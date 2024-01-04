@@ -8,7 +8,7 @@ export default function Header() {
     return (
         <Navbar>
             <NavbarBrand>
-                <p className="font-bold text-inherit">Cursuri</p>
+                <p className="font-bold text-inherit">Cursuri Dev</p>
             </NavbarBrand>
 
             <NavbarContent justify='end' as='div'>
