@@ -1,10 +1,26 @@
 'use client'
 
-import React from "react";
+import React, { useContext } from "react";
+import { AppContext } from "@/components/AppContext";
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu, DropdownSection, Avatar } from "@nextui-org/react";
+import Login from "@/components/Login";
+import { firebaseAuth } from "@/utils/firebase/firebase.config";
+import { signOut } from "firebase/auth";
 
 export default function Header() {
-    const user = { photoURL: 'https://i.pravatar.cc/150?u=a042581f4e29026704d' }
+
+
+    const context = useContext(AppContext);
+    if (!context) {
+        throw new Error("Missing context value");
+    }
+    const { user, openModal, closeModal } = context;
+
+    const handleSignOut = async () => {
+        await signOut(firebaseAuth);
+    }
+
+
     return (
         <Navbar>
             <NavbarBrand>
@@ -65,7 +81,7 @@ export default function Header() {
 
                                 >
                                     <p className="font-semibold">Signed in as</p>
-                                    {/* <p className="font-semibold">{user?.displayName ? user?.displayName : user?.email ? user?.email : user?.phoneNumber ? user?.phoneNumber : user?.uid}</p> */}
+                                    <p className="font-semibold">{user?.displayName ? user?.displayName : user?.email ? user?.email : user?.phoneNumber ? user?.phoneNumber : user?.uid}</p>
                                 </div>
                             </DropdownItem>
                         </DropdownSection>
@@ -91,27 +107,28 @@ export default function Header() {
                                 {user ? (
                                     <div
                                         className='cursor-pointer hover:bg-[rgb(243,18,96)]/20 hover:text-[rgb(243,18,96)] rounded-lg p-2'
-                                    // onClick={handleSignOut}
+                                        onClick={handleSignOut}
                                     >
                                         Logout
                                     </div>
                                 ) : (
                                     <div
                                         className='cursor-pointer hover:bg-[rgb(18,243,67)]/20 hover:text-[rgb(18,243,67)] rounded-lg p-2'
-                                    // onClick={() => handleOpenModal({
-                                    //     id: 'login',
-                                    //     isOpen: true,
-                                    //     hideCloseButton: false,
-                                    //     backdrop: 'blur',
-                                    //     size: 'full',
-                                    //     scrollBehavior: 'inside',
-                                    //     isDismissable: true,
-                                    //     modalHeader: 'Autentificare',
-                                    //     modalBody: <Login onClose={() => closeModal('login')} />,
-                                    //     headerDisabled: true,
-                                    //     footerDisabled: true,
-                                    //     noReplaceURL: true
-                                    // })}
+                                        onClick={() => openModal({
+                                            id: 'login',
+                                            isOpen: true,
+                                            hideCloseButton: false,
+                                            backdrop: 'blur',
+                                            size: 'full',
+                                            scrollBehavior: 'inside',
+                                            isDismissable: true,
+                                            modalHeader: 'Autentificare',
+                                            modalBody: <Login onClose={() => closeModal('login')} />,
+                                            headerDisabled: true,
+                                            footerDisabled: true,
+                                            noReplaceURL: true,
+                                            onClose: () => closeModal('login'),
+                                        })}
                                     >
                                         Login
                                     </div>

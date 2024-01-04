@@ -1,4 +1,5 @@
 'use client'
+import { AppContextProvider } from "@/components/AppContext";
 import { NextUIProvider } from "@nextui-org/react";
 
 export default function Providers({
@@ -8,9 +9,11 @@ export default function Providers({
 }) {
     return (
         <>
-            <NextUIProvider>
-                {children}
-            </NextUIProvider>
+            <AppContextProvider>
+                <NextUIProvider>
+                    {children}
+                </NextUIProvider>
+            </AppContextProvider>
         </>
     )
 }

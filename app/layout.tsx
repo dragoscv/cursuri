@@ -17,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`has-[section[role='dialog'][data-open='true']]:overflow-hidden transition-all ease-in-out duration-500`}>
       <body className={inter.className}>
         <Providers>
           <Header />
