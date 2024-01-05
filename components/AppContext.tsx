@@ -209,6 +209,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             includePrices: true,
             activeOnly: true,
         }).then((products) => {
+            console.log(products);
             dispatch({ type: 'SET_PRODUCTS', payload: products });
         });
     }, []);

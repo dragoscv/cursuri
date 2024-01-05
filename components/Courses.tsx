@@ -43,6 +43,7 @@ export default function Courses() {
         const payments = stripePayments(firebaseApp);
         const session = await createCheckoutSession(payments, {
             price: priceId,
+            allow_promotion_codes: true,
             mode: 'payment',
             metadata: {
                 courseId: courseId
