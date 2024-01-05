@@ -4,6 +4,8 @@ import React, { useContext } from "react";
 import { AppContext } from "@/components/AppContext";
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu, DropdownSection, Avatar } from "@nextui-org/react";
 import Login from "@/components/Login";
+import AddCourse from "./Course/AddCourse";
+import Profile from "./Profile";
 import { firebaseAuth } from "@/utils/firebase/firebase.config";
 import { signOut } from "firebase/auth";
 
@@ -14,7 +16,7 @@ export default function Header() {
     if (!context) {
         throw new Error("Missing context value");
     }
-    const { user, openModal, closeModal } = context;
+    const { user, openModal, closeModal, isAdmin } = context;
 
     const handleSignOut = async () => {
         await signOut(firebaseAuth);
@@ -78,6 +80,21 @@ export default function Header() {
                             >
                                 <div
                                     className='cursor-pointer hover:bg-slate-800/40 rounded-lg p-2 border-0'
+                                    onClick={() => openModal({
+                                        id: 'profile',
+                                        isOpen: true,
+                                        hideCloseButton: false,
+                                        backdrop: 'blur',
+                                        size: 'full',
+                                        scrollBehavior: 'inside',
+                                        isDismissable: true,
+                                        modalHeader: 'Profile',
+                                        modalBody: <Profile onClose={() => closeModal('profile')} />,
+                                        headerDisabled: true,
+                                        footerDisabled: true,
+                                        noReplaceURL: true,
+                                        onClose: () => closeModal('profile'),
+                                    })}
 
                                 >
                                     <p className="font-semibold">Signed in as</p>
@@ -86,6 +103,35 @@ export default function Header() {
                             </DropdownItem>
                         </DropdownSection>
                         <DropdownSection aria-label="Help & Feedback">
+                            {isAdmin ? (
+                                <DropdownItem
+                                    key="addCourse"
+                                    textValue='Add Course'
+                                    className='p-0'
+                                    onClick={() => openModal({
+                                        id: 'add-course',
+                                        isOpen: true,
+                                        hideCloseButton: false,
+                                        backdrop: 'blur',
+                                        size: 'full',
+                                        scrollBehavior: 'inside',
+                                        isDismissable: true,
+                                        modalHeader: 'Add Course',
+                                        modalBody: <AddCourse onClose={() => closeModal('add-course')} />,
+                                        headerDisabled: true,
+                                        footerDisabled: true,
+                                        noReplaceURL: true,
+                                        onClose: () => closeModal('add-course'),
+                                    })}
+                                >
+                                    <div
+                                        className='cursor-pointer hover:bg-slate-800/40 rounded-lg p-2'
+
+                                    >
+                                        Add Course
+                                    </div>
+                                </DropdownItem>
+                            ) : <DropdownItem key="hidden" className="hidden">H</DropdownItem>}
                             <DropdownItem
                                 key="sugestii"
                                 textValue='Sugestii'

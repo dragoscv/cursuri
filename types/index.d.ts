@@ -7,6 +7,14 @@ export interface AppContextProps {
     openModal: (modal: ModalProps) => void;
     closeModal: (id: string) => void;
     updateModal: (modal: string, props: ModalProps) => void;
+    products: any[];
+    isAdmin: boolean;
+    courses: any[];
+    lessons: any[];
+    getCourseLessons: (courseId: string) => Promise<void>;
+    userPaidProducts: any[];
+    reviews: any[];
+    getCourseReviews: (courseId: string) => Promise<void>;
 }
 
 /**
