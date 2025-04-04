@@ -36,7 +36,26 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson }) => {
     }
 
     const { lessons, lessonProgress, saveLessonProgress, markLessonComplete } = context;
-    const courseId = lesson.courseId || '';
+
+    // Check if lesson is undefined before accessing properties
+    const courseId = lesson?.courseId || '';
+
+    // Early return with loading state if no lesson is provided
+    if (!lesson) {
+        return (
+            <div className="flex flex-col w-full max-w-7xl mx-auto animate-in fade-in duration-500">
+                <div className="bg-gradient-to-r from-indigo-600/10 via-purple-600/10 to-pink-600/10 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-white/10 dark:border-gray-800/50 shadow-xl">
+                    <div className="flex justify-center items-center py-20">
+                        <div className="animate-pulse flex flex-col items-center">
+                            <div className="w-32 h-32 bg-gray-300 dark:bg-gray-700 rounded-full mb-4"></div>
+                            <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-1/2 mb-4"></div>
+                            <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     // Load saved progress and completion status
     useEffect(() => {
@@ -77,7 +96,7 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson }) => {
                 }
             }
         }
-    }, [courseId, lesson.id, lessonProgress]);
+    }, [courseId, lesson?.id, lessonProgress]);
 
     // Save progress when component unmounts or video is paused
     const saveCurrentProgress = useCallback(() => {
@@ -96,7 +115,7 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson }) => {
         setTimeout(() => {
             setProgressSaved(false);
         }, 3000);
-    }, [courseId, lesson.id, saveLessonProgress, isCompleted, saveProgress]);
+    }, [courseId, lesson?.id, saveLessonProgress, isCompleted, saveProgress]);
 
     // Handle video events
     const handleTimeUpdate = () => {
@@ -142,7 +161,7 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson }) => {
     const handleMarkComplete = useCallback(() => {
         markLessonComplete(courseId, lesson.id);
         setIsCompleted(true);
-    }, [courseId, lesson.id, markLessonComplete]);
+    }, [courseId, lesson?.id, markLessonComplete]);
 
     // Handle toggling autoplay preference
     const handleAutoPlayToggle = () => {
@@ -164,7 +183,7 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson }) => {
         if (savedNotes) {
             setNotes(savedNotes);
         }
-    }, [lesson.id]);
+    }, [lesson?.id]);
 
     const saveNotes = () => {
         if (notes.trim()) {
