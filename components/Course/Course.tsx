@@ -155,14 +155,14 @@ export default function Course({ courseId }: CourseProps) {
                 onSelectionChange={(key) => setSelectedTab(key as string)}
                 className="mb-8"
             >
-                <Tab 
-                    key="content" 
+                <Tab
+                    key="content"
                     title={
                         <div className="flex items-center gap-2">
                             <FiBookOpen size={18} />
                             <span>Content</span>
                         </div>
-                    } 
+                    }
                 />
                 <Tab key="reviews" title="Reviews" />
                 {course?.resources && <Tab key="resources" title="Resources" />}
@@ -177,11 +177,11 @@ export default function Course({ courseId }: CourseProps) {
                         lessons={sortedLessons()}
                         hasAccess={!!hasAccess}
                         isAdmin={isAdmin}
-                        completedLessons={lessonProgress && lessonProgress[courseId] ? 
+                        completedLessons={lessonProgress && lessonProgress[courseId] ?
                             Object.keys(lessonProgress[courseId]).reduce((acc, lessonId) => {
                                 acc[lessonId] = lessonProgress[courseId][lessonId].isCompleted;
                                 return acc;
-                            }, {} as Record<string, boolean>) : 
+                            }, {} as Record<string, boolean>) :
                             {}
                         }
                         handleLessonClick={handleLessonClick}

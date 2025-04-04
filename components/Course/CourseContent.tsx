@@ -3,12 +3,12 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Chip, Card } from '@heroui/react';
 import { Course, Lesson } from '@/types';
-import { 
-    FiPlay, 
-    FiLock, 
-    FiCheck, 
-    FiClock, 
-    FiBookOpen 
+import {
+    FiPlay,
+    FiLock,
+    FiCheck,
+    FiClock,
+    FiBookOpen
 } from '../icons/FeatherIcons';
 
 interface CourseContentProps {
@@ -93,7 +93,7 @@ const CourseContent: React.FC<CourseContentProps> = ({
         <div className="space-y-6">
             {/* Course Progress */}
             {hasAccess && (
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4 }}
@@ -108,7 +108,7 @@ const CourseContent: React.FC<CourseContentProps> = ({
                         </div>
                         <div className="flex items-center">
                             <div className="relative h-6 w-40 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                                <div 
+                                <div
                                     className="absolute h-full bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full transition-all duration-500 ease-out"
                                     style={{ width: `${calculateProgress()}%` }}
                                 />
@@ -156,7 +156,7 @@ const CourseContent: React.FC<CourseContentProps> = ({
                     // Show lessons grouped by modules if they exist
                     <>
                         {modules.map((module, moduleIndex) => (
-                            <motion.div 
+                            <motion.div
                                 key={module.id || moduleIndex}
                                 variants={itemVariants}
                                 className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-800 shadow-sm"
@@ -190,10 +190,10 @@ const CourseContent: React.FC<CourseContentProps> = ({
                                 </div>
                             </motion.div>
                         ))}
-                        
+
                         {/* Show any lessons not assigned to a module */}
                         {lessonsByModule['default'] && lessonsByModule['default'].length > 0 && (
-                            <motion.div 
+                            <motion.div
                                 variants={itemVariants}
                                 className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-800 shadow-sm"
                             >
@@ -217,7 +217,7 @@ const CourseContent: React.FC<CourseContentProps> = ({
                     </>
                 ) : (
                     // Show flat list if no modules are defined
-                    <motion.div 
+                    <motion.div
                         variants={itemVariants}
                         className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-800 shadow-sm"
                     >
@@ -229,7 +229,7 @@ const CourseContent: React.FC<CourseContentProps> = ({
                                 </span>
                             </h3>
                         </div>
-                        
+
                         {sortedLessons.length > 0 ? (
                             <div className="divide-y divide-gray-100 dark:divide-gray-700">
                                 {sortedLessons.map((lesson, index) => (
@@ -281,7 +281,7 @@ const LessonItem: React.FC<LessonItemProps> = ({ lesson, index, isCompleted, isA
     };
 
     return (
-        <div 
+        <div
             className={`
                 flex items-center p-4 hover:bg-gray-50 dark:hover:bg-gray-750
                 ${isAccessible ? 'cursor-pointer' : 'cursor-not-allowed opacity-80'}
@@ -291,45 +291,45 @@ const LessonItem: React.FC<LessonItemProps> = ({ lesson, index, isCompleted, isA
         >
             <div className={`
                 flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full mr-4
-                ${isCompleted ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400' : 
-                  !isAccessible ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500' :
-                  'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400'}
+                ${isCompleted ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400' :
+                    !isAccessible ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500' :
+                        'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400'}
             `}>
                 {getIcon()}
             </div>
-            
+
             <div className="flex-1 min-w-0">
                 <div className="flex items-center">
                     <span className="text-sm font-medium text-gray-500 dark:text-gray-400 mr-2">
                         {(index + 1).toString().padStart(2, '0')}
                     </span>
                     <h4 className={`font-medium truncate
-                        ${isCompleted ? 'text-green-700 dark:text-green-400' : 
-                          !isAccessible ? 'text-gray-500 dark:text-gray-400' : 
-                          'text-gray-900 dark:text-white'}
+                        ${isCompleted ? 'text-green-700 dark:text-green-400' :
+                            !isAccessible ? 'text-gray-500 dark:text-gray-400' :
+                                'text-gray-900 dark:text-white'}
                     `}>
                         {lesson.name}
                     </h4>
-                    
+
                     {lesson.isFree && (
-                        <Chip 
-                            size="sm" 
-                            variant="flat" 
-                            color="success" 
+                        <Chip
+                            size="sm"
+                            variant="flat"
+                            color="success"
                             className="ml-2 text-xs"
                         >
                             Free
                         </Chip>
                     )}
                 </div>
-                
+
                 {lesson.description && (
                     <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 line-clamp-1">
                         {lesson.description}
                     </p>
                 )}
             </div>
-            
+
             <div className="ml-4 flex-shrink-0 flex items-center gap-3">
                 {lesson.duration && (
                     <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
@@ -337,7 +337,7 @@ const LessonItem: React.FC<LessonItemProps> = ({ lesson, index, isCompleted, isA
                         {lesson.duration}
                     </span>
                 )}
-                
+
                 {!isAccessible ? (
                     <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-2 py-1 rounded-full">
                         Locked
