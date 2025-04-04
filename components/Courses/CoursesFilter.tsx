@@ -18,22 +18,22 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
     const context = useContext(AppContext);
     const [searchText, setSearchText] = useState(currentFilter);
     const [selectedCategory, setSelectedCategory] = useState(currentCategory || 'all');
-    
+
     // Extract unique categories from courses
     const categories = React.useMemo(() => {
         if (!context || !context.courses) return [];
-        
+
         // Extract all tags from all courses
-        const allTags = Object.values(context.courses).flatMap((course: any) => 
+        const allTags = Object.values(context.courses).flatMap((course: any) =>
             course.tags || []
         );
-        
+
         // Count occurrences of each tag
-        const tagCounts = allTags.reduce((acc: {[key: string]: number}, tag: string) => {
+        const tagCounts = allTags.reduce((acc: { [key: string]: number }, tag: string) => {
             acc[tag] = (acc[tag] || 0) + 1;
             return acc;
         }, {});
-        
+
         // Sort by count (descending)
         return Object.entries(tagCounts)
             .sort((a, b) => (b[1] as number) - (a[1] as number))
@@ -45,10 +45,10 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
         const timer = setTimeout(() => {
             onFilterChange(searchText);
         }, 300);
-        
+
         return () => clearTimeout(timer);
     }, [searchText, onFilterChange]);
-    
+
     // Handle category selection
     const handleCategoryChange = (category: string) => {
         setSelectedCategory(category);
@@ -74,7 +74,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
                         className="w-full"
                     />
                 </div>
-                
+
                 {/* Category dropdown */}
                 <div className="md:w-60">
                     <Dropdown>
@@ -102,7 +102,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
                             >
                                 All Categories
                             </DropdownItem>
-                            
+
                             {categories.map((category) => (
                                 <DropdownItem
                                     key={category}
@@ -116,12 +116,12 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
                     </Dropdown>
                 </div>
             </div>
-            
+
             {/* Selected filters display */}
             {(currentFilter || currentCategory !== 'all') && (
                 <div className="mt-4 flex flex-wrap gap-2 items-center">
                     <span className="text-sm text-gray-500 dark:text-gray-400">Active filters:</span>
-                    
+
                     {currentFilter && (
                         <div className="inline-flex items-center gap-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-200 px-3 py-1 rounded-full text-sm">
                             <span>"{currentFilter}"</span>
@@ -140,7 +140,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
                             </button>
                         </div>
                     )}
-                    
+
                     {currentCategory !== 'all' && (
                         <div className="inline-flex items-center gap-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-200 px-3 py-1 rounded-full text-sm">
                             <span>{currentCategory}</span>
@@ -159,7 +159,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
                             </button>
                         </div>
                     )}
-                    
+
                     {(currentFilter || currentCategory !== 'all') && (
                         <button
                             title="Clear all filters"

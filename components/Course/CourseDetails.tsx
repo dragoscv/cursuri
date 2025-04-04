@@ -1,14 +1,39 @@
-import React from 'react';
-import { Course } from '../../types';
+import React, { useEffect } from 'react';
+import { Course, Lesson } from '../../types';
 import { Tabs, Tab, Card, Divider } from "@heroui/react";
 import { motion } from 'framer-motion';
 import { FiCheckCircle, FiLayers, FiTarget, FiCalendar, FiBookOpen } from '../icons/FeatherIcons';
+import { useRouter, useSearchParams } from 'next/navigation';
+import EnhancedLessonsList from '../../components/Lessons/EnhancedLessonsList';
 
 interface CourseDetailsProps {
     course: Course;
+    lessons?: Lesson[];
+    courseId?: string;
 }
 
-export const CourseDetails: React.FC<CourseDetailsProps> = ({ course }) => {
+export const CourseDetails: React.FC<CourseDetailsProps> = ({ course, lessons = [], courseId }) => {
+    // For handling tab selection in URL
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const tabParam = searchParams.get('tab');
+    const [selectedTab, setSelectedTab] = React.useState(tabParam || "overview");
+
+    // Update URL when tab changes
+    const handleTabChange = (key: string) => {
+        setSelectedTab(key);
+        if (courseId) {
+            router.push(`/courses/${courseId}?tab=${key}`, { scroll: false });
+        }
+    };
+
+    // Update tab state when URL param changes
+    useEffect(() => {
+        if (tabParam) {
+            setSelectedTab(tabParam);
+        }
+    }, [tabParam]);
+
     // Sample benefits if not provided
     const benefits = course.benefits || [
         "Learn key concepts and best practices",
@@ -27,6 +52,8 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({ course }) => {
     return (
         <Card className="shadow-md border border-gray-200 dark:border-gray-700">
             <Tabs
+                selectedKey={selectedTab}
+                onSelectionChange={handleTabChange}
                 fullWidth
                 size="lg"
                 color="primary"
@@ -105,7 +132,16 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({ course }) => {
                     <div className="p-6">
                         <h3 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">Course Content</h3>
 
-                        {course.modules && course.modules.length > 0 ? (
+                        {courseId && (
+                            <EnhancedLessonsList
+                                lessons={lessons || []}
+                                course={course}
+                                courseId={courseId}
+                                completedLessons={[]}
+                            />
+                        )}
+
+                        {!courseId && course.modules && course.modules.length > 0 && (
                             <div className="space-y-4">
                                 {course.modules.map((module, index) => (
                                     <div
@@ -126,10 +162,12 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({ course }) => {
                                     </div>
                                 ))}
                             </div>
-                        ) : (
+                        )}
+
+                        {!courseId && (!course.modules || course.modules.length === 0) && lessons.length === 0 && (
                             <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-6 text-center">
                                 <p className="text-gray-600 dark:text-gray-300">
-                                    The full course curriculum will be available soon. Check back later for detailed content information.
+                                    No lessons available yet. Check back later for content updates.
                                 </p>
                             </div>
                         )}

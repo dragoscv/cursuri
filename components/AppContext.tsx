@@ -5,7 +5,7 @@ import { firebaseAuth, firebaseApp, firestoreDB } from '@/utils/firebase/firebas
 import { stripePayments } from '@/utils/firebase/stripe';
 import { getProducts } from '@invertase/firestore-stripe-payments';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { doc, collection, getDocs, query, where, onSnapshot, updateDoc, setDoc, getDoc, Timestamp } from 'firebase/firestore';
+import { doc, collection, getDocs, query, where, onSnapshot, updateDoc, setDoc, getDoc, Timestamp, Unsubscribe } from 'firebase/firestore';
 import ModalComponent from '@/components/Modal';
 
 import { AppContextProps, UserLessonProgress } from '@/types';
@@ -189,7 +189,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
     const getCourseLessons = useCallback(async (courseId: string) => {
         const lessons = state.lessons;
         if (Object.keys(lessons).includes(courseId)) {
-            return;
+            return () => { }; // Return a no-op function if already fetched
         }
 
         const docRef = collection(firestoreDB, `courses/${courseId}/lessons`);
@@ -201,12 +201,15 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                 dispatch({ type: 'SET_LESSONS', payload: { courseId: courseId, lessonId: doc.id, lesson: data } });
             });
         });
-    }, [state.lessons]);
+
+        // Return the unsubscribe function
+        return unsubscribe;
+    }, [state.lessons, dispatch]);
 
     const getCourseReviews = useCallback(async (courseId: string) => {
         const reviews = state.reviews;
         if (Object.keys(reviews).includes(courseId)) {
-            return;
+            return () => { }; // Return a no-op function if already fetched
         }
 
         const docRef = collection(firestoreDB, `courses/${courseId}/reviews`);
@@ -218,7 +221,10 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                 dispatch({ type: 'SET_REVIEWS', payload: { courseId: courseId, reviewId: doc.id, review: data } });
             });
         });
-    }, [state.reviews]);
+
+        // Return the unsubscribe function
+        return unsubscribe;
+    }, [state.reviews, dispatch]);
 
     const saveLessonProgress = useCallback(async (courseId: string, lessonId: string, position: number, isCompleted: boolean = false) => {
         if (!user) return;
@@ -237,7 +243,15 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             };
 
             if (progressExists.exists()) {
-                await updateDoc(progressRef, progressData);
+                // Convert UserLessonProgress to a plain object for Firebase updateDoc
+                await updateDoc(progressRef, {
+                    userId: progressData.userId,
+                    courseId: progressData.courseId,
+                    lessonId: progressData.lessonId,
+                    lastPosition: progressData.lastPosition,
+                    isCompleted: progressData.isCompleted,
+                    lastUpdated: progressData.lastUpdated
+                });
             } else {
                 await setDoc(progressRef, progressData);
             }
@@ -263,13 +277,14 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
     }, [saveLessonProgress]);
 
     const getUserLessonProgress = useCallback(async () => {
-        if (!user) return;
+        if (!user) return () => { }; // Return a no-op function when user is null
 
         try {
             const progressRef = collection(firestoreDB, `users/${user.uid}/progress`);
             const q = query(progressRef);
 
-            const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            // Explicitly type this as a Firebase Unsubscribe function
+            const unsubscribe: Unsubscribe = onSnapshot(q, (querySnapshot) => {
                 querySnapshot.forEach((doc) => {
                     const data = doc.data() as UserLessonProgress;
                     const { courseId, lessonId } = data;
@@ -285,14 +300,17 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                 });
             });
 
-            return unsubscribe;
+            // Since this is an async function, we need to return a Promise that resolves to the unsubscribe function
+            return Promise.resolve(unsubscribe);
         } catch (error) {
             console.error("Error fetching lesson progress:", error);
+            return Promise.resolve(() => { }); // Return a Promise that resolves to a no-op function in case of error
         }
     }, [user, dispatch]);
 
     useEffect(() => {
-        onAuthStateChanged(firebaseAuth, (user) => {
+        // Store the auth unsubscribe function in a variable so we can clean up
+        const unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
             if (user) {
                 setUser(user);
                 if (user.email === 'vladulescu.catalin@gmail.com') {
@@ -304,15 +322,40 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                 setUser(null);
             }
         });
+
+        // Return the unsubscribe function for cleanup
+        return () => {
+            if (typeof unsubscribe === 'function') {
+                unsubscribe();
+            }
+        };
     }, []);
 
     useEffect(() => {
         if (user) {
-            const unsubscribe = getUserLessonProgress();
+            // Create local variable to hold unsubscribe function
+            let cleanupFunction: (() => void) | null = null;
+
+            // Get the unsubscribe function asynchronously
+            getUserLessonProgress()
+                .then(unsubFunction => {
+                    // Store the function so we can call it during cleanup
+                    if (typeof unsubFunction === 'function') {
+                        cleanupFunction = unsubFunction;
+                    }
+                })
+                .catch(err => {
+                    console.error("Error getting unsubscribe function:", err);
+                });
+
+            // Return cleanup function that uses the stored function if available
             return () => {
-                if (unsubscribe) unsubscribe();
+                if (cleanupFunction) {
+                    cleanupFunction();
+                }
             };
         }
+        return () => { }; // Return a no-op function when there's no user
     }, [user, getUserLessonProgress]);
 
     useEffect(() => {
@@ -351,9 +394,15 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                 });
                 dispatch({ type: 'SET_USER_PAID_PRODUCTS', payload: userPaidProducts });
             });
-            return unsubscribe;
+            // Properly type the unsubscribe function to avoid type errors
+            return () => {
+                if (typeof unsubscribe === 'function') {
+                    unsubscribe();
+                }
+            };
         } else {
             dispatch({ type: 'SET_USER_PAID_PRODUCTS', payload: [] });
+            return () => { }; // Return a no-op function when user is null
         }
     }, [user]);
 

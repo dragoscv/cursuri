@@ -1,8 +1,5 @@
 # GitHub Copilot Instructions for Cursuri Project
 
-Think before doing something! Very important!
-Be careful with the code you write!
-
 This document provides context and guidance for GitHub Copilot when working with the Cursuri online course platform codebase.
 
 ## Project Overview
@@ -99,31 +96,32 @@ Modals are managed through the AppContext using the openModal, closeModal, and u
 
 ```typescript
 openModal({
-  id: 'uniqueId',               // Required - unique identifier for the modal
-  isOpen: true,                 // Required - controls visibility
-  modalBody: 'componentName',   // Required - can be a string ID or a React component
-  
+  id: "uniqueId", // Required - unique identifier for the modal
+  isOpen: true, // Required - controls visibility
+  modalBody: "componentName", // Required - can be a string ID or a React component
+
   // Optional parameters with their defaults
-  hideCloseIcon: false,         // Hide the X icon in the top-right
-  hideCloseButton: false,       // Hide the Close button in the footer
-  backdrop: 'blur',             // 'blur', 'opaque', or 'transparent'
-  size: 'md',                   // 'xs', 'sm', 'md', 'lg', 'xl', 'full'
-  scrollBehavior: 'inside',     // 'inside' or 'outside'
-  isDismissable: true,          // Can click outside to dismiss
-  modalHeader: 'Header Text',   // Text or component for the header
-  headerDisabled: false,        // Hide the header completely
-  footerDisabled: true,         // Hide the footer completely
-  footerButtonText: null,       // Custom text for footer button
-  footerButtonClick: null,      // Handler for footer button click
-  modalBottomComponent: null,   // Component to render at bottom of modal
-  noReplaceURL: false,          // Don't modify browser history
-  onClose: () => closeModal('uniqueId'), // Close handler
-})
+  hideCloseIcon: false, // Hide the X icon in the top-right
+  hideCloseButton: false, // Hide the Close button in the footer
+  backdrop: "blur", // 'blur', 'opaque', or 'transparent'
+  size: "md", // 'xs', 'sm', 'md', 'lg', 'xl', 'full'
+  scrollBehavior: "inside", // 'inside' or 'outside'
+  isDismissable: true, // Can click outside to dismiss
+  modalHeader: "Header Text", // Text or component for the header
+  headerDisabled: false, // Hide the header completely
+  footerDisabled: true, // Hide the footer completely
+  footerButtonText: null, // Custom text for footer button
+  footerButtonClick: null, // Handler for footer button click
+  modalBottomComponent: null, // Component to render at bottom of modal
+  noReplaceURL: false, // Don't modify browser history
+  onClose: () => closeModal("uniqueId"), // Close handler
+});
 ```
 
 Modals are rendered automatically by the AppContextProvider, which maps over all modals in state and renders the ModalComponent for each one.
 
 The most common modal types include:
+
 - `login` - User authentication modal
 - `checkout` - Payment processing modal
 - Custom component modals for forms and dialogs
@@ -131,17 +129,17 @@ The most common modal types include:
 To close a modal, use the closeModal function with the modal's ID:
 
 ```typescript
-closeModal('uniqueId')
+closeModal("uniqueId");
 ```
 
 To update an existing modal, use the updateModal function:
 
 ```typescript
 updateModal({
-  id: 'uniqueId',
+  id: "uniqueId",
   // Any properties to update
   modalBody: <NewComponent />,
-})
+});
 ```
 
 ### Firebase Data Fetching

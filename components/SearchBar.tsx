@@ -5,6 +5,8 @@ import { Input, Button } from '@heroui/react'  // Updated to use HeroUI
 import { useRouter, usePathname } from 'next/navigation'
 import { useContext } from 'react'
 import { AppContext } from './AppContext'
+import SearchIcon from './icons/SearchIcon'
+import CloseIcon from './icons/CloseIcon'
 
 export default function SearchBar() {
     const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -139,9 +141,7 @@ export default function SearchBar() {
                 onClick={() => setIsSearchOpen(true)}
                 className="hidden md:flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400"
                 startContent={(
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
+                    <SearchIcon className="w-4 h-4" />
                 )}
             >
                 Search courses...
@@ -158,9 +158,7 @@ export default function SearchBar() {
                 className="md:hidden"
                 aria-label="Search"
             >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
+                <SearchIcon className="w-5 h-5" />
             </Button>
 
             {/* Search modal */}
@@ -175,9 +173,7 @@ export default function SearchBar() {
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 startContent={(
-                                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                    </svg>
+                                    <SearchIcon className="w-5 h-5 text-gray-400" />
                                 )}
                                 endContent={
                                     searchQuery && (
@@ -187,9 +183,7 @@ export default function SearchBar() {
                                             size="sm"
                                             onClick={() => setSearchQuery('')}
                                         >
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                            </svg>
+                                            <CloseIcon className="w-4 h-4" />
                                         </Button>
                                     )
                                 }

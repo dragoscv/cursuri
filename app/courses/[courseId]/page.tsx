@@ -7,16 +7,25 @@ import CourseDetails from '../../../components/Course/CourseDetails';
 import CourseEnrollment from '../../../components/Course/CourseEnrollment';
 import { motion } from 'framer-motion';
 import { Spinner } from '@heroui/react';
+import { useCourseParams } from '@/utils/hooks/useParams';
 
-export default function CourseDetailPage({ params }: { params: { courseId: string } }) {
-    const { courseId } = params;
+// Define the props interface for your page component
+interface CourseDetailPageProps {
+    params: {
+        courseId: string;
+    }
+}
+
+export default function CourseDetailPage(props: CourseDetailPageProps) {
+    // Use the custom hook to safely access params
+    const { courseId } = useCourseParams(props.params);
     const context = useContext(AppContext);
 
     if (!context) {
         throw new Error('CourseDetailPage must be used within an AppContextProvider');
     }
 
-    const { courses, userPaidProducts, getCourseLessons } = context;
+    const { courses, userPaidProducts, getCourseLessons, lessons } = context;
 
     // Fetch course lessons when component mounts
     useEffect(() => {
@@ -26,6 +35,11 @@ export default function CourseDetailPage({ params }: { params: { courseId: strin
     }, [courseId, getCourseLessons]);
 
     const course = courses ? courses[courseId] : null;
+
+    // Get lessons for this course from context
+    const courseLessons = lessons && courseId && lessons[courseId]
+        ? Object.values(lessons[courseId])
+        : [];
 
     // Check if the course has been purchased
     const isPurchased = userPaidProducts?.some(
@@ -57,7 +71,11 @@ export default function CourseDetailPage({ params }: { params: { courseId: strin
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
                 >
-                    <CourseDetails course={course} />
+                    <CourseDetails
+                        course={course}
+                        courseId={courseId}
+                        lessons={courseLessons}
+                    />
                 </motion.div>
 
                 <motion.div

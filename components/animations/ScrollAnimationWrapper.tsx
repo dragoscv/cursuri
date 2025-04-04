@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
-import { motion, useAnimation, Variants } from 'framer-motion';
-import { useInView } from 'framer-motion';
+import React, { useRef } from 'react';
+import { motion, Variants, useInView } from 'framer-motion';
+import { MarginType } from '@/types';
 
 interface ScrollAnimationWrapperProps {
     children: React.ReactNode;
@@ -12,7 +12,17 @@ interface ScrollAnimationWrapperProps {
     duration?: number;
     once?: boolean;
     direction?: 'up' | 'down' | 'left' | 'right' | 'none';
-    viewport?: { once?: boolean; margin?: string; amount?: 'some' | 'all' | number };
+    viewport?: {
+        once?: boolean;
+        margin?: string;
+        amount?: 'some' | 'all' | number
+    };
+}
+
+interface UseInViewCustomOptions {
+    once?: boolean;
+    margin?: string;
+    amount?: 'some' | 'all' | number;
 }
 
 export default function ScrollAnimationWrapper({
@@ -26,7 +36,8 @@ export default function ScrollAnimationWrapper({
     variants,
 }: ScrollAnimationWrapperProps) {
     const ref = useRef(null);
-    const isInView = useInView(ref, viewport);
+    // Cast viewport to any to bypass the type issue with margin
+    const isInView = useInView(ref, viewport as any);
 
     // Default animation variants based on direction
     const defaultVariants: Variants = {

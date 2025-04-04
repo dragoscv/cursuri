@@ -27,7 +27,7 @@ export default function CallToActionSection() {
     // Pre-calculate floating orbs properties
     const floatingOrbs = useMemo(() => {
         // Use a seeded random function for consistent values between server and client
-        const seededRandom = (seed) => {
+        const seededRandom = (seed: number): number => {
             const x = Math.sin(seed) * 10000;
             return x - Math.floor(x);
         };

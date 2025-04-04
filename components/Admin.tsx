@@ -12,6 +12,8 @@ export default function Admin() {
     const [selectedTab, setSelectedTab] = useState<string>("courses");
     const [selectedView, setSelectedView] = useState<"grid" | "list">("grid");
     const [selectedCourse, setSelectedCourse] = useState<CourseWithPriceProduct | null>(null);
+    const [courseToDelete, setCourseToDelete] = useState<CourseWithPriceProduct | null>(null);
+    const [deleteConfirmOpen, setDeleteConfirmOpen] = useState<boolean>(false);
 
     const context = useContext(AppContext);
     if (!context) {
@@ -132,7 +134,7 @@ export default function Admin() {
                             <Button
                                 color={selectedView === "grid" ? "primary" : "default"}
                                 variant={selectedView === "grid" ? "solid" : "light"}
-                                onClick={() => setSelectedView("grid")}
+                                onPress={() => setSelectedView("grid")}
                                 size="sm"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -143,7 +145,7 @@ export default function Admin() {
                             <Button
                                 color={selectedView === "list" ? "primary" : "default"}
                                 variant={selectedView === "list" ? "solid" : "light"}
-                                onClick={() => setSelectedView("list")}
+                                onPress={() => setSelectedView("list")}
                                 size="sm"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -154,7 +156,7 @@ export default function Admin() {
                         </div>
                         <Button
                             color="primary"
-                            onClick={handleAddCourse}
+                            onPress={handleAddCourse}
                             startContent={(
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M12 4V20M4 12H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -190,11 +192,17 @@ export default function Admin() {
                                                     {formatPrice(course)}
                                                 </div>
                                                 <div className="flex gap-2">
-                                                    <Button size="sm" color="secondary" variant="flat" onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleEditCourse(course);
+                                                    <Button size="sm" color="secondary" variant="flat" onPress={(e: any) => {
+                                                        // Delete course logic
+                                                        e.preventDefault?.();
+                                                        e.stopPropagation?.();
+                                                        setCourseToDelete(course);
+                                                        setDeleteConfirmOpen(true);
                                                     }}>
-                                                        Edit
+                                                        Delete
+                                                    </Button>
+                                                    <Button size="sm" color="primary" variant="flat" onPress={() => handleEditCourse(course)}>
+                                                        Edit Course
                                                     </Button>
                                                 </div>
                                             </div>
@@ -246,7 +254,7 @@ export default function Admin() {
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                                     <div className="flex gap-2">
-                                                        <Button size="sm" color="primary" variant="flat" onClick={() => handleEditCourse(course)}>
+                                                        <Button size="sm" color="primary" variant="flat" onPress={() => handleEditCourse(course)}>
                                                             Edit
                                                         </Button>
                                                     </div>
@@ -270,7 +278,7 @@ export default function Admin() {
                             <div className="flex gap-2">
                                 <Button
                                     color="primary"
-                                    onClick={() => handleAddLesson(selectedCourse.id)}
+                                    onPress={() => handleAddLesson(selectedCourse.id)}
                                     startContent={(
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M12 4V20M4 12H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -282,7 +290,7 @@ export default function Admin() {
                                 <Button
                                     color="default"
                                     variant="light"
-                                    onClick={() => {
+                                    onPress={() => {
                                         setSelectedCourse(null);
                                         setSelectedTab("courses");
                                     }}
@@ -302,6 +310,8 @@ export default function Admin() {
                                                 Course Name
                                             </label>
                                             <input
+                                                title="Course Name"
+                                                aria-label="Course Name"
                                                 type="text"
                                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                                                 value={selectedCourse.name}
@@ -313,6 +323,8 @@ export default function Admin() {
                                                 Description
                                             </label>
                                             <textarea
+                                                title="Course Description"
+                                                aria-label="Course Description"
                                                 rows={4}
                                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                                                 value={selectedCourse.description || ''}
@@ -439,8 +451,8 @@ export default function Admin() {
                                                         </td>
                                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                                             <div className="flex gap-2">
-                                                                <Button size="sm" color="primary" variant="flat" onClick={() => handleEditLesson(lesson)}>
-                                                                    Edit
+                                                                <Button size="sm" color="primary" variant="flat" onPress={() => handleEditLesson(lesson)}>
+                                                                    Edit Lesson
                                                                 </Button>
                                                             </div>
                                                         </td>
@@ -453,7 +465,7 @@ export default function Admin() {
                                         <p className="text-gray-500 dark:text-gray-400 mb-4">No lessons found for this course</p>
                                         <Button
                                             color="primary"
-                                            onClick={() => handleAddLesson(selectedCourse.id)}
+                                            onPress={() => handleAddLesson(selectedCourse.id)}
                                             size="sm"
                                         >
                                             Add First Lesson

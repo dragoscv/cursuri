@@ -131,7 +131,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                         color="primary"
                         className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 mb-4 py-6"
                         size="lg"
-                        onClick={handleEnrollClick}
+                        onPress={handleEnrollClick}
                         isLoading={isLoading}
                         startContent={course.isFree ? <FiCheck className="text-xl" /> : <FiShoppingCart className="text-xl" />}
                     >
@@ -188,7 +188,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                         color="default"
                         variant="flat"
                         className="w-full"
-                        onClick={() => {
+                        onPress={() => {
                             openModal({
                                 id: 'login',
                                 isOpen: true,

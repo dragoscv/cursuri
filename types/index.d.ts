@@ -1,5 +1,20 @@
+import { Timestamp, Unsubscribe } from 'firebase/firestore';
 import { User } from 'firebase/auth';
 import { ReactNode } from 'react';
+
+// Next.js 15 specific types
+declare module 'next' {
+    export interface PageProps {
+        params?: any;
+        searchParams?: Record<string, string | string[]>;
+    }
+}
+
+// Alternative page params interface for our usage
+export interface PageParams<T extends Record<string, string> = Record<string, string>> {
+    params: T;
+    searchParams?: Record<string, string | string[]>;
+}
 
 export interface AppContextProps {
     isDark: boolean;
@@ -12,13 +27,22 @@ export interface AppContextProps {
     isAdmin: boolean;
     courses: Record<string, Course>;
     lessons: Record<string, Record<string, Lesson>>;
-    getCourseLessons: (courseId: string) => Promise<void>;
+    getCourseLessons: (courseId: string) => Promise<Unsubscribe | void>;
     userPaidProducts: UserPaidProduct[];
+    userPurchases?: Record<string, UserPaidProduct>; // Added missing property
     reviews: Record<string, Record<string, Review>>;
-    getCourseReviews: (courseId: string) => Promise<void>;
+    getCourseReviews: (courseId: string) => Promise<Unsubscribe | void>;
     lessonProgress: Record<string, Record<string, UserLessonProgress>>;
     saveLessonProgress: (courseId: string, lessonId: string, position: number, isCompleted?: boolean) => Promise<boolean | void>;
     markLessonComplete: (courseId: string, lessonId: string) => Promise<boolean | void>;
+}
+
+// For use with framer-motion inView
+export interface MarginType {
+    top?: number | string;
+    right?: number | string;
+    bottom?: number | string;
+    left?: number | string;
 }
 
 /**
@@ -83,6 +107,8 @@ export interface Course {
     name: string;
     /** The description of the course. */
     description?: string;
+    /** Full description with more details */
+    fullDescription?: string;
     /** The difficulty level of the course. */
     difficulty?: string;
     /** The duration of the course. */
@@ -117,6 +143,14 @@ export interface Course {
     instructor?: string;
     /** Tags or categories for the course. */
     tags?: string[];
+    /** Benefits of taking the course */
+    benefits?: string[];
+    /** Course requirements or prerequisites */
+    requirements?: string[];
+    /** Course modules or sections */
+    modules?: CourseModule[];
+    /** Course reviews */
+    reviews?: Review[];
     /** The price product information from Stripe. */
     priceProduct?: {
         /** The prices for the course. */
@@ -134,6 +168,18 @@ export interface Course {
 }
 
 /**
+ * Interface for a course module or section
+ */
+export interface CourseModule {
+    id: string;
+    title: string;
+    description?: string;
+    lessons?: string[]; // Array of lesson IDs
+    lessonCount?: number; // Count of lessons in this module
+    duration?: string; // Total duration of the module
+}
+
+/**
  * Interface for a lesson within a course.
  */
 export interface Lesson {
@@ -143,10 +189,14 @@ export interface Lesson {
     courseId?: string;
     /** The name/title of the lesson. */
     name: string;
+    /** The title of the lesson (alternative to name) */
+    title?: string;
     /** The description of the lesson. */
     description?: string;
     /** The file URL for the lesson video/content. */
     file: string;
+    /** Video URL for the lesson */
+    videoUrl?: string;
     /** HTML content for the lesson. */
     content?: string;
     /** Whether the lesson has a quiz. */
@@ -157,6 +207,14 @@ export interface Lesson {
     order?: number;
     /** The duration of the lesson. */
     duration?: string;
+    /** Estimated time to complete the lesson */
+    estimatedTime?: string;
+    /** Whether the lesson is locked or not */
+    isLocked?: boolean;
+    /** Status of the lesson (e.g., 'published', 'draft') */
+    status?: string;
+    /** Whether the lesson is free for all users */
+    isFree?: boolean;
 }
 
 /**
@@ -174,7 +232,7 @@ export interface UserLessonProgress {
     /** The last timestamp/position in the video where the user left off (in seconds). */
     lastPosition: number;
     /** When the progress was last updated. */
-    lastUpdated: Date | string;
+    lastUpdated: Date | string | Timestamp;
 }
 
 /**
@@ -238,3 +296,24 @@ export interface UserPaidProduct {
     /** The purchase date. */
     purchaseDate?: string | Date;
 }
+
+/**
+ * Interface for a course with its Stripe price product
+ */
+export interface CourseWithPriceProduct extends Course {
+    priceProduct: {
+        prices: {
+            unit_amount: number;
+            currency: string;
+            id: string;
+        }[];
+        id: string;
+    };
+}
+
+export interface IconProps {
+    className?: string;
+    size?: number;
+}
+
+// Other existing types...

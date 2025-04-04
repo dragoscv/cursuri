@@ -18,7 +18,7 @@ interface CoursesListProps {
 export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) => {
     const router = useRouter();
     const context = useContext(AppContext);
-    
+
     if (!context) {
         throw new Error('CoursesList must be used within an AppContextProvider');
     }
@@ -30,7 +30,7 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
     // Filter courses based on filter and category props
     const filteredCourses = React.useMemo(() => {
         let result = Object.values(courses || {});
-        
+
         if (filter) {
             const lowercaseFilter = filter.toLowerCase();
             result = result.filter(
@@ -39,13 +39,13 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
                     (course.description && course.description.toLowerCase().includes(lowercaseFilter))
             );
         }
-        
+
         if (category && category !== 'all') {
             result = result.filter(
                 (course: any) => course.tags && course.tags.includes(category)
             );
         }
-        
+
         return result;
     }, [courses, filter, category]);
 
@@ -68,7 +68,7 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
             });
             return;
         }
-        
+
         setLoadingPayment(true);
         setLoadingCourseId(courseId);
 
@@ -106,7 +106,7 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
     }, [products]);
 
     const isPurchased = useCallback((courseId: string) => {
-        return userPaidProducts?.find((userPaidProduct: any) => 
+        return userPaidProducts?.find((userPaidProduct: any) =>
             userPaidProduct.metadata?.courseId === courseId
         );
     }, [userPaidProducts]);
@@ -144,7 +144,7 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
                 const { amount, currency, priceId } = getCoursePrice(course);
                 const purchased = isPurchased(course.id);
                 const isLoading = loadingPayment && loadingCourseId === course.id;
-                
+
                 return (
                     <motion.div
                         key={course.id}
@@ -170,7 +170,7 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
                                     {course.difficulty || 'Intermediate'}
                                 </Chip>
                             </div>
-                            
+
                             {/* Purchased badge */}
                             {purchased && (
                                 <div className="absolute bottom-4 right-4 z-20">
@@ -189,7 +189,7 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
                                     </Chip>
                                 </div>
                             )}
-                            
+
                             {/* Course image */}
                             <div
                                 className="relative h-48 w-full cursor-pointer overflow-hidden"
@@ -197,14 +197,14 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
                             >
                                 {/* Gradient overlay */}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent z-10"></div>
-                                
+
                                 {/* Course image */}
                                 <img
                                     src={products?.find((product: any) => product.id === course.priceProduct?.id)?.images?.[0] || '/placeholder-course.jpg'}
                                     alt={course.name}
                                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                                 />
-                                
+
                                 {/* Course info overlays */}
                                 <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center z-20">
                                     <div className="bg-black/50 backdrop-blur-sm px-3 py-1 rounded-lg text-white text-xs flex items-center">
@@ -213,7 +213,7 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
                                         </svg>
                                         <span>{course.duration || '8 hours'}</span>
                                     </div>
-                                    
+
                                     {course.lessonsCount && (
                                         <div className="bg-black/50 backdrop-blur-sm px-3 py-1 rounded-lg text-white text-xs flex items-center">
                                             <svg className="w-3.5 h-3.5 mr-1.5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -225,7 +225,7 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div className="flex flex-1 flex-col p-6">
                             {/* Course title */}
                             <h3
@@ -234,7 +234,7 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
                             >
                                 {course.name}
                             </h3>
-                            
+
                             {/* Course description */}
                             <p
                                 className="mb-4 flex-1 text-sm text-gray-600 dark:text-gray-300 line-clamp-2"
@@ -242,13 +242,13 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
                             >
                                 {course.description || 'Learn professional skills with this comprehensive course.'}
                             </p>
-                            
+
                             {/* Tags */}
                             {course.tags && course.tags.length > 0 && (
                                 <div className="flex flex-wrap gap-2 mb-4">
                                     {course.tags.slice(0, 3).map((tag: string) => (
-                                        <span 
-                                            key={tag} 
+                                        <span
+                                            key={tag}
                                             className="px-2 py-1 text-xs rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300"
                                         >
                                             {tag}
@@ -256,19 +256,19 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
                                     ))}
                                 </div>
                             )}
-                            
+
                             {/* Divider */}
                             <div className="h-[1px] bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent mb-4"></div>
-                            
+
                             <div className="mt-auto flex items-center justify-between">
                                 {/* Price */}
                                 <div className="text-xl font-bold text-gray-900 dark:text-white">
-                                    {course.isFree ? 
-                                        <span className="text-green-600 dark:text-green-400">Free</span> : 
+                                    {course.isFree ?
+                                        <span className="text-green-600 dark:text-green-400">Free</span> :
                                         <span>{amount} {currency}</span>
                                     }
                                 </div>
-                                
+
                                 {/* Action button */}
                                 {purchased ? (
                                     <Button

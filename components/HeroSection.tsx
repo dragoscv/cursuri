@@ -200,7 +200,7 @@ export default function HeroSection() {
     // Generate deterministic opacity values
     const gridOpacities = useMemo(() => {
         // Create a deterministic function to generate opacity values
-        const generateOpacity = (index) => {
+        const generateOpacity = (index: number): string => {
             // Using a sine function to generate values between 0.1 and 0.4
             return (Math.sin(index * 0.1) * 0.15 + 0.25).toFixed(5);
         };
@@ -277,7 +277,7 @@ export default function HeroSection() {
 
     // Map technology names to their corresponding icon components
     const getTechIcon = (tech: string) => {
-        const iconMap = {
+        const iconMap: Record<string, React.FC<any>> = {
             'TypeScript': TypeScriptIcon,
             'JavaScript': JavaScriptIcon,
             'React': ReactIcon,
@@ -416,7 +416,7 @@ export default function HeroSection() {
                                 radius="full"
                                 className="px-8 py-6 text-lg font-medium border-indigo-300 text-indigo-100 backdrop-blur-sm hover:bg-white/10 transform hover:-translate-y-1 transition-all duration-300"
                                 as="a"
-                                href="#courses-section"
+                                href="/courses"
                             >
                                 Explore Courses
                             </Button>

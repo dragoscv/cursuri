@@ -40,7 +40,7 @@ export default function StatisticsSection() {
         const seed = 42;
         const particles = [];
 
-        function pseudoRandom(seed, index) {
+        function pseudoRandom(seed: number, index: number): number {
             // Deterministic pseudo-random generator
             return parseFloat(((Math.sin(seed * index) * 10000) % 1).toFixed(2));
         }

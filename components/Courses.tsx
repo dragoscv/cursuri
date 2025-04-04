@@ -9,11 +9,8 @@ import LoadingButton from "./Buttons/LoadingButton";
 import Login from "./Login";
 import { Button, Badge, Chip } from "@heroui/react";
 import { motion, useAnimation, useInView } from "framer-motion";
-import { useRouter } from "next/navigation";  // Import Next.js router
-import { ModalProps } from "@/types";
 
 export default function Courses() {
-    const router = useRouter();  // Initialize the router
     const [loadingPayment, setLoadingPayment] = useState(false)
     const [loadingCourseId, setLoadingCourseId] = useState<string | null>(null)
 
@@ -77,17 +74,19 @@ export default function Courses() {
     }, [closeModal, openModal, user]);
 
     const handleCourseClick = useCallback((course: any) => {
-        // Navigate to the dedicated course page instead of opening a modal
-        router.push(`/courses/${course.id}`);
-    }, [router]);
+        // Navigate to the course page instead of opening a modal
+        window.location.href = `/courses/${course.id}`;
+    }, []);
 
     const getCoursePrice = useCallback((course: any) => {
+        if (!course?.priceProduct) return { amount: 0, currency: 'RON', priceId: '' };
+
         const product = products?.find((product: any) => product.id === course.priceProduct.id);
         const price = product?.prices.find((price: any) => price.id === course.price);
         return {
-            amount: price?.unit_amount / 100,
-            currency: price?.currency.toUpperCase(),
-            priceId: price?.id
+            amount: price?.unit_amount / 100 || 0,
+            currency: price?.currency?.toUpperCase() || 'RON',
+            priceId: price?.id || ''
         };
     }, [products]);
 
@@ -289,137 +288,124 @@ export default function Courses() {
                         <motion.div
                             key={course.id}
                             id={course.id}
-                            className="group flex flex-col overflow-hidden rounded-xl bg-white dark:bg-gray-800/80 backdrop-blur-sm shadow-md border border-transparent dark:border-gray-700/30 hover:border-indigo-300/50 dark:hover:border-indigo-500/30 transition-all duration-300"
+                            className="group flex flex-col overflow-hidden rounded-xl bg-white dark:bg-gray-800/80 backdrop-blur-sm shadow-lg hover:shadow-xl relative"
                             variants={courseVariants}
                             whileHover={{
-                                y: -8,
-                                transition: { duration: 0.3, ease: "easeOut" }
+                                y: -10,
+                                transition: { duration: 0.3 }
                             }}
                         >
-                            {/* Shine effect on hover */}
-                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 z-10 transition-opacity duration-700">
-                                <div className="absolute inset-[-100%] w-[200%] h-[200%] bg-gradient-to-r from-transparent via-white/20 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-1500"></div>
-                            </div>
-
-                            {/* 3D card effect with layered shadows */}
-                            <div className="absolute -inset-[2px] rounded-xl bg-gradient-to-r from-indigo-500/70 via-purple-500/70 to-pink-500/70 opacity-0 group-hover:opacity-100 blur-[2px] transition-all duration-300 -z-10"></div>
-                            <div className="absolute -inset-[1px] rounded-xl bg-gradient-to-r from-indigo-500/30 via-purple-500/30 to-pink-500/30 opacity-0 group-hover:opacity-100 -z-10"></div>
+                            {/* Decorative gradient border */}
+                            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 -z-10 blur transition-opacity duration-300" style={{ transform: 'translate(-2px, -2px)' }} />
 
                             <div className="relative overflow-hidden">
-                                {/* Floating badges with glass effect */}
-                                <div className="absolute top-4 left-4 z-20">
+                                {/* Course difficulty badge */}
+                                <div className="absolute top-4 left-4 z-10">
                                     <Chip
                                         variant="flat"
                                         color="primary"
                                         size="sm"
-                                        className="text-xs font-medium backdrop-blur-md bg-white/10 dark:bg-black/30 border border-white/20 shadow-lg"
+                                        className="text-xs font-medium backdrop-blur-sm bg-black/20"
                                     >
                                         {course.difficulty || 'Advanced'}
                                     </Chip>
                                 </div>
 
-                                {/* Course topic with improved styling */}
-                                <div className="absolute top-4 right-4 z-20">
+                                {/* Course topic */}
+                                <div className="absolute top-4 right-4 z-10">
                                     <Chip
                                         variant="flat"
                                         color="secondary"
                                         size="sm"
-                                        className="text-xs font-medium backdrop-blur-md bg-white/10 dark:bg-black/30 border border-white/20 shadow-lg"
+                                        className="text-xs font-medium backdrop-blur-sm bg-black/20"
                                     >
                                         {courseTopic}
                                     </Chip>
                                 </div>
 
-                                {/* Enhanced purchased badge */}
+                                {/* Purchased badge */}
                                 {purchased && (
-                                    <div className="absolute bottom-4 right-4 z-20">
+                                    <div className="absolute bottom-4 right-4 z-10">
                                         <Chip
                                             variant="solid"
                                             color="success"
                                             size="sm"
-                                            className="text-xs font-medium shadow-lg shadow-green-500/20 flex items-center gap-1"
-                                            startContent={
-                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
-                                            }
+                                            className="text-xs font-medium"
                                         >
                                             Enrolled
                                         </Chip>
                                     </div>
                                 )}
 
-                                {/* Course image with improved overlay effects */}
+                                {/* Course image with futuristic overlay */}
                                 <div
-                                    className="relative h-56 w-full cursor-pointer overflow-hidden"
+                                    className="relative h-52 w-full cursor-pointer overflow-hidden"
                                     onClick={() => handleCourseClick(course)}
                                 >
-                                    {/* Enhanced gradient overlay with better visibility */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent z-10"></div>
+                                    {/* Gradient overlay */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
 
-                                    {/* Tech circuit pattern overlay with reduced opacity for subtlety */}
-                                    <div className="absolute inset-0 bg-[url('/circuit-pattern.svg')] bg-cover mix-blend-overlay opacity-30 z-10"></div>
+                                    {/* Tech circuit pattern overlay */}
+                                    <div className="absolute inset-0 bg-[url('/circuit-pattern.svg')] bg-cover mix-blend-overlay opacity-40 z-10"></div>
 
-                                    {/* Improved interactive hover effect with smoother transition */}
-                                    <div className="absolute inset-0 bg-indigo-600/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"></div>
+                                    {/* Interactive hover effect */}
+                                    <div className="absolute inset-0 bg-indigo-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
 
-                                    {/* Enhanced glow effect */}
-                                    <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500/50 to-purple-600/50 opacity-0 group-hover:opacity-40 blur-md transition-all duration-500 z-[5] scale-105 group-hover:scale-110"></div>
+                                    {/* Animated glow */}
+                                    <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-600 opacity-0 group-hover:opacity-30 blur-md transition-opacity duration-300 z-[5]"></div>
 
-                                    {/* Image with enhanced zoom effect */}
                                     <img
-                                        src={products?.find((product: any) => product.id === course.priceProduct.id)?.images[0]}
+                                        src={course.priceProduct && products?.find((product: any) => product?.id === course.priceProduct?.id)?.images?.[0] || null}
                                         alt={course.name}
-                                        className="h-full w-full object-cover transition-transform duration-1000 ease-in-out group-hover:scale-110 transform-gpu"
+                                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                                     />
 
-                                    {/* Enhanced futuristic HUD elements with better spacing and readability */}
+                                    {/* Futuristic HUD elements */}
                                     <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center z-20">
-                                        <div className="bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-lg text-white text-xs flex items-center shadow-lg">
-                                            <svg className="w-3.5 h-3.5 mr-1.5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <div className="bg-black/40 backdrop-blur-sm px-2 py-1 rounded-md text-white text-xs flex items-center">
+                                            <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
-                                            <span className="font-medium">{course.duration || '10 weeks'}</span>
+                                            {course.duration || '10 weeks'}
                                         </div>
 
-                                        <div className="bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-lg text-white text-xs flex items-center shadow-lg">
-                                            <svg className="w-3.5 h-3.5 mr-1.5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <div className="bg-black/40 backdrop-blur-sm px-2 py-1 rounded-md text-white text-xs flex items-center">
+                                            <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                             </svg>
-                                            <span className="font-medium">{Math.floor(Math.random() * 200) + 100} enrolled</span>
+                                            {Math.floor(Math.random() * 200) + 100} enrolled
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="flex flex-1 flex-col p-6">
-                                {/* Course title with improved typography and hover effect */}
+                                {/* Course title */}
                                 <h3
-                                    className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white cursor-pointer group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-300"
+                                    className="mb-3 text-xl font-semibold tracking-tight text-gray-900 dark:text-white cursor-pointer group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-300"
                                     onClick={() => handleCourseClick(course)}
                                 >
                                     {course.name}
                                 </h3>
 
-                                {/* Course description with improved readability */}
+                                {/* Course description */}
                                 <p
-                                    className="mb-5 flex-1 text-sm leading-relaxed text-gray-600 dark:text-gray-300 line-clamp-2"
+                                    className="mb-4 flex-1 text-sm text-gray-600 dark:text-gray-300 line-clamp-2"
                                     onClick={() => handleCourseClick(course)}
                                 >
                                     {course.description || 'Master cutting-edge AI techniques and practical implementations to power the future of technology in our interconnected world.'}
                                 </p>
 
-                                {/* Enhanced rating with animated stars */}
+                                {/* Rating */}
                                 <div
-                                    className="mt-auto mb-5 flex items-center"
+                                    className="mt-auto mb-4 flex items-center"
                                     onClick={() => handleCourseClick(course)}
                                 >
                                     <div className="flex items-center">
                                         {[1, 2, 3, 4, 5].map((rating) => (
                                             <svg
                                                 key={rating}
-                                                className={`w-4 h-4 ${rating <= 4 ? 'text-yellow-400 group-hover:animate-pulse' : 'text-gray-300 dark:text-gray-600'}`}
-                                                style={{ animationDelay: `${rating * 0.1}s` }}
+                                                className={`w-4 h-4 ${rating <= 4 ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600'}`}
                                                 fill="currentColor"
                                                 viewBox="0 0 20 20"
                                             >
@@ -427,33 +413,25 @@ export default function Courses() {
                                             </svg>
                                         ))}
                                     </div>
-                                    <span className="ml-2 text-sm font-medium text-gray-600 dark:text-gray-400">4.8 <span className="text-xs opacity-75">(42 reviews)</span></span>
+                                    <span className="ml-2 text-sm font-medium text-gray-600 dark:text-gray-400">4.8 (42 reviews)</span>
                                 </div>
 
-                                {/* Divider with gradient effect */}
-                                <div className="h-[1px] bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent mb-5"></div>
-
-                                <div className="mt-auto flex items-center justify-between">
-                                    {/* Price with enhanced styling and micro-interactions */}
-                                    <div className="relative group-hover:scale-105 transition-transform duration-300">
-                                        <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500/50 to-purple-500/50 rounded-full opacity-0 group-hover:opacity-70 blur-md transition-opacity duration-300"></div>
-                                        <div className="relative text-2xl font-extrabold text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800/90 px-3 py-1 rounded-full shadow-sm">
-                                            <span className="bg-gradient-to-br from-indigo-600 to-purple-600 text-transparent bg-clip-text">{amount} {currency}</span>
+                                <div className="mt-4 flex items-center justify-between">
+                                    {/* Price with futuristic styling */}
+                                    <div className="relative">
+                                        <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full opacity-0 group-hover:opacity-70 blur-md transition-opacity duration-300"></div>
+                                        <div className="relative text-2xl font-bold text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full">
+                                            {amount} {currency}
                                         </div>
                                     </div>
 
-                                    {/* Enhanced buttons with better visual feedback */}
+                                    {/* Buy button */}
                                     {purchased ? (
                                         <Button
                                             color="success"
                                             variant="shadow"
                                             onClick={() => handleCourseClick(course)}
-                                            className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:shadow-xl hover:shadow-emerald-500/30 transform group-hover:scale-105 transition-all duration-300 rounded-full px-4"
-                                            endContent={
-                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                                </svg>
-                                            }
+                                            className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:shadow-lg hover:shadow-emerald-500/30 transform group-hover:scale-105 transition-all duration-300"
                                         >
                                             Continue Learning
                                         </Button>
@@ -464,12 +442,7 @@ export default function Courses() {
                                             <Button
                                                 color="primary"
                                                 onClick={() => buyCourse(priceId, course.id)}
-                                                className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:shadow-xl hover:shadow-indigo-500/30 transform group-hover:scale-105 transition-all duration-300 rounded-full px-4"
-                                                endContent={
-                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                                                    </svg>
-                                                }
+                                                className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:shadow-lg hover:shadow-indigo-500/30 transform group-hover:scale-105 transition-all duration-300"
                                             >
                                                 Enroll Now
                                             </Button>

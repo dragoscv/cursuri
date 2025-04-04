@@ -6,9 +6,19 @@ import { Card, CardHeader, CardBody, Spinner, Button } from "@heroui/react";
 import { motion } from 'framer-motion';
 import { FiArrowLeft, FiBookOpen } from '../../../../components/icons/FeatherIcons';
 import Link from 'next/link';
+import { Course, Lesson, UserPaidProduct } from '@/types';
+import { useCourseParams } from '@/utils/hooks/useParams';
 
-export default function LessonsPage({ params }) {
-    const { courseId } = params;
+// Define the props interface for the page component
+interface LessonsPageProps {
+    params: {
+        courseId: string;
+    }
+}
+
+export default function LessonsPage(props: LessonsPageProps) {
+    // Use the custom hook to safely access params
+    const { courseId } = useCourseParams(props.params);
     const context = useContext(AppContext);
 
     if (!context) {
@@ -21,8 +31,12 @@ export default function LessonsPage({ params }) {
     const [isLoading, setIsLoading] = useState(true);
 
     // Find the course and its associated lessons
-    const course = courses?.find(c => c.id === courseId);
-    const courseLessons = lessons?.filter(lesson => lesson.courseId === courseId);
+    const course = Object.values(courses || {}).find((c: Course) => c.id === courseId);
+
+    // Get all lessons for this course and convert to array
+    const courseLessons = lessons[courseId]
+        ? Object.values(lessons[courseId])
+        : [];
 
     useEffect(() => {
         // Simulate fetching completed lessons
@@ -30,8 +44,8 @@ export default function LessonsPage({ params }) {
         if (user && courseLessons) {
             // This is just a placeholder - replace with your actual data fetching logic
             const mockCompletedLessons = courseLessons
-                .filter((_, index) => index % 3 === 0) // Just for demo: mark every third lesson as completed
-                .map(lesson => lesson.id);
+                .filter((_: Lesson, index: number) => index % 3 === 0) // Just for demo: mark every third lesson as completed
+                .map((lesson: Lesson) => lesson.id);
 
             setCompletedLessons(mockCompletedLessons);
             setIsLoading(false);
@@ -41,7 +55,10 @@ export default function LessonsPage({ params }) {
     }, [user, courseLessons]);
 
     // Check if the user has purchased this course
-    const hasPurchased = userPurchases?.some(purchase => purchase.courseId === courseId);
+    const hasPurchased = userPurchases
+        ? Object.values(userPurchases).some((purchase: UserPaidProduct) =>
+            purchase.metadata?.courseId === courseId)
+        : false;
 
     if (!course) {
         return (
@@ -100,9 +117,9 @@ export default function LessonsPage({ params }) {
                     className="flex flex-col md:flex-row md:items-center justify-between gap-4"
                 >
                     <div>
-                        <h1 className="text-3xl font-bold">{course.title}</h1>
+                        <h1 className="text-3xl font-bold">{course.name}</h1>
                         <p className="text-gray-500 dark:text-gray-400 mt-1">
-                            {courseLessons?.length || 0} lessons • {course.level || 'All levels'}
+                            {courseLessons?.length || 0} lessons • {course.difficulty || 'All levels'}
                         </p>
                     </div>
 

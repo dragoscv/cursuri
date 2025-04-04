@@ -36,20 +36,23 @@ export default function Profile(props: any) {
                                     </span>
                                     <h2 className="text-lg font-medium text-gray-900 dark:text-white">{
                                         Object.keys(courses).map((key: any) => {
-                                            if (courses[key].id === userPaidProduct.metadata.courseId) {
+                                            if (courses[key]?.id === userPaidProduct?.metadata?.courseId) {
                                                 return courses[key].name
                                             }
-                                        })
+                                            return null;
+                                        }).filter(Boolean)
                                     }</h2>
                                     <p className="text-lg font-medium text-gray-900 dark:text-white">{
                                         Object.keys(courses).map((key: any) => {
-                                            if (courses[key].id === userPaidProduct.metadata.courseId) {
+                                            if (courses[key]?.id === userPaidProduct?.metadata?.courseId &&
+                                                courses[key]?.priceProduct?.prices?.[0]?.unit_amount) {
                                                 return (courses[key].priceProduct.prices[0].unit_amount / 100).toLocaleString('ro-RO', {
                                                     style: 'currency',
                                                     currency: 'RON',
                                                 })
                                             }
-                                        })
+                                            return null;
+                                        }).filter(Boolean)
                                     }
                                     </p>
                                     {/* <span className="text-sm font-medium text-gray-900 dark:text-white cursor-pointer">Invoice</span> */}
