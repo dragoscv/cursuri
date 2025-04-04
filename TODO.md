@@ -82,6 +82,21 @@ Based on the analysis of the current codebase, here are recommended improvements
 - [ ] Add batch operations for content management
 - [ ] Create user management interface
 
+### Profile Dashboard (New)
+
+- [ ] Implement profile dashboard with the following sections:
+  - [ ] Main dashboard with statistics overview, learning progress, and achievements
+  - [ ] User profile settings page with account information management
+  - [ ] Purchased courses view with progress tracking and quick access
+  - [ ] Payment history with invoice download functionality
+  - [ ] Learning path visualization showing course progression
+  - [ ] Achievements and badges section
+- [ ] Create responsive layout for all profile sections
+- [ ] Implement proper navigation between profile sections
+- [ ] Add data visualization for learning progress
+- [ ] Implement settings management (notifications, preferences, etc.)
+- [ ] Create invoice generation and download functionality
+
 ## Performance & Technical Improvements
 
 - [ ] Implement data caching strategies
@@ -141,8 +156,13 @@ Based on the analysis of the current codebase, here are recommended improvements
 
 ## Next Priority Items
 
-1. Search functionality for courses
-2. User dashboard with progress tracking
-3. Bookmarking feature for lessons
-4. Toast notifications for actions
-5. Course categories and filtering options
+1. User profile dashboard implementation with:
+   - Main dashboard with statistics and progress overview
+   - Settings page for account customization
+   - Purchased courses view with progress tracking
+   - Payment history with invoice download functionality
+2. Search functionality for courses
+3. User dashboard with progress tracking
+4. Bookmarking feature for lessons
+5. Toast notifications for actions
+6. Course categories and filtering options
