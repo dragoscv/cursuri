@@ -63,7 +63,7 @@ export default function LessonDetailPage({ params }: LessonDetailPageProps) {
     // Fix: lessons[courseId] is an object with lesson IDs as keys, not an array
     // Directly access the specific lesson by ID
     const lesson = lessons[courseId]?.[lessonId];
-    
+
     // Handle case where lesson is not found
     if (!lesson) {
         return (
@@ -74,7 +74,7 @@ export default function LessonDetailPage({ params }: LessonDetailPageProps) {
                         <p className="text-gray-600 dark:text-gray-400 mb-6">
                             The lesson you're looking for doesn't exist or you may not have access to it.
                         </p>
-                        <button 
+                        <button
                             onClick={() => window.history.back()}
                             className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
                         >
@@ -88,17 +88,17 @@ export default function LessonDetailPage({ params }: LessonDetailPageProps) {
 
     // Convert lessons object to array for finding previous and next lessons
     const lessonsArray = Object.values(lessons[courseId]);
-    
+
     // Sort lessons by their order property if available
     const sortedLessons = [...lessonsArray].sort((a, b) => {
         const orderA = a.order || 0;
         const orderB = b.order || 0;
         return orderA - orderB;
     });
-    
+
     // Find current lesson index
     const currentIndex = sortedLessons.findIndex(l => l.id === lessonId);
-    
+
     // Get previous and next lessons
     const previousLesson = currentIndex > 0 ? sortedLessons[currentIndex - 1] : null;
     const nextLesson = currentIndex < sortedLessons.length - 1 ? sortedLessons[currentIndex + 1] : null;

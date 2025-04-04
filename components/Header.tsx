@@ -146,12 +146,16 @@ export default function Header() {
                     placement="bottom-end"
                     backdrop="blur"
                     classNames={{
-                        base: "py-1 px-1 rounded-lg bg-gradient-to-br from-white to-default-200 dark:from-gray-800/90 dark:to-gray-900/70 z-50",
+                        base: "py-1 px-1 rounded-lg bg-gradient-to-br from-white to-default-200 dark:from-gray-800/90 dark:to-gray-900/70 z-[100]",
                         arrow: "bg-default-200",
-                        backdrop: "pointer-events-none backdrop-blur-md backdrop-saturate-150 bg-white/70 dark:bg-black/60 w-screen min-h-[100dvh] inset-0",
-                        content: "z-50 flex flex-col justify-start items-end shadow-xl",
+                        backdrop: "fixed pointer-events-none backdrop-blur-md backdrop-saturate-150 bg-white/70 dark:bg-black/60 w-screen h-screen inset-0",
+                        content: "z-[100] flex flex-col justify-start items-end shadow-xl",
                     }}
-                    className="z-50"
+                    className="z-[100]"
+                    offset={12}
+                    shouldBlockScroll={false}
+                    shouldCloseOnBlur={true}
+                    shouldCloseOnInteractOutside={true}
                 >
                     <DropdownTrigger>
                         <Button
