@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect } from "react";
 import {
     Modal,
@@ -6,7 +8,7 @@ import {
     ModalBody,
     ModalFooter,
     Button,
-} from "@nextui-org/react";
+} from "@heroui/react";  // Updated to use HeroUI instead of NextUI
 
 import { ModalProps } from "@/types";
 

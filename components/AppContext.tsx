@@ -1,14 +1,14 @@
-
+'use client'
 
 import React, { createContext, useState, useEffect, useReducer, useCallback } from 'react';
 import { firebaseAuth, firebaseApp, firestoreDB } from '@/utils/firebase/firebase.config';
 import { stripePayments } from '@/utils/firebase/stripe';
 import { getProducts } from '@invertase/firestore-stripe-payments';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { doc, collection, getDocs, query, where, onSnapshot } from 'firebase/firestore';
+import { doc, collection, getDocs, query, where, onSnapshot, updateDoc, setDoc, getDoc, Timestamp } from 'firebase/firestore';
 import ModalComponent from '@/components/Modal';
 
-import { AppContextProps } from '@/types';
+import { AppContextProps, UserLessonProgress } from '@/types';
 
 export const AppContext = createContext<AppContextProps | undefined>(undefined);
 
@@ -23,7 +23,8 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         courses: {},
         lessons: {},
         userPaidProducts: [],
-        reviews: {}
+        reviews: {},
+        lessonProgress: {},
     };
 
     const reducer = (state: any, action: any) => {
@@ -31,7 +32,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             case 'ADD_MODAL': {
                 const existingModalIndex = state.modals.findIndex((modal: any) => modal.id === action.payload.id);
                 if (existingModalIndex !== -1) {
-                    // Modal with the specified id already exists. Update its properties.
                     return {
                         ...state,
                         modals: state.modals.map((modal: any, index: any) =>
@@ -58,7 +58,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                         ),
                     };
                 } else {
-                    // Modal with the specified id does not exist. Add the new modal to the modalProps array.
                     return { ...state, modals: [...state.modals, action.payload] };
                 }
             }
@@ -91,7 +90,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                     isAdmin: action.payload
                 };
             case 'SET_COURSES':
-                // console.log(action.payload);
                 return {
                     ...state,
                     courses: {
@@ -126,6 +124,17 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                     ...state,
                     userPaidProducts: action.payload
                 };
+            case 'SET_LESSON_PROGRESS':
+                return {
+                    ...state,
+                    lessonProgress: {
+                        ...state.lessonProgress,
+                        [action.payload.courseId]: {
+                            ...state.lessonProgress[action.payload.courseId],
+                            [action.payload.lessonId]: action.payload.progress
+                        }
+                    }
+                };
             default:
                 return state;
         }
@@ -134,10 +143,37 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
     const [state, dispatch] = useReducer(reducer, initialState);
 
     const toggleTheme = () => {
-        setIsDark(!isDark);
+        const newDarkMode = !isDark;
+        setIsDark(newDarkMode);
+
+        // Apply dark mode class to HTML element
+        if (newDarkMode) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        // Save preference to localStorage
+        localStorage.setItem('theme', newDarkMode ? 'dark' : 'light');
     };
 
-    // This code sets the modal props for the modal component.
+    // Initialize theme from localStorage on component mount
+    useEffect(() => {
+        // Check for saved theme preference or use system preference
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        const shouldUseDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+
+        if (shouldUseDark) {
+            setIsDark(true);
+            document.documentElement.classList.add('dark');
+        } else {
+            setIsDark(false);
+            document.documentElement.classList.remove('dark');
+        }
+    }, []);
+
     const openModal = useCallback((props: any) => {
         dispatch({ type: 'ADD_MODAL', payload: props });
     }, [dispatch]);
@@ -151,7 +187,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
     }, [dispatch]);
 
     const getCourseLessons = useCallback(async (courseId: string) => {
-
         const lessons = state.lessons;
         if (Object.keys(lessons).includes(courseId)) {
             return;
@@ -185,10 +220,80 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         });
     }, [state.reviews]);
 
+    const saveLessonProgress = useCallback(async (courseId: string, lessonId: string, position: number, isCompleted: boolean = false) => {
+        if (!user) return;
+
+        try {
+            const progressRef = doc(firestoreDB, `users/${user.uid}/progress/${courseId}_${lessonId}`);
+            const progressExists = await getDoc(progressRef);
+
+            const progressData: UserLessonProgress = {
+                userId: user.uid,
+                courseId,
+                lessonId,
+                lastPosition: position,
+                isCompleted,
+                lastUpdated: Timestamp.now()
+            };
+
+            if (progressExists.exists()) {
+                await updateDoc(progressRef, progressData);
+            } else {
+                await setDoc(progressRef, progressData);
+            }
+
+            dispatch({
+                type: 'SET_LESSON_PROGRESS',
+                payload: {
+                    courseId,
+                    lessonId,
+                    progress: progressData
+                }
+            });
+
+            return true;
+        } catch (error) {
+            console.error("Error saving lesson progress:", error);
+            return false;
+        }
+    }, [user, dispatch]);
+
+    const markLessonComplete = useCallback(async (courseId: string, lessonId: string) => {
+        return saveLessonProgress(courseId, lessonId, 0, true);
+    }, [saveLessonProgress]);
+
+    const getUserLessonProgress = useCallback(async () => {
+        if (!user) return;
+
+        try {
+            const progressRef = collection(firestoreDB, `users/${user.uid}/progress`);
+            const q = query(progressRef);
+
+            const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data() as UserLessonProgress;
+                    const { courseId, lessonId } = data;
+
+                    dispatch({
+                        type: 'SET_LESSON_PROGRESS',
+                        payload: {
+                            courseId,
+                            lessonId,
+                            progress: data
+                        }
+                    });
+                });
+            });
+
+            return unsubscribe;
+        } catch (error) {
+            console.error("Error fetching lesson progress:", error);
+        }
+    }, [user, dispatch]);
+
     useEffect(() => {
         onAuthStateChanged(firebaseAuth, (user) => {
             if (user) {
-                // console.log('user', user);
                 setUser(user);
                 if (user.email === 'vladulescu.catalin@gmail.com') {
                     dispatch({ type: 'SET_IS_ADMIN', payload: true });
@@ -201,20 +306,25 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         });
     }, []);
 
+    useEffect(() => {
+        if (user) {
+            const unsubscribe = getUserLessonProgress();
+            return () => {
+                if (unsubscribe) unsubscribe();
+            };
+        }
+    }, [user, getUserLessonProgress]);
 
-    //This code fetches the products from Stripe.
     useEffect(() => {
         const payments = stripePayments(firebaseApp);
         getProducts(payments, {
             includePrices: true,
             activeOnly: true,
         }).then((products) => {
-            console.log(products);
             dispatch({ type: 'SET_PRODUCTS', payload: products });
         });
     }, []);
 
-    //This code fetches the courses from Firestore.
     useEffect(() => {
         const fetchCourses = async () => {
             const q = query(collection(firestoreDB, "courses"), where("status", "==", "active"));
@@ -223,13 +333,11 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                 const data = doc.data();
                 data.id = doc.id;
                 dispatch({ type: 'SET_COURSES', payload: { courseId: doc.id, course: data } });
-
             });
         }
         fetchCourses();
     }, []);
 
-    //This code fetches the user paid products from Firestore.
     useEffect(() => {
         if (user) {
             const collectionRef = collection(firestoreDB, `customers/${user.uid}/payments`);
@@ -241,7 +349,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                     data.id = doc.id;
                     if (data.status === 'succeeded') userPaidProducts.push(data);
                 });
-                console.log(userPaidProducts);
                 dispatch({ type: 'SET_USER_PAID_PRODUCTS', payload: userPaidProducts });
             });
             return unsubscribe;
@@ -249,9 +356,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             dispatch({ type: 'SET_USER_PAID_PRODUCTS', payload: [] });
         }
     }, [user]);
-
-
-
 
     return (
         <AppContext.Provider value={{
@@ -265,7 +369,10 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             getCourseLessons,
             userPaidProducts: state.userPaidProducts,
             reviews: state.reviews,
-            getCourseReviews
+            getCourseReviews,
+            lessonProgress: state.lessonProgress,
+            saveLessonProgress,
+            markLessonComplete
         }}>
             {children}
             {state.modals.map((modal: any) => (

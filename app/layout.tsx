@@ -3,6 +3,8 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import Providers from './providers'
 import Header from '@/components/Header'
+import Footer from '@/components/Footer'
+import CookieConsent from '@/components/CookieConsent'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -17,11 +19,22 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`has-[section[role='dialog'][data-open='true']]:overflow-hidden transition-all ease-in-out duration-500`}>
-      <body className={inter.className}>
+    <html lang="en" className="has-[section[role='dialog'][data-open='true']]:overflow-hidden transition-all ease-in-out duration-500">
+      <body className={`${inter.className}`}>
         <Providers>
+          {/* Fixed header at the top */}
           <Header />
-          {children}
+
+          {/* Main content area that starts below the header */}
+          <div className="pt-16">
+            <main className="flex-grow">
+              {children}
+            </main>
+            <Footer />
+          </div>
+
+          {/* Cookie consent banner */}
+          <CookieConsent />
         </Providers>
       </body>
     </html>
