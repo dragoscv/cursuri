@@ -30,7 +30,7 @@ export default function ProfileCourses() {
             .map(product => {
                 const courseId = product.metadata?.courseId;
                 if (!courseId) return null;
-                
+
                 const course = courses[courseId];
                 if (!course) return null;
 
@@ -61,7 +61,7 @@ export default function ProfileCourses() {
                                 timestamp = lessonData.lastUpdated.getTime();
                             }
                         }
-                                
+
                         if (timestamp > recentTimestamp) {
                             recentLessonId = lessonId;
                             recentTimestamp = timestamp;
@@ -125,7 +125,7 @@ export default function ProfileCourses() {
             </div>
 
             {/* Filters and search */}
-            <ProfileCoursesFilter 
+            <ProfileCoursesFilter
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
                 filterStatus={filterStatus}

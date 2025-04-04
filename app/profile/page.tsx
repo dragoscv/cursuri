@@ -170,7 +170,7 @@ export default function ProfileDashboard() {
 
             {/* Progress Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <DashboardProgress 
+                <DashboardProgress
                     courseCompletionPercentage={courseCompletionPercentage}
                     lessonCompletionPercentage={lessonCompletionPercentage}
                     completedCourses={stats.completedCourses}
