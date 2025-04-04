@@ -1,59 +1,62 @@
-import React from 'react';
-import { DropdownItem } from "@heroui/react";  // Updated to use HeroUI
+'use client'
+
+import React, { useContext } from 'react';
+import { AppContext } from "@/components/AppContext";
+import { Button } from "@heroui/react";
 import Login from "@/components/Login";
-import { firebaseAuth } from "@/utils/firebase/firebase.config";
-import { signOut } from "firebase/auth";
-import { ModalProps } from '@/types';
 
-interface AuthActionsProps {
-    user: any;
-    openModal: (modalProps: ModalProps) => void;
-    closeModal: (id: string) => void;
-}
+/**
+ * AuthActions component that displays login/signup buttons when user is not authenticated
+ */
+export default function AuthActions() {
+    const context = useContext(AppContext);
 
-const AuthActions: React.FC<AuthActionsProps> = ({ user, openModal, closeModal }) => {
-    const handleSignOut = async () => {
-        await signOut(firebaseAuth);
+    if (!context) {
+        throw new Error("Missing context value");
     }
 
-    return (
-        <DropdownItem
-            key="account"
-            textValue='Account'
-            color="danger"
-            className='p-0'
-        >
-            {user ? (
-                <div
-                    className='cursor-pointer hover:bg-[rgb(243,18,96)]/20 hover:text-[rgb(243,18,96)] rounded-lg p-2'
-                    onClick={handleSignOut}
-                >
-                    Logout
-                </div>
-            ) : (
-                <div
-                    className='cursor-pointer hover:bg-[rgb(18,243,67)]/20 hover:text-[rgb(18,243,67)] rounded-lg p-2'
-                    onClick={() => openModal({
-                        id: 'login',
-                        isOpen: true,
-                        hideCloseButton: false,
-                        backdrop: 'blur',
-                        size: 'full',
-                        scrollBehavior: 'inside',
-                        isDismissable: true,
-                        modalHeader: 'Autentificare',
-                        modalBody: <Login onClose={() => closeModal('login')} />,
-                        headerDisabled: true,
-                        footerDisabled: true,
-                        noReplaceURL: true,
-                        onClose: () => closeModal('login'),
-                    })}
-                >
-                    Login
-                </div>
-            )}
-        </DropdownItem>
-    );
-};
+    const { user, openModal, closeModal } = context;
 
-export default AuthActions;
+    // Don't show login buttons if user is already logged in
+    if (user) {
+        return null;
+    }
+
+    const handleOpenLoginModal = () => {
+        openModal({
+            id: 'login',
+            isOpen: true,
+            hideCloseButton: false,
+            backdrop: 'blur',
+            size: 'full',
+            scrollBehavior: 'inside',
+            isDismissable: true,
+            modalHeader: 'Autentificare',
+            modalBody: <Login onClose={() => closeModal('login')} />,
+            headerDisabled: true,
+            footerDisabled: true,
+            noReplaceURL: true,
+            onClose: () => closeModal('login'),
+        });
+    };
+
+    return (
+        <div className="flex gap-3">
+            <Button
+                variant="flat"
+                color="primary"
+                onClick={handleOpenLoginModal}
+                className="font-medium"
+            >
+                Login
+            </Button>
+            <Button
+                color="primary"
+                onClick={handleOpenLoginModal}
+                className="font-medium"
+            >
+                Sign Up
+            </Button>
+        </div>
+    );
+}

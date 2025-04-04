@@ -1,37 +1,35 @@
-import React from 'react';
-import { DropdownItem } from "@heroui/react";  // Updated to use HeroUI
+'use client'
+
+import React, { useContext } from 'react';
+import { AppContext } from "@/components/AppContext";
+import { Button } from "@heroui/react";
+import { PlusIcon } from "@/components/icons/FeatherIcons";
 import AddCourse from "@/components/Course/AddCourse";
-import { ModalProps } from '@/types';
+import { useRouter } from "next/navigation";
 
-interface AdminActionsProps {
-    isAdmin: boolean;
-    openModal: (modalProps: ModalProps) => void;
-    closeModal: (id: string) => void;
-}
+/**
+ * AdminActions component that displays admin-specific buttons and actions
+ */
+export default function AdminActions() {
+    const context = useContext(AppContext);
+    const router = useRouter();
 
-const AdminActions: React.FC<AdminActionsProps> = ({ isAdmin, openModal, closeModal }) => {
+    if (!context) {
+        throw new Error("Missing context value");
+    }
+
+    const { isAdmin, openModal, closeModal } = context;
+
+    // Don't show admin actions if user is not an admin
     if (!isAdmin) {
-        return <DropdownItem key="hidden" className="hidden">H</DropdownItem>;
+        return null;
     }
 
     return (
-        <>
-            <DropdownItem
-                key="adminDashboard"
-                textValue='Admin Dashboard'
-                className='p-0'
-            >
-                <div
-                    className='cursor-pointer hover:bg-slate-800/40 rounded-lg p-2'
-                    onClick={() => window.location.href = "/admin"}
-                >
-                    Admin Dashboard
-                </div>
-            </DropdownItem>
-            <DropdownItem
-                key="addCourse"
-                textValue='Add Course'
-                className='p-0'
+        <div className="flex gap-2">
+            <Button
+                color="primary"
+                startIcon={<PlusIcon size={16} />}
                 onClick={() => openModal({
                     id: 'add-course',
                     isOpen: true,
@@ -47,15 +45,20 @@ const AdminActions: React.FC<AdminActionsProps> = ({ isAdmin, openModal, closeMo
                     noReplaceURL: true,
                     onClose: () => closeModal('add-course'),
                 })}
+                className="font-medium"
+                size="sm"
             >
-                <div
-                    className='cursor-pointer hover:bg-slate-800/40 rounded-lg p-2'
-                >
-                    Add Course
-                </div>
-            </DropdownItem>
-        </>
+                Add Course
+            </Button>
+            <Button
+                variant="flat"
+                color="primary"
+                onClick={() => router.push('/admin')}
+                className="font-medium"
+                size="sm"
+            >
+                Admin Panel
+            </Button>
+        </div>
     );
-};
-
-export default AdminActions;
+}
