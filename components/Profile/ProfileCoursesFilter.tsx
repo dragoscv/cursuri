@@ -20,7 +20,7 @@ export default function ProfileCoursesFilter({
             <Input
                 className="md:max-w-xs"
                 placeholder="Search your courses"
-                startContent={<FiSearch className="text-gray-400" />}
+                startContent={<FiSearch className="text-[color:var(--ai-muted)]" />}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
             />

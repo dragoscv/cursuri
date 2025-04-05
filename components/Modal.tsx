@@ -73,7 +73,7 @@ export default function ModalComponent({ isOpen, onClose, hideCloseIcon, hideClo
         base: "z-50 flex min-h-[100dvh] w-full flex-col justify-start items-end outline-none bg-white dark:bg-[color:var(--ai-card-bg)]",
         body: "z-50 flex flex-col justify-start items-center w-full",
         header: "flex flex-row justify-between items-center w-full p-2 border-b border-[color:var(--ai-card-border)] text-[color:var(--ai-foreground)]",
-        closeButton: "z-50 flex flex-row justify-end items-center rounded-full text-[color:var(--ai-foreground)] hover:bg-gray-200 dark:hover:bg-gray-800/20 p-2 pr-4 cursor-pointer scale-150",
+        closeButton: "z-50 flex flex-row justify-end items-center rounded-full text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-border)]/40 dark:hover:bg-[color:var(--ai-card-border)]/20 p-2 pr-4 cursor-pointer scale-150",
     };
 
     // Merge default and custom classNames
@@ -97,7 +97,7 @@ export default function ModalComponent({ isOpen, onClose, hideCloseIcon, hideClo
                             {modalHeader}
                             {!hideCloseIcon && (
                                 <div
-                                    className="cursor-pointer p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800/20"
+                                    className="cursor-pointer p-2 rounded-full hover:bg-[color:var(--ai-card-border)]/40 dark:hover:bg-[color:var(--ai-card-border)]/20"
                                     onClick={handleClose}
                                 >
                                     <svg

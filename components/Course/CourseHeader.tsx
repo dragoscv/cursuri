@@ -26,7 +26,7 @@ export const CourseHeader: React.FC<CourseHeaderProps> = ({ course }) => {
     const extendedCourse = course as ExtendedCourse;
 
     return (
-        <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-[color:var(--ai-accent)]/10 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-white/10 dark:border-[color:var(--ai-card-border)] shadow-xl">
+        <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-[color:var(--ai-accent)]/10 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-[color:var(--ai-card-border)]/50 shadow-xl">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                 <div>
                     <div className="flex flex-wrap gap-2 mb-3">

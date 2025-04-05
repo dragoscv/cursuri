@@ -138,32 +138,32 @@ export default function ProfileDashboard() {
             {/* Stats Overview Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                 <StatsCard
-                    icon={<FiBook className="text-blue-500" />}
+                    icon={<FiBook className="text-[color:var(--ai-primary)]" />}
                     title="Enrolled Courses"
                     value={stats.totalCoursesEnrolled}
                     footer={`${stats.completedCourses} completed`}
-                    colorClass="from-blue-500 to-indigo-600"
+                    colorClass="from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
                 />
                 <StatsCard
-                    icon={<FiBarChart2 className="text-green-500" />}
+                    icon={<FiBarChart2 className="text-[color:var(--ai-success)]" />}
                     title="Lessons Completed"
                     value={stats.completedLessons}
                     footer={`${stats.totalLessons} total`}
-                    colorClass="from-green-500 to-emerald-600"
+                    colorClass="from-[color:var(--ai-success)] to-[color:var(--ai-secondary)]"
                 />
                 <StatsCard
-                    icon={<FiClock className="text-purple-500" />}
+                    icon={<FiClock className="text-[color:var(--ai-secondary)]" />}
                     title="Learning Hours"
                     value={stats.totalHours}
                     footer="Total hours of content"
-                    colorClass="from-purple-500 to-violet-600"
+                    colorClass="from-[color:var(--ai-secondary)] to-[color:var(--ai-accent)]"
                 />
                 <StatsCard
-                    icon={<FiAward className="text-amber-500" />}
+                    icon={<FiAward className="text-[color:var(--ai-accent)]" />}
                     title="Achievements"
                     value={stats.completedCourses}
                     footer="Courses mastered"
-                    colorClass="from-amber-500 to-orange-600"
+                    colorClass="from-[color:var(--ai-accent)] to-[color:var(--ai-primary)]"
                 />
             </div>
 
@@ -191,7 +191,7 @@ export default function ProfileDashboard() {
                     <Link href="/profile/courses">
                         <Button
                             color="primary"
-                            className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium px-8"
+                            className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium px-8"
                             startContent={<FiBook />}
                             size="lg"
                         >
@@ -204,7 +204,7 @@ export default function ProfileDashboard() {
                     <Link href="/courses">
                         <Button
                             color="primary"
-                            className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium px-8"
+                            className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium px-8"
                             startContent={<FiBook />}
                             size="lg"
                         >

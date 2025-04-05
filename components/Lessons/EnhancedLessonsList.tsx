@@ -1,136 +1,113 @@
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Lesson, Course } from '../../types';
+import { useParams } from 'next/navigation';
+import { FiBookOpen, FiLock, FiCheckCircle, FiPlay } from '@/components/icons/FeatherIcons';
 import { motion } from 'framer-motion';
-import { FiPlay, FiCheck, FiLock, FiClock, FiBookOpen } from '../icons/FeatherIcons';
 
-interface EnhancedLessonsListProps {
-    lessons: Lesson[];
-    course: Course;
-    courseId: string;
-    completedLessons?: string[]; // Array of completed lesson IDs
-}
+export default function EnhancedLessonsList({ lessons, userHasAccess = false }: { lessons: any[]; userHasAccess?: boolean }) {
+    const params = useParams();
+    const courseId = params.courseId;
 
-export const EnhancedLessonsList: React.FC<EnhancedLessonsListProps> = ({
-    lessons,
-    course,
-    courseId,
-    completedLessons = []
-}) => {
     if (!lessons || lessons.length === 0) {
         return (
-            <div className="bg-gradient-to-r from-indigo-600/10 via-purple-600/10 to-pink-600/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 dark:border-gray-800/50 shadow-xl text-center py-12">
-                <FiBookOpen className="mx-auto text-4xl text-indigo-500 dark:text-indigo-400 mb-4" />
-                <h3 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">No lessons available yet</h3>
-                <p className="text-gray-600 dark:text-gray-300 mt-2">
-                    Check back soon for updates to this course.
+            <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-[color:var(--ai-accent)]/10 backdrop-blur-sm rounded-2xl p-6 border border-[color:var(--ai-card-border)]/50 shadow-xl text-center py-12">
+                <FiBookOpen className="mx-auto text-4xl text-[color:var(--ai-primary)] mb-4" />
+                <h3 className="text-xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">No lessons available yet</h3>
+                <p className="text-[color:var(--ai-muted)] mt-2">
+                    This course is still being developed. Check back soon for new content!
                 </p>
             </div>
         );
     }
 
+    // Animation variants
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { y: 20, opacity: 0 },
+        visible: { y: 0, opacity: 1 }
+    };
+
     return (
-        <div className="space-y-6">
-            <div className="bg-gradient-to-r from-indigo-600/10 via-purple-600/10 to-pink-600/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 dark:border-gray-800/50 shadow-xl">
-                <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Course Content</h2>
-                    <div className="text-sm font-medium text-indigo-600 dark:text-indigo-400">
-                        {completedLessons.length} / {lessons.length} completed
-                    </div>
-                </div>
+        <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-[color:var(--ai-accent)]/10 backdrop-blur-sm rounded-2xl p-6 border border-[color:var(--ai-card-border)]/50 shadow-xl">
+            <div className="mb-6">
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">Course Content</h2>
+                <p className="text-[color:var(--ai-muted)]">{lessons.length} lessons • {Math.ceil(lessons.reduce((total, lesson) => total + (lesson.duration || 30), 0) / 60)} hours total</p>
+            </div>
 
-                <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden mb-6">
-                    <div
-                        className="h-full bg-gradient-to-r from-indigo-600 to-purple-600 transition-all duration-300 ease-in-out rounded-full"
-                        style={{ width: `${(completedLessons.length / lessons.length) * 100}%` }}
-                    />
-                </div>
+            <motion.div
+                className="space-y-4"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+            >
+                {lessons.map((lesson, index) => (
+                    <motion.div
+                        key={lesson.id}
+                        variants={itemVariants}
+                        className={`relative rounded-xl p-4 transition-all duration-300 group ${userHasAccess
+                                ? 'bg-[color:var(--ai-card-bg)]/80 hover:bg-[color:var(--ai-card-bg)] cursor-pointer shadow hover:shadow-md border border-[color:var(--ai-card-border)]'
+                                : 'bg-[color:var(--ai-card-bg)]/50 cursor-not-allowed border border-[color:var(--ai-card-border)]/50'
+                            }`}
+                    >
+                        {/* Lesson Index Circle */}
+                        <div className="absolute -left-3 top-1/2 transform -translate-y-1/2 w-6 h-6 rounded-full bg-[color:var(--ai-primary)] text-white flex items-center justify-center text-xs font-bold">
+                            {index + 1}
+                        </div>
 
-                <ul className="space-y-3">
-                    {lessons.map((lesson, index) => {
-                        const isCompleted = completedLessons.includes(lesson.id);
-                        const isLocked = lesson.isLocked && !isCompleted;
-
-                        return (
-                            <motion.li
-                                key={lesson.id}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.3, delay: index * 0.05 }}
-                                className="relative group"
-                            >
-                                <Link href={isLocked ? '#' : `/courses/${courseId}/lessons/${lesson.id}`}>
-                                    <motion.div
-                                        whileHover={!isLocked ? {
-                                            scale: 1.01,
-                                            backgroundColor: 'rgba(79, 70, 229, 0.08)',
-                                        } : {}}
-                                        className={`p-4 flex items-start gap-4 transition-all duration-200 rounded-xl 
-                                          border border-gray-100 dark:border-gray-700
-                                          ${isLocked ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer hover:shadow-md'}
-                                          ${isCompleted ? 'bg-green-50/50 dark:bg-green-900/10' : 'bg-white/80 dark:bg-gray-800/50'}`}
-                                    >
-                                        <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center
-                                          ${isCompleted
-                                                ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400'
-                                                : isLocked
-                                                    ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500'
-                                                    : 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400'
-                                            }`}
-                                        >
-                                            {isCompleted ? (
-                                                <FiCheck className="text-xl" />
-                                            ) : isLocked ? (
-                                                <FiLock className="text-xl" />
-                                            ) : lesson.videoUrl ? (
-                                                <FiPlay className="text-xl" />
-                                            ) : (
-                                                <FiBookOpen className="text-xl" />
-                                            )}
+                        {userHasAccess ? (
+                            <Link href={`/courses/${courseId}/lessons/${lesson.id}`} className="block">
+                                <div className="flex justify-between items-center">
+                                    <div className="flex items-start gap-3">
+                                        <div className="rounded-md bg-[color:var(--ai-primary)]/10 p-2 mt-1">
+                                            <FiPlay className="h-4 w-4 text-[color:var(--ai-primary)]" />
                                         </div>
-
-                                        <div className="flex-1 min-w-0">
-                                            <h3 className={`text-lg font-medium truncate 
-                                              ${isCompleted ? 'text-green-600 dark:text-green-400' : isLocked ? 'text-gray-500 dark:text-gray-400' : 'text-gray-800 dark:text-white'}`}>
-                                                {index + 1}. {lesson.title || lesson.name}
+                                        <div>
+                                            <h3 className="font-medium group-hover:text-[color:var(--ai-primary)] transition-colors duration-300">
+                                                {lesson.title}
                                             </h3>
-                                            <p className="mt-1 text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
+                                            <p className="text-sm text-[color:var(--ai-muted)] line-clamp-2 mt-1">
                                                 {lesson.description || 'No description available'}
                                             </p>
-
-                                            <div className="flex items-center gap-4 mt-2">
-                                                {lesson.videoUrl && (
-                                                    <span className="inline-flex items-center text-xs text-indigo-600 dark:text-indigo-400">
-                                                        <FiPlay className="mr-1 text-xs" />
-                                                        Video lesson
-                                                    </span>
-                                                )}
-
-                                                {lesson.estimatedTime && (
-                                                    <span className="inline-flex items-center text-xs text-gray-600 dark:text-gray-300">
-                                                        <FiClock className="mr-1 text-xs" />
-                                                        {lesson.estimatedTime}
-                                                    </span>
-                                                )}
-
-                                                {isCompleted && (
-                                                    <span className="inline-flex items-center text-xs text-green-600 dark:text-green-400">
-                                                        <FiCheck className="mr-1 text-xs" />
-                                                        Completed
-                                                    </span>
-                                                )}
-                                            </div>
                                         </div>
-                                    </motion.div>
-                                </Link>
-                            </motion.li>
-                        );
-                    })}
-                </ul>
-            </div>
+                                    </div>
+                                    <div className="flex items-center space-x-3">
+                                        <span className="text-sm text-[color:var(--ai-muted)]">{lesson.duration || 30} min</span>
+                                        <FiCheckCircle className="h-5 w-5 text-[color:var(--ai-success)]" />
+                                    </div>
+                                </div>
+                            </Link>
+                        ) : (
+                            <div className="flex justify-between items-center">
+                                <div className="flex items-start gap-3">
+                                    <div className="rounded-md bg-[color:var(--ai-primary)]/5 p-2 mt-1">
+                                        <FiLock className="h-4 w-4 text-[color:var(--ai-muted)]" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-medium text-[color:var(--ai-muted)]">
+                                            {lesson.title}
+                                        </h3>
+                                        <p className="text-sm text-[color:var(--ai-muted)]/70 line-clamp-2 mt-1">
+                                            {lesson.description || 'No description available'}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center">
+                                    <span className="text-sm text-[color:var(--ai-muted)]/70">{lesson.duration || 30} min</span>
+                                </div>
+                            </div>
+                        )}
+                    </motion.div>
+                ))}
+            </motion.div>
         </div>
     );
-};
-
-export default EnhancedLessonsList;
+}

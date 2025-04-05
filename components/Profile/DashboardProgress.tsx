@@ -26,40 +26,40 @@ export default function DashboardProgress({
     lessonProgress
 }: DashboardProgressProps) {
     return (
-        <Card className="border border-gray-200 dark:border-gray-800">
+        <Card className="border border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)]/50">
             <CardBody>
-                <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
-                    <FiTrendingUp className="text-indigo-500" />
+                <h2 className="text-lg font-semibold mb-4 text-[color:var(--ai-foreground)] flex items-center gap-2">
+                    <FiTrendingUp className="text-[color:var(--ai-primary)]" />
                     Your Learning Progress
                 </h2>
 
                 <div className="space-y-6">
                     <div>
                         <div className="flex justify-between mb-2">
-                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Course Completion</span>
-                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <span className="text-sm font-medium text-[color:var(--ai-foreground)]/80 dark:text-[color:var(--ai-foreground)]/70">Course Completion</span>
+                            <span className="text-sm font-medium text-[color:var(--ai-foreground)]/80 dark:text-[color:var(--ai-foreground)]/70">
                                 {completedCourses}/{totalCoursesEnrolled}
                             </span>
                         </div>
                         <Progress
                             value={courseCompletionPercentage}
                             classNames={{
-                                indicator: "bg-gradient-to-r from-indigo-500 to-purple-600",
+                                indicator: "bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]",
                             }}
                         />
                     </div>
 
                     <div>
                         <div className="flex justify-between mb-2">
-                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Lesson Completion</span>
-                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <span className="text-sm font-medium text-[color:var(--ai-foreground)]/80 dark:text-[color:var(--ai-foreground)]/70">Lesson Completion</span>
+                            <span className="text-sm font-medium text-[color:var(--ai-foreground)]/80 dark:text-[color:var(--ai-foreground)]/70">
                                 {completedLessons}/{totalLessons}
                             </span>
                         </div>
                         <Progress
                             value={lessonCompletionPercentage}
                             classNames={{
-                                indicator: "bg-gradient-to-r from-green-500 to-teal-600",
+                                indicator: "bg-gradient-to-r from-[color:var(--ai-success)] to-[color:var(--ai-secondary)]",
                             }}
                         />
                     </div>
@@ -80,19 +80,19 @@ export default function DashboardProgress({
                         return (
                             <div key={courseId}>
                                 <div className="flex justify-between mb-2">
-                                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate max-w-[80%]">
+                                    <span className="text-sm font-medium text-[color:var(--ai-foreground)]/80 dark:text-[color:var(--ai-foreground)]/70 truncate max-w-[80%]">
                                         {course.name}
                                     </span>
-                                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    <span className="text-sm font-medium text-[color:var(--ai-foreground)]/80 dark:text-[color:var(--ai-foreground)]/70">
                                         {courseProgress}%
                                     </span>
                                 </div>
                                 <Progress
                                     value={courseProgress}
                                     classNames={{
-                                        indicator: `bg-gradient-to-r ${index % 3 === 0 ? "from-blue-500 to-cyan-600" :
-                                            index % 3 === 1 ? "from-purple-500 to-pink-600" :
-                                                "from-orange-500 to-red-600"
+                                        indicator: `bg-gradient-to-r ${index % 3 === 0 ? "from-[color:var(--ai-primary)] to-[color:var(--ai-accent)]" :
+                                            index % 3 === 1 ? "from-[color:var(--ai-secondary)] to-[color:var(--ai-primary)]" :
+                                                "from-[color:var(--ai-accent)] to-[color:var(--ai-secondary)]"
                                             }`,
                                     }}
                                 />

@@ -40,13 +40,14 @@ export default function UserDropdown() {
             placement="bottom-end"
             backdrop="blur"
             classNames={{
-                base: "py-1 px-1 rounded-lg bg-gradient-to-br from-white to-default-200 dark:from-[color:var(--ai-card-bg)]/90 dark:to-[color:var(--ai-background)]/70 z-[100]",
+                base: "py-1 px-1 rounded-lg bg-gradient-to-br from-white to-default-200 dark:from-[color:var(--ai-card-bg)]/90 dark:to-[color:var(--ai-background)]/70 z-[9999]",
                 arrow: "bg-default-200",
                 backdrop: "fixed pointer-events-none backdrop-blur-md backdrop-saturate-150 bg-white/70 dark:bg-[color:var(--ai-background)]/60 w-screen h-screen inset-0",
-                content: "z-[100] flex flex-col justify-start items-end shadow-xl",
+                content: "z-[9999] flex flex-col justify-start items-end shadow-xl",
             }}
-            className="z-[100]"
+            className="z-[9999] relative"
             offset={12}
+            portalContainer={typeof document !== 'undefined' ? document.body : undefined}
         >
             <DropdownTrigger>
                 <Button
@@ -57,7 +58,7 @@ export default function UserDropdown() {
                     <img
                         src={user?.photoURL || "https://i.pravatar.cc/150?u=a042581f4e29026704d"}
                         alt="User avatar"
-                        className="w-8 h-8 rounded-full object-cover border-2 border-indigo-600/40"
+                        className="w-8 h-8 rounded-full object-cover border-2 border-[color:var(--ai-primary)]/40"
                     />
                 </Button>
             </DropdownTrigger>
@@ -75,13 +76,13 @@ export default function UserDropdown() {
                         "data-[selectable=true]:focus:bg-default-50",
                         "data-[pressed=true]:opacity-70",
                         "data-[focus-visible=true]:ring-default-500",
-                        "text-black dark:text-white",
+                        "text-[color:var(--ai-foreground)]",
                         "border-0",
                         "outline-none"
                     ],
                     wrapper: "border-0",
                 }}
-                className="z-50"
+                className="z-[9999]"
             >
                 {/* User Profile Section */}
                 <DropdownSection
@@ -91,7 +92,7 @@ export default function UserDropdown() {
                     {user && (
                         <DropdownItem
                             key="profile-info"
-                            className="h-14 gap-2 border-0 text-black/80"
+                            className="h-14 gap-2 border-0 text-[color:var(--ai-foreground)]/80"
                             textValue="Profile Details"
                         >
                             <div
@@ -114,10 +115,10 @@ export default function UserDropdown() {
                             className="p-0"
                         >
                             <div
-                                className="cursor-pointer hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg p-2 transition-colors flex items-center gap-2"
+                                className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors flex items-center gap-2"
                                 onClick={() => router.push('/profile')}
                             >
-                                <UserIcon className="text-indigo-500" size={18} />
+                                <UserIcon className="text-[color:var(--ai-primary)]" size={18} />
                                 Profile Dashboard
                             </div>
                         </DropdownItem>
@@ -134,10 +135,10 @@ export default function UserDropdown() {
                                 className="p-0"
                             >
                                 <div
-                                    className="cursor-pointer hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg p-2 transition-colors flex items-center gap-2"
+                                    className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors flex items-center gap-2"
                                     onClick={() => router.push('/admin')}
                                 >
-                                    <ShieldIcon className="text-indigo-500" size={18} />
+                                    <ShieldIcon className="text-[color:var(--ai-primary)]" size={18} />
                                     Admin Dashboard
                                 </div>
                             </DropdownItem>
@@ -162,9 +163,9 @@ export default function UserDropdown() {
                                 })}
                             >
                                 <div
-                                    className="cursor-pointer hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg p-2 transition-colors flex items-center gap-2"
+                                    className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors flex items-center gap-2"
                                 >
-                                    <PlusIcon className="text-indigo-500" size={18} />
+                                    <PlusIcon className="text-[color:var(--ai-primary)]" size={18} />
                                     Add Course
                                 </div>
                             </DropdownItem>
@@ -179,8 +180,8 @@ export default function UserDropdown() {
                         textValue="Suggestions"
                         className="p-0"
                     >
-                        <div className="cursor-pointer hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg p-2 transition-colors flex items-center gap-2">
-                            <MessageSquareIcon className="text-indigo-500" size={18} />
+                        <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors flex items-center gap-2">
+                            <MessageSquareIcon className="text-[color:var(--ai-primary)]" size={18} />
                             Suggestions
                         </div>
                     </DropdownItem>
@@ -193,10 +194,10 @@ export default function UserDropdown() {
                             className="p-0"
                         >
                             <div
-                                className="cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 rounded-lg p-2 transition-colors flex items-center gap-2"
+                                className="cursor-pointer hover:bg-[color:var(--ai-danger)]/10 hover:text-[color:var(--ai-danger)] rounded-lg p-2 transition-colors flex items-center gap-2"
                                 onClick={handleSignOut}
                             >
-                                <LogOutIcon className="text-red-500" size={18} />
+                                <LogOutIcon className="text-[color:var(--ai-danger)]" size={18} />
                                 Logout
                             </div>
                         </DropdownItem>
@@ -207,7 +208,7 @@ export default function UserDropdown() {
                             className="p-0"
                         >
                             <div
-                                className="cursor-pointer hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-green-600 dark:hover:text-green-400 rounded-lg p-2 transition-colors flex items-center gap-2"
+                                className="cursor-pointer hover:bg-[color:var(--ai-success)]/10 hover:text-[color:var(--ai-success)] rounded-lg p-2 transition-colors flex items-center gap-2"
                                 onClick={() => openModal({
                                     id: 'login',
                                     isOpen: true,
@@ -224,7 +225,7 @@ export default function UserDropdown() {
                                     onClose: () => closeModal('login'),
                                 })}
                             >
-                                <UserIcon className="text-green-500" size={18} />
+                                <UserIcon className="text-[color:var(--ai-success)]" size={18} />
                                 Login
                             </div>
                         </DropdownItem>

@@ -3,7 +3,7 @@
 import React, { useContext, useEffect } from 'react';
 import { AppContext } from '../../../../../components/AppContext';
 import LessonContent from '../../../../../components/Lesson/LessonContent';
-import LessonNavigation from '../../../../../components/Lesson/LessonNavigation';
+import LessonNavigation from '../../../../../components/Lesson/Navigation/LessonNavigation';
 import { useLessonParams } from '@/utils/hooks/useParams';
 import { Card } from '@heroui/react';
 import { Lesson } from '@/types';
@@ -108,10 +108,11 @@ export default function LessonDetailPage({ params }: LessonDetailPageProps) {
             <LessonContent lesson={lesson} />
 
             <LessonNavigation
-                courseId={courseId}
-                currentLessonId={lessonId}
-                previousLesson={previousLesson}
-                nextLesson={nextLesson}
+                prevLessonId={previousLesson ? previousLesson.id : null}
+                nextLessonId={nextLesson ? nextLesson.id : null}
+                isCompleted={lesson.isCompleted || false}
+                onNavigateLesson={(lessonId) => window.location.href = `/courses/${courseId}/lessons/${lessonId}`}
+                onClose={() => window.location.href = `/courses/${courseId}`}
             />
         </div>
     );

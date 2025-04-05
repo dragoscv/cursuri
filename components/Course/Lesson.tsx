@@ -300,9 +300,9 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
 
                     {/* Lesson Content */}
                     {lesson.content && (
-                        <Card className="mt-8 border border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm shadow-xl">
+                        <Card className="mt-8 border border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)]/50 bg-white/50 dark:bg-[color:var(--ai-background)]/50 backdrop-blur-sm shadow-xl">
                             <div className="p-6">
-                                <h2 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-4">
+                                <h2 className="text-xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-4">
                                     Lesson Content
                                 </h2>
                                 <div

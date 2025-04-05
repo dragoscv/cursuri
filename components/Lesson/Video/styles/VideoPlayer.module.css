@@ -1,0 +1,17 @@
+.progressBar {
+    width: 100%;
+}
+
+.progressFill {
+    height: 100%;
+}
+
+.bufferedProgress {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 1.5px;
+    background-color: rgba(var(--ai-card-border), 0.2);
+    pointer-events: none;
+    border-radius: 9999px;
+}

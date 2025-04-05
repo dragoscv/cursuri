@@ -10,7 +10,7 @@ export default function SocialIcons() {
                 href="https://github.com/dragoscv"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="cursor-pointer p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                className="cursor-pointer p-2 rounded-lg hover:bg-[color:var(--ai-card-border)]/30 dark:hover:bg-[color:var(--ai-card-border)]/20 transition-colors"
                 aria-label="GitHub"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill='currentColor' viewBox="0 0 20 20" version="1.1">
@@ -28,7 +28,7 @@ export default function SocialIcons() {
                 href="https://dragoscatalin.ro"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="cursor-pointer p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                className="cursor-pointer p-2 rounded-lg hover:bg-[color:var(--ai-card-border)]/30 dark:hover:bg-[color:var(--ai-card-border)]/20 transition-colors"
                 aria-label="Website"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24" fill="currentColor">
@@ -47,7 +47,7 @@ export default function SocialIcons() {
                 href="https://tiktok.com/@dragoscatalin.ro"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="cursor-pointer p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                className="cursor-pointer p-2 rounded-lg hover:bg-[color:var(--ai-card-border)]/30 dark:hover:bg-[color:var(--ai-card-border)]/20 transition-colors"
                 aria-label="TikTok"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="20px" height="20px" viewBox="0 0 32 32" version="1.1">
@@ -59,7 +59,7 @@ export default function SocialIcons() {
                 href="https://instagram.com/dragoscatalin.ro"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="cursor-pointer p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                className="cursor-pointer p-2 rounded-lg hover:bg-[color:var(--ai-card-border)]/30 dark:hover:bg-[color:var(--ai-card-border)]/20 transition-colors"
                 aria-label="Instagram"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24" fill="currentColor">

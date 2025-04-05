@@ -19,14 +19,14 @@ export default function LessonHeader({
     calculateProgress
 }: LessonHeaderProps) {
     return (
-        <div className="bg-gradient-to-r from-indigo-600/10 via-purple-600/10 to-pink-600/10 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-white/10 dark:border-gray-800/50 shadow-xl">
+        <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-[color:var(--ai-accent)]/10 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-[color:var(--ai-card-border)]/50 shadow-xl">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                 <div>
-                    <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                    <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-2">
                         {lesson.name}
                     </h1>
                     {lesson.description && (
-                        <p className="text-gray-600 dark:text-gray-300 max-w-2xl">
+                        <p className="text-[color:var(--ai-muted)] max-w-2xl">
                             {lesson.description}
                         </p>
                     )}
@@ -35,12 +35,12 @@ export default function LessonHeader({
                 {/* Course Progress Indicator */}
                 <div className="flex flex-col items-end">
                     <div className="flex items-center gap-2 mb-2">
-                        <span className="text-sm text-gray-600 dark:text-gray-400">Course Progress</span>
-                        <span className="font-semibold text-indigo-600 dark:text-indigo-400">{Math.round(calculateProgress())}%</span>
+                        <span className="text-sm text-[color:var(--ai-muted)]">Course Progress</span>
+                        <span className="font-semibold text-[color:var(--ai-primary)]">{Math.round(calculateProgress())}%</span>
                     </div>
-                    <div className="w-32 bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+                    <div className="w-32 bg-[color:var(--ai-card-border)]/20 rounded-full h-2 overflow-hidden">
                         <div
-                            className="h-full bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full"
+                            className="h-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-full"
                             style={{ width: `${calculateProgress()}%` }}
                         ></div>
                     </div>

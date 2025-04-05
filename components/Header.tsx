@@ -42,10 +42,10 @@ export default function Header() {
         <Navbar
             maxWidth="xl"
             isBordered
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${isScrolled
-                ? 'bg-white/90 dark:bg-[color:var(--ai-background)]/95 shadow-sm backdrop-blur-md'
-                : 'bg-white/70 dark:bg-[color:var(--ai-background)]/80 backdrop-blur-sm'
-                } border-b border-[color:var(--ai-card-border)]`}
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+                ? 'bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-[color:var(--ai-accent)]/10 backdrop-blur-md shadow-sm'
+                : 'bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-[color:var(--ai-accent)]/5 backdrop-blur-sm'
+                } border-b border-[color:var(--ai-card-border)]/50`}
         >
             {/* Logo and desktop breadcrumbs */}
             <NavbarBrand />

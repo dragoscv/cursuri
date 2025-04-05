@@ -47,7 +47,7 @@ export default function CourseCard({ course }: CourseCardProps) {
                         </div>
 
                         {/* Progress bar */}
-                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 dark:bg-gray-700">
+                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-[color:var(--ai-card-border)]/20 dark:bg-[color:var(--ai-card-border)]/30">
                             <div
                                 className="h-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
                                 style={{ width: `${course.progress}%` }}
