@@ -1,11 +1,13 @@
 'use client'
 
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { AppContext } from '@/components/AppContext';
 import { Card, CardBody, Button, Input, Divider, Textarea, Switch } from '@heroui/react';
 import { motion } from 'framer-motion';
 import { FiUser, FiLock, FiMail, FiSettings, FiBell, FiGlobe, FiSave } from '@/components/icons/FeatherIcons';
 import { updateProfile, updateEmail, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
+import ThemeSelector from '@/components/Profile/ThemeSelector';
+import { ColorScheme, UserPreferences } from '@/types';
 
 export default function ProfileSettings() {
     const context = useContext(AppContext);
@@ -13,7 +15,7 @@ export default function ProfileSettings() {
         throw new Error("AppContext not found");
     }
 
-    const { user } = context;
+    const { user, userPreferences, saveUserPreferences } = context;
 
     const [form, setForm] = useState({
         displayName: user?.displayName || '',
@@ -21,15 +23,29 @@ export default function ProfileSettings() {
         currentPassword: '',
         newPassword: '',
         confirmPassword: '',
-        bio: '', // These fields would be stored in Firestore in a real implementation
-        language: 'en',
-        emailNotifications: true,
-        courseUpdates: true,
-        marketingEmails: false
+        bio: userPreferences?.bio || '',
+        language: userPreferences?.language || 'en',
+        emailNotifications: userPreferences?.emailNotifications || true,
+        courseUpdates: userPreferences?.courseUpdates || true,
+        marketingEmails: userPreferences?.marketingEmails || false
     });
 
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
+
+    // Load user preferences when available
+    useEffect(() => {
+        if (userPreferences) {
+            setForm(prev => ({
+                ...prev,
+                bio: userPreferences.bio || prev.bio,
+                language: userPreferences.language || prev.language,
+                emailNotifications: userPreferences.emailNotifications || prev.emailNotifications,
+                courseUpdates: userPreferences.courseUpdates || prev.courseUpdates,
+                marketingEmails: userPreferences.marketingEmails || prev.marketingEmails
+            }));
+        }
+    }, [userPreferences]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -47,8 +63,14 @@ export default function ProfileSettings() {
         setMessage({ type: '', text: '' });
 
         try {
+            // Update Firebase Auth profile
             await updateProfile(user, {
                 displayName: form.displayName,
+            });
+
+            // Save bio to Firestore preferences
+            await saveUserPreferences({
+                bio: form.bio
             });
 
             setMessage({
@@ -160,12 +182,32 @@ export default function ProfileSettings() {
         }
     };
 
-    const updateNotificationSettings = () => {
-        // In a real application, this would save to Firestore
-        setMessage({
-            type: 'success',
-            text: 'Notification preferences updated successfully!'
-        });
+    const updateNotificationSettings = async () => {
+        if (!user) return;
+
+        setIsLoading(true);
+        setMessage({ type: '', text: '' });
+
+        try {
+            // Save notification preferences to Firestore
+            await saveUserPreferences({
+                emailNotifications: form.emailNotifications,
+                courseUpdates: form.courseUpdates,
+                marketingEmails: form.marketingEmails
+            });
+
+            setMessage({
+                type: 'success',
+                text: 'Notification preferences updated successfully!'
+            });
+        } catch (error: any) {
+            setMessage({
+                type: 'error',
+                text: error.message || 'Failed to update notification preferences.'
+            });
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     if (!user) {
@@ -449,11 +491,49 @@ export default function ProfileSettings() {
                         <Button
                             color="primary"
                             startContent={<FiSave />}
-                            onClick={() => setMessage({ type: 'success', text: 'Language preferences saved!' })}
+                            onClick={async () => {
+                                setIsLoading(true);
+                                try {
+                                    await saveUserPreferences({
+                                        language: form.language
+                                    });
+                                    setMessage({
+                                        type: 'success',
+                                        text: 'Language preferences saved!'
+                                    });
+                                } catch (error: any) {
+                                    setMessage({
+                                        type: 'error',
+                                        text: error.message || 'Failed to update language preferences.'
+                                    });
+                                } finally {
+                                    setIsLoading(false);
+                                }
+                            }}
+                            isLoading={isLoading}
                         >
                             Save Language
                         </Button>
                     </div>
+                </CardBody>
+            </Card>
+
+            {/* Appearance Settings */}
+            <Card className="border border-gray-200 dark:border-gray-800">
+                <CardBody>
+                    <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
+                        <FiSettings className="text-indigo-500" />
+                        Appearance Settings
+                    </h2>
+
+                    <ThemeSelector
+                        onThemeChange={(theme) => {
+                            setMessage({
+                                type: 'success',
+                                text: `Theme changed to ${theme.replace('-', ' ')}!`
+                            });
+                        }}
+                    />
                 </CardBody>
             </Card>
         </div>

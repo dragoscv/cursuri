@@ -16,9 +16,33 @@ export interface PageParams<T extends Record<string, string> = Record<string, st
     searchParams?: Record<string, string | string[]>;
 }
 
+// Add TypeScript types for color schemes
+export type ColorScheme = 'modern-purple' | 'black-white' | 'green-neon' | 'blue-ocean' | 'brown-sunset' | 'yellow-morning' | 'red-blood' | 'pink-candy';
+
+// User preferences interface for storing settings in Firestore
+export interface UserPreferences {
+    // Theme settings
+    isDark: boolean;
+    colorScheme: ColorScheme;
+    // Notification settings
+    emailNotifications: boolean;
+    courseUpdates: boolean;
+    marketingEmails: boolean;
+    // Language settings
+    language: string;
+    // Other user settings
+    bio?: string;
+    // Timestamp for when the preferences were last updated
+    lastUpdated: Timestamp | Date;
+}
+
 export interface AppContextProps {
     isDark: boolean;
     toggleTheme: () => void;
+    colorScheme: ColorScheme;
+    setColorScheme: (scheme: ColorScheme) => void;
+    userPreferences: UserPreferences | null;
+    saveUserPreferences: (preferences: Partial<UserPreferences>) => Promise<boolean>;
     user: User | null;
     openModal: (modal: ModalProps) => void;
     closeModal: (id: string) => void;

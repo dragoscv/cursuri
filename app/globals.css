@@ -284,6 +284,7 @@ body {
 
 /* Dark mode adaptive colors */
 :root {
+  /* Modern Purple (Default) */
   --ai-primary: #6366f1;
   --ai-secondary: #8b5cf6;
   --ai-accent: #ec4899;
@@ -294,6 +295,7 @@ body {
   --ai-card-border: #e5e7eb;
 }
 
+/* Dark mode base colors */
 @media (prefers-color-scheme: dark) {
   :root {
     --ai-primary: #818cf8;
@@ -305,6 +307,112 @@ body {
     --ai-card-bg: #1e293b;
     --ai-card-border: #334155;
   }
+}
+
+/* Theme: Modern Purple - Default Theme */
+html.theme-modern-purple {
+  --ai-primary: #6366f1;
+  --ai-secondary: #8b5cf6;
+  --ai-accent: #ec4899;
+}
+
+html.dark.theme-modern-purple {
+  --ai-primary: #818cf8;
+  --ai-secondary: #a78bfa;
+  --ai-accent: #f472b6;
+}
+
+/* Theme: Black and White */
+html.theme-black-white {
+  --ai-primary: #000000;
+  --ai-secondary: #404040;
+  --ai-accent: #737373;
+  --ai-card-border: #d4d4d4;
+}
+
+html.dark.theme-black-white {
+  --ai-primary: #ffffff;
+  --ai-secondary: #d4d4d4;
+  --ai-accent: #a3a3a3;
+  --ai-card-border: #525252;
+}
+
+/* Theme: Green Neon */
+html.theme-green-neon {
+  --ai-primary: #10b981;
+  --ai-secondary: #059669;
+  --ai-accent: #34d399;
+}
+
+html.dark.theme-green-neon {
+  --ai-primary: #4ade80;
+  --ai-secondary: #22c55e;
+  --ai-accent: #86efac;
+}
+
+/* Theme: Blue Ocean */
+html.theme-blue-ocean {
+  --ai-primary: #0ea5e9;
+  --ai-secondary: #0284c7;
+  --ai-accent: #38bdf8;
+}
+
+html.dark.theme-blue-ocean {
+  --ai-primary: #38bdf8;
+  --ai-secondary: #0ea5e9;
+  --ai-accent: #7dd3fc;
+}
+
+/* Theme: Brown Sunset */
+html.theme-brown-sunset {
+  --ai-primary: #b45309;
+  --ai-secondary: #92400e;
+  --ai-accent: #d97706;
+}
+
+html.dark.theme-brown-sunset {
+  --ai-primary: #f59e0b;
+  --ai-secondary: #d97706;
+  --ai-accent: #fbbf24;
+}
+
+/* Theme: Yellow Morning */
+html.theme-yellow-morning {
+  --ai-primary: #eab308;
+  --ai-secondary: #ca8a04;
+  --ai-accent: #facc15;
+}
+
+html.dark.theme-yellow-morning {
+  --ai-primary: #facc15;
+  --ai-secondary: #eab308;
+  --ai-accent: #fde047;
+}
+
+/* Theme: Red Blood */
+html.theme-red-blood {
+  --ai-primary: #dc2626;
+  --ai-secondary: #b91c1c;
+  --ai-accent: #ef4444;
+}
+
+html.dark.theme-red-blood {
+  --ai-primary: #ef4444;
+  --ai-secondary: #dc2626;
+  --ai-accent: #f87171;
+}
+
+/* Theme: Pink Candy */
+html.theme-pink-candy {
+  --ai-primary: #db2777;
+  --ai-secondary: #be185d;
+  --ai-accent: #ec4899;
+}
+
+html.dark.theme-pink-candy {
+  --ai-primary: #ec4899;
+  --ai-secondary: #db2777;
+  --ai-accent: #f472b6;
 }
 
 /* Neural network animation */

@@ -9,13 +9,26 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { doc, collection, getDocs, query, where, onSnapshot, updateDoc, setDoc, getDoc, Timestamp, Unsubscribe, getFirestore } from 'firebase/firestore';
 import ModalComponent from '@/components/Modal';
 
-import { AppContextProps, UserLessonProgress } from '@/types';
+import { AppContextProps, UserLessonProgress, ColorScheme, UserPreferences } from '@/types';
 
 export const AppContext = createContext<AppContextProps | undefined>(undefined);
 
+// Default user preferences
+const defaultUserPreferences: UserPreferences = {
+    isDark: false,
+    colorScheme: 'modern-purple',
+    emailNotifications: true,
+    courseUpdates: true,
+    marketingEmails: false,
+    language: 'en',
+    lastUpdated: new Date()
+};
+
 export const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     const [isDark, setIsDark] = useState(false);
+    const [colorScheme, setColorScheme] = useState<ColorScheme>('modern-purple');
     const [user, setUser] = useState<User | null>(null);
+    const [userPreferences, setUserPreferences] = useState<UserPreferences | null>(null);
 
     const initialState = {
         modals: [],
@@ -143,7 +156,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
     const [state, dispatch] = useReducer(reducer, initialState);
 
-    const toggleTheme = () => {
+    const toggleTheme = useCallback(() => {
         const newDarkMode = !isDark;
         setIsDark(newDarkMode);
 
@@ -154,26 +167,168 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             document.documentElement.classList.remove('dark');
         }
 
-        // Save preference to localStorage
+        // Save preference to localStorage for immediate use
         localStorage.setItem('theme', newDarkMode ? 'dark' : 'light');
-    };
 
-    // Initialize theme from localStorage on component mount
-    useEffect(() => {
-        // Check for saved theme preference or use system preference
-        const savedTheme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-        const shouldUseDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
-
-        if (shouldUseDark) {
-            setIsDark(true);
-            document.documentElement.classList.add('dark');
-        } else {
-            setIsDark(false);
-            document.documentElement.classList.remove('dark');
+        // Update preferences in state and Firestore if user is logged in
+        if (user) {
+            saveUserPreferences({ isDark: newDarkMode });
         }
-    }, []);
+    }, [isDark, user]);
+
+    // Handle color scheme changes
+    const handleColorSchemeChange = useCallback((scheme: ColorScheme) => {
+        setColorScheme(scheme);
+
+        // Remove all existing color scheme classes
+        document.documentElement.classList.remove(
+            'theme-modern-purple',
+            'theme-black-white',
+            'theme-green-neon',
+            'theme-blue-ocean',
+            'theme-brown-sunset',
+            'theme-yellow-morning',
+            'theme-red-blood',
+            'theme-pink-candy'
+        );
+
+        // Add the new color scheme class
+        document.documentElement.classList.add(`theme-${scheme}`);
+
+        // Save to localStorage for immediate use
+        localStorage.setItem('colorScheme', scheme);
+
+        // Update preferences in state and Firestore if user is logged in
+        if (user) {
+            saveUserPreferences({ colorScheme: scheme });
+        }
+    }, [user]);
+
+    // Save user preferences to Firestore
+    const saveUserPreferences = useCallback(async (preferences: Partial<UserPreferences>): Promise<boolean> => {
+        if (!user) return false;
+
+        try {
+            const preferencesRef = doc(firestoreDB, `users/${user.uid}/profile/preferences`);
+            const preferencesExists = await getDoc(preferencesRef);
+
+            const updatedPreferences = {
+                ...(preferencesExists.exists() ? preferencesExists.data() as UserPreferences : defaultUserPreferences),
+                ...preferences,
+                lastUpdated: Timestamp.now()
+            };
+
+            // Save to Firestore
+            if (preferencesExists.exists()) {
+                await updateDoc(preferencesRef, updatedPreferences);
+            } else {
+                await setDoc(preferencesRef, updatedPreferences);
+            }
+
+            // Update local state
+            setUserPreferences(updatedPreferences as UserPreferences);
+
+            return true;
+        } catch (error) {
+            console.error("Error saving user preferences:", error);
+            return false;
+        }
+    }, [user]);
+
+    // Get user preferences from Firestore
+    const getUserPreferences = useCallback(async () => {
+        if (!user) return null;
+
+        try {
+            const preferencesRef = doc(firestoreDB, `users/${user.uid}/profile/preferences`);
+            const preferencesSnapshot = await getDoc(preferencesRef);
+
+            if (preferencesSnapshot.exists()) {
+                const preferences = preferencesSnapshot.data() as UserPreferences;
+
+                // Update local state with fetched preferences
+                setUserPreferences(preferences);
+                setIsDark(preferences.isDark);
+                setColorScheme(preferences.colorScheme);
+
+                // Apply theme settings
+                if (preferences.isDark) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+
+                // Remove all color scheme classes and add the correct one
+                document.documentElement.classList.remove(
+                    'theme-modern-purple',
+                    'theme-black-white',
+                    'theme-green-neon',
+                    'theme-blue-ocean',
+                    'theme-brown-sunset',
+                    'theme-yellow-morning',
+                    'theme-red-blood',
+                    'theme-pink-candy'
+                );
+                document.documentElement.classList.add(`theme-${preferences.colorScheme}`);
+
+                return preferences;
+            } else {
+                // If no preferences exist yet, create with defaults and local storage values
+                const savedTheme = localStorage.getItem('theme');
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const savedColorScheme = localStorage.getItem('colorScheme') as ColorScheme | null;
+
+                const shouldUseDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+
+                const initialPreferences: UserPreferences = {
+                    ...defaultUserPreferences,
+                    isDark: shouldUseDark,
+                    colorScheme: savedColorScheme || defaultUserPreferences.colorScheme,
+                    lastUpdated: Timestamp.now()
+                };
+
+                // Save initial preferences to Firestore
+                await setDoc(preferencesRef, initialPreferences);
+                setUserPreferences(initialPreferences);
+
+                return initialPreferences;
+            }
+        } catch (error) {
+            console.error("Error getting user preferences:", error);
+            return null;
+        }
+    }, [user]);
+
+    // Initialize theme and color scheme on component mount
+    useEffect(() => {
+        if (!user) {
+            // If no user is logged in, use localStorage or system preferences
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const savedColorScheme = localStorage.getItem('colorScheme') as ColorScheme | null;
+
+            const shouldUseDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+
+            setIsDark(shouldUseDark);
+            if (shouldUseDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+
+            // Set color scheme
+            if (savedColorScheme) {
+                setColorScheme(savedColorScheme);
+                document.documentElement.classList.add(`theme-${savedColorScheme}`);
+            } else {
+                // Default to modern-purple if no saved preference
+                document.documentElement.classList.add('theme-modern-purple');
+            }
+        } else {
+            // If user is logged in, get preferences from Firestore
+            getUserPreferences();
+        }
+    }, [user, getUserPreferences]);
 
     const openModal = useCallback((props: any) => {
         dispatch({ type: 'ADD_MODAL', payload: props });
@@ -420,10 +575,17 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
     return (
         <AppContext.Provider value={{
-            isDark, toggleTheme,
+            isDark,
+            toggleTheme,
+            colorScheme,
+            setColorScheme: handleColorSchemeChange,
+            userPreferences,
+            saveUserPreferences,
             user,
             isAdmin: state.isAdmin,
-            openModal, closeModal, updateModal,
+            openModal,
+            closeModal,
+            updateModal,
             products: state.products,
             courses: state.courses,
             lessons: state.lessons,
