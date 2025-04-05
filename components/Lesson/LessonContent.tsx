@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useContext, useCallback } from 'react';
+import React, { useState, useEffect, useContext, useCallback, useRef } from 'react';
 import { AppContext } from '../AppContext';
 import { Lesson, AppContextProps, Resource } from '@/types';
 import { Button, Card, Chip, Divider } from '@heroui/react';
@@ -8,6 +8,7 @@ import VideoPlayer from './Video/VideoPlayer';
 import LessonSettings from './Settings/LessonSettings';
 import ResourcesList from './Resources/ResourcesList';
 import Notes from './Notes/Notes';
+import QASection from './QA/QASection';
 
 interface LessonContentProps {
     lesson: Lesson;
@@ -18,6 +19,11 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson }) => {
     const [autoPlayNext, setAutoPlayNext] = useState(false);
     const [saveProgress, setSaveProgress] = useState(true);
     const [progressSaved, setProgressSaved] = useState(false);
+
+    // State for Notes component
+    const [notes, setNotes] = useState('');
+    const [showNotes, setShowNotes] = useState(false);
+    const notesRef = useRef<HTMLTextAreaElement>(null);
 
     const context = useContext(AppContext) as AppContextProps;
     if (!context) {
@@ -71,6 +77,37 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson }) => {
             setIsCompleted(progress.isCompleted);
         }
     }, [courseId, lesson?.id, lessonProgress]);
+
+    // Load saved notes from localStorage on component mount
+    useEffect(() => {
+        if (lesson?.id) {
+            const savedNotes = localStorage.getItem(`notes-${lesson.id}`);
+            if (savedNotes) {
+                setNotes(savedNotes);
+            }
+        }
+    }, [lesson?.id]);
+
+    // Handle notes change
+    const handleNotesChange = (value: string) => {
+        setNotes(value);
+    };
+
+    // Toggle notes visibility
+    const toggleNotes = () => {
+        setShowNotes(!showNotes);
+    };
+
+    // Save notes to localStorage
+    const saveNotes = () => {
+        if (lesson?.id) {
+            localStorage.setItem(`notes-${lesson.id}`, notes);
+            setProgressSaved(true);
+            setTimeout(() => {
+                setProgressSaved(false);
+            }, 3000);
+        }
+    };
 
     // Calculate progress percentage for the progress bar
     const calculateProgress = () => {
@@ -222,6 +259,9 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson }) => {
                             </div>
                         </Card>
                     )}
+
+                    {/* Q&A Discussion Section */}
+                    <QASection lesson={lesson} />
                 </div>
 
                 {/* Right Sidebar */}
@@ -239,7 +279,14 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson }) => {
                     />
 
                     {/* Notes Component */}
-                    <Notes lessonId={lesson.id} setProgressSaved={setProgressSaved} />
+                    <Notes
+                        notes={notes}
+                        showNotes={showNotes}
+                        onNotesChange={handleNotesChange}
+                        onToggleNotes={toggleNotes}
+                        onSaveNotes={saveNotes}
+                        notesRef={notesRef}
+                    />
 
                     {/* Resources Component */}
                     {lesson.resources && lesson.resources.length > 0 && (

@@ -125,11 +125,11 @@ const CourseContent: React.FC<CourseContentProps> = ({
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4 }}
-                    className="bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 rounded-xl p-4 border border-amber-100 dark:border-amber-800/40"
+                    className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-4 border border-amber-200 dark:border-amber-800/40 shadow-sm"
                 >
-                    <div className="flex items-start gap-3">
-                        <div className="rounded-full bg-amber-100 dark:bg-amber-900/50 p-2 text-amber-600 dark:text-amber-400">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <div className="flex items-start gap-4">
+                        <div className="text-amber-500 dark:text-amber-400 p-2 bg-amber-100 dark:bg-amber-900/40 rounded-full">
+                            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
                                 <line x1="12" y1="9" x2="12" y2="13"></line>
                                 <line x1="12" y1="17" x2="12.01" y2="17"></line>
@@ -229,7 +229,6 @@ const CourseContent: React.FC<CourseContentProps> = ({
                                 </span>
                             </h3>
                         </div>
-
                         {sortedLessons.length > 0 ? (
                             <div className="divide-y divide-gray-100 dark:divide-gray-700">
                                 {sortedLessons.map((lesson, index) => (

@@ -1,49 +1,34 @@
 'use client'
 
-import React, { useContext, useEffect } from 'react';
-import { AppContext } from '../../../../../components/AppContext';
-import LessonContent from '../../../../../components/Lesson/LessonContent';
-import LessonNavigation from '../../../../../components/Lesson/Navigation/LessonNavigation';
-import { useLessonParams } from '@/utils/hooks/useParams';
-import { Card } from '@heroui/react';
-import { Lesson } from '@/types';
+import React, { useContext, useState } from 'react';
+import { AppContext } from '@/components/AppContext';
+import { Spinner, Card } from "@heroui/react";
+import { useCourseParams } from '@/utils/hooks/useParams';
+import LessonContent from '@/components/Lesson/LessonContent';
+import LessonNavigation from '@/components/Lesson/Navigation/LessonNavigation';
 
 interface LessonDetailPageProps {
     params: {
         courseId: string;
         lessonId: string;
-    } | Promise<{
-        courseId: string;
-        lessonId: string;
-    }>
+    };
 }
 
 export default function LessonDetailPage({ params }: LessonDetailPageProps) {
-    // Use the custom hook to safely access params
-    const { courseId, lessonId } = useLessonParams(params);
+    const { courseId, lessonId } = useCourseParams(params);
     const context = useContext(AppContext);
 
     if (!context) {
         throw new Error('LessonDetailPage must be used within an AppContextProvider');
     }
 
-    const { lessons, getCourseLessons } = context;
+    const { courses, lessons, user, userPurchases } = context;
 
-    // Add effect to fetch lessons for this course if they're not already loaded
-    useEffect(() => {
-        if (courseId) {
-            console.log("Fetching lessons for course:", courseId);
-            const unsubscribe = getCourseLessons(courseId);
-            return () => {
-                if (typeof unsubscribe === 'function') {
-                    unsubscribe();
-                }
-            };
-        }
-    }, [courseId, getCourseLessons]);
-
-    // Add error handling if lessons or course is not loaded
-    if (!lessons || !lessons[courseId]) {
+    // Check if the course and lesson exist
+    const course = courses[courseId];
+    
+    // Early return if loading course or lessons
+    if (!course || !lessons[courseId]) {
         return (
             <div className="container mx-auto px-4 py-8">
                 <Card className="p-6 shadow-lg">
@@ -63,7 +48,7 @@ export default function LessonDetailPage({ params }: LessonDetailPageProps) {
     // Fix: lessons[courseId] is an object with lesson IDs as keys, not an array
     // Directly access the specific lesson by ID
     const lesson = lessons[courseId]?.[lessonId];
-
+    
     // Handle case where lesson is not found
     if (!lesson) {
         return (

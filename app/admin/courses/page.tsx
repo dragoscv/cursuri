@@ -32,6 +32,10 @@ export default function AdminCoursesPage() {
         router.push(`/admin/courses/${course.id}/edit`);
     };
 
+    const handleViewCourse = (course: CourseWithPriceProduct) => {
+        router.push(`/admin/courses/${course.id}`);
+    };
+
     const formatPrice = (course: CourseWithPriceProduct): string => {
         if (course.priceProduct?.prices?.[0]?.unit_amount !== undefined) {
             const amount = course.priceProduct.prices[0].unit_amount / 100;
@@ -97,7 +101,7 @@ export default function AdminCoursesPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {Object.values(courses).map((course: any) => (
                         <Card key={course.id} className="hover:shadow-lg transition-shadow">
-                            <CardBody onClick={() => router.push(`/admin/courses/${course.id}`)} className="cursor-pointer">
+                            <CardBody onClick={() => handleViewCourse(course)} className="cursor-pointer">
                                 <div className="flex justify-between items-start mb-2">
                                     <h3 className="text-xl font-semibold text-gray-900 dark:text-white line-clamp-1">{course.name}</h3>
                                     <Chip
@@ -205,7 +209,7 @@ export default function AdminCoursesPage() {
                                                     size="sm"
                                                     color="default"
                                                     variant="flat"
-                                                    onClick={() => router.push(`/admin/courses/${course.id}`)}
+                                                    onClick={() => handleViewCourse(course)}
                                                 >
                                                     View Lessons
                                                 </Button>

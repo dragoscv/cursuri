@@ -1,0 +1,70 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Base rules
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == 'vladulescu.catalin@gmail.com';
+    }
+
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    function isValidContentType() {
+      return request.resource.contentType.matches('image/.*') || 
+             request.resource.contentType.matches('video/.*') || 
+             request.resource.contentType.matches('application/pdf');
+    }
+
+    function isValidFileSize() {
+      // Limit file size to 50MB
+      return request.resource.size <= 50 * 1024 * 1024;
+    }
+
+    // Public files (accessible to everyone)
+    match /public/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Course images and preview content
+    match /courses/{courseId}/{allPaths=**} {
+      allow read: if true; // Anyone can view course materials
+      allow write: if isAdmin();
+    }
+
+    // User-specific files
+    match /users/{userId}/{allPaths=**} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow write: if isOwner(userId) && isValidContentType() && isValidFileSize();
+    }
+
+    // Lesson content - accessible by course owners and admins
+    match /lessons/{lessonId}/{allPaths=**} {
+      allow read: if isAuthenticated(); // Only authenticated users
+      allow write: if isAdmin();
+    }
+
+    // Profile pictures and user uploads
+    match /profiles/{userId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if isOwner(userId) && isValidContentType() && isValidFileSize();
+    }
+
+    // Admin-only area
+    match /admin/{allPaths=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // Default rule - deny all other access
+    match /{allPaths=**} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+  }
+}

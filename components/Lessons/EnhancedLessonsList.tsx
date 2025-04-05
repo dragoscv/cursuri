@@ -36,6 +36,13 @@ export default function EnhancedLessonsList({ lessons, userHasAccess = false }: 
         visible: { y: 0, opacity: 1 }
     };
 
+    // Sort lessons by their order property
+    const sortedLessons = [...lessons].sort((a, b) => {
+        const orderA = a.order || 0;
+        const orderB = b.order || 0;
+        return orderA - orderB;
+    });
+
     return (
         <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-[color:var(--ai-accent)]/10 backdrop-blur-sm rounded-2xl p-6 border border-[color:var(--ai-card-border)]/50 shadow-xl">
             <div className="mb-6">
@@ -49,7 +56,7 @@ export default function EnhancedLessonsList({ lessons, userHasAccess = false }: 
                 initial="hidden"
                 animate="visible"
             >
-                {lessons.map((lesson, index) => (
+                {sortedLessons.map((lesson, index) => (
                     <motion.div
                         key={lesson.id}
                         variants={itemVariants}

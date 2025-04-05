@@ -344,4 +344,57 @@ export interface IconProps {
     size?: number;
 }
 
+/**
+ * Interface for a Q&A question in a lesson
+ */
+export interface Question {
+    id: string;
+    lessonId: string;
+    courseId: string;
+    userId: string;
+    userName: string;
+    userRole?: string;
+    userAvatar?: string;
+    title: string;
+    content: string;
+    createdAt: Timestamp | Date;
+    updatedAt?: Timestamp | Date;
+    isResolved: boolean;
+    answers: Answer[];
+    likes: number;
+    likedBy?: string[]; // Array of user IDs who liked the question
+}
+
+/**
+ * Interface for an answer to a question
+ */
+export interface Answer {
+    id: string;
+    questionId: string;
+    userId: string;
+    userName: string;
+    userRole?: string;
+    userAvatar?: string;
+    content: string;
+    htmlContent?: string; // For rich text content
+    createdAt: Timestamp | Date;
+    updatedAt?: Timestamp | Date;
+    isAuthorOrAdmin: boolean;
+    attachments?: Attachment[];
+    likes: number;
+    likedBy?: string[]; // Array of user IDs who liked the answer
+}
+
+/**
+ * Interface for attachments to answers (images, videos, etc.)
+ */
+export interface Attachment {
+    id: string;
+    type: 'image' | 'video' | 'file';
+    url: string;
+    name: string;
+    size?: number;
+    mimeType?: string;
+}
+
 // Other existing types...

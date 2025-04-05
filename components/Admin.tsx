@@ -48,6 +48,10 @@ export default function Admin() {
         router.push(`/admin/courses/${course.id}/edit`);
     };
 
+    const handleViewCourse = (course: CourseWithPriceProduct): void => {
+        router.push(`/admin/courses/${course.id}`);
+    };
+
     const handleAddLesson = (courseId: string): void => {
         router.push(`/admin/courses/${courseId}/lessons/add`);
     };
@@ -151,7 +155,7 @@ export default function Admin() {
                                 const course = courses[key] as CourseWithPriceProduct;
                                 return (
                                     <Card key={course.id} className="cursor-pointer hover:shadow-lg transition-shadow">
-                                        <CardBody onClick={() => handleEditCourse(course)}>
+                                        <CardBody onClick={() => handleViewCourse(course)}>
                                             <div className="flex justify-between items-start mb-2">
                                                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{course.name}</h3>
                                                 <Chip
@@ -178,7 +182,11 @@ export default function Admin() {
                                                     }}>
                                                         Delete
                                                     </Button>
-                                                    <Button size="sm" color="primary" variant="flat" onPress={() => handleEditCourse(course)}>
+                                                    <Button size="sm" color="primary" variant="flat" onPress={(e: any) => {
+                                                        e.preventDefault?.();
+                                                        e.stopPropagation?.();
+                                                        handleEditCourse(course);
+                                                    }}>
                                                         Edit Course
                                                     </Button>
                                                 </div>

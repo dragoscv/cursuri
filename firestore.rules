@@ -41,7 +41,11 @@ service cloud.firestore {
       match /lessons/{lessonId} {
         // Public access for lesson metadata, but potentially restrict full content access
         allow read: if true || hasUserPaid();
+        // Allow write operations for admin
         allow write: if isAdmin();
+        // Specifically allow updates to the order field for reordering
+        allow update: if isAdmin() && 
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['order']);
       }
       
       match /reviews/{reviewId} {
