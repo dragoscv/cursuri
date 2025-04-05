@@ -56,7 +56,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
         // For paid courses
         if (!course.isFree) {
             try {
-                const priceId = course.price || course.priceProduct?.prices?.[0]?.id;
+                const priceId = course.priceProduct?.prices?.[0]?.id || '';
 
                 if (!priceId) {
                     console.error("Price ID not found for course:", course.id);

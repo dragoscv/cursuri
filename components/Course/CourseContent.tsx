@@ -78,8 +78,8 @@ const CourseContent: React.FC<CourseContentProps> = ({
     };
 
     // Function to check if lesson is completed
-    const isLessonCompleted = (lessonId: string) => {
-        return completedLessons ? !!completedLessons[lessonId] : false;
+    const isLessonCompleted = (lessonId: string): boolean => {
+        return completedLessons ? Boolean(completedLessons[lessonId]) : false;
     };
 
     // Calculate progress percentage
@@ -182,7 +182,7 @@ const CourseContent: React.FC<CourseContentProps> = ({
                                             key={lesson.id}
                                             lesson={lesson}
                                             index={lessonIndex}
-                                            isCompleted={isLessonCompleted(lesson.id)}
+                                            isCompleted={Boolean(isLessonCompleted(lesson.id))}
                                             isAccessible={isLessonAccessible(lesson)}
                                             onClick={() => isLessonAccessible(lesson) && handleLessonClick(lesson)}
                                         />
@@ -206,7 +206,7 @@ const CourseContent: React.FC<CourseContentProps> = ({
                                             key={lesson.id}
                                             lesson={lesson}
                                             index={lessonIndex}
-                                            isCompleted={isLessonCompleted(lesson.id)}
+                                            isCompleted={Boolean(isLessonCompleted(lesson.id))}
                                             isAccessible={isLessonAccessible(lesson)}
                                             onClick={() => isLessonAccessible(lesson) && handleLessonClick(lesson)}
                                         />
@@ -237,7 +237,7 @@ const CourseContent: React.FC<CourseContentProps> = ({
                                         key={lesson.id}
                                         lesson={lesson}
                                         index={index}
-                                        isCompleted={isLessonCompleted(lesson.id)}
+                                        isCompleted={Boolean(isLessonCompleted(lesson.id))}
                                         isAccessible={isLessonAccessible(lesson)}
                                         onClick={() => isLessonAccessible(lesson) && handleLessonClick(lesson)}
                                     />

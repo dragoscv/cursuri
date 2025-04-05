@@ -29,8 +29,8 @@ export default function AdminActions() {
         <div className="flex gap-2">
             <Button
                 color="primary"
-                startIcon={<PlusIcon size={16} />}
-                onClick={() => openModal({
+                startContent={<PlusIcon size={16} />}
+                onPress={() => openModal({
                     id: 'add-course',
                     isOpen: true,
                     hideCloseButton: false,
@@ -53,7 +53,7 @@ export default function AdminActions() {
             <Button
                 variant="flat"
                 color="primary"
-                onClick={() => router.push('/admin')}
+                onPress={() => router.push('/admin')}
                 className="font-medium"
                 size="sm"
             >

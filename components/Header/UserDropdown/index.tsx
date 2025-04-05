@@ -87,21 +87,22 @@ export default function UserDropdown() {
                 <DropdownSection
                     aria-label="Profile & Actions"
                     showDivider
-                    className={`${user ? '' : 'hidden'}`}
                 >
-                    <DropdownItem
-                        key="profile-info"
-                        className="h-14 gap-2 border-0 text-black/80"
-                        textValue="Profile Details"
-                    >
-                        <div
-                            className="cursor-pointer hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg p-2 border-0 transition-colors"
-                            onClick={() => router.push('/profile')}
+                    {user && (
+                        <DropdownItem
+                            key="profile-info"
+                            className="h-14 gap-2 border-0 text-black/80"
+                            textValue="Profile Details"
                         >
-                            <p className="font-semibold">Signed in as</p>
-                            <p className="font-semibold">{user?.displayName ? user?.displayName : user?.email ? user?.email : user?.phoneNumber ? user?.phoneNumber : user?.uid}</p>
-                        </div>
-                    </DropdownItem>
+                            <div
+                                className="cursor-pointer hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg p-2 border-0 transition-colors"
+                                onClick={() => router.push('/profile')}
+                            >
+                                <p className="font-semibold">Signed in as</p>
+                                <p className="font-semibold">{user?.displayName ? user?.displayName : user?.email ? user?.email : user?.phoneNumber ? user?.phoneNumber : user?.uid}</p>
+                            </div>
+                        </DropdownItem>
+                    )}
                 </DropdownSection>
 
                 <DropdownSection aria-label="Actions" showDivider>
@@ -121,8 +122,10 @@ export default function UserDropdown() {
                             </div>
                         </DropdownItem>
                     )}
+                </DropdownSection>
 
-                    {/* Admin Actions */}
+                {/* Admin Actions */}
+                <DropdownSection aria-label="Admin Actions" showDivider>
                     {isAdmin && (
                         <>
                             <DropdownItem
@@ -167,7 +170,9 @@ export default function UserDropdown() {
                             </DropdownItem>
                         </>
                     )}
+                </DropdownSection>
 
+                <DropdownSection aria-label="Actions" showDivider>
                     {/* Suggestions Item */}
                     <DropdownItem
                         key="suggestions"
@@ -181,12 +186,12 @@ export default function UserDropdown() {
                     </DropdownItem>
 
                     {/* Auth Actions */}
-                    <DropdownItem
-                        key="account"
-                        textValue="Account"
-                        className="p-0"
-                    >
-                        {user ? (
+                    {user ? (
+                        <DropdownItem
+                            key="logout"
+                            textValue="Logout"
+                            className="p-0"
+                        >
                             <div
                                 className="cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 rounded-lg p-2 transition-colors flex items-center gap-2"
                                 onClick={handleSignOut}
@@ -194,7 +199,13 @@ export default function UserDropdown() {
                                 <LogOutIcon className="text-red-500" size={18} />
                                 Logout
                             </div>
-                        ) : (
+                        </DropdownItem>
+                    ) : (
+                        <DropdownItem
+                            key="login"
+                            textValue="Login"
+                            className="p-0"
+                        >
                             <div
                                 className="cursor-pointer hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-green-600 dark:hover:text-green-400 rounded-lg p-2 transition-colors flex items-center gap-2"
                                 onClick={() => openModal({
@@ -216,8 +227,8 @@ export default function UserDropdown() {
                                 <UserIcon className="text-green-500" size={18} />
                                 Login
                             </div>
-                        )}
-                    </DropdownItem>
+                        </DropdownItem>
+                    )}
                 </DropdownSection>
 
                 {/* Social Icons Section */}
@@ -227,7 +238,9 @@ export default function UserDropdown() {
                         textValue="Social"
                         className="p-0"
                     >
-                        <SocialIcons />
+                        <div className="w-full">
+                            <SocialIcons />
+                        </div>
                     </DropdownItem>
                 </DropdownSection>
             </DropdownMenu>

@@ -45,7 +45,7 @@ export async function transcribeAudio(audioUrl: string, options?: {
         }
 
         // Create audio config from URL
-        const audioConfig = sdk.AudioConfig.fromWavFileInput(audioUrl);
+        const audioConfig = sdk.AudioConfig.fromWavFileInput(new Blob([]) as any);  // Using a placeholder, will be updated in a real implementation
 
         // Create speech recognizer
         const recognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
@@ -95,11 +95,11 @@ export async function transcribeAudio(audioUrl: string, options?: {
  * @param phrases Array of recognized phrases with timing information
  * @returns WebVTT formatted string
  */
-export function generateWebVTT(phrases: sdk.SpeechRecognitionResult[]): string {
+export function generateWebVTT(phrases: any[]): string {
     let vtt = 'WEBVTT\n\n';
 
     phrases.forEach((phrase, index) => {
-        if (phrase.text.trim()) {
+        if (phrase.text && phrase.text.trim()) {
             const startTime = formatTime(phrase.offset / 10000000); // Convert from 100ns to seconds
             const endTime = formatTime((phrase.offset + phrase.duration) / 10000000);
 

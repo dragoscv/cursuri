@@ -1,10 +1,10 @@
 'use client'
 
 import { Chip } from '@heroui/react'
-import { LessonType } from '@/types'
+import { Lesson } from '@/types'
 
 interface LessonHeaderProps {
-    lesson: LessonType;
+    lesson: Lesson;
     isCompleted: boolean;
     progressSaved: boolean;
     autoPlayNext: boolean;

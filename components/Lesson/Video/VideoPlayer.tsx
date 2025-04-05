@@ -3,10 +3,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@heroui/react'
 import { supportedLanguages } from '@/utils/azure/speech'
-import { LessonType } from '@/types'
+import { Lesson } from '@/types'
 
 interface VideoPlayerProps {
-    lesson: LessonType;
+    lesson: Lesson;
     isCompleted: boolean;
     onTimeUpdate: (progress: number) => void;
     onPlay: () => void;
@@ -44,10 +44,14 @@ export default function VideoPlayer({
     useEffect(() => {
         if (videoRef.current && lesson.captions) {
             // Clear any existing tracks
-            while (videoRef.current.textTracks.length > 0) {
-                const track = videoRef.current.textTracks[0];
-                videoRef.current.removeChild(track);
-            }
+            const videoElement = videoRef.current;
+
+            // We need to handle text tracks differently than DOM nodes
+            // Rather than removing children, we can use removeTextTrack API
+            // or simply set their mode to disabled
+            Array.from(videoElement.textTracks).forEach(track => {
+                track.mode = 'disabled';
+            });
 
             // Add caption tracks for each available language
             Object.entries(lesson.captions).forEach(([language, captionData]) => {
@@ -63,7 +67,7 @@ export default function VideoPlayer({
                         track.default = true;
                     }
 
-                    videoRef.current?.appendChild(track);
+                    videoElement.appendChild(track);
                 }
             });
 
@@ -354,7 +358,7 @@ export default function VideoPlayer({
                                         CAPTION LANGUAGE
                                     </DropdownItem>
 
-                                    {lesson.captions && Object.entries(lesson.captions).map(([langCode, _]) => (
+                                    {Object.entries(lesson.captions || {}).map(([langCode, _]) => (
                                         <DropdownItem
                                             key={langCode}
                                             className="flex items-center justify-between"
@@ -370,12 +374,14 @@ export default function VideoPlayer({
                                                 }
                                             }}
                                         >
-                                            <span>{supportedLanguages[langCode as keyof typeof supportedLanguages] || langCode}</span>
-                                            {selectedCaptionLanguage === langCode && (
-                                                <svg className="w-4 h-4 text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                                </svg>
-                                            )}
+                                            <div className="flex items-center justify-between w-full">
+                                                <span>{supportedLanguages[langCode as keyof typeof supportedLanguages] || langCode}</span>
+                                                {selectedCaptionLanguage === langCode && (
+                                                    <svg className="w-4 h-4 text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                                    </svg>
+                                                )}
+                                            </div>
                                         </DropdownItem>
                                     ))}
                                 </DropdownMenu>

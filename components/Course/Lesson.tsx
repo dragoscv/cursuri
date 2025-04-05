@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useContext, useCallback } from 'react'
 import { Card } from '@heroui/react'
 import { useRouter } from 'next/navigation'
 import { AppContext } from '@/components/AppContext'
-import { AppContextProps, Lesson as LessonType } from '@/types'
+import { AppContextProps, Lesson as LessonInterface } from '@/types'
 
 // Import our modular components
 import VideoPlayer from '@/components/Lesson/Video/VideoPlayer'
@@ -15,7 +15,7 @@ import Notes from '@/components/Lesson/Notes/Notes'
 import ResourcesList from '@/components/Lesson/Resources/ResourcesList'
 
 interface LessonProps {
-    lesson: LessonType;
+    lesson: LessonInterface;
     onClose: () => void;
 }
 
@@ -49,13 +49,13 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
     useEffect(() => {
         if (courseId && lessons[courseId]) {
             const courseLessons = Object.values(lessons[courseId])
-                .sort((a: LessonType, b: LessonType) => {
+                .sort((a: LessonInterface, b: LessonInterface) => {
                     const orderA = a.order || 0
                     const orderB = b.order || 0
                     return orderA - orderB
                 })
 
-            const currentIndex = courseLessons.findIndex((l: LessonType) => l.id === lesson.id)
+            const currentIndex = courseLessons.findIndex((l: LessonInterface) => l.id === lesson.id)
 
             if (currentIndex > 0) {
                 setPrevLessonId(courseLessons[currentIndex - 1].id)
@@ -261,7 +261,7 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
 
         // Find current lesson index
         const sortedLessons = Object.values(lessons[courseId])
-            .sort((a: LessonType, b: LessonType) => {
+            .sort((a: LessonInterface, b: LessonInterface) => {
                 const orderA = a.order || 0;
                 const orderB = b.order || 0;
                 return orderA - orderB;
@@ -294,8 +294,8 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
                         onEnded={handleVideoEnded}
                         onMarkComplete={handleMarkComplete}
                         saveCurrentProgress={saveCurrentProgress}
-                        videoRef={videoRef}
-                        videoContainerRef={videoContainerRef}
+                        videoRef={videoRef as React.RefObject<HTMLVideoElement>}
+                        videoContainerRef={videoContainerRef as React.RefObject<HTMLDivElement>}
                     />
 
                     {/* Lesson Content */}
@@ -346,7 +346,7 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
                             notes={notes}
                             onNotesChange={setNotes}
                             onSaveNotes={saveNotes}
-                            notesRef={notesRef}
+                            notesRef={notesRef as React.RefObject<HTMLTextAreaElement>}
                         />
                     </Card>
 

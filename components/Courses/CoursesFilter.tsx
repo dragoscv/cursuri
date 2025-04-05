@@ -109,7 +109,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
                                     onClick={() => handleCategoryChange(category)}
                                     className={selectedCategory === category ? 'bg-indigo-100 dark:bg-indigo-900/30' : ''}
                                 >
-                                    {category}
+                                    <div>{category}</div>
                                 </DropdownItem>
                             ))}
                         </DropdownMenu>

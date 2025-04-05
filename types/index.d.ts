@@ -22,7 +22,7 @@ export interface AppContextProps {
     user: User | null;
     openModal: (modal: ModalProps) => void;
     closeModal: (id: string) => void;
-    updateModal: (modal: string, props: ModalProps) => void;
+    updateModal: (modal: Partial<ModalProps>) => void;
     products: any[];
     isAdmin: boolean;
     courses: Record<string, Course>;
@@ -180,52 +180,43 @@ export interface CourseModule {
 }
 
 /**
- * Interface for a lesson within a course.
+ * Define the LessonType enum to specify the type of lesson (video, text, etc.)
+ */
+export enum LessonType {
+    VIDEO = 'video',
+    TEXT = 'text',
+    QUIZ = 'quiz',
+    CODING = 'coding',
+    EXERCISE = 'exercise'
+}
+
+/**
+ * Define the Lesson interface that represents a lesson in a course
  */
 export interface Lesson {
-    /** The unique identifier of the lesson. */
     id: string;
-    /** The course ID the lesson belongs to. */
-    courseId?: string;
-    /** The name/title of the lesson. */
     name: string;
-    /** The title of the lesson (alternative to name) */
-    title?: string;
-    /** The description of the lesson. */
     description?: string;
-    /** The file URL for the lesson video/content. */
-    file: string;
-    /** Video URL for the lesson */
-    videoUrl?: string;
-    /** HTML content for the lesson. */
     content?: string;
-    /** Whether the lesson has a quiz. */
-    hasQuiz?: boolean;
-    /** The resources associated with the lesson. */
-    resources?: Resource[];
-    /** The order/position of the lesson within the course. */
+    file?: string;
+    videoUrl?: string;
+    thumbnail?: string;
     order?: number;
-    /** The duration of the lesson. */
-    duration?: string;
-    /** Estimated time to complete the lesson */
-    estimatedTime?: string;
-    /** Whether the lesson is locked or not */
-    isLocked?: boolean;
-    /** Status of the lesson (e.g., 'published', 'draft') */
-    status?: string;
-    /** Whether the lesson is free for all users */
     isFree?: boolean;
-    /** Transcription of the lesson audio */
-    transcription?: string;
-    /** Captions for the lesson video */
-    captions?: {
-        [language: string]: {
-            url?: string;
-            content?: string;
-        };
-    };
-    /** Whether captions and transcriptions are being processed */
-    processingCaptions?: boolean;
+    duration?: string;
+    moduleId?: string;
+    courseId?: string;
+    resources?: LessonResource[];
+    captions?: Record<string, { url?: string, content?: string }>;
+    type?: LessonType;
+    isCompleted?: boolean;
+    lastModified?: number;
+    createdBy?: string;
+    status?: string;
+    hasQuiz?: boolean;
+    isLocked?: boolean;
+    estimatedTime?: string;
+    title?: string; // Some components use title instead of name
 }
 
 /**
@@ -306,6 +297,8 @@ export interface UserPaidProduct {
     status?: string;
     /** The purchase date. */
     purchaseDate?: string | Date;
+    /** The creation timestamp */
+    created?: number;
 }
 
 /**

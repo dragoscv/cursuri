@@ -28,7 +28,7 @@ export default function PaymentHistory() {
         // Create enhanced payment objects with course info
         const enhancedPayments = userPaidProducts.map(payment => {
             const courseId = payment.metadata?.courseId;
-            const course = courses[courseId];
+            const course = courseId ? courses[courseId] : undefined;
 
             if (!course) return null;
 
@@ -40,7 +40,7 @@ export default function PaymentHistory() {
                 id: payment.id,
                 courseId,
                 courseName: course.name,
-                date: new Date(payment.created * 1000),
+                date: payment.created ? new Date(payment.created * 1000) : new Date(),
                 amount: priceAmount / 100, // Convert from cents to whole currency
                 currency,
                 status: payment.status,
@@ -53,13 +53,14 @@ export default function PaymentHistory() {
         if (searchTerm) {
             const term = searchTerm.toLowerCase();
             filtered = filtered.filter(payment =>
-                payment.courseName.toLowerCase().includes(term) ||
-                payment.invoiceId.toLowerCase().includes(term)
+                payment?.courseName.toLowerCase().includes(term) ||
+                payment?.invoiceId.toLowerCase().includes(term)
             );
         }
 
         // Apply sorting
         filtered.sort((a, b) => {
+            if (!a || !b) return 0;
             const comparison = a.date.getTime() - b.date.getTime();
             return sortOrder === 'asc' ? comparison : -comparison;
         });

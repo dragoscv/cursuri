@@ -20,8 +20,8 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({ course, lessons = 
     const [selectedTab, setSelectedTab] = React.useState(tabParam || "overview");
 
     // Update URL when tab changes
-    const handleTabChange = (key: string) => {
-        setSelectedTab(key);
+    const handleTabChange = (key: React.Key) => {
+        setSelectedTab(key as string);
         if (courseId) {
             router.push(`/courses/${courseId}?tab=${key}`, { scroll: false });
         }
