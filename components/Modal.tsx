@@ -29,8 +29,7 @@ import { ModalProps } from "@/types";
  * @param classNames - Custom class names to be applied to the modal.
  * @returns A modal component.
  */
-export default function ModalComponent({ isOpen, onClose, hideCloseIcon, hideCloseButton, backdrop, size, scrollBehavior, isDismissable, modalHeader, modalBody, footerDisabled, footerButtonClick, footerButtonText, modalBottomComponent, classNames }: ModalProps) {
-
+export default function ModalComponent({ isOpen, onClose, hideCloseIcon, hideCloseButton, backdrop, size, scrollBehavior, isDismissable, modalHeader, modalBody, footerDisabled, footerButtonClick, footerButtonText, modalBottomComponent, classNames = {} }: ModalProps) {
 
     //prevent back button press and replace with modal close
     useEffect(() => {
@@ -44,31 +43,79 @@ export default function ModalComponent({ isOpen, onClose, hideCloseIcon, hideClo
         }
     }, [isOpen, onClose])
 
+    // Ensure we have a working close handler
+    const handleClose = () => {
+        if (onClose) {
+            onClose();
+        }
+    };
+
+    // Deep merge function for classNames objects
+    const mergeClassNames = (defaultClasses: Record<string, string>, customClasses: Record<string, any> = {}) => {
+        const result: Record<string, string> = { ...defaultClasses };
+
+        // For each custom class, override the default
+        Object.keys(customClasses).forEach(key => {
+            if (result[key]) {
+                result[key] = `${result[key]} ${customClasses[key]}`;
+            } else {
+                result[key] = customClasses[key];
+            }
+        });
+
+        return result;
+    };
+
+    // Default class names
+    const defaultClassNames = {
+        backdrop: "z-50 backdrop-blur-md backdrop-saturate-150 bg-white/70 dark:bg-black/60 w-screen min-h-[100dvh] fixed inset-0",
+        wrapper: "z-50 min-h-[100dvh] w-full flex flex-col justify-center items-center overflow-hidden",
+        base: "z-50 flex min-h-[100dvh] w-full flex-col justify-start items-end outline-none",
+        body: "z-50 flex flex-col justify-start items-center w-full",
+        header: "flex flex-row justify-between items-center w-full p-2 border-b border-b-gray-200 dark:border-b-gray-200/20 text-gray-900 dark:text-gray-100",
+        closeButton: "z-50 flex flex-row justify-end items-center rounded-full text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-800/20 p-2 pr-4 cursor-pointer scale-150",
+    };
+
+    // Merge default and custom classNames
+    const mergedClassNames = mergeClassNames(defaultClassNames, classNames);
+
     return (
         <Modal
             isOpen={isOpen}
-            onClose={onClose}
+            onClose={handleClose}
             hideCloseButton={hideCloseIcon}
             backdrop={backdrop ? backdrop : 'blur'}
             size={size}
-            classNames={{
-                backdrop: "z-50 backdrop-blur-md backdrop-saturate-150 bg-white/70 dark:bg-black/60 w-screen min-h-[100dvh] fixed inset-0",
-                wrapper: "z-50 min-h-[100dvh] w-full flex flex-col justify-center items-center overflow-hidden",
-                base: "z-50 flex min-h-[100dvh] w-full flex-col justify-start items-end outline-none",
-                body: "z-50 flex flex-col justify-start items-center w-full",
-                header: "flex flex-row justify-between items-center w-full p-2 border-b border-b-gray-200 dark:border-b-gray-200/20 text-gray-900 dark:text-gray-100",
-                closeButton: "z-50 flex flex-row justify-end items-center rounded-full text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-800/20 p-2 pr-4 cursor-pointer scale-150",
-            }}
+            classNames={mergedClassNames}
             scrollBehavior={scrollBehavior ? scrollBehavior : 'inside'}
             isDismissable={isDismissable}
         >
-            <ModalContent
-            // className='max-h-[100dvh] overflow-hidden'
-            >
-                {(onClose) => (
+            <ModalContent>
+                {(closeModal) => (
                     <>
                         <ModalHeader>
                             {modalHeader}
+                            {!hideCloseIcon && (
+                                <div
+                                    className="cursor-pointer p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800/20"
+                                    onClick={handleClose}
+                                >
+                                    <svg
+                                        className="w-5 h-5"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M6 18L18 6M6 6l12 12"
+                                        />
+                                    </svg>
+                                </div>
+                            )}
                         </ModalHeader>
                         <ModalBody
                             className='flex flex-col gap-2 w-full h-full p-0'
@@ -92,7 +139,7 @@ export default function ModalComponent({ isOpen, onClose, hideCloseIcon, hideClo
                                         color="danger"
                                         variant="light"
                                         className='text-gray-900 dark:text-gray-100'
-                                        onPress={onClose}
+                                        onClick={handleClose}
                                     >
                                         Close
                                     </Button>
