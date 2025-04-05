@@ -159,7 +159,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                     </Button>
                 ) : (
                     isLoading ? (
-                        <LoadingButton 
+                        <LoadingButton
                             className="w-full bg-gradient-to-r from-indigo-600 via-purple-500 to-indigo-700 mb-4 py-6 shadow-md hover:shadow-lg transition-all duration-300"
                             size="lg"
                             loadingText="Processing payment..."
@@ -169,12 +169,12 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                             {/* Decorative corner highlights */}
                             <div className="absolute -top-1 -left-1 w-8 h-8 border-t-2 border-l-2 border-indigo-300 rounded-tl-lg opacity-70"></div>
                             <div className="absolute -bottom-1 -right-1 w-8 h-8 border-b-2 border-r-2 border-indigo-300 rounded-br-lg opacity-70"></div>
-                            
+
                             {/* Shimmer effect overlay */}
                             <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-10">
                                 <div className="shimmer-effect"></div>
                             </div>
-                            
+
                             {/* Main button */}
                             <Button
                                 color="primary"
@@ -185,7 +185,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                             >
                                 <span className="relative z-10 tracking-wide font-semibold text-white flex items-center gap-2 transition-all duration-300 group-hover:tracking-wider">
                                     {course.isFree ? 'Enroll Now - Free' : 'Buy Now'}
-                                    
+
                                     {/* Arrow that moves on hover */}
                                     {!course.isFree && (
                                         <svg className="w-4 h-4 transition-transform duration-500 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -193,7 +193,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                                         </svg>
                                     )}
                                 </span>
-                                
+
                                 {/* Background gradient overlay that changes on hover */}
                                 <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/50 via-purple-400/50 to-fuchsia-500/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"></div>
                             </Button>

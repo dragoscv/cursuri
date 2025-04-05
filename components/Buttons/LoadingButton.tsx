@@ -19,9 +19,9 @@ export const LoadingButton: React.FC<LoadingButtonProps> = ({
     };
 
     return (
-        <button 
-            disabled 
-            type="button" 
+        <button
+            disabled
+            type="button"
             className={`font-medium rounded-lg border bg-gradient-to-r from-indigo-600 via-purple-500 to-indigo-700 text-white flex items-center justify-center transition-all ${sizeClasses[size]} ${className}`}
         >
             <svg aria-hidden="true" role="status" className="inline w-5 h-5 mr-3 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
