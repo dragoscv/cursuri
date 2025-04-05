@@ -117,9 +117,9 @@ export default function ProfileCourses() {
 
     return (
         <div>
-            <div className="mb-6">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">My Courses</h1>
-                <p className="text-gray-600 dark:text-gray-400">
+            <div className="bg-gradient-to-r from-indigo-600/10 via-purple-600/10 to-pink-600/10 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-white/10 dark:border-gray-800/50 shadow-xl">
+                <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">My Courses</h1>
+                <p className="text-gray-600 dark:text-gray-300">
                     Access your enrolled courses and track your learning progress.
                 </p>
             </div>

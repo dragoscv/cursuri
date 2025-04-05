@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import AddCourse from "./Course/AddCourse";
 import AddLesson from "./Course/AddLesson";
 import { Course, Lesson, CourseWithPriceProduct } from "@/types";
+import { useRouter } from 'next/navigation';
 
 export default function Admin() {
     const [selectedTab, setSelectedTab] = useState<string>("courses");
@@ -20,6 +21,8 @@ export default function Admin() {
         throw new Error("You probably forgot to put <AppProvider>.");
     }
     const { courses, lessons, openModal, closeModal, isAdmin, products, getCourseLessons, user } = context;
+
+    const router = useRouter();
 
     // Redirect if not admin
     useEffect(() => {
@@ -38,49 +41,23 @@ export default function Admin() {
     }, [selectedCourse, getCourseLessons]);
 
     const handleAddCourse = (): void => {
-        openModal({
-            id: 'add-course',
-            isOpen: true,
-            hideCloseButton: false,
-            backdrop: 'blur',
-            size: 'full',
-            scrollBehavior: 'inside',
-            isDismissable: true,
-            modalHeader: 'Add Course',
-            modalBody: <AddCourse onClose={() => closeModal('add-course')} />,
-            headerDisabled: true,
-            footerDisabled: true,
-            noReplaceURL: true,
-            onClose: () => closeModal('add-course'),
-        });
+        router.push('/admin/courses/add');
     };
 
     const handleEditCourse = (course: CourseWithPriceProduct): void => {
-        setSelectedCourse(course);
-        // Switch to the course details tab
-        setSelectedTab("courseDetails");
+        router.push(`/admin/courses/${course.id}/edit`);
     };
 
     const handleAddLesson = (courseId: string): void => {
-        openModal({
-            id: 'addLesson',
-            isOpen: true,
-            hideCloseButton: false,
-            backdrop: 'blur',
-            size: 'full',
-            scrollBehavior: 'inside',
-            isDismissable: true,
-            modalHeader: `Add Lesson`,
-            modalBody: <AddLesson courseId={courseId} onClose={() => closeModal('addLesson')} />,
-            footerDisabled: true,
-            noReplaceURL: true,
-            onClose: () => closeModal('addLesson'),
-        });
+        router.push(`/admin/courses/${courseId}/lessons/add`);
     };
 
     const handleEditLesson = (lesson: Lesson): void => {
-        // Edit lesson functionality will be implemented here
-        console.log("Edit lesson:", lesson);
+        if (!lesson.courseId) {
+            console.error("Lesson is missing courseId:", lesson);
+            return;
+        }
+        router.push(`/admin/courses/${lesson.courseId}/lessons/${lesson.id}/edit`);
     };
 
     // Helper function to safely format price

@@ -9,6 +9,7 @@ import Link from 'next/link';
 import StatsCard from '@/components/Profile/StatsCard';
 import DashboardProgress from '@/components/Profile/DashboardProgress';
 import RecentActivity from '@/components/Profile/RecentActivity';
+import ProfileHeader from '@/components/Profile/ProfileHeader';
 
 export default function ProfileDashboard() {
     const context = useContext(AppContext);
@@ -129,12 +130,10 @@ export default function ProfileDashboard() {
 
     return (
         <>
-            <div className="mb-6">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Your Learning Dashboard</h1>
-                <p className="text-gray-600 dark:text-gray-400">
-                    Track your progress, view statistics, and continue learning.
-                </p>
-            </div>
+            <ProfileHeader
+                title="Your Learning Dashboard"
+                description="Track your progress, view statistics, and continue learning."
+            />
 
             {/* Stats Overview Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

@@ -368,7 +368,15 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             includePrices: true,
             activeOnly: true,
         }).then((products) => {
-            dispatch({ type: 'SET_PRODUCTS', payload: products });
+            // Filter products by app name in metadata
+            const appName = process.env.NEXT_PUBLIC_APP_NAME;
+            const filteredProducts = appName
+                ? products.filter(product =>
+                    product.metadata && product.metadata.app === appName
+                )
+                : products;
+
+            dispatch({ type: 'SET_PRODUCTS', payload: filteredProducts });
         });
     }, []);
 

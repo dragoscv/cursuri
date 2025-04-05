@@ -11,6 +11,7 @@ export default function AddLesson(props: any) {
 
     const [lessonName, setLessonName] = useState("")
     const [lessonDescription, setLessonDescription] = useState("")
+    const [repoUrl, setRepoUrl] = useState("")
     const [loading, setLoading] = useState(false)
     const [file, setFile] = useState<any>(null)
     const [generatingCaptions, setGeneratingCaptions] = useState(false)
@@ -20,7 +21,7 @@ export default function AddLesson(props: any) {
     if (!context) {
         throw new Error("You probably forgot to put <AppProvider>.")
     }
-    const { products, lessons } = context
+    const { lessons } = context
 
     useEffect(() => {
         // If lessonId is provided, we're in edit mode
@@ -28,7 +29,28 @@ export default function AddLesson(props: any) {
             const lesson = lessons[courseId][lessonId]
             setLessonName(lesson.name || "")
             setLessonDescription(lesson.description || "")
+            setRepoUrl(lesson.repoUrl || "")
             setEditMode(true)
+        } else if (lessonId && courseId) {
+            // If lessonId is provided but not found in context, fetch it directly
+            const fetchLessonData = async () => {
+                try {
+                    const lessonRef = doc(firestoreDB, `courses/${courseId}/lessons/${lessonId}`)
+                    const lessonSnap = await getDoc(lessonRef)
+
+                    if (lessonSnap.exists()) {
+                        const lessonData = lessonSnap.data()
+                        setLessonName(lessonData.name || "")
+                        setLessonDescription(lessonData.description || "")
+                        setRepoUrl(lessonData.repoUrl || "")
+                        setEditMode(true)
+                    }
+                } catch (error) {
+                    console.error("Error fetching lesson data:", error)
+                }
+            }
+
+            fetchLessonData()
         }
     }, [lessonId, courseId, lessons])
 
@@ -49,6 +71,7 @@ export default function AddLesson(props: any) {
                 const lesson = {
                     name: lessonName,
                     description: lessonDescription,
+                    repoUrl: repoUrl,
                     file: downloadURL,
                     status: "active"
                 }
@@ -61,7 +84,7 @@ export default function AddLesson(props: any) {
                 })
             });
         });
-    }, [lessonName, lessonDescription, onClose, courseId, file]);
+    }, [lessonName, lessonDescription, repoUrl, onClose, courseId, file]);
 
     const updateLesson = useCallback(() => {
         if (!lessonId) return;
@@ -72,6 +95,7 @@ export default function AddLesson(props: any) {
         const updatedData: any = {
             name: lessonName,
             description: lessonDescription,
+            repoUrl: repoUrl
         };
 
         if (file) {
@@ -101,7 +125,7 @@ export default function AddLesson(props: any) {
                 console.log(error);
             });
         }
-    }, [lessonId, courseId, lessonName, lessonDescription, file, onClose]);
+    }, [lessonId, courseId, lessonName, lessonDescription, repoUrl, file, onClose]);
 
     const generateCaptionsAndTranscriptions = useCallback(async () => {
         if (!lessonId) return;
@@ -157,6 +181,17 @@ export default function AddLesson(props: any) {
                         placeholder="Lesson description"
                         value={lessonDescription}
                         onChange={(e) => setLessonDescription(e.target.value)}
+                    />
+                </div>
+                <div className="flex flex-col w-full">
+                    <label htmlFor="repoUrl" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Repository URL</label>
+                    <input
+                        type="url"
+                        id="repoUrl"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="https://github.com/username/repo"
+                        value={repoUrl}
+                        onChange={(e) => setRepoUrl(e.target.value)}
                     />
                 </div>
                 <div className="flex flex-col w-full">
