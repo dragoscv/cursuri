@@ -146,11 +146,11 @@ export default function Courses() {
         <div id="courses-section" className="w-full py-16 relative" ref={ref}>
             {/* AI-themed background elements */}
             <div className="absolute inset-0 overflow-hidden -z-10">
-                <div className="absolute left-0 right-0 bg-gradient-to-b from-indigo-900/5 to-transparent h-40 -top-10 backdrop-blur-[1px]"></div>
+                <div className="absolute left-0 right-0 bg-gradient-to-b from-[color:var(--ai-primary)]/5 to-transparent h-40 -top-10 backdrop-blur-[1px]"></div>
 
                 {/* Binary data streams */}
                 <div className="absolute right-0 top-1/4 w-40 h-[500px] opacity-10 overflow-hidden select-none pointer-events-none hidden lg:block">
-                    <div className="absolute inset-0 flex flex-col items-end gap-1 text-[10px] font-mono text-indigo-600 animate-flow-down overflow-hidden whitespace-nowrap">
+                    <div className="absolute inset-0 flex flex-col items-end gap-1 text-[10px] font-mono text-[color:var(--ai-primary)] animate-flow-down overflow-hidden whitespace-nowrap">
                         {[...Array(30)].map((_, i) => (
                             <div key={i} className={`animate-flow-left delay-${i}`}>
                                 {binaryPatterns[i]}
@@ -160,7 +160,7 @@ export default function Courses() {
                 </div>
 
                 <div className="absolute left-0 bottom-1/4 w-40 h-[500px] opacity-10 overflow-hidden select-none pointer-events-none hidden lg:block">
-                    <div className="absolute inset-0 flex flex-col items-start gap-1 text-[10px] font-mono text-indigo-600 animate-flow-up overflow-hidden whitespace-nowrap">
+                    <div className="absolute inset-0 flex flex-col items-start gap-1 text-[10px] font-mono text-[color:var(--ai-primary)] animate-flow-up overflow-hidden whitespace-nowrap">
                         {[...Array(30)].map((_, i) => (
                             <div key={i} className={`animate-flow-right delay-${i}`}>
                                 {binaryPatterns[29 - i]}
@@ -245,13 +245,13 @@ export default function Courses() {
                 transition={{ duration: 0.6 }}
             >
                 <div className="text-center">
-                    <span className="inline-block py-1 px-3 rounded-full text-sm font-medium bg-indigo-100/10 text-indigo-300 border border-indigo-400/30 mb-4">
+                    <span className="inline-block py-1 px-3 rounded-full text-sm font-medium bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]/90 border border-[color:var(--ai-secondary)]/30 mb-4">
                         AI Curriculum
                     </span>
-                    <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:text-4xl">
+                    <h2 className="text-3xl font-bold text-[color:var(--ai-foreground)] mb-4 sm:text-4xl">
                         Cutting-Edge AI Courses
                     </h2>
-                    <p className="max-w-2xl mx-auto text-lg text-gray-600 dark:text-gray-300">
+                    <p className="max-w-2xl mx-auto text-lg text-[color:var(--ai-muted)]">
                         Master the technologies shaping our future with courses designed by AI experts for tomorrow's innovators.
                     </p>
                 </div>
@@ -261,7 +261,7 @@ export default function Courses() {
                     {aiTopics.map((topic, index) => (
                         <div
                             key={topic}
-                            className="py-1.5 px-3 rounded-full text-sm bg-white/10 dark:bg-white/5 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/30 backdrop-blur-sm cursor-pointer hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors"
+                            className="py-1.5 px-3 rounded-full text-sm bg-white/10 dark:bg-white/5 text-[color:var(--ai-primary)] dark:text-[color:var(--ai-primary)]/80 border border-[color:var(--ai-card-border)] backdrop-blur-sm cursor-pointer hover:bg-[color:var(--ai-primary)]/10 transition-colors"
                         >
                             {topic}
                         </div>
@@ -288,7 +288,7 @@ export default function Courses() {
                         <motion.div
                             key={course.id}
                             id={course.id}
-                            className="group flex flex-col overflow-hidden rounded-xl bg-white dark:bg-gray-800/80 backdrop-blur-sm shadow-lg hover:shadow-xl relative"
+                            className="group flex flex-col overflow-hidden rounded-xl bg-[color:var(--ai-card-bg)] backdrop-blur-sm shadow-lg hover:shadow-xl relative"
                             variants={courseVariants}
                             whileHover={{
                                 y: -10,
@@ -296,7 +296,7 @@ export default function Courses() {
                             }}
                         >
                             {/* Decorative gradient border */}
-                            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 -z-10 blur transition-opacity duration-300" style={{ transform: 'translate(-2px, -2px)' }} />
+                            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)] opacity-0 group-hover:opacity-100 -z-10 blur transition-opacity duration-300" style={{ transform: 'translate(-2px, -2px)' }} />
 
                             <div className="relative overflow-hidden">
                                 {/* Course difficulty badge */}
@@ -349,10 +349,10 @@ export default function Courses() {
                                     <div className="absolute inset-0 bg-[url('/circuit-pattern.svg')] bg-cover mix-blend-overlay opacity-40 z-10"></div>
 
                                     {/* Interactive hover effect */}
-                                    <div className="absolute inset-0 bg-indigo-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
+                                    <div className="absolute inset-0 bg-[color:var(--ai-primary)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
 
                                     {/* Animated glow */}
-                                    <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-600 opacity-0 group-hover:opacity-30 blur-md transition-opacity duration-300 z-[5]"></div>
+                                    <div className="absolute -inset-1 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] opacity-0 group-hover:opacity-30 blur-md transition-opacity duration-300 z-[5]"></div>
 
                                     <img
                                         src={course.priceProduct && products?.find((product: any) => product?.id === course.priceProduct?.id)?.images?.[0] || null}
@@ -382,7 +382,7 @@ export default function Courses() {
                             <div className="flex flex-1 flex-col p-6">
                                 {/* Course title */}
                                 <h3
-                                    className="mb-3 text-xl font-semibold tracking-tight text-gray-900 dark:text-white cursor-pointer group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-300"
+                                    className="mb-3 text-xl font-semibold tracking-tight text-[color:var(--ai-foreground)] cursor-pointer group-hover:text-[color:var(--ai-primary)] transition-colors duration-300"
                                     onClick={() => handleCourseClick(course)}
                                 >
                                     {course.name}
@@ -390,7 +390,7 @@ export default function Courses() {
 
                                 {/* Course description */}
                                 <p
-                                    className="mb-4 flex-1 text-sm text-gray-600 dark:text-gray-300 line-clamp-2"
+                                    className="mb-4 flex-1 text-sm text-[color:var(--ai-muted)] line-clamp-2"
                                     onClick={() => handleCourseClick(course)}
                                 >
                                     {course.description || 'Master cutting-edge AI techniques and practical implementations to power the future of technology in our interconnected world.'}
@@ -405,7 +405,7 @@ export default function Courses() {
                                         {[1, 2, 3, 4, 5].map((rating) => (
                                             <svg
                                                 key={rating}
-                                                className={`w-4 h-4 ${rating <= 4 ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600'}`}
+                                                className={`w-4 h-4 ${rating <= 4 ? 'text-[color:var(--ai-accent)]' : 'text-[color:var(--ai-muted)]/30'}`}
                                                 fill="currentColor"
                                                 viewBox="0 0 20 20"
                                             >
@@ -413,14 +413,14 @@ export default function Courses() {
                                             </svg>
                                         ))}
                                     </div>
-                                    <span className="ml-2 text-sm font-medium text-gray-600 dark:text-gray-400">4.8 (42 reviews)</span>
+                                    <span className="ml-2 text-sm font-medium text-[color:var(--ai-muted)]">4.8 (42 reviews)</span>
                                 </div>
 
                                 <div className="mt-4 flex items-center justify-between">
                                     {/* Price with futuristic styling */}
                                     <div className="relative">
-                                        <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full opacity-0 group-hover:opacity-70 blur-md transition-opacity duration-300"></div>
-                                        <div className="relative text-2xl font-bold text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full">
+                                        <div className="absolute -inset-1 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-full opacity-0 group-hover:opacity-70 blur-md transition-opacity duration-300"></div>
+                                        <div className="relative text-2xl font-bold text-[color:var(--ai-foreground)] bg-[color:var(--ai-card-bg)]/80 px-3 py-1 rounded-full">
                                             {amount} {currency}
                                         </div>
                                     </div>
@@ -442,7 +442,7 @@ export default function Courses() {
                                             <Button
                                                 color="primary"
                                                 onClick={() => buyCourse(priceId, course.id)}
-                                                className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:shadow-lg hover:shadow-indigo-500/30 transform group-hover:scale-105 transition-all duration-300"
+                                                className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] hover:shadow-lg hover:shadow-[color:var(--ai-primary)]/30 transform group-hover:scale-105 transition-all duration-300"
                                             >
                                                 Enroll Now
                                             </Button>

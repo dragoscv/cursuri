@@ -40,9 +40,9 @@ export default function UserDropdown() {
             placement="bottom-end"
             backdrop="blur"
             classNames={{
-                base: "py-1 px-1 rounded-lg bg-gradient-to-br from-white to-default-200 dark:from-gray-800/90 dark:to-gray-900/70 z-[100]",
+                base: "py-1 px-1 rounded-lg bg-gradient-to-br from-white to-default-200 dark:from-[color:var(--ai-card-bg)]/90 dark:to-[color:var(--ai-background)]/70 z-[100]",
                 arrow: "bg-default-200",
-                backdrop: "fixed pointer-events-none backdrop-blur-md backdrop-saturate-150 bg-white/70 dark:bg-black/60 w-screen h-screen inset-0",
+                backdrop: "fixed pointer-events-none backdrop-blur-md backdrop-saturate-150 bg-white/70 dark:bg-[color:var(--ai-background)]/60 w-screen h-screen inset-0",
                 content: "z-[100] flex flex-col justify-start items-end shadow-xl",
             }}
             className="z-[100]"
@@ -95,11 +95,11 @@ export default function UserDropdown() {
                             textValue="Profile Details"
                         >
                             <div
-                                className="cursor-pointer hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg p-2 border-0 transition-colors"
+                                className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 rounded-lg p-2 border-0 transition-colors"
                                 onClick={() => router.push('/profile')}
                             >
-                                <p className="font-semibold">Signed in as</p>
-                                <p className="font-semibold">{user?.displayName ? user?.displayName : user?.email ? user?.email : user?.phoneNumber ? user?.phoneNumber : user?.uid}</p>
+                                <p className="font-semibold text-[color:var(--ai-foreground)]">Signed in as</p>
+                                <p className="font-semibold text-[color:var(--ai-foreground)]">{user?.displayName ? user?.displayName : user?.email ? user?.email : user?.phoneNumber ? user?.phoneNumber : user?.uid}</p>
                             </div>
                         </DropdownItem>
                     )}

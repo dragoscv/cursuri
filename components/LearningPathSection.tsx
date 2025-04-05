@@ -10,25 +10,25 @@ export default function LearningPathSection() {
             number: "01",
             title: "Core Fundamentals",
             description: "Master the essential building blocks of modern web development with HTML, CSS, and JavaScript.",
-            color: "from-blue-500 to-cyan-400"
+            color: "from-[color:var(--ai-primary)] to-[color:var(--ai-primary)]/70"
         },
         {
             number: "02",
             title: "Frontend Development",
             description: "Build interactive user interfaces with React, TypeScript, and modern CSS frameworks.",
-            color: "from-indigo-500 to-purple-400"
+            color: "from-[color:var(--ai-secondary)] to-[color:var(--ai-secondary)]/70"
         },
         {
             number: "03",
             title: "Backend Integration",
             description: "Create robust server-side applications with Node.js and integrate with databases.",
-            color: "from-emerald-500 to-teal-400"
+            color: "from-[color:var(--ai-accent)] to-[color:var(--ai-accent)]/70"
         },
         {
             number: "04",
             title: "Full Stack Projects",
             description: "Combine frontend and backend skills to build complete, production-ready applications.",
-            color: "from-orange-500 to-amber-400"
+            color: "from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
         }
     ];
 
@@ -45,14 +45,14 @@ export default function LearningPathSection() {
     };
 
     return (
-        <section className="py-24 bg-gray-50 dark:bg-gray-900 overflow-hidden">
+        <section className="py-24 bg-white dark:bg-[color:var(--ai-background)] overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <ScrollAnimationWrapper>
                     <div className="text-center mb-16">
-                        <h2 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">
+                        <h2 className="text-4xl font-bold mb-4 text-[color:var(--ai-foreground)]">
                             Your Learning Journey
                         </h2>
-                        <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                        <p className="text-xl text-[color:var(--ai-muted)] max-w-3xl mx-auto">
                             A structured path to take you from basics to professional developer
                         </p>
                     </div>
@@ -60,7 +60,7 @@ export default function LearningPathSection() {
 
                 <div className="relative">
                     {/* Connecting line */}
-                    <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-indigo-500 via-purple-500 to-pink-500 hidden md:block"></div>
+                    <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)] hidden md:block"></div>
 
                     <div className="space-y-24 relative">
                         {pathSteps.map((step, index) => (
@@ -80,15 +80,15 @@ export default function LearningPathSection() {
 
                                         {/* Content section with glass morphism effect */}
                                         <motion.div
-                                            className="relative flex-grow p-8 rounded-xl bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border border-gray-200 dark:border-gray-700 shadow-xl"
+                                            className="relative flex-grow p-8 rounded-xl bg-white/80 dark:bg-[color:var(--ai-card-bg)]/90 backdrop-blur-md border border-[color:var(--ai-card-border)] shadow-xl"
                                             variants={fadeInUpVariants}
                                             initial="hidden"
                                             whileInView="visible"
                                             viewport={{ once: true, margin: "-100px" }}
                                             transition={{ delay: index * 0.2 }}
                                         >
-                                            <h3 className="text-2xl font-bold mb-3 text-gray-900 dark:text-white">{step.title}</h3>
-                                            <p className="text-gray-600 dark:text-gray-300">{step.description}</p>
+                                            <h3 className="text-2xl font-bold mb-3 text-[color:var(--ai-foreground)]">{step.title}</h3>
+                                            <p className="text-[color:var(--ai-muted)]">{step.description}</p>
                                         </motion.div>
                                     </div>
                                 </ScrollAnimationWrapper>
@@ -96,7 +96,7 @@ export default function LearningPathSection() {
                                 {/* Dots pattern for visual interest */}
                                 <div className="absolute inset-0 opacity-5 pointer-events-none">
                                     <div className="h-full w-full" style={{
-                                        backgroundImage: 'radial-gradient(rgba(99, 102, 241, 0.6) 1px, transparent 1px)',
+                                        backgroundImage: 'radial-gradient(rgba(var(--ai-primary-rgb), 0.6) 1px, transparent 1px)',
                                         backgroundSize: '20px 20px'
                                     }}></div>
                                 </div>

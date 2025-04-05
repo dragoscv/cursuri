@@ -100,7 +100,7 @@ export default function TechStackSection() {
     };
 
     return (
-        <section className="relative py-20 bg-gray-50 dark:bg-gray-900 overflow-hidden">
+        <section className="relative py-20 bg-[color:var(--ai-background)]/80 overflow-hidden">
             {/* Background circuit pattern */}
             <div className="absolute inset-0 opacity-5 dark:opacity-10">
                 <img
@@ -112,10 +112,10 @@ export default function TechStackSection() {
 
             <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <ScrollAnimationWrapper>
-                    <h2 className="text-4xl font-bold text-center mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-purple-400 dark:to-indigo-400">
+                    <h2 className="text-4xl font-bold text-center mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] dark:from-[color:var(--ai-primary)] dark:to-[color:var(--ai-secondary)]">
                         Master Modern Technologies
                     </h2>
-                    <p className="text-xl text-center text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-16">
+                    <p className="text-xl text-center text-[color:var(--ai-muted)] max-w-3xl mx-auto mb-16">
                         Our curriculum is designed around in-demand skills that employers are looking for today
                     </p>
                 </ScrollAnimationWrapper>
@@ -134,7 +134,7 @@ export default function TechStackSection() {
                             direction={index % 2 === 0 ? 'up' : 'down'}
                         >
                             <motion.div
-                                className="flex flex-col items-center p-6 rounded-xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100 dark:border-gray-700 h-full"
+                                className="flex flex-col items-center p-6 rounded-xl bg-white dark:bg-[color:var(--ai-card-bg)] shadow-lg hover:shadow-xl transition-shadow duration-300 border border-[color:var(--ai-card-border)] h-full"
                                 whileHover={{
                                     y: -5,
                                     boxShadow: `0 10px 25px -5px ${tech.color}33, 0 8px 10px -6px ${tech.color}33`,
@@ -144,8 +144,8 @@ export default function TechStackSection() {
                                 <div className="w-16 h-16 mb-4 flex items-center justify-center">
                                     <tech.icon size={48} className={`text-[${tech.color}]`} />
                                 </div>
-                                <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">{tech.name}</h3>
-                                <p className="text-gray-600 dark:text-gray-300 text-center">{tech.description}</p>
+                                <h3 className="text-xl font-bold mb-2 text-[color:var(--ai-foreground)]">{tech.name}</h3>
+                                <p className="text-[color:var(--ai-muted)] text-center">{tech.description}</p>
                             </motion.div>
                         </ScrollAnimationWrapper>
                     ))}

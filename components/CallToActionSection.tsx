@@ -84,7 +84,7 @@ export default function CallToActionSection() {
         <section className="relative py-24 overflow-hidden">
             {/* Background with animated gradient */}
             <div
-                className="absolute inset-0 bg-gradient-to-br from-indigo-950 via-violet-900 to-purple-900"
+                className="absolute inset-0 bg-gradient-to-br from-[color:var(--ai-primary)]/90 via-[color:var(--ai-secondary)]/80 to-[color:var(--ai-accent)]/70"
             />
 
             {/* Animated background elements */}
@@ -156,7 +156,7 @@ export default function CallToActionSection() {
                                     color="primary"
                                     size="lg"
                                     radius="full"
-                                    className="px-8 py-6 text-lg font-medium bg-gradient-to-r from-indigo-500 to-purple-600 hover:shadow-lg hover:shadow-indigo-500/30 transform transition-all duration-300"
+                                    className="px-8 py-6 text-lg font-medium bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] hover:shadow-lg hover:shadow-[color:var(--ai-primary)]/30 transform transition-all duration-300"
                                     onClick={handleGetStarted}
                                 >
                                     Get Started Now
@@ -172,7 +172,7 @@ export default function CallToActionSection() {
                                     color="secondary"
                                     size="lg"
                                     radius="full"
-                                    className="px-8 py-6 text-lg font-medium border-indigo-300 text-indigo-100 backdrop-blur-sm hover:bg-white/10 transform transition-all duration-300"
+                                    className="px-8 py-6 text-lg font-medium border-[color:var(--ai-secondary)]/50 text-white backdrop-blur-sm hover:bg-white/10 transform transition-all duration-300"
                                     as="a"
                                     href="#courses-section"
                                 >

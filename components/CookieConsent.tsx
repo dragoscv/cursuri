@@ -68,11 +68,11 @@ const CookieConsent = () => {
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                     className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:bottom-4 md:max-w-md z-50"
                 >
-                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-4 backdrop-blur-md backdrop-saturate-150">
+                    <div className="bg-white dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-xl border border-[color:var(--ai-card-border)] p-4 backdrop-blur-md backdrop-saturate-150">
                         <div className="flex flex-col gap-3">
                             <div className="flex items-center justify-between">
-                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Cookie Consent</h3>
-                                <div className="text-xs text-gray-500 dark:text-gray-400">
+                                <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)]">Cookie Consent</h3>
+                                <div className="text-xs text-[color:var(--ai-muted)]">
                                     Auto-accept in {Math.max(Math.ceil(timeoutDuration - (progress / 100 * timeoutDuration)), 0)}s
                                 </div>
                             </div>
@@ -84,15 +84,15 @@ const CookieConsent = () => {
                                 color="primary"
                             />
 
-                            <p className="text-sm text-gray-600 dark:text-gray-300">
+                            <p className="text-sm text-[color:var(--ai-muted)]">
                                 We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies, our{' '}
-                                <Link href="/privacy-policy" className="text-indigo-600 dark:text-indigo-400 hover:underline">
+                                <Link href="/privacy-policy" className="text-[color:var(--ai-primary)] hover:underline">
                                     Privacy Policy
                                 </Link>,{' '}
-                                <Link href="/terms-conditions" className="text-indigo-600 dark:text-indigo-400 hover:underline">
+                                <Link href="/terms-conditions" className="text-[color:var(--ai-primary)] hover:underline">
                                     Terms and Conditions
                                 </Link>, and our{' '}
-                                <Link href="/gdpr" className="text-indigo-600 dark:text-indigo-400 hover:underline">
+                                <Link href="/gdpr" className="text-[color:var(--ai-primary)] hover:underline">
                                     GDPR Policy
                                 </Link>.
                             </p>
@@ -110,6 +110,7 @@ const CookieConsent = () => {
                                     color="primary"
                                     size="sm"
                                     onClick={handleAccept}
+                                    className="bg-[color:var(--ai-primary)] hover:bg-[color:var(--ai-primary)]/90"
                                 >
                                     Accept All
                                 </Button>

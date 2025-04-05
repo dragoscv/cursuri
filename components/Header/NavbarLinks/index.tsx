@@ -23,7 +23,7 @@ export default function NavbarLinks() {
             <NavbarItem>
                 <Link
                     href="/#courses-section"
-                    className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition-colors"
                 >
                     Courses
                 </Link>
@@ -31,7 +31,7 @@ export default function NavbarLinks() {
             <NavbarItem>
                 <Link
                     href="#"
-                    className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition-colors"
                 >
                     About
                 </Link>
@@ -39,7 +39,7 @@ export default function NavbarLinks() {
             <NavbarItem>
                 <Link
                     href="#"
-                    className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition-colors"
                 >
                     Contact
                 </Link>

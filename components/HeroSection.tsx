@@ -299,7 +299,7 @@ export default function HeroSection() {
     }
 
     return (
-        <div className="relative w-full bg-gradient-to-br from-indigo-950 via-violet-900 to-purple-900 overflow-hidden">
+        <div className="relative w-full bg-gradient-to-br from-[color:var(--ai-primary)]/90 via-[color:var(--ai-secondary)]/80 to-[color:var(--ai-accent)]/70 overflow-hidden">
             {/* Animated grid background */}
             <div className="absolute inset-0 opacity-10">
                 <div className="absolute inset-0 grid grid-cols-12 gap-2 transform -skew-y-12 scale-150">
@@ -320,14 +320,14 @@ export default function HeroSection() {
             <div
                 className="absolute inset-0 flex items-center justify-center overflow-hidden opacity-30"
                 style={{
-                    background: 'radial-gradient(circle at center, rgba(139, 92, 246, 0.3) 0%, rgba(30, 27, 75, 0.1) 70%)'
+                    background: `radial-gradient(circle at center, rgba(var(--ai-secondary-rgb), 0.3) 0%, rgba(var(--ai-primary-rgb), 0.1) 70%)`
                 }}
             >
                 <svg width="100%" height="100%" viewBox="0 0 800 800" preserveAspectRatio="xMidYMid slice">
                     <defs>
                         <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#8B5CF6" />
-                            <stop offset="100%" stopColor="#6366F1" />
+                            <stop offset="0%" stopColor="var(--ai-secondary)" />
+                            <stop offset="100%" stopColor="var(--ai-primary)" />
                         </linearGradient>
                     </defs>
                     <g>
@@ -378,17 +378,17 @@ export default function HeroSection() {
                 >
                     <div>
                         <motion.h1
-                            className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight"
+                            className="text-4xl md:text-5xl lg:text-6xl font-bold text-[color:var(--ai-foreground-inverse)] tracking-tight"
                             variants={itemVariants}
                         >
                             <span className="block">Master Modern</span>
-                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 to-indigo-300 pb-2">
+                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[color:var(--ai-secondary)] to-[color:var(--ai-primary)] pb-2">
                                 Web Development
                             </span>
                         </motion.h1>
 
                         <motion.p
-                            className="mt-6 text-lg md:text-xl text-indigo-100"
+                            className="mt-6 text-lg md:text-xl text-[color:var(--ai-foreground-inverse)]/90"
                             variants={itemVariants}
                         >
                             Learn in-demand technologies from industry experts. Build real-world projects
@@ -403,7 +403,7 @@ export default function HeroSection() {
                                 color="primary"
                                 size="lg"
                                 radius="full"
-                                className="px-8 py-6 text-lg font-medium bg-gradient-to-r from-indigo-500 to-purple-600 hover:shadow-lg hover:shadow-indigo-500/30 transform hover:-translate-y-1 transition-all duration-300"
+                                className="px-8 py-6 text-lg font-medium bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] hover:shadow-lg hover:shadow-[color:var(--ai-primary)]/30 transform hover:-translate-y-1 transition-all duration-300"
                                 onClick={handleGetStarted}
                             >
                                 Get Started
@@ -414,7 +414,7 @@ export default function HeroSection() {
                                 color="secondary"
                                 size="lg"
                                 radius="full"
-                                className="px-8 py-6 text-lg font-medium border-indigo-300 text-indigo-100 backdrop-blur-sm hover:bg-white/10 transform hover:-translate-y-1 transition-all duration-300"
+                                className="px-8 py-6 text-lg font-medium border-[color:var(--ai-secondary)]/50 text-[color:var(--ai-foreground-inverse)] backdrop-blur-sm hover:bg-white/10 transform hover:-translate-y-1 transition-all duration-300"
                                 as="a"
                                 href="/courses"
                             >
@@ -431,7 +431,7 @@ export default function HeroSection() {
                                     {[1, 2, 3, 4, 5].map((i) => (
                                         <div
                                             key={i}
-                                            className="inline-block h-8 w-8 rounded-full ring-2 ring-indigo-900 overflow-hidden transform hover:scale-110 hover:z-10 transition-all duration-300"
+                                            className="inline-block h-8 w-8 rounded-full ring-2 ring-[color:var(--ai-primary)]/30 overflow-hidden transform hover:scale-110 hover:z-10 transition-all duration-300"
                                         >
                                             <img
                                                 src={`https://i.pravatar.cc/100?img=${i + 10}`}
@@ -441,8 +441,8 @@ export default function HeroSection() {
                                         </div>
                                     ))}
                                 </div>
-                                <div className="text-sm text-indigo-200 font-medium">
-                                    <span className="text-cyan-300 font-semibold">{stats.totalStudents}+</span> developers already enrolled
+                                <div className="text-sm text-[color:var(--ai-foreground-inverse)]/90 font-medium">
+                                    <span className="text-[color:var(--ai-secondary)] font-semibold">{stats.totalStudents}+</span> developers already enrolled
                                 </div>
                             </div>
                         </motion.div>
@@ -455,7 +455,7 @@ export default function HeroSection() {
                             {stats.topTechnologies.map((tech, index) => (
                                 <span
                                     key={tech}
-                                    className="px-3 py-1 text-xs rounded-full bg-indigo-600/20 text-indigo-200 border border-indigo-500/30 backdrop-blur-sm flex items-center"
+                                    className="px-3 py-1 text-xs rounded-full bg-[color:var(--ai-primary)]/20 text-[color:var(--ai-foreground-inverse)]/90 border border-[color:var(--ai-secondary)]/30 backdrop-blur-sm flex items-center"
                                 >
                                     {getTechIcon(tech)}
                                     {tech}
@@ -472,8 +472,8 @@ export default function HeroSection() {
                             transition: { duration: 0.3 }
                         }}
                     >
-                        <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl blur-md opacity-75 animate-pulse" />
-                        <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-gray-900 to-indigo-900 border border-indigo-800/50">
+                        <div className="absolute -inset-0.5 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-2xl blur-md opacity-75 animate-pulse" />
+                        <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-[color:var(--ai-card-bg)] to-[color:var(--ai-primary)]/20 border border-[color:var(--ai-card-border)]">
                             <div
                                 className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.1),transparent)] opacity-50"
                             />
@@ -486,10 +486,10 @@ export default function HeroSection() {
 
                             {/* Futuristic overlay elements */}
                             <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-indigo-950 to-transparent" />
+                                <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-[color:var(--ai-primary)]/40 to-transparent" />
 
-                                <div className="absolute top-4 right-4 flex items-center gap-2 bg-black/30 backdrop-blur-md px-3 py-1.5 rounded-full text-xs text-cyan-300 border border-indigo-500/30">
-                                    <span className="inline-block h-2 w-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                                <div className="absolute top-4 right-4 flex items-center gap-2 bg-black/30 backdrop-blur-md px-3 py-1.5 rounded-full text-xs text-[color:var(--ai-secondary)] border border-[color:var(--ai-secondary)]/30">
+                                    <span className="inline-block h-2 w-2 rounded-full bg-[color:var(--ai-secondary)] animate-pulse"></span>
                                     Project-Based Learning
                                 </div>
 
@@ -497,7 +497,7 @@ export default function HeroSection() {
                                 {techNodes.slice(0, 3).map((tech, i) => (
                                     <div
                                         key={tech}
-                                        className="absolute bg-indigo-600/20 backdrop-blur-sm border border-indigo-500/30 rounded-lg px-2 py-1 text-xs text-indigo-200 flex items-center"
+                                        className="absolute bg-[color:var(--ai-primary)]/20 backdrop-blur-sm border border-[color:var(--ai-secondary)]/30 rounded-lg px-2 py-1 text-xs text-[color:var(--ai-foreground-inverse)]/90 flex items-center"
                                         style={{
                                             top: `${20 + i * 20}%`,
                                             left: `${10 + i * 25}%`,
@@ -519,28 +519,28 @@ export default function HeroSection() {
                         </div>
 
                         {/* Floating stats cards - updated with real data */}
-                        <div className="absolute -bottom-6 -left-6 z-10 rounded-lg bg-white/10 backdrop-blur-md border border-indigo-500/30 shadow-xl p-4 flex items-center gap-3 transform hover:scale-105 transition-transform duration-300">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-purple-700">
-                                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <div className="absolute -bottom-6 -left-6 z-10 rounded-lg bg-white/10 backdrop-blur-md border border-[color:var(--ai-secondary)]/30 shadow-xl p-4 flex items-center gap-3 transform hover:scale-105 transition-transform duration-300">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]">
+                                <svg className="h-6 w-6 text-[color:var(--ai-foreground-inverse)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                                 </svg>
                             </div>
                             <div>
-                                <p className="text-sm font-medium text-white">{stats.totalCourses} Courses Available</p>
-                                <p className="text-xs text-indigo-200">Project-based curriculum</p>
+                                <p className="text-sm font-medium text-[color:var(--ai-foreground-inverse)]">{stats.totalCourses} Courses Available</p>
+                                <p className="text-xs text-[color:var(--ai-foreground-inverse)]/80">Project-based curriculum</p>
                             </div>
                         </div>
 
-                        <div className="absolute -top-6 -right-6 z-10 rounded-lg bg-white/10 backdrop-blur-md border border-indigo-500/30 shadow-xl p-4 transform hover:scale-105 transition-transform duration-300">
+                        <div className="absolute -top-6 -right-6 z-10 rounded-lg bg-white/10 backdrop-blur-md border border-[color:var(--ai-secondary)]/30 shadow-xl p-4 transform hover:scale-105 transition-transform duration-300">
                             <div className="text-center">
-                                <p className="text-sm font-medium text-indigo-200">Student Rating</p>
+                                <p className="text-sm font-medium text-[color:var(--ai-foreground-inverse)]/90">Student Rating</p>
                                 <div className="flex items-center justify-center mt-1">
-                                    <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                    <svg className="h-5 w-5 text-[color:var(--ai-accent)]" viewBox="0 0 20 20" fill="currentColor">
                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                     </svg>
                                 </div>
-                                <p className="mt-1 text-xl font-bold text-white">{stats.avgRating}<span className="text-sm text-indigo-300">/5</span></p>
-                                <p className="text-xs text-indigo-300">from {stats.totalReviews || 42} reviews</p>
+                                <p className="mt-1 text-xl font-bold text-[color:var(--ai-foreground-inverse)]">{stats.avgRating}<span className="text-sm text-[color:var(--ai-foreground-inverse)]/70">/5</span></p>
+                                <p className="text-xs text-[color:var(--ai-foreground-inverse)]/70">from {stats.totalReviews || 42} reviews</p>
                             </div>
                         </div>
                     </motion.div>
@@ -549,9 +549,9 @@ export default function HeroSection() {
 
             {/* Scroll indicator */}
             <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
-                <p className="text-indigo-200 text-sm mb-2">Scroll to explore</p>
+                <p className="text-[color:var(--ai-foreground-inverse)]/80 text-sm mb-2">Scroll to explore</p>
                 <motion.div
-                    className="w-8 h-12 rounded-full border-2 border-indigo-300 flex justify-center p-2"
+                    className="w-8 h-12 rounded-full border-2 border-[color:var(--ai-secondary)]/60 flex justify-center p-2"
                     initial={{ opacity: 0.6 }}
                     animate={{
                         opacity: [0.6, 1, 0.6],
@@ -559,7 +559,7 @@ export default function HeroSection() {
                     }}
                 >
                     <motion.div
-                        className="w-1 h-2 bg-indigo-300 rounded-full"
+                        className="w-1 h-2 bg-[color:var(--ai-secondary)]/80 rounded-full"
                         animate={{
                             y: [0, 15, 0],
                             transition: { duration: 1.5, repeat: Infinity }

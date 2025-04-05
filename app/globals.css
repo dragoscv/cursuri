@@ -501,3 +501,46 @@ html.dark.theme-pink-candy {
     background-position: 100% 100%;
   }
 }
+
+/* Theme-aware button styles */
+.themed-button-primary {
+  background-color: var(--ai-primary);
+  color: white;
+  border: 1px solid var(--ai-primary);
+  transition: all 0.3s ease;
+}
+
+.themed-button-primary:hover {
+  background-color: var(--ai-primary);
+  opacity: 0.9;
+  box-shadow: 0 4px 12px rgba(var(--ai-primary-rgb), 0.3);
+  transform: translateY(-1px);
+}
+
+.themed-button-secondary {
+  background-color: transparent;
+  color: var(--ai-primary);
+  border: 1px solid var(--ai-primary);
+  transition: all 0.3s ease;
+}
+
+.themed-button-secondary:hover {
+  background-color: var(--ai-primary);
+  color: white;
+  box-shadow: 0 4px 12px rgba(var(--ai-primary-rgb), 0.2);
+  transform: translateY(-1px);
+}
+
+.themed-button-success {
+  background-color: var(--ai-success, #10b981);
+  color: white;
+  border: 1px solid var(--ai-success, #10b981);
+  transition: all 0.3s ease;
+}
+
+.themed-button-success:hover {
+  background-color: var(--ai-success, #10b981);
+  opacity: 0.9;
+  box-shadow: 0 4px 12px rgba(var(--ai-success-rgb, 16, 185, 129), 0.3);
+  transform: translateY(-1px);
+}

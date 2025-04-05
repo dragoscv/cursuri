@@ -18,10 +18,10 @@ interface RecentActivityProps {
 
 export default function RecentActivity({ activities }: RecentActivityProps) {
     return (
-        <Card className="border border-gray-200 dark:border-gray-800">
+        <Card className="border border-[color:var(--ai-card-border)]">
             <CardBody>
-                <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
-                    <FiCalendar className="text-indigo-500" />
+                <h2 className="text-lg font-semibold mb-4 text-[color:var(--ai-foreground)] flex items-center gap-2">
+                    <FiCalendar className="text-[color:var(--ai-primary)]" />
                     Recent Activity
                 </h2>
 
@@ -29,17 +29,17 @@ export default function RecentActivity({ activities }: RecentActivityProps) {
                     <div className="space-y-4">
                         {activities.map((activity, index) => (
                             <div key={index} className="flex items-start gap-4">
-                                <div className="rounded-full bg-indigo-100 dark:bg-indigo-900/30 p-2 flex-shrink-0">
-                                    <FiBook className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+                                <div className="rounded-full bg-[color:var(--ai-primary)]/10 p-2 flex-shrink-0">
+                                    <FiBook className="h-5 w-5 text-[color:var(--ai-primary)]" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                    <p className="text-sm font-medium text-[color:var(--ai-foreground)]">
                                         {activity.lessonName ? `Continued "${activity.lessonName}"` : `Accessed "${activity.courseName}"`}
                                     </p>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                                    <p className="text-xs text-[color:var(--ai-muted)] truncate">
                                         Course: {activity.courseName}
                                     </p>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                    <p className="text-xs text-[color:var(--ai-muted)]">
                                         {activity.date.toLocaleDateString()} at {activity.date.toLocaleTimeString()}
                                     </p>
                                 </div>
@@ -52,7 +52,7 @@ export default function RecentActivity({ activities }: RecentActivityProps) {
                         ))}
                     </div>
                 ) : (
-                    <p className="text-center py-6 text-gray-500 dark:text-gray-400">
+                    <p className="text-center py-6 text-[color:var(--ai-muted)]">
                         No recent activity yet. Start learning!
                     </p>
                 )}

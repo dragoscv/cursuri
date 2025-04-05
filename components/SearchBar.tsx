@@ -139,13 +139,13 @@ export default function SearchBar() {
             <Button
                 variant="light"
                 onClick={() => setIsSearchOpen(true)}
-                className="hidden md:flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400"
+                className="hidden md:flex items-center gap-2 text-sm text-[color:var(--ai-muted)]"
                 startContent={(
                     <SearchIcon className="w-4 h-4" />
                 )}
             >
                 Search courses...
-                <kbd className="px-2 py-1 ml-2 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                <kbd className="px-2 py-1 ml-2 text-xs font-semibold text-[color:var(--ai-foreground)] bg-[color:var(--ai-card-bg)]/80 border border-[color:var(--ai-card-border)] rounded-md">
                     ⌘K
                 </kbd>
             </Button>
@@ -164,7 +164,7 @@ export default function SearchBar() {
             {/* Search modal */}
             {isSearchOpen && (
                 <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 px-4 bg-black/30 backdrop-blur-sm">
-                    <div className="w-full max-w-2xl bg-white dark:bg-gray-800 rounded-xl shadow-2xl overflow-hidden">
+                    <div className="w-full max-w-2xl bg-white dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-2xl overflow-hidden">
                         <div className="p-4">
                             <Input
                                 ref={searchInputRef}
@@ -173,7 +173,7 @@ export default function SearchBar() {
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 startContent={(
-                                    <SearchIcon className="w-5 h-5 text-gray-400" />
+                                    <SearchIcon className="w-5 h-5 text-[color:var(--ai-muted)]" />
                                 )}
                                 endContent={
                                     searchQuery && (
@@ -189,7 +189,7 @@ export default function SearchBar() {
                                 }
                                 classNames={{
                                     base: "w-full",
-                                    inputWrapper: "bg-white dark:bg-gray-800"
+                                    inputWrapper: "bg-white dark:bg-[color:var(--ai-card-bg)]"
                                 }}
                             />
                         </div>
@@ -201,7 +201,7 @@ export default function SearchBar() {
                                     {searchResults.map((course) => (
                                         <div
                                             key={course.id}
-                                            className="p-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer transition-colors"
+                                            className="p-3 hover:bg-[color:var(--ai-primary)]/10 rounded-lg cursor-pointer transition-colors"
                                             onClick={() => handleSelectCourse(course.id)}
                                         >
                                             <div className="flex items-center gap-3">
@@ -213,16 +213,16 @@ export default function SearchBar() {
                                                     />
                                                 )}
                                                 <div className="flex-1 min-w-0">
-                                                    <h3 className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                                    <h3 className="text-sm font-medium text-[color:var(--ai-foreground)] truncate">
                                                         {course.name}
                                                     </h3>
                                                     {course.description && (
-                                                        <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1">
+                                                        <p className="text-xs text-[color:var(--ai-muted)] line-clamp-1">
                                                             {course.description}
                                                         </p>
                                                     )}
                                                 </div>
-                                                <div className="text-xs font-medium text-gray-900 dark:text-white">
+                                                <div className="text-xs font-medium text-[color:var(--ai-foreground)]">
                                                     {course.formattedPrice}
                                                 </div>
                                             </div>
@@ -230,12 +230,12 @@ export default function SearchBar() {
                                     ))}
                                 </div>
                             ) : searchQuery ? (
-                                <div className="p-8 text-center text-gray-500 dark:text-gray-400">
+                                <div className="p-8 text-center text-[color:var(--ai-muted)]">
                                     <p>No courses found for "{searchQuery}"</p>
                                 </div>
                             ) : (
-                                <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-                                    <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+                                <div className="p-4 border-t border-[color:var(--ai-card-border)]">
+                                    <p className="text-sm text-[color:var(--ai-muted)] text-center">
                                         Start typing to search for courses
                                     </p>
                                 </div>
@@ -243,27 +243,27 @@ export default function SearchBar() {
                         </div>
 
                         {/* Footer with keyboard shortcuts */}
-                        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-                            <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                        <div className="p-4 border-t border-[color:var(--ai-card-border)]">
+                            <div className="flex items-center justify-between text-xs text-[color:var(--ai-muted)]">
                                 <div className="flex items-center gap-3">
                                     <div className="flex items-center gap-1">
-                                        <kbd className="px-1.5 py-0.5 font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                                        <kbd className="px-1.5 py-0.5 font-semibold text-[color:var(--ai-foreground)] bg-[color:var(--ai-card-border)]/30 border border-[color:var(--ai-card-border)] rounded-md">
                                             ESC
                                         </kbd>
                                         <span>to close</span>
                                     </div>
                                     <div className="flex items-center gap-1">
-                                        <kbd className="px-1.5 py-0.5 font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                                        <kbd className="px-1.5 py-0.5 font-semibold text-[color:var(--ai-foreground)] bg-[color:var(--ai-card-border)]/30 border border-[color:var(--ai-card-border)] rounded-md">
                                             ↑
                                         </kbd>
-                                        <kbd className="px-1.5 py-0.5 font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                                        <kbd className="px-1.5 py-0.5 font-semibold text-[color:var(--ai-foreground)] bg-[color:var(--ai-card-border)]/30 border border-[color:var(--ai-card-border)] rounded-md">
                                             ↓
                                         </kbd>
                                         <span>to navigate</span>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-1">
-                                    <kbd className="px-1.5 py-0.5 font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                                    <kbd className="px-1.5 py-0.5 font-semibold text-[color:var(--ai-foreground)] bg-[color:var(--ai-card-border)]/30 border border-[color:var(--ai-card-border)] rounded-md">
                                         Enter
                                     </kbd>
                                     <span>to select</span>

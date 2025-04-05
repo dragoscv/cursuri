@@ -16,19 +16,19 @@ export default function StatsCard({ icon, title, value, footer, colorClass }: St
             whileHover={{ y: -5 }}
             transition={{ duration: 0.3 }}
         >
-            <Card className="border border-gray-200 dark:border-gray-800 overflow-hidden h-full">
+            <Card className="border border-[color:var(--ai-border)] overflow-hidden h-full">
                 <div className={`absolute top-0 right-0 w-20 h-20 -mt-8 -mr-8 rounded-full bg-gradient-to-br ${colorClass} opacity-20`}></div>
                 <CardBody>
                     <div className="flex items-center gap-4">
-                        <div className="p-3 rounded-lg bg-gray-100 dark:bg-gray-800">
+                        <div className="p-3 rounded-lg bg-[color:var(--ai-card-bg)]/80">
                             {icon}
                         </div>
                         <div>
-                            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{value}</h3>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">{title}</p>
+                            <h3 className="text-2xl font-bold text-[color:var(--ai-foreground)]">{value}</h3>
+                            <p className="text-xs text-[color:var(--ai-muted)]">{title}</p>
                         </div>
                     </div>
-                    <div className="mt-4 text-xs text-gray-500 dark:text-gray-400 font-medium">
+                    <div className="mt-4 text-xs text-[color:var(--ai-muted)] font-medium">
                         {footer}
                     </div>
                 </CardBody>

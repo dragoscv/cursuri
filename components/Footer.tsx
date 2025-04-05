@@ -20,43 +20,43 @@ const Footer = () => {
     const appVersion = packageInfo.version;
 
     return (
-        <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 mt-auto">
+        <footer className="bg-white dark:bg-[color:var(--ai-background)] border-t border-[color:var(--ai-card-border)]">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {/* Left column - About */}
                     <div>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Cursuri</h3>
-                        <p className="text-gray-600 dark:text-gray-400 mb-4">
+                        <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-4">Cursuri</h3>
+                        <p className="text-[color:var(--ai-muted)] mb-4">
                             Quality programming courses to help you master modern web and mobile development.
                         </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-500">
+                        <p className="text-sm text-[color:var(--ai-muted)]">
                             Version {appVersion}
                         </p>
                     </div>
 
                     {/* Middle column - Quick Links */}
                     <div>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Links</h3>
+                        <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-4">Quick Links</h3>
                         <ul className="space-y-2">
                             <li>
-                                <Link href="/courses" className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+                                <Link href="/courses" className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition">
                                     All Courses
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/#featured" className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+                                <Link href="/#featured" className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition">
                                     Featured Courses
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/#testimonials" className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+                                <Link href="/#testimonials" className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition">
                                     Testimonials
                                 </Link>
                             </li>
                             <li>
                                 <button
                                     onClick={toggleTheme}
-                                    className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
+                                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
                                 >
                                     {isDark ? 'Light Mode' : 'Dark Mode'}
                                 </button>
@@ -66,13 +66,13 @@ const Footer = () => {
 
                     {/* Right column - Connect */}
                     <div>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Connect</h3>
+                        <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-4">Connect</h3>
                         <div className="flex space-x-4 mb-4">
                             <a
                                 href="https://github.com/catalinpetrovici"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                                className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]"
                                 aria-label="GitHub"
                             >
                                 <GithubIcon className="w-6 h-6" />
@@ -81,7 +81,7 @@ const Footer = () => {
                                 href="https://www.tiktok.com/@catalinpetrovici"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                                className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]"
                                 aria-label="TikTok"
                             >
                                 <TikTokIcon className="w-6 h-6" />
@@ -90,20 +90,20 @@ const Footer = () => {
                                 href="https://catalinpetrovici.com"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                                className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]"
                                 aria-label="Website"
                             >
                                 <WebsiteIcon className="w-6 h-6" />
                             </a>
                         </div>
-                        <p className="text-gray-600 dark:text-gray-400">
-                            Contact us at <a href="mailto:contact@cursuri.dev" className="text-indigo-600 dark:text-indigo-400 hover:underline">contact@cursuri.dev</a>
+                        <p className="text-[color:var(--ai-muted)]">
+                            Contact us at <a href="mailto:contact@cursuri.dev" className="text-[color:var(--ai-primary)] hover:underline">contact@cursuri.dev</a>
                         </p>
                     </div>
                 </div>
 
-                <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
-                    <p className="text-center text-gray-500 dark:text-gray-400 text-sm">
+                <div className="mt-12 pt-8 border-t border-[color:var(--ai-card-border)]">
+                    <p className="text-center text-[color:var(--ai-muted)] text-sm">
                         &copy; {year} Cursuri. All rights reserved.
                     </p>
                 </div>

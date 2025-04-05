@@ -16,7 +16,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
         <div className="mb-8">
             <div className="relative">
                 {/* Background gradient with admin theme colors */}
-                <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 opacity-10 rounded-lg -z-10" />
+                <div className="absolute inset-0 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] opacity-10 rounded-lg -z-10" />
 
                 {/* Content */}
                 <div className="py-6 px-6 rounded-lg">
@@ -27,12 +27,12 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
                     >
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between">
                             <div>
-                                <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-500 bg-clip-text text-transparent">
+                                <h1 className="text-3xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">
                                     {title}
                                 </h1>
 
                                 {subtitle && (
-                                    <p className="mt-2 text-gray-600 dark:text-gray-300">
+                                    <p className="mt-2 text-[color:var(--ai-muted)]">
                                         {subtitle}
                                     </p>
                                 )}
@@ -40,8 +40,8 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
 
                             {/* Admin badge */}
                             <div className="mt-3 sm:mt-0">
-                                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
-                                    <span className="mr-1.5 h-2 w-2 rounded-full bg-indigo-500"></span>
+                                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] dark:bg-[color:var(--ai-primary)]/20 dark:text-[color:var(--ai-primary)]/90">
+                                    <span className="mr-1.5 h-2 w-2 rounded-full bg-[color:var(--ai-primary)]"></span>
                                     Admin Dashboard
                                 </span>
                             </div>

@@ -56,7 +56,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
     };
 
     return (
-        <div className="mb-8 bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+        <div className="mb-8 bg-white dark:bg-[color:var(--ai-card-bg)] rounded-xl p-4 shadow-sm border border-[color:var(--ai-card-border)] shadow-xl">
             <div className="flex flex-col md:flex-row gap-4">
                 {/* Search input */}
                 <div className="flex-1">
@@ -65,7 +65,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
                         value={searchText}
                         onChange={(e) => setSearchText(e.target.value)}
                         startContent={
-                            <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <svg className="w-5 h-5 text-[color:var(--ai-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
                         }
@@ -98,7 +98,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
                             <DropdownItem
                                 key="all"
                                 onClick={() => handleCategoryChange('all')}
-                                className={selectedCategory === 'all' ? 'bg-indigo-100 dark:bg-indigo-900/30' : ''}
+                                className={selectedCategory === 'all' ? 'bg-[color:var(--ai-primary)]/10 dark:bg-[color:var(--ai-primary)]/20' : ''}
                             >
                                 All Categories
                             </DropdownItem>
@@ -107,7 +107,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
                                 <DropdownItem
                                     key={category}
                                     onClick={() => handleCategoryChange(category)}
-                                    className={selectedCategory === category ? 'bg-indigo-100 dark:bg-indigo-900/30' : ''}
+                                    className={selectedCategory === category ? 'bg-[color:var(--ai-primary)]/10 dark:bg-[color:var(--ai-primary)]/20' : ''}
                                 >
                                     <div>{category}</div>
                                 </DropdownItem>
@@ -120,10 +120,10 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
             {/* Selected filters display */}
             {(currentFilter || currentCategory !== 'all') && (
                 <div className="mt-4 flex flex-wrap gap-2 items-center">
-                    <span className="text-sm text-gray-500 dark:text-gray-400">Active filters:</span>
+                    <span className="text-sm text-[color:var(--ai-muted)]">Active filters:</span>
 
                     {currentFilter && (
-                        <div className="inline-flex items-center gap-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-200 px-3 py-1 rounded-full text-sm">
+                        <div className="inline-flex items-center gap-1 bg-[color:var(--ai-primary)]/10 dark:bg-[color:var(--ai-primary)]/20 text-[color:var(--ai-primary)] px-3 py-1 rounded-full text-sm">
                             <span>"{currentFilter}"</span>
                             <button
                                 title="Clear search filter"
@@ -132,7 +132,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
                                     setSearchText('');
                                     onFilterChange('');
                                 }}
-                                className="text-indigo-500 hover:text-indigo-700 dark:hover:text-indigo-300 ml-1"
+                                className="text-[color:var(--ai-primary)] hover:text-[color:var(--ai-primary)]/80 ml-1"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -142,7 +142,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
                     )}
 
                     {currentCategory !== 'all' && (
-                        <div className="inline-flex items-center gap-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-200 px-3 py-1 rounded-full text-sm">
+                        <div className="inline-flex items-center gap-1 bg-[color:var(--ai-primary)]/10 dark:bg-[color:var(--ai-primary)]/20 text-[color:var(--ai-primary)] px-3 py-1 rounded-full text-sm">
                             <span>{currentCategory}</span>
                             <button
                                 title="Clear category filter"
@@ -151,7 +151,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
                                     setSelectedCategory('all');
                                     onCategoryChange('all');
                                 }}
-                                className="text-indigo-500 hover:text-indigo-700 dark:hover:text-indigo-300 ml-1"
+                                className="text-[color:var(--ai-primary)] hover:text-[color:var(--ai-primary)]/80 ml-1"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -170,7 +170,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
                                 onFilterChange('');
                                 onCategoryChange('all');
                             }}
-                            className="text-sm text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 underline"
+                            className="text-sm text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] underline"
                         >
                             Clear all
                         </button>

@@ -72,12 +72,12 @@ const Breadcrumbs = () => {
                 {breadcrumbItems.map((item, index) => (
                     <li key={item.path} className="flex items-center min-w-0">
                         {index > 0 && (
-                            <span className="mx-2 flex-shrink-0 text-gray-400 dark:text-gray-500">/</span>
+                            <span className="mx-2 flex-shrink-0 text-[color:var(--ai-muted)]">/</span>
                         )}
                         {item.isActive ? (
                             <Tooltip content={item.label} delay={500} closeDelay={0}>
                                 <span
-                                    className="font-medium text-gray-900 dark:text-white truncate max-w-[200px]"
+                                    className="font-medium text-[color:var(--ai-foreground)] truncate max-w-[200px]"
                                     aria-current="page"
                                 >
                                     {item.label}
@@ -87,7 +87,7 @@ const Breadcrumbs = () => {
                             <Tooltip content={item.label} delay={500} closeDelay={0}>
                                 <Link
                                     href={item.path}
-                                    className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white truncate max-w-[120px]"
+                                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] truncate max-w-[120px]"
                                 >
                                     {item.label}
                                 </Link>

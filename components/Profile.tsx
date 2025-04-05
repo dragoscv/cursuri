@@ -17,11 +17,11 @@ export default function Profile(props: any) {
                     {userPaidProducts?.map((userPaidProduct: any) => {
                         return (
                             <div key={userPaidProduct.id} id={userPaidProduct.id}
-                                className={`bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700
+                                className={`bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-lg shadow
                             `}
                             >
                                 <div className="flex flex-row items-center justify-between p-4 gap-4">
-                                    <span className="text-sm font-medium text-gray-900 dark:text-white">
+                                    <span className="text-sm font-medium text-[color:var(--ai-foreground)]">
                                         {new Date(userPaidProduct.created * 1000).toLocaleDateString('ro-RO', {
                                             year: 'numeric',
                                             month: 'long',
@@ -34,7 +34,7 @@ export default function Profile(props: any) {
                                         }
 
                                     </span>
-                                    <h2 className="text-lg font-medium text-gray-900 dark:text-white">{
+                                    <h2 className="text-lg font-medium text-[color:var(--ai-foreground)]">{
                                         Object.keys(courses).map((key: any) => {
                                             if (courses[key]?.id === userPaidProduct?.metadata?.courseId) {
                                                 return courses[key].name
@@ -42,7 +42,7 @@ export default function Profile(props: any) {
                                             return null;
                                         }).filter(Boolean)
                                     }</h2>
-                                    <p className="text-lg font-medium text-gray-900 dark:text-white">{
+                                    <p className="text-lg font-medium text-[color:var(--ai-foreground)]">{
                                         Object.keys(courses).map((key: any) => {
                                             if (courses[key]?.id === userPaidProduct?.metadata?.courseId &&
                                                 courses[key]?.priceProduct?.prices?.[0]?.unit_amount) {
@@ -55,7 +55,7 @@ export default function Profile(props: any) {
                                         }).filter(Boolean)
                                     }
                                     </p>
-                                    {/* <span className="text-sm font-medium text-gray-900 dark:text-white cursor-pointer">Invoice</span> */}
+                                    {/* <span className="text-sm font-medium text-[color:var(--ai-foreground)] cursor-pointer">Invoice</span> */}
                                 </div>
                             </div>
                         )

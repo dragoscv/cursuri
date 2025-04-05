@@ -23,11 +23,11 @@ export default function CourseCard({ course }: CourseCardProps) {
             whileHover={{ y: -5 }}
             transition={{ duration: 0.3 }}
         >
-            <Card className="border border-gray-200 dark:border-gray-800 overflow-hidden h-full">
+            <Card className="border border-[color:var(--ai-card-border)] overflow-hidden h-full">
                 <CardBody className="p-0">
                     {/* Course banner with progress overlay */}
                     <div className="relative">
-                        <div className="h-32 bg-gradient-to-r from-indigo-600 to-purple-600 relative">
+                        <div className="h-32 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] relative">
                             {/* Pattern overlay */}
                             <div className="absolute top-0 left-0 w-full h-full opacity-20">
                                 <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -49,7 +49,7 @@ export default function CourseCard({ course }: CourseCardProps) {
                         {/* Progress bar */}
                         <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 dark:bg-gray-700">
                             <div
-                                className="h-full bg-gradient-to-r from-green-500 to-emerald-600"
+                                className="h-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
                                 style={{ width: `${course.progress}%` }}
                             ></div>
                         </div>
@@ -71,18 +71,18 @@ export default function CourseCard({ course }: CourseCardProps) {
                     {/* Course details */}
                     <div className="p-4">
                         <div className="flex flex-wrap gap-2 mb-4">
-                            <div className="inline-flex items-center text-xs text-gray-500 dark:text-gray-400">
+                            <div className="inline-flex items-center text-xs text-[color:var(--ai-muted)]">
                                 <FiClock className="mr-1" /> {course.duration || '10 hours'}
                             </div>
-                            <div className="inline-flex items-center text-xs text-gray-500 dark:text-gray-400">
+                            <div className="inline-flex items-center text-xs text-[color:var(--ai-muted)]">
                                 <FiLayers className="mr-1" /> {course.totalLessons} lessons
                             </div>
-                            <div className="inline-flex items-center text-xs text-gray-500 dark:text-gray-400">
+                            <div className="inline-flex items-center text-xs text-[color:var(--ai-muted)]">
                                 <FiBarChart2 className="mr-1" /> {course.progress}% complete
                             </div>
                         </div>
 
-                        <div className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2 mb-4 h-10">
+                        <div className="text-sm text-[color:var(--ai-foreground)] line-clamp-2 mb-4 h-10">
                             {course.description || 'No description available.'}
                         </div>
 

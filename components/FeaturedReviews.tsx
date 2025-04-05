@@ -153,13 +153,13 @@ export default function FeaturedReviews() {
         <section className="py-20 relative overflow-hidden" ref={ref}>
             {/* Background elements */}
             <div className="absolute inset-0 -z-10">
-                <div className="absolute top-1/2 left-0 w-72 h-72 bg-purple-700/10 rounded-full filter blur-3xl" />
-                <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-700/10 rounded-full filter blur-3xl" />
+                <div className="absolute top-1/2 left-0 w-72 h-72 bg-[color:var(--ai-secondary)]/10 rounded-full filter blur-3xl" />
+                <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[color:var(--ai-primary)]/10 rounded-full filter blur-3xl" />
             </div>
 
             {/* Animated grid lines */}
             <div className="absolute inset-0 -z-10 opacity-5">
-                <div className="h-full w-full border-[0.5px] border-indigo-500/50 [mask-image:linear-gradient(to_bottom,transparent,white,transparent)]" style={{ backgroundSize: '30px 30px', backgroundImage: 'linear-gradient(to right, rgb(99 102 241 / 10%) 1px, transparent 1px), linear-gradient(to bottom, rgb(99 102 241 / 10%) 1px, transparent 1px)' }} />
+                <div className="h-full w-full border-[0.5px] border-[color:var(--ai-primary)]/50 [mask-image:linear-gradient(to_bottom,transparent,white,transparent)]" style={{ backgroundSize: '30px 30px', backgroundImage: 'linear-gradient(to right, rgb(var(--ai-primary-rgb) / 10%) 1px, transparent 1px), linear-gradient(to bottom, rgb(var(--ai-primary-rgb) / 10%) 1px, transparent 1px)' }} />
             </div>
 
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -173,16 +173,16 @@ export default function FeaturedReviews() {
                     }}
                     transition={{ duration: 0.6 }}
                 >
-                    <span className="inline-block py-1 px-3 rounded-full text-sm font-medium bg-indigo-100/10 text-indigo-300 border border-indigo-400/30 mb-4">
+                    <span className="inline-block py-1 px-3 rounded-full text-sm font-medium bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] border border-[color:var(--ai-primary)]/30 mb-4">
                         Success Stories
                     </span>
-                    <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl mb-4">
+                    <h2 className="text-3xl font-bold tracking-tight text-[color:var(--ai-foreground)] sm:text-4xl mb-4">
                         Voices of Our AI Community
                     </h2>
                     <div className="max-w-2xl mx-auto">
-                        <p className="text-lg text-gray-600 dark:text-gray-300 relative">
+                        <p className="text-lg text-[color:var(--ai-muted)] relative">
                             <span className="relative z-10">Discover how our AI curriculum is empowering professionals to break new ground in machine learning and artificial intelligence.</span>
-                            <span className="absolute -z-10 bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-3 bg-indigo-400/20 rounded-full blur-sm"></span>
+                            <span className="absolute -z-10 bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-3 bg-[color:var(--ai-primary)]/20 rounded-full blur-sm"></span>
                         </p>
                     </div>
                 </motion.div>
@@ -201,9 +201,9 @@ export default function FeaturedReviews() {
                             whileHover={{ y: -10, transition: { duration: 0.3 } }}
                         >
                             {/* Gradient border animation */}
-                            <div className="absolute -inset-[1px] bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl opacity-70 blur-[2px] group-hover:opacity-100 transition-opacity duration-300" />
+                            <div className="absolute -inset-[1px] bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)] rounded-2xl opacity-70 blur-[2px] group-hover:opacity-100 transition-opacity duration-300" />
 
-                            <div className="relative rounded-2xl bg-white dark:bg-gray-800/90 backdrop-blur-sm p-6 h-full flex flex-col">
+                            <div className="relative rounded-2xl bg-white dark:bg-[color:var(--ai-card-bg)]/90 backdrop-blur-sm p-6 h-full flex flex-col">
                                 {/* Tech circuit pattern */}
                                 <div className="absolute top-0 right-0 w-40 h-40 opacity-[0.03] dark:opacity-[0.05]">
                                     <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -228,12 +228,12 @@ export default function FeaturedReviews() {
                                     ))}
                                 </div>
 
-                                <div className="px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 w-fit mb-4">
+                                <div className="px-2 py-1 rounded-full text-xs font-medium bg-[color:var(--ai-primary)]/10 dark:bg-[color:var(--ai-primary)]/20 text-[color:var(--ai-primary)] w-fit mb-4">
                                     {review.courseType}
                                 </div>
 
                                 <blockquote className="flex-grow">
-                                    <p className="text-lg font-medium text-gray-900 dark:text-white">
+                                    <p className="text-lg font-medium text-[color:var(--ai-foreground)]">
                                         "{review.content}"
                                     </p>
                                 </blockquote>
@@ -241,18 +241,18 @@ export default function FeaturedReviews() {
                                 <div className="mt-6 flex items-center">
                                     <div className="flex-shrink-0 relative">
                                         {/* Glowing avatar effect */}
-                                        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 opacity-0 group-hover:opacity-70 blur-md transition-opacity duration-300" />
+                                        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] opacity-0 group-hover:opacity-70 blur-md transition-opacity duration-300" />
                                         <img
-                                            className="relative h-12 w-12 rounded-full object-cover border-2 border-indigo-500/30"
+                                            className="relative h-12 w-12 rounded-full object-cover border-2 border-[color:var(--ai-primary)]/30"
                                             src={review.author?.avatar || `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70)}`}
                                             alt={(review.author?.name || review.userName || "User") as string}
                                         />
                                     </div>
                                     <div className="ml-4">
-                                        <div className="text-base font-medium text-gray-900 dark:text-white">
+                                        <div className="text-base font-medium text-[color:var(--ai-foreground)]">
                                             {review.author?.name || review.userName || "Anonymous User"}
                                         </div>
-                                        <div className="text-sm text-indigo-600 dark:text-indigo-400">
+                                        <div className="text-sm text-[color:var(--ai-primary)] dark:text-[color:var(--ai-primary)]/80">
                                             {review.author?.role || review.userRole || "Course Participant"}
                                         </div>
                                     </div>
@@ -260,7 +260,7 @@ export default function FeaturedReviews() {
 
                                 {/* Decorative elements */}
                                 <svg
-                                    className="absolute top-6 right-6 h-10 w-10 text-indigo-200 dark:text-indigo-600/20"
+                                    className="absolute top-6 right-6 h-10 w-10 text-[color:var(--ai-primary)]/20 dark:text-[color:var(--ai-primary)]/10"
                                     fill="currentColor"
                                     viewBox="0 0 32 32"
                                 >
@@ -281,7 +281,7 @@ export default function FeaturedReviews() {
                     }}
                     transition={{ duration: 0.6, delay: 0.4 }}
                 >
-                    <button className="group relative inline-flex items-center justify-center rounded-full px-8 py-3 overflow-hidden bg-indigo-600 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-purple-600 text-white font-medium transition-all duration-300">
+                    <button className="group relative inline-flex items-center justify-center rounded-full px-8 py-3 overflow-hidden bg-[color:var(--ai-primary)] hover:bg-gradient-to-r hover:from-[color:var(--ai-primary)] hover:to-[color:var(--ai-secondary)] text-white font-medium transition-all duration-300">
                         <span className="absolute -inset-px rounded-full border-2 border-white/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                         <span className="relative flex items-center">
                             View All Success Stories

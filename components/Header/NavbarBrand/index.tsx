@@ -17,7 +17,7 @@ export default function NavbarBrand() {
     return (
         <HeroNavbarBrand>
             <Link href="/" className="flex items-center gap-2">
-                <div className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white p-1.5 rounded-md">
+                <div className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white p-1.5 rounded-md">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
@@ -30,7 +30,7 @@ export default function NavbarBrand() {
                     </svg>
                 </div>
                 {!isCourseOrLessonPage && (
-                    <p className="font-bold text-xl bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+                    <p className="font-bold text-xl bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">
                         Cursuri
                     </p>
                 )}

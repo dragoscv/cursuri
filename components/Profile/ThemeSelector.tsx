@@ -81,13 +81,13 @@ export default function ThemeSelector({ onThemeChange }: ThemeSelectorProps) {
     return (
         <div className="space-y-4">
             <div className="flex justify-between items-center mb-4">
-                <h3 className="text-base font-medium text-gray-700 dark:text-gray-300">
+                <h3 className="text-base font-medium text-[color:var(--ai-foreground)]">
                     Light/Dark Mode
                 </h3>
                 <Button
                     variant="flat"
                     color={isDark ? "secondary" : "primary"}
-                    className="min-w-[120px]"
+                    className={`min-w-[120px] themed-button-${isDark ? 'secondary' : 'primary'}`}
                     onClick={toggleTheme}
                 >
                     {isDark ? '☀️ Light Mode' : '🌙 Dark Mode'}
@@ -95,7 +95,7 @@ export default function ThemeSelector({ onThemeChange }: ThemeSelectorProps) {
             </div>
 
             <div className="mb-6">
-                <h3 className="text-base font-medium text-gray-700 dark:text-gray-300 mb-3">
+                <h3 className="text-base font-medium text-[color:var(--ai-foreground)] mb-3">
                     Color Scheme
                 </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
@@ -107,8 +107,8 @@ export default function ThemeSelector({ onThemeChange }: ThemeSelectorProps) {
                 relative cursor-pointer rounded-md p-3 border-2 
                 transition-all duration-300 hover:shadow-md
                 ${colorScheme === theme.value
-                                    ? 'border-indigo-500 dark:border-indigo-400 shadow-sm'
-                                    : 'border-gray-200 dark:border-gray-700'
+                                    ? 'border-[color:var(--ai-primary)] shadow-sm'
+                                    : 'border-[color:var(--ai-card-border)]'
                                 }
               `}
                         >
@@ -123,12 +123,12 @@ export default function ThemeSelector({ onThemeChange }: ThemeSelectorProps) {
                                         style={{ backgroundColor: theme.darkColor }}
                                     />
                                 </div>
-                                <span className="text-sm text-gray-700 dark:text-gray-300 text-center">
+                                <span className="text-sm text-[color:var(--ai-foreground)] text-center">
                                     {theme.name}
                                 </span>
 
                                 {colorScheme === theme.value && (
-                                    <div className="absolute top-2 right-2 bg-indigo-500 dark:bg-indigo-400 text-white rounded-full p-1">
+                                    <div className="absolute top-2 right-2 bg-[color:var(--ai-primary)] text-white rounded-full p-1">
                                         <FiCheck size={12} />
                                     </div>
                                 )}

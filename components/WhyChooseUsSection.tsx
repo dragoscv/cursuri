@@ -65,7 +65,7 @@ export default function WhyChooseUsSection() {
     return (
         <ParallaxSection
             className="py-24 relative"
-            bgColor="bg-gradient-to-br from-indigo-900 via-purple-900 to-violet-900"
+            bgColor="bg-gradient-to-br from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)]"
             speed={0.2}
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -74,7 +74,7 @@ export default function WhyChooseUsSection() {
                         <h2 className="text-4xl font-bold text-white mb-4">
                             Why Choose Our Platform
                         </h2>
-                        <p className="text-xl text-indigo-200 max-w-3xl mx-auto">
+                        <p className="text-xl text-white/80 max-w-3xl mx-auto">
                             We've designed our learning experience with developers in mind, focusing on what matters most
                         </p>
                     </div>
@@ -94,7 +94,7 @@ export default function WhyChooseUsSection() {
                             className="h-full"
                         >
                             <motion.div
-                                className="bg-white/10 backdrop-filter backdrop-blur-lg rounded-xl p-6 h-full border border-white/20 shadow-xl"
+                                className="bg-white/10 dark:bg-white/5 backdrop-filter backdrop-blur-lg rounded-xl p-6 h-full border border-white/20 dark:border-white/10 shadow-xl"
                                 whileHover={{
                                     y: -5,
                                     backgroundColor: "rgba(255, 255, 255, 0.15)",
@@ -102,16 +102,16 @@ export default function WhyChooseUsSection() {
                             >
                                 <div className="text-4xl mb-4">{feature.icon}</div>
                                 <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
-                                <p className="text-indigo-200">{feature.description}</p>
+                                <p className="text-white/80">{feature.description}</p>
                             </motion.div>
                         </ScrollAnimationWrapper>
                     ))}
                 </motion.div>
 
                 {/* Floating elements for visual interest */}
-                <div className="absolute top-20 left-10 w-24 h-24 rounded-full bg-purple-600/20 blur-2xl animate-pulse"></div>
-                <div className="absolute bottom-20 right-10 w-32 h-32 rounded-full bg-indigo-500/20 blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-                <div className="absolute top-1/3 right-1/4 w-16 h-16 rounded-full bg-violet-500/30 blur-xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+                <div className="absolute top-20 left-10 w-24 h-24 rounded-full bg-[color:var(--ai-secondary)]/20 blur-2xl animate-pulse"></div>
+                <div className="absolute bottom-20 right-10 w-32 h-32 rounded-full bg-[color:var(--ai-primary)]/20 blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+                <div className="absolute top-1/3 right-1/4 w-16 h-16 rounded-full bg-[color:var(--ai-accent)]/30 blur-xl animate-pulse" style={{ animationDelay: '2s' }}></div>
             </div>
 
             {/* Neural network-like connectors */}

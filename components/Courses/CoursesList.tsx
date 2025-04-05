@@ -128,10 +128,10 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
     if (filteredCourses.length === 0) {
         return (
             <div className="text-center py-12">
-                <h3 className="text-xl font-medium text-gray-600 dark:text-gray-300">
+                <h3 className="text-xl font-medium text-[color:var(--ai-foreground)]">
                     No courses found matching your criteria.
                 </h3>
-                <p className="mt-2 text-gray-500 dark:text-gray-400">
+                <p className="mt-2 text-[color:var(--ai-muted)]">
                     Try adjusting your search or filters.
                 </p>
             </div>
@@ -149,7 +149,7 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
                     <motion.div
                         key={course.id}
                         id={course.id}
-                        className="group flex flex-col overflow-hidden rounded-xl bg-white dark:bg-gray-800 shadow-md border border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-500/50 hover:shadow-lg transition-all duration-300"
+                        className="group flex flex-col overflow-hidden rounded-xl bg-white dark:bg-[color:var(--ai-card-bg)] shadow-md border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/50 hover:shadow-lg transition-all duration-300"
                         variants={courseVariants}
                         initial="hidden"
                         animate="visible"
@@ -208,7 +208,7 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
                                 {/* Course info overlays */}
                                 <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center z-20">
                                     <div className="bg-black/50 backdrop-blur-sm px-3 py-1 rounded-lg text-white text-xs flex items-center">
-                                        <svg className="w-3.5 h-3.5 mr-1.5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <svg className="w-3.5 h-3.5 mr-1.5 text-[color:var(--ai-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
                                         <span>{course.duration || '8 hours'}</span>
@@ -216,7 +216,7 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
 
                                     {course.lessonsCount && (
                                         <div className="bg-black/50 backdrop-blur-sm px-3 py-1 rounded-lg text-white text-xs flex items-center">
-                                            <svg className="w-3.5 h-3.5 mr-1.5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <svg className="w-3.5 h-3.5 mr-1.5 text-[color:var(--ai-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                                             </svg>
                                             <span>{course.lessonsCount} lessons</span>
@@ -229,7 +229,7 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
                         <div className="flex flex-1 flex-col p-6">
                             {/* Course title */}
                             <h3
-                                className="mb-2 text-xl font-bold text-gray-900 dark:text-white cursor-pointer hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                                className="mb-2 text-xl font-bold text-[color:var(--ai-foreground)] cursor-pointer hover:text-[color:var(--ai-primary)] transition-colors"
                                 onClick={() => handleCourseClick(course)}
                             >
                                 {course.name}
@@ -237,7 +237,7 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
 
                             {/* Course description */}
                             <p
-                                className="mb-4 flex-1 text-sm text-gray-600 dark:text-gray-300 line-clamp-2"
+                                className="mb-4 flex-1 text-sm text-[color:var(--ai-muted)] line-clamp-2"
                                 onClick={() => handleCourseClick(course)}
                             >
                                 {course.description || 'Learn professional skills with this comprehensive course.'}
@@ -249,7 +249,7 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
                                     {course.tags.slice(0, 3).map((tag: string) => (
                                         <span
                                             key={tag}
-                                            className="px-2 py-1 text-xs rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300"
+                                            className="px-2 py-1 text-xs rounded-full bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]"
                                         >
                                             {tag}
                                         </span>
@@ -258,11 +258,11 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
                             )}
 
                             {/* Divider */}
-                            <div className="h-[1px] bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent mb-4"></div>
+                            <div className="h-[1px] bg-gradient-to-r from-transparent via-[color:var(--ai-card-border)] to-transparent mb-4"></div>
 
                             <div className="mt-auto flex items-center justify-between">
                                 {/* Price */}
-                                <div className="text-xl font-bold text-gray-900 dark:text-white">
+                                <div className="text-xl font-bold text-[color:var(--ai-foreground)]">
                                     {course.isFree ?
                                         <span className="text-green-600 dark:text-green-400">Free</span> :
                                         <span>{amount} {currency}</span>

@@ -15,9 +15,9 @@ export default function StatisticsSection() {
     const y = useTransform(scrollYProgress, [0, 1], [0, 100]);
 
     const stats = [
-        { value: "15+", label: "Courses", icon: "📚", color: "from-blue-500 to-blue-400" },
-        { value: "2,500+", label: "Students", icon: "👨‍🎓", color: "from-purple-500 to-purple-400" },
-        { value: "10,000+", label: "Hours of Content", icon: "⏱️", color: "from-pink-500 to-pink-400" },
+        { value: "15+", label: "Courses", icon: "📚", color: "from-[color:var(--ai-primary)] to-[color:var(--ai-primary)]/80" },
+        { value: "2,500+", label: "Students", icon: "👨‍🎓", color: "from-[color:var(--ai-secondary)] to-[color:var(--ai-secondary)]/80" },
+        { value: "10,000+", label: "Hours of Content", icon: "⏱️", color: "from-[color:var(--ai-accent)] to-[color:var(--ai-accent)]/80" },
         { value: "4.8", label: "Average Rating", icon: "⭐", color: "from-amber-500 to-amber-400" }
     ];
 
@@ -72,7 +72,7 @@ export default function StatisticsSection() {
         <div ref={ref} className="relative py-16 md:py-20 overflow-hidden">
             {/* Simplified animated gradient background */}
             <motion.div
-                className="absolute inset-0 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600"
+                className="absolute inset-0 bg-gradient-to-br from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)]"
                 style={{
                     backgroundSize: "200% 200%",
                     y,
@@ -175,7 +175,7 @@ export default function StatisticsSection() {
             <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
                 {/* Top left glow */}
                 <div
-                    className="absolute rounded-full bg-blue-500/20 blur-3xl"
+                    className="absolute rounded-full bg-[color:var(--ai-primary)]/20 blur-3xl"
                     style={{
                         width: "20vw",
                         height: "20vw",
@@ -185,7 +185,7 @@ export default function StatisticsSection() {
                 />
                 {/* Bottom right glow */}
                 <div
-                    className="absolute rounded-full bg-purple-500/20 blur-3xl"
+                    className="absolute rounded-full bg-[color:var(--ai-secondary)]/20 blur-3xl"
                     style={{
                         width: "25vw",
                         height: "25vw",

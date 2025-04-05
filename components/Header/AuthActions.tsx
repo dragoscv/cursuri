@@ -46,14 +46,14 @@ export default function AuthActions() {
                 variant="flat"
                 color="primary"
                 onClick={handleOpenLoginModal}
-                className="font-medium"
+                className="font-medium text-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10 hover:bg-[color:var(--ai-primary)]/20"
             >
                 Login
             </Button>
             <Button
                 color="primary"
                 onClick={handleOpenLoginModal}
-                className="font-medium"
+                className="font-medium bg-[color:var(--ai-primary)] text-white hover:bg-[color:var(--ai-primary)]/90"
             >
                 Sign Up
             </Button>
