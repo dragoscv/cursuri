@@ -35,49 +35,48 @@ export default function CourseProgressHeader({
                 </Button>
             </Link>
 
-            <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.1 }}
-                className="flex flex-col md:flex-row md:items-center justify-between gap-4"
-            >
-                <div>
-                    <h1 className="text-3xl font-bold">{courseName}</h1>
-                    <p className="text-gray-500 dark:text-gray-400 mt-1">
-                        {lessonCount} lessons • {difficulty || 'All levels'}
-                    </p>
-                </div>
+            <div className="bg-gradient-to-r from-indigo-600/10 via-purple-600/10 to-pink-600/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 dark:border-gray-800/50 shadow-xl">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+                    <div>
+                        <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                            {courseName}
+                        </h1>
+                        <p className="text-gray-600 dark:text-gray-300">
+                            {lessonCount} lessons • {difficulty || 'All levels'}
+                        </p>
+                    </div>
 
-                {isLoading ? (
-                    <div className="bg-white dark:bg-gray-800 rounded-full px-4 py-2 shadow-sm border border-gray-100 dark:border-gray-700">
-                        <div className="flex items-center gap-2">
-                            <div className="relative w-32 bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
-                                <div
-                                    className="absolute h-full bg-primary-500 transition-all duration-300 ease-in-out rounded-full"
-                                    style={{ width: '0%' }}
-                                />
+                    {isLoading ? (
+                        <div className="bg-white/80 dark:bg-gray-800/80 rounded-full px-4 py-2 shadow-sm border border-gray-100 dark:border-gray-700">
+                            <div className="flex items-center gap-2">
+                                <div className="relative w-32 bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
+                                    <div
+                                        className="absolute h-full bg-gray-400 dark:bg-gray-600 animate-pulse rounded-full"
+                                        style={{ width: '30%' }}
+                                    />
+                                </div>
+                                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                                    Loading...
+                                </span>
                             </div>
-                            <span className="text-sm font-medium">
-                                Loading...
-                            </span>
                         </div>
-                    </div>
-                ) : (
-                    <div className="bg-white dark:bg-gray-800 rounded-full px-4 py-2 shadow-sm border border-gray-100 dark:border-gray-700">
-                        <div className="flex items-center gap-2">
-                            <div className="relative w-32 bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
-                                <div
-                                    className="absolute h-full bg-primary-500 transition-all duration-300 ease-in-out rounded-full"
-                                    style={{ width: `${progressPercentage}%` }}
-                                />
+                    ) : (
+                        <div className="bg-white/80 dark:bg-gray-800/80 rounded-full px-4 py-2 shadow-sm border border-gray-100 dark:border-gray-700">
+                            <div className="flex items-center gap-2">
+                                <div className="relative w-32 bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
+                                    <div
+                                        className="absolute h-full bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full"
+                                        style={{ width: `${progressPercentage}%` }}
+                                    />
+                                </div>
+                                <span className="text-sm font-medium text-indigo-600 dark:text-indigo-400">
+                                    {Math.round(progressPercentage)}% Complete
+                                </span>
                             </div>
-                            <span className="text-sm font-medium">
-                                {Math.round(progressPercentage)}% Complete
-                            </span>
                         </div>
-                    </div>
-                )}
-            </motion.div>
+                    )}
+                </div>
+            </div>
         </div>
     );
 }
