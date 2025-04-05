@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { firebaseAuth } from "@/utils/firebase/firebase.config";
+import { firebaseAuth } from "firewand";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import LoadingButton from "./Buttons/LoadingButton"
 import GoogleIcon from "./icons/GoogleIcon"

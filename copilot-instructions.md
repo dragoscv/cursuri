@@ -21,7 +21,7 @@ Cursuri is a Next.js application for an online course platform with the followin
 - **Backend/Database**: Firebase (Firestore)
 - **Authentication**: Firebase Authentication
 - **File Storage**: Firebase Storage
-- **Payments**: Stripe via @invertase/firestore-stripe-payments
+- **Payments**: Stripe via firewand (wrapper around @invertase/firestore-stripe-payments)
 
 ## Code Structure and Architecture
 
@@ -184,6 +184,61 @@ const session = await createCheckoutSession(payments, {
 });
 window.location.assign(session.url);
 ```
+
+## Payment Processing with Firewand
+
+The application uses the firewand library (version 0.5.15) as a wrapper around the @invertase/firestore-stripe-payments package to handle Stripe integration with Firebase. Here's how it's implemented:
+
+### Firewand Implementation
+
+Firewand is imported in `utils/firebase/stripe.ts` and provides the following functionality:
+
+```typescript
+import {
+  getStripePayments,
+  getCurrentUserSubscription,
+  getCurrentUserSubscriptions,
+  StripePayments,
+  getProducts,
+  createCheckoutSession,
+} from "firewand";
+```
+
+### Key Firewand Functions
+
+1. **getStripePayments**: Initializes the Stripe payments configuration with Firebase
+
+   ```typescript
+   export const stripePayments = (firebaseApp: FirebaseApp): StripePayments =>
+     getStripePayments(firebaseApp, {
+       productsCollection: "products",
+       customersCollection: "/customers",
+     });
+   ```
+
+2. **createCheckoutSession**: Creates a Stripe checkout session
+
+   ```typescript
+   const session = await createCheckoutSession(payments, {
+     price: priceId,
+     allow_promotion_codes: true,
+     success_url: `${window.location.href}?paymentStatus=success`,
+     cancel_url: `${window.location.href}?paymentStatus=cancel`,
+   });
+   ```
+
+3. **getCurrentUserSubscription/getCurrentUserSubscriptions**: Retrieves user subscription data
+
+4. **getProducts**: Retrieves product data from Firestore
+
+The integration follows this pattern:
+
+1. Initialize the Stripe payments with Firebase app
+2. Create checkout sessions with product/price information
+3. Redirect users to Stripe checkout page
+4. Process successful payments in the Firebase database
+
+When implementing payment-related features, always use the firewand library instead of directly using the @invertase/firestore-stripe-payments package.
 
 ## Development Guidelines
 

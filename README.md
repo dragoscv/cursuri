@@ -12,6 +12,7 @@ An interactive online course platform built with Next.js, TypeScript, Firebase, 
 - **Admin Panel**: Course and lesson management for administrators
 - **Responsive Design**: Mobile-friendly interface using TailwindCSS and NextUI
 - **Dark/Light Mode**: Theme toggle functionality
+- **Captions and Transcriptions**: Automatically generate captions and transcriptions for lesson content using Azure Speech Service
 
 ## Technology Stack
 
@@ -21,6 +22,7 @@ An interactive online course platform built with Next.js, TypeScript, Firebase, 
 - **UI Components**: @heroui/react, framer-motion
 - **Authentication & Database**: Firebase (Authentication, Firestore, Storage)
 - **Payment Processing**: Stripe via @invertase/firestore-stripe-payments
+- **Speech Services**: Azure Speech Service for transcription and caption generation
 - **Deployment**: Vercel (recommended)
 
 ## Getting Started
@@ -31,6 +33,7 @@ An interactive online course platform built with Next.js, TypeScript, Firebase, 
 - npm or yarn
 - Firebase account
 - Stripe account
+- Azure account (for Speech Service)
 
 ### Environment Setup
 
@@ -45,6 +48,10 @@ NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
 NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your_measurement_id
+
+# Azure Speech Service Configuration
+NEXT_PUBLIC_AZURE_SPEECH_API_KEY=your_azure_speech_api_key
+NEXT_PUBLIC_AZURE_SPEECH_API_REGION=your_azure_region
 
 # Stripe Configuration (on Firebase Extension)
 # No environment variables needed as they're managed through the Firebase Stripe Extension

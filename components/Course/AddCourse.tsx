@@ -2,7 +2,7 @@
 import { useState, useContext, useEffect, useCallback } from "react"
 import { AppContext } from "@/components/AppContext"
 import LoadingButton from "../Buttons/LoadingButton"
-import { firestoreDB } from "@/utils/firebase/firebase.config";
+import { firestoreDB } from "firewand";
 import { doc, addDoc, collection } from "firebase/firestore";
 
 export default function AddCourse(props: any) {

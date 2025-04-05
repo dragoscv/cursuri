@@ -4,9 +4,9 @@ import { Button, Chip } from '@heroui/react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import LoadingButton from '../Buttons/LoadingButton';
-import { createCheckoutSession } from "@invertase/firestore-stripe-payments";
+import { createCheckoutSession } from "firewand";
 import { stripePayments } from "@/utils/firebase/stripe";
-import { firebaseApp } from "@/utils/firebase/firebase.config";
+import { firebaseApp } from "firewand";
 import Login from "../Login";
 import { Course } from '@/types';
 

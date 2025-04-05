@@ -1,11 +1,12 @@
 'use client'
 
 import React, { createContext, useState, useEffect, useReducer, useCallback } from 'react';
-import { firebaseAuth, firebaseApp, firestoreDB } from '@/utils/firebase/firebase.config';
+
+import { getProducts } from 'firewand';
+import { firebaseApp, firestoreDB, firebaseAuth, firebaseStorage } from '@/utils/firebase/firebase.config';
 import { stripePayments } from '@/utils/firebase/stripe';
-import { getProducts } from '@invertase/firestore-stripe-payments';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { doc, collection, getDocs, query, where, onSnapshot, updateDoc, setDoc, getDoc, Timestamp, Unsubscribe } from 'firebase/firestore';
+import { doc, collection, getDocs, query, where, onSnapshot, updateDoc, setDoc, getDoc, Timestamp, Unsubscribe, getFirestore } from 'firebase/firestore';
 import ModalComponent from '@/components/Modal';
 
 import { AppContextProps, UserLessonProgress } from '@/types';
@@ -191,9 +192,10 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         if (Object.keys(lessons).includes(courseId)) {
             return () => { }; // Return a no-op function if already fetched
         }
+        const db = getFirestore(firebaseApp);
 
-        const docRef = collection(firestoreDB, `courses/${courseId}/lessons`);
-        const q = query(docRef, where("status", "==", "active"));
+        const lessonsCollection = collection(db, `courses/${courseId}/lessons`);
+        const q = query(lessonsCollection, where("status", "==", "active"));
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
@@ -212,7 +214,9 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             return () => { }; // Return a no-op function if already fetched
         }
 
-        const docRef = collection(firestoreDB, `courses/${courseId}/reviews`);
+        const db = getFirestore(firebaseApp);
+
+        const docRef = collection(db, `courses/${courseId}/reviews`);
         const q = query(docRef);
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             querySnapshot.forEach((doc) => {
@@ -280,7 +284,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         if (!user) return () => { }; // Return a no-op function when user is null
 
         try {
-            const progressRef = collection(firestoreDB, `users/${user.uid}/progress`);
+            const progressRef = collection(firestoreDB, "users", user.uid, "progress");
             const q = query(progressRef);
 
             // Explicitly type this as a Firebase Unsubscribe function

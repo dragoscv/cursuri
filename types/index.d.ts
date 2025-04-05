@@ -215,6 +215,17 @@ export interface Lesson {
     status?: string;
     /** Whether the lesson is free for all users */
     isFree?: boolean;
+    /** Transcription of the lesson audio */
+    transcription?: string;
+    /** Captions for the lesson video */
+    captions?: {
+        [language: string]: {
+            url?: string;
+            content?: string;
+        };
+    };
+    /** Whether captions and transcriptions are being processed */
+    processingCaptions?: boolean;
 }
 
 /**

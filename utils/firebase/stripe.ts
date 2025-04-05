@@ -1,4 +1,4 @@
-import { FirebaseApp } from "firebase/app";
+import { type FirebaseApp } from "firebase/app";
 import {
     getStripePayments,
     getCurrentUserSubscription,
@@ -6,14 +6,16 @@ import {
     StripePayments,
     getProducts,
     createCheckoutSession,
-} from "@invertase/firestore-stripe-payments";
+    firebaseApp
+} from "firewand";
+
 
 export const stripePayments = (firebaseApp: FirebaseApp): StripePayments => getStripePayments(firebaseApp, {
     productsCollection: "products",
     customersCollection: "/customers",
 });
 
-export const newCheckoutSession = async (firebaseApp: FirebaseApp, priceId: string, promoCode?: string) => {
+export const newCheckoutSession = async (priceId: string, promoCode?: string) => {
     const payments = stripePayments(firebaseApp);
     const paymentConfig: any = {
         price: priceId,
@@ -24,6 +26,13 @@ export const newCheckoutSession = async (firebaseApp: FirebaseApp, priceId: stri
     if (promoCode) {
         paymentConfig["promotion_code"] = promoCode;
     }
-    const session = await createCheckoutSession(payments, paymentConfig);
-    window.location.assign(session.url);
+
+    try {
+        const session = await createCheckoutSession(payments, paymentConfig);
+        window.location.assign(session.url);
+        return session;
+    } catch (error) {
+        console.error("Error creating checkout session:", error);
+        throw error;
+    }
 }

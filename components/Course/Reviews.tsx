@@ -2,7 +2,7 @@
 
 import { useContext, useCallback, useState, useEffect } from "react"
 import { AppContext } from "@/components/AppContext"
-import { firestoreDB } from "@/utils/firebase/firebase.config";
+import { firestoreDB } from "firewand";
 import { doc, addDoc, collection, Timestamp } from "firebase/firestore";
 import LoadingButton from "../Buttons/LoadingButton";
 

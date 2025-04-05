@@ -6,7 +6,6 @@ import { Card, CardBody, Button, Input, Divider, Textarea, Switch } from '@herou
 import { motion } from 'framer-motion';
 import { FiUser, FiLock, FiMail, FiSettings, FiBell, FiGlobe, FiSave } from '@/components/icons/FeatherIcons';
 import { updateProfile, updateEmail, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
-import { firebaseAuth } from '@/utils/firebase/firebase.config';
 
 export default function ProfileSettings() {
     const context = useContext(AppContext);
