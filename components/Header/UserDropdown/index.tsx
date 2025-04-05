@@ -12,7 +12,7 @@ import {
 import { useRouter } from "next/navigation";
 import { AppContext } from "@/components/AppContext";
 import { UserIcon, LogOutIcon, ShieldIcon, PlusIcon, MessageSquareIcon } from "@/components/icons/FeatherIcons";
-import { firebaseApp, firebaseAuth } from "firewand";
+import { firebaseApp, firebaseAuth } from "@/utils/firebase/firebase.config";
 import { signOut } from "firebase/auth";
 import Login from "@/components/Login";
 import AddCourse from "@/components/Course/AddCourse";

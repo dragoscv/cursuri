@@ -131,7 +131,7 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
     const saveCurrentProgress = useCallback(() => {
         if (!saveProgress || !videoRef.current) return;
 
-        const videoProgress = videoRef.current ? 
+        const videoProgress = videoRef.current ?
             (videoRef.current.currentTime / videoRef.current.duration) * 100 : 0;
 
         saveLessonProgress(courseId, lesson.id, {

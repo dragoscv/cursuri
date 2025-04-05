@@ -26,7 +26,7 @@ export default function LessonDetailPage({ params }: LessonDetailPageProps) {
 
     // Check if the course and lesson exist
     const course = courses[courseId];
-    
+
     // Early return if loading course or lessons
     if (!course || !lessons[courseId]) {
         return (
@@ -48,7 +48,7 @@ export default function LessonDetailPage({ params }: LessonDetailPageProps) {
     // Fix: lessons[courseId] is an object with lesson IDs as keys, not an array
     // Directly access the specific lesson by ID
     const lesson = lessons[courseId]?.[lessonId];
-    
+
     // Handle case where lesson is not found
     if (!lesson) {
         return (

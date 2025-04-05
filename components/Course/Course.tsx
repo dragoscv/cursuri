@@ -11,7 +11,7 @@ import { AppContextProps, Course as CourseType, Lesson, Resource, UserPaidProduc
 import { FiBookOpen } from '../icons/FeatherIcons'
 import { createCheckoutSession } from "firewand"
 import { stripePayments } from "@/utils/firebase/stripe"
-import { firebaseApp } from "firewand"
+import { firebaseApp } from "@/utils/firebase/firebase.config"
 import Login from "../Login"
 import LoadingButton from '../Buttons/LoadingButton'
 

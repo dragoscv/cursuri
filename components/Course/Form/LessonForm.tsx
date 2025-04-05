@@ -1,7 +1,7 @@
 import { useState, useContext, useCallback, useEffect } from "react"
 import { AppContext } from "@/components/AppContext"
 import LoadingButton from "@/components/Buttons/LoadingButton"
-import { firestoreDB, firebaseStorage } from "firewand";
+import { firestoreDB, firebaseStorage } from "@/utils/firebase/firebase.config";
 import { doc, addDoc, collection, updateDoc, getDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useRouter } from "next/navigation";

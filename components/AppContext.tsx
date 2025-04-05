@@ -6,10 +6,10 @@ import { getProducts } from 'firewand';
 import { firebaseApp, firestoreDB, firebaseAuth, firebaseStorage } from '@/utils/firebase/firebase.config';
 import { stripePayments } from '@/utils/firebase/stripe';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { doc, collection, getDocs, query, where, onSnapshot, updateDoc, setDoc, getDoc, Timestamp, Unsubscribe, getFirestore } from 'firebase/firestore';
+import { doc, collection, getDocs, query, where, onSnapshot, updateDoc, setDoc, getDoc, Timestamp, Unsubscribe, getFirestore, limit, collectionGroup } from 'firebase/firestore';
 import ModalComponent from '@/components/Modal';
 
-import { AppContextProps, UserLessonProgress, ColorScheme, UserPreferences } from '@/types';
+import { AppContextProps, UserLessonProgress, ColorScheme, UserPreferences, UserProfile, AdminSettings } from '@/types';
 
 export const AppContext = createContext<AppContextProps | undefined>(undefined);
 
@@ -39,6 +39,9 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         userPaidProducts: [],
         reviews: {},
         lessonProgress: {},
+        users: {}, // Add users state
+        adminAnalytics: null, // Add analytics state
+        adminSettings: null, // Add settings state
     };
 
     const reducer = (state: any, action: any) => {
@@ -148,6 +151,21 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                             [action.payload.lessonId]: action.payload.progress
                         }
                     }
+                };
+            case 'SET_USERS':
+                return {
+                    ...state,
+                    users: action.payload
+                };
+            case 'SET_ADMIN_ANALYTICS':
+                return {
+                    ...state,
+                    adminAnalytics: action.payload
+                };
+            case 'SET_ADMIN_SETTINGS':
+                return {
+                    ...state,
+                    adminSettings: action.payload
                 };
             default:
                 return state;
@@ -467,6 +485,312 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         }
     }, [user, dispatch]);
 
+    // Get all users (admin only)
+    const getAllUsers = useCallback(async () => {
+        if (!user || !state.isAdmin) {
+            console.log("Not fetching users: User is null or not admin", { user: !!user, isAdmin: state.isAdmin });
+            return null;
+        }
+
+        try {
+            console.log("Attempting to fetch users as admin");
+            const usersRef = collection(firestoreDB, "users");
+            const q = query(usersRef, limit(100));
+            const usersSnapshot = await getDocs(q);
+
+            console.log(`Found ${usersSnapshot.size} users in database`);
+            
+            if (usersSnapshot.empty) {
+                console.log("No user documents found in the collection");
+                dispatch({ type: 'SET_USERS', payload: {} });
+                return {};
+            }
+
+            const usersData: Record<string, UserProfile> = {};
+
+            usersSnapshot.forEach((doc) => {
+                const userData = doc.data();
+                console.log(`Processing user: ${doc.id}`);
+                
+                usersData[doc.id] = {
+                    id: doc.id,
+                    email: userData.email || '',
+                    displayName: userData.displayName || '',
+                    photoURL: userData.photoURL || '',
+                    emailVerified: userData.emailVerified || false,
+                    role: userData.role || 'user',
+                    createdAt: userData.createdAt || null,
+                    enrollments: userData.enrollments || {},
+                    ...userData
+                };
+            });
+
+            console.log(`Processed ${Object.keys(usersData).length} user objects`);
+            dispatch({ type: 'SET_USERS', payload: usersData });
+            return usersData;
+        } catch (error) {
+            console.error("Error fetching users:", error);
+            return null;
+        }
+    }, [user, state.isAdmin, dispatch]);
+
+    // Assign course to a user (admin only)
+    const assignCourseToUser = useCallback(async (userId: string, courseId: string) => {
+        if (!user || !state.isAdmin) return false;
+
+        try {
+            const db = getFirestore(firebaseApp);
+
+            // First check if the course exists
+            const courseRef = doc(db, `courses/${courseId}`);
+            const courseDoc = await getDoc(courseRef);
+
+            if (!courseDoc.exists()) {
+                console.error("Course does not exist");
+                return false;
+            }
+
+            // Find the product ID associated with the course
+            const productId = state.products.find((product) =>
+                product.metadata && product.metadata.courseId === courseId
+            )?.id;
+
+            if (!productId) {
+                console.error("Product not found for course");
+                return false;
+            }
+
+            // Create a payment document in the user's payments collection
+            const paymentId = `admin-assigned-${Date.now()}`;
+            const paymentRef = doc(db, `customers/${userId}/payments/${paymentId}`);
+
+            await setDoc(paymentRef, {
+                id: paymentId,
+                productId: productId,
+                status: 'succeeded',
+                created: Date.now(),
+                metadata: {
+                    courseId: courseId,
+                    assignedBy: user.uid,
+                    assignmentMethod: 'admin'
+                }
+            });
+
+            // Update user enrollments in the users collection
+            const userRef = doc(db, `users/${userId}`);
+            const userDoc = await getDoc(userRef);
+
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                const enrollments = userData.enrollments || {};
+
+                await updateDoc(userRef, {
+                    enrollments: {
+                        ...enrollments,
+                        [courseId]: {
+                            enrolledAt: Timestamp.now(),
+                            status: 'active',
+                            source: 'admin'
+                        }
+                    }
+                });
+            }
+
+            return true;
+        } catch (error) {
+            console.error("Error assigning course to user:", error);
+            return false;
+        }
+    }, [user, state.isAdmin, state.products]);
+
+    // Get admin analytics data
+    const getAdminAnalytics = useCallback(async () => {
+        if (!user || !state.isAdmin) return null;
+
+        try {
+            // Calculate analytics data from various collections
+
+            // Get total users
+            const usersRef = collection(firestoreDB, "users");
+            const usersSnapshot = await getDocs(usersRef);
+            const totalUsers = usersSnapshot.size;
+
+            // Get total courses
+            const coursesRef = collection(firestoreDB, "courses");
+            const coursesSnapshot = await getDocs(coursesRef);
+            const totalCourses = coursesSnapshot.size;
+
+            // Calculate total lessons
+            let totalLessons = 0;
+            for (const courseDoc of coursesSnapshot.docs) {
+                const lessonsRef = collection(firestoreDB, `courses/${courseDoc.id}/lessons`);
+                const lessonsSnapshot = await getDocs(lessonsRef);
+                totalLessons += lessonsSnapshot.size;
+            }
+
+            // Get new users in the last 30 days
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+            const newUsersQuery = query(
+                usersRef,
+                where("createdAt", ">=", thirtyDaysAgo)
+            );
+            const newUsersSnapshot = await getDocs(newUsersQuery);
+            const newUsers = newUsersSnapshot.size;
+
+            // Get sales data
+            const salesRef = collectionGroup(firestoreDB, "payments");
+            const salesQuery = query(
+                salesRef,
+                where("status", "==", "succeeded")
+            );
+            const salesSnapshot = await getDocs(salesQuery);
+
+            let totalRevenue = 0;
+            let newSales = 0;
+            const monthlyRevenue: Record<string, number> = {};
+
+            salesSnapshot.forEach((doc) => {
+                const sale = doc.data();
+                if (sale.amount !== undefined) {
+                    totalRevenue += sale.amount / 100; // Convert from cents to dollars
+
+                    // Calculate monthly revenue
+                    const date = new Date(sale.created);
+                    const monthYear = `${date.getMonth() + 1}/${date.getFullYear()}`;
+
+                    monthlyRevenue[monthYear] = (monthlyRevenue[monthYear] || 0) + (sale.amount / 100);
+
+                    // Check if sale is from last 30 days
+                    if (date >= thirtyDaysAgo) {
+                        newSales++;
+                    }
+                }
+            });
+
+            // Get popular courses
+            const popularCourses: Array<{
+                courseId: string;
+                courseName: string;
+                enrollments: number;
+            }> = [];
+
+            coursesSnapshot.forEach((doc) => {
+                const courseData = doc.data();
+                const course = {
+                    courseId: doc.id,
+                    courseName: courseData.name,
+                    enrollments: 0
+                };
+
+                popularCourses.push(course);
+            });
+
+            // For each payment, find the course and increment its enrollments
+            salesSnapshot.forEach((doc) => {
+                const sale = doc.data();
+                if (sale.metadata && sale.metadata.courseId) {
+                    const courseId = sale.metadata.courseId;
+                    const course = popularCourses.find((c) => c.courseId === courseId);
+                    if (course) {
+                        course.enrollments++;
+                    }
+                }
+            });
+
+            // Sort by enrollments
+            popularCourses.sort((a, b) => b.enrollments - a.enrollments);
+
+            const analyticsData = {
+                totalUsers,
+                totalCourses,
+                totalLessons,
+                totalRevenue,
+                newUsers,
+                newSales,
+                monthlyRevenue,
+                popularCourses: popularCourses.slice(0, 5) // Top 5 courses
+            };
+
+            dispatch({ type: 'SET_ADMIN_ANALYTICS', payload: analyticsData });
+            return analyticsData;
+        } catch (error) {
+            console.error("Error fetching admin analytics:", error);
+            return null;
+        }
+    }, [user, state.isAdmin]);
+
+    // Get admin settings
+    const getAdminSettings = useCallback(async () => {
+        if (!user || !state.isAdmin) return null;
+
+        try {
+            // First check if the admin collection exists and create it if not
+            const adminCollectionRef = collection(firestoreDB, "admin");
+            const adminDocs = await getDocs(adminCollectionRef);
+            if (adminDocs.empty) {
+                // Admin collection doesn't exist, create it with a blank document
+                await setDoc(doc(firestoreDB, "admin", "info"), {
+                    createdAt: Timestamp.now()
+                });
+            }
+
+            const settingsRef = doc(firestoreDB, "admin/settings");
+            const settingsDoc = await getDoc(settingsRef);
+
+            if (settingsDoc.exists()) {
+                const settingsData = settingsDoc.data() as AdminSettings;
+                dispatch({ type: 'SET_ADMIN_SETTINGS', payload: settingsData });
+                return settingsData;
+            } else {
+                // Create default settings if they don't exist
+                const defaultSettings: AdminSettings = {
+                    siteName: "Cursuri",
+                    siteDescription: "Online Learning Platform",
+                    contactEmail: "contact@example.com",
+                    allowRegistration: true,
+                    allowSocialLogin: true,
+                    paymentProcessorEnabled: true,
+                    taxRate: 0,
+                    currencyCode: "RON"
+                };
+
+                await setDoc(settingsRef, defaultSettings);
+                dispatch({ type: 'SET_ADMIN_SETTINGS', payload: defaultSettings });
+                return defaultSettings;
+            }
+        } catch (error) {
+            console.error("Error fetching admin settings:", error);
+            return null;
+        }
+    }, [user, state.isAdmin]);
+
+    // Update admin settings
+    const updateAdminSettings = useCallback(async (settings: Partial<AdminSettings>) => {
+        if (!user || !state.isAdmin) return false;
+
+        try {
+            const settingsRef = doc(firestoreDB, "admin/settings");
+
+            await updateDoc(settingsRef, settings);
+
+            // Update local state
+            if (state.adminSettings) {
+                const updatedSettings = {
+                    ...state.adminSettings,
+                    ...settings
+                };
+                dispatch({ type: 'SET_ADMIN_SETTINGS', payload: updatedSettings });
+            }
+
+            return true;
+        } catch (error) {
+            console.error("Error updating admin settings:", error);
+            return false;
+        }
+    }, [user, state.isAdmin, state.adminSettings]);
+
     useEffect(() => {
         // Store the auth unsubscribe function in a variable so we can clean up
         const unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
@@ -595,7 +919,15 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             getCourseReviews,
             lessonProgress: state.lessonProgress,
             saveLessonProgress,
-            markLessonComplete
+            markLessonComplete,
+            users: state.users,
+            getAllUsers,
+            assignCourseToUser,
+            adminAnalytics: state.adminAnalytics,
+            getAdminAnalytics,
+            adminSettings: state.adminSettings,
+            getAdminSettings,
+            updateAdminSettings
         }}>
             {children}
             {state.modals.map((modal: any) => (

@@ -59,6 +59,15 @@ export interface AppContextProps {
     lessonProgress: Record<string, Record<string, UserLessonProgress>>;
     saveLessonProgress: (courseId: string, lessonId: string, position: number, isCompleted?: boolean) => Promise<boolean | void>;
     markLessonComplete: (courseId: string, lessonId: string) => Promise<boolean | void>;
+    // Admin-specific properties and functions
+    users?: Record<string, UserProfile>;
+    getAllUsers?: () => Promise<Record<string, UserProfile> | null>;
+    assignCourseToUser?: (userId: string, courseId: string) => Promise<boolean>;
+    adminAnalytics?: AdminAnalytics | null;
+    getAdminAnalytics?: () => Promise<AdminAnalytics | null>;
+    adminSettings?: AdminSettings | null;
+    getAdminSettings?: () => Promise<AdminSettings | null>;
+    updateAdminSettings?: (settings: Partial<AdminSettings>) => Promise<boolean>;
 }
 
 // For use with framer-motion inView
@@ -395,6 +404,88 @@ export interface Attachment {
     name: string;
     size?: number;
     mimeType?: string;
+}
+
+/**
+ * Interface for application user information
+ * This extends the Firebase Auth User with additional data
+ */
+export interface UserProfile {
+    /** The unique identifier of the user. */
+    id: string;
+    /** The user's email. */
+    email: string;
+    /** The user's display name. */
+    displayName?: string;
+    /** The user's profile photo URL. */
+    photoURL?: string;
+    /** The user's bio. */
+    bio?: string;
+    /** The user's role (e.g. 'user', 'admin', 'instructor'). */
+    role?: string;
+    /** When the user was created. */
+    createdAt: Timestamp | Date;
+    /** When the user was last updated. */
+    updatedAt?: Timestamp | Date;
+    /** Whether the user's email is verified. */
+    emailVerified: boolean;
+    /** Additional profile data. */
+    metadata?: Record<string, any>;
+    /** User's enrollment status in various courses */
+    enrollments?: Record<string, {
+        enrolledAt: Timestamp | Date;
+        completedAt?: Timestamp | Date;
+        status: 'active' | 'completed' | 'expired';
+        source: 'purchase' | 'admin' | 'gift';
+    }>;
+}
+
+/**
+ * Interface for admin dashboard analytics data
+ */
+export interface AdminAnalytics {
+    /** Total number of registered users. */
+    totalUsers: number;
+    /** Total number of courses. */
+    totalCourses: number;
+    /** Total number of lessons. */
+    totalLessons: number;
+    /** Total revenue. */
+    totalRevenue: number;
+    /** New users in the last 30 days. */
+    newUsers: number;
+    /** New sales in the last 30 days. */
+    newSales: number;
+    /** Monthly revenue breakdown. */
+    monthlyRevenue: Record<string, number>;
+    /** Popular courses by enrollment. */
+    popularCourses: Array<{
+        courseId: string;
+        courseName: string;
+        enrollments: number;
+    }>;
+}
+
+/**
+ * Interface for admin platform settings
+ */
+export interface AdminSettings {
+    /** Site name. */
+    siteName: string;
+    /** Site description. */
+    siteDescription: string;
+    /** Default email for notifications. */
+    contactEmail: string;
+    /** Whether to allow user registration. */
+    allowRegistration: boolean;
+    /** Whether to allow social login. */
+    allowSocialLogin: boolean;
+    /** Payment processor status. */
+    paymentProcessorEnabled: boolean;
+    /** Tax rate for purchases. */
+    taxRate: number;
+    /** Currency code. */
+    currencyCode: string;
 }
 
 // Other existing types...

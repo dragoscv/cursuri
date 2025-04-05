@@ -1,7 +1,7 @@
 'use client'
 
 import * as sdk from 'microsoft-cognitiveservices-speech-sdk';
-import { firestoreDB, firebaseStorage } from 'firewand';
+import { firestoreDB, firebaseStorage } from '@/utils/firebase/firebase.config';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { ref, uploadString, getDownloadURL } from 'firebase/storage';
 

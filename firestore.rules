@@ -11,27 +11,40 @@ service cloud.firestore {
       return request.auth != null;
     }
     
+    // Allow admins to list/read all users (collection query)
+    match /users {
+      allow list: if isAdmin();
+    }
+    
+    // Allow admins to list/read all users
     match /users/{userId} {
-      // Users can read and write only their own data
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      // Users can read and write their own data, admins can read all user data
+      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      allow write: if request.auth != null && (request.auth.uid == userId || isAdmin());
       
       match /progress/{progressId} {
-        // Users can only read and write their own progress
-        allow read, write: if request.auth != null && request.auth.uid == userId;
+        // Users can only read and write their own progress, admins can read all progress
+        allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+        allow write: if request.auth != null && (request.auth.uid == userId || isAdmin());
       }
       
       // Adding profile settings access
       match /profile/{document=**} {
-        allow read: if request.auth != null && request.auth.uid == userId;
-        allow write: if request.auth != null && request.auth.uid == userId;
+        allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+        allow write: if request.auth != null && (request.auth.uid == userId || isAdmin());
       }
       
       // Adding user activity tracking
       match /activity/{activityId} {
-        allow read: if request.auth != null && request.auth.uid == userId;
+        allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
         allow create: if request.auth != null && request.auth.uid == userId;
         allow update, delete: if false; // Activities should be immutable once created
       }
+    }
+    
+    // If you need to allow admin to access all users including subcollections
+    match /{path=**}/users/{userId} {
+      allow read: if isAdmin();
     }
     
     match /courses/{courseId} {
@@ -67,18 +80,22 @@ service cloud.firestore {
     }
     
     match /customers/{uid} {
-      allow read: if request.auth != null && request.auth.uid == uid;
+      // Allow admins to read/write any customer data for course assignments
+      allow read: if request.auth != null && (request.auth.uid == uid || isAdmin());
+      allow write: if isAdmin();
 
       match /checkout_sessions/{id} {
-        allow read, write: if request.auth != null && request.auth.uid == uid;
+        allow read, write: if request.auth != null && (request.auth.uid == uid || isAdmin());
       }
       
       match /subscriptions/{id} {
-        allow read: if request.auth != null && request.auth.uid == uid;
+        allow read: if request.auth != null && (request.auth.uid == uid || isAdmin());
       }
       
       match /payments/{id} {
-        allow read: if request.auth != null && request.auth.uid == uid;
+        allow read: if request.auth != null && (request.auth.uid == uid || isAdmin());
+        // Allow admins to create payments for users (for course assignment functionality)
+        allow create: if isAdmin();
       }
     }
 
@@ -92,6 +109,16 @@ service cloud.firestore {
       match /tax_rates/{id} {
         allow read: if true;
       }
+    }
+    
+    // Allow collection group query access for admins
+    match /{path=**}/payments/{paymentId} {
+      allow read: if isAdmin();
+    }
+    
+    // Add collection group rules for payments
+    match /{path=**}/payments/{payment} {
+      allow read: if isAdmin();
     }
   }
 }

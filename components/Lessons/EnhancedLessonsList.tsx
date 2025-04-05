@@ -61,8 +61,8 @@ export default function EnhancedLessonsList({ lessons, userHasAccess = false }: 
                         key={lesson.id}
                         variants={itemVariants}
                         className={`relative rounded-xl p-4 transition-all duration-300 group ${userHasAccess
-                                ? 'bg-[color:var(--ai-card-bg)]/80 hover:bg-[color:var(--ai-card-bg)] cursor-pointer shadow hover:shadow-md border border-[color:var(--ai-card-border)]'
-                                : 'bg-[color:var(--ai-card-bg)]/50 cursor-not-allowed border border-[color:var(--ai-card-border)]/50'
+                            ? 'bg-[color:var(--ai-card-bg)]/80 hover:bg-[color:var(--ai-card-bg)] cursor-pointer shadow hover:shadow-md border border-[color:var(--ai-card-border)]'
+                            : 'bg-[color:var(--ai-card-bg)]/50 cursor-not-allowed border border-[color:var(--ai-card-border)]/50'
                             }`}
                     >
                         {/* Lesson Index Circle */}

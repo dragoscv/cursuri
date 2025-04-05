@@ -4,7 +4,7 @@ import { AppContext } from "@/components/AppContext"
 import Course from "@/components/Course/Course"
 import { createCheckoutSession } from "firewand";
 import { stripePayments } from "@/utils/firebase/stripe";
-import { firebaseApp } from "firewand";
+import { firebaseApp } from "@/utils/firebase/firebase.config";
 import LoadingButton from "./Buttons/LoadingButton";
 import Login from "./Login";
 import { Button, Badge, Chip } from "@heroui/react";
