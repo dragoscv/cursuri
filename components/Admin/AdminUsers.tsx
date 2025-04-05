@@ -204,154 +204,282 @@ const AdminUsers: React.FC = () => {
 
             {/* User Details Modal */}
             {selectedUser && (
-                <Modal isOpen={!!selectedUser && !assignModalOpen} onClose={closeModal} size="lg">
-                    <ModalContent>
-                        <ModalHeader>User Details</ModalHeader>
-                        <ModalBody>
-                            <div className="flex items-center mb-6">
-                                <Avatar
-                                    src={selectedUser.photoURL || ""}
-                                    name={selectedUser.displayName || selectedUser.email}
-                                    className="mr-4"
-                                    size="lg"
-                                />
-                                <div>
-                                    <h2 className="text-2xl font-bold">{selectedUser.displayName || 'No Name'}</h2>
-                                    <p className="text-gray-600 dark:text-gray-400">{selectedUser.email}</p>
-                                    <div className="flex mt-2">
-                                        <Chip color={selectedUser.role === 'admin' ? 'primary' : 'default'} size="sm" className="mr-2">
-                                            {selectedUser.role || 'user'}
-                                        </Chip>
-                                        {selectedUser.emailVerified ? (
-                                            <Chip color="success" size="sm">Verified</Chip>
-                                        ) : (
-                                            <Chip color="warning" size="sm">Not Verified</Chip>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <Divider className="my-4" />
-
-                            <div className="mb-4">
-                                <h3 className="text-lg font-semibold mb-2">Account Details</h3>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <p className="text-sm text-gray-500">User ID</p>
-                                        <p>{selectedUser.id}</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-sm text-gray-500">Created On</p>
-                                        <p>{selectedUser.createdAt ? new Date(selectedUser.createdAt.seconds * 1000).toLocaleDateString() : 'Unknown'}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="mb-4">
-                                <h3 className="text-lg font-semibold mb-2">Enrolled Courses</h3>
-                                {selectedUser.enrollments && Object.keys(selectedUser.enrollments).length > 0 ? (
-                                    <div className="space-y-2">
-                                        {Object.entries(selectedUser.enrollments).map(([courseId, enrollment]) => {
-                                            const course = courses[courseId];
-                                            return (
-                                                <div key={courseId} className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                                                    <div>
-                                                        <p className="font-medium">{course?.name || 'Unknown Course'}</p>
-                                                        <p className="text-xs text-gray-500">
-                                                            Enrolled: {enrollment.enrolledAt ?
-                                                                new Date(enrollment.enrolledAt.seconds * 1000).toLocaleDateString() :
-                                                                'Unknown date'}
-                                                        </p>
-                                                    </div>
-                                                    <div>
-                                                        <Chip color={enrollment.source === 'admin' ? 'primary' : 'success'} size="sm">
-                                                            {enrollment.source === 'admin' ? 'Assigned' : 'Purchased'}
-                                                        </Chip>
-                                                    </div>
+                <Modal 
+                    isOpen={!!selectedUser && !assignModalOpen} 
+                    onClose={closeModal} 
+                    size="lg"
+                    backdrop="blur"
+                    className="z-50"
+                    motionProps={{
+                        variants: {
+                            enter: {
+                                y: 0,
+                                opacity: 1,
+                                transition: {
+                                    duration: 0.3,
+                                    ease: "easeOut"
+                                }
+                            },
+                            exit: {
+                                y: -20,
+                                opacity: 0,
+                                transition: {
+                                    duration: 0.2,
+                                    ease: "easeIn"
+                                }
+                            }
+                        }
+                    }}
+                >
+                    <ModalContent className="overflow-hidden dark:bg-gray-900/95 border border-primary-200/20 dark:border-gray-800 shadow-xl">
+                        {(onClose) => (
+                            <>
+                                <div className="relative">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-primary-500/10 to-secondary-500/10 blur-xl opacity-80 -z-10"></div>
+                                    <ModalHeader className="border-b border-primary-100 dark:border-gray-800 text-primary-900 dark:text-primary-100">User Details</ModalHeader>
+                                    <ModalBody className="py-6">
+                                        <div className="flex items-center mb-6">
+                                            <Avatar
+                                                src={selectedUser.photoURL || ""}
+                                                name={selectedUser.displayName || selectedUser.email}
+                                                className="mr-4"
+                                                size="lg"
+                                            />
+                                            <div>
+                                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{selectedUser.displayName || 'No Name'}</h2>
+                                                <p className="text-gray-600 dark:text-gray-400">{selectedUser.email}</p>
+                                                <div className="flex mt-2">
+                                                    <Chip color={selectedUser.role === 'admin' ? 'primary' : 'default'} size="sm" className="mr-2">
+                                                        {selectedUser.role || 'user'}
+                                                    </Chip>
+                                                    {selectedUser.emailVerified ? (
+                                                        <Chip color="success" size="sm">Verified</Chip>
+                                                    ) : (
+                                                        <Chip color="warning" size="sm">Not Verified</Chip>
+                                                    )}
                                                 </div>
-                                            );
-                                        })}
-                                    </div>
-                                ) : (
-                                    <p className="text-gray-500 dark:text-gray-400">No enrolled courses</p>
-                                )}
-                            </div>
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button color="primary" variant="flat" onPress={openAssignCourseModal}>
-                                Assign Course
-                            </Button>
-                            <Button color="default" onPress={closeModal}>
-                                Close
-                            </Button>
-                        </ModalFooter>
+                                            </div>
+                                        </div>
+
+                                        <Divider className="my-4" />
+
+                                        <div className="mb-4">
+                                            <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Account Details</h3>
+                                            <div className="grid grid-cols-2 gap-4 bg-gray-50/80 dark:bg-gray-800/50 p-4 rounded-xl backdrop-blur-sm">
+                                                <div>
+                                                    <p className="text-sm text-gray-500 dark:text-gray-400">User ID</p>
+                                                    <p className="font-medium text-gray-900 dark:text-white">{selectedUser.id}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-gray-500 dark:text-gray-400">Created On</p>
+                                                    <p className="font-medium text-gray-900 dark:text-white">{selectedUser.createdAt ? new Date(selectedUser.createdAt.seconds * 1000).toLocaleDateString() : 'Unknown'}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Enrolled Courses</h3>
+                                                <Button size="sm" color="primary" variant="flat" onPress={openAssignCourseModal} className="text-sm">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                                                    </svg>
+                                                    Add Course
+                                                </Button>
+                                            </div>
+                                            {selectedUser.enrollments && Object.keys(selectedUser.enrollments).length > 0 ? (
+                                                <div className="space-y-2">
+                                                    {Object.entries(selectedUser.enrollments).map(([courseId, enrollment]) => {
+                                                        const course = courses[courseId];
+                                                        return (
+                                                            <div key={courseId} className="flex justify-between items-center p-4 bg-gray-50/80 dark:bg-gray-800/50 rounded-xl border border-primary-100 dark:border-gray-800 backdrop-blur-sm">
+                                                                <div>
+                                                                    <p className="font-medium text-gray-900 dark:text-white">{course?.name || 'Unknown Course'}</p>
+                                                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                                        Enrolled: {enrollment.enrolledAt ?
+                                                                            new Date(enrollment.enrolledAt.seconds * 1000).toLocaleDateString() :
+                                                                            'Unknown date'}
+                                                                    </p>
+                                                                </div>
+                                                                <div>
+                                                                    <Chip color={enrollment.source === 'admin' ? 'primary' : 'success'} size="sm" className="animate-fadeIn">
+                                                                        {enrollment.source === 'admin' ? 'Assigned' : 'Purchased'}
+                                                                    </Chip>
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            ) : (
+                                                <div className="text-center py-8 bg-gray-50/80 dark:bg-gray-800/50 rounded-xl border border-dashed border-primary-200 dark:border-gray-700 backdrop-blur-sm">
+                                                    <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                                    </svg>
+                                                    <p className="mt-2 text-gray-500 dark:text-gray-400">No enrolled courses</p>
+                                                    <Button color="primary" variant="flat" size="sm" className="mt-4" onPress={openAssignCourseModal}>
+                                                        Assign First Course
+                                                    </Button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </ModalBody>
+                                    <ModalFooter className="border-t border-primary-100 dark:border-gray-800">
+                                        <Button color="default" onPress={closeModal} className="font-medium">
+                                            Close
+                                        </Button>
+                                        <Button color="primary" variant="flat" onPress={openAssignCourseModal} className="font-medium">
+                                            Assign Course
+                                        </Button>
+                                    </ModalFooter>
+                                </div>
+                            </>
+                        )}
                     </ModalContent>
                 </Modal>
             )}
 
             {/* Assign Course Modal */}
-            <Modal isOpen={assignModalOpen} onClose={closeAssignCourseModal} size="md">
-                <ModalContent>
-                    <ModalHeader>Assign Course to User</ModalHeader>
-                    <ModalBody>
-                        {assignSuccess ? (
-                            <div className="text-center py-4">
-                                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-                                    <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                    </svg>
-                                </div>
-                                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">Course Assigned Successfully</h3>
-                                <p className="text-gray-500 dark:text-gray-400">
-                                    The course has been assigned to {selectedUser?.displayName || selectedUser?.email}
-                                </p>
-                            </div>
-                        ) : (
-                            <>
-                                {selectedUser && (
-                                    <div className="mb-4">
-                                        <p className="text-sm text-gray-500 mb-1">Assigning course to:</p>
-                                        <div className="flex items-center">
-                                            <Avatar src={selectedUser.photoURL || ""} name={selectedUser.displayName || selectedUser.email} className="mr-2" size="sm" />
-                                            <span className="font-medium">{selectedUser.displayName || selectedUser.email}</span>
+            <Modal 
+                isOpen={assignModalOpen} 
+                onClose={closeAssignCourseModal} 
+                size="md"
+                backdrop="blur"
+                className="z-50"
+                motionProps={{
+                    variants: {
+                        enter: {
+                            y: 0,
+                            opacity: 1,
+                            transition: {
+                                duration: 0.3,
+                                ease: "easeOut"
+                            }
+                        },
+                        exit: {
+                            y: -20,
+                            opacity: 0,
+                            transition: {
+                                duration: 0.2,
+                                ease: "easeIn"
+                            }
+                        }
+                    }
+                }}
+            >
+                <ModalContent className="overflow-hidden dark:bg-gray-900/95 border border-primary-200/20 dark:border-gray-800 shadow-xl">
+                    {(onClose) => (
+                        <>
+                            <div className="relative">
+                                <div className="absolute inset-0 bg-gradient-to-r from-primary-500/20 to-secondary-500/20 blur-xl opacity-80 -z-10"></div>
+                                <ModalHeader className="flex flex-col gap-1 border-b border-primary-100 dark:border-gray-800">
+                                    <div className="flex items-center gap-2">
+                                        <div className="bg-gradient-to-br from-primary-500 to-secondary-500 p-2 rounded-lg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                                <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
+                                            </svg>
                                         </div>
+                                        <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-500 to-secondary-500">
+                                            Assign Course
+                                        </span>
                                     </div>
-                                )}
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                                        Grant course access to this user
+                                    </p>
+                                </ModalHeader>
+                                <ModalBody className="py-6">
+                                    {assignSuccess ? (
+                                        <div className="text-center py-6 px-4">
+                                            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center mx-auto mb-5">
+                                                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            </div>
+                                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Course Assigned Successfully</h3>
+                                            <p className="text-gray-500 dark:text-gray-400">
+                                                The course has been assigned to {selectedUser?.displayName || selectedUser?.email}
+                                            </p>
+                                            <div className="mt-6">
+                                                <Button color="primary" className="w-full" onPress={closeAssignCourseModal}>
+                                                    Close
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            {selectedUser && (
+                                                <div className="mb-6 bg-gray-50/80 dark:bg-gray-800/50 p-4 rounded-xl backdrop-blur-sm">
+                                                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Assigning course to:</p>
+                                                    <div className="flex items-center">
+                                                        <Avatar src={selectedUser.photoURL || ""} name={selectedUser.displayName || selectedUser.email} className="mr-3" size="md" />
+                                                        <div>
+                                                            <p className="font-medium text-gray-900 dark:text-white">{selectedUser.displayName || 'No Name'}</p>
+                                                            <p className="text-sm text-gray-500 dark:text-gray-400">{selectedUser.email}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
 
-                                <div className="mb-4">
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Select Course
-                                    </label>
-                                    <Select
-                                        placeholder="Choose a course"
-                                        value={selectedCourseId}
-                                        onChange={(e) => setSelectedCourseId(e.target.value)}
-                                    >
-                                        {Object.values(courses).map((course: Course) => (
-                                            <SelectItem key={course.id} value={course.id}>
-                                                {course.name}
-                                            </SelectItem>
-                                        ))}
-                                    </Select>
-                                </div>
-                            </>
-                        )}
-                    </ModalBody>
-                    <ModalFooter>
-                        {!assignSuccess && (
-                            <Button
-                                color="primary"
-                                isDisabled={!selectedCourseId || assignLoading}
-                                isLoading={assignLoading}
-                                onPress={handleAssignCourse}
-                            >
-                                Assign Course
-                            </Button>
-                        )}
-                        <Button color="default" onPress={closeAssignCourseModal}>
-                            {assignSuccess ? 'Close' : 'Cancel'}
-                        </Button>
-                    </ModalFooter>
+                                            <div className="mb-2">
+                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                    Select Course
+                                                </label>
+                                                <div className="relative">
+                                                    <Select
+                                                        placeholder="Choose a course"
+                                                        value={selectedCourseId}
+                                                        onChange={(e) => setSelectedCourseId(e.target.value)}
+                                                        className="w-full"
+                                                        variant="bordered"
+                                                        size="lg"
+                                                        labelPlacement="outside"
+                                                        classNames={{
+                                                            trigger: "h-12 bg-gray-50/80 dark:bg-gray-800/50 backdrop-blur-sm border-primary-200 dark:border-gray-700",
+                                                            value: "text-gray-900 dark:text-white",
+                                                        }}
+                                                    >
+                                                        {Object.values(courses).map((course: Course) => (
+                                                            <SelectItem key={course.id} value={course.id} className="text-gray-900 dark:text-white">
+                                                                {course.name}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </Select>
+                                                    <div className="absolute right-3 top-3 pointer-events-none text-gray-500">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                                <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                                    The selected course will be immediately available to this user.
+                                                </p>
+                                            </div>
+                                        </>
+                                    )}
+                                </ModalBody>
+                                {!assignSuccess && (
+                                    <ModalFooter className="border-t border-primary-100 dark:border-gray-800">
+                                        <Button 
+                                            color="default" 
+                                            variant="light" 
+                                            onPress={closeAssignCourseModal}
+                                            className="font-medium"
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button
+                                            color="primary"
+                                            isDisabled={!selectedCourseId || assignLoading}
+                                            isLoading={assignLoading}
+                                            onPress={handleAssignCourse}
+                                            className="bg-gradient-to-r from-primary-500 to-secondary-500 font-medium shadow-lg shadow-primary-500/20"
+                                        >
+                                            Assign Course
+                                        </Button>
+                                    </ModalFooter>
+                                )}
+                            </div>
+                        </>
+                    )}
                 </ModalContent>
             </Modal>
         </div>

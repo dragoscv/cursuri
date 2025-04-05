@@ -195,6 +195,7 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({ course, lessons = 
                                         course={course}
                                         courseId={courseId}
                                         completedLessons={[]}
+                                        userHasAccess={true}
                                     />
                                 </div>
                             )}

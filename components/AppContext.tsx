@@ -499,7 +499,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             const usersSnapshot = await getDocs(q);
 
             console.log(`Found ${usersSnapshot.size} users in database`);
-            
+
             if (usersSnapshot.empty) {
                 console.log("No user documents found in the collection");
                 dispatch({ type: 'SET_USERS', payload: {} });
@@ -511,7 +511,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             usersSnapshot.forEach((doc) => {
                 const userData = doc.data();
                 console.log(`Processing user: ${doc.id}`);
-                
+
                 usersData[doc.id] = {
                     id: doc.id,
                     email: userData.email || '',
@@ -550,13 +550,23 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                 return false;
             }
 
-            // Find the product ID associated with the course
-            const productId = state.products.find((product) =>
-                product.metadata && product.metadata.courseId === courseId
-            )?.id;
+            // Get the course data
+            const courseData = courseDoc.data();
+            // Get the priceId from the course data
+            const priceId = courseData.price;
 
-            if (!productId) {
-                console.error("Product not found for course");
+            if (!priceId) {
+                console.error("Price not found for course");
+                return false;
+            }
+
+            // Find the product that contains this price
+            const product = state.products.find((product: any) =>
+                product.prices && product.prices.some((price: any) => price.id === priceId)
+            );
+
+            if (!product) {
+                console.error("Product not found for course price");
                 return false;
             }
 
@@ -566,7 +576,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
             await setDoc(paymentRef, {
                 id: paymentId,
-                productId: productId,
+                productId: product.id,
                 status: 'succeeded',
                 created: Date.now(),
                 metadata: {

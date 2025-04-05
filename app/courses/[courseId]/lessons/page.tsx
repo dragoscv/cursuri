@@ -94,6 +94,7 @@ export default function LessonsPage(props: LessonsPageProps) {
                 course={course}
                 courseId={courseId}
                 completedLessons={completedLessons}
+                userHasAccess={hasPurchased || course.isFree}
             />
         </motion.div>
     );
