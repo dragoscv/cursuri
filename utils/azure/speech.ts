@@ -8,6 +8,7 @@ import { ref, uploadString, getDownloadURL } from 'firebase/storage';
 // Supported languages for translation
 export const supportedLanguages = {
     'en-US': 'English',
+    'ro-RO': 'Romanian',
     'es-ES': 'Spanish',
     'fr-FR': 'French',
     'de-DE': 'German',

@@ -4,6 +4,11 @@ import { AppContext } from '../AppContext';
 import { Button, Progress, Chip } from '@heroui/react';
 import { motion } from 'framer-motion';
 import { FiShoppingCart, FiCheck, FiLock, FiClock, FiBook, FiPlayCircle } from '../icons/FeatherIcons';
+import { createCheckoutSession } from "firewand";
+import { stripePayments } from "@/utils/firebase/stripe";
+import { firebaseApp } from "firewand";
+import Login from "../Login";
+import LoadingButton from '../Buttons/LoadingButton';
 
 interface CourseEnrollmentProps {
     course: Course;
@@ -20,19 +25,29 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
     const { user, openModal } = context;
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleEnrollClick = () => {
+    const handleEnrollClick = async () => {
         setIsLoading(true);
 
         if (!user) {
             openModal({
                 id: 'login',
                 isOpen: true,
-                modalBody: 'login',
-                modalHeader: 'Login',
+                hideCloseButton: false,
+                backdrop: 'blur',
+                size: 'full',
+                scrollBehavior: 'inside',
+                isDismissable: true,
+                modalHeader: 'Autentificare',
+                modalBody: <Login onClose={() => {
+                    setIsLoading(false);
+                    context.closeModal('login');
+                }} />,
                 headerDisabled: true,
                 footerDisabled: true,
+                noReplaceURL: true,
                 onClose: () => {
                     setIsLoading(false);
+                    context.closeModal('login');
                 }
             });
             return;
@@ -40,17 +55,32 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
 
         // For paid courses
         if (!course.isFree) {
-            openModal({
-                id: 'checkout',
-                isOpen: true,
-                modalBody: React.createElement('div', {}, 'Checkout Component for ' + course.name),
-                modalHeader: 'Checkout',
-                onClose: () => {
+            try {
+                const priceId = course.price || course.priceProduct?.prices?.[0]?.id;
+
+                if (!priceId) {
+                    console.error("Price ID not found for course:", course.id);
                     setIsLoading(false);
+                    return;
                 }
-            });
+
+                const payments = stripePayments(firebaseApp);
+                const session = await createCheckoutSession(payments, {
+                    price: priceId,
+                    allow_promotion_codes: true,
+                    mode: 'payment',
+                    metadata: {
+                        courseId: course.id
+                    }
+                });
+                window.location.assign(session.url);
+            } catch (error) {
+                console.error("Payment error:", error);
+                setIsLoading(false);
+            }
         } else {
             // For free courses - direct enrollment logic
+            // Logic for enrolling in free courses would go here
             setIsLoading(false);
         }
     };
@@ -115,11 +145,12 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
             <motion.div
                 whileHover={!isPurchased ? { scale: 1.02 } : {}}
                 transition={{ duration: 0.2 }}
+                className="relative"
             >
                 {isPurchased ? (
                     <Button
                         color="success"
-                        className="w-full bg-gradient-to-r from-green-500 to-emerald-500 mb-4 py-6"
+                        className="w-full bg-gradient-to-r from-green-500 to-emerald-500 mb-4 py-6 shadow-md hover:shadow-lg transition-all duration-300"
                         size="lg"
                         href={`/courses/${course.id}/lessons`}
                         startContent={<FiPlayCircle className="text-xl" />}
@@ -127,16 +158,47 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                         Continue Learning
                     </Button>
                 ) : (
-                    <Button
-                        color="primary"
-                        className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 mb-4 py-6"
-                        size="lg"
-                        onPress={handleEnrollClick}
-                        isLoading={isLoading}
-                        startContent={course.isFree ? <FiCheck className="text-xl" /> : <FiShoppingCart className="text-xl" />}
-                    >
-                        {course.isFree ? 'Enroll Now - Free' : 'Buy Now'}
-                    </Button>
+                    isLoading ? (
+                        <LoadingButton 
+                            className="w-full bg-gradient-to-r from-indigo-600 via-purple-500 to-indigo-700 mb-4 py-6 shadow-md hover:shadow-lg transition-all duration-300"
+                            size="lg"
+                            loadingText="Processing payment..."
+                        />
+                    ) : (
+                        <div className="relative mb-4 overflow-hidden rounded-xl">
+                            {/* Decorative corner highlights */}
+                            <div className="absolute -top-1 -left-1 w-8 h-8 border-t-2 border-l-2 border-indigo-300 rounded-tl-lg opacity-70"></div>
+                            <div className="absolute -bottom-1 -right-1 w-8 h-8 border-b-2 border-r-2 border-indigo-300 rounded-br-lg opacity-70"></div>
+                            
+                            {/* Shimmer effect overlay */}
+                            <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-10">
+                                <div className="shimmer-effect"></div>
+                            </div>
+                            
+                            {/* Main button */}
+                            <Button
+                                color="primary"
+                                className="w-full bg-gradient-to-r from-indigo-600 via-purple-500 to-indigo-700 py-6 font-medium text-white transition-all duration-500 shadow-md hover:shadow-xl hover:shadow-indigo-500/20 group relative overflow-hidden"
+                                size="lg"
+                                onPress={handleEnrollClick}
+                                startContent={course.isFree ? <FiCheck className="text-xl" /> : <FiShoppingCart className="text-xl transition-transform duration-500 group-hover:rotate-12" />}
+                            >
+                                <span className="relative z-10 tracking-wide font-semibold text-white flex items-center gap-2 transition-all duration-300 group-hover:tracking-wider">
+                                    {course.isFree ? 'Enroll Now - Free' : 'Buy Now'}
+                                    
+                                    {/* Arrow that moves on hover */}
+                                    {!course.isFree && (
+                                        <svg className="w-4 h-4 transition-transform duration-500 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                        </svg>
+                                    )}
+                                </span>
+                                
+                                {/* Background gradient overlay that changes on hover */}
+                                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/50 via-purple-400/50 to-fuchsia-500/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"></div>
+                            </Button>
+                        </div>
+                    )
                 )}
             </motion.div>
 

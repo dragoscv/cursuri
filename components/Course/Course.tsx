@@ -9,6 +9,11 @@ import { Button, Tabs, Tab, Divider, Card, Chip } from "@heroui/react"
 import { useRouter } from "next/navigation"
 import { AppContextProps, Course as CourseType, Lesson, Resource, UserPaidProduct } from "@/types"
 import { FiBookOpen } from '../icons/FeatherIcons'
+import { createCheckoutSession } from "firewand"
+import { stripePayments } from "@/utils/firebase/stripe"
+import { firebaseApp } from "firewand"
+import Login from "../Login"
+import LoadingButton from '../Buttons/LoadingButton'
 
 interface CourseProps {
     courseId: string;
@@ -17,13 +22,14 @@ interface CourseProps {
 export default function Course({ courseId }: CourseProps) {
     const [selectedTab, setSelectedTab] = useState("content")
     const [lessonCount, setLessonCount] = useState(0)
+    const [loadingPayment, setLoadingPayment] = useState(false)
     const router = useRouter()
 
     const context = useContext(AppContext) as AppContextProps
     if (!context) {
         throw new Error("You probably forgot to put <AppProvider>.")
     }
-    const { courses, isAdmin, openModal, closeModal, lessons, getCourseLessons, userPaidProducts, getCourseReviews, lessonProgress } = context
+    const { courses, isAdmin, openModal, closeModal, lessons, getCourseLessons, userPaidProducts, getCourseReviews, lessonProgress, products, user } = context
 
     const course = courses[courseId]
     const hasAccess = userPaidProducts?.find((userPaidProduct: UserPaidProduct) =>
@@ -84,6 +90,64 @@ export default function Course({ courseId }: CourseProps) {
 
     const courseProgress = calculateCourseProgress();
 
+    // Get course price information
+    const getCoursePrice = () => {
+        const product = products?.find((product: any) => product.id === course?.priceProduct?.id);
+        const price = product?.prices?.find((price: any) => price.id === course?.price);
+        return {
+            amount: price?.unit_amount ? price.unit_amount / 100 : course?.price || 0,
+            currency: price?.currency?.toUpperCase() || 'RON',
+            priceId: price?.id
+        };
+    };
+
+    // Handle course purchase
+    const buyCourse = async () => {
+        if (!user) {
+            openModal({
+                id: 'login',
+                isOpen: true,
+                hideCloseButton: false,
+                backdrop: 'blur',
+                size: 'full',
+                scrollBehavior: 'inside',
+                isDismissable: true,
+                modalHeader: 'Autentificare',
+                modalBody: <Login onClose={() => closeModal('login')} />,
+                headerDisabled: true,
+                footerDisabled: true,
+                noReplaceURL: true,
+                onClose: () => closeModal('login'),
+            });
+            return;
+        }
+
+        const { priceId } = getCoursePrice();
+        if (!priceId) {
+            console.error("Price ID not found for course:", courseId);
+            return;
+        }
+
+        setLoadingPayment(true);
+
+        const payments = stripePayments(firebaseApp);
+        try {
+            const session = await createCheckoutSession(payments, {
+                price: priceId,
+                allow_promotion_codes: true,
+                mode: 'payment',
+                metadata: {
+                    courseId: courseId
+                }
+            });
+            window.location.assign(session.url);
+        } catch (error) {
+            console.error("Payment error:", error);
+        } finally {
+            setLoadingPayment(false);
+        }
+    };
+
     return (
         <div className="w-full max-w-6xl mx-auto px-4 py-6">
             {/* Course Header */}
@@ -142,6 +206,29 @@ export default function Course({ courseId }: CourseProps) {
                         >
                             Add Lesson
                         </Button>
+                    )}
+
+                    {/* Buy Now Button - Only show for users who don't have access and aren't admins */}
+                    {!hasAccess && !isAdmin && (
+                        <>
+                            {loadingPayment ? (
+                                <LoadingButton />
+                            ) : (
+                                <Button
+                                    color="primary"
+                                    size="lg"
+                                    className="px-6 shadow-md hover:shadow-lg transition-all"
+                                    onClick={buyCourse}
+                                    startContent={(
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M19 7L5 7.00001M19 7V20H5V7.00001M19 7L16 2H8L5 7.00001" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                    )}
+                                >
+                                    {course?.isFree ? 'Enroll for Free' : `Buy Now - ${getCoursePrice().amount} ${getCoursePrice().currency}`}
+                                </Button>
+                            )}
+                        </>
                     )}
                 </div>
 
