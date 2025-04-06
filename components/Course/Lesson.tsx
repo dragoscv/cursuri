@@ -195,7 +195,7 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
                 <div className="lg:col-span-2 space-y-6">
                     {/* Video Player Section */}
                     {lesson.videoUrl && (
-                        <Card className="border border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)]/50 bg-white/50 dark:bg-[color:var(--ai-background)]/50 backdrop-blur-sm shadow-xl overflow-hidden">
+                        <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-md overflow-hidden rounded-xl">
                             <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
                                 <video
                                     ref={videoRef}
@@ -208,12 +208,12 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
                             </div>
 
                             {/* Progress bar for the video */}
-                            <div className="p-4">
+                            <div className="p-5">
                                 <div className="flex items-center justify-between mb-2">
-                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                    <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)]">
                                         {lesson.title || lesson.name}
                                     </h3>
-                                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                                    <span className="text-sm text-[color:var(--ai-muted)]">
                                         {lesson.duration || "Tutorial"}
                                     </span>
                                 </div>
@@ -228,7 +228,7 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
                                 />
 
                                 {/* Course progress indicator */}
-                                <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                                <div className="flex items-center justify-between text-xs text-[color:var(--ai-muted)]">
                                     <span>Lesson {calculateProgress() / (100 / Object.keys(lessons[courseId] || {}).length)} of {Object.keys(lessons[courseId] || {}).length}</span>
                                     <span>{Math.round(calculateProgress())}% of course completed</span>
                                 </div>
@@ -238,7 +238,7 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
 
                     {/* Lesson Content */}
                     {lesson.content && (
-                        <Card className="mt-8 border border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)]/50 bg-white/50 dark:bg-[color:var(--ai-background)]/50 backdrop-blur-sm shadow-xl">
+                        <Card className="mt-8 border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-md rounded-xl">
                             <div className="p-6">
                                 <h2 className="text-xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-4">
                                     Lesson Content
@@ -255,7 +255,7 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
                 {/* Right Sidebar */}
                 <div className="lg:col-span-1 space-y-6">
                     {/* Lesson Navigation */}
-                    <Card className="border border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm shadow-xl overflow-hidden">
+                    <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-md rounded-xl overflow-hidden">
                         <LessonNavigation
                             prevLessonId={prevLessonId}
                             nextLessonId={nextLessonId}
@@ -266,7 +266,7 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
                     </Card>
 
                     {/* Lesson Settings */}
-                    <Card className="border border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm shadow-xl overflow-hidden">
+                    <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-md rounded-xl overflow-hidden">
                         <LessonSettings
                             isCompleted={isCompleted}
                             autoPlayNext={autoPlayNext}

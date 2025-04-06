@@ -1,6 +1,8 @@
 'use client'
 
-import { Resource } from '@/types'
+import { Resource } from '@/types';
+import { Card } from '@heroui/react';
+import { FiFileText, FiExternalLink, FiDownload } from '@/components/icons/FeatherIcons';
 
 interface ResourcesListProps {
     resources: Resource[];
@@ -13,37 +15,56 @@ export default function ResourcesList({
         return null;
     }
 
+    // Function to get appropriate icon based on resource type
+    const getResourceIcon = (type: string) => {
+        switch (type?.toLowerCase()) {
+            case 'pdf':
+                return <FiFileText size={18} />;
+            case 'download':
+                return <FiDownload size={18} />;
+            default:
+                return <FiExternalLink size={18} />;
+        }
+    };
+
     return (
-        <div className="p-6">
-            <h3 className="text-lg font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-4">
-                Lesson Resources
-            </h3>
-            <ul className="space-y-3">
-                {resources.map((resource: Resource, index: number) => (
-                    <li key={index} className="group">
-                        <a
-                            href={resource.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center p-3 rounded-lg border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/30 bg-[color:var(--ai-card-bg)]/50 hover:bg-[color:var(--ai-primary)]/10 transition-all duration-300 group"
-                        >
-                            <div className="mr-3 p-2 rounded-full bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] group-hover:bg-[color:var(--ai-primary)]/20 transition-colors">
-                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clipRule="evenodd" />
-                                </svg>
-                            </div>
-                            <div className="flex-1">
-                                <span className="text-[color:var(--ai-primary)] font-medium group-hover:text-[color:var(--ai-primary-accent)] transition-colors">
-                                    {resource.name}
-                                </span>
-                            </div>
-                            <svg className="w-4 h-4 text-[color:var(--ai-primary)] opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
-                        </a>
-                    </li>
-                ))}
-            </ul>
-        </div>
-    )
+        <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-md rounded-xl overflow-hidden">
+            <div className="p-5">
+                <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 -m-5 mb-4 border-b border-[color:var(--ai-card-border)]">
+                    <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
+                        <FiFileText className="mr-2 text-[color:var(--ai-primary)]" />
+                        <span>Lesson Resources</span>
+                    </h3>
+                </div>
+
+                <ul className="space-y-3">
+                    {resources.map((resource: Resource, index: number) => (
+                        <li key={index} className="group">
+                            <a
+                                href={resource.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center p-3 rounded-lg border border-[color:var(--ai-card-border)]/50 hover:border-[color:var(--ai-primary)]/30 bg-[color:var(--ai-card-bg)]/50 hover:bg-[color:var(--ai-primary)]/5 transition-all duration-300 group"
+                            >
+                                <div className="mr-3 p-2 rounded-full bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] group-hover:bg-[color:var(--ai-primary)]/20 transition-colors">
+                                    {getResourceIcon(resource.type)}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <span className="text-[color:var(--ai-foreground)] font-medium group-hover:text-[color:var(--ai-primary)] transition-colors block truncate">
+                                        {resource.name}
+                                    </span>
+                                    {resource.description && (
+                                        <span className="text-xs text-[color:var(--ai-muted)] block truncate">
+                                            {resource.description}
+                                        </span>
+                                    )}
+                                </div>
+                                <FiExternalLink className="w-4 h-4 text-[color:var(--ai-primary)] opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 ml-2" />
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </Card>
+    );
 }

@@ -67,7 +67,7 @@ const CourseContent: React.FC<CourseContentProps> = ({
             opacity: 1,
             transition: {
                 type: "spring",
-                damping: 12
+                damping: 15
             }
         }
     };
@@ -97,23 +97,23 @@ const CourseContent: React.FC<CourseContentProps> = ({
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4 }}
-                    className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-xl p-4 border border-indigo-100 dark:border-indigo-800/40 shadow-sm"
+                    className="bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-[color:var(--ai-accent)]/5 backdrop-blur-sm rounded-xl p-5 border border-[color:var(--ai-card-border)]/50 shadow-sm"
                 >
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
-                            <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Your Progress</h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                            <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)]">Your Progress</h3>
+                            <p className="text-sm text-[color:var(--ai-muted)]">
                                 {Object.values(completedLessons).filter(Boolean).length} of {sortedLessons.length} lessons completed
                             </p>
                         </div>
                         <div className="flex items-center">
-                            <div className="relative h-6 w-40 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                            <div className="relative h-6 w-40 bg-[color:var(--ai-card-border)]/30 rounded-full overflow-hidden">
                                 <div
-                                    className="absolute h-full bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full transition-all duration-500 ease-out"
+                                    className="absolute h-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-full transition-all duration-500 ease-out"
                                     style={{ width: `${calculateProgress()}%` }}
                                 />
                             </div>
-                            <span className="ml-3 font-medium text-gray-800 dark:text-white">{calculateProgress()}%</span>
+                            <span className="ml-3 font-medium text-[color:var(--ai-foreground)]">{calculateProgress()}%</span>
                         </div>
                     </div>
                 </motion.div>
@@ -125,19 +125,19 @@ const CourseContent: React.FC<CourseContentProps> = ({
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4 }}
-                    className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-4 border border-amber-200 dark:border-amber-800/40 shadow-sm"
+                    className="bg-[color:var(--ai-accent)]/10 rounded-xl p-5 border border-[color:var(--ai-accent)]/20 shadow-sm"
                 >
                     <div className="flex items-start gap-4">
-                        <div className="text-amber-500 dark:text-amber-400 p-2 bg-amber-100 dark:bg-amber-900/40 rounded-full">
+                        <div className="text-[color:var(--ai-accent)] p-2 bg-[color:var(--ai-accent)]/10 rounded-full">
                             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                                <line x1="12" y1="9" x2="12" y2="13"></line>
-                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
+                                <line x1="12" y1="9" x2="12" y2="13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></line>
+                                <line x1="12" y1="17" x2="12.01" y2="17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></line>
                             </svg>
                         </div>
                         <div>
-                            <h3 className="text-lg font-semibold text-amber-800 dark:text-amber-300">Some Content is Locked</h3>
-                            <p className="text-sm text-amber-700 dark:text-amber-400 mt-1">
+                            <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)]">Some Content is Locked</h3>
+                            <p className="text-sm text-[color:var(--ai-muted)] mt-1">
                                 Purchase this course to unlock all lessons. Free preview lessons are accessible to everyone.
                             </p>
                         </div>
@@ -159,24 +159,24 @@ const CourseContent: React.FC<CourseContentProps> = ({
                             <motion.div
                                 key={module.id || moduleIndex}
                                 variants={itemVariants}
-                                className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-800 shadow-sm"
+                                className="border border-[color:var(--ai-card-border)] rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)] shadow-sm"
                             >
-                                <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 py-3 px-4 border-b border-gray-200 dark:border-gray-700">
-                                    <h3 className="font-medium text-gray-800 dark:text-white flex items-center">
+                                <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 border-b border-[color:var(--ai-card-border)]">
+                                    <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
                                         <span>{module.title}</span>
                                         {module.lessonCount && (
-                                            <span className="ml-2 text-xs bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 px-2 py-0.5 rounded-full">
+                                            <span className="ml-2 text-xs bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] px-2 py-0.5 rounded-full">
                                                 {module.lessonCount} lessons
                                             </span>
                                         )}
                                     </h3>
                                     {module.description && (
-                                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                        <p className="text-sm text-[color:var(--ai-muted)] mt-1">
                                             {module.description}
                                         </p>
                                     )}
                                 </div>
-                                <div className="divide-y divide-gray-100 dark:divide-gray-700">
+                                <div className="divide-y divide-[color:var(--ai-card-border)]/50">
                                     {(lessonsByModule[module.id] || []).map((lesson, lessonIndex) => (
                                         <LessonItem
                                             key={lesson.id}
@@ -195,12 +195,12 @@ const CourseContent: React.FC<CourseContentProps> = ({
                         {lessonsByModule['default'] && lessonsByModule['default'].length > 0 && (
                             <motion.div
                                 variants={itemVariants}
-                                className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-800 shadow-sm"
+                                className="border border-[color:var(--ai-card-border)] rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)] shadow-sm"
                             >
-                                <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 py-3 px-4 border-b border-gray-200 dark:border-gray-700">
-                                    <h3 className="font-medium text-gray-800 dark:text-white">Additional Lessons</h3>
+                                <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 border-b border-[color:var(--ai-card-border)]">
+                                    <h3 className="font-medium text-[color:var(--ai-foreground)]">Additional Lessons</h3>
                                 </div>
-                                <div className="divide-y divide-gray-100 dark:divide-gray-700">
+                                <div className="divide-y divide-[color:var(--ai-card-border)]/50">
                                     {lessonsByModule['default'].map((lesson, lessonIndex) => (
                                         <LessonItem
                                             key={lesson.id}
@@ -219,18 +219,18 @@ const CourseContent: React.FC<CourseContentProps> = ({
                     // Show flat list if no modules are defined
                     <motion.div
                         variants={itemVariants}
-                        className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-800 shadow-sm"
+                        className="border border-[color:var(--ai-card-border)] rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)] shadow-sm"
                     >
-                        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 py-3 px-4 border-b border-gray-200 dark:border-gray-700">
-                            <h3 className="font-medium text-gray-800 dark:text-white flex items-center">
+                        <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 border-b border-[color:var(--ai-card-border)]">
+                            <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
                                 <span>Course Content</span>
-                                <span className="ml-2 text-xs bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 px-2 py-0.5 rounded-full">
+                                <span className="ml-2 text-xs bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] px-2 py-0.5 rounded-full">
                                     {sortedLessons.length} lessons
                                 </span>
                             </h3>
                         </div>
                         {sortedLessons.length > 0 ? (
-                            <div className="divide-y divide-gray-100 dark:divide-gray-700">
+                            <div className="divide-y divide-[color:var(--ai-card-border)]/50">
                                 {sortedLessons.map((lesson, index) => (
                                     <LessonItem
                                         key={lesson.id}
@@ -244,9 +244,9 @@ const CourseContent: React.FC<CourseContentProps> = ({
                             </div>
                         ) : (
                             <div className="flex flex-col items-center justify-center py-12 text-center">
-                                <FiBookOpen className="w-12 h-12 text-gray-400 dark:text-gray-600 mb-4" />
-                                <h3 className="text-lg font-medium text-gray-900 dark:text-white">No lessons available</h3>
-                                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                <FiBookOpen className="w-12 h-12 text-[color:var(--ai-muted)]/40 mb-4" />
+                                <h3 className="text-lg font-medium text-[color:var(--ai-foreground)]">No lessons available</h3>
+                                <p className="mt-1 text-sm text-[color:var(--ai-muted)]">
                                     This course doesn't have any lessons yet.
                                 </p>
                             </div>
@@ -269,43 +269,43 @@ interface LessonItemProps {
 const LessonItem: React.FC<LessonItemProps> = ({ lesson, index, isCompleted, isAccessible, onClick }) => {
     const getIcon = () => {
         if (isCompleted) {
-            return <FiCheck className="text-green-500" />;
+            return <FiCheck className="text-[color:var(--ai-success, #10b981)]" />;
         } else if (!isAccessible) {
-            return <FiLock className="text-gray-400 dark:text-gray-500" />;
+            return <FiLock className="text-[color:var(--ai-muted)]" />;
         } else if (lesson.videoUrl) {
-            return <FiPlay className="text-indigo-500 dark:text-indigo-400" />;
+            return <FiPlay className="text-[color:var(--ai-primary)]" />;
         } else {
-            return <FiBookOpen className="text-indigo-500 dark:text-indigo-400" />;
+            return <FiBookOpen className="text-[color:var(--ai-primary)]" />;
         }
     };
 
     return (
         <div
             className={`
-                flex items-center p-4 hover:bg-gray-50 dark:hover:bg-gray-750
+                flex items-center p-4 hover:bg-[color:var(--ai-card-bg)]/80 transition-colors duration-200
                 ${isAccessible ? 'cursor-pointer' : 'cursor-not-allowed opacity-80'}
-                ${isCompleted ? 'bg-green-50/50 dark:bg-green-900/10' : ''}
+                ${isCompleted ? 'bg-[color:var(--ai-success, #10b981)]/5' : ''}
             `}
             onClick={onClick}
         >
             <div className={`
                 flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full mr-4
-                ${isCompleted ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400' :
-                    !isAccessible ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500' :
-                        'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400'}
+                ${isCompleted ? 'bg-[color:var(--ai-success, #10b981)]/10 text-[color:var(--ai-success, #10b981)]' :
+                    !isAccessible ? 'bg-[color:var(--ai-card-border)]/20 text-[color:var(--ai-muted)]' :
+                        'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]'}
             `}>
                 {getIcon()}
             </div>
 
             <div className="flex-1 min-w-0">
                 <div className="flex items-center">
-                    <span className="text-sm font-medium text-gray-500 dark:text-gray-400 mr-2">
+                    <span className="text-sm font-medium text-[color:var(--ai-muted)] mr-2">
                         {(index + 1).toString().padStart(2, '0')}
                     </span>
                     <h4 className={`font-medium truncate
-                        ${isCompleted ? 'text-green-700 dark:text-green-400' :
-                            !isAccessible ? 'text-gray-500 dark:text-gray-400' :
-                                'text-gray-900 dark:text-white'}
+                        ${isCompleted ? 'text-[color:var(--ai-success, #10b981)]' :
+                            !isAccessible ? 'text-[color:var(--ai-muted)]' :
+                                'text-[color:var(--ai-foreground)]'}
                     `}>
                         {lesson.name}
                     </h4>
@@ -323,7 +323,7 @@ const LessonItem: React.FC<LessonItemProps> = ({ lesson, index, isCompleted, isA
                 </div>
 
                 {lesson.description && (
-                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 line-clamp-1">
+                    <p className="mt-1 text-sm text-[color:var(--ai-muted)] line-clamp-1">
                         {lesson.description}
                     </p>
                 )}
@@ -331,18 +331,18 @@ const LessonItem: React.FC<LessonItemProps> = ({ lesson, index, isCompleted, isA
 
             <div className="ml-4 flex-shrink-0 flex items-center gap-3">
                 {lesson.duration && (
-                    <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
+                    <span className="text-xs text-[color:var(--ai-muted)] flex items-center">
                         <FiClock className="mr-1 h-3.5 w-3.5" />
                         {lesson.duration}
                     </span>
                 )}
 
                 {!isAccessible ? (
-                    <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-2 py-1 rounded-full">
+                    <span className="text-xs bg-[color:var(--ai-card-border)]/20 text-[color:var(--ai-muted)] px-2 py-1 rounded-full">
                         Locked
                     </span>
                 ) : isCompleted ? (
-                    <span className="text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-2 py-1 rounded-full flex items-center gap-1">
+                    <span className="text-xs bg-[color:var(--ai-success, #10b981)]/10 text-[color:var(--ai-success, #10b981)] px-2 py-1 rounded-full flex items-center gap-1">
                         <FiCheck className="h-3 w-3" />
                         Completed
                     </span>

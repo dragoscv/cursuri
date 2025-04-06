@@ -1,99 +1,86 @@
 'use client'
 
-import { Chip } from '@heroui/react'
-import { Lesson } from '@/types'
+import React from 'react';
+import { Chip } from '@heroui/react';
+import { FiArrowLeft, FiClock, FiCheck, FiLock } from '@/components/icons/FeatherIcons';
+import { Lesson } from '@/types';
 
 interface LessonHeaderProps {
-    lesson: Lesson;
-    isCompleted: boolean;
-    progressSaved: boolean;
-    autoPlayNext: boolean;
-    calculateProgress: () => number;
+  lesson: Lesson;
+  onBack: () => void;
+  isCompleted: boolean;
+  hasAccess: boolean;
 }
 
-export default function LessonHeader({
-    lesson,
-    isCompleted,
-    progressSaved,
-    autoPlayNext,
-    calculateProgress
-}: LessonHeaderProps) {
-    return (
-        <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-[color:var(--ai-accent)]/10 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-[color:var(--ai-card-border)]/50 shadow-xl">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-                <div>
-                    <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-2">
-                        {lesson.name}
-                    </h1>
-                    {lesson.description && (
-                        <p className="text-[color:var(--ai-muted)] max-w-2xl">
-                            {lesson.description}
-                        </p>
-                    )}
-                </div>
+const LessonHeader: React.FC<LessonHeaderProps> = ({ 
+  lesson, 
+  onBack, 
+  isCompleted,
+  hasAccess
+}) => {
+  return (
+    <div className="p-5 bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-[color:var(--ai-accent)]/5 backdrop-blur-sm rounded-xl border border-[color:var(--ai-card-border)]/50 shadow-sm mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
+        <button 
+          onClick={onBack}
+          className="flex items-center text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition-colors"
+        >
+          <FiArrowLeft className="mr-1" />
+          <span className="text-sm">Back to course</span>
+        </button>
 
-                {/* Course Progress Indicator */}
-                <div className="flex flex-col items-end">
-                    <div className="flex items-center gap-2 mb-2">
-                        <span className="text-sm text-[color:var(--ai-muted)]">Course Progress</span>
-                        <span className="font-semibold text-[color:var(--ai-primary)]">{Math.round(calculateProgress())}%</span>
-                    </div>
-                    <div className="w-32 bg-[color:var(--ai-card-border)]/20 rounded-full h-2 overflow-hidden">
-                        <div
-                            className="h-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-full"
-                            style={{ width: `${calculateProgress()}%` }}
-                        ></div>
-                    </div>
-                </div>
+        <div className="flex items-center gap-2">
+          {lesson.duration && (
+            <div className="flex items-center text-[color:var(--ai-muted)]">
+              <FiClock className="mr-1" size={14} />
+              <span className="text-sm">{lesson.duration}</span>
             </div>
+          )}
 
-            {/* Status indicators */}
-            <div className="flex flex-wrap items-center gap-2">
-                {isCompleted && (
-                    <Chip
-                        color="success"
-                        variant="flat"
-                        className="transition-all duration-300"
-                        startContent={
-                            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
-                            </svg>
-                        }
-                    >
-                        Completed
-                    </Chip>
-                )}
-
-                {progressSaved && (
-                    <Chip
-                        color="primary"
-                        variant="flat"
-                        className="animate-pulse"
-                        startContent={
-                            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" clipRule="evenodd"></path>
-                            </svg>
-                        }
-                    >
-                        Progress Saved
-                    </Chip>
-                )}
-
-                {autoPlayNext && (
-                    <Chip
-                        color="warning"
-                        variant="flat"
-                        startContent={
-                            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
-                                <path fillRule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clipRule="evenodd"></path>
-                            </svg>
-                        }
-                    >
-                        Autoplay Next
-                    </Chip>
-                )}
-            </div>
+          {isCompleted ? (
+            <Chip
+              size="sm"
+              color="success"
+              variant="flat"
+              startContent={<FiCheck size={12} />}
+              className="text-[color:var(--ai-success, #10b981)]"
+            >
+              Completed
+            </Chip>
+          ) : !hasAccess ? (
+            <Chip
+              size="sm"
+              color="danger"
+              variant="flat"
+              startContent={<FiLock size={12} />}
+              className="text-[color:var(--ai-danger, #f43f5e)]"
+            >
+              Locked
+            </Chip>
+          ) : lesson.isFree ? (
+            <Chip
+              size="sm"
+              color="primary"
+              variant="flat"
+              className="text-[color:var(--ai-primary)]"
+            >
+              Free Preview
+            </Chip>
+          ) : null}
         </div>
-    )
-}
+      </div>
+
+      <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">
+        {lesson.title || lesson.name}
+      </h1>
+      
+      {lesson.description && (
+        <p className="text-[color:var(--ai-muted)] mt-2 max-w-3xl">
+          {lesson.description}
+        </p>
+      )}
+    </div>
+  );
+};
+
+export default LessonHeader;

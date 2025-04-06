@@ -1,13 +1,14 @@
 'use client'
 
-import Button from '@/components/ui/Button'
+import { Button } from '@heroui/react';
+import { FiArrowLeft, FiArrowRight, FiCheck, FiMap } from '@/components/icons/FeatherIcons';
 
 interface LessonNavigationProps {
     prevLessonId: string | null;
     nextLessonId: string | null;
     isCompleted: boolean;
     onNavigateLesson: (lessonId: string) => void;
-    onClose: () => void;
+    onClose?: () => void;
 }
 
 export default function LessonNavigation({
@@ -18,38 +19,35 @@ export default function LessonNavigation({
     onClose
 }: LessonNavigationProps) {
     return (
-        <div className="p-6 rounded-3xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-xl overflow-hidden mt-8">
-            <h3 className="text-lg font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-4 rounded-3xl">
-                Lesson Navigation
-            </h3>
+        <div className="p-5">
+            <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 -m-5 mb-4 border-b border-[color:var(--ai-card-border)]">
+                <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
+                    <FiMap className="mr-2 text-[color:var(--ai-primary)]" />
+                    <span>Lesson Navigation</span>
+                </h3>
+            </div>
 
             <div className="flex flex-col gap-3">
                 {/* Back to Course Button */}
-                <Button
-                    variant="flat"
-                    className="bg-[color:var(--ai-card-bg)]/80 hover:bg-[color:var(--ai-primary)]/10 transition-colors rounded-lg"
-                    onClick={onClose}
-                    startContent={
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                    }
-                >
-                    Back to Course
-                </Button>
+                {onClose && (
+                    <Button
+                        variant="flat"
+                        className="bg-[color:var(--ai-card-bg)]/80 hover:bg-[color:var(--ai-primary)]/10 transition-colors text-[color:var(--ai-foreground)]"
+                        onClick={onClose}
+                        startContent={<FiArrowLeft size={16} />}
+                    >
+                        Back to Course
+                    </Button>
+                )}
 
                 {/* Previous & Next Lesson Buttons */}
                 <div className="grid grid-cols-2 gap-3 mt-2">
                     {prevLessonId ? (
                         <Button
                             variant="flat"
-                            className="bg-[color:var(--ai-card-bg)]/80 hover:bg-[color:var(--ai-primary)]/10 transition-colors rounded-lg"
+                            className="bg-[color:var(--ai-card-bg)]/80 hover:bg-[color:var(--ai-primary)]/10 transition-colors text-[color:var(--ai-foreground)]"
                             onClick={() => onNavigateLesson(prevLessonId)}
-                            startContent={
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                                </svg>
-                            }
+                            startContent={<FiArrowLeft size={16} />}
                         >
                             Previous
                         </Button>
@@ -60,26 +58,18 @@ export default function LessonNavigation({
                     {nextLessonId ? (
                         <Button
                             color="primary"
-                            className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white rounded-lg"
+                            className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white border-none transition-transform hover:scale-[1.02]"
                             onClick={() => onNavigateLesson(nextLessonId)}
-                            endContent={
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                </svg>
-                            }
+                            endContent={<FiArrowRight size={16} />}
                         >
                             Next
                         </Button>
                     ) : (
                         <Button
                             color="success"
-                            className="bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg"
+                            className="bg-[color:var(--ai-success, #10b981)] text-white border-none transition-transform hover:scale-[1.02]"
                             onClick={onClose}
-                            endContent={
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                </svg>
-                            }
+                            endContent={<FiCheck size={16} />}
                         >
                             Complete
                         </Button>
@@ -87,5 +77,5 @@ export default function LessonNavigation({
                 </div>
             </div>
         </div>
-    )
+    );
 }
