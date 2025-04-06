@@ -3,20 +3,30 @@
 import React from 'react';
 import { NavbarBrand as HeroNavbarBrand, Link } from "@heroui/react";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 /**
  * NavbarBrand component that handles the logo and breadcrumbs in the header
  */
 export default function NavbarBrand() {
     const pathname = usePathname();
+    const router = useRouter();
 
     // Check if current route is a course or lesson page
     const isCourseOrLessonPage = pathname.includes('/courses/');
 
+    // Handle logo click to navigate without page refresh
+    const handleLogoClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        router.push('/');
+    };
+
     return (
         <HeroNavbarBrand>
-            <Link href="/" className="flex items-center gap-2">
+            <div
+                onClick={handleLogoClick}
+                className="flex items-center gap-2 cursor-pointer"
+            >
                 <div className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white p-1.5 rounded-md">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -34,7 +44,7 @@ export default function NavbarBrand() {
                         Cursuri
                     </p>
                 )}
-            </Link>
+            </div>
             {/* Display Breadcrumbs if on a course or lesson page - visible on desktop */}
             {isCourseOrLessonPage && (
                 <div className="ml-4 hidden md:block max-w-[200px] lg:max-w-[300px] xl:max-w-[400px] overflow-hidden">
