@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react';
-import { Button } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { Attachment } from '@/types';
 import RichTextEditor from './RichTextEditor';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';

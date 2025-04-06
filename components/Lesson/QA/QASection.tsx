@@ -98,7 +98,7 @@ const QASection: React.FC<QASectionProps> = ({ lesson }) => {
     }
 
     return (
-        <Card className="mt-8 border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-xl">
+        <Card className="mt-8 border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-xl rounded-2xl">
             <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">

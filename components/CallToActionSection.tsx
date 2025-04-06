@@ -2,7 +2,7 @@
 
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Button } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import ScrollAnimationWrapper from './animations/ScrollAnimationWrapper';
 import { useContext } from 'react';
 import { AppContext } from './AppContext';

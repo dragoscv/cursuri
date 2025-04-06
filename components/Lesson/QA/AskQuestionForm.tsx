@@ -2,7 +2,8 @@
 'use client'
 
 import React, { useState } from 'react';
-import { Button, Textarea, Input } from '@heroui/react';
+import Button from '@/components/ui/Button';
+import { Textarea, Input } from '@heroui/react';
 
 interface AskQuestionFormProps {
     onSubmit: (title: string, content: string) => void;

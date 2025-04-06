@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react';
-import { Button } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { SaveIcon } from '@/components/icons/svg';
 
 interface NotesProps {

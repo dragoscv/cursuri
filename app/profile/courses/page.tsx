@@ -2,7 +2,7 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from '@/components/AppContext';
-import { Button } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import Link from 'next/link';
 import { FiBook, FiSearch } from '@/components/icons/FeatherIcons';
 import CourseCard from '@/components/Profile/CourseCard';

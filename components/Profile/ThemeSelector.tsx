@@ -3,7 +3,7 @@
 import React from 'react';
 import { useContext } from 'react';
 import { AppContext } from '@/components/AppContext';
-import { Button } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { ColorScheme } from '@/types';
 import { FiCheck } from '@/components/icons/FeatherIcons';
 

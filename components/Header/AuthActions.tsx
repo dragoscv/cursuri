@@ -2,7 +2,7 @@
 
 import React, { useContext } from 'react';
 import { AppContext } from "@/components/AppContext";
-import { Button } from "@heroui/react";
+import Button from "@/components/ui/Button";
 import Login from "@/components/Login";
 
 /**

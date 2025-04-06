@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { FiArrowLeft } from '@/components/icons/FeatherIcons';
 import { motion } from 'framer-motion';
 import Link from 'next/link';

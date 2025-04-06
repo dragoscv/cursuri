@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useCallback } from 'react';
-import { Button, Divider, Card } from '@heroui/react';
+import Button from '@/components/ui/Button';
+import { Divider, Card } from '@heroui/react';
 import { Lesson } from '@/types';
 
 interface LessonSettingsProps {

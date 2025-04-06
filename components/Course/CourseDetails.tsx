@@ -57,12 +57,12 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({ course, lessons = 
                 size="md"
                 color="primary"
                 aria-label="Course details tabs"
-                disableAnimation={false}
+                disableAnimation={true}
                 classNames={{
-                    base: "overflow-hidden",
-                    tabList: "bg-gradient-to-r from-[color:var(--ai-card-bg)]/80 to-[color:var(--ai-card-bg)]/80 p-2 rounded-t-xl shadow-sm flex justify-center",
-                    cursor: "bg-gradient-to-r from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 backdrop-blur-sm shadow-sm",
-                    tab: "text-sm data-[selected=true]:text-[color:var(--ai-primary)] data-[selected=true]:font-semibold relative overflow-visible transition-all px-4 py-3 flex-col gap-1 min-w-20 hover:opacity-90 transition-transform",
+                    base: "overflow-hidden group relative",
+                    tabList: "bg-transparent border-b border-[color:var(--ai-card-border)]/50 p-2 rounded-t-xl flex justify-center",
+                    cursor: "opacity-0",
+                    tab: "text-sm data-[selected=true]:text-[color:var(--ai-primary)] data-[selected=true]:font-semibold relative overflow-visible transition-all px-4 py-3 flex-col gap-1 min-w-20 hover:opacity-90",
                     tabContent: "py-5 sm:py-6 px-4 sm:px-6"
                 }}
             >

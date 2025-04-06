@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button, Input } from '@heroui/react';
+import Button from '@/components/ui/Button';
+import { Input } from '@heroui/react';
 import { FiSearch, FiLayers, FiPlay, FiBarChart2 } from '@/components/icons/FeatherIcons';
 
 interface ProfileCoursesFilterProps {
