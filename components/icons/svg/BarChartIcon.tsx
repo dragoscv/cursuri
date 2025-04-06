@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconProps } from '@/types';
 
-const PlaybackSpeedIcon: React.FC<IconProps> = ({ className = "w-5 h-5", size }) => {
+const BarChartIcon: React.FC<IconProps> = ({ className = "w-5 h-5", size }) => {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -15,10 +15,11 @@ const PlaybackSpeedIcon: React.FC<IconProps> = ({ className = "w-5 h-5", size })
             strokeLinejoin="round"
             className={className}
         >
-            <circle cx="12" cy="12" r="10"></circle>
-            <polyline points="12 6 12 12 16 10"></polyline>
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
         </svg>
     );
 };
 
-export default PlaybackSpeedIcon;
+export default BarChartIcon;
