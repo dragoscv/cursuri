@@ -41,8 +41,8 @@ const LessonResources: React.FC<LessonResourcesProps> = ({ resources }) => {
 
                 <div className="space-y-3">
                     {resources.map((resource) => (
-                        <div 
-                            key={resource.id} 
+                        <div
+                            key={resource.id}
                             className="flex items-start p-3 rounded-lg border border-[color:var(--ai-card-border)]/50 hover:bg-[color:var(--ai-primary)]/5 transition-colors"
                         >
                             <div className="flex-shrink-0 mr-3 mt-1">

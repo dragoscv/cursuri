@@ -40,9 +40,9 @@ const QASection: React.FC<QAProps> = ({ lessonId }) => {
 
     const handleSubmitQuestion = async () => {
         if (!question.trim()) return;
-        
+
         setIsSubmitting(true);
-        
+
         // This would be where you'd submit to a database in a real implementation
         setTimeout(() => {
             setQuestion('');
@@ -90,11 +90,11 @@ const QASection: React.FC<QAProps> = ({ lessonId }) => {
                     <div className="text-sm font-medium text-[color:var(--ai-foreground)]">
                         Previous Questions
                     </div>
-                    
+
                     {sampleQuestions.length > 0 ? (
                         sampleQuestions.map(qa => (
-                            <div 
-                                key={qa.id} 
+                            <div
+                                key={qa.id}
                                 className="p-4 rounded-lg border border-[color:var(--ai-card-border)]/50 bg-[color:var(--ai-card-bg)]/80"
                             >
                                 <div className="flex items-start gap-3 mb-3">
@@ -114,7 +114,7 @@ const QASection: React.FC<QAProps> = ({ lessonId }) => {
                                         </p>
                                     </div>
                                 </div>
-                                
+
                                 {qa.answer && (
                                     <div className="ml-11 p-3 bg-[color:var(--ai-primary)]/5 rounded-lg">
                                         <div className="text-xs text-[color:var(--ai-muted)] mb-1">

@@ -26,7 +26,7 @@ const LessonNotes: React.FC<LessonNotesProps> = ({ notes, onChange, onSave }) =>
                         placeholder="Write your notes here..."
                         className="w-full border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/80 text-[color:var(--ai-foreground)] placeholder:text-[color:var(--ai-muted)]/70 min-h-[120px]"
                     />
-                    
+
                     <Button
                         onClick={onSave}
                         variant="flat"
