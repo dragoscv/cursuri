@@ -5,20 +5,19 @@ import EnhancedLessonsList from '../../../../components/Lessons/EnhancedLessonsL
 import { Spinner } from "@heroui/react";
 import { motion } from 'framer-motion';
 import { Course, Lesson, UserPaidProduct } from '@/types';
-import { useCourseParams } from '@/utils/hooks/useParams';
 import CourseProgressHeader from '@/components/Lessons/CourseProgressHeader';
 import CourseAccessRequired from '@/components/Course/Access/CourseAccessRequired';
 
 // Define the props interface for the page component
 interface LessonsPageProps {
-    params: {
-        courseId: string;
-    }
+    params: { courseId: string } | Promise<{ courseId: string }>;
 }
 
 export default function LessonsPage(props: LessonsPageProps) {
-    // Use the custom hook to safely access params
-    const { courseId } = useCourseParams(props.params);
+    // Unwrap the params using React.use() to handle both Promise and non-Promise cases
+    const unwrappedParams = React.use(props.params instanceof Promise ? props.params : Promise.resolve(props.params));
+    const { courseId } = unwrappedParams;
+
     const context = useContext(AppContext);
 
     if (!context) {

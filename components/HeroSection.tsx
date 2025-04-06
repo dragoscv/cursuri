@@ -7,6 +7,7 @@ import { AppContext } from './AppContext'
 import Login from './Login'
 import { motion } from 'framer-motion'
 import { ModalProps } from '@/types'
+import { useRouter } from 'next/navigation'
 import {
     TypeScriptIcon,
     ReactIcon,
@@ -30,6 +31,7 @@ export default function HeroSection() {
         throw new Error("You probably forgot to put <AppProvider>.")
     }
 
+    const router = useRouter()
     const { openModal, closeModal, user, courses, userPaidProducts, reviews } = context
     const particlesRef = useRef<HTMLDivElement>(null)
 
@@ -415,8 +417,7 @@ export default function HeroSection() {
                                 size="lg"
                                 radius="full"
                                 className="px-8 py-6 text-lg font-medium border-[color:var(--ai-secondary)]/50 text-[color:var(--ai-foreground-inverse)] backdrop-blur-sm hover:bg-white/10 transform hover:-translate-y-1 transition-all duration-300"
-                                as="a"
-                                href="/courses"
+                                onClick={() => router.push('/courses')}
                             >
                                 Explore Courses
                             </Button>

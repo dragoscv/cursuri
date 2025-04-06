@@ -2,9 +2,10 @@ import React, { useEffect } from 'react';
 import { Course, Lesson } from '../../types';
 import { Tabs, Tab, Card, Divider } from "@heroui/react";
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiCheckCircle, FiLayers, FiTarget, FiCalendar, FiBookOpen } from '../icons/FeatherIcons';
+import { FiLayers, FiBookOpen } from '../icons/FeatherIcons';
 import { useRouter, useSearchParams } from 'next/navigation';
 import EnhancedLessonsList from '../../components/Lessons/EnhancedLessonsList';
+import CourseOverview from './CourseOverview';
 
 interface CourseDetailsProps {
     course: Course;
@@ -34,25 +35,17 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({ course, lessons = 
         }
     }, [tabParam]);
 
-    // Sample benefits if not provided
-    const benefits = course.benefits || [
-        "Learn key concepts and best practices",
-        "Build real-world projects",
-        "Understand modern development techniques",
-        "Gain practical skills employers are looking for"
-    ];
-
-    // Sample requirements if not provided
-    const requirements = course.requirements || [
-        "Basic understanding of programming concepts",
-        "Computer with internet connection",
-        "Willingness to learn and practice"
-    ];
-
     // Animation variants
     const tabContentVariants = {
-        hidden: { opacity: 0, y: 10 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
+        hidden: { opacity: 0, y: 20, transition: { duration: 0.3 } },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.5,
+                ease: [0.22, 1, 0.36, 1] // Custom cubic-bezier for smooth feel
+            }
+        }
     };
 
     return (
@@ -69,20 +62,25 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({ course, lessons = 
                     base: "overflow-hidden",
                     tabList: "bg-gradient-to-r from-[color:var(--ai-card-bg)]/80 to-[color:var(--ai-card-bg)]/80 p-2 rounded-t-xl shadow-sm flex justify-center",
                     cursor: "bg-gradient-to-r from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 backdrop-blur-sm shadow-sm",
-                    tab: "text-sm data-[selected=true]:text-[color:var(--ai-primary)] font-medium relative overflow-visible transition-all px-3 py-2.5 flex-col gap-1 min-w-16",
+                    tab: "text-sm data-[selected=true]:text-[color:var(--ai-primary)] data-[selected=true]:font-semibold relative overflow-visible transition-all px-4 py-3 flex-col gap-1 min-w-20 hover:opacity-90 transition-transform",
                     tabContent: "py-5 sm:py-6 px-4 sm:px-6"
                 }}
             >
                 <Tab
                     key="overview"
                     title={
-                        <div className="flex flex-col items-center gap-1">
-                            <FiLayers className="text-[color:var(--ai-primary)] flex-shrink-0 w-5 h-5" />
-                            <span className="text-xs">Overview</span>
+                        <div className="flex flex-col items-center gap-1 relative">
+                            <FiLayers className={`${selectedTab === "overview" ? "text-[color:var(--ai-primary)]" : "text-[color:var(--ai-muted)]"} flex-shrink-0 w-5 h-5 transition-colors duration-300`} />
+                            <span className="text-xs">{selectedTab === "overview" ? <span className="font-semibold">Overview</span> : "Overview"}</span>
+
+                            {/* Bottom indicator line */}
                             {selectedTab === "overview" && (
                                 <motion.span
                                     className="absolute -bottom-2 left-0 right-0 h-0.5 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
                                     layoutId="tab-indicator"
+                                    initial={{ width: "0%", opacity: 0 }}
+                                    animate={{ width: "100%", opacity: 1 }}
+                                    transition={{ duration: 0.3 }}
                                 />
                             )}
                         </div>
@@ -95,70 +93,8 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({ course, lessons = 
                             initial="hidden"
                             animate="visible"
                             exit="hidden"
-                            className="space-y-6"
                         >
-                            <h3 className="text-xl sm:text-2xl font-bold mb-4 text-[color:var(--ai-foreground)] bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">Course Overview</h3>
-
-                            <p className="text-[color:var(--ai-muted)] leading-relaxed">
-                                {course.fullDescription || course.description}
-                            </p>
-
-                            <div className="relative">
-                                <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-full"></div>
-                                <div className="pl-4 sm:pl-6">
-                                    <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-[color:var(--ai-foreground)] flex items-center gap-2">
-                                        <FiTarget className="text-[color:var(--ai-primary)]" />
-                                        <span>What You'll Learn</span>
-                                    </h3>
-
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        transition={{ staggerChildren: 0.1 }}
-                                        className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3"
-                                    >
-                                        {benefits.map((benefit, index) => (
-                                            <motion.div
-                                                key={index}
-                                                initial={{ opacity: 0, x: -20 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                transition={{ duration: 0.3, delay: index * 0.05 }}
-                                                className="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg bg-white dark:bg-[color:var(--ai-card-bg)]/60 hover:bg-[color:var(--ai-primary)]/10 transition-colors border border-[color:var(--ai-card-border)] shadow-sm"
-                                            >
-                                                <FiCheckCircle className="text-[color:var(--ai-primary)] mt-0.5 flex-shrink-0" />
-                                                <span className="text-sm sm:text-base text-[color:var(--ai-foreground)]">{benefit}</span>
-                                            </motion.div>
-                                        ))}
-                                    </motion.div>
-                                </div>
-                            </div>
-
-                            <Divider className="my-5 sm:my-8 opacity-50" />
-
-                            <div className="relative">
-                                <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-full"></div>
-                                <div className="pl-4 sm:pl-6">
-                                    <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-[color:var(--ai-foreground)] flex items-center gap-2">
-                                        <FiCalendar className="text-[color:var(--ai-primary)]" />
-                                        <span>Requirements</span>
-                                    </h3>
-
-                                    <ul className="space-y-2 sm:space-y-3 pl-1 sm:pl-2">
-                                        {requirements.map((requirement, index) => (
-                                            <motion.li
-                                                key={index}
-                                                initial={{ opacity: 0, y: 10 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                transition={{ delay: index * 0.1 }}
-                                                className="text-sm sm:text-base text-[color:var(--ai-muted)] flex items-center gap-2 sm:gap-3 py-1 px-2"
-                                            >
-                                                <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] flex-shrink-0"></span>
-                                                {requirement}
-                                            </motion.li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </div>
+                            <CourseOverview course={course} />
                         </motion.div>
                     </AnimatePresence>
                 </Tab>
@@ -166,13 +102,18 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({ course, lessons = 
                 <Tab
                     key="content"
                     title={
-                        <div className="flex flex-col items-center gap-1">
-                            <FiBookOpen className="text-[color:var(--ai-primary)] flex-shrink-0 w-5 h-5" />
-                            <span className="text-xs">Content</span>
+                        <div className="flex flex-col items-center gap-1 relative">
+                            <FiBookOpen className={`${selectedTab === "content" ? "text-[color:var(--ai-primary)]" : "text-[color:var(--ai-muted)]"} flex-shrink-0 w-5 h-5 transition-colors duration-300`} />
+                            <span className="text-xs">{selectedTab === "content" ? <span className="font-semibold">Content</span> : "Content"}</span>
+
+                            {/* Bottom indicator line */}
                             {selectedTab === "content" && (
                                 <motion.span
                                     className="absolute -bottom-2 left-0 right-0 h-0.5 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
                                     layoutId="tab-indicator"
+                                    initial={{ width: "0%", opacity: 0 }}
+                                    animate={{ width: "100%", opacity: 1 }}
+                                    transition={{ duration: 0.3 }}
                                 />
                             )}
                         </div>
@@ -186,8 +127,6 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({ course, lessons = 
                             animate="visible"
                             exit="hidden"
                         >
-                            <h3 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-[color:var(--ai-foreground)] bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">Course Content</h3>
-
                             {courseId && (
                                 <div className="bg-white dark:bg-[color:var(--ai-card-bg)]/30 rounded-xl p-1 shadow-inner">
                                     <EnhancedLessonsList
@@ -259,10 +198,10 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({ course, lessons = 
                 <Tab
                     key="reviews"
                     title={
-                        <div className="flex flex-col items-center gap-1">
+                        <div className="flex flex-col items-center gap-1 relative">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
-                                className="text-[color:var(--ai-primary)] flex-shrink-0 w-5 h-5"
+                                className={`${selectedTab === "reviews" ? "text-[color:var(--ai-primary)]" : "text-[color:var(--ai-muted)]"} flex-shrink-0 w-5 h-5 transition-colors duration-300`}
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
@@ -272,11 +211,16 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({ course, lessons = 
                             >
                                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                             </svg>
-                            <span className="text-xs">Reviews</span>
+                            <span className="text-xs">{selectedTab === "reviews" ? <span className="font-semibold">Reviews</span> : "Reviews"}</span>
+
+                            {/* Bottom indicator line */}
                             {selectedTab === "reviews" && (
                                 <motion.span
                                     className="absolute -bottom-2 left-0 right-0 h-0.5 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
                                     layoutId="tab-indicator"
+                                    initial={{ width: "0%", opacity: 0 }}
+                                    animate={{ width: "100%", opacity: 1 }}
+                                    transition={{ duration: 0.3 }}
                                 />
                             )}
                         </div>
@@ -290,8 +234,6 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({ course, lessons = 
                             animate="visible"
                             exit="hidden"
                         >
-                            <h3 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-[color:var(--ai-foreground)] bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">Student Reviews</h3>
-
                             {course.reviews && course.reviews.length > 0 ? (
                                 <div className="space-y-4 sm:space-y-6">
                                     {course.reviews.map((review, index) => (

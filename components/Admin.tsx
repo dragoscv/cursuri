@@ -60,9 +60,9 @@ export default function Admin() {
         // Only redirect if we know for sure the user is not an admin
         // This prevents redirection before the admin status is loaded
         if (user && !isAdmin) {
-            window.location.href = "/";
+            router.push("/");
         }
-    }, [isAdmin, user]);
+    }, [isAdmin, user, router]);
 
     // Fetch lessons for a course when selected
     useEffect(() => {

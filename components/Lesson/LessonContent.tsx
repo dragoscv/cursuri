@@ -111,7 +111,7 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson }) => {
 
     // Calculate progress percentage for the progress bar
     const calculateProgress = () => {
-        if (!lessons[courseId]) return 0;
+        if (!lessons || !courseId || !lessons[courseId]) return 0;
 
         const totalLessons = Object.keys(lessons[courseId]).length;
         if (totalLessons === 0) return 0;
@@ -124,7 +124,11 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson }) => {
                 return orderA - orderB;
             });
 
+        if (!lesson || !lesson.id) return 0;
+
         const currentIndex = sortedLessons.findIndex(l => l.id === lesson.id);
+        if (currentIndex === -1) return 0;
+
         return ((currentIndex + 1) / totalLessons) * 100;
     };
 

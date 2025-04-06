@@ -873,13 +873,58 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         const fetchCourses = async () => {
             const q = query(collection(firestoreDB, "courses"), where("status", "==", "active"));
             const querySnapshot = await getDocs(q);
+
+            // First set all courses in the state
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
                 data.id = doc.id;
                 dispatch({ type: 'SET_COURSES', payload: { courseId: doc.id, course: data } });
             });
+
+            // Then fetch lessons for each course
+            const unsubscribes: Unsubscribe[] = [];
+            querySnapshot.forEach((doc) => {
+                const courseId = doc.id;
+                const db = getFirestore(firebaseApp);
+
+                const lessonsCollection = collection(db, `courses/${courseId}/lessons`);
+                const q = query(lessonsCollection, where("status", "==", "active"));
+                const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                    querySnapshot.forEach((lessonDoc) => {
+                        const data = lessonDoc.data();
+                        data.id = lessonDoc.id;
+                        // Dispatch each lesson individually with its own ID
+                        dispatch({
+                            type: 'SET_LESSONS',
+                            payload: {
+                                courseId: courseId,
+                                lessonId: lessonDoc.id,
+                                lesson: data
+                            }
+                        });
+                    });
+                    console.log("Lessons fetched for course", courseId);
+                });
+
+                unsubscribes.push(unsubscribe);
+            });
+
+            // Return cleanup function to unsubscribe from all listeners
+            return () => {
+                unsubscribes.forEach(unsubscribe => unsubscribe());
+            };
         }
-        fetchCourses();
+
+        const unsubscribePromise = fetchCourses();
+
+        // Clean up function
+        return () => {
+            unsubscribePromise.then(cleanup => {
+                if (typeof cleanup === 'function') {
+                    cleanup();
+                }
+            });
+        };
     }, []);
 
     useEffect(() => {

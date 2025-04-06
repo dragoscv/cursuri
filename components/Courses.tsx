@@ -9,6 +9,7 @@ import LoadingButton from "./Buttons/LoadingButton";
 import Login from "./Login";
 import { Button, Badge, Chip } from "@heroui/react";
 import { motion, useAnimation, useInView } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 export default function Courses() {
     const [loadingPayment, setLoadingPayment] = useState(false)
@@ -25,6 +26,7 @@ export default function Courses() {
         }
     }, [controls, isInView])
 
+    const router = useRouter();
     const context = useContext(AppContext)
     if (!context) {
         throw new Error("You probably forgot to put <AppProvider>.")
@@ -74,9 +76,9 @@ export default function Courses() {
     }, [closeModal, openModal, user]);
 
     const handleCourseClick = useCallback((course: any) => {
-        // Navigate to the course page instead of opening a modal
-        window.location.href = `/courses/${course.id}`;
-    }, []);
+        // Navigate to the course page using Next.js client-side navigation
+        router.push(`/courses/${course.id}`);
+    }, [router]);
 
     const getCoursePrice = useCallback((course: any) => {
         if (!course?.priceProduct) return { amount: 0, currency: 'RON', priceId: '' };

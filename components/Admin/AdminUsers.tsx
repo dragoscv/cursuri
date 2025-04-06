@@ -204,9 +204,9 @@ const AdminUsers: React.FC = () => {
 
             {/* User Details Modal */}
             {selectedUser && (
-                <Modal 
-                    isOpen={!!selectedUser && !assignModalOpen} 
-                    onClose={closeModal} 
+                <Modal
+                    isOpen={!!selectedUser && !assignModalOpen}
+                    onClose={closeModal}
                     size="lg"
                     backdrop="blur"
                     className="z-50"
@@ -339,9 +339,9 @@ const AdminUsers: React.FC = () => {
             )}
 
             {/* Assign Course Modal */}
-            <Modal 
-                isOpen={assignModalOpen} 
-                onClose={closeAssignCourseModal} 
+            <Modal
+                isOpen={assignModalOpen}
+                onClose={closeAssignCourseModal}
                 size="md"
                 backdrop="blur"
                 className="z-50"
@@ -458,9 +458,9 @@ const AdminUsers: React.FC = () => {
                                 </ModalBody>
                                 {!assignSuccess && (
                                     <ModalFooter className="border-t border-primary-100 dark:border-gray-800">
-                                        <Button 
-                                            color="default" 
-                                            variant="light" 
+                                        <Button
+                                            color="default"
+                                            variant="light"
                                             onPress={closeAssignCourseModal}
                                             className="font-medium"
                                         >

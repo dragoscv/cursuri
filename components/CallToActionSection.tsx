@@ -173,8 +173,11 @@ export default function CallToActionSection() {
                                     size="lg"
                                     radius="full"
                                     className="px-8 py-6 text-lg font-medium border-[color:var(--ai-secondary)]/50 text-white backdrop-blur-sm hover:bg-white/10 transform transition-all duration-300"
-                                    as="a"
-                                    href="#courses-section"
+                                    onClick={() => {
+                                        // Smooth scroll to courses section
+                                        const coursesSection = document.getElementById('courses-section');
+                                        coursesSection?.scrollIntoView({ behavior: 'smooth' });
+                                    }}
                                 >
                                     Browse Courses
                                 </Button>
