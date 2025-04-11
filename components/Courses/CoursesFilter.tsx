@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { AppContext } from '../AppContext';
 import { Input, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from '@heroui/react';
+import { Course } from '../../types';
 
 interface CoursesFilterProps {
     onFilterChange: (filter: string) => void;
@@ -18,13 +19,12 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
     const context = useContext(AppContext);
     const [searchText, setSearchText] = useState(currentFilter);
     const [selectedCategory, setSelectedCategory] = useState(currentCategory || 'all');
-
-    // Extract unique categories from courses
+    const [isSelectOpen, setIsSelectOpen] = useState(false);// Extract unique categories from courses
     const categories = React.useMemo(() => {
         if (!context || !context.courses) return [];
 
         // Extract all tags from all courses
-        const allTags = Object.values(context.courses).flatMap((course: any) =>
+        const allTags = Object.values(context.courses).flatMap((course: Course) =>
             course.tags || []
         );
 
@@ -34,10 +34,14 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
             return acc;
         }, {});
 
-        // Sort by count (descending)
+        // Sort by count (descending) and convert to objects with key and label properties
         return Object.entries(tagCounts)
             .sort((a, b) => (b[1] as number) - (a[1] as number))
-            .map(([tag]) => tag);
+            .map(([tag, count]) => ({
+                key: tag,
+                label: tag,
+                count: count
+            }));
     }, [context]);
 
     // Handle search input change with debounce
@@ -56,7 +60,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
     };
 
     return (
-        <div className="mb-8 bg-white dark:bg-[color:var(--ai-card-bg)] rounded-xl p-4 shadow-sm border border-[color:var(--ai-card-border)] shadow-xl">
+        <div className="mb-8 bg-white dark:bg-[color:var(--ai-card-bg)] rounded-xl p-4 border border-[color:var(--ai-card-border)] shadow-xl">
             <div className="flex flex-col md:flex-row gap-4">
                 {/* Search input */}
                 <div className="flex-1">
@@ -73,47 +77,76 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
                         size="lg"
                         className="w-full"
                     />
-                </div>
-
-                {/* Category dropdown */}
-                <div className="md:w-60">
-                    <Dropdown>
-                        <DropdownTrigger>
-                            <Button
-                                variant="flat"
-                                className="w-full justify-between"
-                                endContent={
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                }
+                </div>                {/* Category custom select dropdown */}
+                <div className="md:w-60 relative">
+                    <div
+                        onClick={() => setIsSelectOpen(!isSelectOpen)}
+                        className="w-full cursor-pointer bg-white dark:bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-lg px-4 py-2.5 text-left flex items-center justify-between hover:border-[color:var(--ai-primary)]/50 transition-colors duration-200"
+                    >
+                        <span className="block truncate">
+                            {selectedCategory === 'all' ? 'All Categories' : selectedCategory}
+                        </span>
+                        <span className="pointer-events-none">
+                            <svg
+                                className={`w-5 h-5 text-[color:var(--ai-muted)] transition-transform duration-200 ${isSelectOpen ? 'rotate-180 transform' : ''}`}
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
                             >
-                                {selectedCategory === 'all' ? 'All Categories' : selectedCategory}
-                            </Button>
-                        </DropdownTrigger>
-                        <DropdownMenu
-                            aria-label="Categories"
-                            className="max-h-[300px] overflow-y-auto"
-                        >
-                            <DropdownItem
-                                key="all"
-                                onClick={() => handleCategoryChange('all')}
-                                className={selectedCategory === 'all' ? 'bg-[color:var(--ai-primary)]/10 dark:bg-[color:var(--ai-primary)]/20' : ''}
-                            >
-                                All Categories
-                            </DropdownItem>
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </span>
+                    </div>
 
-                            {categories.map((category) => (
-                                <DropdownItem
-                                    key={category}
-                                    onClick={() => handleCategoryChange(category)}
-                                    className={selectedCategory === category ? 'bg-[color:var(--ai-primary)]/10 dark:bg-[color:var(--ai-primary)]/20' : ''}
+                    {isSelectOpen && (
+                        <>
+                            {/* Backdrop for clicking outside */}
+                            <div
+                                className="fixed inset-0 z-10"
+                                onClick={() => setIsSelectOpen(false)}
+                            ></div>
+
+                            {/* Dropdown options */}
+                            <div
+                                className="absolute z-20 mt-1 w-full bg-white dark:bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-lg shadow-lg max-h-60 overflow-y-auto"
+                                style={{
+                                    transformOrigin: 'top center',
+                                    animation: 'scaleIn 0.15s ease-out forwards'
+                                }}
+                            >
+                                <div
+                                    className={`px-4 py-2.5 cursor-pointer hover:bg-[color:var(--ai-primary)]/5 ${selectedCategory === 'all' ? 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]' : 'text-[color:var(--ai-foreground)]'
+                                        }`}
+                                    onClick={() => {
+                                        handleCategoryChange('all');
+                                        setIsSelectOpen(false);
+                                    }}
                                 >
-                                    <div>{category}</div>
-                                </DropdownItem>
-                            ))}
-                        </DropdownMenu>
-                    </Dropdown>
+                                    All Categories
+                                </div>
+
+                                {categories.map((category) => (
+                                    <div
+                                        key={category.key}
+                                        className={`px-4 py-2.5 cursor-pointer hover:bg-[color:var(--ai-primary)]/5 ${selectedCategory === category.label ? 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]' : 'text-[color:var(--ai-foreground)]'
+                                            }`}
+                                        onClick={() => {
+                                            handleCategoryChange(category.label);
+                                            setIsSelectOpen(false);
+                                        }}
+                                    >
+                                        <div className="flex justify-between items-center">
+                                            <span>{category.label}</span>
+                                            <span className="text-xs bg-[color:var(--ai-card-border)]/30 text-[color:var(--ai-muted)] rounded-full px-2 py-0.5">
+                                                {category.count}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
 
@@ -127,12 +160,11 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
                             <span>"{currentFilter}"</span>
                             <button
                                 title="Clear search filter"
-                                aria-label="Clear search filter"
-                                onClick={() => {
+                                aria-label="Clear search filter" onClick={() => {
                                     setSearchText('');
                                     onFilterChange('');
                                 }}
-                                className="text-[color:var(--ai-primary)] hover:text-[color:var(--ai-primary)]/80 ml-1"
+                                className="text-[color:var(--ai-primary)] hover:text-[color:var(--ai-primary)]/80 ml-1 cursor-pointer"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -146,12 +178,11 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
                             <span>{currentCategory}</span>
                             <button
                                 title="Clear category filter"
-                                aria-label="Clear category filter"
-                                onClick={() => {
+                                aria-label="Clear category filter" onClick={() => {
                                     setSelectedCategory('all');
                                     onCategoryChange('all');
                                 }}
-                                className="text-[color:var(--ai-primary)] hover:text-[color:var(--ai-primary)]/80 ml-1"
+                                className="text-[color:var(--ai-primary)] hover:text-[color:var(--ai-primary)]/80 ml-1 cursor-pointer"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -170,7 +201,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
                                 onFilterChange('');
                                 onCategoryChange('all');
                             }}
-                            className="text-sm text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] underline"
+                            className="text-sm text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] underline cursor-pointer"
                         >
                             Clear all
                         </button>

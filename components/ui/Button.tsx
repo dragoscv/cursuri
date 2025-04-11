@@ -3,11 +3,11 @@
 import React, { forwardRef } from 'react';
 import { Button as HeroButton, type ButtonProps as HeroButtonProps } from '@heroui/react';
 
-export interface ButtonProps extends Omit<HeroButtonProps, 'variant'> {
+export interface ButtonProps {
     /**
      * The visual style of the button
      */
-    variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'flat' | 'light' | 'outline-gradient' | 'shimmer';
+    variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'flat' | 'light' | 'outline-gradient' | 'shimmer' | 'bordered';
 
     /**
      * Size of the button
@@ -48,6 +48,21 @@ export interface ButtonProps extends Omit<HeroButtonProps, 'variant'> {
      * Button children/content
      */
     children?: React.ReactNode;
+
+    /**
+     * Click handler
+     */
+    onClick?: (e: React.MouseEvent) => void;
+
+    /**
+     * Whether the button is disabled
+     */
+    isDisabled?: boolean;
+
+    /**
+     * Additional props
+     */
+    [key: string]: any;
 }
 
 /**
@@ -73,6 +88,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
             case 'primary':
                 return 'solid';
             case 'secondary':
+            case 'bordered':
                 return 'bordered';
             case 'flat':
                 return 'flat';
@@ -84,11 +100,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
             default:
                 return 'solid';
         }
-    };
-
-    // Construct the className based on the props
+    };    // Construct the className based on the props
     const getButtonClasses = () => {
-        const classes = ['btn'];
+        const classes = ['btn', 'cursor-pointer'];
 
         // Add size class
         classes.push(`btn-${size}`);
@@ -116,16 +130,22 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
         return classes.join(' ');
     };
 
-    // Pass through the HeroUI Button with our custom classes
+    // Map our size to HeroUI's size
+    const getHeroSize = (): HeroButtonProps['size'] => {
+        if (size === 'xs') return 'sm';
+        if (size === 'xl') return 'lg';
+        return size as HeroButtonProps['size'];
+    };    // Pass through the HeroUI Button with our custom classes
     return (
         <HeroButton
             ref={ref}
             variant={getHeroVariant()}
-            size={size as any} // Match our size to HeroUI's size
+            size={getHeroSize()}
             isDisabled={isLoading || rest.isDisabled}
             startContent={isLoading ? null : startContent}
             endContent={isLoading ? null : endContent}
-            className={`${getButtonClasses()} ${className}`}
+            // Use a more deterministic approach for class names
+            className={className}
             {...rest}
         >
             {isLoading && loadingText ? loadingText : children}

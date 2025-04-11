@@ -1,12 +1,10 @@
-app/courses/[courseId]/lessons/[lessonId]/page.tsx(39,21): error TS2349: This expression is not callable.
-  Type 'never' has no call signatures.
-components/Course/CourseContent.tsx(186,45): error TS2322: Type 'boolean | undefined' is not assignable to type 'boolean'.
-  Type 'undefined' is not assignable to type 'boolean'.
-components/Course/CourseContent.tsx(210,45): error TS2322: Type 'boolean | undefined' is not assignable to type 'boolean'.
-  Type 'undefined' is not assignable to type 'boolean'.
-components/Course/CourseContent.tsx(241,41): error TS2322: Type 'boolean | undefined' is not assignable to type 'boolean'.
-  Type 'undefined' is not assignable to type 'boolean'.
-components/Courses/CoursesFilter.tsx(106,29): error TS2322: Type 'Element[]' is not assignable to type 'CollectionElement<object>'.
-components/Header/UserDropdown/index.tsx(129,21): error TS2322: Type 'false | Element' is not assignable to type 'ItemElement<object> | ItemElement<object>[] | ItemRenderer<object>'.
-  Type 'false' is not assignable to type 'ItemElement<object> | ItemElement<object>[] | ItemRenderer<object>'.
-components/Lesson/Video/VideoPlayer.tsx(361,37): error TS2322: Type 'Element[]' is not assignable to type 'CollectionElement<object>'.
+components/Courses/CoursesFilter.tsx(105,90): error TS2747: 'DropdownMenu' components don't accept text as child elements. Text in JSX has the type 'string', but the expected type of 'children' is 'CollectionChildren<object>'.
+components/Courses/CoursesFilter.tsx(105,118): error TS2322: Type 'Element[]' is not assignable to type 'CollectionElement<object>'.
+components/Header/UserDropdown/index.tsx(109,17): error TS2322: Type 'string' is not assignable to type 'CollectionElement<object>'.
+components/Header/UserDropdown/index.tsx(126,35): error TS2747: 'DropdownMenu' components don't accept text as child elements. Text in JSX has the type 'string', but the expected type of 'children' is 'CollectionChildren<object>'.
+  Type 'false' is not assignable to type 'CollectionElement<object>'.
+components/Header/UserDropdown/index.tsx(128,17): error TS2322: Type 'false | Element' is not assignable to type 'CollectionElement<object>'.
+  Type 'false' is not assignable to type 'CollectionElement<object>'.
+components/Header/UserDropdown/index.tsx(172,17): error TS2322: Type 'undefined' is not assignable to type 'CollectionElement<object>'.
+components/Header/UserDropdown/index.tsx(231,17): error TS2322: Type 'undefined' is not assignable to type 'CollectionElement<object>'.
+components/Header/UserDropdown/index.tsx(232,17): error TS2322: Type 'undefined' is not assignable to type 'CollectionElement<object>'.

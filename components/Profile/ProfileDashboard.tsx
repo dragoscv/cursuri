@@ -6,6 +6,8 @@ import DashboardProgress from './DashboardProgress';
 import RecentActivity from './RecentActivity';
 import ProfileActionButtons from './ProfileActionButtons';
 import useProfileStats from './hooks/useProfileStats';
+import { AppContext } from '@/components/AppContext';
+import { AppContextProps } from '@/types';
 
 export default function ProfileDashboard() {
     const {
@@ -17,15 +19,14 @@ export default function ProfileDashboard() {
         recentActivity,
         lessonCompletionPercentage,
         courseCompletionPercentage
-    } = useProfileStats();
+    } = useProfileStats();    // Get the context to pass to subcomponents
 
-    // Get the context to pass to subcomponents
-    const context = React.useContext(require('@/components/AppContext').AppContext);
+    const context = React.useContext(AppContext) as AppContextProps;
     if (!context) {
         throw new Error("AppContext not found");
     }
 
-    const { user, userPaidProducts, courses, lessonProgress } = context;
+    const { user, userPaidProducts = [], courses = {}, lessonProgress = {} } = context;
 
     if (!user) {
         return null;

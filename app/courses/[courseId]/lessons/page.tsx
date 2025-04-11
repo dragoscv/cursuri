@@ -26,7 +26,7 @@ export default function LessonsPage(props: LessonsPageProps) {
 
     const { courses, lessons, userPurchases, user } = context;
     const router = useRouter();
-    const [completedLessons, setCompletedLessons] = useState<string[]>([]);
+    const [completedLessons, setCompletedLessons] = useState<Record<string, boolean>>({});
     const [isLoading, setIsLoading] = useState(true);
 
     // Find the course and its associated lessons
@@ -44,7 +44,10 @@ export default function LessonsPage(props: LessonsPageProps) {
             // This is just a placeholder - replace with your actual data fetching logic
             const mockCompletedLessons = courseLessons
                 .filter((_: Lesson, index: number) => index % 3 === 0) // Just for demo: mark every third lesson as completed
-                .map((lesson: Lesson) => lesson.id);
+                .reduce((result: Record<string, boolean>, lesson: Lesson) => {
+                    result[lesson.id] = true;
+                    return result;
+                }, {});
 
             setCompletedLessons(mockCompletedLessons);
             setIsLoading(false);
@@ -84,7 +87,7 @@ export default function LessonsPage(props: LessonsPageProps) {
                 courseName={course.name}
                 difficulty={course.difficulty || 'All levels'}
                 lessonCount={courseLessons?.length || 0}
-                completedLessonsCount={completedLessons.length}
+                completedLessonsCount={Object.keys(completedLessons).length}
                 isLoading={isLoading}
             />
 

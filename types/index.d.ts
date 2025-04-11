@@ -44,6 +44,7 @@ export interface AppContextProps {
     userPreferences: UserPreferences | null;
     saveUserPreferences: (preferences: Partial<UserPreferences>) => Promise<boolean>;
     user: User | null;
+    authLoading: boolean;
     openModal: (modal: ModalProps) => void;
     closeModal: (id: string) => void;
     updateModal: (modal: Partial<ModalProps>) => void;
@@ -121,14 +122,28 @@ export interface ModalProps {
 }
 
 /**
- * Interface for a course resource.
+ * Interface for a resource.
  */
 export interface Resource {
+    /** The unique identifier of the resource. */
+    id?: string;
     /** The name of the resource. */
-    name: string;
+    name?: string;
+    /** The title of the resource. */
+    title?: string;
     /** The URL of the resource. */
     url: string;
+    /** The type of resource. */
+    type?: 'link' | 'pdf' | 'video' | 'code' | 'other';
+    /** Description of the resource. */
+    description?: string;
 }
+
+/**
+ * Interface for a lesson resource.
+ * Extends Resource interface
+ */
+export interface LessonResource extends Resource { }
 
 /**
  * Interface for a course.
@@ -144,6 +159,8 @@ export interface Course {
     fullDescription?: string;
     /** The difficulty level of the course. */
     difficulty?: string;
+    /** The course level (beginner, intermediate, advanced) */
+    level?: string;
     /** The duration of the course. */
     duration?: string;
     /** The URL of the course thumbnail/image. */
@@ -168,12 +185,21 @@ export interface Course {
     status?: string;
     /** The resources associated with the course. */
     resources?: Resource[];
+    /** Repository URL for course materials */
+    repoUrl?: string;
+    /** Additional information about the course */
+    additionalInfo?: string;
     /** The creation date of the course. */
     createdAt?: string | Date;
     /** The last update date of the course. */
     updatedAt?: string | Date;
     /** The instructor/author of the course. */
-    instructor?: string;
+    instructor?: string | {
+        name?: string;
+        photoUrl?: string;
+        bio?: string;
+        title?: string;
+    };
     /** Tags or categories for the course. */
     tags?: string[];
     /** Benefits of taking the course */
@@ -234,6 +260,7 @@ export interface Lesson {
     file?: string;
     videoUrl?: string;
     thumbnail?: string;
+    thumbnailUrl?: string; // Alternative property name for thumbnail
     order?: number;
     isFree?: boolean;
     duration?: string;
@@ -250,6 +277,7 @@ export interface Lesson {
     isLocked?: boolean;
     estimatedTime?: string;
     title?: string; // Some components use title instead of name
+    repoUrl?: string; // Repository URL for lesson materials
 }
 
 /**
@@ -268,6 +296,10 @@ export interface UserLessonProgress {
     lastPosition: number;
     /** When the progress was last updated. */
     lastUpdated: Date | string | Timestamp;
+    /** Video progress percentage */
+    videoProgress?: number;
+    /** User notes for the lesson */
+    notes?: string;
 }
 
 /**
@@ -351,6 +383,7 @@ export interface CourseWithPriceProduct extends Course {
 export interface IconProps {
     className?: string;
     size?: number;
+    color?: string;
 }
 
 /**
@@ -486,6 +519,29 @@ export interface AdminSettings {
     taxRate: number;
     /** Currency code. */
     currencyCode: string;
+}
+
+/**
+ * Lesson Settings Props interface
+ */
+export interface LessonSettingsProps {
+    courseId: string;
+    lessonId: string;
+    isCompleted: boolean;
+    autoPlayNext: boolean;
+    saveProgress: boolean;
+    setAutoPlayNext: React.Dispatch<React.SetStateAction<boolean>>;
+    setSaveProgress: React.Dispatch<React.SetStateAction<boolean>>;
+    saveLessonProgress: (courseId: string, lessonId: string, position: number, isCompleted?: boolean) => Promise<boolean | void>;
+    markLessonComplete: (courseId: string, lessonId: string) => Promise<boolean | void>;
+}
+
+/**
+ * QA Props interface for Lesson QA section
+ */
+export interface QAProps {
+    courseId: string;
+    lessonId: string;
 }
 
 // Other existing types...

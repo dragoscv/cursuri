@@ -38,7 +38,7 @@ export default function CourseForm({ courseId, onSuccess }: CourseFormProps) {
             const course = courses[courseId]
             setCourseName(course.name || "")
             setCourseDescription(course.description || "")
-            setCoursePrice(course.price || "")
+            setCoursePrice(course.price ? String(course.price) : "")
             setRepoUrl(course.repoUrl || "")
             setIsEditing(true)
         } else if (courseId) {
@@ -52,7 +52,7 @@ export default function CourseForm({ courseId, onSuccess }: CourseFormProps) {
                         const courseData = courseSnap.data();
                         setCourseName(courseData.name || "");
                         setCourseDescription(courseData.description || "");
-                        setCoursePrice(courseData.price || "");
+                        setCoursePrice(courseData.price ? String(courseData.price) : "");
                         setRepoUrl(courseData.repoUrl || "");
                         setIsEditing(true);
                     } else {

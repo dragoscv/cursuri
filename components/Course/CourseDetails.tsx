@@ -133,7 +133,7 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({ course, lessons = 
                                         lessons={lessons || []}
                                         course={course}
                                         courseId={courseId}
-                                        completedLessons={[]}
+                                        completedLessons={{}}
                                         userHasAccess={true}
                                     />
                                 </div>

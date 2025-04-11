@@ -1,21 +1,17 @@
 import React from 'react';
 import { Card, Button } from '@heroui/react';
-import { FiDownload, FiFileText, FiLink, FiExternalLink } from '@/components/icons/FeatherIcons';
-
-interface Resource {
-    id: string;
-    title: string;
-    url: string;
-    type: 'pdf' | 'link' | 'image' | 'code' | 'video' | string;
-    description?: string;
-}
+import { FiDownload } from '@/components/icons/FeatherIcons/FiDownload';
+import { FiFileText } from '@/components/icons/FeatherIcons/FiFileText';
+import { FiLink } from '@/components/icons/FeatherIcons/FiLink';
+import { FiExternalLink } from '@/components/icons/FeatherIcons/FiExternalLink';
+import { LessonResource } from '@/types';
 
 interface LessonResourcesProps {
-    resources: Resource[];
+    resources: LessonResource[];
 }
 
 const LessonResources: React.FC<LessonResourcesProps> = ({ resources }) => {
-    const getResourceIcon = (type: string) => {
+    const getResourceIcon = (type?: string) => {
         switch (type) {
             case 'pdf':
                 return <FiFileText className="text-[color:var(--ai-primary)]" />;
@@ -37,12 +33,10 @@ const LessonResources: React.FC<LessonResourcesProps> = ({ resources }) => {
                         <FiFileText className="mr-2 text-[color:var(--ai-primary)]" />
                         <span>Additional Resources</span>
                     </h3>
-                </div>
-
-                <div className="space-y-3">
-                    {resources.map((resource) => (
+                </div>                <div className="space-y-3">
+                    {resources.map((resource, index) => (
                         <div
-                            key={resource.id}
+                            key={index}
                             className="flex items-start p-3 rounded-lg border border-[color:var(--ai-card-border)]/50 hover:bg-[color:var(--ai-primary)]/5 transition-colors"
                         >
                             <div className="flex-shrink-0 mr-3 mt-1">
@@ -50,7 +44,7 @@ const LessonResources: React.FC<LessonResourcesProps> = ({ resources }) => {
                             </div>
                             <div className="flex-1 min-w-0">
                                 <h4 className="font-medium text-[color:var(--ai-foreground)] truncate">
-                                    {resource.title}
+                                    {resource.name}
                                 </h4>
                                 {resource.description && (
                                     <p className="text-sm text-[color:var(--ai-muted)] mt-1">

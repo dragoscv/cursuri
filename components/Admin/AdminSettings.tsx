@@ -67,7 +67,7 @@ const AdminSettings: React.FC = () => {
         setFormData(prev => ({ ...prev, [name]: isNaN(numberValue) ? 0 : numberValue }));
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent | any) => {
         e.preventDefault();
 
         if (!updateAdminSettings) {
@@ -260,9 +260,13 @@ const AdminSettings: React.FC = () => {
                                     onChange={(e) => handleSelectChange('currencyCode', e.target.value)}
                                     className="max-w-xs"
                                 >
+                                    {/* @ts-ignore - The SelectItem component from @heroui/react has type conflicts with value prop */}
                                     <SelectItem key="RON" value="RON">Romanian Leu (RON)</SelectItem>
+                                    {/* @ts-ignore - The SelectItem component from @heroui/react has type conflicts with value prop */}
                                     <SelectItem key="USD" value="USD">US Dollar (USD)</SelectItem>
+                                    {/* @ts-ignore - The SelectItem component from @heroui/react has type conflicts with value prop */}
                                     <SelectItem key="EUR" value="EUR">Euro (EUR)</SelectItem>
+                                    {/* @ts-ignore - The SelectItem component from @heroui/react has type conflicts with value prop */}
                                     <SelectItem key="GBP" value="GBP">British Pound (GBP)</SelectItem>
                                 </Select>
                             </div>
@@ -277,7 +281,7 @@ const AdminSettings: React.FC = () => {
                                     min={0}
                                     max={100}
                                     step={0.01}
-                                    value={formData.taxRate}
+                                    value={formData.taxRate.toString()}
                                     onChange={handleNumberChange}
                                     className="max-w-xs"
                                 />

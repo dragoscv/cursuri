@@ -19,7 +19,9 @@ const QuestionItem: React.FC<QuestionItemProps> = ({ question }) => {
     const [isReplying, setIsReplying] = useState(false);
     const [expanded, setExpanded] = useState(false);
     const context = useContext(AppContext);
-    const { user, isAdmin } = context;
+    // Explicitly type the context to help TypeScript understand it's not undefined in our usage
+    const user = context?.user || null;
+    const isAdmin = context?.isAdmin || false;
 
     // Format the date for display
     const formatDate = (date: Date | Timestamp) => {

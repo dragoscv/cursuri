@@ -168,7 +168,7 @@ export default function CallToActionSection() {
                                 whileTap={{ scale: 0.95 }}
                             >
                                 <Button
-                                    variant="bordered"
+                                    variant="secondary"
                                     color="secondary"
                                     size="lg"
                                     radius="full"

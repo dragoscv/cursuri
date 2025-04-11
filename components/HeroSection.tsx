@@ -403,6 +403,7 @@ export default function HeroSection() {
                         >
                             <Button
                                 color="primary"
+                                variant="primary"
                                 size="lg"
                                 radius="full"
                                 className="px-8 py-6 text-lg font-medium bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] hover:shadow-lg hover:shadow-[color:var(--ai-primary)]/30 transform hover:-translate-y-1 transition-all duration-300"
@@ -412,7 +413,7 @@ export default function HeroSection() {
                             </Button>
 
                             <Button
-                                variant="bordered"
+                                variant="secondary"
                                 color="secondary"
                                 size="lg"
                                 radius="full"

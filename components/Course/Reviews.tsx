@@ -1,7 +1,6 @@
 import { useContext, useState, useEffect } from "react"
 import { AppContext } from "@/components/AppContext"
 import {
-    firestoreDB,
     collection,
     query,
     where,
@@ -9,13 +8,18 @@ import {
     doc,
     setDoc,
     Timestamp
-} from '@/utils/firebase/firestore'
+} from 'firebase/firestore'
+import { firestoreDB } from '@/utils/firebase/firebase.config'
 import { useParams } from "next/navigation"
-import { Rating, Button, Textarea } from "@heroui/react"
+import { Button, Textarea } from "@heroui/react"
+// Using our custom RatingStars component 
+import RatingStars from "../ui/RatingStars"
 import { motion } from 'framer-motion'
-import { FiEdit, FiStar, FiMessageCircle } from '../icons/FeatherIcons'
+import { FiStar } from '../icons/FeatherIcons'
+import { FiEdit } from '../icons/FeatherIcons/FiEdit'
+import { FiMessageCircle } from '../icons/FeatherIcons/FiMessageCircle'
 
-export default function Reviews({ courseId: propCourseId }) {
+export default function Reviews({ courseId: propCourseId }: { courseId: string }) {
     const [review, setReview] = useState('')
     const [stars, setStars] = useState(5)
     const [reviews, setReviews] = useState<any[]>([])
@@ -39,7 +43,7 @@ export default function Reviews({ courseId: propCourseId }) {
             const q = query(collection(firestoreDB, "courses", courseId as string, "reviews"));
             const querySnapshot = await getDocs(q);
             const reviewsData: any[] = [];
-            querySnapshot.forEach((doc) => {
+            querySnapshot.forEach((doc: any) => {
                 reviewsData.push({
                     id: doc.id,
                     ...doc.data()
@@ -145,19 +149,16 @@ export default function Reviews({ courseId: propCourseId }) {
                                     variant="bordered"
                                     required
                                 />
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                                <label className="block text-sm font-medium text-[color:var(--ai-foreground)]">Your rating:</label>
-                                <Rating
-                                    size="lg"
-                                    defaultValue={stars}
-                                    onChange={setStars}
-                                    classNames={{
-                                        base: "gap-1",
-                                        item: "text-[color:var(--ai-accent)]"
-                                    }}
-                                />
+                            </div>                            <div className="flex items-center gap-2">                                <label className="block text-sm font-medium text-[color:var(--ai-foreground)]">Your rating:</label>                                <RatingStars
+                                size="lg"
+                                defaultValue={Number(stars)}
+                                value={Number(stars)}
+                                onChange={(value) => setStars(value)}
+                                classNames={{
+                                    base: "gap-1",
+                                    item: "text-[color:var(--ai-accent)]"
+                                }}
+                            />
                             </div>
 
                             {error && (
@@ -230,17 +231,15 @@ export default function Reviews({ courseId: propCourseId }) {
                                             <div className="text-xs text-[color:var(--ai-muted)]">
                                                 {review.timestamp ? new Date(review.timestamp.toDate()).toLocaleDateString() : 'Recently'}
                                             </div>
-                                        </div>
-                                        <div className="flex items-center bg-[color:var(--ai-accent)]/10 px-2 py-1 rounded-full shadow-sm">
-                                            <Rating
-                                                size="sm"
-                                                value={review.stars}
-                                                readOnly
-                                                classNames={{
-                                                    base: "gap-1",
-                                                    item: "text-[color:var(--ai-accent)]"
-                                                }}
-                                            />
+                                        </div>                                        <div className="flex items-center bg-[color:var(--ai-accent)]/10 px-2 py-1 rounded-full shadow-sm">                                        <RatingStars
+                                            size="sm"
+                                            value={typeof review.stars === 'string' ? Number(review.stars) : review.stars}
+                                            readOnly
+                                            classNames={{
+                                                base: "gap-1",
+                                                item: "text-[color:var(--ai-accent)]"
+                                            }}
+                                        />
                                         </div>
                                     </div>
                                     <div className="relative pl-3">

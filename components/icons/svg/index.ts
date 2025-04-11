@@ -19,6 +19,8 @@ export { default as ListIcon } from './ListIcon';
 export { default as SuccessIcon } from './SuccessIcon';
 export { default as LoadingIcon } from './LoadingIcon';
 export { default as ArrowRightIcon } from './ArrowRightIcon';
+export { default as LikeIcon } from './LikeIcon';
+export { default as ReplyIcon } from './ReplyIcon';
 export { default as ArrowLeftIcon } from './ArrowLeftIcon';
 export { default as ClockIcon } from './ClockIcon';
 export { default as MessageIcon } from './MessageIcon';

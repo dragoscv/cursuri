@@ -23,17 +23,29 @@ export default function ProfileCourses() {
         if (!userPaidProducts || !courses) {
             setFilteredCourses([]);
             return;
-        }
+        }        // Create enhanced course objects with progress info
+        // First, group purchases by courseId to avoid duplicates
+        const courseMap = new Map();
 
-        // Create enhanced course objects with progress info
-        const enhancedCourses = userPaidProducts
-            .map(product => {
-                const courseId = product.metadata?.courseId;
-                if (!courseId) return null;
+        userPaidProducts.forEach(product => {
+            const courseId = product.metadata?.courseId;
+            if (!courseId) return;
 
-                const course = courses[courseId];
-                if (!course) return null;
+            const course = courses[courseId];
+            if (!course) return;
 
+            // If this course is already in our map, update only if this purchase is more recent
+            if (courseMap.has(courseId)) {
+                const existingEntry = courseMap.get(courseId);
+                const currentPurchaseDate = new Date(product.purchaseDate || Date.now());
+
+                if (currentPurchaseDate > existingEntry.purchaseDate) {
+                    courseMap.set(courseId, {
+                        ...existingEntry,
+                        purchaseDate: currentPurchaseDate
+                    });
+                }
+            } else {
                 // Calculate progress
                 const courseLessonsCount = Object.keys(lessonProgress[courseId] || {}).length;
                 const completedLessonsCount = Object.values(lessonProgress[courseId] || {})
@@ -69,7 +81,7 @@ export default function ProfileCourses() {
                     });
                 }
 
-                return {
+                courseMap.set(courseId, {
                     ...course,
                     courseId,
                     purchaseDate: new Date(product.purchaseDate || Date.now()),
@@ -78,9 +90,12 @@ export default function ProfileCourses() {
                     totalLessons: courseLessonsCount,
                     recentLessonId,
                     status: progress === 100 ? 'completed' : progress > 0 ? 'in-progress' : 'not-started'
-                };
-            })
-            .filter(Boolean) as any[];
+                });
+            }
+        });
+
+        // Convert the Map back to an array
+        const enhancedCourses = Array.from(courseMap.values()) as any[];
 
         // Apply filters
         let filtered = enhancedCourses;

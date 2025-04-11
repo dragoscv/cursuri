@@ -15,12 +15,27 @@ export default function LessonDetailPage({
 }) {
     // Unwrap the params using React.use() to handle both Promise and non-Promise cases
     const unwrappedParams = React.use(params instanceof Promise ? params : Promise.resolve(params));
-    const { courseId, lessonId } = unwrappedParams;
+    const { courseId, lessonId } = unwrappedParams;    // Define a proper interface for the debug state
+    interface DebugInfo {
+        courseId: string;
+        lessonId: string;
+        courseExists: boolean;
+        courseLessonsExist: boolean;
+        lessonsAvailable: string[] | string | boolean;
+        lessonExists: boolean;
+    }
 
     const context = useContext(AppContext);
     const router = useRouter();
     const [hasAccess, setHasAccess] = useState(false);
-    const [debug, setDebug] = useState<any>({});
+    const [debug, setDebug] = useState<DebugInfo>({
+        courseId: '',
+        lessonId: '',
+        courseExists: false,
+        courseLessonsExist: false,
+        lessonsAvailable: false,
+        lessonExists: false
+    });
 
     if (!context) {
         throw new Error('LessonDetailPage must be used within an AppContextProvider');
@@ -34,15 +49,17 @@ export default function LessonDetailPage({
         console.log("Debug info - lessonId:", lessonId);
         console.log("Debug info - course exists:", Boolean(courses[courseId]));
         console.log("Debug info - courseLessons exists:", Boolean(lessons[courseId]));
-
-        // Store debug info for rendering
+        // Store debug info for rendering       
         setDebug({
             courseId,
             lessonId,
             courseExists: Boolean(courses[courseId]),
             courseLessonsExist: Boolean(lessons[courseId]),
-            lessonsAvailable: lessons && lessons[courseId] ?
-                (Array.isArray(lessons[courseId]) ? lessons[courseId].map(l => l.id) : Object.keys(lessons[courseId])) : [],
+            // Store whether lessons are available (true) or not (false)
+            lessonsAvailable: Boolean(lessons && lessons[courseId] &&
+                (Array.isArray(lessons[courseId])
+                    ? lessons[courseId].length > 0
+                    : Object.keys(lessons[courseId]).length > 0)),
             lessonExists: false // Will be updated below
         });
 
@@ -74,10 +91,8 @@ export default function LessonDetailPage({
                     // If courseLessons is an object, check if the lessonId exists as a key
                     lessonExists = Boolean(courseLessons[lessonId]);
                     lesson = courseLessons[lessonId];
-                }
-
-                // Update debug information
-                setDebug(prev => ({
+                }                // Update debug information
+                setDebug((prev: DebugInfo) => ({
                     ...prev,
                     lessonExists
                 }));
@@ -187,12 +202,10 @@ export default function LessonDetailPage({
                             {/* Debugging information */}
                             <div className="mt-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-left">
                                 <h3 className="font-bold mb-2">Debugging Information:</h3>
-                                <ul className="list-disc pl-5 space-y-1 text-sm">
-                                    <li>Course ID: {debug.courseId}</li>
-                                    <li>Lesson ID: {debug.lessonId}</li>
-                                    <li>Course Exists: {debug.courseExists ? 'Yes' : 'No'}</li>
+                                <ul className="list-disc pl-5 space-y-1 text-sm">                                    <li>Course ID: {debug.courseId}</li>
+                                    <li>Lesson ID: {debug.lessonId}</li>                                    <li>Course Exists: {debug.courseExists ? 'Yes' : 'No'}</li>
                                     <li>Course Lessons Loaded: {debug.courseLessonsExist ? 'Yes' : 'No'}</li>
-                                    <li>Lessons Available: {debug.lessonsAvailable.length}</li>
+                                    <li>Lessons Available: {debug.lessonsAvailable ? 'Yes' : 'No'}</li>
                                     <li>Lesson Exists: {debug.lessonExists ? 'Yes' : 'No'}</li>
                                 </ul>
                                 <div className="mt-2">

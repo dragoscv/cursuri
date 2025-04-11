@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, Textarea, Button } from '@heroui/react';
-import { FiEdit3, FiSave } from '@/components/icons/FeatherIcons';
+import { FiEdit3 } from '@/components/icons/FeatherIcons/FiEdit3';
+import { FiSave } from '@/components/icons/FeatherIcons/FiSave';
 
 interface LessonNotesProps {
     notes: string;

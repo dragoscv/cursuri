@@ -72,7 +72,12 @@ export default function EnhancedLessonsList({
     });
 
     // Calculate total duration
-    const totalDuration = sortedLessons.reduce((total, lesson) => total + (lesson.duration || 30), 0);
+    const totalDuration = sortedLessons.reduce((total, lesson) => {
+        // Make sure we're working with numbers
+        const duration = typeof lesson.duration === 'number' ? lesson.duration :
+            (typeof lesson.duration === 'string' ? parseInt(lesson.duration, 10) : 30);
+        return total + duration;
+    }, 0);
     const hours = Math.floor(totalDuration / 60);
     const minutes = totalDuration % 60;
     const durationText = hours > 0

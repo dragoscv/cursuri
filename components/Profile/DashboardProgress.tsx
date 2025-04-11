@@ -75,29 +75,27 @@ export default function DashboardProgress({
 
                         const courseProgress = courseLessons > 0
                             ? Math.round((courseCompleted / courseLessons) * 100)
-                            : 0;
-
-                        return (
-                            <div key={courseId}>
-                                <div className="flex justify-between mb-2">
-                                    <span className="text-sm font-medium text-[color:var(--ai-foreground)]/80 dark:text-[color:var(--ai-foreground)]/70 truncate max-w-[80%]">
-                                        {course.name}
-                                    </span>
-                                    <span className="text-sm font-medium text-[color:var(--ai-foreground)]/80 dark:text-[color:var(--ai-foreground)]/70">
-                                        {courseProgress}%
-                                    </span>
+                            : 0; return (
+                                <div key={`${courseId}-${index}`}>
+                                    <div className="flex justify-between mb-2">
+                                        <span className="text-sm font-medium text-[color:var(--ai-foreground)]/80 dark:text-[color:var(--ai-foreground)]/70 truncate max-w-[80%]">
+                                            {course.name}
+                                        </span>
+                                        <span className="text-sm font-medium text-[color:var(--ai-foreground)]/80 dark:text-[color:var(--ai-foreground)]/70">
+                                            {courseProgress}%
+                                        </span>
+                                    </div>
+                                    <Progress
+                                        value={courseProgress}
+                                        classNames={{
+                                            indicator: `bg-gradient-to-r ${index % 3 === 0 ? "from-[color:var(--ai-primary)] to-[color:var(--ai-accent)]" :
+                                                index % 3 === 1 ? "from-[color:var(--ai-secondary)] to-[color:var(--ai-primary)]" :
+                                                    "from-[color:var(--ai-accent)] to-[color:var(--ai-secondary)]"
+                                                }`,
+                                        }}
+                                    />
                                 </div>
-                                <Progress
-                                    value={courseProgress}
-                                    classNames={{
-                                        indicator: `bg-gradient-to-r ${index % 3 === 0 ? "from-[color:var(--ai-primary)] to-[color:var(--ai-accent)]" :
-                                            index % 3 === 1 ? "from-[color:var(--ai-secondary)] to-[color:var(--ai-primary)]" :
-                                                "from-[color:var(--ai-accent)] to-[color:var(--ai-secondary)]"
-                                            }`,
-                                    }}
-                                />
-                            </div>
-                        );
+                            );
                     })}
                 </div>
             </CardBody>

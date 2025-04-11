@@ -215,13 +215,12 @@ export default function ProfileSettings() {
     }
 
     return (
-        <div className="space-y-6">
-            <div className="mb-6">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Account Settings</h1>
-                <p className="text-gray-600 dark:text-gray-400">
-                    Manage your profile and account preferences.
-                </p>
-            </div>
+        <div className="space-y-6">            <div className="mb-6">
+            <h1 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-2">Account Settings</h1>
+            <p className="text-[color:var(--ai-muted)]">
+                Manage your profile and account preferences.
+            </p>
+        </div>
 
             {/* Success/Error message */}
             {message.text && (
@@ -238,18 +237,17 @@ export default function ProfileSettings() {
             )}
 
             {/* Profile Information */}
-            <Card className="border border-gray-200 dark:border-gray-800">
+            <Card className="border border-[color:var(--ai-card-border)] shadow-sm">
                 <CardBody>
-                    <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
-                        <FiUser className="text-indigo-500" />
+                    <h2 className="text-lg font-semibold mb-4 text-[color:var(--ai-foreground)] flex items-center gap-2">
+                        <FiUser className="text-[color:var(--ai-primary)]" />
                         Profile Information
                     </h2>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Display Name
-                            </label>
+                        <div>                            <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-1">
+                            Display Name
+                        </label>
                             <Input
                                 name="displayName"
                                 value={form.displayName}
@@ -260,10 +258,9 @@ export default function ProfileSettings() {
                             />
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Bio
-                            </label>
+                        <div>                            <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-1">
+                            Bio
+                        </label>
                             <Textarea
                                 name="bio"
                                 value={form.bio}
@@ -288,10 +285,10 @@ export default function ProfileSettings() {
             </Card>
 
             {/* Email Settings */}
-            <Card className="border border-gray-200 dark:border-gray-800">
+            <Card className="border border-[color:var(--ai-card-border)] shadow-sm">
                 <CardBody>
-                    <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
-                        <FiMail className="text-indigo-500" />
+                    <h2 className="text-lg font-semibold mb-4 text-[color:var(--ai-foreground)] flex items-center gap-2">
+                        <FiMail className="text-[color:var(--ai-primary)]" />
                         Email Settings
                     </h2>
 

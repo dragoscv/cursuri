@@ -16,7 +16,7 @@ interface AnswersListProps {
 
 const AnswersList: React.FC<AnswersListProps> = ({ answers, questionId, expanded }) => {
     const context = useContext(AppContext);
-    const { user } = context;
+    const user = context?.user || null;
 
     // Format the date for display
     const formatDate = (date: Date | Timestamp) => {
@@ -80,8 +80,8 @@ const AnswersList: React.FC<AnswersListProps> = ({ answers, questionId, expanded
                                     <h4 className="font-medium text-[color:var(--ai-text)]">{answer.userName}</h4>
                                     {answer.userRole && (
                                         <span className={`text-xs px-2 py-0.5 rounded-full ${answer.userRole === 'Instructor' || answer.userRole === 'Admin'
-                                                ? 'bg-[color:var(--ai-secondary)]/10 text-[color:var(--ai-secondary)]'
-                                                : 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]'
+                                            ? 'bg-[color:var(--ai-secondary)]/10 text-[color:var(--ai-secondary)]'
+                                            : 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]'
                                             }`}>
                                             {answer.userRole}
                                         </span>
@@ -146,8 +146,8 @@ const AnswersList: React.FC<AnswersListProps> = ({ answers, questionId, expanded
                         <button
                             onClick={() => handleLike(answer)}
                             className={`flex items-center gap-1 text-xs px-2 py-1 rounded-md transition-colors ${user && answer.likedBy?.includes(user.uid)
-                                    ? 'text-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10'
-                                    : 'text-[color:var(--ai-muted)] hover:bg-[color:var(--ai-card-border)]/10'
+                                ? 'text-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10'
+                                : 'text-[color:var(--ai-muted)] hover:bg-[color:var(--ai-card-border)]/10'
                                 }`}
                         >
                             <LikeIcon className="w-3.5 h-3.5" />

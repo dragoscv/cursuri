@@ -29,6 +29,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
     const [colorScheme, setColorScheme] = useState<ColorScheme>('modern-purple');
     const [user, setUser] = useState<User | null>(null);
     const [userPreferences, setUserPreferences] = useState<UserPreferences | null>(null);
+    const [authLoading, setAuthLoading] = useState(true);
 
     const initialState = {
         modals: [],
@@ -814,6 +815,8 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             } else {
                 setUser(null);
             }
+            // Auth check complete, regardless of result
+            setAuthLoading(false);
         });
 
         // Return the unsubscribe function for cleanup
@@ -822,7 +825,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                 unsubscribe();
             }
         };
-    }, []);
+    }, [dispatch]);
 
     useEffect(() => {
         if (user) {
@@ -950,9 +953,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             dispatch({ type: 'SET_USER_PAID_PRODUCTS', payload: [] });
             return () => { }; // Return a no-op function when user is null
         }
-    }, [user]);
-
-    return (
+    }, [user]); return (
         <AppContext.Provider value={{
             isDark,
             toggleTheme,
@@ -961,6 +962,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             userPreferences,
             saveUserPreferences,
             user,
+            authLoading,
             isAdmin: state.isAdmin,
             openModal,
             closeModal,

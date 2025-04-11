@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useContext, useCallback, useRef } from 'react';
 import { AppContext } from '../AppContext';
-import { Lesson, AppContextProps, Resource } from '@/types';
+import { Lesson, AppContextProps, Resource, LessonSettingsProps, QAProps } from '@/types';
 import { Button, Card, Chip, Divider } from '@heroui/react';
 import VideoPlayer from './Video/VideoPlayer';
 import LessonSettings from './Settings/LessonSettings';
@@ -14,16 +14,15 @@ interface LessonContentProps {
     lesson: Lesson;
 }
 
-export const LessonContent: React.FC<LessonContentProps> = ({ lesson }) => {
+function LessonContent({ lesson }: LessonContentProps) {
     const [isCompleted, setIsCompleted] = useState(false);
     const [autoPlayNext, setAutoPlayNext] = useState(false);
     const [saveProgress, setSaveProgress] = useState(true);
     const [progressSaved, setProgressSaved] = useState(false);
-
-    // State for Notes component
+    const [videoPosition, setVideoPosition] = useState(0);    // Track video position in seconds
     const [notes, setNotes] = useState('');
     const [showNotes, setShowNotes] = useState(false);
-    const notesRef = useRef<HTMLTextAreaElement>(null);
+    const notesRef = useRef<HTMLTextAreaElement>(null) as React.RefObject<HTMLTextAreaElement>;
 
     const context = useContext(AppContext) as AppContextProps;
     if (!context) {
@@ -209,10 +208,8 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson }) => {
                         </Chip>
                     )}
                 </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2">
+            </div>            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2 space-y-8">
                     {/* Video Player Component */}
                     <VideoPlayer
                         lesson={lesson}
@@ -226,7 +223,7 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson }) => {
 
                     {/* Lesson Content */}
                     {lesson.content && (
-                        <Card className="mt-8 border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-xl">
+                        <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-xl">
                             <div className="p-6">
                                 <h2 className="text-xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-4">
                                     Lesson Content
@@ -241,7 +238,7 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson }) => {
 
                     {/* Quiz Section (if lesson has a quiz) */}
                     {lesson.hasQuiz && (
-                        <Card className="mt-6 border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-xl overflow-hidden">
+                        <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-xl overflow-hidden">
                             <div className="p-6">
                                 <h2 className="text-xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-4">
                                     Knowledge Check
@@ -265,21 +262,20 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson }) => {
                     )}
 
                     {/* Q&A Discussion Section */}
-                    <QASection lesson={lesson} />
+                    <QASection courseId={lesson.courseId || ''} lessonId={lesson.id} />
                 </div>
 
                 {/* Right Sidebar */}
-                <div className="lg:col-span-1 space-y-6">
+                <div className="lg:col-span-1 space-y-8">
                     {/* Lesson Settings Component */}
                     <LessonSettings
-                        lesson={lesson}
                         isCompleted={isCompleted}
                         autoPlayNext={autoPlayNext}
                         saveProgress={saveProgress}
-                        setAutoPlayNext={setAutoPlayNext}
-                        setSaveProgress={setSaveProgress}
-                        saveLessonProgress={saveLessonProgress}
-                        markLessonComplete={markLessonComplete}
+                        onMarkComplete={() => markLessonComplete(courseId, lesson.id)}
+                        onAutoPlayToggle={setAutoPlayNext}
+                        onSaveProgressToggle={setSaveProgress}
+                        onManualSave={() => saveLessonProgress(courseId, lesson.id, videoPosition, isCompleted)}
                     />
 
                     {/* Notes Component */}

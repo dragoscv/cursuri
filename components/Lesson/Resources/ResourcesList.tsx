@@ -16,7 +16,7 @@ export default function ResourcesList({
     }
 
     // Function to get appropriate icon based on resource type
-    const getResourceIcon = (type: string) => {
+    const getResourceIcon = (type: string | undefined) => {
         switch (type?.toLowerCase()) {
             case 'pdf':
                 return <FiFileText size={18} />;
@@ -41,7 +41,7 @@ export default function ResourcesList({
                     {resources.map((resource: Resource, index: number) => (
                         <li key={index} className="group">
                             <a
-                                href={resource.url}
+                                href={resource.url || '#'}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="flex items-center p-3 rounded-lg border border-[color:var(--ai-card-border)]/50 hover:border-[color:var(--ai-primary)]/30 bg-[color:var(--ai-card-bg)]/50 hover:bg-[color:var(--ai-primary)]/5 transition-all duration-300 group"

@@ -37,7 +37,7 @@ export default function AdminCoursesPage() {
 
     return (
         <AdminCoursesView
-            courses={courses}
+            courses={courses as Record<string, CourseWithPriceProduct>}
             onAddCourse={handleAddCourse}
             onViewCourse={handleViewCourse}
             onEditCourse={handleEditCourse}

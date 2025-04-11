@@ -4,13 +4,13 @@ import React, { useEffect, useState, useContext, useCallback, useRef } from "rea
 import { AppContext } from "../AppContext";
 import { Button, Card, Progress } from "@heroui/react";
 import { useRouter } from "next/navigation";
-import LessonContent from "./LessonContent";
-import LessonNavigation from "./Navigation/LessonNavigation";
-import LessonSettings from "./Settings/LessonSettings";
-import LessonNotes from "./Notes/LessonNotes";
-import LessonResources from "./Resources/LessonResources";
-import QASection from "./QA/QASection";
-import { Lesson as LessonInterface, AppContextProps } from "@/types";
+import LessonContent from "@/components/Lesson/LessonContent";
+import LessonNavigation from "@/components/Lesson/Navigation/LessonNavigation";
+import LessonSettings from "@/components/Lesson/Settings/LessonSettings";
+import LessonNotes from "@/components/Lesson/Notes/LessonNotes";
+import LessonResources from "@/components/Lesson/Resources/LessonResources";
+import QASection from "@/components/Lesson/QA/QASection";
+import { Lesson as LessonInterface, AppContextProps, LessonResource } from "@/types";
 
 interface LessonProps {
     lesson: LessonInterface;
@@ -132,14 +132,8 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
         if (!saveProgress || !videoRef.current) return;
 
         const videoProgress = videoRef.current ?
-            (videoRef.current.currentTime / videoRef.current.duration) * 100 : 0;
-
-        saveLessonProgress(courseId, lesson.id, {
-            videoProgress,
-            notes: noteContent,
-            isCompleted,
-            lastUpdated: new Date()
-        });
+            (videoRef.current.currentTime / videoRef.current.duration) * 100 : 0;        // Pass position as the third parameter (videoProgress as a number)
+        saveLessonProgress(courseId, lesson.id, videoProgress, isCompleted);
     }, [courseId, lesson.id, saveProgress, videoRef, noteContent, isCompleted, saveLessonProgress]);
 
     // Handle marking lesson as complete
@@ -190,72 +184,9 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
 
     return (
         <div className="w-full max-w-7xl mx-auto px-4 py-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Main Content (2/3 width on large screens) */}
-                <div className="lg:col-span-2 space-y-6">
-                    {/* Video Player Section */}
-                    {lesson.videoUrl && (
-                        <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-md overflow-hidden rounded-xl">
-                            <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
-                                <video
-                                    ref={videoRef}
-                                    className="absolute inset-0 w-full h-full bg-black"
-                                    src={lesson.videoUrl}
-                                    poster={lesson.thumbnailUrl}
-                                    controls
-                                    onTimeUpdate={handleTimeUpdate}
-                                ></video>
-                            </div>
-
-                            {/* Progress bar for the video */}
-                            <div className="p-5">
-                                <div className="flex items-center justify-between mb-2">
-                                    <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)]">
-                                        {lesson.title || lesson.name}
-                                    </h3>
-                                    <span className="text-sm text-[color:var(--ai-muted)]">
-                                        {lesson.duration || "Tutorial"}
-                                    </span>
-                                </div>
-
-                                {/* Video progress indicator */}
-                                <Progress
-                                    value={videoProgress}
-                                    color="primary"
-                                    size="sm"
-                                    radius="full"
-                                    className="mb-2"
-                                />
-
-                                {/* Course progress indicator */}
-                                <div className="flex items-center justify-between text-xs text-[color:var(--ai-muted)]">
-                                    <span>Lesson {calculateProgress() / (100 / Object.keys(lessons[courseId] || {}).length)} of {Object.keys(lessons[courseId] || {}).length}</span>
-                                    <span>{Math.round(calculateProgress())}% of course completed</span>
-                                </div>
-                            </div>
-                        </Card>
-                    )}
-
-                    {/* Lesson Content */}
-                    {lesson.content && (
-                        <Card className="mt-8 border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-md rounded-xl">
-                            <div className="p-6">
-                                <h2 className="text-xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-4">
-                                    Lesson Content
-                                </h2>
-                                <div
-                                    className="prose dark:prose-invert max-w-none"
-                                    dangerouslySetInnerHTML={{ __html: lesson.content }}
-                                />
-                            </div>
-                        </Card>
-                    )}
-                </div>
-
-                {/* Right Sidebar */}
-                <div className="lg:col-span-1 space-y-6">
-                    {/* Lesson Navigation */}
-                    <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-md rounded-xl overflow-hidden">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">                {/* Main Content (2/3 width on large screens) */}                <div className="lg:col-span-2 space-y-8">                    {/* Lesson Navigation */}
+                <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-md rounded-xl overflow-hidden w-full">
+                    <div className="p-0">
                         <LessonNavigation
                             prevLessonId={prevLessonId}
                             nextLessonId={nextLessonId}
@@ -263,8 +194,71 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
                             onNavigateLesson={navigateToLesson}
                             onClose={onClose}
                         />
-                    </Card>
+                    </div>
+                </Card>
 
+                {/* Video Player Section */}
+                {lesson.videoUrl && (
+                    <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-md overflow-hidden rounded-xl">
+                        <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+                            <video
+                                ref={videoRef}
+                                className="absolute inset-0 w-full h-full bg-black"
+                                src={lesson.videoUrl}
+                                poster={lesson.thumbnailUrl}
+                                controls
+                                onTimeUpdate={handleTimeUpdate}
+                            ></video>
+                        </div>
+
+                        {/* Progress bar for the video */}
+                        <div className="p-5">
+                            <div className="flex items-center justify-between mb-2">
+                                <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)]">
+                                    {lesson.title || lesson.name}
+                                </h3>
+                                <span className="text-sm text-[color:var(--ai-muted)]">
+                                    {lesson.duration || "Tutorial"}
+                                </span>
+                            </div>
+
+                            {/* Video progress indicator */}
+                            <Progress
+                                value={videoProgress}
+                                color="primary"
+                                size="sm"
+                                radius="full"
+                                className="mb-2"
+                            />
+
+                            {/* Course progress indicator */}
+                            <div className="flex items-center justify-between text-xs text-[color:var(--ai-muted)]">
+                                <span>Lesson {calculateProgress() / (100 / Object.keys(lessons[courseId] || {}).length)} of {Object.keys(lessons[courseId] || {}).length}</span>
+                                <span>{Math.round(calculateProgress())}% of course completed</span>
+                            </div>
+                        </div>
+                    </Card>
+                )}
+
+                {/* Lesson Content */}
+                {lesson.content && (
+                    <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-md rounded-xl">
+                        <div className="p-6">
+                            <h2 className="text-xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-4">
+                                Lesson Content
+                            </h2>
+                            <div
+                                className="prose dark:prose-invert max-w-none"
+                                dangerouslySetInnerHTML={{ __html: lesson.content }}
+                            />
+                        </div>
+                    </Card>
+                )}
+
+                {/* Q&A Section - Moved into main content column */}
+                <QASection lessonId={lesson.id} courseId={courseId} />
+            </div>                {/* Right Sidebar */}
+                <div className="lg:col-span-1 space-y-8">
                     {/* Lesson Settings */}
                     <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-md rounded-xl overflow-hidden">
                         <LessonSettings
@@ -283,18 +277,20 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
                         notes={noteContent}
                         onChange={setNoteContent}
                         onSave={() => saveCurrentProgress()}
-                    />
-
-                    {/* Additional Resources */}
+                    />                    {/* Additional Resources */}
                     {lesson.resources && lesson.resources.length > 0 && (
-                        <LessonResources resources={lesson.resources} />
-                    )}
-                </div>
-            </div>
-
-            {/* Q&A Section */}
-            <div className="mt-8">
-                <QASection lessonId={lesson.id} />
+                        <LessonResources
+                            resources={
+                                // Ensure resources have the correct shape for LessonResource
+                                lesson.resources.map(r => ({
+                                    name: r.name || r.title || '',
+                                    url: r.url || '',
+                                    type: r.type,
+                                    description: r.description
+                                }))
+                            }
+                        />
+                    )}</div>
             </div>
         </div>
     );

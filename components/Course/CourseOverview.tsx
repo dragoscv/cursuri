@@ -188,27 +188,31 @@ const CourseOverview: React.FC<CourseOverviewProps> = ({ course }) => {
                         <div className="p-4">
                             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                                 <div className="w-16 h-16 rounded-full overflow-hidden bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] flex items-center justify-center text-white font-bold text-xl">
-                                    {course.instructor.photoUrl ? (
+                                    {typeof course.instructor !== 'string' && course.instructor.photoUrl ? (
                                         <img
                                             src={course.instructor.photoUrl}
-                                            alt={course.instructor.name}
+                                            alt={typeof course.instructor !== 'string' ? course.instructor.name || 'Instructor' : 'Instructor'}
                                             className="w-full h-full object-cover"
                                         />
                                     ) : (
-                                        course.instructor.name?.charAt(0) || "I"
+                                        typeof course.instructor !== 'string'
+                                            ? (course.instructor.name?.charAt(0) || "I")
+                                            : (typeof course.instructor === 'string' ? course.instructor.charAt(0) : "I")
                                     )}
                                 </div>
 
                                 <div>
                                     <h4 className="text-[color:var(--ai-foreground)] font-medium">
-                                        {course.instructor.name}
+                                        {typeof course.instructor !== 'string'
+                                            ? course.instructor.name
+                                            : course.instructor}
                                     </h4>
-                                    {course.instructor.title && (
+                                    {typeof course.instructor !== 'string' && course.instructor.title && (
                                         <p className="text-sm text-[color:var(--ai-muted)]">
                                             {course.instructor.title}
                                         </p>
                                     )}
-                                    {course.instructor.bio && (
+                                    {typeof course.instructor !== 'string' && course.instructor.bio && (
                                         <p className="text-sm text-[color:var(--ai-muted)] mt-2 leading-relaxed">
                                             {course.instructor.bio}
                                         </p>

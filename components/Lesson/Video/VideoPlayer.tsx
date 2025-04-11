@@ -14,6 +14,9 @@ import {
   ExitFullscreenIcon,
   PlaybackSpeedIcon
 } from '@/components/icons/svg';
+import CaptionsIcon from '@/components/icons/svg/CaptionsIcon';
+import VolumeIcon from '@/components/icons/svg/VolumeIcon';
+import MuteIcon from '@/components/icons/svg/MuteIcon';
 
 interface VideoPlayerProps {
   lesson: Lesson;
@@ -36,6 +39,9 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoContainerRef = useRef<HTMLDivElement>(null);
+  const [isMuted, setIsMuted] = React.useState(false);
+  const [captionsEnabled, setCaptionsEnabled] = React.useState(false);
+  const [selectedCaptionLanguage, setSelectedCaptionLanguage] = React.useState('en-US');
 
   const courseId = lesson?.courseId || '';
 
@@ -66,6 +72,59 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
     setIsCompleted,
     setProgressSaved
   });
+
+  // Toggle mute state
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !videoRef.current.muted;
+      setIsMuted(videoRef.current.muted);
+    }
+  };
+
+  // Handle captions toggle
+  const toggleCaptions = () => {
+    setCaptionsEnabled(!captionsEnabled);
+
+    if (videoRef.current) {
+      // Get text tracks from video element
+      const tracks = videoRef.current.textTracks;
+
+      // Set mode for all tracks
+      for (let i = 0; i < tracks.length; i++) {
+        tracks[i].mode = captionsEnabled ? 'hidden' : 'showing';
+      }
+    }
+  };
+
+  // Initialize captions when the component mounts
+  React.useEffect(() => {
+    if (videoRef.current && lesson.captions) {
+      // Clear existing tracks
+      while (videoRef.current.firstChild) {
+        videoRef.current.removeChild(videoRef.current.firstChild);
+      }
+
+      // Add caption tracks for available languages
+      if (lesson.captions && Object.keys(lesson.captions).length > 0) {
+        Object.entries(lesson.captions).forEach(([language, captionData]) => {
+          if (captionData.url) {
+            const track = document.createElement('track');
+            track.kind = 'subtitles';
+            track.label = language;
+            track.srclang = language.split('-')[0];
+            track.src = captionData.url;
+
+            // Set default language
+            if (language === selectedCaptionLanguage) {
+              track.default = true;
+            }
+
+            videoRef.current?.appendChild(track);
+          }
+        });
+      }
+    }
+  }, [lesson.captions, selectedCaptionLanguage]);
 
   if (!lesson.file) {
     return (
@@ -181,16 +240,38 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
               <ForwardIcon />
             </button>
 
-            {/* Time Display */}
-            <span className="text-sm font-medium ml-2">
+            {/* Time Display */}            <span className="text-sm font-medium ml-2">
               {videoRef.current
                 ? `${formatTime(videoRef.current?.currentTime || 0)} / ${formatTime(videoRef.current?.duration || 0)}`
                 : '0:00 / 0:00'
               }
             </span>
+
+            {/* Volume Control */}
+            <button
+              className="p-1.5 rounded-xl hover:bg-white/20 transition duration-300"
+              onClick={toggleMute}
+              aria-label={isMuted ? 'Unmute' : 'Mute'}
+            >
+              {isMuted ? <MuteIcon /> : <VolumeIcon />}
+            </button>
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Captions Toggle */}
+            {lesson.captions && Object.keys(lesson.captions).length > 0 && (
+              <button
+                className={`p-1.5 rounded-xl transition duration-300 ${captionsEnabled
+                    ? 'bg-[color:var(--ai-primary)]/20 text-[color:var(--ai-primary)]'
+                    : 'hover:bg-white/20 text-white'
+                  }`}
+                onClick={toggleCaptions}
+                aria-label={captionsEnabled ? 'Disable captions' : 'Enable captions'}
+              >
+                <CaptionsIcon />
+              </button>
+            )}
+
             {/* Playback Speed */}
             <Dropdown>
               <DropdownTrigger>

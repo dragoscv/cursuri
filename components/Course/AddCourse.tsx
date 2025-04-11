@@ -26,7 +26,8 @@ export default function AddCourse(props: any) {
             const course = courses[courseId]
             setCourseName(course.name || "")
             setCourseDescription(course.description || "")
-            setCoursePrice(course.price || "")
+            // Convert price to string if it's a number
+            setCoursePrice(course.price ? String(course.price) : "")
             setRepoUrl(course.repoUrl || "")
             setEditMode(true)
         }

@@ -10,8 +10,8 @@ export default function ViewToggle({ view, onViewChange }: ViewToggleProps) {
     return (
         <div className="flex gap-4 mb-6">
             <Button
-                color={view === "grid" ? "primary" : "default"}
-                variant={view === "grid" ? "solid" : "light"}
+                color={view === "grid" ? "primary" : "light"}
+                variant={view === "grid" ? "primary" : "light"}
                 onClick={() => onViewChange("grid")}
                 size="sm"
             >
@@ -21,8 +21,8 @@ export default function ViewToggle({ view, onViewChange }: ViewToggleProps) {
                 <span className="ml-2">Grid</span>
             </Button>
             <Button
-                color={view === "list" ? "primary" : "default"}
-                variant={view === "list" ? "solid" : "light"}
+                color={view === "list" ? "primary" : "light"}
+                variant={view === "list" ? "primary" : "light"}
                 onClick={() => onViewChange("list")}
                 size="sm"
             >

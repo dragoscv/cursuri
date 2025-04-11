@@ -28,8 +28,8 @@ export default function ProfileCoursesFilter({
 
             <div className="inline-flex gap-2 ml-auto">
                 <Button
-                    color={filterStatus === 'all' ? 'primary' : 'default'}
-                    variant={filterStatus === 'all' ? 'solid' : 'light'}
+                    color={filterStatus === 'all' ? 'primary' : 'light'}
+                    variant={filterStatus === 'all' ? 'primary' : 'light'}
                     size="sm"
                     startContent={<FiLayers />}
                     onClick={() => setFilterStatus('all')}
@@ -37,8 +37,8 @@ export default function ProfileCoursesFilter({
                     All
                 </Button>
                 <Button
-                    color={filterStatus === 'in-progress' ? 'primary' : 'default'}
-                    variant={filterStatus === 'in-progress' ? 'solid' : 'light'}
+                    color={filterStatus === 'in-progress' ? 'primary' : 'light'}
+                    variant={filterStatus === 'in-progress' ? 'primary' : 'light'}
                     size="sm"
                     startContent={<FiPlay />}
                     onClick={() => setFilterStatus('in-progress')}
@@ -46,8 +46,8 @@ export default function ProfileCoursesFilter({
                     In Progress
                 </Button>
                 <Button
-                    color={filterStatus === 'completed' ? 'primary' : 'default'}
-                    variant={filterStatus === 'completed' ? 'solid' : 'light'}
+                    color={filterStatus === 'completed' ? 'primary' : 'light'}
+                    variant={filterStatus === 'completed' ? 'primary' : 'light'}
                     size="sm"
                     startContent={<FiBarChart2 />}
                     onClick={() => setFilterStatus('completed')}

@@ -272,7 +272,11 @@ const AdminUsers: React.FC = () => {
                                                 </div>
                                                 <div>
                                                     <p className="text-sm text-gray-500 dark:text-gray-400">Created On</p>
-                                                    <p className="font-medium text-gray-900 dark:text-white">{selectedUser.createdAt ? new Date(selectedUser.createdAt.seconds * 1000).toLocaleDateString() : 'Unknown'}</p>
+                                                    <p className="font-medium text-gray-900 dark:text-white">{selectedUser.createdAt ?
+                                                        (typeof selectedUser.createdAt === 'object' && 'seconds' in selectedUser.createdAt
+                                                            ? new Date(selectedUser.createdAt.seconds * 1000).toLocaleDateString()
+                                                            : new Date(selectedUser.createdAt).toLocaleDateString())
+                                                        : 'Unknown'}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -297,8 +301,10 @@ const AdminUsers: React.FC = () => {
                                                                     <p className="font-medium text-gray-900 dark:text-white">{course?.name || 'Unknown Course'}</p>
                                                                     <p className="text-xs text-gray-500 dark:text-gray-400">
                                                                         Enrolled: {enrollment.enrolledAt ?
-                                                                            new Date(enrollment.enrolledAt.seconds * 1000).toLocaleDateString() :
-                                                                            'Unknown date'}
+                                                                            (typeof enrollment.enrolledAt === 'object' && 'seconds' in enrollment.enrolledAt
+                                                                                ? new Date(enrollment.enrolledAt.seconds * 1000).toLocaleDateString()
+                                                                                : new Date(enrollment.enrolledAt).toLocaleDateString())
+                                                                            : 'Unknown date'}
                                                                     </p>
                                                                 </div>
                                                                 <div>
@@ -438,7 +444,7 @@ const AdminUsers: React.FC = () => {
                                                         }}
                                                     >
                                                         {Object.values(courses).map((course: Course) => (
-                                                            <SelectItem key={course.id} value={course.id} className="text-gray-900 dark:text-white">
+                                                            <SelectItem key={course.id} textValue={course.name} className="text-gray-900 dark:text-white">
                                                                 {course.name}
                                                             </SelectItem>
                                                         ))}

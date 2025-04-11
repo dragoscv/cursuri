@@ -1,13 +1,24 @@
 import React from 'react';
+import { IconProps } from '@/types';
 
-interface IconProps {
-    className?: string;
-}
-
-export const ExitFullscreenIcon: React.FC<IconProps> = ({ className = "w-5 h-5" }) => {
+const ExitFullscreenIcon: React.FC<IconProps> = ({ className = "w-5 h-5", size }) => {
     return (
-        <svg className={className} fill="currentColor" viewBox="0 0 24 24">
-            <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z" />
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width={size || "20"}
+            height={size || "20"}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className={className}
+        >
+            <path d="M4 14h3a3 3 0 0 1 3 3v3"></path>
+            <path d="M14 10h3a3 3 0 0 0 3-3V4"></path>
+            <path d="M10 4v3a3 3 0 0 1-3 3H4"></path>
+            <path d="M20 14v3a3 3 0 0 1-3 3h-3"></path>
         </svg>
     );
 };

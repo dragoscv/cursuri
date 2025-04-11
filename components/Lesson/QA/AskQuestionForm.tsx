@@ -7,7 +7,7 @@ import { Textarea, Input } from '@heroui/react';
 
 interface AskQuestionFormProps {
     onSubmit: (title: string, content: string) => void;
-    onCancel: () => void;
+    onCancel?: () => void;
 }
 
 const AskQuestionForm: React.FC<AskQuestionFormProps> = ({ onSubmit, onCancel }) => {
@@ -59,20 +59,23 @@ const AskQuestionForm: React.FC<AskQuestionFormProps> = ({ onSubmit, onCancel })
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4 mb-6">
-            <div>
-                <Input
-                    type="text"
-                    label="Question Title"
-                    placeholder="What's your question about this lesson?"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className="w-full"
-                    isInvalid={!!errors.title}
-                    errorMessage={errors.title}
-                    description="Be specific and imagine you're asking another student"
-                />
-            </div>
+        <form onSubmit={handleSubmit} className="space-y-4 mb-6">            <div>
+            <Input
+                type="text"
+                label="Question Title"
+                placeholder="What's your question about this lesson?"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full rounded-lg"
+                classNames={{
+                    input: "rounded-lg border-[color:var(--ai-card-border)] focus:border-[color:var(--ai-primary)] bg-[color:var(--ai-card-bg)]/50",
+                    inputWrapper: "shadow-sm hover:shadow transition-shadow duration-300"
+                }}
+                isInvalid={!!errors.title}
+                errorMessage={errors.title}
+                description="Be specific and imagine you're asking another student"
+            />
+        </div>
 
             <div>
                 <Textarea
@@ -82,6 +85,10 @@ const AskQuestionForm: React.FC<AskQuestionFormProps> = ({ onSubmit, onCancel })
                     onChange={(e) => setContent(e.target.value)}
                     rows={5}
                     className="w-full resize-y"
+                    classNames={{
+                        input: "rounded-lg border-[color:var(--ai-card-border)] focus:border-[color:var(--ai-primary)] bg-[color:var(--ai-card-bg)]/50",
+                        inputWrapper: "shadow-sm hover:shadow transition-shadow duration-300"
+                    }}
                     isInvalid={!!errors.content}
                     errorMessage={errors.content}
                     description="Include all relevant information for others to understand your question"
@@ -94,7 +101,7 @@ const AskQuestionForm: React.FC<AskQuestionFormProps> = ({ onSubmit, onCancel })
                     color="default"
                     onClick={onCancel}
                     type="button"
-                    className="bg-[color:var(--ai-card-border)]/20 hover:bg-[color:var(--ai-card-border)]/30"
+                    className="bg-[color:var(--ai-card-border)]/20 hover:bg-[color:var(--ai-card-border)]/30 rounded-lg border border-[color:var(--ai-card-border)]/50 shadow-sm transition-all duration-300 hover:shadow"
                 >
                     Cancel
                 </Button>
@@ -102,7 +109,7 @@ const AskQuestionForm: React.FC<AskQuestionFormProps> = ({ onSubmit, onCancel })
                     color="primary"
                     type="submit"
                     isLoading={isSubmitting}
-                    className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white"
+                    className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white rounded-lg shadow-md transition-all duration-300 hover:shadow-lg hover:scale-[1.02]"
                 >
                     {isSubmitting ? 'Submitting...' : 'Submit Question'}
                 </Button>
