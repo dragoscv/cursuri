@@ -2,6 +2,27 @@ import { Timestamp, Unsubscribe } from 'firebase/firestore';
 import { User } from 'firebase/auth';
 import { ReactNode } from 'react';
 
+// Toast related types
+export type ToastType = 'info' | 'success' | 'warning' | 'error';
+export type ToastPosition = 'top-right' | 'top-center' | 'top-left' | 'bottom-right' | 'bottom-center' | 'bottom-left';
+
+export interface ToastProps {
+    id: string;
+    type?: ToastType;
+    title?: string;
+    message: string;
+    duration?: number;
+    position?: ToastPosition;
+    isClosable?: boolean;
+    action?: () => void;
+    actionLabel?: string;
+    onClose?: () => void;
+}
+
+export interface Toast extends ToastProps {
+    createdAt: number;
+}
+
 // Next.js 15 specific types
 declare module 'next' {
     export interface PageProps {

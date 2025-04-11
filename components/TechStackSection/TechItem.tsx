@@ -23,7 +23,8 @@ export default function TechItem({ name, Icon, description, color, index }: Tech
                 delay: index * 0.1
             }
         }
-    }    return (
+    };
+    return (
         <motion.div
             variants={itemVariants}
             className="p-6 rounded-xl bg-white dark:bg-[color:var(--ai-card-bg)] shadow-md hover:shadow-lg dark:shadow-[color:var(--ai-card-border)]/10 transition-shadow border border-transparent dark:border-[color:var(--ai-card-border)]/30"

@@ -3,6 +3,7 @@ import { AppContextProvider } from "@/components/AppContext";
 import { HeroUIProvider } from "@heroui/react";
 import { useContext, useEffect } from "react";
 import { AppContext } from "@/components/AppContext";
+import { ToastProvider } from "@/components/Toast/ToastContext";
 
 // Theme provider wrapper to handle theme class application
 function ThemeHandler({ children }: { children: React.ReactNode }) {
@@ -51,9 +52,11 @@ export default function Providers({
         <>
             <AppContextProvider>
                 <HeroUIProvider>
-                    <ThemeHandler>
-                        {children}
-                    </ThemeHandler>
+                    <ToastProvider>
+                        <ThemeHandler>
+                            {children}
+                        </ThemeHandler>
+                    </ToastProvider>
                 </HeroUIProvider>
             </AppContextProvider>
         </>

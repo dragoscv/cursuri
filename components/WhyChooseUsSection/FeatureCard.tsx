@@ -22,7 +22,8 @@ export default function FeatureCard({ icon, title, description, index }: Feature
                 delay: index * 0.1
             }
         }
-    }    return (
+    };
+    return (
         <motion.div
             className="bg-white dark:bg-[color:var(--ai-card-bg)] backdrop-filter backdrop-blur-lg rounded-xl p-6 h-full border border-[color:var(--ai-card-border)] shadow-lg dark:shadow-[color:var(--ai-card-border)]/20"
             variants={itemVariants}

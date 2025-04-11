@@ -319,6 +319,7 @@ body {
   --ai-secondary: #a78bfa;
   --ai-accent: #f472b6;
   --ai-background: #0f172a;
+  /* Default dark background */
   --ai-foreground: #f8fafc;
   --ai-muted: #94a3b8;
   --ai-card-bg: #1e293b;
@@ -348,6 +349,11 @@ html.dark.theme-modern-purple {
   --ai-primary: #818cf8;
   --ai-secondary: #a78bfa;
   --ai-accent: #f472b6;
+  --ai-background: #0f172a;
+  --background-start-rgb: 16, 24, 46;
+  /* Slightly purplish dark background */
+  --background-end-rgb: 12, 17, 35;
+  --section-dark-bg: #111936;
 }
 
 /* Theme: Black and White */
@@ -363,6 +369,11 @@ html.dark.theme-black-white {
   --ai-secondary: #d4d4d4;
   --ai-accent: #a3a3a3;
   --ai-card-border: #525252;
+  --ai-background: #0f1724;
+  --background-start-rgb: 16, 23, 36;
+  /* Slightly cooler dark background */
+  --background-end-rgb: 12, 16, 28;
+  --section-dark-bg: #101724;
 }
 
 /* Theme: Green Neon */
@@ -376,6 +387,11 @@ html.dark.theme-green-neon {
   --ai-primary: #4ade80;
   --ai-secondary: #22c55e;
   --ai-accent: #86efac;
+  --ai-background: #0f1a2a;
+  --background-start-rgb: 13, 26, 42;
+  /* Subtle green tint in dark background */
+  --background-end-rgb: 10, 20, 32;
+  --section-dark-bg: #0e1e2c;
 }
 
 /* Theme: Blue Ocean */
@@ -389,6 +405,11 @@ html.dark.theme-blue-ocean {
   --ai-primary: #38bdf8;
   --ai-secondary: #0ea5e9;
   --ai-accent: #7dd3fc;
+  --ai-background: #0a192f;
+  --background-start-rgb: 10, 25, 47;
+  /* Subtle blue tint in dark background */
+  --background-end-rgb: 8, 20, 38;
+  --section-dark-bg: #0b1a2e;
 }
 
 /* Theme: Brown Sunset */
@@ -402,6 +423,11 @@ html.dark.theme-brown-sunset {
   --ai-primary: #f59e0b;
   --ai-secondary: #d97706;
   --ai-accent: #fbbf24;
+  --ai-background: #171520;
+  --background-start-rgb: 23, 21, 32;
+  /* Subtle brown/amber tint in dark background */
+  --background-end-rgb: 18, 16, 26;
+  --section-dark-bg: #18161f;
 }
 
 /* Theme: Yellow Morning */
@@ -415,6 +441,11 @@ html.dark.theme-yellow-morning {
   --ai-primary: #facc15;
   --ai-secondary: #eab308;
   --ai-accent: #fde047;
+  --ai-background: #171a24;
+  --background-start-rgb: 23, 26, 36;
+  /* Subtle yellow/gold tint in dark background */
+  --background-end-rgb: 18, 21, 30;
+  --section-dark-bg: #161922;
 }
 
 /* Theme: Red Blood */
@@ -428,6 +459,11 @@ html.dark.theme-red-blood {
   --ai-primary: #ef4444;
   --ai-secondary: #dc2626;
   --ai-accent: #f87171;
+  --ai-background: #17141a;
+  --background-start-rgb: 23, 20, 26;
+  /* Subtle red tint in dark background */
+  --background-end-rgb: 19, 16, 22;
+  --section-dark-bg: #18151b;
 }
 
 /* Theme: Pink Candy */
@@ -441,6 +477,11 @@ html.dark.theme-pink-candy {
   --ai-primary: #ec4899;
   --ai-secondary: #db2777;
   --ai-accent: #f472b6;
+  --ai-background: #1a141e;
+  --background-start-rgb: 26, 20, 30;
+  /* Subtle pink/magenta tint in dark background */
+  --background-end-rgb: 22, 16, 26;
+  --section-dark-bg: #19131d;
 }
 
 /* Neural network animation */

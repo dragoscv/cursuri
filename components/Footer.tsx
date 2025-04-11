@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { AppContext } from './AppContext';
 import { AppContextProps } from '@/types';
-import GithubIcon from './icons/GithubIcon';
+import GithubIcon from './icons/GitHubIcon';
 import TikTokIcon from './icons/TikTokIcon';
 import WebsiteIcon from './icons/WebsiteIcon';
 import packageInfo from '../package.json';
@@ -66,34 +66,33 @@ const Footer = () => {
 
                     {/* Right column - Connect */}
                     <div>
-                        <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-4">Connect</h3>
-                        <div className="flex space-x-4 mb-4">
+                        <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-4">Connect</h3>                        <div className="flex space-x-4 mb-4">
                             <a
                                 href="https://github.com/catalinpetrovici"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]"
+                                className="p-2 rounded-lg hover:bg-[color:var(--ai-card-border)]/30 dark:hover:bg-[color:var(--ai-card-border)]/20 transition-colors"
                                 aria-label="GitHub"
                             >
-                                <GithubIcon className="w-6 h-6" />
+                                <GithubIcon className="text-[color:var(--ai-primary)]" size={24} />
                             </a>
                             <a
                                 href="https://www.tiktok.com/@catalinpetrovici"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]"
+                                className="p-2 rounded-lg hover:bg-[color:var(--ai-card-border)]/30 dark:hover:bg-[color:var(--ai-card-border)]/20 transition-colors"
                                 aria-label="TikTok"
                             >
-                                <TikTokIcon className="w-6 h-6" />
+                                <TikTokIcon className="text-[color:var(--ai-primary)]" size={24} />
                             </a>
                             <a
                                 href="https://catalinpetrovici.com"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]"
+                                className="p-2 rounded-lg hover:bg-[color:var(--ai-card-border)]/30 dark:hover:bg-[color:var(--ai-card-border)]/20 transition-colors"
                                 aria-label="Website"
                             >
-                                <WebsiteIcon className="w-6 h-6" />
+                                <WebsiteIcon className="text-[color:var(--ai-primary)]" size={24} />
                             </a>
                         </div>
                         <p className="text-[color:var(--ai-muted)]">

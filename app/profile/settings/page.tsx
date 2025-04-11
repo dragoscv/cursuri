@@ -8,14 +8,13 @@ import { FiUser, FiLock, FiMail, FiSettings, FiBell, FiGlobe, FiSave } from '@/c
 import { updateProfile, updateEmail, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
 import ThemeSelector from '@/components/Profile/ThemeSelector';
 import { ColorScheme, UserPreferences } from '@/types';
+import { useToast } from '@/components/Toast';
 
 export default function ProfileSettings() {
     const context = useContext(AppContext);
     if (!context) {
         throw new Error("AppContext not found");
-    }
-
-    const { user, userPreferences, saveUserPreferences } = context;
+    } const { user, userPreferences, saveUserPreferences } = context;
 
     const [form, setForm] = useState({
         displayName: user?.displayName || '',
@@ -29,9 +28,9 @@ export default function ProfileSettings() {
         courseUpdates: userPreferences?.courseUpdates || true,
         marketingEmails: userPreferences?.marketingEmails || false
     });
-
     const [isLoading, setIsLoading] = useState(false);
-    const [message, setMessage] = useState({ type: '', text: '' });
+    const [message, setMessage] = useState<{ type: string, text: string }>({ type: '', text: '' });
+    const { showToast } = useToast();
 
     // Load user preferences when available
     useEffect(() => {
@@ -71,100 +70,97 @@ export default function ProfileSettings() {
             // Save bio to Firestore preferences
             await saveUserPreferences({
                 bio: form.bio
-            });
-
-            setMessage({
+            }); showToast({
                 type: 'success',
-                text: 'Profile information updated successfully!'
+                title: 'Profile Updated',
+                message: 'Profile information updated successfully!'
             });
         } catch (error: any) {
-            setMessage({
+            showToast({
                 type: 'error',
-                text: error.message || 'Failed to update profile information.'
+                title: 'Update Failed',
+                message: error.message || 'Failed to update profile information.'
             });
         } finally {
             setIsLoading(false);
         }
-    };
-
-    const updateUserEmail = async () => {
+    }; const updateUserEmail = async () => {
         if (!user || !user.email) return;
 
         if (!form.currentPassword) {
-            setMessage({
+            showToast({
                 type: 'error',
-                text: 'Please enter your current password to update email.'
+                title: 'Validation Error',
+                message: 'Please enter your current password to update email.'
             });
             return;
         }
 
         setIsLoading(true);
-        setMessage({ type: '', text: '' });
 
         try {
             // Reauthenticate user first
             const credential = EmailAuthProvider.credential(user.email, form.currentPassword);
-            await reauthenticateWithCredential(user, credential);
-
-            // Then update email
+            await reauthenticateWithCredential(user, credential);            // Then update email
             await updateEmail(user, form.email);
 
-            setMessage({
+            showToast({
                 type: 'success',
-                text: 'Email updated successfully!'
+                title: 'Email Updated',
+                message: 'Email updated successfully!'
             });
             setForm(prev => ({ ...prev, currentPassword: '' }));
         } catch (error: any) {
-            setMessage({
+            showToast({
                 type: 'error',
-                text: error.message || 'Failed to update email.'
+                title: 'Update Failed',
+                message: error.message || 'Failed to update email.'
             });
         } finally {
             setIsLoading(false);
         }
-    };
-
-    const changePassword = async () => {
+    }; const changePassword = async () => {
         if (!user || !user.email) return;
 
         if (!form.currentPassword) {
-            setMessage({
+            showToast({
                 type: 'error',
-                text: 'Please enter your current password.'
+                title: 'Validation Error',
+                message: 'Please enter your current password.'
             });
             return;
         }
 
         if (form.newPassword !== form.confirmPassword) {
-            setMessage({
+            showToast({
                 type: 'error',
-                text: 'New passwords do not match.'
+                title: 'Validation Error',
+                message: 'New passwords do not match.'
             });
             return;
         }
 
         if (form.newPassword.length < 6) {
-            setMessage({
+            showToast({
                 type: 'error',
-                text: 'Password should be at least 6 characters.'
+                title: 'Validation Error',
+                message: 'Password should be at least 6 characters.'
             });
             return;
         }
 
         setIsLoading(true);
-        setMessage({ type: '', text: '' });
 
         try {
             // Reauthenticate user first
             const credential = EmailAuthProvider.credential(user.email, form.currentPassword);
-            await reauthenticateWithCredential(user, credential);
-
-            // Then update password
+            await reauthenticateWithCredential(user, credential);            // Then update password
             await updatePassword(user, form.newPassword);
 
-            setMessage({
+            showToast({
                 type: 'success',
-                text: 'Password updated successfully!'
+                title: 'Password Updated',
+                message: 'Password updated successfully!'
             });
             setForm(prev => ({
                 ...prev,
@@ -173,20 +169,18 @@ export default function ProfileSettings() {
                 confirmPassword: ''
             }));
         } catch (error: any) {
-            setMessage({
+            showToast({
                 type: 'error',
-                text: error.message || 'Failed to update password.'
+                title: 'Update Failed',
+                message: error.message || 'Failed to update password.'
             });
         } finally {
             setIsLoading(false);
         }
-    };
-
-    const updateNotificationSettings = async () => {
+    }; const updateNotificationSettings = async () => {
         if (!user) return;
 
         setIsLoading(true);
-        setMessage({ type: '', text: '' });
 
         try {
             // Save notification preferences to Firestore
@@ -196,14 +190,16 @@ export default function ProfileSettings() {
                 marketingEmails: form.marketingEmails
             });
 
-            setMessage({
+            showToast({
                 type: 'success',
-                text: 'Notification preferences updated successfully!'
+                title: 'Preferences Updated',
+                message: 'Notification preferences updated successfully!'
             });
         } catch (error: any) {
-            setMessage({
+            showToast({
                 type: 'error',
-                text: error.message || 'Failed to update notification preferences.'
+                title: 'Update Failed',
+                message: error.message || 'Failed to update notification preferences.'
             });
         } finally {
             setIsLoading(false);
@@ -212,29 +208,14 @@ export default function ProfileSettings() {
 
     if (!user) {
         return null;
-    }
-
-    return (
-        <div className="space-y-6">            <div className="mb-6">
-            <h1 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-2">Account Settings</h1>
-            <p className="text-[color:var(--ai-muted)]">
-                Manage your profile and account preferences.
-            </p>
-        </div>
-
-            {/* Success/Error message */}
-            {message.text && (
-                <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className={`p-4 rounded-lg mb-6 ${message.type === 'success'
-                        ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800/30'
-                        : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800/30'
-                        }`}
-                >
-                    {message.text}
-                </motion.div>
-            )}
+    } return (
+        <div className="space-y-6">
+            <div className="mb-6">
+                <h1 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-2">Account Settings</h1>
+                <p className="text-[color:var(--ai-muted)]">
+                    Manage your profile and account preferences.
+                </p>
+            </div>
 
             {/* Profile Information */}
             <Card className="border border-[color:var(--ai-card-border)] shadow-sm">
