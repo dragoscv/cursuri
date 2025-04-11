@@ -7,6 +7,7 @@ interface RatingStarsProps {
     defaultValue?: number;
     value?: number;
     initialRating?: number;
+    rating?: number;
     maxStars?: number;
     size?: number | 'sm' | 'md' | 'lg';
     onChange?: (rating: number) => void;
@@ -22,6 +23,7 @@ const RatingStars: React.FC<RatingStarsProps> = ({
     defaultValue = 0,
     value,
     initialRating,
+    rating: ratingProp,
     maxStars = 5,
     size = 20,
     onChange,
@@ -29,8 +31,8 @@ const RatingStars: React.FC<RatingStarsProps> = ({
     className = '',
     classNames = { base: '', item: '' },
 }) => {
-    // Use value or defaultValue if provided, otherwise fall back to initialRating
-    const initialValue = value ?? defaultValue ?? initialRating ?? 0;
+    // Use rating prop if provided, otherwise fall back to value, defaultValue, or initialRating
+    const initialValue = ratingProp ?? value ?? defaultValue ?? initialRating ?? 0;
     const [rating, setRating] = useState(initialValue);
     const [hoverRating, setHoverRating] = useState(0);
 

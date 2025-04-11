@@ -9,10 +9,9 @@ const { Section, Paragraph, List } = PolicyContent;
 export default function GDPRPolicy() {
     return (
         <PolicyPage title="GDPR Policy" lastUpdated="April 4, 2025">
-            <Section title="1. Introduction">
-                <Paragraph>
-                    This GDPR Policy explains how Cursuri ("we," "our," or "us") processes personal data in accordance with the General Data Protection Regulation (GDPR) and outlines your rights as a data subject.
-                </Paragraph>
+            <Section title="1. Introduction">                <Paragraph>
+                This GDPR Policy explains how Cursuri (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) processes personal data in accordance with the General Data Protection Regulation (GDPR) and outlines your rights as a data subject.
+            </Paragraph>
                 <Paragraph>
                     We are committed to protecting your privacy and handling your data in an open and transparent manner. This policy applies where we are acting as a data controller with respect to your personal data.
                 </Paragraph>
@@ -148,10 +147,9 @@ export default function GDPRPolicy() {
                 </Paragraph>
             </Section>
 
-            <Section title="13. Changes to This GDPR Policy">
-                <Paragraph>
-                    We may update this GDPR Policy from time to time to reflect changes in our practices or legal requirements. We will notify you of any material changes by posting the updated policy on our platform and updating the "Last Updated" date.
-                </Paragraph>
+            <Section title="13. Changes to This GDPR Policy">                <Paragraph>
+                We may update this GDPR Policy from time to time to reflect changes in our practices or legal requirements. We will notify you of any material changes by posting the updated policy on our platform and updating the &quot;Last Updated&quot; date.
+            </Paragraph>
             </Section>
 
             <Section title="14. Complaints">

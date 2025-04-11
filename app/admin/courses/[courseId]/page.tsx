@@ -124,14 +124,12 @@ export default function AdminCourseDetailPage() {
             );
             setSortedLessons(lessonArray);
         }
-    }, [lessons, courseId]);
-
-    const handleAddLesson = () => {
-        router.push(`/admin/courses/${courseId}/lessons/add`, { scroll: false, replace: true });
+    }, [lessons, courseId]); const handleAddLesson = () => {
+        router.push(`/admin/courses/${courseId}/lessons/add`, { scroll: false });
     };
 
     const handleEditLesson = (lesson: Lesson) => {
-        router.push(`/admin/courses/${courseId}/lessons/${lesson.id}/edit`, { scroll: false, replace: true });
+        router.push(`/admin/courses/${courseId}/lessons/${lesson.id}/edit`, { scroll: false });
     };
 
     const handleDragEnd = async (event: DragEndEvent) => {

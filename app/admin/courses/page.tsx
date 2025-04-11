@@ -42,29 +42,28 @@ export default function CoursesPage() {
             id: 'delete-course',
             isOpen: true,
             modalHeader: 'Confirm Delete',
-            modalBody: (
-                <div className="p-4">
-                    <p className="mb-4">Are you sure you want to delete the course "{course.name}"?</p>
-                    <div className="flex justify-end gap-2">
-                        <Button
-                            color="default"
-                            variant="flat"
-                            onClick={() => closeModal('delete-course')}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            color="danger"
-                            onClick={() => {
-                                // Delete course logic would go here
-                                console.log(`Deleting course: ${course.id}`);
-                                closeModal('delete-course');
-                            }}
-                        >
-                            Delete
-                        </Button>
-                    </div>
+            modalBody: (<div className="p-4">
+                <p className="mb-4">Are you sure you want to delete the course &quot;{course.name}&quot;?</p>
+                <div className="flex justify-end gap-2">
+                    <Button
+                        color="default"
+                        variant="flat"
+                        onClick={() => closeModal('delete-course')}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        color="danger"
+                        onClick={() => {
+                            // Delete course logic would go here
+                            console.log(`Deleting course: ${course.id}`);
+                            closeModal('delete-course');
+                        }}
+                    >
+                        Delete
+                    </Button>
                 </div>
+            </div>
             ),
             headerDisabled: false,
             footerDisabled: true,

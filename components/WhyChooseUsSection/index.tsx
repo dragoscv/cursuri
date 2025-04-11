@@ -29,9 +29,8 @@ export default function WhyChooseUsSection() {
                     <div className="text-center mb-16">
                         <h2 className="text-4xl font-bold text-white mb-4">
                             Why Choose Our Platform
-                        </h2>
-                        <p className="text-xl text-white/80 max-w-3xl mx-auto">
-                            We've designed our learning experience with developers in mind, focusing on what matters most
+                        </h2>                        <p className="text-xl text-white/80 max-w-3xl mx-auto">
+                            We&apos;ve designed our learning experience with developers in mind, focusing on what matters most
                         </p>
                     </div>
                 </ScrollAnimationWrapper>

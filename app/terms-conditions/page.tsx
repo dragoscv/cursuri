@@ -18,14 +18,13 @@ export default function TermsConditions() {
                 </Paragraph>
             </Section>
 
-            <Section title="2. Definitions">
-                <List items={[
-                    <><strong>"Platform"</strong> refers to the Cursuri website and all its contents, features, and services.</>,
-                    <><strong>"User," "You," and "Your"</strong> refer to the individual or entity accessing or using the Platform.</>,
-                    <><strong>"We," "Us," and "Our"</strong> refer to Cursuri.</>,
-                    <><strong>"Content"</strong> refers to course materials, videos, text, graphics, images, and other materials available on the Platform.</>,
-                    <><strong>"Subscription"</strong> refers to the paid access to courses or services offered on the Platform.</>
-                ]} />
+            <Section title="2. Definitions">                <List items={[
+                <><strong>&quot;Platform&quot;</strong> refers to the Cursuri website and all its contents, features, and services.</>,
+                <><strong>&quot;User,&quot; &quot;You,&quot; and &quot;Your&quot;</strong> refer to the individual or entity accessing or using the Platform.</>,
+                <><strong>&quot;We,&quot; &quot;Us,&quot; and &quot;Our&quot;</strong> refer to Cursuri.</>,
+                <><strong>&quot;Content&quot;</strong> refers to course materials, videos, text, graphics, images, and other materials available on the Platform.</>,
+                <><strong>&quot;Subscription&quot;</strong> refers to the paid access to courses or services offered on the Platform.</>
+            ]} />
             </Section>
 
             <Section title="3. Account Registration">
@@ -98,10 +97,9 @@ export default function TermsConditions() {
                 </Paragraph>
             </Section>
 
-            <Section title="9. Disclaimer of Warranties">
-                <Paragraph>
-                    The Platform and its content are provided on an "as is" and "as available" basis without any warranties of any kind. We disclaim all warranties, express or implied, including but not limited to the implied warranties of merchantability, fitness for a particular purpose, and non-infringement.
-                </Paragraph>
+            <Section title="9. Disclaimer of Warranties">                <Paragraph>
+                The Platform and its content are provided on an &quot;as is&quot; and &quot;as available&quot; basis without any warranties of any kind. We disclaim all warranties, express or implied, including but not limited to the implied warranties of merchantability, fitness for a particular purpose, and non-infringement.
+            </Paragraph>
                 <Paragraph>
                     We do not guarantee that the Platform will be error-free, uninterrupted, secure, or that any defects will be corrected.
                 </Paragraph>
@@ -115,7 +113,7 @@ export default function TermsConditions() {
 
             <Section title="11. Indemnification">
                 <Paragraph>
-                    You agree to indemnify, defend, and hold harmless Cursuri and its officers, directors, employees, agents, and affiliates from and against any and all claims, liabilities, damages, losses, costs, expenses, or fees (including reasonable attorneys' fees) arising from your use of the Platform, your violation of these Terms, or your violation of any rights of another.
+                    You agree to indemnify, defend, and hold harmless Cursuri and its officers, directors, employees, agents, and affiliates from and against any and all claims, liabilities, damages, losses, costs, expenses, or fees (including reasonable attorneys&apos; fees) arising from your use of the Platform, your violation of these Terms, or your violation of any rights of another.
                 </Paragraph>
             </Section>
 
@@ -130,7 +128,7 @@ export default function TermsConditions() {
 
             <Section title="13. Changes to Terms">
                 <Paragraph>
-                    We reserve the right to modify or replace these Terms at any time. We will provide notice of any material changes by posting the updated Terms on the Platform and updating the "Last Updated" date. Your continued use of the Platform after any such changes constitutes your acceptance of the new Terms.
+                    We reserve the right to modify or replace these Terms at any time. We will provide notice of any material changes by posting the updated Terms on the Platform and updating the &quot;Last Updated&quot; date. Your continued use of the Platform after any such changes constitutes your acceptance of the new Terms.
                 </Paragraph>
             </Section>
 

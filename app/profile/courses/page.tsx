@@ -173,10 +173,9 @@ export default function ProfileCourses() {
                             </Button>
                         </>
                     ) : (
-                        <>
-                            <FiBook className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+                        <>                            <FiBook className="w-12 h-12 mx-auto text-gray-400 mb-4" />
                             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No enrolled courses yet</h3>
-                            <p className="text-gray-600 dark:text-gray-400 mb-4">You haven't purchased any courses yet.</p>
+                            <p className="text-gray-600 dark:text-gray-400 mb-4">You haven&apos;t purchased any courses yet.</p>
                             <Link href="/courses">
                                 <Button color="primary">Browse Courses</Button>
                             </Link>

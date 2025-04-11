@@ -64,3 +64,45 @@ export const useLessons = (courseId: string) => {
         loadLessons
     };
 };
+
+/**
+ * Custom hook to access authentication-related data from AppContext
+ * This hook provides access to the user object, authentication state,
+ * and admin status from the global AppContext.
+ */
+export const useAuth = () => {
+    const context = useContext(AppContext);
+
+    if (!context) {
+        throw new Error('useAuth must be used within an AppContextProvider');
+    }
+
+    const { user, authLoading, isAdmin } = context;
+
+    return {
+        user,
+        authLoading,
+        isAdmin
+    };
+};
+
+/**
+ * Custom hook to access modal functionality from AppContext
+ * This hook provides methods to open, close, and update modals
+ * from the global AppContext.
+ */
+export const useModal = () => {
+    const context = useContext(AppContext);
+
+    if (!context) {
+        throw new Error('useModal must be used within an AppContextProvider');
+    }
+
+    const { openModal, closeModal, updateModal } = context;
+
+    return {
+        openModal,
+        closeModal,
+        updateModal
+    };
+};

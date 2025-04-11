@@ -228,12 +228,11 @@ export default function SearchBar() {
                                             </div>
                                         </div>
                                     ))}
-                                </div>
-                            ) : searchQuery ? (
-                                <div className="p-8 text-center text-[color:var(--ai-muted)]">
-                                    <p>No courses found for "{searchQuery}"</p>
-                                </div>
-                            ) : (
+                                </div>) : searchQuery ? (
+                                    <div className="p-8 text-center text-[color:var(--ai-muted)]">
+                                        <p>No courses found for &quot;{searchQuery}&quot;</p>
+                                    </div>
+                                ) : (
                                 <div className="p-4 border-t border-[color:var(--ai-card-border)]">
                                     <p className="text-sm text-[color:var(--ai-muted)] text-center">
                                         Start typing to search for courses

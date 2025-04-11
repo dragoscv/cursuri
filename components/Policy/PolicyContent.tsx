@@ -49,9 +49,11 @@ export function PolicyParagraph({ children }: { children: React.ReactNode }) {
     return <p className="mb-4">{children}</p>;
 }
 
-export default {
+const PolicyContent = {
     Section: PolicySection,
     Subsection: PolicySubsection,
     List: PolicyList,
     Paragraph: PolicyParagraph
 };
+
+export default PolicyContent;

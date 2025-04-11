@@ -48,10 +48,8 @@ export function ReviewCard({ review, index }: ReviewCardProps) {
                         {review.courseType || "Course"}
                     </p>
                 </div>
-            </div>
-
-            <p className="text-gray-600 dark:text-gray-300 mb-6">
-                "{review.content}"
+            </div>            <p className="text-gray-600 dark:text-gray-300 mb-6">
+                &quot;{review.content}&quot;
             </p>
 
             <div className="flex items-center">

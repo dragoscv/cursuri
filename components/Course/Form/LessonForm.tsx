@@ -258,10 +258,9 @@ export default function LessonForm({ courseId, lessonId, onSuccess }: LessonForm
                 {isEditing && !file && (
                     <>
                         {currentFileUrl ? (
-                            <div className="mt-2">
-                                <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-                                    Current file will be kept if you don't select a new one.
-                                </p>
+                            <div className="mt-2">                                <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                                Current file will be kept if you don&apos;t select a new one.
+                            </p>
                                 <div className="bg-gray-50 dark:bg-gray-700 p-2 rounded">
                                     <a
                                         href={currentFileUrl}

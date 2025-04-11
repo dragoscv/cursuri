@@ -139,9 +139,8 @@ export default function LessonDetailPage({
             <div className="container mx-auto px-4 py-8">
                 <Card className="p-6 shadow-lg">
                     <div className="text-center py-10">
-                        <h2 className="text-xl font-semibold mb-4">Course not found</h2>
-                        <p className="text-gray-600 dark:text-gray-400 mb-6">
-                            The course you're looking for doesn't exist or you may not have access to it.
+                        <h2 className="text-xl font-semibold mb-4">Course not found</h2>                        <p className="text-gray-600 dark:text-gray-400 mb-6">
+                            The course you&apos;re looking for doesn&apos;t exist or you may not have access to it.
                         </p>
                         <button
                             onClick={() => router.push("/courses")}
@@ -187,9 +186,8 @@ export default function LessonDetailPage({
             <div className="container mx-auto px-4 py-8">
                 <Card className="p-6 shadow-lg">
                     <div className="text-center py-10">
-                        <h2 className="text-xl font-semibold mb-4">Lesson not found</h2>
-                        <p className="text-gray-600 dark:text-gray-400 mb-6">
-                            The lesson you're looking for doesn't exist or you may not have access to it.
+                        <h2 className="text-xl font-semibold mb-4">Lesson not found</h2>                        <p className="text-gray-600 dark:text-gray-400 mb-6">
+                            The lesson you&apos;re looking for doesn&apos;t exist or you may not have access to it.
                         </p>
                         <div className="space-y-4">
                             <button

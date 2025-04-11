@@ -153,11 +153,9 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
             {/* Selected filters display */}
             {(currentFilter || currentCategory !== 'all') && (
                 <div className="mt-4 flex flex-wrap gap-2 items-center">
-                    <span className="text-sm text-[color:var(--ai-muted)]">Active filters:</span>
-
-                    {currentFilter && (
+                    <span className="text-sm text-[color:var(--ai-muted)]">Active filters:</span>                    {currentFilter && (
                         <div className="inline-flex items-center gap-1 bg-[color:var(--ai-primary)]/10 dark:bg-[color:var(--ai-primary)]/20 text-[color:var(--ai-primary)] px-3 py-1 rounded-full text-sm">
-                            <span>"{currentFilter}"</span>
+                            <span>&quot;{currentFilter}&quot;</span>
                             <button
                                 title="Clear search filter"
                                 aria-label="Clear search filter" onClick={() => {

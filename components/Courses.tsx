@@ -253,9 +253,8 @@ export default function Courses() {
                     </span>
                     <h2 className="text-3xl font-bold text-[color:var(--ai-foreground)] mb-4 sm:text-4xl">
                         Cutting-Edge AI Courses
-                    </h2>
-                    <p className="max-w-2xl mx-auto text-lg text-[color:var(--ai-muted)]">
-                        Master the technologies shaping our future with courses designed by AI experts for tomorrow's innovators.
+                    </h2>                    <p className="max-w-2xl mx-auto text-lg text-[color:var(--ai-muted)]">
+                        Master the technologies shaping our future with courses designed by AI experts for tomorrow&apos;s innovators.
                     </p>
                 </div>
 

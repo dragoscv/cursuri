@@ -240,9 +240,8 @@ const CourseContent: React.FC<CourseContentProps> = ({
                         ) : (
                             <div className="flex flex-col items-center justify-center py-12 text-center">
                                 <FiBookOpen className="w-12 h-12 text-[color:var(--ai-muted)]/40 mb-4" />
-                                <h3 className="text-lg font-medium text-[color:var(--ai-foreground)]">No lessons available</h3>
-                                <p className="mt-1 text-sm text-[color:var(--ai-muted)]">
-                                    This course doesn't have any lessons yet.
+                                <h3 className="text-lg font-medium text-[color:var(--ai-foreground)]">No lessons available</h3>                                <p className="mt-1 text-sm text-[color:var(--ai-muted)]">
+                                    This course doesn&apos;t have any lessons yet.
                                 </p>
                             </div>
                         )}

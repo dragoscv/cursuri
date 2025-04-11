@@ -88,21 +88,17 @@ export const useVideoControls = ({
                 }
             }, 3000);
         }
-    }, [isPlaying, isHovering]);
-
-    // Handle video ended event
+    }, [isPlaying, isHovering]);    // Handle video ended event
     const handleVideoEnded = useCallback(() => {
         // Mark the lesson as completed when the video ends
         handleMarkComplete();
-    }, []);
+    }, [handleMarkComplete]);
 
     // Handle mark as complete
     const handleMarkComplete = useCallback(() => {
         markLessonComplete(courseId, lessonId);
         setIsCompleted(true);
-    }, [courseId, lessonId, markLessonComplete, setIsCompleted]);
-
-    // Toggle play/pause
+    }, [courseId, lessonId, markLessonComplete, setIsCompleted]);    // Toggle play/pause
     const togglePlayPause = useCallback(() => {
         if (videoRef.current) {
             if (videoRef.current.paused) {
@@ -126,9 +122,7 @@ export const useVideoControls = ({
                 setIsControlsVisible(true); // Always show controls on pause
             }
         }
-    }, [isHovering, saveCurrentProgress]);
-
-    // Seek forward or backward
+    }, [isHovering, saveCurrentProgress, videoRef]);    // Seek forward or backward
     const seek = useCallback((seconds: number) => {
         if (videoRef.current) {
             videoRef.current.currentTime += seconds;
@@ -147,9 +141,7 @@ export const useVideoControls = ({
                 }, 3000);
             }
         }
-    }, [isPlaying, isHovering]);
-
-    // Toggle fullscreen
+    }, [isPlaying, isHovering, videoRef]);// Toggle fullscreen
     const toggleFullscreen = useCallback(() => {
         if (videoContainerRef.current) {
             if (!document.fullscreenElement) {
@@ -166,7 +158,7 @@ export const useVideoControls = ({
                 });
             }
         }
-    }, []);
+    }, [videoContainerRef]);
 
     // Format time for display
     const formatTime = useCallback((seconds: number) => {

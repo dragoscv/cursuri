@@ -53,11 +53,9 @@ export default function Reviews({ courseId: propCourseId }: { courseId: string }
         } catch (error: any) {
             setError(error?.message || 'Unknown error occurred')
         }
-    }
-
-    useEffect(() => {
+    }    useEffect(() => {
         getReviews()
-    }, [courseId])
+    }, [courseId, getReviews])
 
     const handleReview = async (e: any) => {
         e.preventDefault()

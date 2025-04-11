@@ -6,9 +6,8 @@ import PolicyPage from '@/components/Policy/PolicyPage'
 export default function PrivacyPolicy() {
     return (
         <PolicyPage title="Privacy Policy" lastUpdated="April 4, 2025">
-            <h2 className="text-2xl font-semibold mt-8 mb-4">1. Introduction</h2>
-            <p>
-                Welcome to Cursuri ("we," "our," or "us"). We are committed to protecting your privacy and personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our services.
+            <h2 className="text-2xl font-semibold mt-8 mb-4">1. Introduction</h2>            <p>
+                Welcome to Cursuri (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;). We are committed to protecting your privacy and personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our services.
             </p>
             <p>
                 Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the site.
@@ -125,14 +124,13 @@ export default function PrivacyPolicy() {
                 To exercise these rights, please contact us using the details provided below.
             </p>
 
-            <h2 className="text-2xl font-semibold mt-8 mb-4">9. Children's Privacy</h2>
+            <h2 className="text-2xl font-semibold mt-8 mb-4">9. Children&apos;s Privacy</h2>
             <p>
                 Our platform is not intended for individuals under 16 years of age. We do not knowingly collect personal information from children under 16. If we learn we have collected personal information from a child under 16, we will delete this information.
             </p>
 
-            <h2 className="text-2xl font-semibold mt-8 mb-4">10. Changes to This Privacy Policy</h2>
-            <p>
-                We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last Updated" date. You are advised to review this Privacy Policy periodically for any changes.
+            <h2 className="text-2xl font-semibold mt-8 mb-4">10. Changes to This Privacy Policy</h2>            <p>
+                We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the &quot;Last Updated&quot; date. You are advised to review this Privacy Policy periodically for any changes.
             </p>
 
             <h2 className="text-2xl font-semibold mt-8 mb-4">11. Contact Us</h2>

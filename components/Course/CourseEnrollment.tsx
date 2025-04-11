@@ -110,10 +110,9 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
     if (isPurchased) {
         return (
             <div className="border border-[color:var(--ai-card-border)] rounded-xl p-6 bg-[color:var(--ai-card-bg)]">
-                <div className="flex items-center justify-between mb-4">
-                    <h3 className="font-bold text-lg text-[color:var(--ai-foreground)]">
-                        You're Enrolled
-                    </h3>
+                <div className="flex items-center justify-between mb-4">                    <h3 className="font-bold text-lg text-[color:var(--ai-foreground)]">
+                    You&apos;re Enrolled
+                </h3>
                     <Chip color="success" variant="flat">
                         Active
                     </Chip>

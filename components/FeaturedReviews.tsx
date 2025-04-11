@@ -230,11 +230,9 @@ export default function FeaturedReviews() {
 
                                 <div className="px-2 py-1 rounded-full text-xs font-medium bg-[color:var(--ai-primary)]/10 dark:bg-[color:var(--ai-primary)]/20 text-[color:var(--ai-primary)] w-fit mb-4">
                                     {review.courseType}
-                                </div>
-
-                                <blockquote className="flex-grow">
+                                </div>                                <blockquote className="flex-grow">
                                     <p className="text-lg font-medium text-[color:var(--ai-foreground)]">
-                                        "{review.content}"
+                                        &quot;{review.content}&quot;
                                     </p>
                                 </blockquote>
 

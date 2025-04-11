@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Review } from '@/types'
 import { collection, query, where, orderBy, limit, getDocs } from 'firebase/firestore'
-import { firestoreDB } from '@/utils/firebase/config'
+import { firestoreDB } from '@/utils/firebase/firebase.config'
 import { fallbackReviews } from '../fallbackReviewData'
 
 export const useFeaturedReviews = (count: number = 3): Review[] => {

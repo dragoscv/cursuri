@@ -32,24 +32,20 @@ function LessonContent({ lesson }: LessonContentProps) {
     const { lessons, lessonProgress, saveLessonProgress, markLessonComplete } = context;
 
     // Check if lesson is undefined before accessing properties
-    const courseId = lesson?.courseId || '';
-
-    // Early return with loading state if no lesson is provided
-    if (!lesson) {
-        return (
-            <div className="flex flex-col w-full max-w-7xl mx-auto animate-in fade-in duration-500">
-                <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-[color:var(--ai-accent)]/10 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-[color:var(--ai-card-border)]/50 shadow-xl">
-                    <div className="flex justify-center items-center py-20">
-                        <div className="animate-pulse flex flex-col items-center">
-                            <div className="w-32 h-32 bg-[color:var(--ai-card-border)]/30 rounded-full mb-4"></div>
-                            <div className="h-6 bg-[color:var(--ai-card-border)]/30 rounded w-1/2 mb-4"></div>
-                            <div className="h-4 bg-[color:var(--ai-card-border)]/30 rounded w-3/4"></div>
-                        </div>
+    const courseId = lesson?.courseId || '';    // Set up loading state component for when lesson is not available
+    const loadingComponent = (
+        <div className="flex flex-col w-full max-w-7xl mx-auto animate-in fade-in duration-500">
+            <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-[color:var(--ai-accent)]/10 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-[color:var(--ai-card-border)]/50 shadow-xl">
+                <div className="flex justify-center items-center py-20">
+                    <div className="animate-pulse flex flex-col items-center">
+                        <div className="w-32 h-32 bg-[color:var(--ai-card-border)]/30 rounded-full mb-4"></div>
+                        <div className="h-6 bg-[color:var(--ai-card-border)]/30 rounded w-1/2 mb-4"></div>
+                        <div className="h-4 bg-[color:var(--ai-card-border)]/30 rounded w-3/4"></div>
                     </div>
                 </div>
             </div>
-        );
-    }
+        </div>
+    );
 
     // Load saved progress and completion status
     useEffect(() => {
@@ -129,7 +125,10 @@ function LessonContent({ lesson }: LessonContentProps) {
         if (currentIndex === -1) return 0;
 
         return ((currentIndex + 1) / totalLessons) * 100;
-    };
+    };    // If lesson is not available, show the loading component
+    if (!lesson) {
+        return loadingComponent;
+    }
 
     return (
         <div className="flex flex-col w-full max-w-7xl mx-auto animate-in fade-in duration-500">
