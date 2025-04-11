@@ -25,7 +25,9 @@ export default function StatCounter({ value, label, icon, color, index }: StatCo
                 delay: index * 0.1
             }
         }
-    }    return (
+    };
+
+    return (
         <motion.div
             className={`bg-gradient-to-br ${color} rounded-xl p-6 shadow-lg dark:shadow-xl dark:shadow-[color:var(--ai-card-border)]/10`}
             variants={counterVariants}

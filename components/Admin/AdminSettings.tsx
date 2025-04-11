@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useContext, useEffect, useState } from 'react';
-import { Button, Card, CardBody, CardHeader, Divider, Input, Select, SelectItem, Spinner, Switch, Textarea } from '@heroui/react';
+import { Card, CardBody, CardHeader, Divider, SelectItem, Spinner } from '@heroui/react';
+import { Button, Input, Switch, Select, Textarea } from '@/components/ui';
 import { AppContext } from '@/components/AppContext';
 import { AdminSettings as AdminSettingsType } from '@/types';
 
@@ -201,11 +202,11 @@ const AdminSettings: React.FC = () => {
                                     <p className="text-sm text-gray-500 dark:text-gray-400">
                                         When disabled, new users cannot register
                                     </p>
-                                </div>
-                                <Switch
+                                </div>                                <Switch
                                     isSelected={formData.allowRegistration}
                                     onValueChange={(checked) => handleSwitchChange('allowRegistration', checked)}
                                     aria-label="Allow User Registration"
+                                    color="primary"
                                 />
                             </div>
 

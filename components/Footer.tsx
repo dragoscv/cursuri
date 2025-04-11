@@ -8,6 +8,7 @@ import GithubIcon from './icons/GitHubIcon';
 import TikTokIcon from './icons/TikTokIcon';
 import WebsiteIcon from './icons/WebsiteIcon';
 import packageInfo from '../package.json';
+import Button from './ui/Button';
 
 const Footer = () => {
     const context = React.useContext(AppContext) as AppContextProps;
@@ -52,14 +53,14 @@ const Footer = () => {
                                 <Link href="/#testimonials" className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition">
                                     Testimonials
                                 </Link>
-                            </li>
-                            <li>
-                                <button
+                            </li>                            <li>
+                                <Button
                                     onClick={toggleTheme}
-                                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
+                                    variant="light"
+                                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] p-0 min-w-0"
                                 >
                                     {isDark ? 'Light Mode' : 'Dark Mode'}
-                                </button>
+                                </Button>
                             </li>
                         </ul>
                     </div>

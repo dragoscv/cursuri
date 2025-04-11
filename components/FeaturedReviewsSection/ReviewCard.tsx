@@ -31,7 +31,9 @@ export function ReviewCard({ review, index }: ReviewCardProps) {
                 delay: 0.1 * index
             }
         }
-    }    return (
+    };
+
+    return (
         <motion.div
             ref={ref}
             initial="hidden"

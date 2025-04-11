@@ -63,12 +63,11 @@ export default function RecentActivity({ activities }: RecentActivityProps) {
                             <FiBook className="h-6 w-6 text-[color:var(--ai-primary)]" />
                         </div>
                         <p className="text-[color:var(--ai-foreground)] font-medium mb-1">No recent activity yet</p>
-                        <p className="text-[color:var(--ai-muted)] text-sm mb-4">Start exploring courses to track your learning journey</p>
-                        <Link href="/courses">
+                        <p className="text-[color:var(--ai-muted)] text-sm mb-4">Start exploring courses to track your learning journey</p>                        <Link href="/courses">
                             <Button
                                 size="sm"
                                 color="primary"
-                                className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white shadow-sm"
+                                className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium rounded-lg shadow-md hover:shadow-[0_4px_12px_-4px_rgba(var(--ai-primary-rgb),0.5)] transition-all duration-300 hover:-translate-y-0.5"
                             >
                                 Browse Courses
                             </Button>

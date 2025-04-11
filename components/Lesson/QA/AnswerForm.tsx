@@ -163,14 +163,17 @@ const AnswerForm: React.FC<AnswerFormProps> = ({ onSubmit, onCancel }) => {
                                         alt={attachment.name}
                                         className="h-16 w-16 object-cover rounded border border-[color:var(--ai-card-border)]"
                                     />
-                                    <button
+                                    <Button
                                         type="button"
+                                        isIconOnly
+                                        size="sm"
+                                        variant="danger"
                                         onClick={() => removeAttachment(attachment.id)}
-                                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 p-0 min-w-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                                         aria-label="Remove attachment"
                                     >
                                         ✕
-                                    </button>
+                                    </Button>
                                 </div>
                             ) : attachment.type === 'video' ? (
                                 <div className="relative">
@@ -180,14 +183,17 @@ const AnswerForm: React.FC<AnswerFormProps> = ({ onSubmit, onCancel }) => {
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
                                     </div>
-                                    <button
+                                    <Button
                                         type="button"
+                                        isIconOnly
+                                        size="sm"
+                                        variant="danger"
                                         onClick={() => removeAttachment(attachment.id)}
-                                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 p-0 min-w-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                                         aria-label="Remove attachment"
                                     >
                                         ✕
-                                    </button>
+                                    </Button>
                                 </div>
                             ) : (
                                 <div className="relative">
@@ -196,14 +202,17 @@ const AnswerForm: React.FC<AnswerFormProps> = ({ onSubmit, onCancel }) => {
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                         </svg>
                                     </div>
-                                    <button
+                                    <Button
                                         type="button"
+                                        isIconOnly
+                                        size="sm"
+                                        variant="danger"
                                         onClick={() => removeAttachment(attachment.id)}
-                                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 p-0 min-w-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                                         aria-label="Remove attachment"
                                     >
                                         ✕
-                                    </button>
+                                    </Button>
                                 </div>
                             )}
                         </div>

@@ -25,7 +25,9 @@ export default function FeaturedReviewsSection() {
                 staggerChildren: 0.2
             }
         }
-    }    return (
+    };
+
+    return (
         <section className="py-16 bg-[color:var(--section-light-bg)] dark:bg-[color:var(--section-dark-bg)]">
             <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <ScrollAnimationWrapper>

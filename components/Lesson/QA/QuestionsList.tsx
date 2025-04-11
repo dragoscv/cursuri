@@ -54,34 +54,42 @@ const QuestionsList: React.FC<QuestionsListProps> = ({ questions, lessonId, cour
             </div>
 
             <div className="mb-6">
-                <div className="flex gap-2">
-                    <button
-                        onClick={() => setFilter('all')}
-                        className={`text-sm px-3 py-1 rounded-full ${filter === 'all'
-                                ? 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]'
-                                : 'bg-[color:var(--ai-card-border)]/10 text-[color:var(--ai-muted)] hover:bg-[color:var(--ai-card-border)]/20'
-                            }`}
-                    >
-                        All
-                    </button>
-                    <button
+                <div className="flex gap-2">                    <Button
+                    size="sm"
+                    variant={filter === 'all' ? 'primary' : 'flat'}
+                    onClick={() => setFilter('all')}
+                    radius="full"
+                    className={filter === 'all' ?
+                        'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]' :
+                        'text-[color:var(--ai-muted)]'
+                    }
+                >
+                    All
+                </Button>
+                    <Button
+                        size="sm"
+                        variant={filter === 'resolved' ? 'success' : 'flat'}
                         onClick={() => setFilter('resolved')}
-                        className={`text-sm px-3 py-1 rounded-full ${filter === 'resolved'
-                                ? 'bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400'
-                                : 'bg-[color:var(--ai-card-border)]/10 text-[color:var(--ai-muted)] hover:bg-[color:var(--ai-card-border)]/20'
-                            }`}
+                        radius="full"
+                        className={filter === 'resolved' ?
+                            'bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400' :
+                            'text-[color:var(--ai-muted)]'
+                        }
                     >
                         Resolved
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                        size="sm"
+                        variant={filter === 'unresolved' ? 'warning' : 'flat'}
                         onClick={() => setFilter('unresolved')}
-                        className={`text-sm px-3 py-1 rounded-full ${filter === 'unresolved'
-                                ? 'bg-amber-100 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400'
-                                : 'bg-[color:var(--ai-card-border)]/10 text-[color:var(--ai-muted)] hover:bg-[color:var(--ai-card-border)]/20'
-                            }`}
+                        radius="full"
+                        className={filter === 'unresolved' ?
+                            'bg-amber-100 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400' :
+                            'text-[color:var(--ai-muted)]'
+                        }
                     >
                         Unresolved
-                    </button>
+                    </Button>
                 </div>
             </div>
 

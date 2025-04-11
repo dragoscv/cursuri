@@ -267,9 +267,7 @@ export default function FeaturedReviews() {
                             </div>
                         </motion.div>
                     ))}
-                </motion.div>
-
-                <motion.div
+                </motion.div>                <motion.div
                     className="mt-14 text-center"
                     initial={{ opacity: 0, y: 20 }}
                     animate={controls}
@@ -279,15 +277,19 @@ export default function FeaturedReviews() {
                     }}
                     transition={{ duration: 0.6, delay: 0.4 }}
                 >
-                    <button className="group relative inline-flex items-center justify-center rounded-full px-8 py-3 overflow-hidden bg-[color:var(--ai-primary)] hover:bg-gradient-to-r hover:from-[color:var(--ai-primary)] hover:to-[color:var(--ai-secondary)] text-white font-medium transition-all duration-300">
-                        <span className="absolute -inset-px rounded-full border-2 border-white/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-                        <span className="relative flex items-center">
-                            View All Success Stories
-                            <svg className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <Button
+                        variant="primary"
+                        size="lg"
+                        radius="full"
+                        className="px-8 py-3 group bg-[color:var(--ai-primary)] hover:bg-gradient-to-r hover:from-[color:var(--ai-primary)] hover:to-[color:var(--ai-secondary)] font-medium"
+                        endContent={
+                            <svg className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
                             </svg>
-                        </span>
-                    </button>
+                        }
+                    >
+                        View All Success Stories
+                    </Button>
                 </motion.div>
             </div>
         </section>

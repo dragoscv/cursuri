@@ -17,6 +17,7 @@ import {
 import CaptionsIcon from '@/components/icons/svg/CaptionsIcon';
 import VolumeIcon from '@/components/icons/svg/VolumeIcon';
 import MuteIcon from '@/components/icons/svg/MuteIcon';
+import Button from '@/components/ui/Button';
 
 interface VideoPlayerProps {
   lesson: Lesson;
@@ -245,42 +246,42 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
                 ? `${formatTime(videoRef.current?.currentTime || 0)} / ${formatTime(videoRef.current?.duration || 0)}`
                 : '0:00 / 0:00'
               }
-            </span>
-
-            {/* Volume Control */}
-            <button
-              className="p-1.5 rounded-xl hover:bg-white/20 transition duration-300"
+            </span>            {/* Volume Control */}
+            <Button
+              isIconOnly
+              variant="light"
+              size="sm"
               onClick={toggleMute}
               aria-label={isMuted ? 'Unmute' : 'Mute'}
             >
               {isMuted ? <MuteIcon /> : <VolumeIcon />}
-            </button>
+            </Button>
           </div>
 
-          <div className="flex items-center gap-3">
-            {/* Captions Toggle */}
+          <div className="flex items-center gap-3">            {/* Captions Toggle */}
             {lesson.captions && Object.keys(lesson.captions).length > 0 && (
-              <button
-                className={`p-1.5 rounded-xl transition duration-300 ${captionsEnabled
-                    ? 'bg-[color:var(--ai-primary)]/20 text-[color:var(--ai-primary)]'
-                    : 'hover:bg-white/20 text-white'
-                  }`}
+              <Button
+                isIconOnly
+                variant={captionsEnabled ? "primary" : "light"}
+                size="sm"
                 onClick={toggleCaptions}
                 aria-label={captionsEnabled ? 'Disable captions' : 'Enable captions'}
+                className={captionsEnabled ? 'bg-[color:var(--ai-primary)]/20' : ''}
               >
                 <CaptionsIcon />
-              </button>
+              </Button>
             )}
 
-            {/* Playback Speed */}
-            <Dropdown>
+            {/* Playback Speed */}            <Dropdown>
               <DropdownTrigger>
-                <button className="p-1.5 rounded-full hover:bg-white/20 transition duration-300 text-sm flex items-center gap-1">
-                  <PlaybackSpeedIcon />
-                  <span>
-                    {videoRef.current?.playbackRate || 1}x
-                  </span>
-                </button>
+                <Button
+                  variant="light"
+                  size="sm"
+                  className="text-white"
+                  startContent={<PlaybackSpeedIcon />}
+                >
+                  {videoRef.current?.playbackRate || 1}x
+                </Button>
               </DropdownTrigger>
               <DropdownMenu
                 aria-label="Playback speed"
@@ -298,29 +299,27 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
                 <DropdownItem key="1.5">1.5x</DropdownItem>
                 <DropdownItem key="2">2x</DropdownItem>
               </DropdownMenu>
-            </Dropdown>
-
-            {/* Mark Complete Button */}
-            <button
-              className={`p-1.5 rounded-full transition duration-300 ${isCompleted
-                ? 'bg-[color:var(--ai-success)]/20 text-[color:var(--ai-success)]'
-                : 'hover:bg-white/20 text-white'
-                }`}
+            </Dropdown>            {/* Mark Complete Button */}
+            <Button
+              isIconOnly
+              variant={isCompleted ? "success" : "light"}
+              size="sm"
               onClick={handleMarkComplete}
-              disabled={isCompleted}
+              isDisabled={isCompleted}
               aria-label={isCompleted ? "Lesson completed" : "Mark lesson as complete"}
-            >
-              <CheckIcon />
-            </button>
+            >              <CheckIcon />
+            </Button>
 
             {/* Fullscreen Toggle */}
-            <button
-              className="p-1.5 rounded-full hover:bg-white/20 transition duration-300"
+            <Button
+              isIconOnly
+              variant="light"
+              size="sm"
               onClick={toggleFullscreen}
               aria-label="Toggle fullscreen"
             >
               {isFullscreen ? <ExitFullscreenIcon /> : <FullscreenIcon />}
-            </button>
+            </Button>
           </div>
         </div>
       </div>

@@ -142,17 +142,18 @@ const AnswersList: React.FC<AnswersListProps> = ({ answers, questionId, expanded
                     )}
 
                     {/* Like button */}
-                    <div className="mt-3">
-                        <button
-                            onClick={() => handleLike(answer)}
-                            className={`flex items-center gap-1 text-xs px-2 py-1 rounded-md transition-colors ${user && answer.likedBy?.includes(user.uid)
-                                ? 'text-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10'
-                                : 'text-[color:var(--ai-muted)] hover:bg-[color:var(--ai-card-border)]/10'
-                                }`}
-                        >
-                            <LikeIcon className="w-3.5 h-3.5" />
-                            <span>{answer.likes || 0}</span>
-                        </button>
+                    <div className="mt-3">                        <Button
+                        size="sm"
+                        variant={user && answer.likedBy?.includes(user.uid) ? "primary" : "flat"}
+                        onClick={() => handleLike(answer)}
+                        className={user && answer.likedBy?.includes(user.uid) ?
+                            'text-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10' :
+                            'text-[color:var(--ai-muted)]'
+                        }
+                        startContent={<LikeIcon className="w-3.5 h-3.5" />}
+                    >
+                        {answer.likes || 0}
+                    </Button>
                     </div>
                 </div>
             ))}

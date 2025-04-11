@@ -134,15 +134,17 @@ interface NavLinkProps {
 
 const NavLink: React.FC<NavLinkProps> = ({ label, isActive, onClick }) => {
     return (
-        <button
+        <Button
             onClick={onClick}
-            className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive
-                    ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
-                }`}
+            variant={isActive ? "primary" : "light"}
+            size="sm"
+            className={isActive
+                ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
+                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+            }
         >
             {label}
-        </button>
+        </Button>
     );
 };
 

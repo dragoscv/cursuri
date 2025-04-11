@@ -144,37 +144,39 @@ const QuestionItem: React.FC<QuestionItemProps> = ({ question }) => {
                 <h4 className="font-semibold mt-3 text-[color:var(--ai-text)]">{question.title}</h4>
                 <p className="mt-2 text-[color:var(--ai-text-secondary)] whitespace-pre-wrap">{question.content}</p>
 
-                <div className="flex items-center gap-4 mt-4">
-                    <button
-                        onClick={toggleLike}
-                        className={`flex items-center gap-1 text-sm px-2 py-1 rounded-md transition-colors ${question.likedBy?.includes(user?.uid || '')
-                            ? 'text-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10'
-                            : 'text-[color:var(--ai-muted)] hover:bg-[color:var(--ai-card-border)]/10'
-                            }`}
-                    >
-                        <LikeIcon className="w-4 h-4" />
-                        <span>{question.likes || 0}</span>
-                    </button>
+                <div className="flex items-center gap-4 mt-4">                    <Button
+                    size="sm"
+                    variant={question.likedBy?.includes(user?.uid || '') ? "primary" : "flat"}
+                    onClick={toggleLike}
+                    startContent={<LikeIcon className="w-4 h-4" />}
+                    className={question.likedBy?.includes(user?.uid || '') ?
+                        "text-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10 hover:bg-[color:var(--ai-primary)]/20" :
+                        "text-[color:var(--ai-muted)]"
+                    }
+                >
+                    {question.likes || 0}
+                </Button>
 
-                    <button
+                    <Button
+                        size="sm"
+                        variant="flat"
                         onClick={() => setIsReplying(!isReplying)}
-                        className="flex items-center gap-1 text-sm text-[color:var(--ai-muted)] px-2 py-1 rounded-md hover:bg-[color:var(--ai-card-border)]/10 transition-colors"
+                        startContent={<ReplyIcon className="w-4 h-4" />}
                     >
-                        <ReplyIcon className="w-4 h-4" />
-                        <span>Reply</span>
-                    </button>
-
-                    {(isAdmin || user?.uid === question.userId) && (
-                        <button
+                        Reply
+                    </Button>                    {(isAdmin || user?.uid === question.userId) && (
+                        <Button
+                            size="sm"
+                            variant={question.isResolved ? "success" : "flat"}
                             onClick={toggleResolved}
-                            className={`flex items-center gap-1 text-sm px-2 py-1 rounded-md transition-colors ${question.isResolved
-                                ? 'text-green-600 bg-green-50 dark:bg-green-900/20 dark:text-green-400'
-                                : 'text-[color:var(--ai-muted)] hover:bg-[color:var(--ai-card-border)]/10'
-                                }`}
+                            startContent={<CheckIcon className="w-4 h-4" />}
+                            className={question.isResolved ?
+                                'text-green-600 bg-green-50 dark:bg-green-900/20 dark:text-green-400' :
+                                'text-[color:var(--ai-muted)]'
+                            }
                         >
-                            <CheckIcon className="w-4 h-4" />
-                            <span>{question.isResolved ? 'Resolved' : 'Mark as Resolved'}</span>
-                        </button>
+                            {question.isResolved ? 'Resolved' : 'Mark as Resolved'}
+                        </Button>
                     )}
                 </div>
             </div>
