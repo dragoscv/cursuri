@@ -26,8 +26,7 @@ export default function NavbarBrand() {
             <div
                 onClick={handleLogoClick}
                 className="flex items-center gap-2 cursor-pointer"
-            >
-                <div className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white p-1.5 rounded-md">
+            >                <div className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white p-1.5 rounded-md">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
@@ -40,7 +39,7 @@ export default function NavbarBrand() {
                     </svg>
                 </div>
                 {!isCourseOrLessonPage && (
-                    <p className="font-bold text-xl bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">
+                    <p className="font-bold text-xl bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent drop-shadow-sm dark:drop-shadow-[0_1px_1px_rgba(255,255,255,0.3)]">
                         Cursuri
                     </p>
                 )}

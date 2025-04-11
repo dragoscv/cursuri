@@ -78,10 +78,8 @@ export default function CallToActionSection() {
             const coursesSection = document.getElementById('courses-section');
             coursesSection?.scrollIntoView({ behavior: 'smooth' });
         }
-    };
-
-    return (
-        <section className="relative py-24 overflow-hidden">
+    }; return (
+        <section className="relative w-full py-24 overflow-hidden">
             {/* Background with animated gradient */}
             <div
                 className="absolute inset-0 bg-gradient-to-br from-[color:var(--ai-primary)]/90 via-[color:var(--ai-secondary)]/80 to-[color:var(--ai-accent)]/70"

@@ -22,20 +22,21 @@ export default function FeatureCard({ icon, title, description, index }: Feature
                 delay: index * 0.1
             }
         }
-    }
-
-    return (
+    }    return (
         <motion.div
-            className="bg-white/10 dark:bg-white/5 backdrop-filter backdrop-blur-lg rounded-xl p-6 h-full border border-white/20 dark:border-white/10 shadow-xl"
+            className="bg-white dark:bg-[color:var(--ai-card-bg)] backdrop-filter backdrop-blur-lg rounded-xl p-6 h-full border border-[color:var(--ai-card-border)] shadow-lg dark:shadow-[color:var(--ai-card-border)]/20"
             variants={itemVariants}
             whileHover={{
                 y: -5,
-                backgroundColor: "rgba(255, 255, 255, 0.15)",
+                boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)",
             }}
+            style={{
+                '--hover-bg': 'rgba(var(--ai-primary-rgb), 0.07)'
+            } as React.CSSProperties}
         >
-            <div className="text-3xl mb-4">{icon}</div>
-            <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
-            <p className="text-white/70">{description}</p>
+            <div className="text-3xl mb-4 text-[color:var(--ai-primary)]">{icon}</div>
+            <h3 className="text-xl font-bold text-[color:var(--ai-foreground)] mb-2">{title}</h3>
+            <p className="text-[color:var(--ai-muted)]">{description}</p>
         </motion.div>
     )
 }

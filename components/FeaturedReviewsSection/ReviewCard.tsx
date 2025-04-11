@@ -31,24 +31,22 @@ export function ReviewCard({ review, index }: ReviewCardProps) {
                 delay: 0.1 * index
             }
         }
-    }
-
-    return (
+    }    return (
         <motion.div
             ref={ref}
             initial="hidden"
             animate={controls}
             variants={cardVariants}
-            className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg"
+            className="bg-white dark:bg-[color:var(--ai-card-bg)] rounded-xl p-6 shadow-lg dark:shadow-[color:var(--ai-card-border)]/10 border border-transparent dark:border-[color:var(--ai-card-border)]/30"
         >
             <div className="flex justify-between items-start mb-4">
                 <div>
                     <RatingStars rating={review.rating} />
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    <p className="text-sm text-[color:var(--ai-muted)] mt-1">
                         {review.courseType || "Course"}
                     </p>
                 </div>
-            </div>            <p className="text-gray-600 dark:text-gray-300 mb-6">
+            </div>            <p className="text-[color:var(--ai-foreground)] opacity-80 mb-6">
                 &quot;{review.content}&quot;
             </p>
 

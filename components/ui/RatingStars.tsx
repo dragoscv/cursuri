@@ -54,12 +54,11 @@ const RatingStars: React.FC<RatingStarsProps> = ({
                         onClick={() => handleClick(index)}
                         onMouseEnter={() => !readOnly && setHoverRating(index + 1)}
                         onMouseLeave={() => !readOnly && setHoverRating(0)}
-                        className={`cursor-${readOnly ? 'default' : 'pointer'} mr-1`}                    >
-                        <FiStar
+                        className={`cursor-${readOnly ? 'default' : 'pointer'} mr-1`}                    >                        <FiStar
                             size={typeof size === 'string' ?
                                 (size === 'sm' ? 16 : size === 'md' ? 20 : 24) :
                                 size}
-                            className={filled ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}
+                            className={filled ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300 dark:text-gray-500'}
                         />
                     </div>
                 );

@@ -26,7 +26,7 @@ export default function DashboardProgress({
     lessonProgress
 }: DashboardProgressProps) {
     return (
-        <Card className="border border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)]/50 rounded-xl shadow-md overflow-hidden">
+        <Card className="border border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)]/50 bg-white dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-md overflow-hidden">
             <div className="h-1 w-full bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)]"></div>
             <CardBody className="p-6">
                 <h2 className="text-lg font-semibold mb-5 text-[color:var(--ai-foreground)] flex items-center gap-2">

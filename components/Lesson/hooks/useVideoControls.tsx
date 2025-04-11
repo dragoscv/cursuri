@@ -71,9 +71,7 @@ export const useVideoControls = ({
                 }, 15000); // Save every 15 seconds
             }
         }
-    }, [saveProgress, saveCurrentProgress]);
-
-    // Handle mouse movement to show/hide controls
+    }, [saveProgress, saveCurrentProgress]);    // Handle mouse movement to show/hide controls
     const handleMouseMove = useCallback(() => {
         if (isPlaying) {
             setIsControlsVisible(true);
@@ -88,17 +86,19 @@ export const useVideoControls = ({
                 }
             }, 3000);
         }
-    }, [isPlaying, isHovering]);    // Handle video ended event
-    const handleVideoEnded = useCallback(() => {
-        // Mark the lesson as completed when the video ends
-        handleMarkComplete();
-    }, [handleMarkComplete]);
-
+    }, [isPlaying, isHovering]);
     // Handle mark as complete
     const handleMarkComplete = useCallback(() => {
         markLessonComplete(courseId, lessonId);
         setIsCompleted(true);
-    }, [courseId, lessonId, markLessonComplete, setIsCompleted]);    // Toggle play/pause
+    }, [courseId, lessonId, markLessonComplete, setIsCompleted]);
+
+    // Handle video ended event
+    const handleVideoEnded = useCallback(() => {
+        // Mark the lesson as completed when the video ends
+        markLessonComplete(courseId, lessonId);
+        setIsCompleted(true);
+    }, [courseId, lessonId, markLessonComplete, setIsCompleted]);// Toggle play/pause
     const togglePlayPause = useCallback(() => {
         if (videoRef.current) {
             if (videoRef.current.paused) {

@@ -42,10 +42,8 @@ export default function LearningPathSection() {
                 ease: [0.22, 1, 0.36, 1]
             }
         }
-    };
-
-    return (
-        <section className="py-24 bg-white dark:bg-[color:var(--ai-background)] overflow-hidden">
+    }; return (
+        <section className="relative w-full py-24 bg-white dark:bg-[color:var(--ai-background)] overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <ScrollAnimationWrapper>
                     <div className="text-center mb-16">

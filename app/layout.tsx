@@ -20,13 +20,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="has-[section[role='dialog'][data-open='true']]:overflow-hidden transition-all ease-in-out duration-500">
-      <body className={`${inter.className}`}>
+      <body className={`${inter.className} bg-[rgb(var(--background-start-rgb))]`}>
         <Providers>
           {/* Fixed header at the top */}
           <Header />
 
           {/* Main content area that starts below the header */}
-          <div className="pt-16">
+          <div className="pt-8 bg-[rgb(var(--background-start-rgb))] min-h-screen">
             <main className="flex-grow">
               {children}
             </main>
