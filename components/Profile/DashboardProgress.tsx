@@ -26,77 +26,102 @@ export default function DashboardProgress({
     lessonProgress
 }: DashboardProgressProps) {
     return (
-        <Card className="border border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)]/50">
-            <CardBody>
-                <h2 className="text-lg font-semibold mb-4 text-[color:var(--ai-foreground)] flex items-center gap-2">
-                    <FiTrendingUp className="text-[color:var(--ai-primary)]" />
+        <Card className="border border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)]/50 rounded-xl shadow-md overflow-hidden">
+            <div className="h-1 w-full bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)]"></div>
+            <CardBody className="p-6">
+                <h2 className="text-lg font-semibold mb-5 text-[color:var(--ai-foreground)] flex items-center gap-2">
+                    <div className="p-1.5 rounded-full bg-[color:var(--ai-primary)]/10">
+                        <FiTrendingUp className="text-[color:var(--ai-primary)]" />
+                    </div>
                     Your Learning Progress
                 </h2>
 
-                <div className="space-y-6">
+                <div className="space-y-8">
                     <div>
-                        <div className="flex justify-between mb-2">
-                            <span className="text-sm font-medium text-[color:var(--ai-foreground)]/80 dark:text-[color:var(--ai-foreground)]/70">Course Completion</span>
-                            <span className="text-sm font-medium text-[color:var(--ai-foreground)]/80 dark:text-[color:var(--ai-foreground)]/70">
+                        <div className="flex justify-between mb-3">
+                            <span className="text-sm font-medium text-[color:var(--ai-foreground)]/90 dark:text-[color:var(--ai-foreground)]/80 flex items-center gap-2">
+                                <span className="inline-block h-2 w-2 rounded-full bg-[color:var(--ai-primary)]"></span>
+                                Course Completion
+                            </span>
+                            <span className="text-sm font-medium bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] px-2 py-0.5 rounded-full">
                                 {completedCourses}/{totalCoursesEnrolled}
                             </span>
                         </div>
                         <Progress
                             value={courseCompletionPercentage}
                             classNames={{
-                                indicator: "bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]",
+                                track: "h-2 rounded-full",
+                                indicator: "bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-full",
                             }}
                         />
-                    </div>
-
-                    <div>
-                        <div className="flex justify-between mb-2">
-                            <span className="text-sm font-medium text-[color:var(--ai-foreground)]/80 dark:text-[color:var(--ai-foreground)]/70">Lesson Completion</span>
-                            <span className="text-sm font-medium text-[color:var(--ai-foreground)]/80 dark:text-[color:var(--ai-foreground)]/70">
+                    </div>                    <div>
+                        <div className="flex justify-between mb-3">
+                            <span className="text-sm font-medium text-[color:var(--ai-foreground)]/90 dark:text-[color:var(--ai-foreground)]/80 flex items-center gap-2">
+                                <span className="inline-block h-2 w-2 rounded-full bg-[color:var(--ai-success)]"></span>
+                                Lesson Completion
+                            </span>
+                            <span className="text-sm font-medium bg-[color:var(--ai-success)]/10 text-[color:var(--ai-success)] px-2 py-0.5 rounded-full">
                                 {completedLessons}/{totalLessons}
                             </span>
                         </div>
                         <Progress
                             value={lessonCompletionPercentage}
                             classNames={{
-                                indicator: "bg-gradient-to-r from-[color:var(--ai-success)] to-[color:var(--ai-secondary)]",
+                                track: "h-2 rounded-full",
+                                indicator: "bg-gradient-to-r from-[color:var(--ai-success)] to-[color:var(--ai-secondary)] rounded-full",
                             }}
                         />
                     </div>
 
-                    {userPaidProducts.map((product, index) => {
-                        const courseId = product.metadata?.courseId;
-                        const course = courses[courseId];
-                        if (!course) return null;
+                    <div className="mt-6 pt-5 border-t border-[color:var(--ai-card-border)]/30">
+                        <h3 className="text-sm font-semibold mb-4 text-[color:var(--ai-foreground)]">Course-by-Course Progress</h3>
 
-                        const courseLessons = Object.keys(lessonProgress[courseId] || {}).length;
-                        const courseCompleted = Object.values(lessonProgress[courseId] || {})
-                            .filter(progress => progress.isCompleted).length;
+                        <div className="space-y-5">
+                            {userPaidProducts.map((product, index) => {
+                                const courseId = product.metadata?.courseId;
+                                const course = courses[courseId];
+                                if (!course) return null;
 
-                        const courseProgress = courseLessons > 0
-                            ? Math.round((courseCompleted / courseLessons) * 100)
-                            : 0; return (
-                                <div key={`${courseId}-${index}`}>
-                                    <div className="flex justify-between mb-2">
-                                        <span className="text-sm font-medium text-[color:var(--ai-foreground)]/80 dark:text-[color:var(--ai-foreground)]/70 truncate max-w-[80%]">
-                                            {course.name}
-                                        </span>
-                                        <span className="text-sm font-medium text-[color:var(--ai-foreground)]/80 dark:text-[color:var(--ai-foreground)]/70">
-                                            {courseProgress}%
-                                        </span>
+                                const courseLessons = Object.keys(lessonProgress[courseId] || {}).length;
+                                const courseCompleted = Object.values(lessonProgress[courseId] || {})
+                                    .filter(progress => progress.isCompleted).length;
+
+                                const courseProgress = courseLessons > 0
+                                    ? Math.round((courseCompleted / courseLessons) * 100)
+                                    : 0;
+
+                                return (
+                                    <div key={`${courseId}-${index}`} className="bg-[color:var(--ai-card-bg)]/50 p-3 rounded-lg border border-[color:var(--ai-card-border)]/10">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <span className="text-sm font-medium text-[color:var(--ai-foreground)] truncate max-w-[80%] flex items-center gap-1.5">
+                                                <span className={`inline-block h-2 w-2 rounded-full ${courseProgress === 100
+                                                    ? "bg-[color:var(--ai-success)]"
+                                                    : courseProgress > 50
+                                                        ? "bg-[color:var(--ai-secondary)]"
+                                                        : "bg-[color:var(--ai-primary)]"
+                                                    }`}></span>
+                                                {course.name}
+                                            </span>
+                                            <span className="text-xs font-medium bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)]/30 px-2 py-1 rounded-full border border-[color:var(--ai-card-border)]/20">
+                                                {courseProgress}%
+                                            </span>
+                                        </div>
+                                        <Progress
+                                            value={courseProgress}
+                                            size="sm"
+                                            classNames={{
+                                                track: "h-1.5 rounded-full",
+                                                indicator: `bg-gradient-to-r rounded-full ${index % 3 === 0 ? "from-[color:var(--ai-primary)] to-[color:var(--ai-accent)]" :
+                                                    index % 3 === 1 ? "from-[color:var(--ai-secondary)] to-[color:var(--ai-primary)]" :
+                                                        "from-[color:var(--ai-accent)] to-[color:var(--ai-secondary)]"
+                                                    }`,
+                                            }}
+                                        />
                                     </div>
-                                    <Progress
-                                        value={courseProgress}
-                                        classNames={{
-                                            indicator: `bg-gradient-to-r ${index % 3 === 0 ? "from-[color:var(--ai-primary)] to-[color:var(--ai-accent)]" :
-                                                index % 3 === 1 ? "from-[color:var(--ai-secondary)] to-[color:var(--ai-primary)]" :
-                                                    "from-[color:var(--ai-accent)] to-[color:var(--ai-secondary)]"
-                                                }`,
-                                        }}
-                                    />
-                                </div>
-                            );
-                    })}
+                                );
+                            })}
+                        </div>
+                    </div>
                 </div>
             </CardBody>
         </Card>

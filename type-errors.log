@@ -1,10 +1,8 @@
-components/Courses/CoursesFilter.tsx(105,90): error TS2747: 'DropdownMenu' components don't accept text as child elements. Text in JSX has the type 'string', but the expected type of 'children' is 'CollectionChildren<object>'.
-components/Courses/CoursesFilter.tsx(105,118): error TS2322: Type 'Element[]' is not assignable to type 'CollectionElement<object>'.
-components/Header/UserDropdown/index.tsx(109,17): error TS2322: Type 'string' is not assignable to type 'CollectionElement<object>'.
-components/Header/UserDropdown/index.tsx(126,35): error TS2747: 'DropdownMenu' components don't accept text as child elements. Text in JSX has the type 'string', but the expected type of 'children' is 'CollectionChildren<object>'.
-  Type 'false' is not assignable to type 'CollectionElement<object>'.
-components/Header/UserDropdown/index.tsx(128,17): error TS2322: Type 'false | Element' is not assignable to type 'CollectionElement<object>'.
-  Type 'false' is not assignable to type 'CollectionElement<object>'.
-components/Header/UserDropdown/index.tsx(172,17): error TS2322: Type 'undefined' is not assignable to type 'CollectionElement<object>'.
-components/Header/UserDropdown/index.tsx(231,17): error TS2322: Type 'undefined' is not assignable to type 'CollectionElement<object>'.
-components/Header/UserDropdown/index.tsx(232,17): error TS2322: Type 'undefined' is not assignable to type 'CollectionElement<object>'.
+components/FeaturedReviewsSection/index.tsx(5,24): error TS2306: File 'E:/GitHub/cursuri/components/FeaturedReviewsSection/ReviewCard.tsx' is not a module.
+components/FeaturedReviewsSection/index.tsx(6,36): error TS2307: Cannot find module './hooks/useFeaturedReviews' or its corresponding type declarations.
+components/FeaturedReviewsSection/index.tsx(51,42): error TS7006: Parameter 'review' implicitly has an 'any' type.
+components/FeaturedReviewsSection/index.tsx(51,50): error TS7006: Parameter 'index' implicitly has an 'any' type.
+components/HeroSection/hooks/useHeroStats.tsx(4,27): error TS2307: Cannot find module '@/components/contexts/hooks' or its corresponding type declarations.
+components/HeroSection/hooks/useHeroStats.tsx(32,59): error TS7006: Parameter 'product' implicitly has an 'any' type.
+components/HeroSection/hooks/useHeroStats.tsx(57,31): error TS7006: Parameter 'tag' implicitly has an 'any' type.
+components/HeroSection/index.tsx(7,35): error TS2307: Cannot find module '@/components/contexts/hooks' or its corresponding type declarations.

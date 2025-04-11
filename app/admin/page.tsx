@@ -1,7 +1,17 @@
 'use client'
 
-import Admin from '@/components/Admin';
+import React from 'react';
+import AdminDashboard from '@/components/Admin/AdminDashboard';
+import AdminPageHeader from '@/components/Admin/AdminPageHeader';
 
 export default function AdminPage() {
-    return <Admin />;
+    return (
+        <>
+            <AdminPageHeader 
+                title="Admin Dashboard"
+                description="Overview of your platform's key metrics and activities."
+            />
+            <AdminDashboard />
+        </>
+    );
 }

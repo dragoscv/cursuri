@@ -127,11 +127,11 @@ export default function AdminCourseDetailPage() {
     }, [lessons, courseId]);
 
     const handleAddLesson = () => {
-        router.push(`/admin/courses/${courseId}/lessons/add`);
+        router.push(`/admin/courses/${courseId}/lessons/add`, { scroll: false, replace: true });
     };
 
     const handleEditLesson = (lesson: Lesson) => {
-        router.push(`/admin/courses/${courseId}/lessons/${lesson.id}/edit`);
+        router.push(`/admin/courses/${courseId}/lessons/${lesson.id}/edit`, { scroll: false, replace: true });
     };
 
     const handleDragEnd = async (event: DragEndEvent) => {
@@ -192,6 +192,8 @@ export default function AdminCourseDetailPage() {
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Course Not Found</h1>
                     <Link
                         href="/admin/courses"
+                        replace
+                        scroll={false}
                         className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                     >
                         Back to Courses
@@ -213,6 +215,8 @@ export default function AdminCourseDetailPage() {
                 <div className="flex gap-3">
                     <Link
                         href={`/admin/courses/${courseId}/edit`}
+                        replace
+                        scroll={false}
                         className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center"
                     >
                         <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -222,6 +226,8 @@ export default function AdminCourseDetailPage() {
                     </Link>
                     <Link
                         href="/admin/courses"
+                        replace
+                        scroll={false}
                         className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                     >
                         Back to Courses

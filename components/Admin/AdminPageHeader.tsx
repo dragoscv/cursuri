@@ -1,13 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-interface ProfileHeaderProps {
+interface AdminPageHeaderProps {
     title: string;
     description?: string;
     actions?: React.ReactNode;
 }
 
-const ProfileHeader: React.FC<ProfileHeaderProps> = ({
+const AdminPageHeader: React.FC<AdminPageHeaderProps> = ({
     title,
     description,
     actions
@@ -58,4 +58,4 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     );
 };
 
-export default ProfileHeader;
+export default AdminPageHeader;

@@ -15,6 +15,8 @@ export default function AddLessonPage() {
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Add New Lesson</h1>
                 <Link
                     href={`/admin/courses/${courseId}`}
+                    replace
+                    scroll={false}
                     className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
                 >
                     Back to Course
