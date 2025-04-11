@@ -9,12 +9,17 @@ import LessonSettings from './Settings/LessonSettings';
 import ResourcesList from './Resources/ResourcesList';
 import Notes from './Notes/Notes';
 import QASection from './QA/QASection';
+import LessonNavigation from './Navigation/LessonNavigation';
 
 interface LessonContentProps {
     lesson: Lesson;
+    prevLessonId?: string | null;
+    nextLessonId?: string | null;
+    onNavigateLesson?: (lessonId: string) => void;
+    onClose?: () => void;
 }
 
-function LessonContent({ lesson }: LessonContentProps) {
+function LessonContent({ lesson, prevLessonId = null, nextLessonId = null, onNavigateLesson, onClose }: LessonContentProps) {
     const [isCompleted, setIsCompleted] = useState(false);
     const [autoPlayNext, setAutoPlayNext] = useState(false);
     const [saveProgress, setSaveProgress] = useState(true);
@@ -104,6 +109,36 @@ function LessonContent({ lesson }: LessonContentProps) {
         }
     };
 
+    // Get available lessons for the course for the navigation component
+    const getCourseLessons = () => {
+        if (!lessons || !courseId || !lessons[courseId]) return [];
+
+        let courseLessons = [];
+        if (Array.isArray(lessons[courseId])) {
+            courseLessons = [...lessons[courseId]];
+        } else {
+            courseLessons = Object.values(lessons[courseId]);
+        }
+
+        // Sort lessons by order
+        return courseLessons.sort((a, b) => {
+            const orderA = a.order || 0;
+            const orderB = b.order || 0;
+            return orderA - orderB;
+        }).map(l => ({
+            id: l.id,
+            name: l.name,
+            order: l.order,
+            isCompleted: lessonProgress &&
+                lessonProgress[courseId] &&
+                lessonProgress[courseId][l.id] &&
+                lessonProgress[courseId][l.id].isCompleted,
+            isCurrent: l.id === lesson.id,
+            durationMinutes: l.durationMinutes || null,
+            isLocked: l.isLocked || false
+        }));
+    };
+
     // Calculate progress percentage for the progress bar
     const calculateProgress = () => {
         if (!lessons || !courseId || !lessons[courseId]) return 0;
@@ -125,10 +160,15 @@ function LessonContent({ lesson }: LessonContentProps) {
         if (currentIndex === -1) return 0;
 
         return ((currentIndex + 1) / totalLessons) * 100;
-    };    // If lesson is not available, show the loading component
+    };
+
+    // If lesson is not available, show the loading component
     if (!lesson) {
         return loadingComponent;
     }
+
+    // Get the list of lessons for the navigation component
+    const navigationLessons = getCourseLessons();
 
     return (
         <div className="flex flex-col w-full max-w-7xl mx-auto animate-in fade-in duration-500">
@@ -207,7 +247,11 @@ function LessonContent({ lesson }: LessonContentProps) {
                         </Chip>
                     )}
                 </div>
-            </div>            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            </div>
+
+            {/* Main content grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Main Content Column */}
                 <div className="lg:col-span-2 space-y-8">
                     {/* Video Player Component */}
                     <VideoPlayer
@@ -262,6 +306,22 @@ function LessonContent({ lesson }: LessonContentProps) {
 
                     {/* Q&A Discussion Section */}
                     <QASection courseId={lesson.courseId || ''} lessonId={lesson.id} />
+
+                    {/* Lesson Navigation - Positioned at bottom of content for all screen sizes */}
+                    {(prevLessonId || nextLessonId || onClose) && (
+                        <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-xl overflow-hidden 
+                            transform transition-all duration-300 hover:shadow-2xl hover:border-[color:var(--ai-primary)]/30">
+                            <LessonNavigation
+                                prevLessonId={prevLessonId}
+                                nextLessonId={nextLessonId}
+                                isCompleted={isCompleted}
+                                onNavigateLesson={(lessonId) => onNavigateLesson && onNavigateLesson(lessonId)}
+                                onClose={onClose}
+                                lessons={navigationLessons}
+                                currentLessonId={lesson.id}
+                            />
+                        </Card>
+                    )}
                 </div>
 
                 {/* Right Sidebar */}

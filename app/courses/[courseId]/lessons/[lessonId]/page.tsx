@@ -4,7 +4,6 @@ import React, { useContext, useState, useEffect } from 'react';
 import { AppContext } from '@/components/AppContext';
 import { Spinner, Card } from "@heroui/react";
 import LessonContent from '@/components/Lesson/LessonContent';
-import LessonNavigation from '@/components/Lesson/Navigation/LessonNavigation';
 import { useRouter } from 'next/navigation';
 
 // Using the same pattern as CourseDetailPage to fix Next.js 15 params Promise issue
@@ -281,12 +280,10 @@ export default function LessonDetailPage({
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <LessonContent lesson={lesson} />
-
-            <LessonNavigation
+            <LessonContent
+                lesson={lesson}
                 prevLessonId={previousLesson ? previousLesson.id : null}
                 nextLessonId={nextLesson ? nextLesson.id : null}
-                isCompleted={lesson.isCompleted || false}
                 onNavigateLesson={(lessonId) => router.push(`/courses/${courseId}/lessons/${lessonId}`)}
                 onClose={() => router.push(`/courses/${courseId}`)}
             />
