@@ -23,14 +23,36 @@ export default function LessonForm({ courseId, lessonId, onSuccess }: LessonForm
     const [isEditing, setIsEditing] = useState(false)
     const [currentFileUrl, setCurrentFileUrl] = useState<string | null>(null)
     const [saveAction, setSaveAction] = useState<"save" | "saveAndClose">("saveAndClose")
+    const [videoDuration, setVideoDuration] = useState<number | null>(null)
 
     const router = useRouter();
 
     const context = useContext(AppContext)
     if (!context) {
         throw new Error("AppContext not found. You probably forgot to put <AppProvider>.")
-    }
-    const { lessons } = context
+    } const { lessons } = context
+
+    // Function to detect video duration from a file
+    const detectVideoDuration = (file: File) => {
+        // Only process video files
+        if (!file.type.startsWith('video/')) {
+            console.log('Not a video file');
+            return;
+        }
+
+        const video = document.createElement('video');
+        video.preload = 'metadata';
+
+        video.onloadedmetadata = () => {
+            window.URL.revokeObjectURL(video.src);
+            const durationInSeconds = video.duration;
+            const durationInMinutes = Math.round(durationInSeconds / 60);
+            console.log(`Video duration detected: ${durationInMinutes} minutes`);
+            setVideoDuration(durationInMinutes);
+        };
+
+        video.src = URL.createObjectURL(file);
+    };
 
     useEffect(() => {
         // If lessonId is provided, we're in edit mode
@@ -81,9 +103,7 @@ export default function LessonForm({ courseId, lessonId, onSuccess }: LessonForm
             // Upload file to Firebase Storage
             const storageRef = ref(firebaseStorage, `lessons/${courseId}/${file.name}`);
             const uploadTask = await uploadBytes(storageRef, file);
-            const downloadURL = await getDownloadURL(uploadTask.ref);
-
-            // Create new lesson in Firestore
+            const downloadURL = await getDownloadURL(uploadTask.ref);            // Create new lesson in Firestore
             const lessonData = {
                 name: lessonName,
                 description: lessonDescription,
@@ -91,7 +111,8 @@ export default function LessonForm({ courseId, lessonId, onSuccess }: LessonForm
                 repoUrl: repoUrl,
                 courseId: courseId,
                 status: "active",
-                createdAt: new Date()
+                createdAt: new Date(),
+                durationMinutes: videoDuration || 0 // Store video duration in minutes
             };
 
             await addDoc(collection(firestoreDB, `courses/${courseId}/lessons`), lessonData);
@@ -115,14 +136,17 @@ export default function LessonForm({ courseId, lessonId, onSuccess }: LessonForm
         setLoading(true);
 
         try {
-            const lessonRef = doc(firestoreDB, `courses/${courseId}/lessons/${lessonId}`);
-
-            let updatedData: any = {
+            const lessonRef = doc(firestoreDB, `courses/${courseId}/lessons/${lessonId}`); let updatedData: any = {
                 name: lessonName,
                 description: lessonDescription,
                 repoUrl: repoUrl,
                 updatedAt: new Date()
             };
+
+            // Only update duration if we have a new value from uploaded video
+            if (videoDuration !== null) {
+                updatedData.durationMinutes = videoDuration;
+            }
 
             if (file) {
                 // Upload new file if provided
@@ -247,12 +271,18 @@ export default function LessonForm({ courseId, lessonId, onSuccess }: LessonForm
             <div className="mb-6">
                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" htmlFor="file_input">
                     {isEditing ? 'Replace Video File' : 'Upload Video File'}
-                </label>
-                <input
+                </label>                <input
                     className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                     id="file_input"
                     type="file"
-                    onChange={(e) => e.target.files && setFile(e.target.files[0])}
+                    accept="video/*"
+                    onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                            const selectedFile = e.target.files[0];
+                            setFile(selectedFile);
+                            detectVideoDuration(selectedFile);
+                        }
+                    }}
                 />
 
                 {isEditing && !file && (

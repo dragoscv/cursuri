@@ -5,6 +5,7 @@ import Providers from './providers'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import CookieConsent from '@/components/CookieConsent'
+import BottomNavigation from '@/components/Header/BottomNavigation'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -20,22 +21,24 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="has-[section[role='dialog'][data-open='true']]:overflow-hidden transition-all ease-in-out duration-500">
-      <body className={`${inter.className} bg-[rgb(var(--background-start-rgb))]`}>
-        <Providers>
-          {/* Fixed header at the top */}
-          <Header />
+      <body className={`${inter.className} bg-[rgb(var(--background-start-rgb))]`}>        <Providers>
+        {/* Fixed header at the top */}
+        <Header />
 
-          {/* Main content area that starts below the header */}
-          <div className="pt-8 bg-[rgb(var(--background-start-rgb))] min-h-screen">
-            <main className="flex-grow">
-              {children}
-            </main>
-            <Footer />
-          </div>
+        {/* Main content area that starts below the header */}
+        <div className="pt-8 bg-[rgb(var(--background-start-rgb))] min-h-screen">
+          <main className="flex-grow pb-16 md:pb-0">
+            {children}
+          </main>
+          <Footer />
+        </div>
 
-          {/* Cookie consent banner */}
-          <CookieConsent />
-        </Providers>
+        {/* Mobile Bottom Navigation */}
+        <BottomNavigation />
+
+        {/* Cookie consent banner */}
+        <CookieConsent />
+      </Providers>
       </body>
     </html>
   )

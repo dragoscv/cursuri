@@ -11,7 +11,7 @@ import {
 } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { AppContext } from "@/components/AppContext";
-import { UserIcon, LogOutIcon, ShieldIcon, PlusIcon, MessageSquareIcon } from "@/components/icons/FeatherIcons";
+import { UserIcon, LogOutIcon, ShieldIcon, PlusIcon, MessageSquareIcon, FiSettings } from "@/components/icons/FeatherIcons";
 import { firebaseApp, firebaseAuth } from "@/utils/firebase/firebase.config";
 import { signOut } from "firebase/auth";
 import Login from "@/components/Login";
@@ -59,26 +59,39 @@ export default function UserDropdown() {
                 </DropdownItem>
             </DropdownSection>
         );
-    };
-
-    // Actions section (Profile Dashboard)
+    };    // Actions section (Profile Dashboard)
     const renderActionsSection = () => {
         return (
             <DropdownSection aria-label="Actions" showDivider>
                 {user && (
-                    <DropdownItem
-                        key="profile"
-                        textValue="Profile Dashboard"
-                        className="p-0"
-                    >
-                        <div
-                            className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors flex items-center gap-2"
-                            onClick={() => router.push('/profile')}
+                    <>
+                        <DropdownItem
+                            key="profile"
+                            textValue="Profile Dashboard"
+                            className="p-0"
                         >
-                            <UserIcon className="text-[color:var(--ai-primary)]" size={18} />
-                            Profile Dashboard
-                        </div>
-                    </DropdownItem>
+                            <div
+                                className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors flex items-center gap-2"
+                                onClick={() => router.push('/profile')}
+                            >
+                                <UserIcon className="text-[color:var(--ai-primary)]" size={18} />
+                                Profile Dashboard
+                            </div>
+                        </DropdownItem>
+                        <DropdownItem
+                            key="settings"
+                            textValue="Settings"
+                            className="p-0"
+                        >
+                            <div
+                                className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors flex items-center gap-2"
+                                onClick={() => router.push('/profile/settings')}
+                            >
+                                <FiSettings className="text-[color:var(--ai-primary)]" size={18} />
+                                Settings
+                            </div>
+                        </DropdownItem>
+                    </>
                 )}
             </DropdownSection>
         );

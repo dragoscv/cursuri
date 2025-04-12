@@ -35,11 +35,10 @@ const AdminSidebar: React.FC = () => {
     const handleSignOut = async () => {
         await signOut(firebaseAuth);
         router.push('/');
-    };
-
-    return (
-        <div className="sticky top-24">
-            <Card className="mb-6 overflow-hidden border border-[color:var(--ai-card-border)] shadow-lg rounded-xl">
+    }; return (
+        <div className="md:sticky md:top-24 fixed md:relative bottom-0 left-0 right-0 md:bottom-auto z-50">
+            {/* Profile Card - Only visible on desktop */}
+            <Card className="mb-6 overflow-hidden border border-[color:var(--ai-card-border)] shadow-lg rounded-xl hidden md:block">
                 <div className="relative bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] h-28">
                     {/* Circuit pattern overlay */}
                     <div className="absolute top-0 left-0 w-full h-full opacity-20">
@@ -82,38 +81,38 @@ const AdminSidebar: React.FC = () => {
                         </div>
                     </div>
                 </div>
-            </Card>
-
-            {/* Navigation */}
-            <Card className="overflow-hidden border border-[color:var(--ai-card-border)] shadow-md rounded-xl">
-                <nav className="flex flex-col py-2">
+            </Card>            {/* Navigation */}
+            <Card className="overflow-hidden border border-[color:var(--ai-card-border)] shadow-md md:shadow-lg rounded-xl md:rounded-t-xl rounded-b-none md:bg-[color:var(--ai-card-bg)] md:backdrop-blur-none bg-[color:var(--ai-card-bg)]/80 backdrop-blur-md">
+                <nav className="flex md:flex-col flex-row justify-around py-2">
                     {navItems.map((item) => {
                         const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
                         return (
                             <Link key={item.href} href={item.href} className="block">
                                 <div
                                     className={`
-                                      flex items-center gap-3 px-6 py-3.5 mx-2 my-1 transition-all duration-200 rounded-lg
+                                      flex md:flex-row flex-col items-center md:gap-3 gap-1 
+                                      md:px-6 px-2 md:py-3.5 py-3 md:mx-2 mx-0 md:my-1 my-0 transition-all duration-200 
+                                      md:rounded-lg rounded-md
                                       ${isActive
-                                            ? 'bg-gradient-to-r from-[color:var(--ai-primary)]/20 to-[color:var(--ai-secondary)]/10 text-[color:var(--ai-primary)] font-medium shadow-sm'
-                                            : 'hover:bg-[color:var(--ai-primary)]/5 text-[color:var(--ai-foreground)] hover:translate-x-1'}
+                                            ? 'md:bg-gradient-to-r md:from-[color:var(--ai-primary)]/20 md:to-[color:var(--ai-secondary)]/10 text-[color:var(--ai-primary)] font-medium md:shadow-sm'
+                                            : 'hover:bg-[color:var(--ai-primary)]/5 text-[color:var(--ai-foreground)] md:hover:translate-x-1'}
                                     `}
                                 >
                                     <div className={`p-1.5 rounded-full ${isActive ? 'bg-[color:var(--ai-primary)]/10' : ''}`}>
                                         <item.icon className="w-4 h-4" />
                                     </div>
-                                    <span>{item.label}</span>
+                                    <span className="md:block text-xs md:text-base">{item.label}</span>
                                     {isActive && (
-                                        <div className="ml-auto w-1.5 h-6 bg-gradient-to-b from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-full"></div>
+                                        <div className="md:ml-auto md:w-1.5 md:h-6 h-0.5 w-1/2 mt-1 md:mt-0 bg-gradient-to-b md:bg-gradient-to-b md:from-[color:var(--ai-primary)] md:to-[color:var(--ai-secondary)] from-[color:var(--ai-primary)] to-[color:var(--ai-primary)] rounded-full"></div>
                                     )}
                                 </div>
                             </Link>
                         );
                     })}
 
-                    {/* Sign Out Button */}
+                    {/* Sign Out Button - Only visible on desktop */}
                     <div
-                        className="flex items-center gap-3 px-6 py-3.5 mx-2 my-1 transition-all duration-200 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 cursor-pointer"
+                        className="hidden md:flex items-center gap-3 px-6 py-3.5 mx-2 my-1 transition-all duration-200 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 cursor-pointer"
                         onClick={handleSignOut}
                     >
                         <div className="p-1.5 rounded-full">

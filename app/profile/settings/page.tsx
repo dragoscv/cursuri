@@ -204,60 +204,61 @@ export default function ProfileSettings() {
         } finally {
             setIsLoading(false);
         }
-    };
-
-    if (!user) {
+    }; if (!user) {
         return null;
-    } return (
+    }
+
+    return (
         <div className="space-y-6">
             <div className="mb-6">
                 <h1 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-2">Account Settings</h1>
                 <p className="text-[color:var(--ai-muted)]">
                     Manage your profile and account preferences.
                 </p>
-            </div>
-
-            {/* Profile Information */}
-            <Card className="border border-[color:var(--ai-card-border)] shadow-sm">
-                <CardBody>
+            </div>            {/* Profile Information */}
+            <Card className="border border-[color:var(--ai-card-border)]/50 shadow-lg rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)]/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+                <div className="h-1 w-full bg-gradient-to-r from-[color:var(--ai-primary)]/80 to-[color:var(--ai-secondary)]/80"></div>
+                <CardBody className="p-6">
                     <h2 className="text-lg font-semibold mb-4 text-[color:var(--ai-foreground)] flex items-center gap-2">
-                        <FiUser className="text-[color:var(--ai-primary)]" />
+                        <div className="p-2 rounded-full bg-gradient-to-r from-[color:var(--ai-primary)]/20 to-[color:var(--ai-secondary)]/20">
+                            <FiUser className="text-[color:var(--ai-primary)]" />
+                        </div>
                         Profile Information
                     </h2>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>                            <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-1">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">                        <div>
+                        <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
                             Display Name
                         </label>
-                            <Input
-                                name="displayName"
-                                value={form.displayName}
-                                onChange={handleChange}
-                                placeholder="Your name"
-                                startContent={<FiUser className="text-gray-400" />}
-                                className="w-full"
-                            />
-                        </div>
+                        <Input
+                            name="displayName"
+                            value={form.displayName}
+                            onChange={handleChange}
+                            placeholder="Your name"
+                            startContent={<FiUser className="text-[color:var(--ai-primary)]" />}
+                            className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-primary)]/70 hover:border-[color:var(--ai-primary)]/40 transition-all duration-300"
+                        />
+                    </div>
 
-                        <div>                            <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-1">
-                            Bio
-                        </label>
+                        <div>
+                            <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
+                                Bio
+                            </label>
                             <Textarea
                                 name="bio"
                                 value={form.bio}
                                 onChange={handleChange}
                                 placeholder="Tell us about yourself"
-                                className="w-full"
+                                className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-primary)]/70 hover:border-[color:var(--ai-primary)]/40 transition-all duration-300"
                             />
                         </div>
-                    </div>
-
-                    <div className="mt-6">
+                    </div>                    <div className="mt-6">
                         <Button
                             color="primary"
                             startContent={<FiSave />}
                             onClick={updateProfileDetails}
                             isLoading={isLoading}
+                            className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] border-none text-white font-medium px-5 py-2 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
                         >
                             Save Profile
                         </Button>
@@ -266,255 +267,305 @@ export default function ProfileSettings() {
             </Card>
 
             {/* Email Settings */}
-            <Card className="border border-[color:var(--ai-card-border)] shadow-sm">
-                <CardBody>
-                    <h2 className="text-lg font-semibold mb-4 text-[color:var(--ai-foreground)] flex items-center gap-2">
-                        <FiMail className="text-[color:var(--ai-primary)]" />
-                        Email Settings
-                    </h2>
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.4 }}
+            >
+                <Card className="border border-[color:var(--ai-card-border)]/50 shadow-lg rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)]/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+                    <div className="h-1 w-full bg-gradient-to-r from-[color:var(--ai-secondary)]/80 to-[color:var(--ai-primary)]/80"></div>
+                    <CardBody className="p-6">
+                        <h2 className="text-lg font-semibold mb-4 text-[color:var(--ai-foreground)] flex items-center gap-2">
+                            <div className="p-2 rounded-full bg-gradient-to-r from-[color:var(--ai-secondary)]/20 to-[color:var(--ai-primary)]/20">
+                                <FiMail className="text-[color:var(--ai-secondary)]" />
+                            </div>
+                            Email Settings
+                        </h2>                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
+                                    Email Address
+                                </label>
+                                <Input
+                                    name="email"
+                                    value={form.email}
+                                    onChange={handleChange}
+                                    placeholder="your@email.com"
+                                    startContent={<FiMail className="text-[color:var(--ai-secondary)]" />}
+                                    className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-secondary)]/70 hover:border-[color:var(--ai-secondary)]/40 transition-all duration-300"
+                                />
+                            </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Email Address
-                            </label>
-                            <Input
-                                name="email"
-                                value={form.email}
-                                onChange={handleChange}
-                                placeholder="your@email.com"
-                                startContent={<FiMail className="text-gray-400" />}
-                                className="w-full"
-                            />
+                            <div>
+                                <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
+                                    Current Password
+                                </label>
+                                <Input
+                                    type="password"
+                                    name="currentPassword"
+                                    value={form.currentPassword}
+                                    onChange={handleChange}
+                                    placeholder="Enter current password"
+                                    startContent={<FiLock className="text-[color:var(--ai-secondary)]" />}
+                                    className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-secondary)]/70 hover:border-[color:var(--ai-secondary)]/40 transition-all duration-300"
+                                />
+                            </div>
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Current Password
-                            </label>
-                            <Input
-                                type="password"
-                                name="currentPassword"
-                                value={form.currentPassword}
-                                onChange={handleChange}
-                                placeholder="Enter current password"
-                                className="w-full"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="mt-6">
-                        <Button
-                            color="primary"
-                            startContent={<FiSave />}
-                            onClick={updateUserEmail}
-                            isLoading={isLoading}
-                        >
-                            Update Email
-                        </Button>
-                    </div>
-                </CardBody>
-            </Card>
+                        <div className="mt-6">
+                            <Button
+                                color="primary"
+                                startContent={<FiSave />}
+                                onClick={updateUserEmail}
+                                isLoading={isLoading}
+                                className="bg-gradient-to-r from-[color:var(--ai-secondary)] to-[color:var(--ai-primary)] border-none text-white font-medium px-5 py-2 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+                            >
+                                Update Email
+                            </Button>
+                        </div>                </CardBody>
+                </Card>
+            </motion.div>
 
             {/* Password Settings */}
-            <Card className="border border-gray-200 dark:border-gray-800">
-                <CardBody>
-                    <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
-                        <FiLock className="text-indigo-500" />
-                        Password Settings
-                    </h2>
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.4 }}
+            >
+                <Card className="border border-[color:var(--ai-card-border)]/50 shadow-lg rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)]/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+                    <div className="h-1 w-full bg-gradient-to-r from-[color:var(--ai-accent)]/80 to-[color:var(--ai-secondary)]/80"></div>
+                    <CardBody className="p-6">
+                        <h2 className="text-lg font-semibold mb-4 text-[color:var(--ai-foreground)] flex items-center gap-2">
+                            <div className="p-2 rounded-full bg-gradient-to-r from-[color:var(--ai-accent)]/20 to-[color:var(--ai-secondary)]/20">
+                                <FiLock className="text-[color:var(--ai-accent)]" />
+                            </div>
+                            Password Settings
+                        </h2>                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                                <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
+                                    Current Password
+                                </label>
+                                <Input
+                                    type="password"
+                                    name="currentPassword"
+                                    value={form.currentPassword}
+                                    onChange={handleChange}
+                                    placeholder="Enter current password"
+                                    startContent={<FiLock className="text-[color:var(--ai-accent)]" />}
+                                    className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-accent)]/70 hover:border-[color:var(--ai-accent)]/40 transition-all duration-300"
+                                />
+                            </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Current Password
-                            </label>
-                            <Input
-                                type="password"
-                                name="currentPassword"
-                                value={form.currentPassword}
-                                onChange={handleChange}
-                                placeholder="Enter current password"
-                                className="w-full"
-                            />
+                            <div>
+                                <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
+                                    New Password
+                                </label>
+                                <Input
+                                    type="password"
+                                    name="newPassword" value={form.newPassword}
+                                    onChange={handleChange}
+                                    placeholder="Enter new password"
+                                    startContent={<FiLock className="text-[color:var(--ai-accent)]" />}
+                                    className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-accent)]/70 hover:border-[color:var(--ai-accent)]/40 transition-all duration-300"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
+                                    Confirm Password
+                                </label>
+                                <Input
+                                    type="password"
+                                    name="confirmPassword"
+                                    value={form.confirmPassword}
+                                    onChange={handleChange}
+                                    placeholder="Confirm new password"
+                                    startContent={<FiLock className="text-[color:var(--ai-accent)]" />}
+                                    className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-accent)]/70 hover:border-[color:var(--ai-accent)]/40 transition-all duration-300"
+                                />
+                            </div>
+                        </div>                        <div className="mt-6">
+                            <Button
+                                color="primary"
+                                startContent={<FiSave />}
+                                onClick={changePassword}
+                                isLoading={isLoading}
+                                className="bg-gradient-to-r from-[color:var(--ai-accent)] to-[color:var(--ai-secondary)] border-none text-white font-medium px-5 py-2 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+                            >
+                                Update Password
+                            </Button>
                         </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                New Password
-                            </label>
-                            <Input
-                                type="password"
-                                name="newPassword"
-                                value={form.newPassword}
-                                onChange={handleChange}
-                                placeholder="Enter new password"
-                                className="w-full"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Confirm Password
-                            </label>
-                            <Input
-                                type="password"
-                                name="confirmPassword"
-                                value={form.confirmPassword}
-                                onChange={handleChange}
-                                placeholder="Confirm new password"
-                                className="w-full"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="mt-6">
-                        <Button
-                            color="primary"
-                            startContent={<FiSave />}
-                            onClick={changePassword}
-                            isLoading={isLoading}
-                        >
-                            Update Password
-                        </Button>
-                    </div>
-                </CardBody>
-            </Card>
+                    </CardBody>
+                </Card>
+            </motion.div>
 
             {/* Notification Preferences */}
-            <Card className="border border-gray-200 dark:border-gray-800">
-                <CardBody>
-                    <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
-                        <FiBell className="text-indigo-500" />
-                        Notification Preferences
-                    </h2>
-
-                    <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Email Notifications</h3>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">Receive important updates via email</p>
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.4 }}
+            >
+                <Card className="border border-[color:var(--ai-card-border)]/50 shadow-lg rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)]/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+                    <div className="h-1 w-full bg-gradient-to-r from-[color:var(--ai-success)]/80 to-[color:var(--ai-primary)]/80"></div>
+                    <CardBody className="p-6">
+                        <h2 className="text-lg font-semibold mb-4 text-[color:var(--ai-foreground)] flex items-center gap-2">
+                            <div className="p-2 rounded-full bg-gradient-to-r from-[color:var(--ai-success)]/20 to-[color:var(--ai-primary)]/20">
+                                <FiBell className="text-[color:var(--ai-success)]" />
                             </div>
-                            <Switch
-                                isSelected={form.emailNotifications}
-                                onChange={(e) => handleSwitchChange('emailNotifications', e.target.checked)}
-                            />
-                        </div>
-
-                        <Divider />
-
-                        <div className="flex justify-between items-center">
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Course Updates</h3>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">Get notified when courses you're enrolled in are updated</p>
+                            Notification Preferences
+                        </h2>                        <div className="space-y-6 py-2">
+                            <div className="flex justify-between items-center p-3 rounded-lg bg-[color:var(--ai-card-bg)]/50 hover:bg-[color:var(--ai-card-bg)] transition-all duration-300 border border-[color:var(--ai-card-border)]/30">
+                                <div>
+                                    <h3 className="text-sm font-medium text-[color:var(--ai-foreground)]">Email Notifications</h3>
+                                    <p className="text-xs text-[color:var(--ai-muted)]">Receive important updates via email</p>
+                                </div>
+                                <Switch
+                                    isSelected={form.emailNotifications}
+                                    onChange={(e) => handleSwitchChange('emailNotifications', e.target.checked)}
+                                    color="success"
+                                    classNames={{
+                                        base: "bg-[color:var(--ai-card-bg)]/70"
+                                    }}
+                                />
                             </div>
-                            <Switch
-                                isSelected={form.courseUpdates}
-                                onChange={(e) => handleSwitchChange('courseUpdates', e.target.checked)}
-                            />
-                        </div>
 
-                        <Divider />
-
-                        <div className="flex justify-between items-center">
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Marketing Emails</h3>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">Receive promotions and special offers</p>
+                            <div className="flex justify-between items-center p-3 rounded-lg bg-[color:var(--ai-card-bg)]/50 hover:bg-[color:var(--ai-card-bg)] transition-all duration-300 border border-[color:var(--ai-card-border)]/30">
+                                <div>
+                                    <h3 className="text-sm font-medium text-[color:var(--ai-foreground)]">Course Updates</h3>
+                                    <p className="text-xs text-[color:var(--ai-muted)]">Get notified when courses you're enrolled in are updated</p>
+                                </div>
+                                <Switch
+                                    isSelected={form.courseUpdates}
+                                    onChange={(e) => handleSwitchChange('courseUpdates', e.target.checked)}
+                                    color="success"
+                                    classNames={{
+                                        base: "bg-[color:var(--ai-card-bg)]/70"
+                                    }}
+                                />
                             </div>
-                            <Switch
-                                isSelected={form.marketingEmails}
-                                onChange={(e) => handleSwitchChange('marketingEmails', e.target.checked)}
-                            />
-                        </div>
-                    </div>
 
-                    <div className="mt-6">
-                        <Button
-                            color="primary"
-                            startContent={<FiSave />}
-                            onClick={updateNotificationSettings}
-                        >
-                            Save Preferences
-                        </Button>
-                    </div>
-                </CardBody>
-            </Card>
+                            <div className="flex justify-between items-center p-3 rounded-lg bg-[color:var(--ai-card-bg)]/50 hover:bg-[color:var(--ai-card-bg)] transition-all duration-300 border border-[color:var(--ai-card-border)]/30">
+                                <div>
+                                    <h3 className="text-sm font-medium text-[color:var(--ai-foreground)]">Marketing Emails</h3>
+                                    <p className="text-xs text-[color:var(--ai-muted)]">Receive promotions and special offers</p>
+                                </div>
+                                <Switch
+                                    isSelected={form.marketingEmails}
+                                    onChange={(e) => handleSwitchChange('marketingEmails', e.target.checked)}
+                                    color="success"
+                                    classNames={{
+                                        base: "bg-[color:var(--ai-card-bg)]/70"
+                                    }}
+                                />
+                            </div>
+                        </div>                        <div className="mt-6">
+                            <Button
+                                color="success"
+                                startContent={<FiSave />}
+                                onClick={updateNotificationSettings}
+                                isLoading={isLoading}
+                                className="bg-gradient-to-r from-[color:var(--ai-success)] to-[color:var(--ai-primary)] border-none text-white font-medium px-5 py-2 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+                            >
+                                Save Preferences
+                            </Button>
+                        </div>
+                    </CardBody>
+                </Card>
+            </motion.div>
 
             {/* Language Settings */}
-            <Card className="border border-gray-200 dark:border-gray-800">
-                <CardBody>
-                    <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
-                        <FiGlobe className="text-indigo-500" />
-                        Language Settings
-                    </h2>
-
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Preferred Language
-                        </label>
-                        <select
-                            title="Language"
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                            value={form.language}
-                            onChange={(e) => setForm(prev => ({ ...prev, language: e.target.value }))}
-                        >
-                            <option value="en">English</option>
-                            <option value="ro">Romanian</option>
-                            <option value="es">Spanish</option>
-                            <option value="fr">French</option>
-                            <option value="de">German</option>
-                        </select>
-                    </div>
-
-                    <div className="mt-6">
-                        <Button
-                            color="primary"
-                            startContent={<FiSave />}
-                            onClick={async () => {
-                                setIsLoading(true);
-                                try {
-                                    await saveUserPreferences({
-                                        language: form.language
-                                    });
-                                    setMessage({
-                                        type: 'success',
-                                        text: 'Language preferences saved!'
-                                    });
-                                } catch (error: any) {
-                                    setMessage({
-                                        type: 'error',
-                                        text: error.message || 'Failed to update language preferences.'
-                                    });
-                                } finally {
-                                    setIsLoading(false);
-                                }
-                            }}
-                            isLoading={isLoading}
-                        >
-                            Save Language
-                        </Button>
-                    </div>
-                </CardBody>
-            </Card>
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.4 }}
+            >
+                <Card className="border border-[color:var(--ai-card-border)]/50 shadow-lg rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)]/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+                    <div className="h-1 w-full bg-gradient-to-r from-[color:var(--ai-primary)]/80 to-[color:var(--ai-accent)]/80"></div>
+                    <CardBody className="p-6">
+                        <h2 className="text-lg font-semibold mb-4 text-[color:var(--ai-foreground)] flex items-center gap-2">
+                            <div className="p-2 rounded-full bg-gradient-to-r from-[color:var(--ai-primary)]/20 to-[color:var(--ai-accent)]/20">
+                                <FiGlobe className="text-[color:var(--ai-primary)]" />
+                            </div>
+                            Language Settings
+                        </h2>                        <div className="mb-6">
+                            <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
+                                Preferred Language
+                            </label>
+                            <select
+                                title="Language"
+                                className="w-full px-4 py-3 border border-[color:var(--ai-card-border)]/50 rounded-lg shadow-sm 
+                                focus:outline-none focus:ring-2 focus:ring-[color:var(--ai-primary)]/20 focus:border-[color:var(--ai-primary)]/70 
+                                bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm text-[color:var(--ai-foreground)]
+                                hover:border-[color:var(--ai-primary)]/40 transition-all duration-300"
+                                value={form.language}
+                                onChange={(e) => setForm(prev => ({ ...prev, language: e.target.value }))}
+                            >
+                                <option value="en">English</option>
+                                <option value="ro">Romanian</option>
+                                <option value="es">Spanish</option>
+                                <option value="fr">French</option>
+                                <option value="de">German</option>
+                            </select>
+                        </div>                        <div className="mt-6">
+                            <Button
+                                color="primary"
+                                startContent={<FiSave />}
+                                onClick={async () => {
+                                    setIsLoading(true);
+                                    try {
+                                        await saveUserPreferences({
+                                            language: form.language
+                                        });
+                                        showToast({
+                                            type: 'success',
+                                            title: 'Language Updated',
+                                            message: 'Language preferences saved successfully!'
+                                        });
+                                    } catch (error: any) {
+                                        showToast({
+                                            type: 'error',
+                                            title: 'Update Failed',
+                                            message: error.message || 'Failed to update language preferences.'
+                                        });
+                                    } finally {
+                                        setIsLoading(false);
+                                    }
+                                }}
+                                isLoading={isLoading}
+                                className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-accent)] border-none text-white font-medium px-5 py-2 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+                            >
+                                Save Language
+                            </Button>
+                        </div>
+                    </CardBody>                </Card>
+            </motion.div>
 
             {/* Appearance Settings */}
-            <Card className="border border-gray-200 dark:border-gray-800">
-                <CardBody>
-                    <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
-                        <FiSettings className="text-indigo-500" />
-                        Appearance Settings
-                    </h2>
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.4 }}
+            >
+                <Card className="border border-[color:var(--ai-card-border)]/50 shadow-lg rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)]/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+                    <div className="h-1 w-full bg-gradient-to-r from-[color:var(--ai-secondary)]/80 to-[color:var(--ai-accent)]/80"></div>
+                    <CardBody className="p-6">
+                        <h2 className="text-lg font-semibold mb-6 text-[color:var(--ai-foreground)] flex items-center gap-2">
+                            <div className="p-2 rounded-full bg-gradient-to-r from-[color:var(--ai-secondary)]/20 to-[color:var(--ai-accent)]/20">
+                                <FiSettings className="text-[color:var(--ai-secondary)]" />
+                            </div>
+                            Appearance Settings
+                        </h2>
 
-                    <ThemeSelector
-                        onThemeChange={(theme) => {
-                            setMessage({
-                                type: 'success',
-                                text: `Theme changed to ${theme.replace('-', ' ')}!`
-                            });
-                        }}
-                    />
-                </CardBody>
-            </Card>
+                        <ThemeSelector
+                            onThemeChange={(theme) => {
+                                setMessage({
+                                    type: 'success',
+                                    text: `Theme changed to ${theme.replace('-', ' ')}!`
+                                });
+                            }}
+                        />
+                    </CardBody>
+                </Card>
+            </motion.div>
         </div>
     );
 }

@@ -261,6 +261,16 @@ interface LessonItemProps {
 }
 
 const LessonItem: React.FC<LessonItemProps> = ({ lesson, index, isCompleted, isAccessible, onClick }) => {
+    // Format duration in minutes to "HH:MM" format or "MM min" if less than an hour
+    const formatDuration = (minutes?: number) => {
+        if (!minutes) return "00:00";
+        const hrs = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        return hrs > 0
+            ? `${hrs}:${mins.toString().padStart(2, '0')}`
+            : `${mins} min`;
+    };
+
     const getIcon = () => {
         if (isCompleted) {
             return <FiCheck className="text-[color:var(--ai-success, #10b981)]" />;
@@ -321,15 +331,12 @@ const LessonItem: React.FC<LessonItemProps> = ({ lesson, index, isCompleted, isA
                         {lesson.description}
                     </p>
                 )}
-            </div>
-
-            <div className="ml-4 flex-shrink-0 flex items-center gap-3">
-                {lesson.duration && (
+            </div>            <div className="ml-4 flex-shrink-0 flex items-center gap-3">
+                {lesson.durationMinutes && (
                     <span className="text-xs text-[color:var(--ai-muted)] flex items-center">
                         <FiClock className="mr-1 h-3.5 w-3.5" />
-                        {lesson.duration}
-                    </span>
-                )}
+                        {formatDuration(lesson.durationMinutes)}
+                    </span>)}
 
                 {!isAccessible ? (
                     <span className="text-xs bg-[color:var(--ai-card-border)]/20 text-[color:var(--ai-muted)] px-2 py-1 rounded-full">
@@ -340,7 +347,11 @@ const LessonItem: React.FC<LessonItemProps> = ({ lesson, index, isCompleted, isA
                         <FiCheck className="h-3 w-3" />
                         Completed
                     </span>
-                ) : null}
+                ) : (
+                    <span className="text-xs bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] px-2 py-1 rounded-full">
+                        Not completed
+                    </span>
+                )}
             </div>
         </div>
     );

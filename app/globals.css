@@ -13,11 +13,11 @@
 /* Dark mode variables */
 .dark {
   --foreground-rgb: 255, 255, 255;
-  --background-start-rgb: 15, 23, 42;
-  --background-end-rgb: 10, 15, 30;
-  --section-light-bg: #1e293b;
-  --section-dark-bg: #0f172a;
-  --section-accent-bg: #283548;
+  --background-start-rgb: 3, 4, 7;
+  --background-end-rgb: 1, 2, 5;
+  --section-light-bg: #0a0e17;
+  --section-dark-bg: #050709;
+  --section-accent-bg: #0c1118;
 }
 
 body {
@@ -318,12 +318,13 @@ body {
   --ai-primary: #818cf8;
   --ai-secondary: #a78bfa;
   --ai-accent: #f472b6;
-  --ai-background: #0f172a;
-  /* Default dark background */
+  --ai-background: #030305;
+  /* Almost pure black background with minimal tint */
   --ai-foreground: #f8fafc;
   --ai-muted: #94a3b8;
-  --ai-card-bg: #1e293b;
-  --ai-card-border: #334155;
+  --ai-card-bg: #0a0d14;
+  /* Nearly black card background */
+  --ai-card-border: #243247;
   --ai-primary-rgb: 129, 140, 248;
   /* #818cf8 */
   --ai-secondary-rgb: 167, 139, 250;
@@ -349,11 +350,11 @@ html.dark.theme-modern-purple {
   --ai-primary: #818cf8;
   --ai-secondary: #a78bfa;
   --ai-accent: #f472b6;
-  --ai-background: #0f172a;
-  --background-start-rgb: 16, 24, 46;
-  /* Slightly purplish dark background */
-  --background-end-rgb: 12, 17, 35;
-  --section-dark-bg: #111936;
+  --ai-background: #030307;
+  --background-start-rgb: 3, 3, 9;
+  /* Very dark with minimal purple tint */
+  --background-end-rgb: 1, 1, 6;
+  --section-dark-bg: #04050c;
 }
 
 /* Theme: Black and White */
@@ -369,11 +370,11 @@ html.dark.theme-black-white {
   --ai-secondary: #d4d4d4;
   --ai-accent: #a3a3a3;
   --ai-card-border: #525252;
-  --ai-background: #0f1724;
-  --background-start-rgb: 16, 23, 36;
-  /* Slightly cooler dark background */
-  --background-end-rgb: 12, 16, 28;
-  --section-dark-bg: #101724;
+  --ai-background: #020304;
+  --background-start-rgb: 2, 3, 4;
+  /* Almost pure black with minimal cool tint */
+  --background-end-rgb: 1, 1, 2;
+  --section-dark-bg: #030405;
 }
 
 /* Theme: Green Neon */
@@ -387,11 +388,11 @@ html.dark.theme-green-neon {
   --ai-primary: #4ade80;
   --ai-secondary: #22c55e;
   --ai-accent: #86efac;
-  --ai-background: #0f1a2a;
-  --background-start-rgb: 13, 26, 42;
-  /* Subtle green tint in dark background */
-  --background-end-rgb: 10, 20, 32;
-  --section-dark-bg: #0e1e2c;
+  --ai-background: #020603;
+  --background-start-rgb: 2, 6, 3;
+  /* Almost black with minimal green tint */
+  --background-end-rgb: 1, 3, 2;
+  --section-dark-bg: #030704;
 }
 
 /* Theme: Blue Ocean */
@@ -405,11 +406,11 @@ html.dark.theme-blue-ocean {
   --ai-primary: #38bdf8;
   --ai-secondary: #0ea5e9;
   --ai-accent: #7dd3fc;
-  --ai-background: #0a192f;
-  --background-start-rgb: 10, 25, 47;
-  /* Subtle blue tint in dark background */
-  --background-end-rgb: 8, 20, 38;
-  --section-dark-bg: #0b1a2e;
+  --ai-background: #020508;
+  --background-start-rgb: 2, 5, 8;
+  /* Almost black with minimal blue tint */
+  --background-end-rgb: 1, 3, 6;
+  --section-dark-bg: #030609;
 }
 
 /* Theme: Brown Sunset */
@@ -423,11 +424,11 @@ html.dark.theme-brown-sunset {
   --ai-primary: #f59e0b;
   --ai-secondary: #d97706;
   --ai-accent: #fbbf24;
-  --ai-background: #171520;
-  --background-start-rgb: 23, 21, 32;
-  /* Subtle brown/amber tint in dark background */
-  --background-end-rgb: 18, 16, 26;
-  --section-dark-bg: #18161f;
+  --ai-background: #050403;
+  --background-start-rgb: 5, 4, 3;
+  /* Almost black with minimal brown/amber tint */
+  --background-end-rgb: 3, 2, 1;
+  --section-dark-bg: #060504;
 }
 
 /* Theme: Yellow Morning */
@@ -441,11 +442,11 @@ html.dark.theme-yellow-morning {
   --ai-primary: #facc15;
   --ai-secondary: #eab308;
   --ai-accent: #fde047;
-  --ai-background: #171a24;
-  --background-start-rgb: 23, 26, 36;
-  /* Subtle yellow/gold tint in dark background */
-  --background-end-rgb: 18, 21, 30;
-  --section-dark-bg: #161922;
+  --ai-background: #050503;
+  --background-start-rgb: 5, 5, 3;
+  /* Almost black with minimal yellow/gold tint */
+  --background-end-rgb: 3, 3, 1;
+  --section-dark-bg: #060604;
 }
 
 /* Theme: Red Blood */
@@ -459,10 +460,10 @@ html.dark.theme-red-blood {
   --ai-primary: #ef4444;
   --ai-secondary: #dc2626;
   --ai-accent: #f87171;
-  --ai-background: #17141a;
-  --background-start-rgb: 23, 20, 26;
-  /* Subtle red tint in dark background */
-  --background-end-rgb: 19, 16, 22;
+  --ai-background: #050303;
+  --background-start-rgb: 5, 3, 3;
+  /* Almost black with minimal red tint */
+  --background-end-rgb: 3, 2, 2;
   --section-dark-bg: #18151b;
 }
 

@@ -23,6 +23,16 @@ export default function EnhancedLessonsList({
     const params = useParams();
     const courseId = propsCourseId || params.courseId;
 
+    // Format duration in minutes to "HH:MM" format or "MM min" if less than an hour
+    const formatDuration = (minutes?: number) => {
+        if (!minutes) return "00:00";
+        const hrs = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        return hrs > 0
+            ? `${hrs}:${mins.toString().padStart(2, '0')}`
+            : `${mins} min`;
+    };
+
     if (!lessons || lessons.length === 0) {
         return (
             <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-[color:var(--ai-accent)]/10 backdrop-blur-sm rounded-xl p-6 border border-[color:var(--ai-card-border)]/50 shadow-md">
@@ -69,40 +79,71 @@ export default function EnhancedLessonsList({
         const orderA = a.order || 0;
         const orderB = b.order || 0;
         return orderA - orderB;
-    });
-
-    // Calculate total duration
+    });    // Calculate total duration in minutes
     const totalDuration = sortedLessons.reduce((total, lesson) => {
-        // Make sure we're working with numbers
-        const duration = typeof lesson.duration === 'number' ? lesson.duration :
-            (typeof lesson.duration === 'string' ? parseInt(lesson.duration, 10) : 30);
-        return total + duration;
+        // Use durationMinutes with fallback to numeric duration or 0
+        const durationMins = lesson.durationMinutes ||
+            (typeof lesson.duration === 'number' ? lesson.duration :
+                (typeof lesson.duration === 'string' ? parseInt(lesson.duration, 10) : 0));
+        return total + durationMins;
     }, 0);
+
+    // Calculate completed duration (sum of durations of completed lessons)
+    const completedDuration = sortedLessons.reduce((total, lesson) => {
+        if (completedLessons[lesson.id]) {
+            const durationMins = lesson.durationMinutes ||
+                (typeof lesson.duration === 'number' ? lesson.duration :
+                    (typeof lesson.duration === 'string' ? parseInt(lesson.duration, 10) : 0));
+            return total + durationMins;
+        }
+        return total;
+    }, 0);
+
+    // Calculate remaining duration
+    const remainingDuration = totalDuration - completedDuration;
+
+    // Format total duration
     const hours = Math.floor(totalDuration / 60);
     const minutes = totalDuration % 60;
     const durationText = hours > 0
         ? `${hours} ${hours === 1 ? 'hour' : 'hours'}${minutes > 0 ? ` ${minutes} min` : ''}`
         : `${minutes} minutes`;
 
+    // Format remaining duration
+    const remainingHours = Math.floor(remainingDuration / 60);
+    const remainingMinutes = remainingDuration % 60;
+    const remainingText = remainingHours > 0
+        ? `${remainingHours}h ${remainingMinutes}m`
+        : `${remainingMinutes} min`;
+
     return (
         <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-[color:var(--ai-accent)]/5 backdrop-blur-sm rounded-xl p-6 border border-[color:var(--ai-card-border)]/50 shadow-md">
-            <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <div>
-                    <h2 className="text-xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-1">
-                        Course Content
-                    </h2>
-                    <div className="flex items-center gap-3 text-[color:var(--ai-muted)] text-sm">
-                        <div className="flex items-center gap-1">
-                            <FiBookOpen className="w-3.5 h-3.5" />
-                            <span>{sortedLessons.length} lessons</span>
-                        </div>
-                        <span>•</span>
-                        <div className="flex items-center gap-1">
-                            <FiClock className="w-3.5 h-3.5" />
-                            <span>{durationText}</span>
-                        </div>
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">                <div>
+                <h2 className="text-xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-1">
+                    Course Content
+                </h2>
+                <div className="flex items-center gap-3 text-[color:var(--ai-muted)] text-sm">
+                    <div className="flex items-center gap-1">
+                        <FiBookOpen className="w-3.5 h-3.5" />
+                        <span>{sortedLessons.length} lessons</span>
                     </div>
+                    <span>•</span>
+                    <div className="flex items-center gap-1">
+                        <FiClock className="w-3.5 h-3.5" />
+                        <span>{durationText} total</span>
+                    </div>
+
+                    {userHasAccess && Object.keys(completedLessons).length > 0 && (
+                        <>
+                            <span>•</span>
+                            <div className="flex items-center gap-1 text-[color:var(--ai-primary)]">
+                                <FiClock className="w-3.5 h-3.5" />
+                                <span>{remainingText} remaining</span>
+                            </div>
+                        </>
+                    )}
                 </div>
+            </div>
 
                 {userHasAccess && Object.keys(completedLessons).length > 0 && (
                     <div className="bg-[color:var(--ai-primary)]/10 px-3 py-2 rounded-lg text-sm">
@@ -185,9 +226,10 @@ export default function EnhancedLessonsList({
                                                     </span>
                                                 )}
                                             </div>
-                                        </div>
-                                        <div className="flex flex-col items-end gap-2">
-                                            <span className="text-sm text-[color:var(--ai-muted)]">{lesson.duration || 30} min</span>
+                                        </div>                                        <div className="flex flex-col items-end gap-2">
+                                            <span className="text-sm text-[color:var(--ai-muted)]">
+                                                {formatDuration(lesson.durationMinutes)}
+                                            </span>
 
                                             {isCompleted && (
                                                 <span className="text-xs font-medium bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] px-2 py-0.5 rounded-full">
