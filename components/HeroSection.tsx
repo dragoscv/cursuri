@@ -103,7 +103,7 @@ export default function HeroSection() {
                 topTechnologies: finalTechnologies
             })
         }
-    }, [courses, userPaidProducts, reviews])
+    }, [courses, userPaidProducts, reviews]);
 
     const handleGetStarted = () => {
         if (!user) {
@@ -111,8 +111,8 @@ export default function HeroSection() {
                 id: 'login',
                 isOpen: true,
                 hideCloseButton: false,
-                backdrop: 'blur',
-                size: 'full',
+                backdrop: 'opaque',
+                size: 'md',
                 scrollBehavior: 'inside',
                 isDismissable: true,
                 modalHeader: 'Autentificare',
@@ -121,6 +121,10 @@ export default function HeroSection() {
                 footerDisabled: true,
                 noReplaceURL: true,
                 onClose: () => closeModal('login'),
+                classNames: {
+                    backdrop: "z-50 backdrop-blur-md backdrop-saturate-150 bg-black/50 dark:bg-black/50 w-screen min-h-[100dvh] fixed inset-0",
+                    base: "z-50 mx-auto my-auto w-full max-w-md rounded-2xl outline-none bg-transparent shadow-2xl",
+                },
             })
         } else {
             // Smooth scroll to courses section

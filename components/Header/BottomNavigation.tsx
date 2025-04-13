@@ -24,7 +24,7 @@ export default function BottomNavigation() {
     const navItems = [
         { label: 'Explore', href: '/courses', icon: FiHome },
         { label: 'My Courses', href: '/profile/courses', icon: FiBookOpen },
-        { label: 'Profile', href: '/profile/settings', icon: FiSettings },
+        { label: 'Profile', href: '/profile', icon: FiSettings },
     ]; return (<div className="md:hidden fixed bottom-0 left-0 right-0 z-50 overflow-hidden">
         {/* Themed blur background that stays within rounded corners */}
         <div className="absolute inset-x-0 bottom-0 h-full rounded-t-xl bg-gradient-to-b from-[color:var(--ai-primary)]/5 to-[color:var(--ai-secondary)]/5 backdrop-blur-xl overflow-hidden"></div>

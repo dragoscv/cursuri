@@ -96,157 +96,217 @@ export default function PaymentHistory() {
             month: 'long',
             day: 'numeric',
         });
-    };
-
-    if (!user) {
+    }; if (!user) {
         return null;
     }
 
     return (
         <div>
-            <div className="mb-6">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Payment History</h1>
-                <p className="text-gray-600 dark:text-gray-400">
-                    View your transaction history and download invoices.
-                </p>
-            </div>
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="mb-8"
+            >
+                <div className="flex flex-col gap-2">
+                    <h1 className="text-3xl font-bold text-[color:var(--ai-foreground)] mb-2">
+                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]">
+                            Payment History
+                        </span>
+                    </h1>
+                    <p className="text-[color:var(--ai-muted)] max-w-2xl">
+                        View your transaction history and download invoices for all your course purchases.
+                    </p>
+                </div>
+                <div className="h-1 w-24 mt-4 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-full"></div>
+            </motion.div>
 
             {/* Filters and search */}
-            <div className="flex flex-col md:flex-row gap-4 mb-6">
+            <div className="flex flex-col md:flex-row gap-4 mb-8">
                 <Input
-                    className="md:max-w-xs"
+                    className="md:max-w-xs shadow-sm border border-[color:var(--ai-card-border)]"
                     placeholder="Search payments"
-                    startContent={<FiSearch className="text-gray-400" />}
+                    startContent={<FiSearch className="text-[color:var(--ai-muted)]" />}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
 
                 <div className="inline-flex gap-2 ml-auto">
                     <Button
-                        color="default"
+                        className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-primary)]/10 transition-all duration-300"
                         variant="flat"
                         size="sm"
-                        endContent={sortOrder === 'asc' ? <FiArrowUp /> : <FiArrowDown />}
+                        endContent={
+                            <div className="bg-[color:var(--ai-primary)]/10 p-1 rounded-full">
+                                {sortOrder === 'asc' ? <FiArrowUp className="text-[color:var(--ai-primary)]" /> :
+                                    <FiArrowDown className="text-[color:var(--ai-primary)]" />}
+                            </div>
+                        }
                         onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
                     >
                         {sortOrder === 'asc' ? 'Oldest First' : 'Newest First'}
                     </Button>
-                </div>
-            </div>
+                </div>            </div>
 
             {/* Payments List */}
             {filteredPayments.length > 0 ? (
-                <Card className="border border-gray-200 dark:border-gray-800">
-                    <CardBody className="p-0">
-                        <div className="overflow-x-auto">
-                            <table className="w-full min-w-full">
-                                <thead className="bg-gray-50 dark:bg-gray-800">
-                                    <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                            Invoice
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                            Course
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                            Date
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                            Amount
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                            Status
-                                        </th>
-                                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                            Actions
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
-                                    {filteredPayments.map((payment) => (
-                                        <tr key={payment.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                                                {payment.invoiceId}
+                <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                >
+                    <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/60 backdrop-blur-sm shadow-lg rounded-xl overflow-hidden">
+                        <div className="h-0.5 w-full bg-gradient-to-r from-[color:var(--ai-primary)]/40 via-[color:var(--ai-secondary)]/40 to-[color:var(--ai-accent)]/40"></div>
+                        <CardBody className="p-0">
+                            <div className="overflow-x-auto">
+                                <table className="w-full min-w-full">
+                                    <thead className="bg-[color:var(--ai-card-bg)]/80 border-b border-[color:var(--ai-card-border)]">
+                                        <tr>
+                                            <th className="px-6 py-4 text-left text-xs font-semibold text-[color:var(--ai-muted)] uppercase tracking-wider">
+                                                Invoice
+                                            </th>
+                                            <th className="px-6 py-4 text-left text-xs font-semibold text-[color:var(--ai-muted)] uppercase tracking-wider">
+                                                Course
+                                            </th>
+                                            <th className="px-6 py-4 text-left text-xs font-semibold text-[color:var(--ai-muted)] uppercase tracking-wider">
+                                                Date
+                                            </th>
+                                            <th className="px-6 py-4 text-left text-xs font-semibold text-[color:var(--ai-muted)] uppercase tracking-wider">
+                                                Amount
+                                            </th>
+                                            <th className="px-6 py-4 text-left text-xs font-semibold text-[color:var(--ai-muted)] uppercase tracking-wider">
+                                                Status
+                                            </th>
+                                            <th className="px-6 py-4 text-right text-xs font-semibold text-[color:var(--ai-muted)] uppercase tracking-wider">
+                                                Actions
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-[color:var(--ai-card-bg)] divide-y divide-[color:var(--ai-card-border)]">                                    {filteredPayments.map((payment, index) => (
+                                        <motion.tr
+                                            key={payment.id}
+                                            className="hover:bg-[color:var(--ai-primary)]/5 transition-colors duration-200"
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ duration: 0.3, delay: index * 0.05 }}
+                                        >
+                                            <td className="px-6 py-5 whitespace-nowrap text-sm font-medium text-[color:var(--ai-foreground)] font-mono">
+                                                <div className="flex items-center">
+                                                    <div className="w-8 h-8 flex items-center justify-center bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] rounded-full mr-2">
+                                                        <FiFileText className="w-4 h-4" />
+                                                    </div>
+                                                    {payment.invoiceId}
+                                                </div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
+                                            <td className="px-6 py-5 whitespace-nowrap text-sm text-[color:var(--ai-foreground)]">
                                                 <Link
                                                     href={`/courses/${payment.courseId}`}
-                                                    className="text-indigo-600 dark:text-indigo-400 hover:underline"
+                                                    className="text-[color:var(--ai-primary)] hover:text-[color:var(--ai-secondary)] transition-colors duration-200 hover:underline"
                                                 >
                                                     {payment.courseName}
                                                 </Link>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
+                                            <td className="px-6 py-5 whitespace-nowrap text-sm text-[color:var(--ai-foreground)]">
                                                 <div className="flex items-center">
-                                                    <FiCalendar className="mr-2 text-gray-400" />
+                                                    <div className="w-8 h-8 flex items-center justify-center bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] rounded-full mr-2">
+                                                        <FiCalendar className="w-4 h-4" />
+                                                    </div>
                                                     {formatDate(payment.date)}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                                                {formatCurrency(payment.amount, payment.currency)}
+                                            <td className="px-6 py-5 whitespace-nowrap text-sm font-medium text-[color:var(--ai-foreground)]">
+                                                <div className="font-mono bg-[color:var(--ai-card-bg)]/80 py-1.5 px-3 rounded-lg inline-flex">
+                                                    {formatCurrency(payment.amount, payment.currency)}
+                                                </div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
+                                            <td className="px-6 py-5 whitespace-nowrap">
                                                 <Chip
-                                                    color={payment.status === 'succeeded' ? 'success' : 'warning'}
+                                                    className={payment.status === 'succeeded'
+                                                        ? "bg-[color:var(--ai-success)]/10 text-[color:var(--ai-success)] border border-[color:var(--ai-success)]/20"
+                                                        : "bg-[color:var(--ai-warning)]/10 text-[color:var(--ai-warning)] border border-[color:var(--ai-warning)]/20"
+                                                    }
                                                     variant="flat"
                                                     size="sm"
                                                 >
                                                     {payment.status === 'succeeded' ? 'Paid' : payment.status}
                                                 </Chip>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-right">
+                                            <td className="px-6 py-5 whitespace-nowrap text-right">
                                                 <Button
-                                                    color="default"
-                                                    variant="light"
+                                                    className="bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] hover:bg-[color:var(--ai-primary)]/20 border border-[color:var(--ai-primary)]/20 transition-all duration-300"
+                                                    variant="flat"
                                                     size="sm"
-                                                    startContent={<FiDownload className="text-gray-600 dark:text-gray-400" />}
+                                                    startContent={<FiDownload className="w-4 h-4" />}
                                                     onClick={() => downloadInvoice(payment)}
                                                 >
                                                     Invoice
                                                 </Button>
                                             </td>
-                                        </tr>
+                                        </motion.tr>
                                     ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </CardBody>
-                </Card>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </CardBody>                    </Card>
+                </motion.div>
             ) : (
-                <div className="text-center py-12 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700">
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.4 }}
+                    className="text-center py-16 px-8 bg-[color:var(--ai-card-bg)]/60 backdrop-blur-sm rounded-xl border border-[color:var(--ai-card-border)] shadow-lg"
+                >
                     {searchTerm ? (
                         <>
-                            <FiSearch className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-                            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No matching payments found</h3>
-                            <p className="text-gray-600 dark:text-gray-400 mb-4">Try adjusting your search criteria.</p>
+                            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-[color:var(--ai-primary)]/10 flex items-center justify-center">
+                                <FiSearch className="w-10 h-10 text-[color:var(--ai-primary)]" />
+                            </div>
+                            <h3 className="text-xl font-bold text-[color:var(--ai-foreground)] mb-3">No matching payments found</h3>
+                            <p className="text-[color:var(--ai-muted)] mb-6 max-w-md mx-auto">We couldn't find any payments that match your search. Try adjusting your search criteria.</p>
                             <Button
-                                color="primary"
-                                variant="light"
+                                className="bg-[color:var(--ai-primary)] hover:bg-[color:var(--ai-primary)]/90 text-white transition-colors duration-300"
+                                variant="solid"
                                 onClick={() => setSearchTerm('')}
                             >
                                 Clear Search
                             </Button>
                         </>
                     ) : (
-                        <>                            <FiFileText className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-                            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No payment history yet</h3>
-                            <p className="text-gray-600 dark:text-gray-400 mb-4">You haven&apos;t made any purchases yet.</p>
+                        <>
+                            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-[color:var(--ai-primary)]/10 flex items-center justify-center">
+                                <FiFileText className="w-10 h-10 text-[color:var(--ai-primary)]" />
+                            </div>
+                            <h3 className="text-xl font-bold text-[color:var(--ai-foreground)] mb-3">No payment history yet</h3>
+                            <p className="text-[color:var(--ai-muted)] mb-6 max-w-md mx-auto">You haven&apos;t made any purchases yet. Start exploring our courses to find the perfect learning opportunity!</p>
                             <Link href="/courses">
-                                <Button color="primary">Browse Courses</Button>
+                                <Button className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white hover:opacity-90 transition-opacity duration-300">
+                                    Browse Courses
+                                </Button>
                             </Link>
                         </>
                     )}
-                </div>
-            )}
+                </motion.div>)}
 
             {/* Help text */}
-            <div className="mt-6 text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-                <p className="mb-2 font-medium">Need help with a payment?</p>
-                <p>
-                    If you have any questions about your payments or need assistance with refunds,
-                    please contact our support team at <a href="mailto:support@cursuri.com" className="text-indigo-600 dark:text-indigo-400 hover:underline">support@cursuri.com</a>.
-                </p>
-            </div>
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="mt-8 text-sm bg-[color:var(--ai-card-bg)]/60 backdrop-blur-sm p-6 rounded-xl border border-[color:var(--ai-card-border)] shadow-md"
+            >
+                <div className="flex items-start space-x-4">
+                    <div className="w-10 h-10 rounded-full bg-[color:var(--ai-primary)]/10 flex items-center justify-center flex-shrink-0">
+                        <FiFileText className="w-5 h-5 text-[color:var(--ai-primary)]" />
+                    </div>
+                    <div>
+                        <p className="mb-2 font-semibold text-[color:var(--ai-foreground)] text-base">Need help with a payment?</p>
+                        <p className="text-[color:var(--ai-muted)]">
+                            If you have any questions about your payments or need assistance with refunds,
+                            please contact our support team at <a href="mailto:support@cursuri.com" className="text-[color:var(--ai-primary)] hover:text-[color:var(--ai-secondary)] transition-colors duration-200 hover:underline">support@cursuri.com</a>.
+                        </p>
+                    </div>
+                </div>
+            </motion.div>
         </div>
     );
 }
