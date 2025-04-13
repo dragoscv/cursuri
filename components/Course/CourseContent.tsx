@@ -352,11 +352,11 @@ const LessonItem: React.FC<LessonItemProps> = ({ lesson, index, isCompleted, isA
                 </p>
             )}
         </div>            <div className="ml-4 flex-shrink-0 flex items-center gap-3">
-            {lesson.durationMinutes && (
+            {lesson.duration && (
                 <span className="text-xs text-[color:var(--ai-muted)] flex items-center">
                     <FiClock className="mr-1 h-3.5 w-3.5" />
-                    {formatDuration(lesson.durationMinutes)}
-                </span>)}                {!isAccessible ? (
+                    {lesson.duration}
+                </span>)}{!isAccessible ? (
                     <span className="text-xs bg-[color:var(--ai-card-border)]/20 text-[color:var(--ai-muted)] px-2 py-1 rounded-full flex items-center">
                         <FiLock className="h-3 w-3 mr-1" />
                         Locked

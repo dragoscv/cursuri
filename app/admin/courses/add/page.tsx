@@ -9,10 +9,9 @@ export default function AddCoursePage() {
         <div className="max-w-7xl mx-auto px-4">
 
 
-            <Card className="shadow-md">
-                <CardBody>
-                    <AddCourse />
-                </CardBody>
+            <Card className="shadow-md">                <CardBody>
+                <AddCourse onClose={() => { }} />
+            </CardBody>
             </Card>
         </div>
     );

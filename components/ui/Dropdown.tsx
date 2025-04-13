@@ -2,62 +2,23 @@
 
 import React, { forwardRef } from 'react';
 import {
-    Dropdown as HeroDropdown,
+    Dropdown as HeroDropdown, DropdownProps as HeroDropdownProps,
     DropdownTrigger as HeroDropdownTrigger,
     DropdownMenu as HeroDropdownMenu,
     DropdownItem as HeroDropdownItem,
-    DropdownSection as HeroDropdownSection,
-    type DropdownProps as HeroDropdownProps,
-    type DropdownMenuProps as HeroDropdownMenuProps,
-    type DropdownItemProps as HeroDropdownItemProps,
-    type DropdownSectionProps as HeroDropdownSectionProps
+    DropdownSection as HeroDropdownSection
 } from '@heroui/react';
 
-export interface DropdownProps {
+export interface DropdownProps extends Omit<HeroDropdownProps, 'children'> {
+    /**
+     * Additional CSS classes to apply
+     */
+    className?: string;
+
     /**
      * The content of the dropdown
      */
-    children: React.ReactNode;
-
-    /**
-     * The placement of the dropdown menu
-     */
-    placement?: 'top' | 'bottom' | 'right' | 'left' | 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end' | 'left-start' | 'left-end' | 'right-start' | 'right-end';
-
-    /**
-     * The offset of the dropdown menu
-     */
-    offset?: number;
-
-    /**
-     * The type of the dropdown trigger
-     */
-    type?: 'menu' | 'listbox';
-
-    /**
-     * Whether the dropdown is currently open
-     */
-    isOpen?: boolean;
-
-    /**
-     * The default open state
-     */
-    defaultOpen?: boolean;
-
-    /**
-     * Callback fired when the open state changes
-     */
-    onOpenChange?: (isOpen: boolean) => void;
-
-    /**
-     * Whether to show a backdrop
-     */
-    backdrop?: 'transparent' | 'blur' | 'opaque';
-
-    /**
-     * Whether to disable closing on blur
-     */
-    disableCloseOnBlur?: boolean;
+    children?: React.ReactNode;
 
     /**
      * Class names for different parts of the dropdown
@@ -65,230 +26,49 @@ export interface DropdownProps {
     classNames?: {
         base?: string;
         trigger?: string;
-        backdrop?: string;
         menu?: string;
+        arrow?: string;
+        content?: string;
+        backdrop?: string;
     };
-
-    /**
-     * Additional CSS class name
-     */
-    className?: string;
-
-    /**
-     * Additional props
-     */
-    [key: string]: any;
-}
-
-export interface DropdownMenuProps {
-    /**
-     * The content of the dropdown menu
-     */
-    children: React.ReactNode;
-
-    /**
-     * The variant of the dropdown menu
-     */
-    variant?: 'solid' | 'bordered' | 'light' | 'flat' | 'faded' | 'shadow';
-
-    /**
-     * The color of the dropdown menu
-     */
-    color?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
-
-    /**
-     * ARIA label for the dropdown menu
-     */
-    'aria-label'?: string;
-
-    /**
-     * Whether to disable item selection animation
-     */
-    disableAnimation?: boolean;
-
-    /**
-     * Item class names
-     */
-    itemClasses?: {
-        base?: string;
-        description?: string;
-        title?: string;
-        icon?: string;
-        shortcut?: string;
-    };
-
-    /**
-     * Class names for different parts of the dropdown menu
-     */
-    className?: string;
-
-    /**
-     * Additional props
-     */
-    [key: string]: any;
-}
-
-export interface DropdownItemProps {
-    /**
-     * The content of the dropdown item
-     */
-    children?: React.ReactNode;
-
-    /**
-     * The key of the dropdown item
-     */
-    key?: React.Key;
-
-    /**
-     * The description for the dropdown item
-     */
-    description?: string;
-
-    /**
-     * The title for the dropdown item
-     */
-    title?: string;
-
-    /**
-     * The text value of the dropdown item
-     */
-    textValue?: string;
-
-    /**
-     * The start content for the dropdown item
-     */
-    startContent?: React.ReactNode;
-
-    /**
-     * The end content for the dropdown item
-     */
-    endContent?: React.ReactNode;
-
-    /**
-     * The shortcut text for the dropdown item
-     */
-    shortcut?: string;
-
-    /**
-     * The color of the dropdown item
-     */
-    color?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
-
-    /**
-     * Whether the dropdown item has a divider
-     */
-    showDivider?: boolean;
-
-    /**
-     * Whether the dropdown item is disabled
-     */
-    isDisabled?: boolean;
-
-    /**
-     * Whether the dropdown item is read-only
-     */
-    isReadOnly?: boolean;
-
-    /**
-     * Whether the dropdown item is a dialog trigger
-     */
-    isDialogTrigger?: boolean;
-
-    /**
-     * Callback fired when the dropdown item is pressed
-     */
-    onPress?: () => void;
-
-    /**
-     * Additional CSS class name
-     */
-    className?: string;
-
-    /**
-     * Additional props
-     */
-    [key: string]: any;
-}
-
-export interface DropdownSectionProps {
-    /**
-     * The content of the dropdown section
-     */
-    children?: React.ReactNode;
-
-    /**
-     * Whether to show a divider after the section
-     */
-    showDivider?: boolean;
-
-    /**
-     * The title of the section
-     */
-    title?: string;
-
-    /**
-     * The ARIA label for the section
-     */
-    'aria-label'?: string;
-
-    /**
-     * Additional CSS class name
-     */
-    className?: string;
-
-    /**
-     * Additional props
-     */
-    [key: string]: any;
 }
 
 /**
- * Dropdown component for creating dropdown menus
+ * A dropdown menu for displaying lists of links and actions
  */
 const Dropdown = forwardRef<HTMLDivElement, DropdownProps>((props, ref) => {
     const {
         children,
-        placement = 'bottom',
-        offset = 7,
-        type = 'menu',
-        isOpen,
-        defaultOpen,
-        onOpenChange,
-        backdrop = 'transparent',
-        disableCloseOnBlur = false,
-        classNames = {},
         className = '',
+        classNames = {},
+        placement = 'bottom',
         ...rest
     } = props;
 
-    // Default theme-aligned styling
+    // Default theme-specific class names
     const defaultClassNames = {
         base: "z-40",
-        backdrop: backdrop === 'blur' ? "backdrop-blur-sm bg-black/10 dark:bg-black/30" : "",
-        menu: "bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)]/70 shadow-lg",
+        menu: "bg-[color:var(--ai-card-bg)] backdrop-blur-md border border-[color:var(--ai-card-border)]/50 shadow-md",
+        arrow: "bg-[color:var(--ai-card-bg)]",
+        backdrop: "backdrop-blur-sm bg-black/20"
     };
 
-    // Merge default classnames with user-provided ones
+    // Merge default class names with user-provided ones
     const mergedClassNames = {
         base: `${defaultClassNames.base} ${classNames.base || ''}`,
-        trigger: classNames.trigger || '',
-        backdrop: `${defaultClassNames.backdrop} ${classNames.backdrop || ''}`,
         menu: `${defaultClassNames.menu} ${classNames.menu || ''}`,
+        arrow: `${defaultClassNames.arrow} ${classNames.arrow || ''}`,
+        backdrop: `${defaultClassNames.backdrop} ${classNames.backdrop || ''}`,
+        content: classNames.content,
+        trigger: classNames.trigger
     };
 
     return (
         <HeroDropdown
             ref={ref}
-            placement={placement as HeroDropdownProps['placement']}
-            offset={offset}
-            type={type as HeroDropdownProps['type']}
-            isOpen={isOpen}
-            defaultOpen={defaultOpen}
-            onOpenChange={onOpenChange}
-            backdrop={backdrop as HeroDropdownProps['backdrop']}
-            disableCloseOnBlur={disableCloseOnBlur}
-            classNames={mergedClassNames}
             className={className}
+            classNames={mergedClassNames}
+            placement={placement}
             {...rest}
         >
             {children}
@@ -296,54 +76,105 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>((props, ref) => {
     );
 });
 
-/**
- * DropdownTrigger component for triggering the dropdown
- */
-const DropdownTrigger = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
-    const { className = '', ...rest } = props;
-    return <HeroDropdownTrigger ref={ref} className={className} {...rest} />;
-});
+Dropdown.displayName = 'Dropdown';
+
+export default Dropdown;
 
 /**
- * DropdownMenu component for the dropdown content container
+ * The trigger element that toggles the dropdown
  */
-const DropdownMenu = forwardRef<HTMLUListElement, DropdownMenuProps>((props, ref) => {
+export interface DropdownTriggerProps {
+    /**
+     * Additional CSS classes to apply
+     */
+    className?: string;
+
+    /**
+     * The content of the trigger
+     */
+    children?: React.ReactNode;
+}
+
+export const DropdownTrigger = forwardRef<HTMLDivElement, DropdownTriggerProps>((props, ref) => {
     const {
         children,
-        variant = 'solid',
-        color = 'default',
-        'aria-label': ariaLabel,
-        disableAnimation = false,
-        itemClasses = {},
         className = '',
         ...rest
     } = props;
 
-    // Default item classes with theming
-    const defaultItemClasses = {
-        base: "text-[color:var(--ai-foreground)] data-[hover=true]:bg-[color:var(--ai-primary)]/10 data-[hover=true]:text-[color:var(--ai-primary)]",
-        title: "font-medium",
-        description: "text-[color:var(--ai-muted)] text-xs",
+    return (
+        <HeroDropdownTrigger
+            ref={ref}
+            className={className}
+            {...rest}
+        >
+            {children}
+        </HeroDropdownTrigger>
+    );
+});
+
+DropdownTrigger.displayName = 'DropdownTrigger';
+
+/**
+ * The menu that contains dropdown items
+ */
+export interface DropdownMenuProps {
+    /**
+     * Additional CSS classes to apply
+     */
+    className?: string;
+
+    /**
+     * The content of the menu
+     */
+    children?: React.ReactNode;
+
+    /**
+     * Accessibility label for the menu
+     */
+    'aria-label'?: string;
+
+    /**
+     * Class names object for styling different parts
+     */
+    classNames?: {
+        base?: string;
+        list?: string;
     };
 
-    // Merge default classes with user-provided ones
-    const mergedItemClasses = {
-        base: `${defaultItemClasses.base} ${itemClasses.base || ''}`,
-        title: `${defaultItemClasses.title} ${itemClasses.title || ''}`,
-        description: `${defaultItemClasses.description} ${itemClasses.description || ''}`,
-        icon: itemClasses.icon || '',
-        shortcut: itemClasses.shortcut || '',
+    /**
+     * Item rendering variants
+     */
+    variant?: 'flat' | 'faded' | 'solid' | 'bordered';
+}
+
+export const DropdownMenu = forwardRef<HTMLUListElement, DropdownMenuProps>((props, ref) => {
+    const {
+        children,
+        className = '',
+        variant = 'flat',
+        classNames = {},
+        ...rest
+    } = props;
+
+    // Default class names for menu items
+    const defaultClassNames = {
+        base: "p-1 gap-0.5",
+        list: "outline-none"
+    };
+
+    // Merge with provided class names
+    const mergedClassNames = {
+        base: `${defaultClassNames.base} ${classNames.base || ''}`,
+        list: `${defaultClassNames.list} ${classNames.list || ''}`
     };
 
     return (
         <HeroDropdownMenu
             ref={ref}
-            variant={variant as HeroDropdownMenuProps['variant']}
-            color={color as HeroDropdownMenuProps['color']}
-            aria-label={ariaLabel}
-            disableAnimation={disableAnimation}
-            itemClasses={mergedItemClasses}
             className={className}
+            variant={variant}
+            classNames={mergedClassNames}
             {...rest}
         >
             {children}
@@ -351,46 +182,89 @@ const DropdownMenu = forwardRef<HTMLUListElement, DropdownMenuProps>((props, ref
     );
 });
 
+DropdownMenu.displayName = 'DropdownMenu';
+
 /**
- * DropdownItem component for individual dropdown options
+ * Individual item within a dropdown menu
  */
-const DropdownItem = forwardRef<HTMLLIElement, DropdownItemProps>((props, ref) => {
+export interface DropdownItemProps {
+    /**
+     * Additional CSS classes to apply
+     */
+    className?: string;
+
+    /**
+     * The content of the item
+     */
+    children?: React.ReactNode;
+
+    /**
+     * A unique key for the item
+     */
+    key?: string;
+
+    /**
+     * Whether the item is currently selected
+     */
+    isSelected?: boolean;
+
+    /**
+     * Whether the item is disabled
+     */
+    isDisabled?: boolean;
+
+    /**
+     * Click handler for the item
+     */
+    onPress?: () => void;
+
+    /**
+     * Text value for accessibility
+     */
+    textValue?: string;
+
+    /**
+     * Color variant of the item
+     */
+    color?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'default';
+}
+
+export const DropdownItem = forwardRef<HTMLLIElement, DropdownItemProps>((props, ref) => {
     const {
         children,
-        key,
-        description,
-        title,
-        textValue,
-        startContent,
-        endContent,
-        shortcut,
-        color = 'default',
-        showDivider = false,
-        isDisabled = false,
-        isReadOnly = false,
-        isDialogTrigger = false,
-        onPress,
         className = '',
+        isSelected = false,
+        isDisabled = false,
+        color = 'default',
         ...rest
     } = props;
+
+    // Color classes based on the color prop
+    const getColorClass = () => {
+        if (isDisabled) return 'text-[color:var(--ai-foreground)]/40';
+
+        switch (color) {
+            case 'primary':
+                return 'data-[hover=true]:text-[color:var(--ai-primary)] data-[hover=true]:bg-[color:var(--ai-primary)]/10';
+            case 'secondary':
+                return 'data-[hover=true]:text-[color:var(--ai-secondary)] data-[hover=true]:bg-[color:var(--ai-secondary)]/10';
+            case 'success':
+                return 'data-[hover=true]:text-[color:var(--ai-success)] data-[hover=true]:bg-[color:var(--ai-success)]/10';
+            case 'warning':
+                return 'data-[hover=true]:text-[color:var(--ai-warning)] data-[hover=true]:bg-[color:var(--ai-warning)]/10';
+            case 'danger':
+                return 'data-[hover=true]:text-[color:var(--ai-danger)] data-[hover=true]:bg-[color:var(--ai-danger)]/10';
+            default:
+                return 'data-[hover=true]:bg-[color:var(--ai-card-border)]/40';
+        }
+    };
 
     return (
         <HeroDropdownItem
             ref={ref}
-            key={key}
-            description={description}
-            title={title}
-            textValue={textValue}
-            startContent={startContent}
-            endContent={endContent}
-            shortcut={shortcut}
-            color={color as HeroDropdownItemProps['color']}
-            showDivider={showDivider}
+            className={`text-[color:var(--ai-foreground)] rounded-md transition-colors ${getColorClass()} ${className}`}
+            isSelected={isSelected}
             isDisabled={isDisabled}
-            isReadOnly={isReadOnly}
-            isDialogTrigger={isDialogTrigger}
-            onPress={onPress}
-            className={className}
             {...rest}
         >
             {children}
@@ -398,26 +272,53 @@ const DropdownItem = forwardRef<HTMLLIElement, DropdownItemProps>((props, ref) =
     );
 });
 
+DropdownItem.displayName = 'DropdownItem';
+
 /**
- * DropdownSection component for grouping dropdown items
+ * Section to group dropdown items
  */
-const DropdownSection = forwardRef<HTMLDivElement, DropdownSectionProps>((props, ref) => {
+export interface DropdownSectionProps {
+    /**
+     * Additional CSS classes to apply
+     */
+    className?: string;
+
+    /**
+     * The content of the section
+     */
+    children?: React.ReactNode;
+
+    /**
+     * Whether to show a divider after this section
+     */
+    showDivider?: boolean;
+
+    /**
+     * Accessibility label for the section
+     */
+    'aria-label'?: string;
+
+    /**
+     * Title of the section
+     */
+    title?: React.ReactNode;
+}
+
+export const DropdownSection = forwardRef<HTMLDivElement, DropdownSectionProps>((props, ref) => {
     const {
         children,
+        className = '',
         showDivider = false,
         title,
-        'aria-label': ariaLabel,
-        className = '',
         ...rest
     } = props;
 
     return (
         <HeroDropdownSection
             ref={ref}
+            className={className}
             showDivider={showDivider}
             title={title}
-            aria-label={ariaLabel}
-            className={className}
             {...rest}
         >
             {children}
@@ -425,11 +326,4 @@ const DropdownSection = forwardRef<HTMLDivElement, DropdownSectionProps>((props,
     );
 });
 
-Dropdown.displayName = 'Dropdown';
-DropdownTrigger.displayName = 'DropdownTrigger';
-DropdownMenu.displayName = 'DropdownMenu';
-DropdownItem.displayName = 'DropdownItem';
 DropdownSection.displayName = 'DropdownSection';
-
-export { DropdownTrigger, DropdownMenu, DropdownItem, DropdownSection };
-export default Dropdown;

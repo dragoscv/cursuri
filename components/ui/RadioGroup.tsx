@@ -1,7 +1,20 @@
 'use client';
 
-import React, { forwardRef } from 'react';
-import { RadioGroup as HeroRadioGroup, type RadioGroupProps as HeroRadioGroupProps } from '@heroui/react';
+import React, { forwardRef, createContext, useContext } from 'react';
+
+// Create context for RadioGroup
+type RadioGroupContextType = {
+    name?: string;
+    value?: string;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    isDisabled?: boolean;
+    size?: 'sm' | 'md' | 'lg';
+    color?: 'primary' | 'success' | 'warning' | 'danger' | 'default';
+};
+
+const RadioGroupContext = createContext<RadioGroupContextType>({});
+
+export const useRadioGroup = () => useContext(RadioGroupContext);
 
 export interface RadioGroupProps {
     /**
@@ -50,6 +63,21 @@ export interface RadioGroupProps {
     children?: React.ReactNode;
 
     /**
+     * Whether the radio group is disabled
+     */
+    isDisabled?: boolean;
+
+    /**
+     * The size of the radios
+     */
+    size?: 'sm' | 'md' | 'lg';
+
+    /**
+     * The color of the radios when checked
+     */
+    color?: 'primary' | 'success' | 'warning' | 'danger' | 'default';
+
+    /**
      * Additional CSS class names
      */
     className?: string;
@@ -60,20 +88,12 @@ export interface RadioGroupProps {
     classNames?: {
         base?: string;
         label?: string;
-        wrapper?: string;
         description?: string;
         errorMessage?: string;
+        wrapper?: string;
     };
-
-    /**
-     * Additional props
-     */
-    [key: string]: any;
 }
 
-/**
- * A container for radio buttons that provides context and state management
- */
 const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>((props, ref) => {
     const {
         value,
@@ -85,46 +105,100 @@ const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>((props, ref) => {
         isInvalid = false,
         orientation = 'vertical',
         children,
+        isDisabled = false,
+        size = 'md',
+        color = 'primary',
         className = '',
         classNames = {},
         ...rest
     } = props;
 
-    // Custom default classnames for theming
-    const defaultClassNames = {
-        base: "w-full",
-        label: "text-[color:var(--ai-foreground)] font-medium mb-1.5",
-        wrapper: `${orientation === 'horizontal' ? 'flex flex-row gap-4' : 'flex flex-col gap-2'}`,
-        description: "text-[color:var(--ai-muted)] text-sm mt-1.5",
-        errorMessage: "text-[color:var(--ai-danger)] text-sm mt-1.5",
+    // Handle change
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!isDisabled && onValueChange) {
+            onValueChange(e.target.value);
+        }
     };
 
-    // Merge default classnames with user-provided ones
-    const mergedClassNames = {
-        base: `${defaultClassNames.base} ${classNames.base || ''}`,
-        label: `${defaultClassNames.label} ${classNames.label || ''}`,
-        wrapper: `${defaultClassNames.wrapper} ${classNames.wrapper || ''}`,
-        description: `${defaultClassNames.description} ${classNames.description || ''}`,
-        errorMessage: `${defaultClassNames.errorMessage} ${classNames.errorMessage || ''}`,
+    // Label size classes
+    const getLabelSizeClasses = () => {
+        switch (size) {
+            case 'sm':
+                return 'text-sm';
+            case 'lg':
+                return 'text-lg';
+            default:
+                return 'text-base';
+        }
+    };
+
+    // Description size classes
+    const getDescriptionSizeClasses = () => {
+        switch (size) {
+            case 'sm':
+                return 'text-xs';
+            case 'lg':
+                return 'text-sm';
+            default:
+                return 'text-xs';
+        }
     };
 
     return (
-        <HeroRadioGroup
-            ref={ref}
-            value={value}
-            onValueChange={onValueChange}
-            name={name}
-            label={label}
-            description={description}
-            errorMessage={errorMessage}
-            isInvalid={isInvalid}
-            orientation={orientation as HeroRadioGroupProps['orientation']}
-            className={className}
-            classNames={mergedClassNames}
-            {...rest}
+        <RadioGroupContext.Provider
+            value={{
+                name,
+                value,
+                onChange: handleChange,
+                isDisabled,
+                size,
+                color
+            }}
         >
-            {children}
-        </HeroRadioGroup>
+            <div
+                ref={ref}
+                className={`w-full ${className} ${classNames.base || ''}`}
+                role="radiogroup"
+                aria-labelledby={label ? `${name}-label` : undefined}
+                aria-describedby={description ? `${name}-description` : undefined}
+                {...rest}
+            >
+                {label && (
+                    <label
+                        id={`${name}-label`}
+                        className={`block mb-2 font-medium ${getLabelSizeClasses()} text-[color:var(--ai-foreground)] ${classNames.label || ''}`}
+                    >
+                        {label}
+                    </label>
+                )}
+
+                <div
+                    className={`
+                        ${orientation === 'horizontal' ? 'flex flex-wrap gap-4' : 'flex flex-col gap-2'}
+                        ${classNames.wrapper || ''}
+                    `}
+                >
+                    {children}
+                </div>
+
+                {description && !isInvalid && (
+                    <p
+                        id={`${name}-description`}
+                        className={`mt-1 ${getDescriptionSizeClasses()} text-[color:var(--ai-muted)] ${classNames.description || ''}`}
+                    >
+                        {description}
+                    </p>
+                )}
+
+                {errorMessage && isInvalid && (
+                    <p
+                        className={`mt-1 text-xs text-red-500 ${classNames.errorMessage || ''}`}
+                    >
+                        {errorMessage}
+                    </p>
+                )}
+            </div>
+        </RadioGroupContext.Provider>
     );
 });
 

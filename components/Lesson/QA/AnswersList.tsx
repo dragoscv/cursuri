@@ -142,9 +142,10 @@ const AnswersList: React.FC<AnswersListProps> = ({ answers, questionId, expanded
                     )}
 
                     {/* Like button */}
-                    <div className="mt-3">                        <Button
+                    <div className="mt-3">                    <Button
                         size="sm"
-                        variant={user && answer.likedBy?.includes(user.uid) ? "primary" : "flat"}
+                        variant={user && answer.likedBy?.includes(user.uid) ? "solid" : "flat"}
+                        color={user && answer.likedBy?.includes(user.uid) ? "primary" : "default"}
                         onClick={() => handleLike(answer)}
                         className={user && answer.likedBy?.includes(user.uid) ?
                             'text-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10' :

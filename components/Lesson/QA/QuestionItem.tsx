@@ -146,7 +146,8 @@ const QuestionItem: React.FC<QuestionItemProps> = ({ question }) => {
 
                 <div className="flex items-center gap-4 mt-4">                    <Button
                     size="sm"
-                    variant={question.likedBy?.includes(user?.uid || '') ? "primary" : "flat"}
+                    variant={question.likedBy?.includes(user?.uid || '') ? "solid" : "flat"}
+                    color="primary"
                     onClick={toggleLike}
                     startContent={<LikeIcon className="w-4 h-4" />}
                     className={question.likedBy?.includes(user?.uid || '') ?
@@ -167,7 +168,8 @@ const QuestionItem: React.FC<QuestionItemProps> = ({ question }) => {
                     </Button>                    {(isAdmin || user?.uid === question.userId) && (
                         <Button
                             size="sm"
-                            variant={question.isResolved ? "success" : "flat"}
+                            variant="flat"
+                            color={question.isResolved ? "success" : "default"}
                             onClick={toggleResolved}
                             startContent={<CheckIcon className="w-4 h-4" />}
                             className={question.isResolved ?

@@ -72,7 +72,7 @@ export const CourseHeader: React.FC<CourseHeaderProps> = ({ course }) => {
                     <span>{extendedCourse.duration || ''}</span>
                 </div>                <div className="flex items-center gap-1">
                     <FiUsers className="text-[color:var(--ai-primary)]" />
-                    <span>{extendedCourse.students > 0 ? `${extendedCourse.students} students` : 'New course'}</span>
+                    <span>{extendedCourse.students && extendedCourse.students > 0 ? `${extendedCourse.students} students` : 'New course'}</span>
                 </div>
 
                 <div className="flex items-center gap-1">

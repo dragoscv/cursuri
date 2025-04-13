@@ -3,7 +3,7 @@
 import React, { forwardRef } from 'react';
 import { Radio as HeroRadio, type RadioProps as HeroRadioProps } from '@heroui/react';
 
-export interface RadioProps {
+export interface RadioProps extends Omit<HeroRadioProps, 'isSelected' | 'onValueChange'> {
     /**
      * Whether the radio is checked
      */

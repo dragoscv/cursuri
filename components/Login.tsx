@@ -11,7 +11,7 @@ export default function Login(props: any) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState<string | React.ReactNode>("");
     const [loadingGoogleLogin, setLoadingGoogleLogin] = useState(false);
     const [loadingEmailLogin, setLoadingEmailLogin] = useState(false);
     const [loadingEmailRegister, setLoadingEmailRegister] = useState(false);

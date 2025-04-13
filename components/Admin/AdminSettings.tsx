@@ -255,10 +255,9 @@ const AdminSettings: React.FC = () => {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Currency
-                                </label>
-                                <Select
+                                </label>                                <Select
                                     value={formData.currencyCode}
-                                    onChange={(e) => handleSelectChange('currencyCode', e.target.value)}
+                                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleSelectChange('currencyCode', e.target.value)}
                                     className="max-w-xs"
                                 >
                                     {/* @ts-ignore - The SelectItem component from @heroui/react has type conflicts with value prop */}

@@ -64,7 +64,7 @@ const AskQuestionForm: React.FC<AskQuestionFormProps> = ({ onSubmit, onCancel })
                 label="Question Title"
                 placeholder="What's your question about this lesson?"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
                 className="w-full"
                 isInvalid={!!errors.title}
                 errorMessage={errors.title}
@@ -77,7 +77,7 @@ const AskQuestionForm: React.FC<AskQuestionFormProps> = ({ onSubmit, onCancel })
                 label="Question Details"
                 placeholder="Provide as much detail as possible about your question... What have you tried? What exactly is confusing you?"
                 value={content}
-                onChange={(e) => setContent(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value)}
                 rows={5}
                 className="w-full"
                 isInvalid={!!errors.content}

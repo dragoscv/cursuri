@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 import { Question } from '@/types';
 import { Spinner, Divider, Input } from '@heroui/react';
+import { Button } from '@/components/ui';
 import QuestionItem from './QuestionItem';
 
 interface QuestionsListProps {

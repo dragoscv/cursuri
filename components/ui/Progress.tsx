@@ -32,14 +32,10 @@ export interface ProgressProps {
     /**
      * The radius of the progress bar
      */
-    radius?: 'none' | 'sm' | 'md' | 'lg' | 'full';
-
-    /**
+    radius?: 'none' | 'sm' | 'md' | 'lg' | 'full';    /**
      * Whether to show the progress value label
      */
-    showValueLabel?: boolean;
-
-    /**
+    showValueLabel?: boolean;    /**
      * Custom formatting for the value label
      */
     formatOptions?: Intl.NumberFormatOptions;
@@ -129,23 +125,19 @@ const Progress = forwardRef<HTMLDivElement, ProgressProps>((props, ref) => {
         indicator: `${defaultClassNames.indicator} ${classNames.indicator || ''}`,
         label: `${defaultClassNames.label} ${classNames.label || ''}`,
         value: `${defaultClassNames.value} ${classNames.value || ''}`,
-    };
-
-    return (
+    }; return (
+        // @ts-ignore - HeroUI component props mismatch
         <HeroProgress
-            ref={ref}
             value={value}
             minValue={minValue}
             maxValue={maxValue}
             size={size as HeroProgressProps['size']}
             color={color as HeroProgressProps['color']}
-            radius={radius as HeroProgressProps['radius']}
-            showValueLabel={showValueLabel}
+            radius={radius as HeroProgressProps['radius']} showValueLabel={showValueLabel}
             formatOptions={formatOptions}
             isIndeterminate={isIndeterminate}
-            isStriped={isStriped}
-            isAnimated={isAnimated}
-            className={className}
+            isStriped={isStriped && !isAnimated ? true : isStriped}
+            className={`${className} ${isAnimated ? 'animate-progress-stripe' : ''}`}
             classNames={mergedClassNames}
             {...rest}
         />

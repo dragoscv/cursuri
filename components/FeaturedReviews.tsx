@@ -4,7 +4,7 @@ import React, { useRef, useEffect, useContext, useState, useMemo } from 'react'
 import { motion, useInView, useAnimation } from 'framer-motion'
 import { AppContext } from './AppContext'
 import { Review } from '@/types'
-import { Button } from "@heroui/react"
+import { Button } from './ui'
 
 export default function FeaturedReviews() {
     const controls = useAnimation()

@@ -5,10 +5,20 @@ import { firestoreDB, firebaseStorage } from "@/utils/firebase/firebase.config";
 import { doc, addDoc, collection, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { motion } from "framer-motion";
-import { Card, CardBody, CardHeader, Textarea, Input, Button, Select, SelectItem, Divider, Chip, Tooltip, Progress, Switch } from "@heroui/react";
 import { FiBook, FiClock, FiLayers, FiFileText, FiUser } from "../icons/FeatherIcons";
 import { FiCode, FiDollarSign, FiImage, FiList, FiTag, FiTarget } from "../icons/FeatherIconsExtended";
 import { Course } from "@/types";
+// Import UI components
+import Card, { CardBody, CardHeader } from "@/components/ui/Card";
+import Textarea from "@/components/ui/Textarea";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
+import Select from "@/components/ui/Select";
+import Divider from "@/components/ui/Divider";
+import Chip from "@/components/ui/Chip";
+import { Tooltip, SelectItem } from "@heroui/react"; // Keep what's not in UI folder
+import Progress from "@/components/ui/Progress";
+import Switch from "@/components/ui/Switch";
 
 interface AddCourseProps {
     onClose: () => void;
@@ -184,10 +194,14 @@ export default function AddCourse(props: AddCourseProps) {
         courseImage, courseLevel, courseCategory, courseTags,
         courseRequirements, courseObjectives, courseStatus, instructorName,
         estimatedDuration, onClose
-    ]);
+    ]);    // Type definitions for input event handlers
+    type InputChangeEvent = React.ChangeEvent<HTMLInputElement>;
+    type TextareaChangeEvent = React.ChangeEvent<HTMLTextAreaElement>;
+    type SelectChangeEvent = React.ChangeEvent<HTMLSelectElement>;
+    type KeyboardEvent = React.KeyboardEvent<HTMLInputElement>;
 
     // Handle image file selection
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageChange = (e: InputChangeEvent) => {
         if (e.target.files && e.target.files.length > 0) {
             const selectedFile = e.target.files[0];
             setCourseImage(selectedFile);
@@ -288,7 +302,7 @@ export default function AddCourse(props: AddCourseProps) {
                                     variant="bordered"
                                     placeholder="Enter course name"
                                     value={courseName}
-                                    onChange={(e) => setCourseName(e.target.value)}
+                                    onChange={(e: InputChangeEvent) => setCourseName(e.target.value)}
                                     isRequired
                                     startContent={<FiBook className="text-[color:var(--ai-muted)]" />}
                                     className="bg-[color:var(--ai-card-bg)]/40"
@@ -304,7 +318,7 @@ export default function AddCourse(props: AddCourseProps) {
                                 variant="bordered"
                                 placeholder="Provide a detailed description of the course"
                                 value={courseDescription}
-                                onChange={(e) => setCourseDescription(e.target.value)}
+                                onChange={(e: TextareaChangeEvent) => setCourseDescription(e.target.value)}
                                 className="mb-6 bg-[color:var(--ai-card-bg)]/40"
                                 isRequired
                                 minRows={5}
@@ -319,7 +333,7 @@ export default function AddCourse(props: AddCourseProps) {
                                     variant="bordered"
                                     placeholder="Instructor name"
                                     value={instructorName}
-                                    onChange={(e) => setInstructorName(e.target.value)}
+                                    onChange={(e: InputChangeEvent) => setInstructorName(e.target.value)}
                                     startContent={<FiUser className="text-[color:var(--ai-muted)]" />}
                                     className="bg-[color:var(--ai-card-bg)]/40"
                                     classNames={{
@@ -332,7 +346,7 @@ export default function AddCourse(props: AddCourseProps) {
                                     variant="bordered"
                                     placeholder="e.g., 10 hours, 4 weeks"
                                     value={estimatedDuration}
-                                    onChange={(e) => setEstimatedDuration(e.target.value)}
+                                    onChange={(e: InputChangeEvent) => setEstimatedDuration(e.target.value)}
                                     startContent={<FiClock className="text-[color:var(--ai-muted)]" />}
                                     className="bg-[color:var(--ai-card-bg)]/40"
                                     classNames={{
@@ -346,7 +360,7 @@ export default function AddCourse(props: AddCourseProps) {
                                 variant="bordered"
                                 placeholder="https://github.com/username/repo"
                                 value={repoUrl}
-                                onChange={(e) => setRepoUrl(e.target.value)}
+                                onChange={(e: InputChangeEvent) => setRepoUrl(e.target.value)}
                                 startContent={<FiCode className="text-[color:var(--ai-muted)]" />}
                                 className="bg-[color:var(--ai-card-bg)]/40 mb-6"
                                 classNames={{
@@ -406,7 +420,7 @@ export default function AddCourse(props: AddCourseProps) {
                                         label="Difficulty Level"
                                         variant="bordered"
                                         selectedKeys={[courseLevel]}
-                                        onChange={(e) => setCourseLevel(e.target.value)}
+                                        onChange={(e: SelectChangeEvent) => setCourseLevel(e.target.value)}
                                         className="bg-[color:var(--ai-card-bg)]/40"
                                         startContent={<FiTarget className="text-[color:var(--ai-muted)]" />}
                                         classNames={{
@@ -437,7 +451,7 @@ export default function AddCourse(props: AddCourseProps) {
                                         variant="bordered"
                                         placeholder="e.g., Web Development"
                                         value={courseCategory}
-                                        onChange={(e) => setCourseCategory(e.target.value)}
+                                        onChange={(e: InputChangeEvent) => setCourseCategory(e.target.value)}
                                         startContent={<FiFileText className="text-[color:var(--ai-muted)]" />}
                                         className="bg-[color:var(--ai-card-bg)]/40"
                                         classNames={{
@@ -453,7 +467,7 @@ export default function AddCourse(props: AddCourseProps) {
                                         label="Status"
                                         variant="bordered"
                                         selectedKeys={[courseStatus]}
-                                        onChange={(e) => setCourseStatus(e.target.value)}
+                                        onChange={(e: SelectChangeEvent) => setCourseStatus(e.target.value)}
                                         className="bg-[color:var(--ai-card-bg)]/40"
                                         classNames={{
                                             label: "text-[color:var(--ai-foreground)] font-medium"
@@ -512,7 +526,7 @@ export default function AddCourse(props: AddCourseProps) {
                             label="Course Price"
                             variant="bordered"
                             selectedKeys={coursePrice ? [coursePrice] : []}
-                            onChange={(e) => setCoursePrice(e.target.value)}
+                            onChange={(e: SelectChangeEvent) => setCoursePrice(e.target.value)}
                             className="mb-4 bg-[color:var(--ai-card-bg)]/40"
                             startContent={<FiDollarSign className="text-[color:var(--ai-muted)]" />}
                             classNames={{
@@ -580,9 +594,8 @@ export default function AddCourse(props: AddCourseProps) {
                                         <Input
                                             placeholder="Add a tag"
                                             variant="bordered"
-                                            value={currentTag}
-                                            onChange={(e) => setCurrentTag(e.target.value)}
-                                            onKeyPress={(e) => e.key === 'Enter' && handleAddTag()}
+                                            value={currentTag} onChange={(e: InputChangeEvent) => setCurrentTag(e.target.value)}
+                                            onKeyPress={(e: KeyboardEvent) => e.key === 'Enter' && handleAddTag()}
                                             className="bg-[color:var(--ai-card-bg)]/40"
                                             startContent={<FiTag className="text-[color:var(--ai-muted)]" size={16} />}
                                         />
@@ -625,9 +638,8 @@ export default function AddCourse(props: AddCourseProps) {
                                         <Input
                                             placeholder="Add a learning objective"
                                             variant="bordered"
-                                            value={currentObjective}
-                                            onChange={(e) => setCurrentObjective(e.target.value)}
-                                            onKeyPress={(e) => e.key === 'Enter' && handleAddObjective()}
+                                            value={currentObjective} onChange={(e: InputChangeEvent) => setCurrentObjective(e.target.value)}
+                                            onKeyPress={(e: KeyboardEvent) => e.key === 'Enter' && handleAddObjective()}
                                             className="bg-[color:var(--ai-card-bg)]/40"
                                             startContent={<FiTarget className="text-[color:var(--ai-muted)]" size={16} />}
                                         />
@@ -672,9 +684,8 @@ export default function AddCourse(props: AddCourseProps) {
                                         <Input
                                             placeholder="Add a requirement"
                                             variant="bordered"
-                                            value={currentRequirement}
-                                            onChange={(e) => setCurrentRequirement(e.target.value)}
-                                            onKeyPress={(e) => e.key === 'Enter' && handleAddRequirement()}
+                                            value={currentRequirement} onChange={(e: InputChangeEvent) => setCurrentRequirement(e.target.value)}
+                                            onKeyPress={(e: KeyboardEvent) => e.key === 'Enter' && handleAddRequirement()}
                                             className="bg-[color:var(--ai-card-bg)]/40"
                                             startContent={<FiList className="text-[color:var(--ai-muted)]" size={16} />}
                                         />

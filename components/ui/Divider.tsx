@@ -43,14 +43,19 @@ const Divider = forwardRef<HTMLHRElement, DividerProps>((props, ref) => {
     } = props;
 
     // Default styling with theme variables
-    const defaultClassName = "bg-[color:var(--ai-card-border)]/60";
+    const defaultClassName = "bg-[color:var(--ai-card-border)]/60";    // Get styling classes based on size
+    const sizeClasses: Record<string, string> = {
+        sm: "mx-2 my-1",
+        md: "mx-3 my-2",
+        lg: "mx-4 my-3"
+    };
+    const sizeClass = sizeClasses[size as keyof typeof sizeClasses] || "mx-3 my-2";
 
     return (
         <HeroDivider
             ref={ref}
             orientation={orientation as HeroDividerProps['orientation']}
-            size={size as HeroDividerProps['size']}
-            className={`${defaultClassName} ${className}`}
+            className={`${defaultClassName} ${sizeClasses} ${className}`}
             {...rest}
         >
             {children}

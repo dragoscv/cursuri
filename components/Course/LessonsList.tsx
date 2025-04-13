@@ -81,17 +81,15 @@ export default function LessonsList({
         return orderA - orderB;
     });    // Calculate total duration in minutes
     const totalDuration = sortedLessons.reduce((total, lesson) => {
-        // Use durationMinutes with fallback to numeric duration or 0
-        const durationMins = lesson.durationMinutes ||
+        // Use numeric duration with fallback to parsed string duration or 0
+        const durationMins =
             (typeof lesson.duration === 'number' ? lesson.duration :
                 (typeof lesson.duration === 'string' ? parseInt(lesson.duration, 10) : 0));
         return total + durationMins;
-    }, 0);
-
-    // Calculate completed duration (sum of durations of completed lessons)
+    }, 0);    // Calculate completed duration (sum of durations of completed lessons)
     const completedDuration = sortedLessons.reduce((total, lesson) => {
         if (completedLessons[lesson.id]) {
-            const durationMins = lesson.durationMinutes ||
+            const durationMins =
                 (typeof lesson.duration === 'number' ? lesson.duration :
                     (typeof lesson.duration === 'string' ? parseInt(lesson.duration, 10) : 0));
             return total + durationMins;
@@ -230,7 +228,7 @@ export default function LessonsList({
                                         </div>
                                         <div className="flex flex-col items-end gap-2">
                                             <span className="text-sm text-[color:var(--ai-muted)]">
-                                                {formatDuration(lesson.durationMinutes)}
+                                                {lesson.duration}
                                             </span>
 
                                             {isCompleted && (

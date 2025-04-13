@@ -1,7 +1,6 @@
 'use client';
 
-import React, { forwardRef } from 'react';
-import { Textarea as HeroTextarea, type TextAreaProps as HeroTextareaProps } from '@heroui/react';
+import React, { forwardRef, useState } from 'react';
 
 export interface TextareaProps {
     /**
@@ -50,6 +49,11 @@ export interface TextareaProps {
     isReadOnly?: boolean;
 
     /**
+     * Whether the textarea is required
+     */
+    isRequired?: boolean;
+
+    /**
      * Whether the textarea is currently invalid
      */
     isInvalid?: boolean;
@@ -65,100 +69,163 @@ export interface TextareaProps {
     description?: string;
 
     /**
-     * Whether to disable automatic resizing
+     * Textarea variant style
      */
-    disableAutosize?: boolean;
+    variant?: 'flat' | 'bordered' | 'underlined' | 'faded';
 
     /**
-     * Whether to disable animation
+     * Textarea color
      */
-    disableAnimation?: boolean;
+    color?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
 
     /**
-     * Additional CSS class names
+     * CSS class to apply to the textarea container
      */
     className?: string;
 
     /**
-     * Class names for different parts of the textarea
+     * Additional classNames for different parts of the component
      */
     classNames?: {
         base?: string;
         label?: string;
-        inputWrapper?: string;
-        input?: string;
-        description?: string;
+        textarea?: string;
         errorMessage?: string;
+        description?: string;
     };
 
     /**
-     * Additional props
+     * Additional props to pass to the textarea element
      */
     [key: string]: any;
 }
 
-/**
- * A modern, animated textarea component that follows the design system
- */
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => {
     const {
-        rows = 4,
+        value,
+        onChange,
+        rows = 3,
         minRows,
         maxRows,
         placeholder,
         label,
-        isDisabled = false,
-        isReadOnly = false,
-        isInvalid = false,
+        isDisabled,
+        isReadOnly,
+        isRequired,
+        isInvalid,
         errorMessage,
         description,
-        disableAutosize = false,
-        disableAnimation = false,
+        variant = 'bordered',
+        color = 'default',
         className = '',
         classNames = {},
         ...rest
     } = props;
 
-    // Default classnames with styling integrated with the app's color system
-    const defaultClassNames = {
-        base: "max-w-full",
-        label: "text-[color:var(--ai-foreground)] font-medium",
-        inputWrapper: "bg-[color:var(--ai-card-bg)]/60 backdrop-blur-sm border-[color:var(--ai-card-border)] data-[hover=true]:border-[color:var(--ai-primary)]/70 data-[focus=true]:border-[color:var(--ai-primary)] rounded-lg transition-all duration-200 shadow-sm hover:shadow",
-        input: "text-[color:var(--ai-foreground)] resize-y",
-        description: "text-[color:var(--ai-muted)]",
-        errorMessage: "text-[color:var(--ai-danger)]",
+    const [isFocused, setIsFocused] = useState(false);
+    const hasValue = value !== undefined && value !== '';
+
+    // Generate variant-specific styles
+    const getVariantStyles = () => {
+        switch (variant) {
+            case 'flat':
+                return 'bg-[color:var(--ai-card-bg)] border-transparent';
+            case 'bordered':
+                return 'bg-transparent border-[color:var(--ai-card-border)]';
+            case 'underlined':
+                return 'bg-transparent border-b-2 border-x-0 border-t-0 rounded-none px-1 border-[color:var(--ai-card-border)]';
+            case 'faded':
+                return 'bg-[color:var(--ai-card-bg)]/50 border-transparent';
+            default:
+                return 'bg-transparent border-[color:var(--ai-card-border)]';
+        }
     };
 
-    // Merge default classnames with user-provided ones
-    const mergedClassNames = {
-        base: `${defaultClassNames.base} ${classNames.base || ''}`,
-        label: `${defaultClassNames.label} ${classNames.label || ''}`,
-        inputWrapper: `${defaultClassNames.inputWrapper} ${classNames.inputWrapper || ''}`,
-        input: `${defaultClassNames.input} ${classNames.input || ''}`,
-        description: `${defaultClassNames.description} ${classNames.description || ''}`,
-        errorMessage: `${defaultClassNames.errorMessage} ${classNames.errorMessage || ''}`,
-    };
+    // Generate color-specific styles
+    const getColorStyles = () => {
+        if (isInvalid) return 'border-red-500 focus-within:border-red-500 focus-within:ring-red-500/20';
+
+        switch (color) {
+            case 'primary':
+                return 'focus-within:border-[color:var(--ai-primary)] focus-within:ring-[color:var(--ai-primary)]/20';
+            case 'secondary':
+                return 'focus-within:border-[color:var(--ai-secondary)] focus-within:ring-[color:var(--ai-secondary)]/20';
+            case 'success':
+                return 'focus-within:border-green-500 focus-within:ring-green-500/20';
+            case 'warning':
+                return 'focus-within:border-yellow-500 focus-within:ring-yellow-500/20';
+            case 'danger':
+                return 'focus-within:border-red-500 focus-within:ring-red-500/20';
+            default:
+                return 'focus-within:border-[color:var(--ai-card-border)] focus-within:ring-[color:var(--ai-foreground)]/20';
+        }
+    };    // Label animation classes
+    const labelClasses = `absolute transition-all duration-200 pointer-events-none ${(isFocused || hasValue)
+        ? '-top-6 left-0 text-xs font-medium'
+        : 'left-3 top-3 text-sm'
+        } ${isDisabled ? 'text-[color:var(--ai-muted)]' : 'text-[color:var(--ai-foreground)]'} ${classNames.label || ''
+        }`;
+
+    // Base container classes
+    const containerClasses = `relative w-full ${className}`;
+
+    // Textarea wrapper classes
+    const textareaWrapperClasses = `
+        w-full border transition-all duration-200
+        ${getVariantStyles()}
+        ${getColorStyles()}
+        ${isFocused ? 'ring-2 ring-opacity-20' : ''}
+        ${isDisabled ? 'opacity-60 cursor-not-allowed' : ''}
+        ${variant !== 'underlined' ? 'rounded-lg' : ''}
+    `;
+
+    // Textarea classes
+    const textareaClasses = `
+        w-full bg-transparent outline-none px-3 py-2 resize-y
+        ${isDisabled || isReadOnly ? 'cursor-not-allowed' : ''}
+        placeholder:text-[color:var(--ai-muted)] text-[color:var(--ai-foreground)]
+        ${classNames.textarea || ''}
+    `;
 
     return (
-        <HeroTextarea
-            ref={ref}
-            rows={rows}
-            minRows={minRows}
-            maxRows={maxRows}
-            placeholder={placeholder}
-            label={label}
-            isDisabled={isDisabled}
-            isReadOnly={isReadOnly}
-            isInvalid={isInvalid}
-            errorMessage={errorMessage}
-            description={description}
-            disableAutosize={disableAutosize}
-            disableAnimation={disableAnimation}
-            className={className}
-            classNames={mergedClassNames}
-            variant="bordered"
-            {...rest}
-        />
+        <div className={containerClasses}>
+            {label && (
+                <label className={labelClasses}>
+                    {label}
+                    {isRequired && <span className="ml-1 text-red-500">*</span>}
+                </label>
+            )}
+
+            <div className={textareaWrapperClasses}>
+                <textarea
+                    ref={ref}
+                    value={value}
+                    onChange={onChange}
+                    disabled={isDisabled}
+                    readOnly={isReadOnly}
+                    placeholder={isFocused || !label ? placeholder : ''}
+                    className={textareaClasses}
+                    rows={rows}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
+                    aria-invalid={isInvalid ? 'true' : 'false'}
+                    required={isRequired}
+                    {...rest}
+                />
+            </div>
+
+            {errorMessage && isInvalid && (
+                <p className={`mt-1 text-xs text-red-500 ${classNames.errorMessage || ''}`}>
+                    {errorMessage}
+                </p>
+            )}
+
+            {description && !isInvalid && (
+                <p className={`mt-1 text-xs text-[color:var(--ai-muted)] ${classNames.description || ''}`}>
+                    {description}
+                </p>
+            )}
+        </div>
     );
 });
 

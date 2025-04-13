@@ -7,7 +7,7 @@ import Reviews from "./Reviews"
 import CourseContent from "./CourseContent"
 import CourseOverview from "./CourseOverview"
 import CourseEnrollment from "./CourseEnrollment"
-import { Button, Tabs, Tab, Divider, Card, Chip } from "@heroui/react"
+import { Button, Tabs, Tab, Divider, Card, Chip } from "@/components/ui"
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation"
 import { AppContextProps, Course as CourseType, Lesson, Resource, UserPaidProduct } from "@/types"
@@ -185,11 +185,10 @@ export default function Course({ courseId }: CourseProps) {
                 <Divider className="my-6" />
             </div>
 
-            {/* Tabs Navigation */}
-            <Tabs
+            {/* Tabs Navigation */}            <Tabs
                 aria-label="Course tabs"
                 selectedKey={selectedTab}
-                onSelectionChange={(key) => setSelectedTab(key as string)}
+                onSelectionChange={(key: string) => setSelectedTab(key)}
                 className="mb-8"
                 classNames={{
                     tabList: "relative border-b border-[color:var(--ai-card-border)]/50 gap-4 mb-4",
