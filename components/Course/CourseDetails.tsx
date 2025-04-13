@@ -4,7 +4,7 @@ import { Tabs, Tab, Card, Divider } from "@heroui/react";
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiLayers, FiBookOpen } from '../icons/FeatherIcons';
 import { useRouter, useSearchParams } from 'next/navigation';
-import EnhancedLessonsList from '../../components/Lessons/EnhancedLessonsList';
+import LessonsList from './LessonsList';
 import CourseOverview from './CourseOverview';
 
 interface CourseDetailsProps {
@@ -128,14 +128,13 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({ course, lessons = 
                             exit="hidden"
                         >
                             {courseId && (
-                                <div className="bg-white dark:bg-[color:var(--ai-card-bg)]/30 rounded-xl p-1 shadow-inner">
-                                    <EnhancedLessonsList
-                                        lessons={lessons || []}
-                                        course={course}
-                                        courseId={courseId}
-                                        completedLessons={{}}
-                                        userHasAccess={true}
-                                    />
+                                <div className="bg-white dark:bg-[color:var(--ai-card-bg)]/30 rounded-xl p-1 shadow-inner">                                    <LessonsList
+                                    lessons={lessons || []}
+                                    course={course}
+                                    courseId={courseId}
+                                    completedLessons={{}}
+                                    userHasAccess={true}
+                                />
                                 </div>
                             )}
 
@@ -152,10 +151,9 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({ course, lessons = 
                                             <div className="bg-gradient-to-r from-[color:var(--ai-card-bg)]/50 to-[color:var(--ai-card-bg)]/80 p-3 sm:p-4 font-medium border-l-4 border-[color:var(--ai-primary)]">
                                                 {module.title || `Module ${index + 1}`}
                                             </div>
-                                            <div className="p-3 sm:p-4">
-                                                <p className="text-sm sm:text-base text-[color:var(--ai-muted)] mb-2">
-                                                    {module.description || "This module covers essential concepts and practical applications."}
-                                                </p>
+                                            <div className="p-3 sm:p-4">                                                <p className="text-sm sm:text-base text-[color:var(--ai-muted)] mb-2">
+                                                {module.description || ""}
+                                            </p>
                                                 <div className="text-xs sm:text-sm text-[color:var(--ai-muted)] flex items-center gap-2">
                                                     <div className="flex items-center gap-1">
                                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

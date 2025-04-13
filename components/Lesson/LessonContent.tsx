@@ -310,7 +310,7 @@ function LessonContent({ lesson, prevLessonId = null, nextLessonId = null, onNav
                     {/* Lesson Navigation - Positioned at bottom of content for all screen sizes */}
                     {(prevLessonId || nextLessonId || onClose) && (
                         <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-xl overflow-hidden 
-                            transform transition-all duration-300 hover:shadow-2xl hover:border-[color:var(--ai-primary)]/30">
+                            transform transition-all duration-300 hover:shadow-2xl hover:border-[color:var(--ai-primary)]/30 rounded-lg">
                             <LessonNavigation
                                 prevLessonId={prevLessonId}
                                 nextLessonId={nextLessonId}

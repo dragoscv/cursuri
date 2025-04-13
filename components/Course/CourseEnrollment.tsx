@@ -1,9 +1,20 @@
 import React, { useState, useContext } from 'react';
 import { Course, ModalProps } from '../../types';
 import { AppContext } from '../AppContext';
-import { Button, Progress, Chip } from '@heroui/react';
+import { Button, Progress, Chip, Divider, Card } from '@heroui/react';
 import { motion } from 'framer-motion';
-import { FiShoppingCart, FiCheck, FiLock, FiClock, FiBook, FiPlayCircle } from '../icons/FeatherIcons';
+import {
+    FiShoppingCart,
+    FiCheck,
+    FiLock,
+    FiClock,
+    FiBook,
+    FiPlayCircle,
+    FiAward,
+    FiDownload,
+    FiArrowRight,
+    FiMessageSquare
+} from '../icons/FeatherIcons';
 import { createCheckoutSession } from "firewand";
 import { stripePayments } from "@/utils/firebase/stripe";
 import { firebaseApp } from "@/utils/firebase/firebase.config";
@@ -104,213 +115,291 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
 
     // Calculate discount if there's an original price
     const discountPercentage = course.originalPrice ?
-        Math.round(((course.originalPrice - (course.price || 0)) / course.originalPrice) * 100) : 0;
-
-    // If user is already enrolled, show a simplified enrolled view
+        Math.round(((course.originalPrice - (course.price || 0)) / course.originalPrice) * 100) : 0;    // If user is already enrolled, show an enhanced enrolled view
     if (isPurchased) {
         return (
-            <div className="border border-[color:var(--ai-card-border)] rounded-xl p-6 bg-[color:var(--ai-card-bg)]">
-                <div className="flex items-center justify-between mb-4">                    <h3 className="font-bold text-lg text-[color:var(--ai-foreground)]">
-                    You&apos;re Enrolled
-                </h3>
-                    <Chip color="success" variant="flat">
-                        Active
-                    </Chip>
-                </div>
+            <>
+                {/* Top success indicator bar */}
+                <div className="h-1.5 w-full bg-gradient-to-r from-emerald-400 via-teal-500 to-emerald-500"></div>
 
-                <p className="text-[color:var(--ai-muted)] mb-6">
-                    Continue your learning journey with this course. You have full access to all content and features.
-                </p>
-
-                <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ duration: 0.2 }}
-                >
-                    <Button
-                        color="success"
-                        className="w-full bg-gradient-to-r from-[color:var(--ai-success)] to-[color:var(--ai-success-light)] py-6 shadow-md hover:shadow-lg transition-all duration-300"
-                        size="lg"
-                        href={`/courses/${course.id}/lessons`}
-                        startContent={<FiPlayCircle className="text-xl" />}
-                    >
-                        Continue Learning
-                    </Button>
-                </motion.div>
-
-                <div className="mt-6 space-y-3">
-                    <div className="flex items-center gap-3 text-[color:var(--ai-muted)]">
-                        <FiBook className="text-[color:var(--ai-primary)] flex-shrink-0" />
-                        <span>{course.lessonsCount || '10+'} lessons available</span>
-                    </div>
-
-                    <div className="flex items-center gap-3 text-[color:var(--ai-muted)]">
-                        <FiClock className="text-[color:var(--ai-primary)] flex-shrink-0" />
-                        <span>Full lifetime access</span>
-                    </div>
-
-                    {course.certificate && (
-                        <div className="flex items-center gap-3 text-[color:var(--ai-muted)]">
-                            <svg className="w-5 h-5 text-[color:var(--ai-primary)] flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 15C15.866 15 19 11.866 19 8C19 4.13401 15.866 1 12 1C8.13401 1 5 4.13401 5 8C5 11.866 8.13401 15 12 15Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                <path d="M8.21 13.89L7 23L12 20L17 23L15.79 13.88" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                            <span>Certificate upon completion</span>
+                <div className="p-6">
+                    {/* Header with status */}
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                            <div className="bg-emerald-500/10 p-2 rounded-full">
+                                <FiCheck className="text-emerald-500" size={18} />
+                            </div>
+                            <h3 className="font-bold text-lg text-[color:var(--ai-foreground)]">
+                                You&apos;re Enrolled
+                            </h3>
                         </div>
-                    )}
-                </div>
-            </div>
+                        <Chip color="success" variant="flat" className="bg-emerald-500/10 text-emerald-500 font-medium">
+                            Active
+                        </Chip>
+                    </div>                    {/* Progress card */}
+                    <div className="bg-gradient-to-br from-emerald-50/10 via-teal-50/5 to-emerald-50/10 dark:from-emerald-900/10 dark:via-teal-900/5 dark:to-emerald-900/10 backdrop-blur-sm rounded-xl p-5 border border-emerald-200/20 dark:border-emerald-800/20 shadow-sm hover:shadow-md transition-all duration-300 mb-6">
+                        <div className="flex items-center justify-between mb-3">
+                            <span className="text-sm font-medium bg-gradient-to-r from-emerald-600 to-teal-500 dark:from-emerald-400 dark:to-teal-300 bg-clip-text text-transparent">Your Progress</span>
+                            <span className="text-xs bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-2.5 py-1 rounded-full font-medium">
+                                Continue Learning
+                            </span>
+                        </div>
+                        <Progress
+                            value={30}
+                            color="success"
+                            className="mb-2 h-2 rounded-full overflow-hidden"
+                            size="sm"
+                        />
+                        <div className="flex justify-between items-center text-xs text-[color:var(--ai-muted)]">
+                            <span className="font-medium">30% complete</span>
+                            <span>{course.lessonsCount ? `${Math.round(course.lessonsCount * 0.3)}/${course.lessonsCount} lessons` : 'In progress'}</span>
+                        </div>
+                    </div>
+
+                    {/* Continue button with animation */}                    <motion.div
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.98 }}
+                        transition={{ duration: 0.2 }}
+                        className="relative"
+                    >
+                        <div className="relative overflow-hidden rounded-xl group">
+                            {/* Subtle animated glow effect */}
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-30 blur-lg bg-gradient-to-r from-emerald-400 to-teal-400 transition-opacity duration-500"></div>
+
+                            <Button
+                                color="success"
+                                className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 py-6 rounded-xl shadow-md hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 font-semibold"
+                                size="lg"
+                                href={`/courses/${course.id}/lessons`}
+                                endContent={<FiArrowRight className="text-lg ml-1 group-hover:translate-x-1 transition-transform duration-200" />}
+                                startContent={<FiPlayCircle className="text-xl" />}
+                            >
+                                Continue Learning
+                            </Button>
+                        </div>
+                    </motion.div>
+
+                    <Divider className="my-6" />
+
+                    <h4 className="text-sm font-semibold text-[color:var(--ai-foreground)] mb-4">
+                        What you have access to:
+                    </h4>                    {/* Features grid for better visual arrangement */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-5">
+                        <div className="flex items-center gap-3 text-[color:var(--ai-muted)] group">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
+                                <FiBook className="flex-shrink-0" />
+                            </div>
+                            <span className="font-medium transition-colors duration-300 group-hover:text-[color:var(--ai-foreground)]">{course.lessonsCount || '10+'} lessons available</span>
+                        </div>
+
+                        <div className="flex items-center gap-3 text-[color:var(--ai-muted)] group">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
+                                <FiClock className="flex-shrink-0" />
+                            </div>
+                            <span className="font-medium transition-colors duration-300 group-hover:text-[color:var(--ai-foreground)]">Lifetime access</span>
+                        </div>
+
+                        {course.certificate && (
+                            <div className="flex items-center gap-3 text-[color:var(--ai-muted)] group">
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
+                                    <FiAward className="flex-shrink-0" />
+                                </div>
+                                <span className="font-medium transition-colors duration-300 group-hover:text-[color:var(--ai-foreground)]">Certificate upon completion</span>
+                            </div>
+                        )}
+                        <div className="flex items-center gap-3 text-[color:var(--ai-muted)] group">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
+                                <FiMessageSquare className="flex-shrink-0" />
+                            </div>
+                            <span className="font-medium transition-colors duration-300 group-hover:text-[color:var(--ai-foreground)]">Premium support</span>
+                        </div>
+                    </div></div>
+            </>
         );
     }
 
-    // Regular view for users who are not enrolled yet
+    // Enhanced view for users who are not enrolled yet
     return (
-        <div>
-            <div className="mb-5">
-                <div className="flex items-center justify-between mb-3">
-                    <div className="flex gap-2 items-center">
-                        <span className="text-3xl font-bold text-[color:var(--ai-foreground)]">{displayPrice()}</span>
+        <>
+            {/* Top animated gradient bar */}            <div className="h-1.5 w-full bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)] background-animate"></div>
 
-                        {course.originalPrice && (
-                            <div className="flex items-center gap-2">
-                                <span className="text-[color:var(--ai-muted)] text-lg line-through">
-                                    {course.originalPrice}
-                                </span>
-                                <Chip color="danger" size="sm" variant="flat">
-                                    {discountPercentage}% off
-                                </Chip>
+            <div className="p-6 bg-gradient-to-br from-[color:var(--ai-card-bg)]/80 via-[color:var(--ai-card-bg)] to-[color:var(--ai-card-bg)]/90 backdrop-blur-sm">
+                {/* Price showcase with enhanced styling */}
+                <div className="mb-6">
+                    <div className="flex items-center justify-between mb-3">
+                        <div className="flex flex-wrap gap-2 items-center">
+                            <span className="text-3xl font-extrabold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">
+                                {displayPrice()}
+                            </span>
+
+                            {course.originalPrice && (
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[color:var(--ai-muted)] text-lg line-through">
+                                        {course.originalPrice}
+                                    </span>
+                                    <Chip color="danger" size="sm" variant="flat" className="font-medium">
+                                        {discountPercentage}% off
+                                    </Chip>
+                                </div>
+                            )}
+                        </div>
+
+                        {course.limitedOffer && (
+                            <div className="bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 text-xs font-medium flex items-center gap-1 py-1.5 px-2.5 rounded-full">
+                                <FiClock className="animate-pulse" />
+                                <span>Limited time offer</span>
                             </div>
                         )}
                     </div>
 
-                    {course.limitedOffer && (
-                        <div className="text-amber-600 dark:text-amber-400 text-sm font-medium flex items-center gap-1">
-                            <FiClock />
-                            <span>Limited time offer</span>
+                    {course.moneyBackGuarantee && (
+                        <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 text-xs font-medium mb-3">
+                            <FiCheck className="text-emerald-500" />
+                            <span>30-day money-back guarantee</span>
                         </div>
                     )}
                 </div>
 
-                {!isPurchased && (
-                    <div className="text-sm text-[color:var(--ai-muted)] mb-3">
-                        {course.moneyBackGuarantee ?
-                            '30-day money-back guarantee' :
-                            'This purchase is non-refundable'}
-                    </div>
-                )}
-            </div>
-
-            <motion.div
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-                className="relative"
-            >
-                {isLoading ? (
-                    <LoadingButton
-                        className="w-full bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-primary)] mb-4 py-6 shadow-md hover:shadow-lg transition-all duration-300"
-                        size="lg"
-                        loadingText="Processing payment..."
-                    />
-                ) : (
-                    <div className="relative mb-4 overflow-hidden rounded-xl">
-                        {/* Decorative corner highlights */}
-                        <div className="absolute -top-1 -left-1 w-8 h-8 border-t-2 border-l-2 border-[color:var(--ai-primary)]/30 rounded-tl-lg opacity-70"></div>
-                        <div className="absolute -bottom-1 -right-1 w-8 h-8 border-b-2 border-r-2 border-[color:var(--ai-secondary)]/30 rounded-br-lg opacity-70"></div>
-
-                        {/* Shimmer effect overlay */}
-                        <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-10">
-                            <div className="shimmer-effect"></div>
-                        </div>
-
-                        {/* Main button */}
-                        <Button
-                            color="primary"
-                            className="w-full bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-primary)] py-6 font-medium text-white transition-all duration-500 shadow-md hover:shadow-xl hover:shadow-[color:var(--ai-primary)]/20 group relative overflow-hidden"
+                {/* Enrollment Button with enhanced animations */}
+                <motion.div
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ duration: 0.2 }}
+                    className="relative"
+                >
+                    {isLoading ? (
+                        <LoadingButton
+                            className="w-full bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-primary)] mb-4 py-6 shadow-lg hover:shadow-xl transition-all duration-300"
                             size="lg"
-                            onPress={handleEnrollClick}
-                            startContent={course.isFree ? <FiCheck className="text-xl" /> : <FiShoppingCart className="text-xl transition-transform duration-500 group-hover:rotate-12" />}
-                        >
-                            <span className="relative z-10 tracking-wide font-semibold text-white flex items-center gap-2 transition-all duration-300 group-hover:tracking-wider">
-                                {course.isFree ? 'Enroll Now - Free' : 'Buy Now'}
+                            loadingText="Processing payment..."
+                        />
+                    ) : (
+                        <div className="relative mb-4 overflow-hidden rounded-xl group">
+                            {/* Animated corners - more subtle and elegant */}
+                            <div className="absolute inset-0 rounded-xl overflow-hidden">
+                                <div className="absolute -top-1 -left-1 w-10 h-10 border-t-2 border-l-2 border-[color:var(--ai-primary)]/30 rounded-tl-lg opacity-70 group-hover:border-[color:var(--ai-primary)]/80 transition-colors duration-500"></div>
+                                <div className="absolute -bottom-1 -right-1 w-10 h-10 border-b-2 border-r-2 border-[color:var(--ai-secondary)]/30 rounded-br-lg opacity-70 group-hover:border-[color:var(--ai-secondary)]/80 transition-colors duration-500"></div>
+                            </div>
 
-                                {/* Arrow that moves on hover */}
-                                {!course.isFree && (
-                                    <svg className="w-4 h-4 transition-transform duration-500 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                    </svg>
-                                )}
-                            </span>
+                            {/* Shimmer effect overlay */}
+                            <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-10">
+                                <div className="absolute -inset-[200%] animate-[shimmer_5s_linear_infinite] bg-gradient-to-r from-transparent via-white/10 dark:via-white/5 to-transparent transform -translate-x-full group-hover:animate-[shimmer_2s_linear_infinite]"></div>
+                            </div>
 
-                            {/* Background gradient overlay that changes on hover */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--ai-primary)]/50 via-[color:var(--ai-secondary)]/50 to-[color:var(--ai-accent)]/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"></div>
-                        </Button>
+                            {/* Enhanced main button */}
+                            <Button
+                                color="primary"
+                                className="w-full bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-primary)] py-6 font-medium text-white transition-all duration-500 shadow-lg hover:shadow-xl hover:shadow-[color:var(--ai-primary)]/20 group-hover:bg-gradient-to-r group-hover:from-[color:var(--ai-secondary)] group-hover:via-[color:var(--ai-primary)] group-hover:to-[color:var(--ai-secondary)]"
+                                size="lg"
+                                onPress={handleEnrollClick}
+                                startContent={
+                                    <div className="relative">
+                                        {course.isFree ? (
+                                            <FiCheck className="text-xl" />
+                                        ) : (
+                                            <FiShoppingCart className="text-xl transition-transform duration-500 group-hover:rotate-12" />
+                                        )}
+                                    </div>
+                                }
+                            >
+                                <span className="relative z-10 tracking-wide font-semibold text-white flex items-center gap-2 transition-all duration-300 group-hover:tracking-wider">
+                                    {course.isFree ? 'Enroll Now - Free' : 'Buy Now'}
+
+                                    {/* Arrow with enhanced hover animation */}
+                                    {!course.isFree && (
+                                        <FiArrowRight className="transition-all duration-500 group-hover:translate-x-1" />
+                                    )}
+                                </span>
+                            </Button>
+                        </div>
+                    )}
+                </motion.div>
+
+                {/* Features section with enhanced visual hierarchy */}
+                <div className="mt-6">
+                    {/* Course benefits heading with accent line */}
+                    <div className="flex items-center gap-2 mb-4">
+                        <div className="h-0.5 w-6 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"></div>
+                        <h4 className="font-bold text-[color:var(--ai-foreground)]">This course includes:</h4>
                     </div>
-                )}
-            </motion.div>
 
-            <div className="space-y-4 mt-6">
-                <h4 className="font-bold text-[color:var(--ai-foreground)]">This course includes:</h4>
+                    {/* Course features grid */}                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div className="flex items-center gap-3 group">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
+                                <FiBook className="flex-shrink-0" />
+                            </div>
+                            <span className="text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)] transition-colors duration-300 font-medium">{course.lessonsCount || '10+'} lessons</span>
+                        </div>
 
-                <ul className="space-y-3">
-                    <li className="flex items-center gap-3 text-[color:var(--ai-muted)]">
-                        <FiBook className="text-[color:var(--ai-primary)] flex-shrink-0" />
-                        <span>{course.lessonsCount || '10+'} lessons</span>
-                    </li>
+                        <div className="flex items-center gap-3 group">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
+                                <FiClock className="flex-shrink-0" />
+                            </div>
+                            <span className="text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)] transition-colors duration-300 font-medium">{course.duration || '5 hours'} of content</span>
+                        </div>
 
-                    <li className="flex items-center gap-3 text-[color:var(--ai-muted)]">
-                        <FiClock className="text-[color:var(--ai-primary)] flex-shrink-0" />
-                        <span>{course.duration || '5 hours'} of content</span>
-                    </li>
+                        <div className="flex items-center gap-3 group">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
+                                <FiPlayCircle className="flex-shrink-0" />
+                            </div>
+                            <span className="text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)] transition-colors duration-300 font-medium">Full lifetime access</span>
+                        </div>
 
-                    <li className="flex items-center gap-3 text-[color:var(--ai-muted)]">
-                        <FiPlayCircle className="text-[color:var(--ai-primary)] flex-shrink-0" />
-                        <span>Full lifetime access</span>
-                    </li>
+                        {course.certificate && (
+                            <div className="flex items-center gap-3 group">
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
+                                    <FiAward className="flex-shrink-0" />
+                                </div>
+                                <span className="text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)] transition-colors duration-300 font-medium">Certificate of completion</span>
+                            </div>
+                        )}
 
-                    {course.certificate && (
-                        <li className="flex items-center gap-3 text-[color:var(--ai-muted)]">
-                            <svg className="w-5 h-5 text-[color:var(--ai-primary)] flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 15C15.866 15 19 11.866 19 8C19 4.13401 15.866 1 12 1C8.13401 1 5 4.13401 5 8C5 11.866 8.13401 15 12 15Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                <path d="M8.21 13.89L7 23L12 20L17 23L15.79 13.88" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                            <span>Certificate of completion</span>
-                        </li>
-                    )}
-
-                    {course.downloadableResources && (
-                        <li className="flex items-center gap-3 text-[color:var(--ai-muted)]">
-                            <svg className="w-5 h-5 text-[color:var(--ai-primary)] flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                <path d="M7 10L12 15L17 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                <path d="M12 15V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                            <span>Downloadable resources</span>
-                        </li>
-                    )}
-                </ul>
-            </div>
-
-            {!isPurchased && !user && (
-                <div className="mt-6 border-t border-[color:var(--ai-card-border)] pt-4">
-                    <Button
-                        color="default"
-                        variant="flat"
-                        className="w-full"
-                        onPress={() => {
-                            openModal({
-                                id: 'login',
-                                isOpen: true,
-                                modalBody: 'login',
-                                modalHeader: 'Login',
-                                headerDisabled: true,
-                                footerDisabled: true
-                            });
-                        }}
-                    >
-                        Sign in to purchase
-                    </Button>
+                        {course.downloadableResources && (
+                            <div className="flex items-center gap-3 group">
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
+                                    <FiDownload className="flex-shrink-0" />
+                                </div>
+                                <span className="text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)] transition-colors duration-300 font-medium">Downloadable resources</span>
+                            </div>
+                        )}
+                        <div className="flex items-center gap-3 group">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
+                                <FiMessageSquare className="flex-shrink-0" />
+                            </div>
+                            <span className="text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)] transition-colors duration-300 font-medium">Premium support</span>
+                        </div>
+                    </div>
                 </div>
-            )}
-        </div>
+
+                {/* Login prompt for guests with enhanced styling */}
+                {!isPurchased && !user && (
+                    <>
+                        <Divider className="my-6" />
+                        <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-[color:var(--ai-accent)]/5 rounded-lg p-4">
+                            <p className="text-sm text-[color:var(--ai-muted)] mb-3 text-center">
+                                Already have an account? Sign in to purchase this course
+                            </p>
+                            <Button
+                                color="default"
+                                variant="flat"
+                                className="w-full bg-[color:var(--ai-card-border)]/20 hover:bg-[color:var(--ai-card-border)]/30 transition-colors"
+                                onPress={() => {
+                                    openModal({
+                                        id: 'login',
+                                        isOpen: true,
+                                        modalBody: 'login',
+                                        modalHeader: 'Login',
+                                        headerDisabled: true,
+                                        footerDisabled: true
+                                    });
+                                }}
+                            >
+                                Sign in to purchase
+                            </Button>
+                        </div>                    </>
+                )}
+            </div>
+        </>
     );
 };
 

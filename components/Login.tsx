@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { firebaseAuth } from "@/utils/firebase/firebase.config";
-import { signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, fetchSignInMethodsForEmail } from "firebase/auth";
 import LoadingButton from "./Buttons/LoadingButton"
 import GoogleIcon from "./icons/GoogleIcon"
 import { motion } from "framer-motion";
@@ -38,9 +38,7 @@ export default function Login(props: any) {
         } finally {
             setLoadingGoogleLogin(false);
         }
-    }
-
-    // Sign in with email and password
+    }    // Sign in with email and password
     const handleEmailLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!email || !password) {
@@ -49,17 +47,78 @@ export default function Login(props: any) {
         }
 
         setLoadingEmailLogin(true);
-        setErrorMessage("");
-
-        try {
+        setErrorMessage(""); try {
             const result = await signInWithEmailAndPassword(firebaseAuth, email, password);
             if (result) {
                 props.onClose();
             }
         } catch (error: any) {
             console.error("Email login error:", error);
-            if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-                setErrorMessage("Invalid email or password");
+
+            // Check for any provider-related errors first
+            if (error.code === 'auth/operation-not-allowed' ||
+                error.code === 'auth/invalid-credential') {
+
+                try {
+                    // Use fetchSignInMethodsForEmail to check which providers are linked to this email
+                    const signInMethods = await fetchSignInMethodsForEmail(firebaseAuth, email);
+
+                    if (signInMethods.includes('google.com')) {
+                        setErrorMessage(
+                            <span>
+                                This email is registered with Google. Please{" "}
+                                <button
+                                    type="button"
+                                    onClick={signInWithGoogleRedirect}
+                                    className="text-[color:var(--ai-primary)] underline hover:text-[color:var(--ai-secondary)]"
+                                >
+                                    sign in with Google
+                                </button>{" "}
+                                instead.
+                            </span>
+                        );
+                    } else if (signInMethods.length > 0) {
+                        setErrorMessage(`This email is registered with ${signInMethods.join(', ')}. Please use that method to sign in.`);
+                    } else if (error.code === 'auth/invalid-credential') {
+                        // This likely means the account exists but with a different authentication method
+                        // or the password is incorrect
+                        setErrorMessage(
+                            <span>
+                                Invalid credentials. If you registered with Google, please{" "}
+                                <button
+                                    type="button"
+                                    onClick={signInWithGoogleRedirect}
+                                    className="text-[color:var(--ai-primary)] underline hover:text-[color:var(--ai-secondary)]"
+                                >
+                                    sign in with Google
+                                </button>{" "}
+                                instead.
+                            </span>
+                        );
+                    } else {
+                        // Generic error for other cases
+                        setErrorMessage("Unable to sign in with these credentials. Please check your email and password.");
+                    }
+                } catch (methodError) {
+                    console.error("Error checking sign-in methods:", methodError);
+                    setErrorMessage("Authentication error. Please verify your credentials or try signing in with Google instead.");
+                }
+            } else if (error.code === 'auth/user-not-found') {
+                // User doesn't exist, suggest registration
+                setErrorMessage(
+                    <span>
+                        This email is not registered. Would you like to{" "}
+                        <button
+                            type="button"
+                            onClick={() => setActiveTab('register')}
+                            className="text-[color:var(--ai-primary)] underline hover:text-[color:var(--ai-secondary)]"
+                        >
+                            create an account
+                        </button>?
+                    </span>
+                );
+            } else if (error.code === 'auth/wrong-password') {
+                setErrorMessage("Invalid password. Please try again.");
             } else {
                 setErrorMessage(error.message || "Failed to sign in");
             }
@@ -229,15 +288,20 @@ export default function Login(props: any) {
                             placeholder="••••••••"
                             required
                         />
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={loadingEmailLogin}
-                        className="w-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white py-2.5 rounded-lg font-medium hover:opacity-90 transition-all duration-300 transform hover:-translate-y-1 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed"
-                    >
-                        {loadingEmailLogin ? <LoadingButton /> : "Sign In"}
-                    </button>
+                    </div>                    {loadingEmailLogin ? (
+                        <LoadingButton
+                            className="w-full py-2.5"
+                            loadingText="Signing In..."
+                        />
+                    ) : (
+                        <button
+                            type="submit"
+                            disabled={loadingEmailLogin}
+                            className="w-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white py-2.5 rounded-lg font-medium hover:opacity-90 transition-all duration-300 transform hover:-translate-y-1 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed"
+                        >
+                            Sign In
+                        </button>
+                    )}
                 </motion.form>
             )}
 
@@ -285,15 +349,20 @@ export default function Login(props: any) {
                             placeholder="••••••••"
                             required
                         />
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={loadingEmailRegister}
-                        className="w-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white py-2.5 rounded-lg font-medium hover:opacity-90 transition-all duration-300 transform hover:-translate-y-1 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed"
-                    >
-                        {loadingEmailRegister ? <LoadingButton /> : "Create Account"}
-                    </button>
+                    </div>                    {loadingEmailRegister ? (
+                        <LoadingButton
+                            className="w-full py-2.5"
+                            loadingText="Creating Account..."
+                        />
+                    ) : (
+                        <button
+                            type="submit"
+                            disabled={loadingEmailRegister}
+                            className="w-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white py-2.5 rounded-lg font-medium hover:opacity-90 transition-all duration-300 transform hover:-translate-y-1 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed"
+                        >
+                            Create Account
+                        </button>
+                    )}
                 </motion.form>
             )}
 

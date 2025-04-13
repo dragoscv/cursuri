@@ -5,7 +5,7 @@ import { FiBookOpen, FiLock, FiCheckCircle, FiPlay, FiClock } from '@/components
 import { motion } from 'framer-motion';
 import { Course, Lesson } from '@/types';
 
-interface EnhancedLessonsListProps {
+interface LessonsListProps {
     lessons: Lesson[];
     course?: Course;
     courseId?: string;
@@ -13,13 +13,13 @@ interface EnhancedLessonsListProps {
     completedLessons?: Record<string, boolean>;
 }
 
-export default function EnhancedLessonsList({
+export default function LessonsList({
     lessons,
     course,
     courseId: propsCourseId,
     userHasAccess = false,
     completedLessons = {}
-}: EnhancedLessonsListProps) {
+}: LessonsListProps) {
     const params = useParams();
     const courseId = propsCourseId || params.courseId;
 
@@ -118,32 +118,33 @@ export default function EnhancedLessonsList({
 
     return (
         <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-[color:var(--ai-accent)]/5 backdrop-blur-sm rounded-xl p-6 border border-[color:var(--ai-card-border)]/50 shadow-md">
-            <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">                <div>
-                <h2 className="text-xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-1">
-                    Course Content
-                </h2>
-                <div className="flex items-center gap-3 text-[color:var(--ai-muted)] text-sm">
-                    <div className="flex items-center gap-1">
-                        <FiBookOpen className="w-3.5 h-3.5" />
-                        <span>{sortedLessons.length} lessons</span>
-                    </div>
-                    <span>•</span>
-                    <div className="flex items-center gap-1">
-                        <FiClock className="w-3.5 h-3.5" />
-                        <span>{durationText} total</span>
-                    </div>
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div>
+                    <h2 className="text-xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-1">
+                        Course Content
+                    </h2>
+                    <div className="flex items-center gap-3 text-[color:var(--ai-muted)] text-sm">
+                        <div className="flex items-center gap-1">
+                            <FiBookOpen className="w-3.5 h-3.5" />
+                            <span>{sortedLessons.length} lessons</span>
+                        </div>
+                        <span>•</span>
+                        <div className="flex items-center gap-1">
+                            <FiClock className="w-3.5 h-3.5" />
+                            <span>{durationText} total</span>
+                        </div>
 
-                    {userHasAccess && Object.keys(completedLessons).length > 0 && (
-                        <>
-                            <span>•</span>
-                            <div className="flex items-center gap-1 text-[color:var(--ai-primary)]">
-                                <FiClock className="w-3.5 h-3.5" />
-                                <span>{remainingText} remaining</span>
-                            </div>
-                        </>
-                    )}
+                        {userHasAccess && Object.keys(completedLessons).length > 0 && (
+                            <>
+                                <span>•</span>
+                                <div className="flex items-center gap-1 text-[color:var(--ai-primary)]">
+                                    <FiClock className="w-3.5 h-3.5" />
+                                    <span>{remainingText} remaining</span>
+                                </div>
+                            </>
+                        )}
+                    </div>
                 </div>
-            </div>
 
                 {userHasAccess && Object.keys(completedLessons).length > 0 && (
                     <div className="bg-[color:var(--ai-primary)]/10 px-3 py-2 rounded-lg text-sm">
@@ -226,7 +227,8 @@ export default function EnhancedLessonsList({
                                                     </span>
                                                 )}
                                             </div>
-                                        </div>                                        <div className="flex flex-col items-end gap-2">
+                                        </div>
+                                        <div className="flex flex-col items-end gap-2">
                                             <span className="text-sm text-[color:var(--ai-muted)]">
                                                 {formatDuration(lesson.durationMinutes)}
                                             </span>

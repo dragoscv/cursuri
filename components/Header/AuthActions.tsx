@@ -20,15 +20,13 @@ export default function AuthActions() {
     // Don't show login buttons if user is already logged in
     if (user) {
         return null;
-    }
-
-    const handleOpenLoginModal = () => {
+    } const handleOpenLoginModal = () => {
         openModal({
             id: 'login',
             isOpen: true,
             hideCloseButton: false,
             backdrop: 'blur',
-            size: 'full',
+            size: 'md',
             scrollBehavior: 'inside',
             isDismissable: true,
             modalHeader: 'Autentificare',
@@ -37,6 +35,12 @@ export default function AuthActions() {
             footerDisabled: true,
             noReplaceURL: true,
             onClose: () => closeModal('login'),
+            classNames: {
+                backdrop: "z-50 backdrop-blur-md backdrop-saturate-150 bg-black/60 w-screen min-h-[100dvh] fixed inset-0",
+                base: "z-50 mx-auto my-auto rounded-xl shadow-xl border border-[color:var(--ai-card-border)] bg-white dark:bg-[color:var(--ai-card-bg)] overflow-hidden h-auto min-h-0",
+                wrapper: "z-50 w-full flex flex-col justify-center items-center overflow-hidden min-h-[100dvh]",
+                content: "h-auto min-h-0",
+            },
         });
     };
 

@@ -224,23 +224,37 @@ export default function ProfileSettings() {
                             <FiUser className="text-[color:var(--ai-primary)]" />
                         </div>
                         Profile Information
-                    </h2>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">                        <div>
-                        <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
-                            Display Name
-                        </label>
-                        <Input
-                            name="displayName"
-                            value={form.displayName}
-                            onChange={handleChange}
-                            placeholder="Your name"
-                            startContent={<FiUser className="text-[color:var(--ai-primary)]" />}
-                            className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-primary)]/70 hover:border-[color:var(--ai-primary)]/40 transition-all duration-300"
-                        />
-                    </div>
+                    </h2>                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
+                                Display Name
+                            </label>
+                            <Input
+                                name="displayName"
+                                value={form.displayName}
+                                onChange={handleChange}
+                                placeholder="Your name"
+                                startContent={<FiUser className="text-[color:var(--ai-primary)]" />}
+                                className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-primary)]/70 hover:border-[color:var(--ai-primary)]/40 transition-all duration-300"
+                            />
+                        </div>
 
                         <div>
+                            <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
+                                Email Address
+                            </label>
+                            <Input
+                                name="email"
+                                value={form.email}
+                                disabled
+                                readOnly
+                                startContent={<FiMail className="text-[color:var(--ai-primary)]" />}
+                                className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/30 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 text-[color:var(--ai-foreground)]/70"
+                                description="Email address cannot be changed"
+                            />
+                        </div>
+
+                        <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
                                 Bio
                             </label>
@@ -252,7 +266,7 @@ export default function ProfileSettings() {
                                 className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-primary)]/70 hover:border-[color:var(--ai-primary)]/40 transition-all duration-300"
                             />
                         </div>
-                    </div>                    <div className="mt-6">
+                    </div><div className="mt-6">
                         <Button
                             color="primary"
                             startContent={<FiSave />}
@@ -262,68 +276,8 @@ export default function ProfileSettings() {
                         >
                             Save Profile
                         </Button>
-                    </div>
-                </CardBody>
+                    </div>                </CardBody>
             </Card>
-
-            {/* Email Settings */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1, duration: 0.4 }}
-            >
-                <Card className="border border-[color:var(--ai-card-border)]/50 shadow-lg rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)]/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
-                    <div className="h-1 w-full bg-gradient-to-r from-[color:var(--ai-secondary)]/80 to-[color:var(--ai-primary)]/80"></div>
-                    <CardBody className="p-6">
-                        <h2 className="text-lg font-semibold mb-4 text-[color:var(--ai-foreground)] flex items-center gap-2">
-                            <div className="p-2 rounded-full bg-gradient-to-r from-[color:var(--ai-secondary)]/20 to-[color:var(--ai-primary)]/20">
-                                <FiMail className="text-[color:var(--ai-secondary)]" />
-                            </div>
-                            Email Settings
-                        </h2>                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
-                                    Email Address
-                                </label>
-                                <Input
-                                    name="email"
-                                    value={form.email}
-                                    onChange={handleChange}
-                                    placeholder="your@email.com"
-                                    startContent={<FiMail className="text-[color:var(--ai-secondary)]" />}
-                                    className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-secondary)]/70 hover:border-[color:var(--ai-secondary)]/40 transition-all duration-300"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
-                                    Current Password
-                                </label>
-                                <Input
-                                    type="password"
-                                    name="currentPassword"
-                                    value={form.currentPassword}
-                                    onChange={handleChange}
-                                    placeholder="Enter current password"
-                                    startContent={<FiLock className="text-[color:var(--ai-secondary)]" />}
-                                    className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-secondary)]/70 hover:border-[color:var(--ai-secondary)]/40 transition-all duration-300"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="mt-6">
-                            <Button
-                                color="primary"
-                                startContent={<FiSave />}
-                                onClick={updateUserEmail}
-                                isLoading={isLoading}
-                                className="bg-gradient-to-r from-[color:var(--ai-secondary)] to-[color:var(--ai-primary)] border-none text-white font-medium px-5 py-2 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
-                            >
-                                Update Email
-                            </Button>
-                        </div>                </CardBody>
-                </Card>
-            </motion.div>
 
             {/* Password Settings */}
             <motion.div

@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import CourseHeader from './CourseHeader';
 import CourseDetails from './CourseDetails';
 import CourseEnrollment from './CourseEnrollment';
+import { AppContext } from '@/components/AppContext';
 
 interface CourseDetailProps {
     course: any;
@@ -19,6 +20,46 @@ export default function CourseDetailView({
     hasAccess,
     isAdmin
 }: CourseDetailProps) {
+    const [courseWithStats, setCourseWithStats] = useState(course);
+    const context = useContext(AppContext);
+
+    useEffect(() => {
+        if (!course) return;
+
+        const enhancedCourse = { ...course };
+
+        // Add lesson count from actual lessons data
+        enhancedCourse.lessonsCount = courseLessons ? courseLessons.length : 0;
+
+        // Calculate minutes of content
+        const totalMinutes = courseLessons ? courseLessons.reduce((acc, lesson) => {
+            return acc + (lesson.durationMinutes || 0);
+        }, 0) : 0;
+
+        // Format duration based on total minutes
+        if (totalMinutes > 0) {
+            const hours = Math.floor(totalMinutes / 60);
+            const mins = totalMinutes % 60;
+
+            if (hours > 0) {
+                enhancedCourse.duration = `${hours}h ${mins > 0 ? `${mins}m` : ''}`;
+            } else {
+                enhancedCourse.duration = `${mins}m`;
+            }
+        }
+
+        // Calculate student count from user purchases data (if available)
+        if (context?.userPaidProducts) {
+            const studentsCount = context.userPaidProducts.filter(
+                product => product.metadata?.courseId === courseId
+            ).length;
+
+            enhancedCourse.students = studentsCount;
+        }
+
+        setCourseWithStats(enhancedCourse);
+    }, [course, courseId, courseLessons, context?.userPaidProducts]);
+
     return (
         <div className="container mx-auto px-4 py-8">
             <motion.div
@@ -26,7 +67,7 @@ export default function CourseDetailView({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
             >
-                <CourseHeader course={course} />
+                <CourseHeader course={courseWithStats} />
             </motion.div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">

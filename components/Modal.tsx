@@ -77,13 +77,11 @@ export default function ModalComponent({ isOpen, onClose, hideCloseIcon, hideClo
     };
 
     // Merge default and custom classNames
-    const mergedClassNames = mergeClassNames(defaultClassNames, classNames);
-
-    return (
+    const mergedClassNames = mergeClassNames(defaultClassNames, classNames); return (
         <Modal
             isOpen={isOpen}
             onClose={handleClose}
-            hideCloseButton={hideCloseIcon}
+            hideCloseButton={true} // Always hide HeroUI's built-in close button
             backdrop={backdrop ? backdrop : 'blur'}
             size={size}
             classNames={mergedClassNames}

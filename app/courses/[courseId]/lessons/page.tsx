@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppContext } from '../../../../components/AppContext';
-import EnhancedLessonsList from '../../../../components/Lessons/EnhancedLessonsList';
+import LessonsList from '../../../../components/Course/LessonsList';
 import { Spinner } from "@heroui/react";
 import { motion } from 'framer-motion';
 import { Course, Lesson, UserPaidProduct } from '@/types';
@@ -89,9 +89,7 @@ export default function LessonsPage(props: LessonsPageProps) {
                 lessonCount={courseLessons?.length || 0}
                 completedLessonsCount={Object.keys(completedLessons).length}
                 isLoading={isLoading}
-            />
-
-            <EnhancedLessonsList
+            />            <LessonsList
                 lessons={courseLessons || []}
                 course={course}
                 courseId={courseId}

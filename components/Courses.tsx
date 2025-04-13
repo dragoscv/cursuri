@@ -386,12 +386,11 @@ export default function Courses() {
                                     {course.name}
                                 </h3>
 
-                                {/* Course description */}
-                                <p
+                                {/* Course description */}                        <p
                                     className="mb-4 flex-1 text-sm text-[color:var(--ai-muted)] line-clamp-2"
                                     onClick={() => handleCourseClick(course)}
                                 >
-                                    {course.description || 'Master cutting-edge AI techniques and practical implementations to power the future of technology in our interconnected world.'}
+                                    {course.description || ''}
                                 </p>
 
                                 {/* Rating */}

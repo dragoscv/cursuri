@@ -3,20 +3,22 @@
 import React, { useContext } from 'react';
 import Link from 'next/link';
 import { Card } from '@heroui/react';
-import { FiHome, FiBookOpen, FiSettings } from '@/components/icons/FeatherIcons';
+import { FiHome, FiBookOpen, FiUser } from '@/components/icons/FeatherIcons';
 import { usePathname } from 'next/navigation';
 import { AppContext } from '@/components/AppContext';
 
 export default function BottomNavigation() {
     const pathname = usePathname();
-    const context = useContext(AppContext);
-
-    // Get authentication status from context
+    const context = useContext(AppContext);    // Get authentication status from context
     const isAuthenticated = !!context?.user;
+    const isAdmin = context?.isAdmin || false;
 
-    // Check if we're on the homepage
-    const isHomepage = pathname === '/';    // Hide navigation on homepage if user is not authenticated
-    if (isHomepage && !isAuthenticated) {
+    // Check if we're on the homepage or in admin section
+    const isHomepage = pathname === '/';
+    const isAdminRoute = pathname.startsWith('/admin');
+
+    // Hide navigation on homepage if user is not authenticated or on admin routes
+    if ((isHomepage && !isAuthenticated) || isAdminRoute) {
         return null;
     }
 
@@ -24,7 +26,7 @@ export default function BottomNavigation() {
     const navItems = [
         { label: 'Explore', href: '/courses', icon: FiHome },
         { label: 'My Courses', href: '/profile/courses', icon: FiBookOpen },
-        { label: 'Profile', href: '/profile', icon: FiSettings },
+        { label: 'Profile', href: '/profile', icon: FiUser },
     ]; return (<div className="md:hidden fixed bottom-0 left-0 right-0 z-50 overflow-hidden">
         {/* Themed blur background that stays within rounded corners */}
         <div className="absolute inset-x-0 bottom-0 h-full rounded-t-xl bg-gradient-to-b from-[color:var(--ai-primary)]/5 to-[color:var(--ai-secondary)]/5 backdrop-blur-xl overflow-hidden"></div>

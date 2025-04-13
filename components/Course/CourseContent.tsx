@@ -99,10 +99,9 @@ const CourseContent: React.FC<CourseContentProps> = ({
                     className="bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-[color:var(--ai-accent)]/5 backdrop-blur-sm rounded-xl p-5 border border-[color:var(--ai-card-border)]/50 shadow-sm"
                 >
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                        <div>
-                            <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)]">Your Progress</h3>
+                        <div>                        <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)]">Your Progress</h3>
                             <p className="text-sm text-[color:var(--ai-muted)]">
-                                {Object.values(completedLessons).filter(Boolean).length} of {sortedLessons.length} lessons completed
+                                {Object.values(completedLessons).filter(Boolean).length} of {sortedLessons.length} {sortedLessons.length === 1 ? 'lesson' : 'lessons'} completed
                             </p>
                         </div>
                         <div className="flex items-center">
@@ -273,7 +272,7 @@ const LessonItem: React.FC<LessonItemProps> = ({ lesson, index, isCompleted, isA
 
     const getIcon = () => {
         if (isCompleted) {
-            return <FiCheck className="text-[color:var(--ai-success, #10b981)]" />;
+            return <FiCheck size={18} className="text-[color:var(--ai-success, #10b981)]" />;
         } else if (!isAccessible) {
             return <FiLock className="text-[color:var(--ai-muted)]" />;
         } else if (lesson.videoUrl) {
@@ -281,31 +280,45 @@ const LessonItem: React.FC<LessonItemProps> = ({ lesson, index, isCompleted, isA
         } else {
             return <FiBookOpen className="text-[color:var(--ai-primary)]" />;
         }
-    };
-
-    return (
-        <div
-            className={`
-                flex items-center p-4 hover:bg-[color:var(--ai-card-bg)]/80 transition-colors duration-200
+    }; return (<div
+        className={`
+                flex items-center p-4 hover:bg-[color:var(--ai-card-bg)]/80 transition-all duration-300 relative
                 ${isAccessible ? 'cursor-pointer' : 'cursor-not-allowed opacity-80'}
-                ${isCompleted ? 'bg-[color:var(--ai-success, #10b981)]/5' : ''}
+                ${isCompleted ? 'bg-gradient-to-r from-[color:var(--ai-success, #10b981)]/15 to-transparent border-l-4 border-[color:var(--ai-success, #10b981)]' : ''}
             `}
-            onClick={onClick}
-        >
-            <div className={`
-                flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full mr-4
-                ${isCompleted ? 'bg-[color:var(--ai-success, #10b981)]/10 text-[color:var(--ai-success, #10b981)]' :
-                    !isAccessible ? 'bg-[color:var(--ai-card-border)]/20 text-[color:var(--ai-muted)]' :
-                        'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]'}
-            `}>
-                {getIcon()}
+        onClick={onClick}
+    >
+        {/* Completion status indicator */}
+        {isCompleted && (
+            <div className="absolute left-0 top-0 bottom-0 flex items-center">
+                <div className="w-1 h-full bg-gradient-to-b from-[color:var(--ai-success, #10b981)] to-[color:var(--ai-success, #10b981)]/70"></div>
+                <div className="absolute -left-2 bg-[color:var(--ai-success, #10b981)] rounded-full w-4 h-4 flex items-center justify-center border-2 border-white dark:border-gray-800">
+                    <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+                </div>
             </div>
+        )}            <div className={`
+                flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full mr-4 transition-all duration-300 relative 
+                ${isCompleted
+                ? 'bg-[color:var(--ai-success, #10b981)] text-white border-4 border-[color:var(--ai-success, #10b981)]/60 ring-4 ring-[color:var(--ai-success, #10b981)]/20 shadow-lg'
+                : !isAccessible
+                    ? 'bg-[color:var(--ai-card-border)]/20 text-[color:var(--ai-muted)] border border-[color:var(--ai-card-border)]/30'
+                    : 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] border border-[color:var(--ai-primary)]/30'
+            }
+            `}>
+            {isCompleted ? <FiCheck size={24} className="text-white" /> : getIcon()}
+            {isCompleted && (
+                <div className="absolute -top-2 -right-2 w-6 h-6 bg-[color:var(--ai-success, #10b981)] rounded-full flex items-center justify-center border-2 border-white dark:border-gray-800 shadow-md">
+                    <div className="w-2 h-2 bg-white rounded-full"></div>
+                </div>
+            )}
 
-            <div className="flex-1 min-w-0">
-                <div className="flex items-center">
-                    <span className="text-sm font-medium text-[color:var(--ai-muted)] mr-2">
-                        {(index + 1).toString().padStart(2, '0')}
-                    </span>
+        </div>
+
+        <div className="flex-1 min-w-0">
+            <div className="flex items-center">
+                <span className="text-sm font-medium text-[color:var(--ai-muted)] mr-2">
+                    {(index + 1).toString().padStart(2, '0')}
+                </span>                <div className="flex items-center">
                     <h4 className={`font-medium truncate
                         ${isCompleted ? 'text-[color:var(--ai-success, #10b981)]' :
                             !isAccessible ? 'text-[color:var(--ai-muted)]' :
@@ -313,47 +326,53 @@ const LessonItem: React.FC<LessonItemProps> = ({ lesson, index, isCompleted, isA
                     `}>
                         {lesson.name}
                     </h4>
-
-                    {lesson.isFree && (
-                        <Chip
-                            size="sm"
-                            variant="flat"
-                            color="success"
-                            className="ml-2 text-xs"
-                        >
-                            Free
-                        </Chip>
+                    {isCompleted && (
+                        <span className="ml-2 bg-[color:var(--ai-success, #10b981)] text-white px-2 py-0.5 rounded-md text-xs font-bold flex items-center gap-1">
+                            <FiCheck className="w-3 h-3" />
+                            COMPLETED
+                        </span>
                     )}
                 </div>
 
-                {lesson.description && (
-                    <p className="mt-1 text-sm text-[color:var(--ai-muted)] line-clamp-1">
-                        {lesson.description}
-                    </p>
-                )}
-            </div>            <div className="ml-4 flex-shrink-0 flex items-center gap-3">
-                {lesson.durationMinutes && (
-                    <span className="text-xs text-[color:var(--ai-muted)] flex items-center">
-                        <FiClock className="mr-1 h-3.5 w-3.5" />
-                        {formatDuration(lesson.durationMinutes)}
-                    </span>)}
-
-                {!isAccessible ? (
-                    <span className="text-xs bg-[color:var(--ai-card-border)]/20 text-[color:var(--ai-muted)] px-2 py-1 rounded-full">
-                        Locked
-                    </span>
-                ) : isCompleted ? (
-                    <span className="text-xs bg-[color:var(--ai-success, #10b981)]/10 text-[color:var(--ai-success, #10b981)] px-2 py-1 rounded-full flex items-center gap-1">
-                        <FiCheck className="h-3 w-3" />
-                        Completed
-                    </span>
-                ) : (
-                    <span className="text-xs bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] px-2 py-1 rounded-full">
-                        Not completed
-                    </span>
+                {lesson.isFree && (
+                    <Chip
+                        size="sm"
+                        variant="flat"
+                        color="success"
+                        className="ml-2 text-xs"
+                    >
+                        Free
+                    </Chip>
                 )}
             </div>
+
+            {lesson.description && (
+                <p className="mt-1 text-sm text-[color:var(--ai-muted)] line-clamp-1">
+                    {lesson.description}
+                </p>
+            )}
+        </div>            <div className="ml-4 flex-shrink-0 flex items-center gap-3">
+            {lesson.durationMinutes && (
+                <span className="text-xs text-[color:var(--ai-muted)] flex items-center">
+                    <FiClock className="mr-1 h-3.5 w-3.5" />
+                    {formatDuration(lesson.durationMinutes)}
+                </span>)}                {!isAccessible ? (
+                    <span className="text-xs bg-[color:var(--ai-card-border)]/20 text-[color:var(--ai-muted)] px-2 py-1 rounded-full flex items-center">
+                        <FiLock className="h-3 w-3 mr-1" />
+                        Locked
+                    </span>) : isCompleted ? (
+                        <span className="text-xs bg-[color:var(--ai-success, #10b981)]/20 text-[color:var(--ai-success, #10b981)] px-3 py-1.5 rounded-full flex items-center gap-1 font-semibold border border-[color:var(--ai-success, #10b981)]/30 shadow-sm">
+                            <FiCheck className="h-3 w-3" />
+                            Completed
+                        </span>
+                    ) : (
+                    <span className="text-xs bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] px-2 py-1 rounded-full flex items-center">
+                        <span className="w-2 h-2 bg-[color:var(--ai-primary)]/60 rounded-full mr-1.5"></span>
+                        In Progress
+                    </span>
+                )}
         </div>
+    </div>
     );
 };
 

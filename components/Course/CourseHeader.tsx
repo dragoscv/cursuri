@@ -68,19 +68,16 @@ export const CourseHeader: React.FC<CourseHeaderProps> = ({ course }) => {
             </div>
 
             <div className="flex flex-wrap gap-4 text-[color:var(--ai-muted)]">
-                <div className="flex items-center gap-1">
-                    <FiClock className="text-[color:var(--ai-primary)]" />
-                    <span>{extendedCourse.duration || '3-5 weeks'}</span>
-                </div>
-
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1">                    <FiClock className="text-[color:var(--ai-primary)]" />
+                    <span>{extendedCourse.duration || ''}</span>
+                </div>                <div className="flex items-center gap-1">
                     <FiUsers className="text-[color:var(--ai-primary)]" />
-                    <span>{extendedCourse.students || '0'} students</span>
+                    <span>{extendedCourse.students > 0 ? `${extendedCourse.students} students` : 'New course'}</span>
                 </div>
 
                 <div className="flex items-center gap-1">
                     <FiBook className="text-[color:var(--ai-primary)]" />
-                    <span>{extendedCourse.lessonsCount || '0'} lessons</span>
+                    <span>{typeof extendedCourse.lessonsCount !== 'undefined' && extendedCourse.lessonsCount > 0 ? `${extendedCourse.lessonsCount} ${extendedCourse.lessonsCount === 1 ? 'lesson' : 'lessons'}` : 'Lessons coming soon'}</span>
                 </div>
 
                 {extendedCourse.certificate && (

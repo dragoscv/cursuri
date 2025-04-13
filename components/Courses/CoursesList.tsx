@@ -1,6 +1,6 @@
 import React, { useContext, useCallback } from 'react';
 import { AppContext } from '../AppContext';
-import { Button, Chip } from '@heroui/react';
+import { Button, Chip, Progress } from '@heroui/react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import LoadingButton from '../Buttons/LoadingButton';
@@ -21,9 +21,7 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
 
     if (!context) {
         throw new Error('CoursesList must be used within an AppContextProvider');
-    }
-
-    const { courses, products, openModal, closeModal, userPaidProducts, user } = context;
+    } const { courses, products, openModal, closeModal, userPaidProducts, user, lessonProgress, lessons } = context;
     const [loadingPayment, setLoadingPayment] = React.useState(false);
     const [loadingCourseId, setLoadingCourseId] = React.useState<string | null>(null);
 
@@ -103,13 +101,33 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
             currency: price?.currency?.toUpperCase() || 'RON',
             priceId: price?.id
         };
-    }, [products]);
-
-    const isPurchased = useCallback((courseId: string) => {
+    }, [products]); const isPurchased = useCallback((courseId: string) => {
         return userPaidProducts?.find((userPaidProduct: any) =>
             userPaidProduct.metadata?.courseId === courseId
         );
     }, [userPaidProducts]);
+
+    // Calculate course completion percentage
+    const getCourseCompletion = useCallback((courseId: string) => {
+        if (!lessonProgress || !lessons || !lessons[courseId]) return { completed: 0, total: 0, percentage: 0 };
+
+        const courseLessons = lessons[courseId] || {};
+        const totalLessons = Object.keys(courseLessons).length;
+        if (totalLessons === 0) return { completed: 0, total: 0, percentage: 0 };
+
+        const courseProgress = lessonProgress[courseId] || {};
+        const completedLessons = Object.values(courseProgress).filter(
+            (progress: any) => progress.isCompleted
+        ).length;
+
+        const percentage = Math.round((completedLessons / totalLessons) * 100);
+
+        return {
+            completed: completedLessons,
+            total: totalLessons,
+            percentage: percentage
+        };
+    }, [lessonProgress, lessons]);
 
     // Animation variants
     const courseVariants = {
@@ -196,13 +214,17 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
                                 onClick={() => handleCourseClick(course)}
                             >
                                 {/* Gradient overlay */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent z-10"></div>
-
-                                {/* Course image */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent z-10"></div>                                {/* Course image with fallback handling */}
                                 <img
-                                    src={products?.find((product: any) => product.id === course.priceProduct?.id)?.images?.[0] || '/placeholder-course.jpg'}
+                                    src={products?.find((product: any) => product.id === course.priceProduct?.id)?.images?.[0] || '/placeholder-course.svg'}
                                     alt={course.name}
                                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                    onError={(e) => {
+                                        const target = e.target as HTMLImageElement;
+                                        if (!target.src.includes('placeholder-course.svg')) {
+                                            target.src = '/placeholder-course.svg';
+                                        }
+                                    }}
                                 />
 
                                 {/* Course info overlays */}
@@ -210,11 +232,10 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
                                     <div className="bg-black/50 backdrop-blur-sm px-3 py-1 rounded-lg text-white text-xs flex items-center">
                                         <svg className="w-3.5 h-3.5 mr-1.5 text-[color:var(--ai-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                        <span>{course.duration || '8 hours'}</span>
+                                        </svg>                                        <span>{course.duration || ''}</span>
                                     </div>
 
-                                    {course.lessonsCount && (
+                                    {course.lessonsCount !== undefined && (
                                         <div className="bg-black/50 backdrop-blur-sm px-3 py-1 rounded-lg text-white text-xs flex items-center">
                                             <svg className="w-3.5 h-3.5 mr-1.5 text-[color:var(--ai-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -236,11 +257,10 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
                             </h3>
 
                             {/* Course description */}
-                            <p
-                                className="mb-4 flex-1 text-sm text-[color:var(--ai-muted)] line-clamp-2"
+                            <p className="mb-4 flex-1 text-sm text-[color:var(--ai-muted)] line-clamp-2"
                                 onClick={() => handleCourseClick(course)}
                             >
-                                {course.description || 'Learn professional skills with this comprehensive course.'}
+                                {course.description || ''}
                             </p>
 
                             {/* Tags */}

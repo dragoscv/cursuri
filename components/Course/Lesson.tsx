@@ -185,15 +185,15 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
     return (
         <div className="w-full max-w-7xl mx-auto px-4 py-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">                {/* Main Content (2/3 width on large screens) */}                <div className="lg:col-span-2 space-y-8">                    {/* Lesson Navigation */}
-                <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-md rounded-xl overflow-hidden w-full">
+                <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-md rounded-2xl overflow-hidden w-full">
                     <div className="p-0">
-                        <LessonNavigation
+                        {/* <LessonNavigation
                             prevLessonId={prevLessonId}
                             nextLessonId={nextLessonId}
                             isCompleted={isCompleted}
                             onNavigateLesson={navigateToLesson}
                             onClose={onClose}
-                        />
+                        /> */}
                     </div>
                 </Card>
 
