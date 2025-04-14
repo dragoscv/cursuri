@@ -1,6 +1,5 @@
 import { useState, useContext, useEffect, useCallback } from "react";
 import { AppContext } from "@/components/AppContext";
-import LoadingButton from "../Buttons/LoadingButton";
 import { firestoreDB, firebaseStorage } from "@/utils/firebase/firebase.config";
 import { doc, addDoc, collection, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -14,11 +13,11 @@ import Textarea from "@/components/ui/Textarea";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import Divider from "@/components/ui/Divider";
-import Chip from "@/components/ui/Chip";
-import { Tooltip } from "@heroui/react"; // Keep what's not in UI folder
 import Select, { SelectItem } from "@/components/ui/Select";
-import Progress from "@/components/ui/Progress";
+import LoadingButton from "../Buttons/LoadingButton";
 import Switch from "@/components/ui/Switch";
+import Chip from "@/components/ui/Chip";
+import Tooltip from "@/components/ui/Tooltip";
 
 interface AddCourseProps {
     onClose: () => void;
@@ -36,17 +35,18 @@ export default function AddCourse(props: AddCourseProps) {
     const [editMode, setEditMode] = useState(false);
     const [courseImage, setCourseImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
-    const [courseLevel, setCourseLevel] = useState("beginner");
-    const [courseCategory, setCourseCategory] = useState("");
+    const [courseLevel, setCourseLevel] = useState("beginner"); const [courseCategory, setCourseCategory] = useState("");
     const [courseTags, setCourseTags] = useState<string[]>([]);
     const [courseRequirements, setCourseRequirements] = useState<string[]>([]);
     const [courseObjectives, setCourseObjectives] = useState<string[]>([]);
     const [courseStatus, setCourseStatus] = useState("active");
     const [currentObjective, setCurrentObjective] = useState("");
     const [currentRequirement, setCurrentRequirement] = useState("");
-    const [currentTag, setCurrentTag] = useState("");
+    const [currentTag, setCurrentTag] = useState(""); const [currentCategory, setCurrentCategory] = useState("");
     const [instructorName, setInstructorName] = useState("");
     const [estimatedDuration, setEstimatedDuration] = useState("");
+    const [certificateEnabled, setCertificateEnabled] = useState(false);
+    const [allowPromoCodes, setAllowPromoCodes] = useState(false);
 
     const context = useContext(AppContext);
     if (!context) {
@@ -91,15 +91,19 @@ export default function AddCourse(props: AddCourseProps) {
             // Set duration
             setEstimatedDuration(course.duration || "");
             setCourseStatus(course.status || "active");
+
+            // Set certificate and promo codes settings
+            if (course.metadata) {
+                setCertificateEnabled(course.metadata.certificateEnabled || false);
+                setAllowPromoCodes(course.metadata.allowPromoCodes || false);
+            }
         }
     }, [courseId, courses]);
 
     const addCourse = useCallback(async () => {
         setLoading(true);
         try {
-            const priceProduct = products.find((product: any) => product.prices.find((price: any) => price.id === coursePrice));
-
-            // Prepare course data
+            const priceProduct = products.find((product: any) => product.prices.find((price: any) => price.id === coursePrice));            // Prepare course data
             const courseData: any = {
                 name: courseName,
                 description: courseDescription,
@@ -114,7 +118,9 @@ export default function AddCourse(props: AddCourseProps) {
                     requirements: courseRequirements,
                     objectives: courseObjectives,
                     instructorName: instructorName,
-                    estimatedDuration: estimatedDuration
+                    estimatedDuration: estimatedDuration,
+                    certificateEnabled: certificateEnabled,
+                    allowPromoCodes: allowPromoCodes
                 },
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString()
@@ -159,15 +165,16 @@ export default function AddCourse(props: AddCourseProps) {
                 price: coursePrice,
                 priceProduct: priceProduct,
                 repoUrl: repoUrl,
-                status: courseStatus,
-                metadata: {
+                status: courseStatus, metadata: {
                     level: courseLevel,
                     category: courseCategory,
                     tags: courseTags,
                     requirements: courseRequirements,
                     objectives: courseObjectives,
                     instructorName: instructorName,
-                    estimatedDuration: estimatedDuration
+                    estimatedDuration: estimatedDuration,
+                    certificateEnabled: certificateEnabled,
+                    allowPromoCodes: allowPromoCodes
                 },
                 updatedAt: new Date().toISOString()
             };
@@ -415,7 +422,7 @@ export default function AddCourse(props: AddCourseProps) {
                             </div>                            <div className="mb-6">                            <Select
                                 label="Difficulty Level"
                                 variant="bordered"
-                                selectedKeys={[courseLevel]}
+                                value={courseLevel}
                                 onChange={(e: SelectChangeEvent) => setCourseLevel(e.target.value)}
                                 className="bg-[color:var(--ai-card-bg)]/40 relative z-10"
                                 startContent={<FiTarget className="text-[color:var(--ai-muted)]" />}
@@ -446,9 +453,8 @@ export default function AddCourse(props: AddCourseProps) {
                             <div className="mb-6">
                                 <label className="flex items-center gap-2 text-sm font-medium text-[color:var(--ai-foreground)] mb-3">
                                     <FiFileText className="text-[color:var(--ai-primary)]" /> Category
-                                </label>
-                                <div className="flex flex-wrap gap-2 mb-3 min-h-[40px] p-2 rounded-lg border border-[color:var(--ai-card-border)]/50">
-                                    {courseTags.filter(tag => tag === courseCategory).length > 0 ? (
+                                </label>                                <div className="flex flex-wrap gap-2 mb-3 min-h-[40px] p-2 rounded-lg border border-[color:var(--ai-card-border)]/50">
+                                    {courseCategory ? (
                                         <Chip key={`category-${courseCategory}`}
                                             onClose={() => setCourseCategory("")}
                                             variant="flat"
@@ -468,15 +474,12 @@ export default function AddCourse(props: AddCourseProps) {
                                     <Input
                                         placeholder="Add a category"
                                         variant="bordered"
-                                        value={currentTag === courseCategory ? currentTag : ""}
-                                        onChange={(e: InputChangeEvent) => setCurrentTag(e.target.value)}
+                                        value={currentCategory}
+                                        onChange={(e: InputChangeEvent) => setCurrentCategory(e.target.value)}
                                         onKeyPress={(e: KeyboardEvent) => {
-                                            if (e.key === 'Enter' && currentTag) {
-                                                if (!courseTags.includes(currentTag)) {
-                                                    setCourseTags([...courseTags, currentTag]);
-                                                }
-                                                setCourseCategory(currentTag);
-                                                setCurrentTag('');
+                                            if (e.key === 'Enter' && currentCategory) {
+                                                setCourseCategory(currentCategory);
+                                                setCurrentCategory('');
                                             }
                                         }}
                                         className="bg-[color:var(--ai-card-bg)]/40"
@@ -491,12 +494,9 @@ export default function AddCourse(props: AddCourseProps) {
                                     <Button
                                         color="primary"
                                         onPress={() => {
-                                            if (currentTag) {
-                                                if (!courseTags.includes(currentTag)) {
-                                                    setCourseTags([...courseTags, currentTag]);
-                                                }
-                                                setCourseCategory(currentTag);
-                                                setCurrentTag('');
+                                            if (currentCategory) {
+                                                setCourseCategory(currentCategory);
+                                                setCurrentCategory('');
                                             }
                                         }}
                                         className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
@@ -510,7 +510,7 @@ export default function AddCourse(props: AddCourseProps) {
                         <div className="grid grid-cols-2 gap-6">                                <div>                                <Select
                             label="Status"
                             variant="bordered"
-                            selectedKeys={[courseStatus]}
+                            value={courseStatus}
                             onChange={(e: SelectChangeEvent) => setCourseStatus(e.target.value)}
                             className="bg-[color:var(--ai-card-bg)]/40 relative z-10"
                             classNames={{
@@ -534,14 +534,18 @@ export default function AddCourse(props: AddCourseProps) {
                             >
                                 Archived
                             </SelectItem>
-                        </Select>
-                        </div>
-                            <div>
-                                <Tooltip content="Course completion certificate will be available">
-                                    <div className="flex items-center h-full mt-7">
+                        </Select>                        </div>
+                            <div>                                <label className="text-sm font-medium text-[color:var(--ai-foreground)] mb-2 block">Certificate</label>
+                                <Tooltip
+                                    content="Course completion certificate will be available"
+                                    placement="top"
+                                >
+                                    <div className="flex items-center h-[40px] mt-1 border border-[color:var(--ai-card-border)]/50 rounded-lg px-3">
                                         <Switch
                                             size="sm"
                                             color="primary"
+                                            isSelected={certificateEnabled}
+                                            onValueChange={setCertificateEnabled}
                                         >
                                             Certificate upon completion
                                         </Switch>
@@ -568,7 +572,7 @@ export default function AddCourse(props: AddCourseProps) {
                         </div>                        <Select
                             label="Course Price"
                             variant="bordered"
-                            selectedKeys={coursePrice ? [coursePrice] : []}
+                            value={coursePrice}
                             onChange={(e: SelectChangeEvent) => setCoursePrice(e.target.value)}
                             className="mb-4 bg-[color:var(--ai-card-bg)]/40 relative z-10"
                             startContent={<FiDollarSign className="text-[color:var(--ai-muted)]" />}
@@ -586,17 +590,20 @@ export default function AddCourse(props: AddCourseProps) {
                                     </SelectItem>
                                 ))
                             ))}
-                        </Select>
-
-                        <div className="flex items-center mt-4">
+                        </Select>                        <div className="flex items-center mt-4">
                             <Switch
                                 size="sm"
                                 color="primary"
+                                isSelected={allowPromoCodes}
+                                onValueChange={setAllowPromoCodes}
                             >
                                 Allow promotion codes
                             </Switch>
-                            <Tooltip content="Students can use promotion codes at checkout">
-                                <div className="ml-1 text-[color:var(--ai-muted)]">ⓘ</div>
+                            <Tooltip
+                                content="Students can use promotion codes at checkout"
+                                placement="right"
+                            >
+                                <div className="ml-1 text-[color:var(--ai-muted)] cursor-help">ⓘ</div>
                             </Tooltip>
                         </div>
                     </CardBody>

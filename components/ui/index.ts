@@ -13,6 +13,7 @@ export { default as Chip } from './Chip';
 export { default as Avatar } from './Avatar';
 export { default as Progress } from './Progress';
 export { default as Divider } from './Divider';
+export { default as Tooltip } from './Tooltip';
 export { default as Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, DropdownSection } from './Dropdown';
 export { default as Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem } from './Navbar';
 
@@ -29,6 +30,7 @@ export type { CardProps } from './Card';
 export type { ChipProps } from './Chip';
 export type { AvatarProps } from './Avatar';
 export type { ProgressProps } from './Progress';
+export type { TooltipProps } from './Tooltip';
 export type { DividerProps } from './Divider';
 export type { DropdownProps, DropdownMenuProps, DropdownItemProps, DropdownSectionProps } from './Dropdown';
 export type { NavbarProps } from './Navbar';

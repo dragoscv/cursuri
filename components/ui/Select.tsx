@@ -1,6 +1,7 @@
 'use client';
 
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 export interface SelectItemProps {
     /**
@@ -322,34 +323,60 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
         }
     };
 
-    const sizeStyles = getSizeStyles();
-
-    const handleSelect = (itemKey: string, itemValue: string, itemLabel: React.ReactNode) => {
+    const sizeStyles = getSizeStyles(); const handleSelect = (itemKey: string, itemValue: string, itemLabel: React.ReactNode, keepOpen: boolean = false) => {
+        // Immediately update local state for UI responsiveness
         setSelectedValue(itemValue);
         setSelectedLabel(itemLabel);
-        setIsOpen(false);
 
-        // Update underlying select for form submission
+        // Only close the dropdown if keepOpen is false
+        if (!keepOpen) {
+            setIsOpen(false);
+        }
+
+        // Create a properly structured event for React's synthetic event system
+        if (onChange && typeof onChange === 'function') {
+            // Create a mock input element to use as the target
+            const fakeInput = document.createElement('select');
+
+            // Set the value property
+            Object.defineProperty(fakeInput, 'value', {
+                value: itemValue,
+                writable: true
+            });
+
+            // Create a synthetic change event that React components expect
+            const syntheticEvent = {
+                target: fakeInput,
+                currentTarget: fakeInput,
+                type: 'change',
+                bubbles: true,
+                cancelable: true,
+                preventDefault: () => { },
+                stopPropagation: () => { },
+                // Add additional React-specific properties
+                isPropagationStopped: () => false,
+                isDefaultPrevented: () => false,
+                nativeEvent: new Event('change'),
+                persist: () => { },
+            } as unknown as React.ChangeEvent<HTMLSelectElement>;
+
+            // Call the onChange handler with our synthetic event
+            onChange(syntheticEvent);
+        }
+
+        // Call onSelectionChange if provided (alternative API)
+        if (onSelectionChange) {
+            onSelectionChange(itemKey);
+        }
+
+        // Update the underlying native select element for form submission
         const inputRef = selectInputRef as React.RefObject<HTMLSelectElement>;
         if (inputRef && inputRef.current) {
             inputRef.current.value = itemValue;
 
-            // Create and dispatch change event
-            const event = new Event('change', { bubbles: true });
-            inputRef.current.dispatchEvent(event);
-
-            // Call onChange if provided
-            if (onChange) {
-                const changeEvent = {
-                    target: { value: itemValue }
-                } as unknown as React.ChangeEvent<HTMLSelectElement>;
-                onChange(changeEvent);
-            }
-        }
-
-        // Call onSelectionChange if provided
-        if (onSelectionChange) {
-            onSelectionChange(itemKey);
+            // Dispatch a native change event to ensure form validation works
+            const changeEvent = new Event('change', { bubbles: true });
+            inputRef.current.dispatchEvent(changeEvent);
         }
     };
 
@@ -371,21 +398,168 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
 
             selectItems.push(itemProps);
         }
-    });    // Create dropdown component rendered within a root-level container
+    });    // State to track keyboard navigation
+    const [focusedIndex, setFocusedIndex] = useState<number>(-1);    // Handle keyboard navigation with improved scrolling
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            switch (e.key) {
+                case 'ArrowDown':
+                    e.preventDefault();
+                    // Mark this as keyboard navigation
+                    isKeyboardNavigationRef.current = true;
+                    setFocusedIndex(prev => {
+                        const nextIndex = prev < selectItems.length - 1 ? prev + 1 : 0;
+
+                        // Schedule the auto-selection in next tick to avoid render-phase update
+                        setTimeout(() => {
+                            const focusedElement = dropdownRef.current?.querySelector(`[data-index="${nextIndex}"]`);
+                            if (focusedElement) {
+                                focusedElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                                // Set focus on the element for better accessibility
+                                (focusedElement as HTMLElement).focus({ preventScroll: true });
+
+                                // Select the item
+                                const item = selectItems[nextIndex];
+                                if (!item.isDisabled) {
+                                    handleSelect(item.itemKey, item.value || item.itemKey, item.children, true);
+                                }
+                            }
+                        }, 0);
+
+                        return nextIndex;
+                    });
+                    break;
+                case 'ArrowUp':
+                    e.preventDefault();
+                    // Mark this as keyboard navigation
+                    isKeyboardNavigationRef.current = true;
+                    setFocusedIndex(prev => {
+                        const prevIndex = prev > 0 ? prev - 1 : selectItems.length - 1;
+
+                        // Schedule the auto-selection in next tick to avoid render-phase update
+                        setTimeout(() => {
+                            const focusedElement = dropdownRef.current?.querySelector(`[data-index="${prevIndex}"]`);
+                            if (focusedElement) {
+                                focusedElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                                // Set focus on the element for better accessibility
+                                (focusedElement as HTMLElement).focus({ preventScroll: true });
+
+                                // Select the item
+                                const item = selectItems[prevIndex];
+                                if (!item.isDisabled) {
+                                    handleSelect(item.itemKey, item.value || item.itemKey, item.children, true);
+                                }
+                            }
+                        }, 0);
+
+                        return prevIndex;
+                    });
+                    break;
+                case 'Enter':
+                    e.preventDefault();
+                    if (focusedIndex >= 0 && focusedIndex < selectItems.length) {
+                        const item = selectItems[focusedIndex];
+                        if (!item.isDisabled) {
+                            // Pass true to keep the dropdown open when selecting with keyboard
+                            handleSelect(item.itemKey, item.value || item.itemKey, item.children, true);
+
+                            // Keep dropdown focused for continued navigation
+                            setTimeout(() => {
+                                const focusedElement = dropdownRef.current?.querySelector(`[data-index="${focusedIndex}"]`);
+                                if (focusedElement) {
+                                    (focusedElement as HTMLElement).focus({ preventScroll: true });
+                                }
+                            }, 10);
+                        }
+                    }
+                    break;
+                case 'Escape':
+                    e.preventDefault();
+                    setIsOpen(false);
+                    break;
+                case 'Tab':
+                    setIsOpen(false);
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    if (selectItems.length > 0) {
+                        setFocusedIndex(0);
+                        const focusedElement = dropdownRef.current?.querySelector(`[data-index="0"]`);
+                        if (focusedElement) {
+                            focusedElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                        }
+                    }
+                    break;
+                case 'End':
+                    e.preventDefault();
+                    if (selectItems.length > 0) {
+                        const lastIndex = selectItems.length - 1;
+                        setFocusedIndex(lastIndex);
+                        const focusedElement = dropdownRef.current?.querySelector(`[data-index="${lastIndex}"]`);
+                        if (focusedElement) {
+                            focusedElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                        }
+                    }
+                    break;
+            }
+        };
+
+        // Use capture phase to ensure our keyboard handler runs first
+        window.addEventListener('keydown', handleKeyDown, { capture: true });
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown, { capture: true });
+        };
+    }, [isOpen, focusedIndex, selectItems]);    // Reset focused index when dropdown opens/closes
+    useEffect(() => {
+        if (isOpen) {
+            // Set focus to selected item if available
+            const selectedIndex = selectItems.findIndex(item =>
+                item.itemKey === (selectedKeys[0] || selectedValue)
+            );
+            setFocusedIndex(selectedIndex >= 0 ? selectedIndex : 0);
+        } else {
+            setFocusedIndex(-1);
+        }
+    }, [isOpen, selectedKeys, selectedValue, selectItems]);    // Keep track of previous focused index without auto-selecting on hover
+    const prevFocusedIndexRef = useRef<number>(-1);    // Add a ref to track keyboard navigation vs mouse hover
+    const isKeyboardNavigationRef = useRef<boolean>(false);
+
+    // Add a handler for keyboard arrow key navigation
+    const handleKeyboardNavigation = (key: 'ArrowUp' | 'ArrowDown') => {
+        isKeyboardNavigationRef.current = true;
+    };// Create dropdown component within the component itself
     const renderDropdown = () => {
         if (!isOpen) return null;
+
+        const dropdownStyle: React.CSSProperties = {
+            position: 'absolute',
+            width: '100%',
+            zIndex: 99999, // Much higher z-index to ensure it's above everything
+        };
+
+        // Position dropdown above or below the select
+        if (dropdownPlacement === 'top') {
+            dropdownStyle.bottom = '100%';
+            dropdownStyle.marginBottom = '2px';
+        } else {
+            dropdownStyle.top = '100%';
+            dropdownStyle.marginTop = '2px';
+        }
 
         return (
             <div
                 id="select-dropdown"
                 ref={dropdownRef}
                 className={`
-                    fixed overflow-auto bg-[color:var(--ai-card-bg)] 
+                    overflow-auto bg-[color:var(--ai-card-bg)] 
                     border border-[color:var(--ai-card-border)] rounded-lg shadow-xl 
-                    animate-in fade-in-0 zoom-in-95 max-h-60 z-50
+                    animate-in fade-in-0 zoom-in-95 max-h-60
                     ${dropdownPlacement === 'top' ? 'origin-bottom' : 'origin-top'}
                     ${classNames.listboxWrapper || ''}
                 `}
+                style={dropdownStyle}
             >
                 <ul
                     className={`py-1 ${classNames.listbox || ''}`}
@@ -395,51 +569,61 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
                     tabIndex={-1}
                 >
                     {selectItems.length ? (
-                        selectItems.map((item) => {
+                        selectItems.map((item, index) => {
                             const isItemSelected = item.itemKey === (selectedKeys[0] || selectedValue);
+                            const isFocused = index === focusedIndex;
 
-                            return (
-                                <li
-                                    key={item.itemKey}
-                                    className={`
+                            return (<li
+                                key={item.itemKey}
+                                data-index={index}
+                                className={`
                                         ${sizeStyles.itemPadding} ${sizeStyles.text} cursor-pointer
                                         flex items-center transition-colors duration-150
                                         ${isItemSelected
-                                            ? 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]'
+                                        ? 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]'
+                                        : isFocused
+                                            ? 'bg-[color:var(--ai-primary)]/5 text-[color:var(--ai-foreground)] outline-none ring-1 ring-[color:var(--ai-primary)]/30'
                                             : 'hover:bg-[color:var(--ai-card-border)]/30 text-[color:var(--ai-foreground)]'
-                                        }
+                                    }
                                         ${item.isDisabled ? 'opacity-50 cursor-not-allowed' : ''}
                                         ${item.className || ''}
                                         ${classNames.item || ''}
                                     `}
-                                    role="option"
-                                    aria-selected={isItemSelected}
-                                    onClick={() => !item.isDisabled && handleSelect(item.itemKey, item.value || item.itemKey, item.children)}
-                                >
-                                    {item.startContent && (
-                                        <span className="mr-2 flex-shrink-0">
-                                            {item.startContent}
+                                role="option"
+                                aria-selected={isItemSelected}
+                                tabIndex={isFocused ? 0 : -1} onMouseEnter={() => setFocusedIndex(index)} onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    if (!item.isDisabled) {
+                                        // For mouse clicks, close the dropdown after selection (keepOpen = false)
+                                        handleSelect(item.itemKey, item.value || item.itemKey, item.children, false);
+                                    }
+                                }}
+                            >
+                                {item.startContent && (
+                                    <span className="mr-2 flex-shrink-0">
+                                        {item.startContent}
+                                    </span>
+                                )}
+                                <div className="flex flex-col flex-grow">
+                                    <span>{item.children}</span>
+                                    {item.description && (
+                                        <span className="text-[color:var(--ai-muted)] text-xs mt-0.5">
+                                            {item.description}
                                         </span>
                                     )}
-                                    <div className="flex flex-col flex-grow">
-                                        <span>{item.children}</span>
-                                        {item.description && (
-                                            <span className="text-[color:var(--ai-muted)] text-xs mt-0.5">
-                                                {item.description}
-                                            </span>
-                                        )}
-                                    </div>
-                                    {item.endContent && (
-                                        <span className="ml-auto flex-shrink-0">
-                                            {item.endContent}
-                                        </span>
-                                    )}
-                                    {isItemSelected && (
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2 text-[color:var(--ai-primary)]" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                        </svg>
-                                    )}
-                                </li>
+                                </div>
+                                {item.endContent && (
+                                    <span className="ml-auto flex-shrink-0">
+                                        {item.endContent}
+                                    </span>
+                                )}
+                                {isItemSelected && (
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2 text-[color:var(--ai-primary)]" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                    </svg>
+                                )}
+                            </li>
                             );
                         })
                     ) : (
@@ -463,13 +647,14 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
             )}            <div
                 ref={selectRef}
                 className="relative w-full"
-            >
-                {/* Hidden native select for form submission */}
+            >                {/* Hidden native select for form submission */}
                 <select
                     ref={selectInputRef as React.RefObject<HTMLSelectElement>}
                     className="sr-only"
-                    value={selectedValue}
-                    onChange={onChange}
+                    {...(onChange
+                        ? { value: selectedValue, onChange }
+                        : { defaultValue: selectedValue }
+                    )}
                     required={isRequired}
                     disabled={isDisabled}
                     aria-hidden="true"
