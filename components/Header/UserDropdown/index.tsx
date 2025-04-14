@@ -95,9 +95,7 @@ export default function UserDropdown() {
                 )}
             </DropdownSection>
         );
-    };
-
-    // Admin section
+    };    // Admin section
     const renderAdminSection = () => {
         if (!isAdmin) return null;
 
@@ -114,33 +112,6 @@ export default function UserDropdown() {
                     >
                         <ShieldIcon className="text-[color:var(--ai-primary)]" size={18} />
                         Admin Dashboard
-                    </div>
-                </DropdownItem>
-                <DropdownItem
-                    key="addCourse"
-                    textValue="Add Course"
-                    className="p-0"
-                    onClick={() => openModal({
-                        id: 'add-course',
-                        isOpen: true,
-                        hideCloseButton: false,
-                        backdrop: 'blur',
-                        size: 'full',
-                        scrollBehavior: 'inside',
-                        isDismissable: true,
-                        modalHeader: 'Add Course',
-                        modalBody: <AddCourse onClose={() => closeModal('add-course')} />,
-                        headerDisabled: true,
-                        footerDisabled: true,
-                        noReplaceURL: true,
-                        onClose: () => closeModal('add-course'),
-                    })}
-                >
-                    <div
-                        className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors flex items-center gap-2"
-                    >
-                        <PlusIcon className="text-[color:var(--ai-primary)]" size={18} />
-                        Add Course
                     </div>
                 </DropdownItem>
             </DropdownSection>
@@ -169,12 +140,10 @@ export default function UserDropdown() {
                         key="logout"
                         textValue="Logout"
                         className="p-0"
+                    >                        <div className="cursor-pointer hover:bg-[color:var(--ai-error)]/10 text-[color:var(--ai-error)] rounded-lg p-2 transition-colors flex items-center gap-2"
+                        onClick={handleSignOut}
                     >
-                        <div
-                            className="cursor-pointer hover:bg-[color:var(--ai-danger)]/10 hover:text-[color:var(--ai-danger)] rounded-lg p-2 transition-colors flex items-center gap-2"
-                            onClick={handleSignOut}
-                        >
-                            <LogOutIcon className="text-[color:var(--ai-danger)]" size={18} />
+                            <LogOutIcon className="text-[color:var(--ai-error)]" size={18} color="var(--ai-error)" />
                             Logout
                         </div>
                     </DropdownItem>

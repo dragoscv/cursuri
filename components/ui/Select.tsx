@@ -3,26 +3,48 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 
 export interface SelectItemProps {
-    key: string;
+    /**
+     * The key for the item (used for selection)
+     */
+    itemKey: string;
+
+    /**
+     * The value for the item
+     */
     value?: string;
+
+    /**
+     * The content to display in the item
+     */
     children: React.ReactNode;
+
+    /**
+     * Content to display at the start of the item
+     */
     startContent?: React.ReactNode;
+
+    /**
+     * Content to display at the end of the item
+     */
     endContent?: React.ReactNode;
+
+    /**
+     * Description for the item
+     */
     description?: string;
+
+    /**
+     * CSS class to apply to the item
+     */
     className?: string;
+
+    /**
+     * Whether the item is disabled
+     */
     isDisabled?: boolean;
 }
 
-export const SelectItem = ({
-    key,
-    value = key,
-    children,
-    startContent,
-    endContent,
-    description,
-    className = '',
-    isDisabled = false
-}: SelectItemProps) => {
+export const SelectItem = (_props: SelectItemProps) => {
     // This is just a wrapper component for type-safety
     // The actual rendering happens in the Select component
     return <></>;
@@ -150,18 +172,47 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
         children,
         isRequired = false,
         ...rest
-    } = props;
-
-    const [isOpen, setIsOpen] = useState(false);
+    } = props; const [isOpen, setIsOpen] = useState(false);
     const [selectedValue, setSelectedValue] = useState<string>('');
-    const [selectedLabel, setSelectedLabel] = useState<React.ReactNode>('');
+    const [selectedLabel, setSelectedLabel] = useState<React.ReactNode>(''); const [dropdownPlacement, setDropdownPlacement] = useState<'bottom' | 'top'>('bottom');
     const selectRef = useRef<HTMLDivElement>(null);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
     const internalRef = useRef<HTMLSelectElement>(null);
-    const selectInputRef = ref || internalRef;
+    const selectInputRef = ref || internalRef;// Calculate dropdown placement (above or below the select)
+    const updateDropdownPlacement = () => {
+        if (selectRef.current) {
+            const rect = selectRef.current.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            const spaceBelow = windowHeight - rect.bottom;
+            const spaceAbove = rect.top;
 
-    // Close dropdown when clicking outside
+            // If there's not enough space below and more space above, place dropdown above
+            if (spaceBelow < 100 && spaceAbove > spaceBelow) {
+                setDropdownPlacement('top');
+            } else {
+                setDropdownPlacement('bottom');
+            }
+        }
+    };
+
+    // Update placement when dropdown is opened
+    useEffect(() => {
+        if (isOpen) {
+            updateDropdownPlacement();
+            window.addEventListener('resize', updateDropdownPlacement);
+        }
+
+        return () => {
+            window.removeEventListener('resize', updateDropdownPlacement);
+        };
+    }, [isOpen]);// Close dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
+            // Only run when dropdown is open
+            if (!isOpen) return;
+
+            // Close if the click is outside the select component
             if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
                 setIsOpen(false);
             }
@@ -171,7 +222,9 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, []);    // Initialize selected value from selectedKeys or value prop
+    }, [isOpen]);
+
+    // Initialize selected value from selectedKeys or value prop
     useEffect(() => {
         if (selectedKeys && selectedKeys.length > 0) {
             const selectedKey = selectedKeys[0];
@@ -179,12 +232,11 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
             // Find the corresponding child to get its text content
             React.Children.forEach(children, (child) => {
                 if (React.isValidElement(child) &&
-                    child.type === SelectItem &&
-                    child.props) {
-                    const childProps = child.props as { key?: string; value?: string; children?: React.ReactNode };
-                    if (childProps.key === selectedKey) {
-                        setSelectedValue(childProps.value || childProps.key || "");
-                        setSelectedLabel(childProps.children);
+                    child.type === SelectItem) {
+                    const props = child.props as SelectItemProps;
+                    if (props.itemKey === selectedKey) {
+                        setSelectedValue(props.value || props.itemKey || "");
+                        setSelectedLabel(props.children);
                     }
                 }
             });
@@ -194,11 +246,10 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
             // Find the child with matching value to get its text content
             React.Children.forEach(children, (child) => {
                 if (React.isValidElement(child) &&
-                    child.type === SelectItem &&
-                    child.props) {
-                    const childProps = child.props as { key?: string; value?: string; children?: React.ReactNode };
-                    if (childProps.value === value || childProps.key === value) {
-                        setSelectedLabel(childProps.children);
+                    child.type === SelectItem) {
+                    const props = child.props as SelectItemProps;
+                    if (props.value === value || props.itemKey === value) {
+                        setSelectedLabel(props.children);
                     }
                 }
             });
@@ -302,13 +353,104 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
         }
     };
 
-    // Extract SelectItem children
-    const selectItems = React.Children.map(children, (child) => {
+    // Extract SelectItem children and process them correctly
+    const selectItems: SelectItemProps[] = [];
+
+    React.Children.forEach(children, (child) => {
         if (React.isValidElement(child) && child.type === SelectItem) {
-            return child.props;
+            // Get the JSX key and use it as itemKey if not explicitly provided
+            const key = child.key != null ? String(child.key).replace(/^\.\$/, '') : undefined;
+            const props = child.props as SelectItemProps;
+
+            // Make a copy of props to avoid modifying the original
+            const itemProps: SelectItemProps = {
+                ...props,
+                itemKey: props.itemKey || key || String(Math.random()),
+                value: props.value || props.itemKey || key || ''
+            };
+
+            selectItems.push(itemProps);
         }
-        return null;
-    })?.filter(Boolean) as SelectItemProps[];
+    });    // Create dropdown component rendered within a root-level container
+    const renderDropdown = () => {
+        if (!isOpen) return null;
+
+        return (
+            <div
+                id="select-dropdown"
+                ref={dropdownRef}
+                className={`
+                    fixed overflow-auto bg-[color:var(--ai-card-bg)] 
+                    border border-[color:var(--ai-card-border)] rounded-lg shadow-xl 
+                    animate-in fade-in-0 zoom-in-95 max-h-60 z-50
+                    ${dropdownPlacement === 'top' ? 'origin-bottom' : 'origin-top'}
+                    ${classNames.listboxWrapper || ''}
+                `}
+            >
+                <ul
+                    className={`py-1 ${classNames.listbox || ''}`}
+                    role="listbox"
+                    aria-labelledby={label ? `${label}-label` : undefined}
+                    title={label || "Options"}
+                    tabIndex={-1}
+                >
+                    {selectItems.length ? (
+                        selectItems.map((item) => {
+                            const isItemSelected = item.itemKey === (selectedKeys[0] || selectedValue);
+
+                            return (
+                                <li
+                                    key={item.itemKey}
+                                    className={`
+                                        ${sizeStyles.itemPadding} ${sizeStyles.text} cursor-pointer
+                                        flex items-center transition-colors duration-150
+                                        ${isItemSelected
+                                            ? 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]'
+                                            : 'hover:bg-[color:var(--ai-card-border)]/30 text-[color:var(--ai-foreground)]'
+                                        }
+                                        ${item.isDisabled ? 'opacity-50 cursor-not-allowed' : ''}
+                                        ${item.className || ''}
+                                        ${classNames.item || ''}
+                                    `}
+                                    role="option"
+                                    aria-selected={isItemSelected}
+                                    onClick={() => !item.isDisabled && handleSelect(item.itemKey, item.value || item.itemKey, item.children)}
+                                >
+                                    {item.startContent && (
+                                        <span className="mr-2 flex-shrink-0">
+                                            {item.startContent}
+                                        </span>
+                                    )}
+                                    <div className="flex flex-col flex-grow">
+                                        <span>{item.children}</span>
+                                        {item.description && (
+                                            <span className="text-[color:var(--ai-muted)] text-xs mt-0.5">
+                                                {item.description}
+                                            </span>
+                                        )}
+                                    </div>
+                                    {item.endContent && (
+                                        <span className="ml-auto flex-shrink-0">
+                                            {item.endContent}
+                                        </span>
+                                    )}
+                                    {isItemSelected && (
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2 text-[color:var(--ai-primary)]" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                        </svg>
+                                    )}
+                                </li>
+                            );
+                        })
+                    ) : (
+                        <li role="presentation" className={`${sizeStyles.itemPadding} ${sizeStyles.text} text-[color:var(--ai-muted)] text-center`}>
+                            No options available
+                        </li>
+                    )}
+                </ul>
+            </div>
+        );
+    };
 
     return (
         <div className={`relative w-full ${className}`}>
@@ -318,9 +460,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
                     {label}
                     {isRequired && <span className="ml-1 text-red-500">*</span>}
                 </label>
-            )}
-
-            <div
+            )}            <div
                 ref={selectRef}
                 className="relative w-full"
             >
@@ -336,8 +476,8 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
                     {...rest}
                 >
                     <option value="" disabled>{placeholder}</option>
-                    {selectItems?.map((item: SelectItemProps) => (
-                        <option key={item.key} value={item.value || item.key} disabled={item.isDisabled}>
+                    {selectItems.map((item) => (
+                        <option key={item.itemKey} value={item.value || item.itemKey} disabled={item.isDisabled}>
                             {item.children?.toString()}
                         </option>
                     ))}
@@ -357,7 +497,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
                     `}
                     onClick={() => !isDisabled && setIsOpen(!isOpen)}
                     disabled={isDisabled}
-                    aria-expanded={isOpen ? 'true' : 'false'}
+                    aria-expanded={isOpen}
                     aria-haspopup="listbox"
                 >
                     <div className="flex items-center flex-grow overflow-hidden">
@@ -378,77 +518,8 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
                     </span>
                 </button>
 
-                {/* Dropdown menu */}
-                <div
-                    className={`
-                        absolute z-10 w-full mt-1 overflow-auto bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)]
-                        rounded-lg shadow-lg transition-all duration-200 max-h-60 scrollbar-thin
-                        ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 invisible translate-y-1'}
-                        ${classNames.listboxWrapper || ''}
-                    `}
-                >
-                    <ul
-                        className={`py-1 ${classNames.listbox || ''}`}
-                        role="listbox"
-                        aria-labelledby={label ? `${label}-label` : undefined}
-                        title={label || "Options"}
-                        tabIndex={-1}
-                    >
-                        {selectItems?.length ? (
-                            selectItems.map((item: SelectItemProps) => {
-                                const isItemSelected = item.key === (selectedKeys[0] || selectedValue);
-
-                                return (
-                                    <li
-                                        key={item.key}
-                                        className={`
-                                            ${sizeStyles.itemPadding} ${sizeStyles.text} cursor-pointer
-                                            flex items-center transition-colors duration-150
-                                            ${isItemSelected
-                                                ? 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]'
-                                                : 'hover:bg-[color:var(--ai-card-border)]/30 text-[color:var(--ai-foreground)]'
-                                            }
-                                            ${item.isDisabled ? 'opacity-50 cursor-not-allowed' : ''}
-                                            ${item.className || ''}
-                                            ${classNames.item || ''}
-                                        `}
-                                        role="option"
-                                        aria-selected={isItemSelected ? 'true' : 'false'}
-                                        onClick={() => !item.isDisabled && handleSelect(item.key, item.value || item.key, item.children)}
-                                    >
-                                        {item.startContent && (
-                                            <span className="mr-2 flex-shrink-0">
-                                                {item.startContent}
-                                            </span>
-                                        )}
-                                        <div className="flex flex-col flex-grow">
-                                            <span>{item.children}</span>
-                                            {item.description && (
-                                                <span className="text-[color:var(--ai-muted)] text-xs mt-0.5">
-                                                    {item.description}
-                                                </span>
-                                            )}
-                                        </div>
-                                        {item.endContent && (
-                                            <span className="ml-auto flex-shrink-0">
-                                                {item.endContent}
-                                            </span>
-                                        )}
-                                        {isItemSelected && (
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2 text-[color:var(--ai-primary)]" viewBox="0 0 20 20" fill="currentColor">
-                                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                            </svg>
-                                        )}
-                                    </li>
-                                );
-                            })
-                        ) : (
-                            <li role="presentation" className={`${sizeStyles.itemPadding} ${sizeStyles.text} text-[color:var(--ai-muted)] text-center`}>
-                                No options available
-                            </li>
-                        )}
-                    </ul>
-                </div>
+                {/* Render dropdown directly in the component */}
+                {renderDropdown()}
             </div>
 
             {errorMessage && isInvalid && (

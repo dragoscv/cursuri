@@ -13,10 +13,10 @@ import Card, { CardBody, CardHeader } from "@/components/ui/Card";
 import Textarea from "@/components/ui/Textarea";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
-import Select from "@/components/ui/Select";
 import Divider from "@/components/ui/Divider";
 import Chip from "@/components/ui/Chip";
-import { Tooltip, SelectItem } from "@heroui/react"; // Keep what's not in UI folder
+import { Tooltip } from "@heroui/react"; // Keep what's not in UI folder
+import Select, { SelectItem } from "@/components/ui/Select";
 import Progress from "@/components/ui/Progress";
 import Switch from "@/components/ui/Switch";
 
@@ -294,7 +294,7 @@ export default function AddCourse(props: AddCourseProps) {
                             <p className="text-[color:var(--ai-muted)] text-sm">Main details about your course</p>
                         </div>
                     </CardHeader>
-                    <CardBody className="p-6"><div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <CardBody className="p-6 overflow-visible"><div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <div>
                             <div className="relative mb-6">
                                 <Input
@@ -412,103 +412,148 @@ export default function AddCourse(props: AddCourseProps) {
                                         </label>
                                     )}
                                 </div>
+                            </div>                            <div className="mb-6">                            <Select
+                                label="Difficulty Level"
+                                variant="bordered"
+                                selectedKeys={[courseLevel]}
+                                onChange={(e: SelectChangeEvent) => setCourseLevel(e.target.value)}
+                                className="bg-[color:var(--ai-card-bg)]/40 relative z-10"
+                                startContent={<FiTarget className="text-[color:var(--ai-muted)]" />}
+                                classNames={{
+                                    label: "text-[color:var(--ai-foreground)] font-medium",
+                                    listboxWrapper: "z-[9999]",
+                                    trigger: "focus:ring-2 focus:ring-[color:var(--ai-primary)]/20"
+                                }}
+                            >
+                                <SelectItem itemKey="beginner" value="beginner"
+                                    startContent={<Chip color="success" size="sm" variant="flat">Easy</Chip>}
+                                >
+                                    Beginner
+                                </SelectItem>
+                                <SelectItem itemKey="intermediate" value="intermediate"
+                                    startContent={<Chip color="warning" size="sm" variant="flat">Medium</Chip>}
+                                >
+                                    Intermediate
+                                </SelectItem>
+                                <SelectItem itemKey="advanced" value="advanced"
+                                    startContent={<Chip color="danger" size="sm" variant="flat">Hard</Chip>}
+                                >
+                                    Advanced
+                                </SelectItem>
+                            </Select>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-6 mb-6">
-                                <div>
-                                    <Select
-                                        label="Difficulty Level"
-                                        variant="bordered"
-                                        selectedKeys={[courseLevel]}
-                                        onChange={(e: SelectChangeEvent) => setCourseLevel(e.target.value)}
-                                        className="bg-[color:var(--ai-card-bg)]/40"
-                                        startContent={<FiTarget className="text-[color:var(--ai-muted)]" />}
-                                        classNames={{
-                                            label: "text-[color:var(--ai-foreground)] font-medium"
-                                        }}
-                                    >
-                                        <SelectItem key="beginner"
-                                            startContent={<Chip color="success" size="sm" variant="flat">Easy</Chip>}
+                            <div className="mb-6">
+                                <label className="flex items-center gap-2 text-sm font-medium text-[color:var(--ai-foreground)] mb-3">
+                                    <FiFileText className="text-[color:var(--ai-primary)]" /> Category
+                                </label>
+                                <div className="flex flex-wrap gap-2 mb-3 min-h-[40px] p-2 rounded-lg border border-[color:var(--ai-card-border)]/50">
+                                    {courseTags.filter(tag => tag === courseCategory).length > 0 ? (
+                                        <Chip key={`category-${courseCategory}`}
+                                            onClose={() => setCourseCategory("")}
+                                            variant="flat"
+                                            color="primary"
+                                            className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 border-none"
+                                            classNames={{
+                                                content: "font-medium"
+                                            }}
                                         >
-                                            Beginner
-                                        </SelectItem>
-                                        <SelectItem key="intermediate"
-                                            startContent={<Chip color="warning" size="sm" variant="flat">Medium</Chip>}
-                                        >
-                                            Intermediate
-                                        </SelectItem>
-                                        <SelectItem key="advanced"
-                                            startContent={<Chip color="danger" size="sm" variant="flat">Hard</Chip>}
-                                        >
-                                            Advanced
-                                        </SelectItem>
-                                    </Select>
+                                            {courseCategory}
+                                        </Chip>
+                                    ) : (
+                                        <p className="text-sm text-[color:var(--ai-muted)] italic">No category selected</p>
+                                    )}
                                 </div>
-
-                                <div>
+                                <div className="flex gap-2">
                                     <Input
-                                        label="Category"
+                                        placeholder="Add a category"
                                         variant="bordered"
-                                        placeholder="e.g., Web Development"
-                                        value={courseCategory}
-                                        onChange={(e: InputChangeEvent) => setCourseCategory(e.target.value)}
-                                        startContent={<FiFileText className="text-[color:var(--ai-muted)]" />}
-                                        className="bg-[color:var(--ai-card-bg)]/40"
-                                        classNames={{
-                                            label: "text-[color:var(--ai-foreground)] font-medium"
+                                        value={currentTag === courseCategory ? currentTag : ""}
+                                        onChange={(e: InputChangeEvent) => setCurrentTag(e.target.value)}
+                                        onKeyPress={(e: KeyboardEvent) => {
+                                            if (e.key === 'Enter' && currentTag) {
+                                                if (!courseTags.includes(currentTag)) {
+                                                    setCourseTags([...courseTags, currentTag]);
+                                                }
+                                                setCourseCategory(currentTag);
+                                                setCurrentTag('');
+                                            }
                                         }}
+                                        className="bg-[color:var(--ai-card-bg)]/40"
+                                        startContent={<FiFileText className="text-[color:var(--ai-muted)]" size={16} />}
+                                        list="categories"
                                     />
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-6">
-                                <div>
-                                    <Select
-                                        label="Status"
-                                        variant="bordered"
-                                        selectedKeys={[courseStatus]}
-                                        onChange={(e: SelectChangeEvent) => setCourseStatus(e.target.value)}
-                                        className="bg-[color:var(--ai-card-bg)]/40"
-                                        classNames={{
-                                            label: "text-[color:var(--ai-foreground)] font-medium"
+                                    <datalist id="categories">
+                                        {courseTags.map((tag, index) => (
+                                            <option key={index} value={tag} />
+                                        ))}
+                                    </datalist>
+                                    <Button
+                                        color="primary"
+                                        onPress={() => {
+                                            if (currentTag) {
+                                                if (!courseTags.includes(currentTag)) {
+                                                    setCourseTags([...courseTags, currentTag]);
+                                                }
+                                                setCourseCategory(currentTag);
+                                                setCurrentTag('');
+                                            }
                                         }}
+                                        className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
                                     >
-                                        <SelectItem key="active"
-                                            startContent={<Chip color="success" size="sm" variant="flat">Live</Chip>}
-                                        >
-                                            Active
-                                        </SelectItem>
-                                        <SelectItem key="draft"
-                                            startContent={<Chip color="warning" size="sm" variant="flat">Draft</Chip>}
-                                        >
-                                            Draft
-                                        </SelectItem>
-                                        <SelectItem key="archived"
-                                            startContent={<Chip color="default" size="sm" variant="flat">Archive</Chip>}
-                                        >
-                                            Archived
-                                        </SelectItem>
-                                    </Select>
-                                </div>
-                                <div>
-                                    <Tooltip content="Course completion certificate will be available">
-                                        <div className="flex items-center h-full mt-7">
-                                            <Switch
-                                                size="sm"
-                                                color="primary"
-                                            >
-                                                Certificate upon completion
-                                            </Switch>
-                                        </div>
-                                    </Tooltip>
+                                        Add
+                                    </Button>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    </CardBody>                </Card>
 
-                <Card className="shadow-xl border border-[color:var(--ai-card-border)] overflow-hidden mb-8 hover:shadow-[color:var(--ai-primary)]/5 transition-all rounded-xl">
-                    <CardHeader className="flex gap-3 px-6 py-4 border-b border-[color:var(--ai-card-border)]/60 bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-transparent">
+                        <div className="grid grid-cols-2 gap-6">                                <div>                                <Select
+                            label="Status"
+                            variant="bordered"
+                            selectedKeys={[courseStatus]}
+                            onChange={(e: SelectChangeEvent) => setCourseStatus(e.target.value)}
+                            className="bg-[color:var(--ai-card-bg)]/40 relative z-10"
+                            classNames={{
+                                label: "text-[color:var(--ai-foreground)] font-medium",
+                                listboxWrapper: "z-[9999]",
+                                trigger: "focus:ring-2 focus:ring-[color:var(--ai-primary)]/20"
+                            }}
+                        >
+                            <SelectItem itemKey="active" value="active"
+                                startContent={<Chip color="success" size="sm" variant="flat">Live</Chip>}
+                            >
+                                Active
+                            </SelectItem>
+                            <SelectItem itemKey="draft" value="draft"
+                                startContent={<Chip color="warning" size="sm" variant="flat">Draft</Chip>}
+                            >
+                                Draft
+                            </SelectItem>
+                            <SelectItem itemKey="archived" value="archived"
+                                startContent={<Chip color="default" size="sm" variant="flat">Archive</Chip>}
+                            >
+                                Archived
+                            </SelectItem>
+                        </Select>
+                        </div>
+                            <div>
+                                <Tooltip content="Course completion certificate will be available">
+                                    <div className="flex items-center h-full mt-7">
+                                        <Switch
+                                            size="sm"
+                                            color="primary"
+                                        >
+                                            Certificate upon completion
+                                        </Switch>
+                                    </div>
+                                </Tooltip>
+                            </div>
+                        </div>                    </div>
+                    </CardBody>
+                </Card>
+
+                <Card className="shadow-xl border border-[color:var(--ai-card-border)] overflow-hidden mb-8 hover:shadow-[color:var(--ai-primary)]/5 transition-all rounded-xl z-10">
+                    <CardHeader className="flex gap-3 px-6 py-4 border-b border-[color:var(--ai-card-border)]/60 bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-transparent z-10">
                         <FiDollarSign className="text-[color:var(--ai-primary)]" size={20} />
                         <div className="flex flex-col">
                             <h2 className="text-lg font-semibold text-[color:var(--ai-foreground)]">Pricing</h2>
@@ -520,23 +565,23 @@ export default function AddCourse(props: AddCourseProps) {
                             <p className="text-sm text-[color:var(--ai-muted)]">
                                 <span className="font-medium text-[color:var(--ai-foreground)]">Pricing Tip:</span> Choose a competitive price that reflects the value of your course content and target audience.
                             </p>
-                        </div>
-
-                        <Select
+                        </div>                        <Select
                             label="Course Price"
                             variant="bordered"
                             selectedKeys={coursePrice ? [coursePrice] : []}
                             onChange={(e: SelectChangeEvent) => setCoursePrice(e.target.value)}
-                            className="mb-4 bg-[color:var(--ai-card-bg)]/40"
+                            className="mb-4 bg-[color:var(--ai-card-bg)]/40 relative z-10"
                             startContent={<FiDollarSign className="text-[color:var(--ai-muted)]" />}
                             classNames={{
-                                label: "text-[color:var(--ai-foreground)] font-medium"
+                                label: "text-[color:var(--ai-foreground)] font-medium",
+                                listboxWrapper: "z-[9999]",
+                                trigger: "focus:ring-2 focus:ring-[color:var(--ai-primary)]/20"
                             }}
                         >
-                            <SelectItem key="">Select a price</SelectItem>
-                            {products.map((product: any) => (
-                                product.prices.map((price: any) => (
-                                    <SelectItem key={price.id}>
+                            <SelectItem itemKey="" value="">Select a price</SelectItem>
+                            {products && products.length > 0 && products.map((product: any) => (
+                                product.prices && product.prices.map((price: any) => (
+                                    <SelectItem itemKey={price.id} value={price.id} key={price.id}>
                                         {product.name} - {(Number(price.unit_amount) / 100).toFixed(2)} {price.currency}
                                     </SelectItem>
                                 ))
@@ -699,9 +744,10 @@ export default function AddCourse(props: AddCourseProps) {
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </CardBody>
-                </Card>                <Card className="shadow-xl border border-[color:var(--ai-card-border)] overflow-hidden mb-8 hover:shadow-[color:var(--ai-primary)]/5 transition-all">
+                        </div>                </CardBody>
+                </Card>
+
+                <Card className="shadow-xl border border-[color:var(--ai-card-border)] overflow-hidden mb-8 hover:shadow-[color:var(--ai-primary)]/5 transition-all">
                     <CardHeader className="flex gap-3 px-6 py-4 border-b border-[color:var(--ai-card-border)]/60 bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-transparent">
                         <div className="flex items-center justify-center w-6 h-6 rounded-full bg-[color:var(--ai-primary)]/20">
                             <span className="text-[color:var(--ai-primary)] font-bold text-sm">✓</span>
@@ -770,8 +816,7 @@ export default function AddCourse(props: AddCourseProps) {
                                         {editMode ? 'Update Course' : 'Create Course'}
                                     </Button>
                                 )}
-                            </div>
-                        </div>
+                            </div>                        </div>
                     </CardBody>
                 </Card>
             </motion.div>

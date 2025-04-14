@@ -1,7 +1,6 @@
 'use client';
 
 import React, { forwardRef } from 'react';
-import { Card as HeroCard, CardBody as HeroCardBody, CardHeader as HeroCardHeader, CardFooter as HeroCardFooter, type CardProps as HeroCardProps } from '@heroui/react';
 
 export interface CardProps {
     /**
@@ -40,6 +39,11 @@ export interface CardProps {
     disableAnimation?: boolean;
 
     /**
+     * Whether to allow content like dropdowns to overflow the card boundaries
+     */
+    allowContentOverflow?: boolean;
+
+    /**
      * Additional CSS classes
      */
     className?: string;
@@ -62,27 +66,42 @@ const Card = forwardRef<HTMLDivElement, CardProps>((props, ref) => {
         shadow = 'md',
         radius = 'lg',
         disableAnimation = false,
+        allowContentOverflow = true,
         className = '',
         ...rest
     } = props;
 
     // Default styling with theme variables
-    const defaultClassName = "bg-[color:var(--ai-card-bg)]/70 backdrop-blur-sm border border-[color:var(--ai-card-border)]/60 transition-all duration-200";
+    const defaultClassName = "bg-[color:var(--ai-card-bg)]/70 backdrop-blur-sm border border-[color:var(--ai-card-border)]/60 transition-all duration-200";    // Generate shadow classes
+    const shadowClasses = shadow === 'none' ? '' :
+        shadow === 'sm' ? 'shadow-sm' :
+            shadow === 'md' ? 'shadow-md' :
+                shadow === 'lg' ? 'shadow-lg' : '';    // Generate radius classes
+    const radiusClasses = radius === 'none' ? 'rounded-none' :
+        radius === 'sm' ? 'rounded-sm' :
+            radius === 'md' ? 'rounded-md' :
+                radius === 'lg' ? 'rounded-lg' :
+                    radius === 'xl' ? 'rounded-xl' :
+                        radius === '2xl' ? 'rounded-2xl' :
+                            radius === 'full' ? 'rounded-full' : 'rounded-lg';
+
+    // Generate conditional classes
+    const hoverableClass = isHoverable ? 'hover:translate-y-[-2px] hover:shadow-lg' : '';
+    const pressableClass = isPressable ? 'cursor-pointer active:scale-[0.98]' : '';
+    const blurredClass = isBlurred ? 'backdrop-blur-md bg-opacity-80' : '';
+    const animationClass = !disableAnimation ? 'transition-all duration-200' : '';    // Generate overflow classes    
+    const overflowClasses = allowContentOverflow
+        ? 'overflow-visible relative z-[40]'
+        : 'overflow-hidden';
 
     return (
-        <HeroCard
+        <div
             ref={ref}
-            isHoverable={isHoverable}
-            isPressable={isPressable}
-            isBlurred={isBlurred}
-            shadow={shadow as HeroCardProps['shadow']}
-            radius={radius as HeroCardProps['radius']}
-            disableAnimation={disableAnimation}
-            className={`${defaultClassName} ${className}`}
+            className={`${defaultClassName} ${shadowClasses} ${radiusClasses} ${hoverableClass} ${pressableClass} ${blurredClass} ${animationClass} ${overflowClasses} ${className}`}
             {...rest}
         >
             {children}
-        </HeroCard>
+        </div>
     );
 });
 
@@ -91,8 +110,11 @@ const Card = forwardRef<HTMLDivElement, CardProps>((props, ref) => {
  */
 export const CardBody = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
     const { className = '', ...rest } = props;
-    // @ts-ignore - HeroUI component expecting slightly different props than React's native types
-    return <HeroCardBody className={className} {...rest} />;
+    return <div
+        ref={ref}
+        className={`p-4 relative overflow-visible z-[50] ${className}`}
+        {...rest}
+    />;
 });
 
 /**
@@ -100,8 +122,11 @@ export const CardBody = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivE
  */
 export const CardHeader = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
     const { className = '', ...rest } = props;
-    // @ts-ignore - HeroUI component expecting slightly different props than React's native types
-    return <HeroCardHeader className={className} {...rest} />;
+    return <div
+        ref={ref}
+        className={`px-4 pt-4 pb-2 flex items-center gap-3 z-20 ${className}`}
+        {...rest}
+    />;
 });
 
 /**
@@ -109,8 +134,11 @@ export const CardHeader = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDi
  */
 export const CardFooter = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
     const { className = '', ...rest } = props;
-    // @ts-ignore - HeroUI component expecting slightly different props than React's native types
-    return <HeroCardFooter className={className} {...rest} />;
+    return <div
+        ref={ref}
+        className={`px-4 pt-2 pb-4 flex flex-wrap gap-3 items-center ${className}`}
+        {...rest}
+    />;
 });
 
 Card.displayName = 'Card';
