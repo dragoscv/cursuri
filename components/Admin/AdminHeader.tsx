@@ -77,15 +77,15 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onTabChange, activeTab = 'das
                         </nav>
                     </div>
 
-                    <div className="flex items-center">
-                        <Button
-                            size="sm"
-                            variant="light"
-                            className="mr-4"
-                            onClick={navigateToSite}
-                        >
-                            Back to Site
-                        </Button>
+                    <div className="flex items-center">                        <Button
+                        size="sm"
+                        variant="light"
+                        color="default"
+                        className="mr-4 font-medium text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-border)]/20"
+                        onClick={navigateToSite}
+                    >
+                        Back to Site
+                    </Button>
 
                         <Dropdown placement="bottom-end">
                             <DropdownTrigger>
@@ -139,8 +139,8 @@ const NavLink: React.FC<NavLinkProps> = ({ label, isActive, onClick }) => {
         color={isActive ? "primary" : "default"}
         size="sm"
         className={isActive
-            ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
-            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+            ? 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] font-medium shadow-sm'
+            : 'text-[color:var(--ai-foreground)] font-medium hover:bg-[color:var(--ai-card-border)]/20'
         }
     >
         {label}

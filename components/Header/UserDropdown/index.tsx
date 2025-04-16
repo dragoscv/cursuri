@@ -200,20 +200,22 @@ export default function UserDropdown() {
                 </DropdownItem>
             </DropdownSection>
         );
-    };
-
-    return (
+    }; return (
         <Dropdown
             placement="bottom-end"
             backdrop="blur"
             classNames={{
                 base: "py-1 px-1 rounded-lg bg-gradient-to-br from-white to-default-200 dark:from-[color:var(--ai-card-bg)]/90 dark:to-[color:var(--ai-background)]/70 z-[9999]",
                 arrow: "bg-default-200",
-                backdrop: "fixed pointer-events-none backdrop-blur-md backdrop-saturate-150 bg-white/70 dark:bg-[color:var(--ai-background)]/60 w-screen h-screen inset-0",
+                backdrop: "fixed backdrop-blur-md backdrop-saturate-150 bg-white/70 dark:bg-[color:var(--ai-background)]/60 w-screen h-screen inset-0",
                 content: "z-[9999] flex flex-col justify-start items-end shadow-xl",
             }}
             className="z-[9999] relative"
             offset={12}
+            showArrow={true}
+            shouldCloseOnBlur={false}
+            isOpen={undefined}
+            onOpenChange={undefined}
             portalContainer={typeof document !== 'undefined' ? document.body : undefined}
         >
             <DropdownTrigger>

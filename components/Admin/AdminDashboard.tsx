@@ -319,12 +319,12 @@ const ActionButton: React.FC<ActionButtonProps> = ({ title, href, onClick, icon 
         <a
             href={href || "#"}
             onClick={onClick}
-            className="flex flex-col items-center justify-center p-4 rounded-lg bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-200 cursor-pointer"
+            className="flex flex-col items-center justify-center p-4 rounded-lg bg-[color:var(--ai-primary)]/5 dark:bg-[color:var(--ai-primary)]/10 hover:bg-[color:var(--ai-primary)]/10 dark:hover:bg-[color:var(--ai-primary)]/15 transition duration-200 cursor-pointer shadow-sm hover:shadow-md border border-[color:var(--ai-card-border)]/30"
         >
-            <div className="p-2 rounded-full bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 mb-3">
+            <div className="p-2 rounded-full bg-[color:var(--ai-primary)]/10 dark:bg-[color:var(--ai-primary)]/20 text-[color:var(--ai-primary)] mb-3">
                 {icon}
             </div>
-            <span className="font-medium">{title}</span>
+            <span className="font-medium text-[color:var(--ai-foreground)]">{title}</span>
         </a>
     );
 };

@@ -1,6 +1,17 @@
 'use client'
 
-import * as sdk from 'microsoft-cognitiveservices-speech-sdk';
+// Dynamically import the Speech SDK only on the client side
+// This prevents server-side import which causes build errors
+let sdk: typeof import('microsoft-cognitiveservices-speech-sdk') | null = null;
+
+// We'll initialize this in a useEffect or when needed on the client
+const initSpeechSdk = async () => {
+    if (typeof window !== 'undefined' && !sdk) {
+        sdk = await import('microsoft-cognitiveservices-speech-sdk');
+    }
+    return sdk;
+};
+
 import { firestoreDB, firebaseStorage } from '@/utils/firebase/firebase.config';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { ref, uploadString, getDownloadURL } from 'firebase/storage';
@@ -29,10 +40,16 @@ export const supportedLanguages = {
 export async function transcribeAudio(audioUrl: string, options?: {
     region?: string;
     language?: string;
-}) {
+}): Promise<string> {
     try {
+        // Ensure SDK is initialized on client-side
+        const speechSdk = await initSpeechSdk();
+        if (!speechSdk) {
+            throw new Error('Speech SDK could not be initialized. This function must be called from client-side code.');
+        }
+
         // Use environment variables or provided options
-        const speechConfig = sdk.SpeechConfig.fromSubscription(
+        const speechConfig = speechSdk.SpeechConfig.fromSubscription(
             process.env.NEXT_PUBLIC_AZURE_SPEECH_API_KEY || '',
             options?.region || process.env.NEXT_PUBLIC_AZURE_REGION || ''
         );
@@ -45,10 +62,11 @@ export async function transcribeAudio(audioUrl: string, options?: {
         }
 
         // Create audio config from URL
-        const audioConfig = sdk.AudioConfig.fromWavFileInput(new Blob([]) as any);  // Using a placeholder, will be updated in a real implementation
+        // In a real implementation, you'd fetch the audio file and create appropriate configuration
+        const audioConfig = await createAudioConfigFromUrl(speechSdk, audioUrl);
 
         // Create speech recognizer
-        const recognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
+        const recognizer = new speechSdk.SpeechRecognizer(speechConfig, audioConfig);
 
         return new Promise<string>((resolve, reject) => {
             // Full transcription result
@@ -56,16 +74,16 @@ export async function transcribeAudio(audioUrl: string, options?: {
 
             // Process recognized text
             recognizer.recognized = (s, e) => {
-                if (e.result.reason === sdk.ResultReason.RecognizedSpeech) {
+                if (e.result.reason === speechSdk.ResultReason.RecognizedSpeech) {
                     transcription += e.result.text + ' ';
-                } else if (e.result.reason === sdk.ResultReason.NoMatch) {
+                } else if (e.result.reason === speechSdk.ResultReason.NoMatch) {
                     console.log('NOMATCH: Speech could not be recognized.');
                 }
             };
 
             // Handle errors
             recognizer.canceled = (s, e) => {
-                if (e.reason === sdk.CancellationReason.Error) {
+                if (e.reason === speechSdk.CancellationReason.Error) {
                     console.error(`ERROR: ${e.errorCode}`);
                     console.error(`ERROR: ${e.errorDetails}`);
                     reject(new Error(e.errorDetails));
@@ -86,6 +104,28 @@ export async function transcribeAudio(audioUrl: string, options?: {
         });
     } catch (error) {
         console.error('Error transcribing audio:', error);
+        throw error;
+    }
+}
+
+/**
+ * Helper function to create audio configuration from a URL
+ * Handles fetching the audio data and creating the appropriate configuration
+ */
+async function createAudioConfigFromUrl(speechSdk: typeof import('microsoft-cognitiveservices-speech-sdk'), url: string) {
+    try {
+        // Fetch the audio file
+        const response = await fetch(url);
+        const arrayBuffer = await response.arrayBuffer();
+        const audioData = new Uint8Array(arrayBuffer);
+
+        // Create a blob from the audio data
+        const audioBlob = new Blob([audioData]);
+
+        // Create audio config using the SDK
+        return speechSdk.AudioConfig.fromWavFileInput(audioBlob as any);
+    } catch (error) {
+        console.error('Error creating audio config from URL:', error);
         throw error;
     }
 }

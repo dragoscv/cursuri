@@ -283,8 +283,13 @@ const AdminUsers: React.FC = () => {
 
                                         <div className="mb-4">
                                             <div className="flex items-center justify-between mb-2">
-                                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Enrolled Courses</h3>
-                                                <Button size="sm" color="primary" variant="flat" onPress={openAssignCourseModal} className="text-sm">
+                                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Enrolled Courses</h3>                                                <Button
+                                                    size="sm"
+                                                    color="primary"
+                                                    variant="flat"
+                                                    onPress={openAssignCourseModal}
+                                                    className="text-sm font-medium text-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10 hover:bg-[color:var(--ai-primary)]/20"
+                                                >
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                                                         <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
                                                     </svg>
@@ -321,19 +326,32 @@ const AdminUsers: React.FC = () => {
                                                     <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                                                     </svg>
-                                                    <p className="mt-2 text-gray-500 dark:text-gray-400">No enrolled courses</p>
-                                                    <Button color="primary" variant="flat" size="sm" className="mt-4" onPress={openAssignCourseModal}>
+                                                    <p className="mt-2 text-gray-500 dark:text-gray-400">No enrolled courses</p>                                                    <Button
+                                                        color="primary"
+                                                        variant="flat"
+                                                        size="sm"
+                                                        className="mt-4 font-medium text-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10 hover:bg-[color:var(--ai-primary)]/20"
+                                                        onPress={openAssignCourseModal}
+                                                    >
                                                         Assign First Course
                                                     </Button>
                                                 </div>
                                             )}
                                         </div>
                                     </ModalBody>
-                                    <ModalFooter className="border-t border-primary-100 dark:border-gray-800">
-                                        <Button color="default" onPress={closeModal} className="font-medium">
-                                            Close
-                                        </Button>
-                                        <Button color="primary" variant="flat" onPress={openAssignCourseModal} className="font-medium">
+                                    <ModalFooter className="border-t border-primary-100 dark:border-gray-800">                                        <Button
+                                        color="default"
+                                        onPress={closeModal}
+                                        className="font-medium text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-border)]/20"
+                                    >
+                                        Close
+                                    </Button>
+                                        <Button
+                                            color="primary"
+                                            variant="flat"
+                                            onPress={openAssignCourseModal}
+                                            className="font-medium text-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10 hover:bg-[color:var(--ai-primary)]/20"
+                                        >
                                             Assign Course
                                         </Button>
                                     </ModalFooter>
@@ -404,10 +422,13 @@ const AdminUsers: React.FC = () => {
                                             <p className="text-gray-500 dark:text-gray-400">
                                                 The course has been assigned to {selectedUser?.displayName || selectedUser?.email}
                                             </p>
-                                            <div className="mt-6">
-                                                <Button color="primary" className="w-full" onPress={closeAssignCourseModal}>
-                                                    Close
-                                                </Button>
+                                            <div className="mt-6">                                                <Button
+                                                color="primary"
+                                                className="w-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium shadow-sm hover:shadow-md hover:shadow-[color:var(--ai-primary)]/20 transition-all"
+                                                onPress={closeAssignCourseModal}
+                                            >
+                                                Close
+                                            </Button>
                                             </div>
                                         </div>
                                     ) : (
@@ -463,21 +484,20 @@ const AdminUsers: React.FC = () => {
                                     )}
                                 </ModalBody>
                                 {!assignSuccess && (
-                                    <ModalFooter className="border-t border-primary-100 dark:border-gray-800">
-                                        <Button
-                                            color="default"
-                                            variant="light"
-                                            onPress={closeAssignCourseModal}
-                                            className="font-medium"
-                                        >
-                                            Cancel
-                                        </Button>
+                                    <ModalFooter className="border-t border-primary-100 dark:border-gray-800">                                        <Button
+                                        color="default"
+                                        variant="light"
+                                        onPress={closeAssignCourseModal}
+                                        className="font-medium text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-border)]/20"
+                                    >
+                                        Cancel
+                                    </Button>
                                         <Button
                                             color="primary"
                                             isDisabled={!selectedCourseId || assignLoading}
                                             isLoading={assignLoading}
                                             onPress={handleAssignCourse}
-                                            className="bg-gradient-to-r from-primary-500 to-secondary-500 font-medium shadow-lg shadow-primary-500/20"
+                                            className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium shadow-sm hover:shadow-md hover:shadow-[color:var(--ai-primary)]/20 transition-all"
                                         >
                                             Assign Course
                                         </Button>

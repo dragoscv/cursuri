@@ -43,22 +43,22 @@ export default function CoursesPage() {
             isOpen: true,
             modalHeader: 'Confirm Delete',
             modalBody: (<div className="p-4">
-                <p className="mb-4">Are you sure you want to delete the course &quot;{course.name}&quot;?</p>
-                <div className="flex justify-end gap-2">
+                <p className="mb-4">Are you sure you want to delete the course &quot;{course.name}&quot;?</p>                <div className="flex justify-end gap-2">
                     <Button
-                        color="default"
-                        variant="flat"
+                        variant="bordered"
                         onClick={() => closeModal('delete-course')}
+                        className="bg-[color:var(--ai-card-bg)]/80 border border-[color:var(--ai-card-border)]/50 text-[color:var(--ai-foreground)] rounded-full hover:bg-[color:var(--ai-card-border)]/20 transition-colors"
                     >
                         Cancel
                     </Button>
                     <Button
-                        color="danger"
+                        variant="primary"
                         onClick={() => {
                             // Delete course logic would go here
                             console.log(`Deleting course: ${course.id}`);
                             closeModal('delete-course');
                         }}
+                        className="bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-full shadow-sm hover:shadow-md hover:shadow-red-500/20 transition-all"
                     >
                         Delete
                     </Button>
@@ -113,25 +113,26 @@ export default function CoursesPage() {
             />
 
             <div className="bg-[color:var(--ai-card-bg)]/50 border border-[color:var(--ai-card-border)]/20 rounded-xl p-4 mb-7 shadow-sm">
-                <div className="flex items-center justify-end gap-2">
+                <div className="flex items-center justify-end gap-2">                    <Button
+                    variant={selectedView === "grid" ? "primary" : "bordered"}
+                    onClick={() => setSelectedView("grid")}
+                    size="sm"
+                    className={selectedView === "grid"
+                        ? "bg-gradient-to-r from-[color:var(--ai-primary)]/20 to-[color:var(--ai-secondary)]/20 text-[color:var(--ai-foreground)] shadow-sm rounded-full"
+                        : "text-[color:var(--ai-foreground)] bg-[color:var(--ai-card-bg)]/80 hover:bg-[color:var(--ai-card-border)]/20 rounded-full"}
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    </svg>
+                    <span className="ml-2">Grid</span>
+                </Button>
                     <Button
-                        color={selectedView === "grid" ? "primary" : "default"}
-                        variant={selectedView === "grid" ? "flat" : "light"}
-                        onClick={() => setSelectedView("grid")}
-                        size="sm"
-                        className={selectedView === "grid" ? "bg-gradient-to-r from-[color:var(--ai-primary)]/20 to-[color:var(--ai-secondary)]/20 shadow-sm" : ""}
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                        </svg>
-                        <span className="ml-2">Grid</span>
-                    </Button>
-                    <Button
-                        color={selectedView === "list" ? "primary" : "default"}
-                        variant={selectedView === "list" ? "flat" : "light"}
+                        variant={selectedView === "list" ? "primary" : "bordered"}
                         onClick={() => setSelectedView("list")}
                         size="sm"
-                        className={selectedView === "list" ? "bg-gradient-to-r from-[color:var(--ai-primary)]/20 to-[color:var(--ai-secondary)]/20 shadow-sm" : ""}
+                        className={selectedView === "list"
+                            ? "bg-gradient-to-r from-[color:var(--ai-primary)]/20 to-[color:var(--ai-secondary)]/20 text-[color:var(--ai-foreground)] shadow-sm rounded-full"
+                            : "text-[color:var(--ai-foreground)] bg-[color:var(--ai-card-bg)]/80 hover:bg-[color:var(--ai-card-border)]/20 rounded-full"}
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />

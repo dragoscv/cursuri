@@ -107,12 +107,12 @@ const AdminSettings: React.FC = () => {
     return (
         <div className="space-y-8">
             <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold">Platform Settings</h1>
-                <Button
+                <h1 className="text-3xl font-bold">Platform Settings</h1>                <Button
                     color="primary"
                     isLoading={saving}
                     isDisabled={saving}
                     onPress={handleSubmit}
+                    className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium shadow-sm hover:shadow-md hover:shadow-[color:var(--ai-primary)]/20 transition-all"
                 >
                     Save Settings
                 </Button>

@@ -146,33 +146,39 @@ export default function Admin() {
                 {selectedTab === "courses" && (
                     <div>
                         <div className="flex justify-between items-center mb-6">
-                            <div className="flex items-center gap-4">
-                                <Button
-                                    color={selectedView === "grid" ? "primary" : "default"}
-                                    variant={selectedView === "grid" ? "solid" : "light"}
-                                    onPress={() => setSelectedView("grid")}
-                                    size="sm"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                                    </svg>
-                                    <span className="ml-2">Grid</span>
-                                </Button>
-                                <Button
-                                    color={selectedView === "list" ? "primary" : "default"}
-                                    variant={selectedView === "list" ? "solid" : "light"}
-                                    onPress={() => setSelectedView("list")}
-                                    size="sm"
-                                >
+                            <div className="flex items-center gap-4">                                <Button
+                                color={selectedView === "grid" ? "primary" : "default"}
+                                variant={selectedView === "grid" ? "solid" : "light"}
+                                onPress={() => setSelectedView("grid")}
+                                size="sm"
+                                className={selectedView === "grid"
+                                    ? "bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] font-medium shadow-sm"
+                                    : "text-[color:var(--ai-foreground)] font-medium hover:bg-[color:var(--ai-card-border)]/20"
+                                }
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                                </svg>
+                                <span className="ml-2">Grid</span>
+                            </Button>                                <Button
+                                color={selectedView === "list" ? "primary" : "default"}
+                                variant={selectedView === "list" ? "solid" : "light"}
+                                onPress={() => setSelectedView("list")}
+                                size="sm"
+                                className={selectedView === "list"
+                                    ? "bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] font-medium shadow-sm"
+                                    : "text-[color:var(--ai-foreground)] font-medium hover:bg-[color:var(--ai-card-border)]/20"
+                                }
+                            >
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                         <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
                                     </svg>
                                     <span className="ml-2">List</span>
                                 </Button>
-                            </div>
-                            <Button
+                            </div>                            <Button
                                 color="primary"
                                 onPress={handleAddCourse}
+                                className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium shadow-sm hover:shadow-md hover:shadow-[color:var(--ai-primary)]/20 transition-all"
                                 startContent={(
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M12 4V20M4 12H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -205,22 +211,23 @@ export default function Admin() {
                                             <div className="flex justify-between items-center">
                                                 <div className="text-sm text-gray-500 dark:text-gray-400">
                                                     {formatPrice(course)}
-                                                </div>
-                                                <div className="flex gap-2">
-                                                    <Button size="sm" color="secondary" variant="flat" onPress={(e: any) => {
+                                                </div>                                                <div className="flex gap-2">
+                                                    <Button size="sm" color="danger" variant="flat" onPress={(e: any) => {
                                                         // Delete course logic
                                                         e.preventDefault?.();
                                                         e.stopPropagation?.();
                                                         setCourseToDelete(course);
                                                         setDeleteConfirmOpen(true);
-                                                    }}>
+                                                    }}
+                                                        className="font-medium text-[color:var(--ai-danger)] bg-[color:var(--ai-danger)]/10 hover:bg-[color:var(--ai-danger)]/20">
                                                         Delete
                                                     </Button>
                                                     <Button size="sm" color="primary" variant="flat" onPress={(e: any) => {
                                                         e.preventDefault?.();
                                                         e.stopPropagation?.();
                                                         handleEditCourse(course);
-                                                    }}>
+                                                    }}
+                                                        className="font-medium text-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10 hover:bg-[color:var(--ai-primary)]/20">
                                                         Edit Course
                                                     </Button>
                                                 </div>
@@ -239,26 +246,26 @@ export default function Admin() {
                         <div className="mb-8">
                             <div className="flex justify-between items-center mb-6">
                                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{selectedCourse.name}</h2>
-                                <div className="flex gap-2">
-                                    <Button
-                                        color="primary"
-                                        onPress={() => handleAddLesson(selectedCourse.id)}
-                                        startContent={(
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M12 4V20M4 12H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                            </svg>
-                                        )}
-                                    >
-                                        Add Lesson
-                                    </Button>
-                                    <Button
-                                        color="default"
-                                        variant="light"
-                                        onPress={() => {
-                                            setSelectedCourse(null);
-                                            setSelectedTab("courses");
-                                        }}
-                                    >
+                                <div className="flex gap-2">                                    <Button
+                                    color="primary"
+                                    onPress={() => handleAddLesson(selectedCourse.id)}
+                                    className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium shadow-sm hover:shadow-md hover:shadow-[color:var(--ai-primary)]/20 transition-all"
+                                    startContent={(
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M12 4V20M4 12H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                    )}
+                                >
+                                    Add Lesson
+                                </Button>                                    <Button
+                                    color="default"
+                                    variant="light"
+                                    onPress={() => {
+                                        setSelectedCourse(null);
+                                        setSelectedTab("courses");
+                                    }}
+                                    className="font-medium text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-border)]/20"
+                                >
                                         Back to Courses
                                     </Button>
                                 </div>
@@ -414,10 +421,15 @@ export default function Admin() {
                                                                 </Chip>
                                                             </td>
                                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                                                <div className="flex gap-2">
-                                                                    <Button size="sm" color="primary" variant="flat" onPress={() => handleEditLesson(lesson)}>
-                                                                        Edit Lesson
-                                                                    </Button>
+                                                                <div className="flex gap-2">                                                                    <Button
+                                                                    size="sm"
+                                                                    color="primary"
+                                                                    variant="flat"
+                                                                    onPress={() => handleEditLesson(lesson)}
+                                                                    className="font-medium text-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10 hover:bg-[color:var(--ai-primary)]/20"
+                                                                >
+                                                                    Edit Lesson
+                                                                </Button>
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -426,11 +438,11 @@ export default function Admin() {
                                         </table>
                                     ) : (
                                         <div className="text-center py-8">
-                                            <p className="text-gray-500 dark:text-gray-400 mb-4">No lessons found for this course</p>
-                                            <Button
+                                            <p className="text-gray-500 dark:text-gray-400 mb-4">No lessons found for this course</p>                                            <Button
                                                 color="primary"
                                                 onPress={() => handleAddLesson(selectedCourse.id)}
                                                 size="sm"
+                                                className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium shadow-sm hover:shadow-md hover:shadow-[color:var(--ai-primary)]/20 transition-all"
                                             >
                                                 Add First Lesson
                                             </Button>
