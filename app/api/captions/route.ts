@@ -47,10 +47,9 @@ function extractAudio(videoPath: string, audioPath: string): Promise<void> {
             .output(audioPath)
             .noVideo()
             .audioCodec('pcm_s16le') // Common format for speech-to-text services
-            .audioChannels(1)        // Mono audio is preferred for speech
-            .audioFrequency(16000)   // 16kHz sample rate is common for speech recognition
+            .audioChannels(1)        // Mono audio is preferred for speech            .audioFrequency(16000)   // 16kHz sample rate is common for speech recognition
             .on('end', () => resolve())
-            .on('error', (err) => reject(err))
+            .on('error', (err: Error) => reject(err))
             .run();
     });
 }

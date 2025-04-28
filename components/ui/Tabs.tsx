@@ -2,7 +2,7 @@
 
 import React, { forwardRef } from 'react';
 import { Tabs as HeroTabs, Tab as HeroTab } from '@heroui/react';
-import type { TabsProps as HeroTabsProps, TabProps as HeroTabProps } from '@heroui/react';
+import type { TabsProps as HeroTabsProps, TabItemProps as HeroTabProps } from '@heroui/react';
 
 export interface TabsProps extends HeroTabsProps {
     /**
@@ -73,7 +73,7 @@ Tabs.displayName = 'Tabs';
 
 export default Tabs;
 
-export interface TabProps extends HeroTabProps {
+export interface TabProps extends Omit<HeroTabProps, 'ref'> {
     className?: string;
     title?: React.ReactNode;
     key?: string;
@@ -87,26 +87,9 @@ export const Tab = forwardRef<HTMLDivElement, TabProps>((props, ref) => {
 
     return (
         <HeroTab
-            ref={ref}
+            // HeroTab doesn't accept ref prop, so we don't forward it
             className={className}
             title={title}
-            {...rest}
-        />
-    );
-});
-
-Tab.displayName = 'Tab';
- */
-export const Tab = forwardRef<HTMLDivElement, TabProps>((props, ref) => {
-    const {
-        className = '',
-        ...rest
-    } = props;
-
-    return (
-        <HeroTab
-            // Remove explicit ref forwarding since HeroTab doesn't accept it
-            className={className}
             {...rest}
         />
     );

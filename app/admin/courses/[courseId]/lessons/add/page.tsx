@@ -12,10 +12,9 @@ export default function AddLessonPage() {
     return (
         <div className="max-w-7xl mx-auto px-4">
 
-            <Card className="shadow-md">
-                <CardBody>
-                    <AddLesson courseId={courseId} />
-                </CardBody>
+            <Card className="shadow-md">                <CardBody>
+                <AddLesson courseId={courseId} onClose={() => { }} />
+            </CardBody>
             </Card>
         </div>
     );

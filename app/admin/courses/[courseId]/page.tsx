@@ -2,7 +2,8 @@
 
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from '@/components/AppContext';
-import { Card, CardBody, Button, Chip, Divider } from '@heroui/react';
+import { Card, CardBody, Chip, Divider } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Lesson } from '@/types';

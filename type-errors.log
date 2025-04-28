@@ -1,0 +1,20 @@
+components/ui/index.ts(18,99): error TS2306: File 'E:/GitHub/cursuri/components/ui/Dropdown.tsx' is not a module.
+components/ui/index.ts(36,96): error TS2306: File 'E:/GitHub/cursuri/components/ui/Dropdown.tsx' is not a module.
+components/ui/Radio.tsx(122,36): error TS7006: Parameter 'e' implicitly has an 'any' type.
+components/ui/Radio.tsx(127,22): error TS2339: Property 'isSelected' does not exist on type '{ ref: ForwardedRef<HTMLInputElement>; className: any; classNames: { base: string; wrapper: string; control: string; label: string; }; size: "sm" | "md" | "lg" | undefined; ... 5 more ...; onChange: ((e: any) => any) | undefined; }'.
+components/ui/Radio.tsx(128,22): error TS2551: Property 'isDisabled' does not exist on type '{ ref: ForwardedRef<HTMLInputElement>; className: any; classNames: { base: string; wrapper: string; control: string; label: string; }; size: "sm" | "md" | "lg" | undefined; ... 5 more ...; onChange: ((e: any) => any) | undefined; }'. Did you mean 'disabled'?
+components/ui/Radio.tsx(129,22): error TS2339: Property 'onValueChange' does not exist on type '{ ref: ForwardedRef<HTMLInputElement>; className: any; classNames: { base: string; wrapper: string; control: string; label: string; }; size: "sm" | "md" | "lg" | undefined; ... 5 more ...; onChange: ((e: any) => any) | undefined; }'.
+utils/azure/speech.ts(74,34): error TS18047: 'sdk' is possibly 'null'.
+utils/azure/speech.ts(81,56): error TS18047: 'sdk' is possibly 'null'.
+utils/azure/speech.ts(84,32): error TS18047: 'sdk' is possibly 'null'.
+utils/azure/speech.ts(84,54): error TS2551: Property 'createPushStream' does not exist on type 'typeof AudioOutputStream'. Did you mean 'createPullStream'?
+utils/azure/speech.ts(85,33): error TS18047: 'sdk' is possibly 'null'.
+utils/azure/speech.ts(86,37): error TS18047: 'sdk' is possibly 'null'.
+utils/azure/speech.ts(103,43): error TS18047: 'sdk' is possibly 'null'.
+utils/azure/speech.ts(212,43): error TS18047: 'sdk' is possibly 'null'.
+utils/azure/speech.ts(215,53): error TS2339: Property 'has' does not exist on type 'Translations'.
+utils/azure/speech.ts(253,34): error TS18047: 'sdk' is possibly 'null'.
+utils/azure/speech.ts(262,32): error TS18047: 'sdk' is possibly 'null'.
+utils/azure/speech.ts(269,33): error TS18047: 'sdk' is possibly 'null'.
+utils/azure/speech.ts(272,36): error TS18047: 'sdk' is possibly 'null'.
+utils/azure/speech.ts(279,43): error TS18047: 'sdk' is possibly 'null'.

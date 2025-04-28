@@ -3,7 +3,7 @@
 import React, { forwardRef } from 'react';
 import { Button as HeroButton, type ButtonProps as HeroButtonProps } from '@heroui/react';
 
-export interface ButtonProps extends Omit<HeroButtonProps, 'variant'> {
+export interface ButtonProps extends Omit<HeroButtonProps, 'variant' | 'size'> {
     /**
      * The visual style of the button
      */

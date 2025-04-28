@@ -12,7 +12,7 @@ export interface BadgeProps extends Omit<HeroBadgeProps, 'variant'> {
     /**
      * Content to display inside the badge
      */
-    children?: React.ReactNode;
+    children: React.ReactNode;
 
     /**
      * The color of the badge
@@ -42,6 +42,21 @@ const Badge = forwardRef<HTMLDivElement, BadgeProps>((props, ref) => {
         placement,
         ...rest
     } = props;
+
+    // Map our variant to HeroUI's variant
+    const getHeroVariant = (): HeroBadgeProps['variant'] => {
+        switch (variant) {
+            case 'bordered':
+            case 'dot':
+                return 'solid'; // HeroUI doesn't have bordered or dot variants
+            case 'flat':
+                return 'flat';
+            case 'solid':
+                return 'solid';
+            default:
+                return 'solid';
+        }
+    };
 
     // Custom color classes based on variant and color
     const getColorClass = () => {
@@ -113,7 +128,7 @@ const Badge = forwardRef<HTMLDivElement, BadgeProps>((props, ref) => {
         <HeroBadge
             ref={ref}
             color={color}
-            variant={variant}
+            variant={getHeroVariant()}
             placement={placement}
             className={`${getColorClass()} ${className}`}
             {...rest}

@@ -200,6 +200,13 @@ export interface Course {
     lessonsCount?: number;
     /** Whether the course offers a certificate */
     certificate?: boolean;
+    /** Additional metadata for the course */
+    metadata?: {
+        certificateEnabled?: boolean;
+        allowPromoCodes?: boolean;
+        [key: string]: any;
+    };
+    certificate?: boolean;
     /** Whether the course has downloadable resources */
     downloadableResources?: boolean;
     /** The status of the course (e.g., 'active', 'draft'). */
@@ -299,6 +306,7 @@ export interface Lesson {
     estimatedTime?: string;
     title?: string; // Some components use title instead of name
     repoUrl?: string; // Repository URL for lesson materials
+    transcription?: string; // Transcription of lesson content
 }
 
 /**

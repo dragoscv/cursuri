@@ -57,23 +57,30 @@ Modal.displayName = 'Modal';
 export default Modal;
 
 export const ModalContent = forwardRef<HTMLDivElement, any>((props, ref) => {
-    return <HeroModalContent ref={ref} {...props} />;
+    // Don't forward the ref directly as HeroModalContent doesn't accept it
+    // Ensure we're passing the children prop which is required
+    const { children, ...rest } = props;
+    return <HeroModalContent {...rest}>{children}</HeroModalContent>;
 });
 ModalContent.displayName = 'ModalContent';
 
 export const ModalHeader = forwardRef<HTMLDivElement, any>((props, ref) => {
-    return <HeroModalHeader ref={ref} {...props} />;
+    // Don't forward the ref directly as HeroModalHeader doesn't accept it
+    return <HeroModalHeader {...props} />;
 });
 ModalHeader.displayName = 'ModalHeader';
 
 export const ModalBody = forwardRef<HTMLDivElement, any>((props, ref) => {
-    return <HeroModalBody ref={ref} {...props} />;
+    // Don't forward the ref directly as HeroModalBody doesn't accept it
+    return <HeroModalBody {...props} />;
 });
 ModalBody.displayName = 'ModalBody';
 
 export const ModalFooter = forwardRef<HTMLDivElement, any>((props, ref) => {
-    return <HeroModalFooter ref={ref} {...props} />;
+    // Don't forward the ref directly as HeroModalFooter doesn't accept it
+    return <HeroModalFooter {...props} />;
 });
 ModalFooter.displayName = 'ModalFooter';
 
-export { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter };
+// Export all components together
+// Note: Removing the duplicate export at the bottom

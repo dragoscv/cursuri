@@ -2,7 +2,8 @@
 
 import React, { useContext, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button, Card, CardBody, Chip } from '@heroui/react';
+import { Card, CardBody, Chip } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { AppContext } from '@/components/AppContext';
 import AdminPageHeader from '@/components/Admin/AdminPageHeader';
 import { CourseWithPriceProduct } from '@/types';
@@ -187,9 +188,8 @@ export default function CoursesPage() {
                                             <div className="flex gap-2">
                                                 <Button
                                                     size="sm"
-                                                    color="danger"
-                                                    variant="flat"
-                                                    onClick={(e) => {
+                                                    color="danger" variant="flat"
+                                                    onClick={(e: React.MouseEvent) => {
                                                         e.preventDefault();
                                                         e.stopPropagation();
                                                         handleConfirmDelete(course);

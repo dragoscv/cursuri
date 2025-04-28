@@ -3,7 +3,7 @@
 import React, { forwardRef } from 'react';
 import { Radio as HeroRadio, type RadioProps as HeroRadioProps } from '@heroui/react';
 
-export interface RadioProps extends Omit<HeroRadioProps, 'isSelected' | 'onValueChange'> {
+export interface RadioProps extends Omit<HeroRadioProps, 'isSelected' | 'onValueChange' | 'value'> {
     /**
      * Whether the radio is checked
      */
@@ -17,7 +17,7 @@ export interface RadioProps extends Omit<HeroRadioProps, 'isSelected' | 'onValue
     /**
      * The value of the radio button
      */
-    value?: string;
+    value: string;
 
     /**
      * The label for the radio
@@ -108,20 +108,26 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>((props, ref) => {
         label: `${defaultClassNames.label} ${classNames.label || ''}`,
     };
 
+    // Create a handler for value changes if needed
+    const handleChange = onValueChange ? (e: React.ChangeEvent<HTMLInputElement>) => {
+        onValueChange(e.target.checked);
+    } : undefined;
+
+    // Properties that HeroRadio accepts
+    const heroProps = {
+        ref,
+        name,
+        value,
+        disabled: isDisabled,
+        checked: isSelected,
+        onChange: handleChange,
+        className,
+        classNames: mergedClassNames,
+        ...rest
+    };
+
     return (
-        <HeroRadio
-            ref={ref}
-            isSelected={isSelected}
-            name={name}
-            value={value}
-            isDisabled={isDisabled}
-            size={size as HeroRadioProps['size']}
-            color={color as HeroRadioProps['color']}
-            className={className}
-            classNames={mergedClassNames}
-            onValueChange={onValueChange}
-            {...rest}
-        >
+        <HeroRadio {...heroProps}>
             {children}
         </HeroRadio>
     );

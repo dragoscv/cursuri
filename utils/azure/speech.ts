@@ -32,148 +32,161 @@ export const supportedLanguages = {
 };
 
 /**
- * Convert audio from a video URL to text using Azure Speech Service
- * @param audioUrl URL of the audio to transcribe
- * @param options Configuration options for the speech service
- * @returns Promise with transcription result
+ * Generate speech from text using Azure Cognitive Services
+ * @param text Text to convert to speech
+ * @param language Language code (e.g., 'en-US')
+ * @param voice Optional voice name
+ * @returns ArrayBuffer containing the audio data
  */
-export async function transcribeAudio(audioUrl: string, options?: {
-    region?: string;
-    language?: string;
-}): Promise<string> {
-    try {
-        // Ensure SDK is initialized on client-side
-        const speechSdk = await initSpeechSdk();
-        if (!speechSdk) {
-            throw new Error('Speech SDK could not be initialized. This function must be called from client-side code.');
+export async function textToSpeech(text: string, language: string = 'en-US', voice?: string): Promise<ArrayBuffer> {
+    // Initialize SDK if not already done
+    await initSpeechSdk();
+    if (!sdk) {
+        throw new Error("Failed to initialize Speech SDK");
+    }
+
+    // Select appropriate voice based on language if not provided
+    if (!voice) {
+        switch (language) {
+            case 'en-US':
+                voice = 'en-US-JennyNeural';
+                break;
+            case 'ro-RO':
+                voice = 'ro-RO-EmilNeural';
+                break;
+            case 'es-ES':
+                voice = 'es-ES-ElviraNeural';
+                break;
+            case 'fr-FR':
+                voice = 'fr-FR-DeniseNeural';
+                break;
+            case 'de-DE':
+                voice = 'de-DE-KatjaNeural';
+                break;
+            default:
+                voice = 'en-US-JennyNeural';
         }
+    }
 
-        // Use environment variables or provided options
-        const speechConfig = speechSdk.SpeechConfig.fromSubscription(
-            process.env.NEXT_PUBLIC_AZURE_SPEECH_API_KEY || '',
-            options?.region || process.env.NEXT_PUBLIC_AZURE_REGION || ''
-        );
-
-        // Set the language for speech recognition if provided
-        if (options?.language) {
-            speechConfig.speechRecognitionLanguage = options.language;
-        } else {
-            speechConfig.speechRecognitionLanguage = 'en-US';
-        }
-
-        // Create audio config from URL
-        // In a real implementation, you'd fetch the audio file and create appropriate configuration
-        const audioConfig = await createAudioConfigFromUrl(speechSdk, audioUrl);
-
-        // Create speech recognizer
-        const recognizer = new speechSdk.SpeechRecognizer(speechConfig, audioConfig);
-
-        return new Promise<string>((resolve, reject) => {
-            // Full transcription result
-            let transcription = '';
-
-            // Process recognized text
-            recognizer.recognized = (s, e) => {
-                if (e.result.reason === speechSdk.ResultReason.RecognizedSpeech) {
-                    transcription += e.result.text + ' ';
-                } else if (e.result.reason === speechSdk.ResultReason.NoMatch) {
-                    console.log('NOMATCH: Speech could not be recognized.');
-                }
-            };
-
-            // Handle errors
-            recognizer.canceled = (s, e) => {
-                if (e.reason === speechSdk.CancellationReason.Error) {
-                    console.error(`ERROR: ${e.errorCode}`);
-                    console.error(`ERROR: ${e.errorDetails}`);
-                    reject(new Error(e.errorDetails));
-                }
-            };
-
-            // Session stopped
-            recognizer.sessionStopped = (s, e) => {
-                recognizer.close();
-                resolve(transcription.trim());
-            };
-
-            // Start continuous recognition
-            recognizer.startContinuousRecognitionAsync(
-                () => console.log('Transcription started...'),
-                (err) => reject(err)
+    return new Promise((resolve, reject) => {
+        try {
+            // Configure speech service
+            const speechConfig = sdk.SpeechConfig.fromSubscription(
+                process.env.NEXT_PUBLIC_AZURE_SPEECH_API_KEY || '',
+                process.env.NEXT_PUBLIC_AZURE_REGION || ''
             );
-        });
-    } catch (error) {
-        console.error('Error transcribing audio:', error);
-        throw error;
-    }
-}
+            speechConfig.speechSynthesisVoiceName = voice;
 
-/**
- * Helper function to create audio configuration from a URL
- * Handles fetching the audio data and creating the appropriate configuration
- */
-async function createAudioConfigFromUrl(speechSdk: typeof import('microsoft-cognitiveservices-speech-sdk'), url: string) {
-    try {
-        // Fetch the audio file
-        const response = await fetch(url);
-        const arrayBuffer = await response.arrayBuffer();
-        const audioData = new Uint8Array(arrayBuffer);
+            // Set output format to MP3
+            speechConfig.speechSynthesisOutputFormat = sdk.SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3;
 
-        // Create a blob from the audio data
-        const audioBlob = new Blob([audioData]);
+            // Create synthesizer with push audio output stream
+            const pushStream = sdk.AudioOutputStream.createPushStream();
+            const audioConfig = sdk.AudioConfig.fromStreamOutput(pushStream);
+            const synthesizer = new sdk.SpeechSynthesizer(speechConfig, audioConfig);
 
-        // Create audio config using the SDK
-        return speechSdk.AudioConfig.fromWavFileInput(audioBlob as any);
-    } catch (error) {
-        console.error('Error creating audio config from URL:', error);
-        throw error;
-    }
-}
+            // Collect audio data
+            const audioData: Uint8Array[] = [];
+            pushStream.write = (data: ArrayBuffer) => {
+                audioData.push(new Uint8Array(data));
+                return data.byteLength;
+            }
 
-/**
- * Generate WebVTT caption format from recognized speech
- * @param phrases Array of recognized phrases with timing information
- * @returns WebVTT formatted string
- */
-export function generateWebVTT(phrases: any[]): string {
-    let vtt = 'WEBVTT\n\n';
+            // Synthesize text to speech
+            synthesizer.speakTextAsync(
+                text,
+                result => {
+                    // Close synthesizer and stream
+                    synthesizer.close();
+                    pushStream.close();
 
-    phrases.forEach((phrase, index) => {
-        if (phrase.text && phrase.text.trim()) {
-            const startTime = formatTime(phrase.offset / 10000000); // Convert from 100ns to seconds
-            const endTime = formatTime((phrase.offset + phrase.duration) / 10000000);
+                    if (result.reason === sdk.ResultReason.SynthesizingAudioCompleted) {
+                        // Combine all audio chunks
+                        const totalLength = audioData.reduce((acc, cur) => acc + cur.length, 0);
+                        const combinedAudio = new Uint8Array(totalLength);
 
-            vtt += `${index + 1}\n`;
-            vtt += `${startTime} --> ${endTime}\n`;
-            vtt += `${phrase.text.trim()}\n\n`;
+                        let offset = 0;
+                        for (const chunk of audioData) {
+                            combinedAudio.set(chunk, offset);
+                            offset += chunk.length;
+                        }
+
+                        resolve(combinedAudio.buffer);
+                    } else {
+                        reject(`Speech synthesis failed: ${result.errorDetails}`);
+                    }
+                },
+                error => {
+                    synthesizer.close();
+                    reject(`Speech synthesis error: ${error}`);
+                }
+            );
+        } catch (error) {
+            reject(`Failed to initialize speech synthesis: ${error}`);
         }
     });
-
-    return vtt;
 }
 
 /**
- * Format time in HH:MM:SS.mmm format for WebVTT
- * @param seconds Time in seconds
- * @returns Formatted time string
+ * Upload caption file to Firebase Storage and update lesson document
+ * @param courseId Course ID
+ * @param lessonId Lesson ID
+ * @param captionContent Caption content (SRT, WebVTT, etc.)
+ * @param language Language code (e.g., 'en-US')
+ * @returns URL to the caption file
  */
-function formatTime(seconds: number): string {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = Math.floor(seconds % 60);
-    const ms = Math.floor((seconds % 1) * 1000);
+export async function uploadCaptions(
+    courseId: string,
+    lessonId: string,
+    captionContent: string,
+    language: string = 'en-US'
+): Promise<string> {
+    try {
+        // Create file path
+        const filePath = `courses/${courseId}/lessons/${lessonId}/captions/${language}.vtt`;
 
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}.${ms.toString().padStart(3, '0')}`;
+        // Upload to Firebase Storage
+        const captionsRef = ref(firebaseStorage, filePath);
+        await uploadString(captionsRef, captionContent, 'raw');
+
+        // Get download URL
+        const downloadURL = await getDownloadURL(captionsRef);
+
+        // Update lesson document with caption info
+        const lessonRef = doc(firestoreDB, `courses/${courseId}/lessons/${lessonId}`);
+        const lessonDoc = await getDoc(lessonRef);
+
+        if (lessonDoc.exists()) {
+            // Update or add the caption entry for this language
+            await updateDoc(lessonRef, {
+                [`captions.${language}`]: {
+                    url: downloadURL,
+                    content: captionContent
+                }
+            });
+        }
+
+        return downloadURL;
+    } catch (error) {
+        console.error('Error uploading captions:', error);
+        throw error;
+    }
 }
 
 /**
- * Translate text to multiple languages using Azure Speech Translation
+ * Translate text to multiple languages using Azure Cognitive Services
  * @param text Text to translate
  * @param targetLanguages Array of language codes to translate to
  * @returns Object with translations keyed by language code
  */
 export async function translateText(text: string, targetLanguages: string[]): Promise<Record<string, string>> {
     try {
+        // Ensure SDK is initialized
+        await initSpeechSdk();
+        if (!sdk) {
+            throw new Error("Failed to initialize Speech SDK");
+        }
+
         const translations: Record<string, string> = {};
 
         // Create translation config
@@ -199,135 +212,84 @@ export async function translateText(text: string, targetLanguages: string[]): Pr
                     if (result.reason === sdk.ResultReason.TranslatedSpeech) {
                         targetLanguages.forEach(language => {
                             const langCode = language.split('-')[0];
-                            translations[language] = result.translations.get(langCode) || '';
+                            if (result.translations.has(langCode)) {
+                                translations[language] = result.translations.get(langCode) || '';
+                            }
                         });
                         resolve(translations);
                     } else {
-                        reject(new Error(`Translation failed: ${result.reason}`));
+                        reject(`Translation failed: ${result.errorDetails}`);
                     }
                     synthesizer.close();
                 },
                 error => {
-                    console.error(`Error translating text: ${error}`);
                     synthesizer.close();
-                    reject(error);
+                    reject(`Translation error: ${error}`);
                 }
             );
         });
     } catch (error) {
-        console.error('Error in translation:', error);
+        console.error('Error translating text:', error);
         throw error;
     }
 }
 
 /**
- * Process a lesson video for captions, transcription, and translations
- * @param courseId Course ID
- * @param lessonId Lesson ID
- * @returns Promise that resolves when processing is complete
+ * Convert speech to text using Azure Cognitive Services
+ * @param audioData ArrayBuffer containing the audio data
+ * @param language Language code (e.g., 'en-US')
+ * @returns Transcribed text
  */
-export async function processLessonForCaptions(courseId: string, lessonId: string): Promise<void> {
+export async function speechToText(audioData: ArrayBuffer, language: string = 'en-US'): Promise<string> {
+    // Ensure SDK is initialized
+    await initSpeechSdk();
+    if (!sdk) {
+        throw new Error("Failed to initialize Speech SDK");
+    }
+
     try {
-        // Get lesson details
-        const lessonRef = doc(firestoreDB, `courses/${courseId}/lessons/${lessonId}`);
-        const lessonDoc = await getDoc(lessonRef);
+        return new Promise<string>((resolve, reject) => {
+            // Configure speech service
+            const speechConfig = sdk.SpeechConfig.fromSubscription(
+                process.env.NEXT_PUBLIC_AZURE_SPEECH_API_KEY || '',
+                process.env.NEXT_PUBLIC_AZURE_REGION || ''
+            );
 
-        if (!lessonDoc.exists()) {
-            throw new Error('Lesson not found');
-        }
+            // Set recognition language
+            speechConfig.speechRecognitionLanguage = language;
 
-        const lessonData = lessonDoc.data();
-        const videoUrl = lessonData.file;
+            // Create push stream for audio data
+            const pushStream = sdk.AudioInputStream.createPushStream();
 
-        if (!videoUrl) {
-            throw new Error('No video file found for lesson');
-        }
+            // Push audio data to stream
+            pushStream.write(audioData);
+            pushStream.close();
 
-        // Mark the lesson as processing captions
-        await updateDoc(lessonRef, { processingCaptions: true });
+            // Create audio config from stream
+            const audioConfig = sdk.AudioConfig.fromStreamInput(pushStream);
 
-        // Step 1: Extract audio from the video and transcribe it
-        // For this example, we'll assume the video URL can be processed directly
-        // In a real implementation, you'd need to extract the audio first
-        const transcription = await transcribeAudio(videoUrl);
+            // Create speech recognizer
+            const recognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
 
-        // Step 2: Generate captions in WebVTT format and upload to storage
-        const captionsVtt = generateVttFromTranscription(transcription);
-        const captionsStoragePath = `captions/${courseId}/${lessonId}/en-US.vtt`;
-        const captionsRef = ref(firebaseStorage, captionsStoragePath);
-        await uploadString(captionsRef, captionsVtt, 'raw');
-        const captionsUrl = await getDownloadURL(captionsRef);
+            // Start recognition
+            recognizer.recognizeOnceAsync(
+                result => {
+                    recognizer.close();
 
-        // Step 3: Translate the transcription to other languages
-        const translations: Record<string, { url?: string, content?: string }> = {};
-        translations['en-US'] = { url: captionsUrl, content: transcription };
-
-        // Get target languages excluding the source language (en-US)
-        const targetLanguages = Object.keys(supportedLanguages).filter(lang => lang !== 'en-US');
-
-        // Perform translations for all target languages
-        const translatedTexts = await translateText(transcription, targetLanguages);
-
-        // Process each translation and create WebVTT files
-        for (const language of targetLanguages) {
-            if (translatedTexts[language]) {
-                const translatedVtt = generateVttFromTranscription(translatedTexts[language]);
-                const translationStoragePath = `captions/${courseId}/${lessonId}/${language}.vtt`;
-                const translationRef = ref(firebaseStorage, translationStoragePath);
-                await uploadString(translationRef, translatedVtt, 'raw');
-                const translationUrl = await getDownloadURL(translationRef);
-
-                translations[language] = {
-                    url: translationUrl,
-                    content: translatedTexts[language]
-                };
-            }
-        }
-
-        // Update the lesson with transcription and captions
-        await updateDoc(lessonRef, {
-            transcription,
-            captions: translations,
-            processingCaptions: false
+                    if (result.reason === sdk.ResultReason.RecognizedSpeech) {
+                        resolve(result.text);
+                    } else {
+                        reject(`Speech recognition failed: ${result.reason}`);
+                    }
+                },
+                error => {
+                    recognizer.close();
+                    reject(`Speech recognition error: ${error}`);
+                }
+            );
         });
-
     } catch (error) {
-        console.error('Error processing lesson for captions:', error);
-
-        // Update the lesson to indicate processing failed
-        const lessonRef = doc(firestoreDB, `courses/${courseId}/lessons/${lessonId}`);
-        await updateDoc(lessonRef, { processingCaptions: false });
-
+        console.error('Error in speech to text conversion:', error);
         throw error;
     }
-}
-
-/**
- * Generate VTT format from a plain text transcription
- * This is a simplified version as we don't have timestamps for individual phrases
- * @param transcription Full text transcription
- * @returns WebVTT formatted string
- */
-function generateVttFromTranscription(transcription: string): string {
-    let vtt = 'WEBVTT\n\n';
-
-    // Simple approach: Split by sentences/periods and estimate timing
-    // In a real implementation, you'd want to get actual timestamps from the recognizer
-    const sentences = transcription.split(/(?<=[.!?])\s+/);
-    let currentTime = 0;
-
-    sentences.forEach((sentence, index) => {
-        if (sentence.trim()) {
-            // Estimate 5 seconds per sentence (very simplified approach)
-            const startTime = formatTime(currentTime);
-            currentTime += 5; // 5 seconds per sentence
-            const endTime = formatTime(currentTime);
-
-            vtt += `${index + 1}\n`;
-            vtt += `${startTime} --> ${endTime}\n`;
-            vtt += `${sentence.trim()}\n\n`;
-        }
-    });
-
-    return vtt;
 }

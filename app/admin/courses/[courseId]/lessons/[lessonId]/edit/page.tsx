@@ -11,13 +11,11 @@ export default function EditLessonPage() {
     const lessonId = params.lessonId as string;
 
     return (
-        <div className="max-w-7xl mx-auto px-4">
-
-            <Card className="shadow-md">
-                <CardBody>
-                    <AddLesson courseId={courseId} lessonId={lessonId} />
-                </CardBody>
-            </Card>
+        <div className="max-w-7xl mx-auto px-4">            <Card className="shadow-md">
+            <CardBody>
+                <AddLesson courseId={courseId} lessonId={lessonId} onClose={() => { }} />
+            </CardBody>
+        </Card>
         </div>
     );
 }
