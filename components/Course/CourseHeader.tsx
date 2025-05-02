@@ -9,7 +9,7 @@ interface CourseHeaderProps {
 }
 
 // Extended properties that might be used in the component but aren't in the Course type
-interface ExtendedCourse extends Course {
+interface ExtendedCourse extends Omit<Course, 'rating'> {
     isFeatured?: boolean;
     isNew?: boolean;
     level?: string;
@@ -17,7 +17,7 @@ interface ExtendedCourse extends Course {
     students?: number;
     lessonsCount?: number;
     certificate?: boolean;
-    rating?: number | string;
+    rating?: number | string; // Override the rating property to allow string values
     reviewsCount?: number;
 }
 

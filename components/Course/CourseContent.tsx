@@ -2,7 +2,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Chip, Card } from '@heroui/react';
-import { Course, Lesson } from '@/types';
+import { Course, Lesson } from "@/types";
 import {
     FiPlay,
     FiLock,
@@ -29,15 +29,26 @@ const CourseContent: React.FC<CourseContentProps> = ({
     completedLessons = {},
     handleLessonClick
 }) => {
+    // Debug lessons input
+    console.log('CourseContent received lessons:', {
+        count: lessons?.length || 0,
+        lessonsEmpty: !lessons || lessons.length === 0,
+        firstLesson: lessons && lessons.length > 0 ? lessons[0] : null
+    });
+
+    // Safely handle potentially invalid lessons input
+    const validLessons = Array.isArray(lessons) ? lessons.filter(lesson => lesson != null) : [];
+
     // Sort lessons by order
-    const sortedLessons = [...lessons].sort((a, b) => {
+    const sortedLessons = [...validLessons].sort((a, b) => {
         const orderA = a.order || 0;
         const orderB = b.order || 0;
         return orderA - orderB;
-    });
-
-    // Group lessons by module/section if available
+    });    // Group lessons by module/section if available
     const lessonsByModule = sortedLessons.reduce((groups, lesson) => {
+        // Skip null/undefined lessons
+        if (!lesson) return groups;
+
         const moduleId = lesson.moduleId || 'default';
         if (!groups[moduleId]) {
             groups[moduleId] = [];
@@ -46,10 +57,15 @@ const CourseContent: React.FC<CourseContentProps> = ({
         return groups;
     }, {} as Record<string, Lesson[]>);
 
-    const modules = course.modules || [];
-    const defaultModule = { id: 'default', title: 'Course Content' };
+    // Debug the module grouping
+    console.log('Lessons by module:', {
+        moduleCount: Object.keys(lessonsByModule).length,
+        moduleKeys: Object.keys(lessonsByModule),
+        defaultModuleLessonCount: lessonsByModule['default']?.length || 0
+    });
 
-    // Animation variants
+    const modules = course.modules || [];
+    const defaultModule = { id: 'default', title: 'Course Content' };    // Animation variants
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: {
@@ -71,7 +87,17 @@ const CourseContent: React.FC<CourseContentProps> = ({
                 damping: 15
             }
         }
-    };    // Function to determine if a lesson is accessible
+    };
+
+    // Log if we don't have any lessons to show
+    if (sortedLessons.length === 0) {
+        console.warn(`No lessons to display for course: ${course?.id || 'unknown'}`, {
+            lessonsProvided: validLessons.length,
+            course
+        });
+    }
+
+    // Function to determine if a lesson is accessible
     const isLessonAccessible = (lesson: Lesson): boolean => {
         return Boolean(hasAccess || isAdmin || lesson.isFree === true);
     };
@@ -169,18 +195,20 @@ const CourseContent: React.FC<CourseContentProps> = ({
                                             {module.description}
                                         </p>
                                     )}
-                                </div>
-                                <div className="divide-y divide-[color:var(--ai-card-border)]/50">
-                                    {(lessonsByModule[module.id] || []).map((lesson, lessonIndex) => (
-                                        <LessonItem
-                                            key={lesson.id}
-                                            lesson={lesson}
-                                            index={lessonIndex}
-                                            isCompleted={isLessonCompleted(lesson.id)}
-                                            isAccessible={isLessonAccessible(lesson)}
-                                            onClick={() => isLessonAccessible(lesson) && handleLessonClick(lesson)}
-                                        />
-                                    ))}
+                                </div>                                <div className="divide-y divide-[color:var(--ai-card-border)]/50">
+                                    {(lessonsByModule[module.id] || [])
+                                        .filter(lesson => lesson != null && lesson.id)
+                                        .map((lesson, lessonIndex) => (
+                                            <LessonItem
+                                                key={lesson.id}
+                                                lesson={lesson}
+                                                index={lessonIndex}
+                                                isCompleted={isLessonCompleted(lesson.id)}
+                                                isAccessible={isLessonAccessible(lesson)}
+                                                onClick={() => isLessonAccessible(lesson) && handleLessonClick(lesson)}
+                                            />
+                                        ))
+                                    }
                                 </div>
                             </motion.div>
                         ))}
@@ -193,18 +221,19 @@ const CourseContent: React.FC<CourseContentProps> = ({
                             >
                                 <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 border-b border-[color:var(--ai-card-border)]">
                                     <h3 className="font-medium text-[color:var(--ai-foreground)]">Additional Lessons</h3>
-                                </div>
-                                <div className="divide-y divide-[color:var(--ai-card-border)]/50">
-                                    {lessonsByModule['default'].map((lesson, lessonIndex) => (
-                                        <LessonItem
-                                            key={lesson.id}
-                                            lesson={lesson}
-                                            index={lessonIndex}
-                                            isCompleted={isLessonCompleted(lesson.id)}
-                                            isAccessible={isLessonAccessible(lesson)}
-                                            onClick={() => isLessonAccessible(lesson) && handleLessonClick(lesson)}
-                                        />
-                                    ))}
+                                </div>                                <div className="divide-y divide-[color:var(--ai-card-border)]/50">
+                                    {lessonsByModule['default']
+                                        .filter(lesson => lesson != null && lesson.id)
+                                        .map((lesson, lessonIndex) => (
+                                            <LessonItem
+                                                key={lesson.id}
+                                                lesson={lesson}
+                                                index={lessonIndex}
+                                                isCompleted={isLessonCompleted(lesson.id)}
+                                                isAccessible={isLessonAccessible(lesson)}
+                                                onClick={() => isLessonAccessible(lesson) && handleLessonClick(lesson)}
+                                            />
+                                        ))}
                                 </div>
                             </motion.div>
                         )}
@@ -222,24 +251,30 @@ const CourseContent: React.FC<CourseContentProps> = ({
                                     {sortedLessons.length} lessons
                                 </span>
                             </h3>
-                        </div>
-                        {sortedLessons.length > 0 ? (
+                        </div>                        {sortedLessons.length > 0 ? (
                             <div className="divide-y divide-[color:var(--ai-card-border)]/50">
-                                {sortedLessons.map((lesson, index) => (
-                                    <LessonItem
-                                        key={lesson.id}
-                                        lesson={lesson}
-                                        index={index}
-                                        isCompleted={isLessonCompleted(lesson.id)}
-                                        isAccessible={isLessonAccessible(lesson)}
-                                        onClick={() => isLessonAccessible(lesson) && handleLessonClick(lesson)}
-                                    />
-                                ))}
+                                {sortedLessons.map((lesson, index) => {
+                                    if (!lesson || !lesson.id) {
+                                        console.error('Invalid lesson data:', lesson);
+                                        return null;
+                                    }
+
+                                    return (
+                                        <LessonItem
+                                            key={lesson.id}
+                                            lesson={lesson}
+                                            index={index}
+                                            isCompleted={isLessonCompleted(lesson.id)}
+                                            isAccessible={isLessonAccessible(lesson)}
+                                            onClick={() => isLessonAccessible(lesson) && handleLessonClick(lesson)}
+                                        />
+                                    );
+                                })}
                             </div>
                         ) : (
                             <div className="flex flex-col items-center justify-center py-12 text-center">
                                 <FiBookOpen className="w-12 h-12 text-[color:var(--ai-muted)]/40 mb-4" />
-                                <h3 className="text-lg font-medium text-[color:var(--ai-foreground)]">No lessons available</h3>                                <p className="mt-1 text-sm text-[color:var(--ai-muted)]">
+                                <h3 className="text-lg font-medium text-[color:var(--ai-foreground]">No lessons available</h3>                                <p className="mt-1 text-sm text-[color:var(--ai-muted)]">
                                     This course doesn&apos;t have any lessons yet.
                                 </p>
                             </div>

@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useContext, useEffect, useState } from 'react';
-import { Avatar, Button, Card, CardBody, Chip, Divider, Input, Spinner, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Select, SelectItem } from '@heroui/react';
+import { Avatar, Button, Card, CardBody, Chip, Divider, Input, Spinner, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Select } from '@heroui/react';
+import SelectItem from '@/components/ui/SelectItem';
 import { AppContext } from '@/components/AppContext';
 import { Course, UserProfile } from '@/types';
 
@@ -230,9 +231,8 @@ const AdminUsers: React.FC = () => {
                             }
                         }
                     }}
-                >
-                    <ModalContent className="overflow-hidden dark:bg-gray-900/95 border border-primary-200/20 dark:border-gray-800 shadow-xl">
-                        {(onClose) => (
+                >                    <ModalContent className="overflow-hidden dark:bg-gray-900/95 border border-primary-200/20 dark:border-gray-800 shadow-xl">
+                        {() => (
                             <>
                                 <div className="relative">
                                     <div className="absolute inset-0 bg-gradient-to-r from-primary-500/10 to-secondary-500/10 blur-xl opacity-80 -z-10"></div>
@@ -389,9 +389,8 @@ const AdminUsers: React.FC = () => {
                         }
                     }
                 }}
-            >
-                <ModalContent className="overflow-hidden dark:bg-gray-900/95 border border-primary-200/20 dark:border-gray-800 shadow-xl">
-                    {(onClose) => (
+            >                <ModalContent className="overflow-hidden dark:bg-gray-900/95 border border-primary-200/20 dark:border-gray-800 shadow-xl">
+                    {() => (
                         <>
                             <div className="relative">
                                 <div className="absolute inset-0 bg-gradient-to-r from-primary-500/20 to-secondary-500/20 blur-xl opacity-80 -z-10"></div>
@@ -458,14 +457,13 @@ const AdminUsers: React.FC = () => {
                                                         className="w-full"
                                                         variant="bordered"
                                                         size="lg"
-                                                        labelPlacement="outside"
-                                                        classNames={{
+                                                        labelPlacement="outside" classNames={{
                                                             trigger: "h-12 bg-gray-50/80 dark:bg-gray-800/50 backdrop-blur-sm border-primary-200 dark:border-gray-700",
                                                             value: "text-gray-900 dark:text-white",
                                                         }}
                                                     >
                                                         {Object.values(courses).map((course: Course) => (
-                                                            <SelectItem key={course.id} textValue={course.name} className="text-gray-900 dark:text-white">
+                                                            <SelectItem key={course.id} value={course.id} textValue={course.name} className="text-gray-900 dark:text-white">
                                                                 {course.name}
                                                             </SelectItem>
                                                         ))}

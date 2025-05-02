@@ -177,7 +177,7 @@ export const DropdownMenu = forwardRef<HTMLUListElement, DropdownMenuProps>((pro
             {...rest}
         >
             {/* Ensure children are properly formatted for HeroUI */}
-            {React.Children.toArray(children)}
+            {(React.Children.toArray(children).filter(child => React.isValidElement(child)) as any)}
         </HeroDropdownMenu>
     );
 });
@@ -262,23 +262,16 @@ export const DropdownItem = forwardRef<HTMLLIElement, DropdownItemProps>((props,
     };
 
     // Convert our props to what HeroDropdownItem expects
-    const heroProps = {
+    const { key, ...heroProps } = {
         className: `text-[color:var(--ai-foreground)] rounded-md transition-colors ${getColorClass()} ${className}`,
-        key: props.key,
         disabled: isDisabled,
         onClick: onPress,
         textValue: textValue,
         ...rest
     };
 
-    // Remove properties that HeroDropdownItem doesn't expect
-    delete heroProps.isSelected;
-    delete heroProps.isDisabled;
-    delete heroProps.onPress;
-    delete heroProps.color;
-
     return (
-        <HeroDropdownItem {...heroProps}>
+        <HeroDropdownItem key={props.key ?? ''} {...heroProps}>
             {children}
         </HeroDropdownItem>
     );
@@ -336,7 +329,7 @@ export const DropdownSection = forwardRef<HTMLDivElement, DropdownSectionProps>(
             {...rest}
         >
             {/* Ensure children are properly formatted for HeroUI */}
-            {React.Children.toArray(children)}
+            {(React.Children.toArray(children).filter(child => React.isValidElement(child)) as any)}
         </HeroDropdownSection>
     );
 });

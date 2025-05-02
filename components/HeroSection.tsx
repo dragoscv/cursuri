@@ -131,11 +131,36 @@ export default function HeroSection() {
             const coursesSection = document.getElementById('courses-section')
             coursesSection?.scrollIntoView({ behavior: 'smooth' })
         }
-    }
-
-    // Create floating particles animation
+    }    // Create floating particles animation
     useEffect(() => {
         if (!particlesRef.current) return
+
+        // Create animation style only once
+        if (!document.getElementById('hero-particles-animation-style')) {
+            const style = document.createElement('style')
+            style.id = 'hero-particles-animation-style'
+            style.innerHTML = `
+        @keyframes float-particle {
+          0% {
+            transform: translateY(0) scale(0);
+            opacity: 0;
+          }
+          10% {
+            transform: translateY(-10px) scale(1);
+            opacity: 0.4;
+          }
+          90% {
+            transform: translateY(-200px) scale(0.8);
+            opacity: 0.2;
+          }
+          100% {
+            transform: translateY(-250px) scale(0);
+            opacity: 0;
+          }
+        }
+      `
+            document.head.appendChild(style)
+        }
 
         const createParticle = () => {
             const particle = document.createElement('div')
@@ -155,30 +180,6 @@ export default function HeroSection() {
             particle.style.opacity = '0'
             particle.style.animation = `float-particle ${Math.random() * 10 + 10}s linear infinite`
 
-            // Apply animation styling to head
-            const style = document.createElement('style')
-            style.innerHTML = `
-        @keyframes float-particle {
-          0% {
-            transform: translateY(0) scale(0);
-            opacity: 0;
-          }
-          10% {
-            transform: translateY(-10px) scale(1);
-            opacity: 0.4;
-          }
-          90% {
-            transform: translateY(-${Math.random() * 200 + 100}px) scale(0.8);
-            opacity: 0.2;
-          }
-          100% {
-            transform: translateY(-${Math.random() * 250 + 150}px) scale(0);
-            opacity: 0;
-          }
-        }
-      `
-            document.head.appendChild(style)
-
             // Add to the DOM
             particlesRef.current?.appendChild(particle)
 
@@ -186,15 +187,17 @@ export default function HeroSection() {
             setTimeout(() => {
                 particle.remove()
             }, 20000)
-        }
-
-        // Create particles periodically
+        }        // Create particles periodically, but limit to fewer particles (every 800ms instead of 300ms)
         const interval = setInterval(() => {
-            createParticle()
-        }, 300)
+            // Limit the total number of particles to avoid performance issues
+            const maxParticles = 30;
+            if (particlesRef.current && particlesRef.current.childElementCount < maxParticles) {
+                createParticle()
+            }
+        }, 800)
 
-        // Initial particles
-        for (let i = 0; i < 20; i++) {
+        // Initial particles - reduce number from 20 to 10
+        for (let i = 0; i < 10; i++) {
             createParticle()
         }
 

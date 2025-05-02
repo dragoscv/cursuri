@@ -3,7 +3,7 @@
 import React, { useContext } from 'react';
 import Link from 'next/link';
 import { Card, Chip, Avatar, Button } from '@heroui/react';
-import { FiHome, FiSettings, FiCreditCard, FiBookOpen, FiUser, FiLogOut } from '@/components/icons/FeatherIcons';
+import { FiHome, FiSettings, FiCreditCard, FiBookOpen, FiUser, FiLogOut, FiAward } from '@/components/icons/FeatherIcons';
 import { signOut } from 'firebase/auth';
 import { firebaseAuth } from '@/utils/firebase/firebase.config';
 import { AppContext } from '@/components/AppContext';
@@ -44,12 +44,11 @@ const ProfileSidebar: React.FC = () => {
     if (!user) return null;
 
     // Count enrolled courses
-    const enrolledCoursesCount = userPaidProducts?.length || 0;
-
-    // Navigation items
+    const enrolledCoursesCount = userPaidProducts?.length || 0;    // Navigation items
     const navItems = [
         { label: 'Dashboard', href: '/profile', icon: FiHome },
         { label: 'My Courses', href: '/profile/courses', icon: FiBookOpen },
+        { label: 'Certificates', href: '/profile/certificates', icon: FiAward },
         { label: 'Payment History', href: '/profile/payments', icon: FiCreditCard },
         { label: 'Settings', href: '/profile/settings', icon: FiSettings },
     ];
@@ -75,11 +74,9 @@ const ProfileSidebar: React.FC = () => {
                         </defs>
                         <rect width="100%" height="100%" fill="url(#grid)" />
                     </svg>
-                </div>
-
-                {/* Decorative elements */}
+                </div>                {/* Decorative elements */}
                 <div className="absolute top-4 right-4 h-3 w-3 rounded-full bg-white/30 animate-pulse"></div>
-                <div className="absolute top-6 right-8 h-2 w-2 rounded-full bg-white/20 animate-pulse" style={{ animationDelay: "1s" }}></div>
+                <div className="absolute top-6 right-8 h-2 w-2 rounded-full bg-white/20 animate-pulse animate-delay-1000"></div>
             </div>
 
             <div className="relative px-6 pt-0 pb-6">

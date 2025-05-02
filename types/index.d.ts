@@ -33,7 +33,7 @@ declare module 'next' {
 
 // Alternative page params interface for our usage
 export interface PageParams<T extends Record<string, string> = Record<string, string>> {
-    params: T;
+    params: T | Promise<T>;
     searchParams?: Record<string, string | string[]>;
 }
 
@@ -66,30 +66,53 @@ export interface AppContextProps {
     saveUserPreferences: (preferences: Partial<UserPreferences>) => Promise<boolean>;
     user: User | null;
     authLoading: boolean;
-    openModal: (modal: ModalProps) => void;
+    openModal: (props: any) => void;
     closeModal: (id: string) => void;
-    updateModal: (modal: Partial<ModalProps>) => void;
+    updateModal: (props: any) => void;
     products: any[];
     isAdmin: boolean;
     courses: Record<string, Course>;
+    courseLoadingStates: Record<string, CacheStatus>;
     lessons: Record<string, Record<string, Lesson>>;
-    getCourseLessons: (courseId: string) => Promise<Unsubscribe | void>;
-    userPaidProducts: UserPaidProduct[];
+    lessonLoadingStates: Record<string, Record<string, CacheStatus>>;
+    getCourseLessons: (courseId: string, options?: CacheOptions) => Promise<Unsubscribe | void>;
+    fetchCourseById: (courseId: string, options?: CacheOptions) => Promise<void>;
+    fetchLessonsForCourse: (courseId: string, options?: CacheOptions) => Promise<void>; userPaidProducts: UserPaidProduct[];
     userPurchases?: Record<string, UserPaidProduct>; // Added missing property
     reviews: Record<string, Record<string, Review>>;
-    getCourseReviews: (courseId: string) => Promise<Unsubscribe | void>;
+    reviewLoadingStates: Record<string, CacheStatus>;
+    getCourseReviews: (courseId: string, options?: CacheOptions) => Promise<Unsubscribe | void>;
+    // Direct access functions for server components
+    getCourseById: (courseId: string) => Promise<any>;
+    getLessonById: (courseId: string, lessonId: string) => Promise<any>;
     lessonProgress: Record<string, Record<string, UserLessonProgress>>;
     saveLessonProgress: (courseId: string, lessonId: string, position: number, isCompleted?: boolean) => Promise<boolean | void>;
     markLessonComplete: (courseId: string, lessonId: string) => Promise<boolean | void>;
     // Admin-specific properties and functions
     users?: Record<string, UserProfile>;
-    getAllUsers?: () => Promise<Record<string, UserProfile> | null>;
+    userLoadingState?: CacheStatus;
+    getAllUsers?: (options?: CacheOptions) => Promise<Record<string, UserProfile> | null>;
     assignCourseToUser?: (userId: string, courseId: string) => Promise<boolean>;
     adminAnalytics?: AdminAnalytics | null;
-    getAdminAnalytics?: () => Promise<AdminAnalytics | null>;
+    adminAnalyticsLoadingState?: CacheStatus;
+    getAdminAnalytics?: (options?: CacheOptions) => Promise<AdminAnalytics | null>;
     adminSettings?: AdminSettings | null;
-    getAdminSettings?: () => Promise<AdminSettings | null>;
+    adminSettingsLoadingState?: CacheStatus;
+    getAdminSettings?: (options?: CacheOptions) => Promise<AdminSettings | null>;
     updateAdminSettings?: (settings: Partial<AdminSettings>) => Promise<boolean>;
+    bookmarkedLessons: BookmarkedLessons;
+    bookmarksLoadingState: CacheStatus;
+    toggleBookmarkLesson: (courseId: string, lessonId: string) => Promise<void>;
+    getBookmarkedLessons: (options?: CacheOptions) => Promise<void>;
+    wishlistCourses: WishlistCourses;
+    wishlistLoadingState: CacheStatus;
+    addToWishlist: (courseId: string) => Promise<void>;
+    removeFromWishlist: (courseId: string) => Promise<void>;
+    getWishlistCourses: (options?: CacheOptions) => Promise<void>;
+    // General cache management utilities
+    clearCache: (cacheKey?: string) => void;
+    clearAllCache: () => void;
+    getCacheStatus: (cacheKey: string) => CacheStatus;
 }
 
 // For use with framer-motion inView
@@ -174,6 +197,8 @@ export interface Course {
     id: string;
     /** The name of the course. */
     name: string;
+    /** Alternative property name for name */
+    title?: string;
     /** The description of the course. */
     description?: string;
     /** Full description with more details */
@@ -186,10 +211,11 @@ export interface Course {
     duration?: string;
     /** The URL of the course thumbnail/image. */
     imageUrl?: string;
-    /** The price of the course. */
-    price?: number;
+    /** Alternative property for course image */
+    coverImage?: string;    /** The price of the course. */
+    price?: number | string;
     /** Original price before discount */
-    originalPrice?: number;
+    originalPrice?: number | string;
     /** Whether the course is free */
     isFree?: boolean;
     /** Whether this is a limited time offer */
@@ -206,7 +232,6 @@ export interface Course {
         allowPromoCodes?: boolean;
         [key: string]: any;
     };
-    certificate?: boolean;
     /** Whether the course has downloadable resources */
     downloadableResources?: boolean;
     /** The status of the course (e.g., 'active', 'draft'). */
@@ -228,12 +253,21 @@ export interface Course {
         bio?: string;
         title?: string;
     };
+    /** Alternative name for instructor (used in some components) */
+    instructorName?: string;
+    /** Course rating average */
+    rating?: number;
+    /** Number of reviews */
+    reviewCount?: number;
+    /** Optional custom slug identifier */
+    slug?: string;
     /** Tags or categories for the course. */
     tags?: string[];
     /** Benefits of taking the course */
-    benefits?: string[];
-    /** Course requirements or prerequisites */
+    benefits?: string[];    /** Course requirements or prerequisites */
     requirements?: string[];
+    /** Course prerequisites - other courses that should be completed first */
+    prerequisites?: string[];
     /** Course modules or sections */
     modules?: CourseModule[];
     /** Course reviews */
@@ -571,6 +605,206 @@ export interface LessonSettingsProps {
 export interface QAProps {
     courseId: string;
     lessonId: string;
+}
+
+/**
+ * Interface for an achievement
+ */
+export interface Achievement {
+    id: string;
+    title: string;
+    description: string;
+    date: string;
+    badgeColor?: string;
+}
+
+/**
+ * Interface for a payment
+ */
+export interface Payment {
+    id: string;
+    courseName: string;
+    amount: string;
+    date: string;
+    invoiceUrl?: string;
+}
+
+/**
+ * Props for the Learning Path section
+ */
+export interface LearningPathSectionProps {
+    progress?: number;
+    currentCourse?: string;
+    nextCourse?: string;
+}
+
+/**
+ * Props for the Profile Settings section
+ */
+export interface ProfileSettingsSectionProps {
+    isDark?: boolean;
+    emailNotifications?: boolean;
+    courseUpdates?: boolean;
+    onToggleDark?: (value: boolean) => void;
+    onToggleEmailNotifications?: (value: boolean) => void;
+    onToggleCourseUpdates?: (value: boolean) => void;
+}
+
+/**
+ * Course Name Field Props interface
+ */
+export interface CourseNameFieldProps {
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+/**
+ * Course Description Field Props interface
+ */
+export interface CourseDescriptionFieldProps {
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+}
+
+/**
+ * Instructor Name Field Props interface
+ */
+export interface InstructorNameFieldProps {
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+/**
+ * Tags Field Props interface
+ */
+export interface TagsFieldProps {
+    tags: string[];
+    currentTag: string;
+    onTagChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onAddTag: () => void;
+    onRemoveTag: (tag: string) => void;
+}
+
+/**
+ * Objectives Field Props interface
+ */
+export interface ObjectivesFieldProps {
+    objectives: string[];
+    currentObjective: string;
+    onObjectiveChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onAddObjective: () => void;
+    onRemoveObjective: (objective: string) => void;
+}
+
+/**
+ * Requirements Field Props interface
+ */
+export interface RequirementsFieldProps {
+    requirements: string[];
+    currentRequirement: string;
+    onRequirementChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onAddRequirement: () => void;
+    onRemoveRequirement: (requirement: string) => void;
+}
+
+/**
+ * Course Image Field Props interface
+ */
+export interface CourseImageFieldProps {
+    imagePreview: string | null;
+    onImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onRemoveImage: () => void;
+}
+
+/**
+ * Props for the reusable lesson form component
+ */
+export interface LessonFormProps {
+    courseId: string;
+    lessonId?: string;
+    onClose: () => void;
+}
+
+/**
+ * Props for the Lesson component
+ */
+export interface LessonProps {
+    lesson: Lesson;
+    onClose?: () => void;
+}
+
+/**
+ * Props for the CourseOverview component
+ */
+export interface CourseOverviewProps {
+    course: Course;
+}
+
+/**
+ * Props for the ProfileHeader component
+ */
+export interface ProfileHeaderProps {
+    title: string;
+    description?: string;
+    actions?: React.ReactNode;
+}
+
+/**
+ * Props for Policy section components
+ */
+export interface PolicySectionProps {
+    title: string;
+    children: React.ReactNode;
+}
+
+export interface PolicySubsectionProps {
+    title: string;
+    children: React.ReactNode;
+}
+
+export interface PolicyListProps {
+    items: string[] | React.ReactNode[];
+    type?: 'disc' | 'none';
+}
+
+/**
+ * Props for the CourseContent component
+ */
+export interface CourseContentProps {
+    course: Course;
+    lessons: Lesson[];
+    hasAccess: boolean;
+    isAdmin: boolean;
+    completedLessons?: Record<string, boolean>;
+    handleLessonClick: (lesson: Lesson) => void;
+}
+
+// Bookmarked lessons: courseId -> lessonId[]
+export type BookmarkedLessons = Record<string, string[]>;
+
+// Wishlist courses: courseId[]
+export type WishlistCourses = string[];
+
+// Caching-related types
+export type CacheStatus = 'idle' | 'loading' | 'success' | 'error';
+
+export interface CacheMetadata {
+    timestamp: number;
+    expiresAt: number;
+    status: CacheStatus;
+    error?: string;
+}
+
+export interface CacheEntry<T> {
+    data: T;
+    metadata: CacheMetadata;
+}
+
+export interface CacheOptions {
+    ttl?: number; // Time to live in milliseconds (default: 5 minutes)
+    persist?: boolean; // Whether to persist in localStorage (default: false)
+    cacheKey?: string; // Custom cache key (default: auto-generated)
+    forceRefresh?: boolean; // Whether to force refresh the data (default: false)
 }
 
 // Other existing types...

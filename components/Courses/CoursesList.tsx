@@ -9,6 +9,7 @@ import { stripePayments } from "@/utils/firebase/stripe";
 import { firebaseApp } from "@/utils/firebase/firebase.config";
 import Login from "../Login";
 import { Course } from '@/types';
+import { FiLink } from '../icons/FeatherIcons/FiLink';
 
 interface CoursesListProps {
     filter?: string;
@@ -143,6 +144,23 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
         }
     };
 
+    // Social share handler
+    const handleShare = (course: any) => {
+        const shareUrl = `${window.location.origin}/courses/${course.id}`;
+        const shareText = `Check out the course "${course.name}" on Cursuri!`;
+        if (navigator.share) {
+            navigator.share({
+                title: course.name,
+                text: shareText,
+                url: shareUrl,
+            });
+        } else {
+            navigator.clipboard.writeText(shareUrl);
+            // Optionally show a toast/alert
+            alert('Course link copied to clipboard!');
+        }
+    };
+
     if (filteredCourses.length === 0) {
         return (
             <div className="text-center py-12">
@@ -158,10 +176,13 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredCourses.map((course: any) => {
+            {filteredCourses.map((course: any, idx: number) => {
                 const { amount, currency, priceId } = getCoursePrice(course);
                 const purchased = isPurchased(course.id);
                 const isLoading = loadingPayment && loadingCourseId === course.id;
+
+                // Mark top 3 as most popular
+                const showPopularBadge = idx < 3;
 
                 return (
                     <motion.div
@@ -188,6 +209,15 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
                                     {course.difficulty || 'Intermediate'}
                                 </Chip>
                             </div>
+                            {/* Most Popular badge */}
+                            {showPopularBadge && (
+                                <div className="absolute top-4 right-4 z-20">
+                                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-yellow-400/90 text-xs font-semibold text-yellow-900 shadow">
+                                        <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
+                                        Most Popular
+                                    </span>
+                                </div>
+                            )}
 
                             {/* Purchased badge */}
                             {purchased && (
@@ -280,7 +310,7 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
                             {/* Divider */}
                             <div className="h-[1px] bg-gradient-to-r from-transparent via-[color:var(--ai-card-border)] to-transparent mb-4"></div>
 
-                            <div className="mt-auto flex items-center justify-between">
+                            <div className="mt-auto flex items-center justify-between gap-2">
                                 {/* Price */}
                                 <div className="text-xl font-bold text-[color:var(--ai-foreground)]">
                                     {course.isFree ?
@@ -316,6 +346,45 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
                                         </Button>
                                     )
                                 )}
+
+                                <div className="flex gap-2 ml-2">
+                                    {/* Facebook */}
+                                    <button
+                                        type="button"
+                                        aria-label="Share on Facebook"
+                                        className="p-2 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/30 transition"
+                                        onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.origin + '/courses/' + course.id)}`, '_blank')}
+                                    >
+                                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 0h-21.35C.595 0 0 .592 0 1.326v21.348C0 23.408.595 24 1.325 24h11.495v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.797.143v3.24l-1.918.001c-1.504 0-1.797.715-1.797 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116C23.406 24 24 23.408 24 22.674V1.326C24 .592 23.406 0 22.675 0" /></svg>
+                                    </button>
+                                    {/* Twitter */}
+                                    <button
+                                        type="button"
+                                        aria-label="Share on Twitter"
+                                        className="p-2 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/20 transition"
+                                        onClick={() => window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.origin + '/courses/' + course.id)}&text=${encodeURIComponent('Check out this course: ' + course.name)}`, '_blank')}
+                                    >
+                                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557a9.83 9.83 0 0 1-2.828.775 4.932 4.932 0 0 0 2.165-2.724c-.951.564-2.005.974-3.127 1.195a4.916 4.916 0 0 0-8.38 4.482C7.691 8.095 4.066 6.13 1.64 3.161c-.542.929-.856 2.01-.857 3.17 0 2.188 1.115 4.117 2.823 5.254a4.904 4.904 0 0 1-2.229-.616c-.054 2.281 1.581 4.415 3.949 4.89a4.936 4.936 0 0 1-2.224.084c.627 1.956 2.444 3.377 4.6 3.417A9.867 9.867 0 0 1 0 21.543a13.94 13.94 0 0 0 7.548 2.209c9.142 0 14.307-7.721 13.995-14.646A9.936 9.936 0 0 0 24 4.557z" /></svg>
+                                    </button>
+                                    {/* LinkedIn */}
+                                    <button
+                                        type="button"
+                                        aria-label="Share on LinkedIn"
+                                        className="p-2 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/20 transition"
+                                        onClick={() => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.origin + '/courses/' + course.id)}`, '_blank')}
+                                    >
+                                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.268c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm13.5 11.268h-3v-5.604c0-1.337-.025-3.063-1.868-3.063-1.868 0-2.154 1.459-2.154 2.967v5.7h-3v-10h2.881v1.367h.041c.401-.761 1.381-1.563 2.841-1.563 3.039 0 3.6 2.001 3.6 4.601v5.595z" /></svg>
+                                    </button>
+                                    {/* Copy Link / Native Share */}
+                                    <button
+                                        type="button"
+                                        aria-label="Copy course link"
+                                        className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800/40 transition"
+                                        onClick={() => handleShare(course)}
+                                    >
+                                        <FiLink size={18} />
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </motion.div>

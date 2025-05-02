@@ -1,57 +1,67 @@
-'use client'
+import React from 'react';
+import { Metadata } from 'next';
+import { getCourseById } from '@/utils/firebase/server';
+import { constructCourseMetadata } from '@/utils/metadata';
+import dynamic from 'next/dynamic';
 
-import React, { useContext } from 'react';
-import { AppContext } from '../../../components/AppContext';
-import { Spinner } from '@heroui/react';
-import CourseDetailView from '@/components/Course/CourseDetailView';
+// Dynamic import for client component
+const CourseDetail = dynamic(() => import('@/components/Course/CourseDetail'), {
+  ssr: true,
+  loading: () => (
+    <div className="flex justify-center items-center min-h-[60vh]">
+      <div className="animate-pulse">
+        <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-4"></div>
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/3 mb-8"></div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="md:col-span-2 h-96 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+          <div className="h-80 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+        </div>
+      </div>
+    </div>
+  )
+});
 
-// Fix for Next.js 15 params Promise issue
-export default function CourseDetailPage({
-    params
-}: {
-    params: { courseId: string } | Promise<{ courseId: string }>
-}) {
-    // Unwrap the params using React.use() to handle both Promise and non-Promise cases
-    const unwrappedParams = React.use(params instanceof Promise ? params : Promise.resolve(params));
-    const { courseId } = unwrappedParams;
+// Generate metadata dynamically for each course
+export async function generateMetadata({ params }: { params: { courseId: string } | Promise<{ courseId: string }> }): Promise<Metadata> {
+  try {
+    // Await params if they are a Promise
+    const resolvedParams = 'then' in params ? await params : params;
+    const courseId = String(resolvedParams.courseId);
 
-    const context = useContext(AppContext);
-
-    if (!context) {
-        throw new Error('CourseDetailPage must be used within an AppContextProvider');
-    }
-
-    const { courses, userPaidProducts, lessons, isAdmin } = context;
-
-    const course = courses ? courses[courseId] : null;
-
-    // Get lessons for this course from context
-    const courseLessons = lessons && courseId && lessons[courseId]
-        ? Object.values(lessons[courseId])
-        : [];
-
-    // Check if the course has been purchased
-    const isPurchased = userPaidProducts?.some(
-        (product) => product.metadata?.courseId === courseId
-    );
-
-    const hasAccess = isPurchased;
-
+    const course = await getCourseById(courseId);
     if (!course) {
-        return (
-            <div className="flex justify-center items-center min-h-[60vh]">
-                <Spinner size="lg" color="primary" />
-            </div>
-        );
+      return {
+        title: 'Course Not Found',
+        description: 'The requested course could not be found.'
+      };
     }
 
-    return (
-        <CourseDetailView
-            course={course}
-            courseId={courseId}
-            courseLessons={courseLessons}
-            hasAccess={hasAccess}
-            isAdmin={isAdmin}
-        />
-    );
+    return constructCourseMetadata({
+      title: course.title || course.name || 'Course',
+      description: course.description || 'No description available',
+      instructorName: course.instructorName || (typeof course.instructor === 'string' ? course.instructor : course.instructor?.name || 'Unknown Instructor'),
+      updatedAt: course.updatedAt ? (typeof course.updatedAt === 'string' ? course.updatedAt : course.updatedAt.toString()) : undefined,
+      createdAt: course.createdAt ? (typeof course.createdAt === 'string' ? course.createdAt : course.createdAt.toString()) : undefined,
+      slug: courseId,
+      coverImage: course.coverImage || course.imageUrl
+    });
+  } catch (error) {
+    console.error('Error generating course metadata:', error);
+    return {
+      title: 'Course Details',
+      description: 'View course details and curriculum'
+    };
+  }
+}
+
+export default async function Page({ params }: { params: { courseId: string } | Promise<{ courseId: string }> }) {
+  // Await params if they are a Promise
+  const resolvedParams = 'then' in params ? await params : params;
+  const courseId = String(resolvedParams.courseId);
+
+  return (
+    <>
+      <CourseDetail courseId={courseId} />
+    </>
+  );
 }

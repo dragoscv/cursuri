@@ -2,24 +2,29 @@
 
 import React, { useState, useEffect, useContext, useCallback, useRef } from 'react';
 import { AppContext } from '../AppContext';
-import { Lesson, AppContextProps, Resource, LessonSettingsProps, QAProps } from '@/types';
-import { Button, Card, Chip, Divider } from '@heroui/react';
+import { Lesson, Course, AppContextProps, Resource, LessonSettingsProps, QAProps } from '@/types';
+import { Button, Card, Chip, Divider, Badge } from '@heroui/react';
+import styles from './styles/LessonContent.module.css';
 import VideoPlayer from './Video/VideoPlayer';
 import LessonSettings from './Settings/LessonSettings';
 import ResourcesList from './Resources/ResourcesList';
 import Notes from './Notes/Notes';
 import QASection from './QA/QASection';
 import LessonNavigation from './Navigation/LessonNavigation';
+import OfflineButton from './OfflineButton';
+import { useOfflineContent } from '../Profile/hooks/useOfflineContent';
+import { FiWifi, FiWifiOff } from '@/components/icons/FeatherIcons';
 
 interface LessonContentProps {
     lesson: Lesson;
+    course?: Course;
     prevLessonId?: string | null;
     nextLessonId?: string | null;
     onNavigateLesson?: (lessonId: string) => void;
     onClose?: () => void;
 }
 
-function LessonContent({ lesson, prevLessonId = null, nextLessonId = null, onNavigateLesson, onClose }: LessonContentProps) {
+function LessonContent({ lesson, course, prevLessonId = null, nextLessonId = null, onNavigateLesson, onClose }: LessonContentProps) {
     const [isCompleted, setIsCompleted] = useState(false);
     const [autoPlayNext, setAutoPlayNext] = useState(false);
     const [saveProgress, setSaveProgress] = useState(true);
@@ -27,6 +32,9 @@ function LessonContent({ lesson, prevLessonId = null, nextLessonId = null, onNav
     const [videoPosition, setVideoPosition] = useState(0);    // Track video position in seconds
     const [notes, setNotes] = useState('');
     const [showNotes, setShowNotes] = useState(false);
+    const [isOnline, setIsOnline] = useState(true);
+    const [isUsingOfflineContent, setIsUsingOfflineContent] = useState(false);
+    const [offlineLessonContent, setOfflineLessonContent] = useState<any>(null);
     const notesRef = useRef<HTMLTextAreaElement>(null) as React.RefObject<HTMLTextAreaElement>;
 
     const context = useContext(AppContext) as AppContextProps;
@@ -34,7 +42,44 @@ function LessonContent({ lesson, prevLessonId = null, nextLessonId = null, onNav
         throw new Error("AppContext is required");
     }
 
-    const { lessons, lessonProgress, saveLessonProgress, markLessonComplete } = context;
+    const { lessons, lessonProgress, saveLessonProgress, markLessonComplete, courses } = context;
+    const { getOfflineLesson, isLessonAvailableOffline } = useOfflineContent();
+
+    // Check online status
+    useEffect(() => {
+        const updateOnlineStatus = () => {
+            setIsOnline(navigator.onLine);
+        };
+
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        updateOnlineStatus();
+
+        return () => {
+            window.removeEventListener('online', updateOnlineStatus);
+            window.removeEventListener('offline', updateOnlineStatus);
+        };
+    }, []);
+
+    // If we're offline, try to load offline content
+    useEffect(() => {
+        const loadOfflineContent = async () => {
+            if (!isOnline && lesson?.id) {
+                if (isLessonAvailableOffline(lesson.id)) {
+                    const offlineContent = await getOfflineLesson(lesson.id);
+                    if (offlineContent) {
+                        setOfflineLessonContent(offlineContent);
+                        setIsUsingOfflineContent(true);
+                    }
+                }
+            } else {
+                setIsUsingOfflineContent(false);
+                setOfflineLessonContent(null);
+            }
+        };
+
+        loadOfflineContent();
+    }, [isOnline, lesson?.id, getOfflineLesson, isLessonAvailableOffline]);
 
     // Check if lesson is undefined before accessing properties
     const courseId = lesson?.courseId || '';    // Set up loading state component for when lesson is not available
@@ -168,10 +213,8 @@ function LessonContent({ lesson, prevLessonId = null, nextLessonId = null, onNav
     }
 
     // Get the list of lessons for the navigation component
-    const navigationLessons = getCourseLessons();
-
-    return (
-        <div className="flex flex-col w-full max-w-7xl mx-auto animate-in fade-in duration-500">
+    const navigationLessons = getCourseLessons(); return (
+        <div className="flex flex-col w-full max-w-7xl mx-auto px-4 py-6 animate-in fade-in duration-500">
             <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-[color:var(--ai-accent)]/10 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-[color:var(--ai-card-border)]/50 shadow-xl">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                     <div>
@@ -185,15 +228,34 @@ function LessonContent({ lesson, prevLessonId = null, nextLessonId = null, onNav
                         )}
                     </div>
 
-                    {/* Course Progress Indicator */}
-                    <div className="flex flex-col items-end">
+                    <div className="flex flex-col items-end gap-2">                    {/* Offline status indicator */}
+                        {!isOnline && (
+                            <Badge
+                                color="danger"
+                                variant="flat"
+                                className="mb-1 flex items-center gap-1"
+                            >
+                                <FiWifiOff size={12} />
+                                Offline Mode
+                            </Badge>
+                        )}
+
+                        {/* Download for offline button */}
+                        {course && (
+                            <OfflineButton
+                                lesson={lesson}
+                                course={course}
+                                className="mb-2"
+                            />
+                        )}
+
+                        {/* Course Progress Indicator */}
                         <div className="flex items-center gap-2 mb-2">
                             <span className="text-sm text-[color:var(--ai-muted)]">Course Progress</span>
                             <span className="font-semibold text-[color:var(--ai-primary)]">{Math.round(calculateProgress())}%</span>
-                        </div>
-                        <div className="w-32 bg-[color:var(--ai-card-border)]/20 rounded-full h-2 overflow-hidden">
+                        </div>                    <div className={styles.progressContainer}>
                             <div
-                                className="h-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-full"
+                                className={styles.progressBar}
                                 style={{ width: `${calculateProgress()}%` }}
                             ></div>
                         </div>
@@ -247,25 +309,25 @@ function LessonContent({ lesson, prevLessonId = null, nextLessonId = null, onNav
                         </Chip>
                     )}
                 </div>
-            </div>
-
-            {/* Main content grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            </div>            {/* Main content grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 px-1">
                 {/* Main Content Column */}
-                <div className="lg:col-span-2 space-y-8">
-                    {/* Video Player Component */}
+                <div className="lg:col-span-2 space-y-8">                    {/* Video Player Component */}
                     <VideoPlayer
-                        lesson={lesson}
+                        lesson={isUsingOfflineContent ? {
+                            ...lesson,
+                            videoUrl: offlineLessonContent?.videoUrl || lesson.videoUrl,
+                            thumbnailUrl: offlineLessonContent?.thumbnailUrl || lesson.thumbnailUrl || lesson.thumbnail
+                        } : lesson}
                         isCompleted={isCompleted}
                         saveProgress={saveProgress}
                         saveLessonProgress={saveLessonProgress}
                         markLessonComplete={markLessonComplete}
                         setIsCompleted={setIsCompleted}
                         setProgressSaved={setProgressSaved}
-                    />
-
-                    {/* Lesson Content */}
-                    {lesson.content && (
+                        isOfflineMode={isUsingOfflineContent}
+                    />{/* Lesson Content */}
+                    {(lesson.content || (isUsingOfflineContent && offlineLessonContent?.content)) && (
                         <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-xl">
                             <div className="p-6">
                                 <h2 className="text-xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-4">
@@ -273,7 +335,7 @@ function LessonContent({ lesson, prevLessonId = null, nextLessonId = null, onNav
                                 </h2>
                                 <div
                                     className="prose dark:prose-invert max-w-none"
-                                    dangerouslySetInnerHTML={{ __html: lesson.content }}
+                                    dangerouslySetInnerHTML={{ __html: isUsingOfflineContent ? offlineLessonContent.content : lesson.content }}
                                 />
                             </div>
                         </Card>
@@ -345,12 +407,20 @@ function LessonContent({ lesson, prevLessonId = null, nextLessonId = null, onNav
                         onToggleNotes={toggleNotes}
                         onSaveNotes={saveNotes}
                         notesRef={notesRef}
-                    />
-
-                    {/* Resources Component */}
-                    {lesson.resources && lesson.resources.length > 0 && (
-                        <ResourcesList resources={lesson.resources} />
-                    )}
+                    />                    {/* Resources Component */}
+                    {((lesson.resources && lesson.resources.length > 0) ||
+                        (isUsingOfflineContent && offlineLessonContent?.resources && offlineLessonContent.resources.length > 0)) && (
+                            <ResourcesList
+                                resources={isUsingOfflineContent && offlineLessonContent?.resources
+                                    ? offlineLessonContent.resources.map((r: any) => ({
+                                        url: r.data,
+                                        name: r.name,
+                                        type: r.type
+                                    }))
+                                    : lesson.resources || []}
+                                isOfflineMode={isUsingOfflineContent}
+                            />
+                        )}
                 </div>
             </div>
         </div>

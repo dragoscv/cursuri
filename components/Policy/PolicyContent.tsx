@@ -1,9 +1,8 @@
 import React from 'react';
 
-interface PolicySectionProps {
-    title: string;
-    children: React.ReactNode;
-}
+import { PolicySectionProps } from "@/types";
+// ...existing code...
+
 
 export function PolicySection({ title, children }: PolicySectionProps) {
     return (
@@ -14,10 +13,9 @@ export function PolicySection({ title, children }: PolicySectionProps) {
     );
 }
 
-interface PolicySubsectionProps {
-    title: string;
-    children: React.ReactNode;
-}
+import { PolicySubsectionProps } from "@/types";
+// ...existing code...
+
 
 export function PolicySubsection({ title, children }: PolicySubsectionProps) {
     return (
@@ -28,10 +26,9 @@ export function PolicySubsection({ title, children }: PolicySubsectionProps) {
     );
 }
 
-interface PolicyListProps {
-    items: string[] | React.ReactNode[];
-    type?: 'disc' | 'none';
-}
+import { PolicyListProps } from "@/types";
+// ...existing code...
+
 
 export function PolicyList({ items, type = 'disc' }: PolicyListProps) {
     const listClass = type === 'disc' ? "list-disc pl-6 mb-4" : "list-none mb-4";

@@ -6,10 +6,12 @@ import { FiFileText, FiExternalLink, FiDownload } from '@/components/icons/Feath
 
 interface ResourcesListProps {
     resources: Resource[];
+    isOfflineMode?: boolean;
 }
 
 export default function ResourcesList({
-    resources
+    resources,
+    isOfflineMode = false
 }: ResourcesListProps) {
     if (!resources || resources.length === 0) {
         return null;
@@ -34,6 +36,11 @@ export default function ResourcesList({
                     <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
                         <FiFileText className="mr-2 text-[color:var(--ai-primary)]" />
                         <span>Lesson Resources</span>
+                        {isOfflineMode && (
+                            <span className="ml-2 text-xs px-2 py-0.5 bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] rounded-full">
+                                Offline Mode
+                            </span>
+                        )}
                     </h3>
                 </div>
 
@@ -43,7 +50,7 @@ export default function ResourcesList({
                             <a
                                 href={resource.url || '#'}
                                 target="_blank"
-                                rel="noopener noreferrer"
+                                rel="noopener noreferrer" download={isOfflineMode ? true : undefined}
                                 className="flex items-center p-3 rounded-lg border border-[color:var(--ai-card-border)]/50 hover:border-[color:var(--ai-primary)]/30 bg-[color:var(--ai-card-bg)]/50 hover:bg-[color:var(--ai-primary)]/5 transition-all duration-300 group"
                             >
                                 <div className="mr-3 p-2 rounded-full bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] group-hover:bg-[color:var(--ai-primary)]/20 transition-colors">

@@ -7,13 +7,15 @@ interface CoursesListViewProps {
     formatPrice: (course: CourseWithPriceProduct) => string;
     onViewCourse: (course: CourseWithPriceProduct) => void;
     onEditCourse: (course: CourseWithPriceProduct) => void;
+    onManageLessons?: (courseId: string) => void;
 }
 
 export default function CoursesListView({
     courses,
     formatPrice,
     onViewCourse,
-    onEditCourse
+    onEditCourse,
+    onManageLessons
 }: CoursesListViewProps) {
     return (<Card className="shadow-xl border border-[color:var(--ai-card-border)] overflow-hidden hover:shadow-[color:var(--ai-primary)]/5 transition-all">
         <div className="overflow-x-auto">
@@ -73,6 +75,17 @@ export default function CoursesListView({
                                     >
                                         View Lessons
                                     </Button>
+                                    {onManageLessons && (
+                                        <Button
+                                            size="sm"
+                                            color="default"
+                                            variant="flat"
+                                            onClick={() => onManageLessons(course.id)}
+                                            className="font-medium text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-border)]/20"
+                                        >
+                                            Manage Lessons
+                                        </Button>
+                                    )}
                                 </div>
                             </td>
                         </tr>

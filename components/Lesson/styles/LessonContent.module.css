@@ -1,0 +1,13 @@
+.progressContainer {
+    width: 8rem;
+    background-color: rgba(var(--ai-card-border), 0.2);
+    border-radius: 9999px;
+    height: 0.5rem;
+    overflow: hidden;
+}
+
+.progressBar {
+    height: 100%;
+    background-image: linear-gradient(to right, var(--ai-primary), var(--ai-secondary));
+    border-radius: 9999px;
+}

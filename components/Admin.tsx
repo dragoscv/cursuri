@@ -10,7 +10,10 @@ import { Course, Lesson, CourseWithPriceProduct } from "@/types";
 // Import Admin Components
 import AdminDashboard from "./Admin/AdminDashboard";
 import AdminUsers from "./Admin/AdminUsers";
+import EnhancedUserManagement from "./Admin/EnhancedUserManagement";
 import AdminAnalytics from "./Admin/AdminAnalytics";
+import CourseEngagement from "./Admin/CourseEngagement";
+import BatchOperations from "./Admin/BatchOperations";
 import AdminSettings from "./Admin/AdminSettings";
 import AdminHeader from "./Admin/AdminHeader";
 
@@ -121,9 +124,7 @@ export default function Admin() {
                 activeTab={selectedTab}
             />
             <div className="w-full max-w-7xl mx-auto px-4 py-8">
-                {/* The page heading is now in AdminHeader, so we can remove the duplicate */}
-
-                <Tabs
+                {/* The page heading is now in AdminHeader, so we can remove the duplicate */}                <Tabs
                     aria-label="Admin tabs"
                     selectedKey={selectedTab}
                     onSelectionChange={(key) => setSelectedTab(key as string)}
@@ -132,8 +133,11 @@ export default function Admin() {
                     <Tab key="dashboard" title="Dashboard" />
                     <Tab key="courses" title="Courses" />
                     {selectedCourse && <Tab key="courseDetails" title={`Editing: ${selectedCourse.name}`} />}
+                    <Tab key="batchOperations" title="Batch Operations" />
                     <Tab key="users" title="Users" />
+                    <Tab key="enhancedUsers" title="Enhanced Users" />
                     <Tab key="analytics" title="Analytics" />
+                    <Tab key="courseEngagement" title="Course Engagement" />
                     <Tab key="settings" title="Settings" />
                 </Tabs>
 
@@ -452,16 +456,29 @@ export default function Admin() {
                             </Card>
                         </div>
                     </div>
-                )}
-
-                {/* Users Tab */}
+                )}                {/* Users Tab */}
                 {selectedTab === "users" && (
                     <AdminUsers />
+                )}
+
+                {/* Enhanced Users Management Tab */}
+                {selectedTab === "enhancedUsers" && (
+                    <EnhancedUserManagement />
+                )}
+
+                {/* Batch Operations Tab */}
+                {selectedTab === "batchOperations" && (
+                    <BatchOperations />
                 )}
 
                 {/* Analytics Tab */}
                 {selectedTab === "analytics" && (
                     <AdminAnalytics />
+                )}
+
+                {/* Course Engagement Tab */}
+                {selectedTab === "courseEngagement" && (
+                    <CourseEngagement />
                 )}
 
                 {/* Settings Tab */}

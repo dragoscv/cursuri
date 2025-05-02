@@ -1,213 +1,112 @@
 'use client'
 
+
 import React, { useContext, useState, useEffect } from 'react';
 import { AppContext } from '@/components/AppContext';
-import { Card, CardBody, Button, Input, Divider, Textarea, Switch } from '@heroui/react';
-import { motion } from 'framer-motion';
-import { FiUser, FiLock, FiMail, FiSettings, FiBell, FiGlobe, FiSave } from '@/components/icons/FeatherIcons';
-import { updateProfile, updateEmail, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
+import { Card, CardBody, Tabs, Tab } from '@heroui/react';
+import { Button, Input, Textarea, Switch } from '@/components/ui';
 import ThemeSelector from '@/components/Profile/ThemeSelector';
-import { ColorScheme, UserPreferences } from '@/types';
-import { useToast } from '@/components/Toast';
+import { FiUser, FiMail, FiLock, FiSave, FiBell, FiGlobe, FiSettings } from '@/components/icons/FeatherIcons';
+import { motion } from 'framer-motion';
+import AppSettings from '@/components/Profile/AppSettings';
 
 export default function ProfileSettings() {
+    // Message state for theme change
+    const [message, setMessage] = useState<{ type: string; text: string } | null>(null);
+    // Firebase Auth imports for password change
+    let EmailAuthProvider: typeof import('firebase/auth').EmailAuthProvider;
+    let reauthenticateWithCredential: typeof import('firebase/auth').reauthenticateWithCredential;
+    let updatePassword: typeof import('firebase/auth').updatePassword;
     const context = useContext(AppContext);
-    if (!context) {
-        throw new Error("AppContext not found");
-    } const { user, userPreferences, saveUserPreferences } = context;
-
+    if (!context) throw new Error("AppContext not found");
+    const { user, saveUserPreferences } = context;
+    const [selectedTab, setSelectedTab] = useState<string>("account");
     const [form, setForm] = useState({
         displayName: user?.displayName || '',
         email: user?.email || '',
+        bio: '',
         currentPassword: '',
         newPassword: '',
         confirmPassword: '',
-        bio: userPreferences?.bio || '',
-        language: userPreferences?.language || 'en',
-        emailNotifications: userPreferences?.emailNotifications || true,
-        courseUpdates: userPreferences?.courseUpdates || true,
-        marketingEmails: userPreferences?.marketingEmails || false
+        emailNotifications: true,
+        courseUpdates: true,
+        marketingEmails: false,
+        language: 'en',
     });
     const [isLoading, setIsLoading] = useState(false);
-    const [message, setMessage] = useState<{ type: string, text: string }>({ type: '', text: '' });
-    const { showToast } = useToast();
-
-    // Load user preferences when available
-    useEffect(() => {
-        if (userPreferences) {
-            setForm(prev => ({
-                ...prev,
-                bio: userPreferences.bio || prev.bio,
-                language: userPreferences.language || prev.language,
-                emailNotifications: userPreferences.emailNotifications || prev.emailNotifications,
-                courseUpdates: userPreferences.courseUpdates || prev.courseUpdates,
-                marketingEmails: userPreferences.marketingEmails || prev.marketingEmails
-            }));
+    const showToast = ({ type, title, message }: { type: 'success' | 'error', title: string, message: string }) => {
+        // Replace with your preferred toast/notification system
+        if (window && (window as any).toast) {
+            (window as any).toast[type](message, { title });
+        } else {
+            alert(`${title}: ${message}`);
         }
-    }, [userPreferences]);
-
+    };
+    // Updated: handleChange supports checkbox and other input types
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setForm(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleSwitchChange = (name: string, checked: boolean) => {
-        setForm(prev => ({ ...prev, [name]: checked }));
-    };
-
-    const updateProfileDetails = async () => {
-        if (!user) return;
-
-        setIsLoading(true);
-        setMessage({ type: '', text: '' });
-
-        try {
-            // Update Firebase Auth profile
-            await updateProfile(user, {
-                displayName: form.displayName,
-            });
-
-            // Save bio to Firestore preferences
-            await saveUserPreferences({
-                bio: form.bio
-            }); showToast({
-                type: 'success',
-                title: 'Profile Updated',
-                message: 'Profile information updated successfully!'
-            });
-        } catch (error: any) {
-            showToast({
-                type: 'error',
-                title: 'Update Failed',
-                message: error.message || 'Failed to update profile information.'
-            });
-        } finally {
-            setIsLoading(false);
+        const { name, value, type } = e.target;
+        if (type === 'checkbox') {
+            setForm(prev => ({ ...prev, [name]: (e.target as HTMLInputElement).checked }));
+        } else {
+            setForm(prev => ({ ...prev, [name]: value }));
         }
-    }; const updateUserEmail = async () => {
+    };
+    const handleSwitchChange = (key: string, checked: boolean) => {
+        setForm(prev => ({ ...prev, [key]: checked }));
+    };
+    const changePassword = async () => {
         if (!user || !user.email) return;
-
         if (!form.currentPassword) {
-            showToast({
-                type: 'error',
-                title: 'Validation Error',
-                message: 'Please enter your current password to update email.'
-            });
+            showToast({ type: 'error', title: 'Validation Error', message: 'Please enter your current password.' });
             return;
         }
-
-        setIsLoading(true);
-
-        try {
-            // Reauthenticate user first
-            const credential = EmailAuthProvider.credential(user.email, form.currentPassword);
-            await reauthenticateWithCredential(user, credential);            // Then update email
-            await updateEmail(user, form.email);
-
-            showToast({
-                type: 'success',
-                title: 'Email Updated',
-                message: 'Email updated successfully!'
-            });
-            setForm(prev => ({ ...prev, currentPassword: '' }));
-        } catch (error: any) {
-            showToast({
-                type: 'error',
-                title: 'Update Failed',
-                message: error.message || 'Failed to update email.'
-            });
-        } finally {
-            setIsLoading(false);
-        }
-    }; const changePassword = async () => {
-        if (!user || !user.email) return;
-
-        if (!form.currentPassword) {
-            showToast({
-                type: 'error',
-                title: 'Validation Error',
-                message: 'Please enter your current password.'
-            });
-            return;
-        }
-
         if (form.newPassword !== form.confirmPassword) {
-            showToast({
-                type: 'error',
-                title: 'Validation Error',
-                message: 'New passwords do not match.'
-            });
+            showToast({ type: 'error', title: 'Validation Error', message: 'New passwords do not match.' });
             return;
         }
-
         if (form.newPassword.length < 6) {
-            showToast({
-                type: 'error',
-                title: 'Validation Error',
-                message: 'Password should be at least 6 characters.'
-            });
+            showToast({ type: 'error', title: 'Validation Error', message: 'Password should be at least 6 characters.' });
             return;
         }
-
         setIsLoading(true);
-
         try {
-            // Reauthenticate user first
+            const authMod = await import('firebase/auth');
+            const EmailAuthProvider = authMod.EmailAuthProvider;
+            const reauthenticateWithCredential = authMod.reauthenticateWithCredential;
+            const updatePassword = authMod.updatePassword;
             const credential = EmailAuthProvider.credential(user.email, form.currentPassword);
-            await reauthenticateWithCredential(user, credential);            // Then update password
+            await reauthenticateWithCredential(user, credential);
             await updatePassword(user, form.newPassword);
-
-            showToast({
-                type: 'success',
-                title: 'Password Updated',
-                message: 'Password updated successfully!'
-            });
-            setForm(prev => ({
-                ...prev,
-                currentPassword: '',
-                newPassword: '',
-                confirmPassword: ''
-            }));
+            showToast({ type: 'success', title: 'Password Updated', message: 'Password updated successfully!' });
+            setForm(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmPassword: '' }));
         } catch (error: any) {
-            showToast({
-                type: 'error',
-                title: 'Update Failed',
-                message: error.message || 'Failed to update password.'
-            });
+            showToast({ type: 'error', title: 'Update Failed', message: error.message || 'Failed to update password.' });
         } finally {
             setIsLoading(false);
         }
-    }; const updateNotificationSettings = async () => {
+    }
+    const updateNotificationSettings = async () => {
         if (!user) return;
-
         setIsLoading(true);
-
         try {
-            // Save notification preferences to Firestore
             await saveUserPreferences({
                 emailNotifications: form.emailNotifications,
                 courseUpdates: form.courseUpdates,
                 marketingEmails: form.marketingEmails
             });
-
-            showToast({
-                type: 'success',
-                title: 'Preferences Updated',
-                message: 'Notification preferences updated successfully!'
-            });
+            showToast({ type: 'success', title: 'Preferences Updated', message: 'Notification preferences updated successfully!' });
         } catch (error: any) {
-            showToast({
-                type: 'error',
-                title: 'Update Failed',
-                message: error.message || 'Failed to update notification preferences.'
-            });
+            showToast({ type: 'error', title: 'Update Failed', message: error.message || 'Failed to update notification preferences.' });
         } finally {
             setIsLoading(false);
         }
-    }; if (!user) {
+    };
+
+    if (!user) {
         return null;
     }
 
+    // --- JSX UI code starts here (copied from previous return) ---
     return (
         <div className="space-y-6">
             <div className="mb-6">
@@ -270,7 +169,34 @@ export default function ProfileSettings() {
                         <Button
                             color="primary"
                             startContent={<FiSave />}
-                            onClick={updateProfileDetails}
+                            onClick={async () => {
+                                setIsLoading(true);
+                                try {
+                                    // Save displayName and bio to Firestore (user profile)
+                                    // This assumes a users collection with user.uid as doc id
+                                    const { doc, updateDoc } = await import('firebase/firestore');
+                                    const { firestoreDB } = await import('@/utils/firebase/firebase.config');
+                                    if (!user?.uid) throw new Error('User not found');
+                                    const userRef = doc(firestoreDB, 'users', user.uid);
+                                    await updateDoc(userRef, {
+                                        displayName: form.displayName,
+                                        bio: form.bio
+                                    });
+                                    showToast({
+                                        type: 'success',
+                                        title: 'Profile Updated',
+                                        message: 'Profile details updated successfully!'
+                                    });
+                                } catch (error: any) {
+                                    showToast({
+                                        type: 'error',
+                                        title: 'Update Failed',
+                                        message: error.message || 'Failed to update profile.'
+                                    });
+                                } finally {
+                                    setIsLoading(false);
+                                }
+                            }}
                             isLoading={isLoading}
                             className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] border-none text-white font-medium px-5 py-2 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
                         >
@@ -374,7 +300,7 @@ export default function ProfileSettings() {
                                 </div>
                                 <Switch
                                     isSelected={form.emailNotifications}
-                                    onChange={(e) => handleSwitchChange('emailNotifications', e.target.checked)}
+                                    onValueChange={(checked: boolean) => handleSwitchChange('emailNotifications', checked)}
                                     color="success"
                                     classNames={{
                                         base: "bg-[color:var(--ai-card-bg)]/70"
@@ -389,7 +315,7 @@ export default function ProfileSettings() {
                                 </div>
                                 <Switch
                                     isSelected={form.courseUpdates}
-                                    onChange={(e) => handleSwitchChange('courseUpdates', e.target.checked)}
+                                    onValueChange={(checked: boolean) => handleSwitchChange('courseUpdates', checked)}
                                     color="success"
                                     classNames={{
                                         base: "bg-[color:var(--ai-card-bg)]/70"
@@ -404,7 +330,7 @@ export default function ProfileSettings() {
                                 </div>
                                 <Switch
                                     isSelected={form.marketingEmails}
-                                    onChange={(e) => handleSwitchChange('marketingEmails', e.target.checked)}
+                                    onValueChange={(checked: boolean) => handleSwitchChange('marketingEmails', checked)}
                                     color="success"
                                     classNames={{
                                         base: "bg-[color:var(--ai-card-bg)]/70"
@@ -510,7 +436,7 @@ export default function ProfileSettings() {
                         </h2>
 
                         <ThemeSelector
-                            onThemeChange={(theme) => {
+                            onThemeChange={(theme: string) => {
                                 setMessage({
                                     type: 'success',
                                     text: `Theme changed to ${theme.replace('-', ' ')}!`

@@ -13,7 +13,8 @@ import {
     FiAward,
     FiDownload,
     FiArrowRight,
-    FiMessageSquare
+    FiMessageSquare,
+    FiLink
 } from '../icons/FeatherIcons';
 import { createCheckoutSession } from "firewand";
 import { stripePayments } from "@/utils/firebase/stripe";
@@ -36,30 +37,108 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
     const { user, openModal } = context;
     const [isLoading, setIsLoading] = useState(false);
 
+    // Check if the user has completed all prerequisites before enrolling
+    const checkPrerequisites = () => {
+        if (!course.prerequisites || course.prerequisites.length === 0) {
+            return { passed: true, missingCourses: [] };
+        }
+
+        if (!context) {
+            return { passed: false, missingCourses: course.prerequisites };
+        }
+
+        const { user, userPaidProducts, courses } = context;
+
+        // If no user or no paid products, they can't have completed any prerequisites
+        if (!user || !userPaidProducts) {
+            return { passed: false, missingCourses: course.prerequisites };
+        }
+
+        // Get the list of course IDs the user has purchased
+        const userPurchasedCourseIds = userPaidProducts
+            .filter(product => product.metadata?.courseId)
+            .map(product => product.metadata.courseId);
+
+        // Find missing prerequisites - courses that are required but not purchased
+        const missingPrerequisites = course.prerequisites.filter(
+            prerequisiteId => !userPurchasedCourseIds.includes(prerequisiteId)
+        );
+
+        // Create a list of missing courses with their names
+        const missingCourses = missingPrerequisites.map(id => {
+            const prerequisiteCourse = courses[id];
+            return {
+                id,
+                name: prerequisiteCourse?.name || id
+            };
+        });
+
+        return {
+            passed: missingPrerequisites.length === 0,
+            missingCourses
+        };
+    };
+
     const handleEnrollClick = async () => {
         setIsLoading(true);
 
+        // Check if user is logged in
         if (!user) {
+            setIsLoading(false);
             openModal({
-                id: 'login',
+                id: "login-modal",
                 isOpen: true,
-                hideCloseButton: false,
-                backdrop: 'blur',
-                size: 'full',
-                scrollBehavior: 'inside',
-                isDismissable: true,
-                modalHeader: 'Autentificare',
-                modalBody: <Login onClose={() => {
-                    setIsLoading(false);
-                    context.closeModal('login');
-                }} />,
-                headerDisabled: true,
-                footerDisabled: true,
-                noReplaceURL: true,
-                onClose: () => {
-                    setIsLoading(false);
-                    context.closeModal('login');
-                }
+                modalHeader: "Login Required",
+                modalBody: <Login />,
+                onClose: () => { }
+            });
+            return;
+        }
+
+        // Check prerequisites
+        const prerequisiteCheck = checkPrerequisites();
+        if (!prerequisiteCheck.passed) {
+            setIsLoading(false);
+
+            // Show modal with missing prerequisites
+            openModal({
+                id: "prerequisites-modal",
+                isOpen: true,
+                modalHeader: "Complete Prerequisites First",
+                modalBody: (
+                    <div className="p-4">
+                        <p className="mb-4 text-[color:var(--ai-muted)]">
+                            Before enrolling in this course, you need to complete the following prerequisite courses:
+                        </p>
+                        <div className="space-y-2 mb-4">
+                            {prerequisiteCheck.missingCourses.map((missingCourse: any) => (
+                                <div key={missingCourse.id} className="flex items-center justify-between p-3 border border-[color:var(--ai-card-border)] rounded-lg">
+                                    <div className="flex items-center">
+                                        <div className="w-8 h-8 flex items-center justify-center bg-[color:var(--ai-primary)]/10 rounded-full mr-3">
+                                            <FiLock className="text-[color:var(--ai-primary)]" size={16} />
+                                        </div>
+                                        <span>{missingCourse.name}</span>
+                                    </div>
+                                    <Button
+                                        size="sm"
+                                        color="primary"
+                                        variant="flat"
+                                        onClick={() => {
+                                            context.closeModal("prerequisites-modal");
+                                            window.location.href = `/courses/${missingCourse.id}`;
+                                        }}
+                                    >
+                                        View Course
+                                    </Button>
+                                </div>
+                            ))}
+                        </div>
+                        <p className="text-sm text-[color:var(--ai-muted)]">
+                            Complete these prerequisites to unlock this course.
+                        </p>
+                    </div>
+                ),
+                onClose: () => { }
             });
             return;
         }
@@ -111,11 +190,10 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
         }
 
         return course.price || '$49.99';
-    };
-
-    // Calculate discount if there's an original price
-    const discountPercentage = course.originalPrice ?
-        Math.round(((course.originalPrice - (course.price || 0)) / course.originalPrice) * 100) : 0;    // If user is already enrolled, show an enhanced enrolled view
+    };    // Calculate discount if there's an original price
+    const originalPrice = typeof course.originalPrice === 'string' ? parseFloat(course.originalPrice) : (course.originalPrice || 0);
+    const price = typeof course.price === 'string' ? parseFloat(course.price) : (course.price || 0);
+    const discountPercentage = originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;    // If user is already enrolled, show an enhanced enrolled view
     if (isPurchased) {
         return (
             <>
@@ -143,12 +221,12 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                             <span className="text-xs bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-2.5 py-1 rounded-full font-medium">
                                 Continue Learning
                             </span>
-                        </div>
-                        <Progress
+                        </div>                        <Progress
                             value={30}
                             color="success"
                             className="mb-2 h-2 rounded-full overflow-hidden"
                             size="sm"
+                            aria-label="Course progress"
                         />
                         <div className="flex justify-between items-center text-xs text-[color:var(--ai-muted)]">
                             <span className="font-medium">30% complete</span>
@@ -370,6 +448,60 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                         </div>
                     </div>
                 </div>
+
+                {/* Prerequisites notice */}
+                {course.prerequisites && course.prerequisites.length > 0 && (
+                    <div className="mb-4 p-4 rounded-lg bg-[color:var(--ai-primary)]/5 border border-[color:var(--ai-primary)]/20">
+                        <div className="flex items-center gap-2 mb-2">
+                            <FiLink className="text-[color:var(--ai-primary)]" />
+                            <h3 className="font-medium text-[color:var(--ai-foreground)]">Prerequisites</h3>
+                        </div>
+                        <p className="text-sm text-[color:var(--ai-muted)] mb-3">
+                            This course requires the completion of prerequisite course(s) before enrollment.
+                        </p>
+
+                        {/* Check prerequisites before enrolling */}
+                        <div>
+                            {course.prerequisites.map(prerequisiteId => {
+                                const prerequisiteCourse = context.courses?.[prerequisiteId];
+
+                                // Check if user has purchased this prerequisite
+                                const hasPurchased = context.userPaidProducts?.some(
+                                    product => product.metadata?.courseId === prerequisiteId
+                                );
+
+                                return (
+                                    <div
+                                        key={prerequisiteId}
+                                        className={`flex items-center justify-between p-2 rounded-md mb-2 ${hasPurchased
+                                            ? 'bg-green-500/10 border border-green-500/20'
+                                            : 'bg-amber-500/10 border border-amber-500/20'
+                                            }`}
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            {hasPurchased ? (
+                                                <FiCheck className="text-green-500" size={16} />
+                                            ) : (
+                                                <FiLock className="text-amber-500" size={16} />
+                                            )}
+                                            <span className="text-sm">
+                                                {prerequisiteCourse?.name || `Course ${prerequisiteId}`}
+                                            </span>
+                                        </div>
+                                        {!hasPurchased && (
+                                            <a
+                                                href={`/courses/${prerequisiteId}`}
+                                                className="text-xs px-2 py-1 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 hover:bg-amber-500/30 transition-colors"
+                                            >
+                                                Enroll First
+                                            </a>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
 
                 {/* Login prompt for guests with enhanced styling */}
                 {!isPurchased && !user && (

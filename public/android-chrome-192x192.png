@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="192px" height="192px" viewBox="0 0 192 192" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Cursuri App Icon</title>
+    <defs>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="linearGradient">
+            <stop stop-color="#3B82F6" offset="0%"></stop>
+            <stop stop-color="#8B5CF6" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect fill="white" x="0" y="0" width="192" height="192"></rect>
+        <circle fill="url(#linearGradient)" cx="96" cy="96" r="80"></circle>
+        <path d="M86,64 L116,64 C129.255,64 140,74.745 140,88 L140,104 C140,117.255 129.255,128 116,128 L86,128 C72.745,128 62,117.255 62,104 L62,88 C62,74.745 72.745,64 86,64 Z" stroke="white" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M116,88 L76,88" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M116,108 L76,108" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"></path>
+    </g>
+</svg>

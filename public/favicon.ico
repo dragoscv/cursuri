@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Cursuri Favicon</title>
+    <defs>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="linearGradient">
+            <stop stop-color="#3B82F6" offset="0%"></stop>
+            <stop stop-color="#8B5CF6" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect fill="white" x="0" y="0" width="32" height="32"></rect>
+        <circle fill="url(#linearGradient)" cx="16" cy="16" r="14"></circle>
+        <path d="M12,8 L20,8 C23.314,8 26,10.686 26,14 L26,18 C26,21.314 23.314,24 20,24 L12,24 C8.686,24 6,21.314 6,18 L6,14 C6,10.686 8.686,8 12,8 Z" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M20,14 L12,14" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M20,18 L12,18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+    </g>
+</svg>

@@ -1,62 +1,66 @@
-'use client'
+'use client';
 
-import { useState, useEffect, useContext } from 'react'
-import { AppContext } from './AppContext'
-import { Button, Progress } from '@heroui/react'
-import Link from 'next/link'
-import { motion, AnimatePresence } from 'framer-motion'
+import React, { useState, useEffect, useContext } from 'react';
+import { AppContext } from './AppContext';
+import { Button, Progress } from '@heroui/react';
+import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
 
-const CookieConsent = () => {
-    const [accepted, setAccepted] = useState(false)
-    const [visible, setVisible] = useState(false)
-    const [progress, setProgress] = useState(0)
-    const timeoutDuration = 60 // 60 seconds (changed from 10 seconds)
+const CookieConsent: React.FC = () => {
+    const [accepted, setAccepted] = useState(false);
+    const [visible, setVisible] = useState(false);
+    const [progress, setProgress] = useState(0);
+    const timeoutDuration = 60; // 60 seconds
 
-    const context = useContext(AppContext)
+    const context = useContext(AppContext);
     if (!context) {
-        throw new Error("Missing AppContext")
+        throw new Error("Missing AppContext");
     }
 
     // Check if cookies were already accepted
     useEffect(() => {
-        const cookiesAccepted = localStorage.getItem('cookiesAccepted')
+        const cookiesAccepted = localStorage.getItem('cookiesAccepted');
+
         if (cookiesAccepted) {
-            setAccepted(true)
+            setAccepted(true);
         } else {
-            setVisible(true)
+            setVisible(true);
 
             // Start progress timer for auto-accept
-            const startTime = Date.now()
+            const startTime = Date.now();
             const interval = setInterval(() => {
-                const elapsedSeconds = (Date.now() - startTime) / 1000
-                const newProgress = Math.min((elapsedSeconds / timeoutDuration) * 100, 100)
-                setProgress(newProgress)
+                const elapsedSeconds = (Date.now() - startTime) / 1000;
+                const newProgress = Math.min((elapsedSeconds / timeoutDuration) * 100, 100);
+                setProgress(newProgress);
 
                 if (elapsedSeconds >= timeoutDuration) {
-                    handleAccept()
-                    clearInterval(interval)
+                    handleAccept();
+                    clearInterval(interval);
                 }
-            }, 100)
+            }, 100);
 
-            return () => clearInterval(interval)
+            return () => clearInterval(interval);
         }
-    }, [])
+
+        // Return undefined for the case where cookies are already accepted
+        return undefined;
+    }, []);
 
     const handleAccept = () => {
-        localStorage.setItem('cookiesAccepted', 'true')
-        setAccepted(true)
-        setVisible(false)
-    }
+        localStorage.setItem('cookiesAccepted', 'true');
+        setAccepted(true);
+        setVisible(false);
+    };
 
     const handleDecline = () => {
-        // Still set as accepted for UX purposes, but could implement 
-        // different behavior for declined cookies if needed
-        localStorage.setItem('cookiesAccepted', 'minimal')
-        setAccepted(true)
-        setVisible(false)
-    }
+        localStorage.setItem('cookiesAccepted', 'minimal');
+        setAccepted(true);
+        setVisible(false);
+    };
 
-    if (accepted || !visible) return null
+    if (accepted || !visible) {
+        return null;
+    }
 
     return (
         <AnimatePresence>
@@ -120,7 +124,7 @@ const CookieConsent = () => {
                 </motion.div>
             )}
         </AnimatePresence>
-    )
-}
+    );
+};
 
-export default CookieConsent
+export default CookieConsent;

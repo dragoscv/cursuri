@@ -8,6 +8,11 @@ import ProfileActionButtons from './ProfileActionButtons';
 import useProfileStats from './hooks/useProfileStats';
 import { AppContext } from '@/components/AppContext';
 import { AppContextProps } from '@/types';
+import AchievementsSection from './AchievementsSection';
+import PaymentHistorySection from './PaymentHistorySection';
+import LearningPathSection from './LearningPathSection';
+import ProfileSettingsSection from './ProfileSettingsSection';
+import OfflineContentSection from './OfflineContentSection';
 
 export default function ProfileDashboard() {
     const {
@@ -88,6 +93,14 @@ export default function ProfileDashboard() {
                 {/* Recent Activity */}
                 <RecentActivity activities={recentActivity} />
             </div>
+
+            {/* New Sections */}
+            <AchievementsSection />
+            <LearningPathSection />
+            <PaymentHistorySection />            <ProfileSettingsSection />
+
+            {/* Offline Content Section */}
+            <OfflineContentSection />
 
             {/* Continue Learning Button */}
             <ProfileActionButtons hasPaidCourses={userPaidProducts?.length > 0} />

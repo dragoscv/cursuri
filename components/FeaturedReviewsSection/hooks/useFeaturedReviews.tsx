@@ -1,16 +1,34 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Review } from '@/types'
 import { collection, query, where, orderBy, limit, getDocs } from 'firebase/firestore'
 import { firestoreDB } from '@/utils/firebase/firebase.config'
 import { fallbackReviews } from '../fallbackReviewData'
 
+// Cache the reviews in memory to avoid unnecessary Firestore calls
+const reviewsCache: Record<number, { data: Review[], timestamp: number }> = {};
+const CACHE_TIME = 5 * 60 * 1000; // 5 minutes
+
 export const useFeaturedReviews = (count: number = 3): Review[] => {
     const [reviews, setReviews] = useState<Review[]>([])
+    const isMounted = useRef(true);
+
+    useEffect(() => {
+        // Cleanup function
+        return () => {
+            isMounted.current = false;
+        };
+    }, []);
 
     useEffect(() => {
         const fetchFeaturedReviews = async () => {
+            // Check cache first
+            if (reviewsCache[count] && Date.now() - reviewsCache[count].timestamp < CACHE_TIME) {
+                setReviews(reviewsCache[count].data);
+                return;
+            }
+
             try {
                 // Query for reviews with rating >= 4, ordered by rating (descending)
                 const reviewsQuery = query(
@@ -32,10 +50,21 @@ export const useFeaturedReviews = (count: number = 3): Review[] => {
                     } as Review)
                 })
 
-                setReviews(fetchedReviews)
+                // Only update state if component is still mounted
+                if (isMounted.current) {
+                    setReviews(fetchedReviews);
+
+                    // Update cache
+                    reviewsCache[count] = {
+                        data: fetchedReviews,
+                        timestamp: Date.now()
+                    };
+                }
             } catch (error) {
                 console.error("Error fetching featured reviews:", error)
-                setReviews(fallbackReviews.slice(0, count))
+                if (isMounted.current) {
+                    setReviews(fallbackReviews.slice(0, count))
+                }
             }
         }
 

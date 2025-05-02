@@ -1,15 +1,19 @@
 'use client'
 
-import React, { createContext, useState, useEffect, useReducer, useCallback } from 'react';
+import React, { createContext, useState, useEffect, useReducer, useCallback, useRef } from 'react';
 
 import { getProducts } from 'firewand';
 import { firebaseApp, firestoreDB, firebaseAuth, firebaseStorage } from '@/utils/firebase/firebase.config';
 import { stripePayments } from '@/utils/firebase/stripe';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { doc, collection, getDocs, query, where, onSnapshot, updateDoc, setDoc, getDoc, Timestamp, Unsubscribe, getFirestore, limit, collectionGroup } from 'firebase/firestore';
+import { doc, collection, getDocs, query, where, onSnapshot, updateDoc, setDoc, getDoc, Timestamp, Unsubscribe, getFirestore, limit, collectionGroup, deleteDoc } from 'firebase/firestore';
 import ModalComponent from '@/components/Modal';
+import { useModal } from './contexts/useModal';
+import OnboardingModal from './OnboardingModal';
 
-import { AppContextProps, UserLessonProgress, ColorScheme, UserPreferences, UserProfile, AdminSettings } from '@/types';
+import { AppContextProps, UserLessonProgress, ColorScheme, UserPreferences, UserProfile, AdminSettings, BookmarkedLessons, CacheOptions, CacheStatus } from '@/types';
+import { appReducer, initialState } from './contexts/appReducer';
+import { generateCacheMetadata, isCacheExpired, saveToLocalStorage, loadFromLocalStorage, generateCacheKey, clearLocalStorageCache, clearAllLocalStorageCache } from '@/utils/caching';
 
 export const AppContext = createContext<AppContextProps | undefined>(undefined);
 
@@ -24,6 +28,13 @@ const defaultUserPreferences: UserPreferences = {
     lastUpdated: new Date()
 };
 
+// Default cache options
+const DEFAULT_CACHE_OPTIONS: CacheOptions = {
+    ttl: 5 * 60 * 1000, // 5 minutes
+    persist: false,
+    cacheKey: undefined
+};
+
 export const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     const [isDark, setIsDark] = useState(false);
     const [colorScheme, setColorScheme] = useState<ColorScheme>('modern-purple');
@@ -31,149 +42,66 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
     const [userPreferences, setUserPreferences] = useState<UserPreferences | null>(null);
     const [authLoading, setAuthLoading] = useState(true);
 
-    const initialState = {
-        modals: [],
-        products: [],
-        isAdmin: false,
-        courses: {},
-        lessons: {},
-        userPaidProducts: [],
-        reviews: {},
-        lessonProgress: {},
-        users: {}, // Add users state
-        adminAnalytics: null, // Add analytics state
-        adminSettings: null, // Add settings state
-    };
+    const [state, dispatch] = useReducer(appReducer, initialState);
 
-    const reducer = (state: any, action: any) => {
-        switch (action.type) {
-            case 'ADD_MODAL': {
-                const existingModalIndex = state.modals.findIndex((modal: any) => modal.id === action.payload.id);
-                if (existingModalIndex !== -1) {
-                    return {
-                        ...state,
-                        modals: state.modals.map((modal: any, index: any) =>
-                            index === existingModalIndex
-                                ? {
-                                    ...modal,
-                                    isOpen: true,
-                                    size: action.payload.size,
-                                    scrollBehavior: action.payload.scrollBehavior,
-                                    isDismissable: action.payload.isDismissable,
-                                    backdrop: action.payload.backdrop,
-                                    hideCloseButton: action.payload.hideCloseButton,
-                                    hideCloseIcon: action.payload.hideCloseIcon,
-                                    modalBody: action.payload.modalBody,
-                                    headerDisabled: action.payload.headerDisabled,
-                                    modalHeader: action.payload.modalHeader,
-                                    footerDisabled: action.payload.footerDisabled,
-                                    footerButtonText: action.payload.footerButtonText,
-                                    footerButtonClick: action.payload.footerButtonClick,
-                                    noReplaceURL: action.payload.noReplaceURL,
-                                    modalBottomComponent: action.payload.modalBottomComponent,
-                                }
-                                : modal
-                        ),
-                    };
-                } else {
-                    return { ...state, modals: [...state.modals, action.payload] };
-                }
-            }
-            case 'CLOSE_MODAL':
-                return {
-                    ...state,
-                    modals: state.modals.map((modal: any) =>
-                        modal.id === action.payload
-                            ? { ...modal, isOpen: false }
-                            : modal
-                    )
-                };
-            case 'UPDATE_MODAL':
-                return {
-                    ...state,
-                    modals: state.modals.map((modal: any) =>
-                        modal.id === action.payload.id
-                            ? { ...modal, ...action.payload }
-                            : modal
-                    )
-                };
-            case 'SET_PRODUCTS':
-                return {
-                    ...state,
-                    products: action.payload
-                };
-            case 'SET_IS_ADMIN':
-                return {
-                    ...state,
-                    isAdmin: action.payload
-                };
-            case 'SET_COURSES':
-                return {
-                    ...state,
-                    courses: {
-                        ...state.courses,
-                        [action.payload.courseId]: action.payload.course
-                    }
-                };
-            case 'SET_LESSONS':
-                return {
-                    ...state,
-                    lessons: {
-                        ...state.lessons,
-                        [action.payload.courseId]: {
-                            ...state.lessons[action.payload.courseId],
-                            [action.payload.lessonId]: action.payload.lesson
-                        }
-                    }
-                };
-            case 'SET_REVIEWS':
-                return {
-                    ...state,
-                    reviews: {
-                        ...state.reviews,
-                        [action.payload.courseId]: {
-                            ...state.reviews[action.payload.courseId],
-                            [action.payload.reviewId]: action.payload.review
-                        }
-                    }
-                };
-            case 'SET_USER_PAID_PRODUCTS':
-                return {
-                    ...state,
-                    userPaidProducts: action.payload
-                };
-            case 'SET_LESSON_PROGRESS':
-                return {
-                    ...state,
-                    lessonProgress: {
-                        ...state.lessonProgress,
-                        [action.payload.courseId]: {
-                            ...state.lessonProgress[action.payload.courseId],
-                            [action.payload.lessonId]: action.payload.progress
-                        }
-                    }
-                };
-            case 'SET_USERS':
-                return {
-                    ...state,
-                    users: action.payload
-                };
-            case 'SET_ADMIN_ANALYTICS':
-                return {
-                    ...state,
-                    adminAnalytics: action.payload
-                };
-            case 'SET_ADMIN_SETTINGS':
-                return {
-                    ...state,
-                    adminSettings: action.payload
-                };
-            default:
-                return state;
+    // Modal logic moved to useModal hook
+    const { openModal, closeModal, updateModal } = useModal(dispatch);
+
+    // Utility to check if a request is pending
+    const isRequestPending = useCallback((key: string) => {
+        return !!state.pendingRequests[key];
+    }, [state.pendingRequests]);
+
+    // Utility to set request pending status
+    const setRequestPending = useCallback((key: string, isPending: boolean) => {
+        dispatch({ type: 'SET_PENDING_REQUEST', payload: { key, isPending } });
+    }, [dispatch]);
+
+    // Cache management utilities
+    const clearCache = useCallback((cacheKey?: string) => {
+        dispatch({ type: 'CLEAR_CACHE', payload: cacheKey });
+        if (cacheKey) {
+            clearLocalStorageCache(cacheKey);
         }
-    };
+    }, [dispatch]);
 
-    const [state, dispatch] = useReducer(reducer, initialState);
+    const clearAllCache = useCallback(() => {
+        dispatch({ type: 'CLEAR_CACHE' });
+        clearAllLocalStorageCache();
+    }, [dispatch]);
+
+    const getCacheStatus = useCallback((cacheKey: string): CacheStatus => {
+        if (cacheKey.startsWith('course_')) {
+            const courseId = cacheKey.replace('course_', '');
+            return state.courseLoadingStates[courseId] || 'idle';
+        } else if (cacheKey.startsWith('lessons_')) {
+            const courseId = cacheKey.replace('lessons_', '');
+            return state.lessonLoadingStates[courseId]?.[cacheKey] || 'idle';
+        } else if (cacheKey.startsWith('reviews_')) {
+            const courseId = cacheKey.replace('reviews_', '');
+            return state.reviewLoadingStates[courseId] || 'idle';
+        } else if (cacheKey === 'users') {
+            return state.userLoadingState;
+        } else if (cacheKey === 'adminAnalytics') {
+            return state.adminAnalyticsLoadingState;
+        } else if (cacheKey === 'adminSettings') {
+            return state.adminSettingsLoadingState;
+        } else if (cacheKey === 'bookmarks') {
+            return state.bookmarksLoadingState;
+        } else if (cacheKey === 'wishlist') {
+            return state.wishlistLoadingState;
+        }
+        return 'idle';
+    }, [
+        state.courseLoadingStates,
+        state.lessonLoadingStates,
+        state.reviewLoadingStates,
+        state.userLoadingState,
+        state.adminAnalyticsLoadingState,
+        state.adminSettingsLoadingState,
+        state.bookmarksLoadingState,
+        state.wishlistLoadingState
+    ]);
 
     const toggleTheme = useCallback(() => {
         const newDarkMode = !isDark;
@@ -349,60 +277,266 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         }
     }, [user, getUserPreferences]);
 
-    const openModal = useCallback((props: any) => {
-        dispatch({ type: 'ADD_MODAL', payload: props });
-    }, [dispatch]);
+    const getCourseLessons = useCallback(async (courseId: string, options?: CacheOptions) => {
+        const cacheOptions = { ...DEFAULT_CACHE_OPTIONS, ...options };
+        const cacheKey = cacheOptions.cacheKey || generateCacheKey('lessons', courseId);
 
-    const closeModal = useCallback((id: string) => {
-        dispatch({ type: 'CLOSE_MODAL', payload: id });
-    }, [dispatch]);
-
-    const updateModal = useCallback((props: any) => {
-        dispatch({ type: 'UPDATE_MODAL', payload: props });
-    }, [dispatch]);
-
-    const getCourseLessons = useCallback(async (courseId: string) => {
-        const lessons = state.lessons;
-        if (Object.keys(lessons).includes(courseId)) {
-            return () => { }; // Return a no-op function if already fetched
-        }
-        const db = getFirestore(firebaseApp);
-
-        const lessonsCollection = collection(db, `courses/${courseId}/lessons`);
-        const q = query(lessonsCollection, where("status", "==", "active"));
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                data.id = doc.id;
-                dispatch({ type: 'SET_LESSONS', payload: { courseId: courseId, lessonId: doc.id, lesson: data } });
-            });
-        });
-
-        // Return the unsubscribe function
-        return unsubscribe;
-    }, [state.lessons, dispatch]);
-
-    const getCourseReviews = useCallback(async (courseId: string) => {
-        const reviews = state.reviews;
-        if (Object.keys(reviews).includes(courseId)) {
-            return () => { }; // Return a no-op function if already fetched
+        // Check if we're already loading this data
+        if (isRequestPending(cacheKey)) {
+            console.log(`Request already pending for ${cacheKey}`);
+            return () => { };
         }
 
-        const db = getFirestore(firebaseApp);
+        // Check if data is already in state
+        const lessons = state.lessons[courseId];
+        if (lessons && Object.keys(lessons).length > 0) {
+            // Check if we need to update loading state
+            const loadingState = state.lessonLoadingStates[courseId];
+            if (loadingState !== 'success') {
+                dispatch({
+                    type: 'SET_LESSON_LOADING_STATE',
+                    payload: { courseId, status: 'success' }
+                });
+            }
+            return () => { };
+        }
 
-        const docRef = collection(db, `courses/${courseId}/reviews`);
-        const q = query(docRef);
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                data.id = doc.id;
-                dispatch({ type: 'SET_REVIEWS', payload: { courseId: courseId, reviewId: doc.id, review: data } });
-            });
+        // Check if data is in localStorage cache
+        if (cacheOptions.persist) {
+            const cachedData = loadFromLocalStorage(cacheKey); if (cachedData && !isCacheExpired(cachedData.metadata)) {
+                // Use cached data
+                Object.entries(cachedData.data as Record<string, unknown>).forEach(([lessonId, lesson]) => {
+                    dispatch({
+                        type: 'SET_LESSONS',
+                        payload: { courseId, lessonId, lesson }
+                    });
+                });
+
+                dispatch({
+                    type: 'SET_LESSON_LOADING_STATE',
+                    payload: { courseId, status: 'success' }
+                });
+
+                return () => { };
+            }
+        }
+
+        // Set loading state
+        dispatch({
+            type: 'SET_LESSON_LOADING_STATE',
+            payload: { courseId, status: 'loading' }
         });
 
-        // Return the unsubscribe function
-        return unsubscribe;
-    }, [state.reviews, dispatch]);
+        // Mark request as pending
+        setRequestPending(cacheKey, true); try {
+            const db = getFirestore(firebaseApp);
+            const lessonsCollection = collection(db, `courses/${courseId}/lessons`);
+            const q = query(lessonsCollection); // Removed status filter to match server implementation            console.log(`Setting up listener for lessons in course: ${courseId}`);
+            const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                const lessonData: Record<string, any> = {};
+                console.log(`Loaded ${querySnapshot.size} lessons for course ${courseId}`);
+
+                if (querySnapshot.size === 0) {
+                    console.warn(`No lessons found for course: ${courseId}. This might be expected for new courses.`);
+
+                    // Even with no lessons, we should set the loading state to success
+                    dispatch({
+                        type: 'SET_LESSON_LOADING_STATE',
+                        payload: { courseId, status: 'success' }
+                    });
+
+                    // Initialize an empty object for this course to track that we've loaded it
+                    dispatch({
+                        type: 'INITIALIZE_COURSE_LESSONS',
+                        payload: { courseId }
+                    });
+                }
+
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    data.id = doc.id;
+                    lessonData[doc.id] = data;
+
+                    dispatch({
+                        type: 'SET_LESSONS',
+                        payload: { courseId, lessonId: doc.id, lesson: data }
+                    });
+                });
+
+                // Log all lesson IDs for debugging
+                const lessonIds = Object.keys(lessonData);
+                console.log(`Lesson IDs for course ${courseId}:`, lessonIds);
+
+                // Set loading state to success
+                dispatch({
+                    type: 'SET_LESSON_LOADING_STATE',
+                    payload: { courseId, status: 'success' }
+                });
+
+                // Cache data if persist is enabled
+                if (cacheOptions.persist) {
+                    const cacheEntry = {
+                        data: lessonData,
+                        metadata: generateCacheMetadata('success', cacheOptions.ttl)
+                    };
+                    saveToLocalStorage(cacheKey, cacheEntry);
+                }
+
+                // Mark request as no longer pending
+                setRequestPending(cacheKey, false);
+            }, (error) => {
+                console.error("Error fetching lessons:", error);
+
+                // Set loading state to error
+                dispatch({
+                    type: 'SET_LESSON_LOADING_STATE',
+                    payload: { courseId, status: 'error' }
+                });
+
+                // Mark request as no longer pending
+                setRequestPending(cacheKey, false);
+            });
+
+            // Return the unsubscribe function
+            return unsubscribe;
+        } catch (error) {
+            console.error("Error setting up lessons listener:", error);
+
+            // Set loading state to error
+            dispatch({
+                type: 'SET_LESSON_LOADING_STATE',
+                payload: { courseId, status: 'error' }
+            });
+
+            // Mark request as no longer pending
+            setRequestPending(cacheKey, false);
+
+            return () => { };
+        }
+    }, [state.lessons, state.lessonLoadingStates, dispatch, isRequestPending, setRequestPending]);
+
+    const getCourseReviews = useCallback(async (courseId: string, options?: CacheOptions) => {
+        const cacheOptions = { ...DEFAULT_CACHE_OPTIONS, ...options };
+        const cacheKey = cacheOptions.cacheKey || generateCacheKey('reviews', courseId);
+
+        // Check if we're already loading this data
+        if (isRequestPending(cacheKey)) {
+            console.log(`Request already pending for ${cacheKey}`);
+            return () => { };
+        }
+
+        // Check if data is already in state
+        const reviews = state.reviews[courseId];
+        if (reviews && Object.keys(reviews).length > 0) {
+            // Check if we need to update loading state
+            const loadingState = state.reviewLoadingStates[courseId];
+            if (loadingState !== 'success') {
+                dispatch({
+                    type: 'SET_REVIEW_LOADING_STATE',
+                    payload: { courseId, status: 'success' }
+                });
+            }
+            return () => { };
+        }
+
+        // Check if data is in localStorage cache
+        if (cacheOptions.persist) {
+            const cachedData = loadFromLocalStorage(cacheKey); if (cachedData && !isCacheExpired(cachedData.metadata)) {
+                // Use cached data
+                const reviewData = cachedData.data as Record<string, any>;
+                if (reviewData && typeof reviewData === 'object') {
+                    Object.entries(reviewData).forEach(([reviewId, review]) => {
+                        dispatch({
+                            type: 'SET_REVIEWS',
+                            payload: { courseId, reviewId, review }
+                        });
+                    });
+                }
+
+                dispatch({
+                    type: 'SET_REVIEW_LOADING_STATE',
+                    payload: { courseId, status: 'success' }
+                });
+
+                return () => { };
+            }
+        }
+
+        // Set loading state
+        dispatch({
+            type: 'SET_REVIEW_LOADING_STATE',
+            payload: { courseId, status: 'loading' }
+        });
+
+        // Mark request as pending
+        setRequestPending(cacheKey, true);
+
+        try {
+            const db = getFirestore(firebaseApp);
+            const docRef = collection(db, `courses/${courseId}/reviews`);
+            const q = query(docRef);
+
+            const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                const reviewData: Record<string, any> = {};
+
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    data.id = doc.id;
+                    reviewData[doc.id] = data;
+
+                    dispatch({
+                        type: 'SET_REVIEWS',
+                        payload: { courseId, reviewId: doc.id, review: data }
+                    });
+                });
+
+                // Set loading state to success
+                dispatch({
+                    type: 'SET_REVIEW_LOADING_STATE',
+                    payload: { courseId, status: 'success' }
+                });
+
+                // Cache data if persist is enabled
+                if (cacheOptions.persist) {
+                    const cacheEntry = {
+                        data: reviewData,
+                        metadata: generateCacheMetadata('success', cacheOptions.ttl)
+                    };
+                    saveToLocalStorage(cacheKey, cacheEntry);
+                }
+
+                // Mark request as no longer pending
+                setRequestPending(cacheKey, false);
+            }, (error) => {
+                console.error("Error fetching reviews:", error);
+
+                // Set loading state to error
+                dispatch({
+                    type: 'SET_REVIEW_LOADING_STATE',
+                    payload: { courseId, status: 'error' }
+                });
+
+                // Mark request as no longer pending
+                setRequestPending(cacheKey, false);
+            });
+
+            // Return the unsubscribe function
+            return unsubscribe;
+        } catch (error) {
+            console.error("Error setting up reviews listener:", error);
+
+            // Set loading state to error
+            dispatch({
+                type: 'SET_REVIEW_LOADING_STATE',
+                payload: { courseId, status: 'error' }
+            });
+
+            // Mark request as no longer pending
+            setRequestPending(cacheKey, false);
+
+            return () => { };
+        }
+    }, [state.reviews, state.reviewLoadingStates, dispatch, isRequestPending, setRequestPending]);
 
     const saveLessonProgress = useCallback(async (courseId: string, lessonId: string, position: number, isCompleted: boolean = false) => {
         if (!user) return;
@@ -421,7 +555,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             };
 
             if (progressExists.exists()) {
-                // Convert UserLessonProgress to a plain object for Firebase updateDoc
                 await updateDoc(progressRef, {
                     userId: progressData.userId,
                     courseId: progressData.courseId,
@@ -487,11 +620,46 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
     }, [user, dispatch]);
 
     // Get all users (admin only)
-    const getAllUsers = useCallback(async () => {
+    const getAllUsers = useCallback(async (options?: CacheOptions) => {
         if (!user || !state.isAdmin) {
             console.log("Not fetching users: User is null or not admin", { user: !!user, isAdmin: state.isAdmin });
             return null;
         }
+
+        const cacheOptions = { ...DEFAULT_CACHE_OPTIONS, ...options };
+        const cacheKey = cacheOptions.cacheKey || 'users';
+
+        // Check if we're already loading this data
+        if (isRequestPending(cacheKey)) {
+            console.log(`Request already pending for ${cacheKey}`);
+            return state.users || null;
+        }
+
+        // Check if data is already in state
+        if (state.users && Object.keys(state.users).length > 0) {
+            // Check if we need to update loading state
+            if (state.userLoadingState !== 'success') {
+                dispatch({ type: 'SET_USER_LOADING_STATE', payload: 'success' });
+            }
+            return state.users;
+        }
+
+        // Check if data is in localStorage cache
+        if (cacheOptions.persist) {
+            const cachedData = loadFromLocalStorage(cacheKey);
+            if (cachedData && !isCacheExpired(cachedData.metadata)) {
+                // Use cached data
+                dispatch({ type: 'SET_USERS', payload: cachedData.data });
+                dispatch({ type: 'SET_USER_LOADING_STATE', payload: 'success' });
+                return cachedData.data;
+            }
+        }
+
+        // Set loading state
+        dispatch({ type: 'SET_USER_LOADING_STATE', payload: 'loading' });
+
+        // Mark request as pending
+        setRequestPending(cacheKey, true);
 
         try {
             console.log("Attempting to fetch users as admin");
@@ -504,6 +672,8 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             if (usersSnapshot.empty) {
                 console.log("No user documents found in the collection");
                 dispatch({ type: 'SET_USERS', payload: {} });
+                dispatch({ type: 'SET_USER_LOADING_STATE', payload: 'success' });
+                setRequestPending(cacheKey, false);
                 return {};
             }
 
@@ -528,12 +698,26 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
             console.log(`Processed ${Object.keys(usersData).length} user objects`);
             dispatch({ type: 'SET_USERS', payload: usersData });
+            dispatch({ type: 'SET_USER_LOADING_STATE', payload: 'success' });
+
+            // Cache data if persist is enabled
+            if (cacheOptions.persist) {
+                const cacheEntry = {
+                    data: usersData,
+                    metadata: generateCacheMetadata('success', cacheOptions.ttl)
+                };
+                saveToLocalStorage(cacheKey, cacheEntry);
+            }
+
+            setRequestPending(cacheKey, false);
             return usersData;
         } catch (error) {
             console.error("Error fetching users:", error);
+            dispatch({ type: 'SET_USER_LOADING_STATE', payload: 'error' });
+            setRequestPending(cacheKey, false);
             return null;
         }
-    }, [user, state.isAdmin, dispatch]);
+    }, [user, state.isAdmin, state.users, state.userLoadingState, dispatch, isRequestPending, setRequestPending]);
 
     // Assign course to a user (admin only)
     const assignCourseToUser = useCallback(async (userId: string, courseId: string) => {
@@ -607,16 +791,54 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                 });
             }
 
+            // Clear user cache after assignment
+            clearCache('users');
+
             return true;
         } catch (error) {
             console.error("Error assigning course to user:", error);
             return false;
         }
-    }, [user, state.isAdmin, state.products]);
+    }, [user, state.isAdmin, state.products, clearCache]);
 
     // Get admin analytics data
-    const getAdminAnalytics = useCallback(async () => {
+    const getAdminAnalytics = useCallback(async (options?: CacheOptions) => {
         if (!user || !state.isAdmin) return null;
+
+        const cacheOptions = { ...DEFAULT_CACHE_OPTIONS, ...options };
+        const cacheKey = cacheOptions.cacheKey || 'adminAnalytics';
+
+        // Check if we're already loading this data
+        if (isRequestPending(cacheKey)) {
+            console.log(`Request already pending for ${cacheKey}`);
+            return state.adminAnalytics;
+        }
+
+        // Check if data is already in state
+        if (state.adminAnalytics) {
+            // Check if we need to update loading state
+            if (state.adminAnalyticsLoadingState !== 'success') {
+                dispatch({ type: 'SET_ADMIN_ANALYTICS_LOADING_STATE', payload: 'success' });
+            }
+            return state.adminAnalytics;
+        }
+
+        // Check if data is in localStorage cache
+        if (cacheOptions.persist) {
+            const cachedData = loadFromLocalStorage(cacheKey);
+            if (cachedData && !isCacheExpired(cachedData.metadata)) {
+                // Use cached data
+                dispatch({ type: 'SET_ADMIN_ANALYTICS', payload: cachedData.data });
+                dispatch({ type: 'SET_ADMIN_ANALYTICS_LOADING_STATE', payload: 'success' });
+                return cachedData.data;
+            }
+        }
+
+        // Set loading state
+        dispatch({ type: 'SET_ADMIN_ANALYTICS_LOADING_STATE', payload: 'loading' });
+
+        // Mark request as pending
+        setRequestPending(cacheKey, true);
 
         try {
             // Calculate analytics data from various collections
@@ -725,16 +947,65 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             };
 
             dispatch({ type: 'SET_ADMIN_ANALYTICS', payload: analyticsData });
+            dispatch({ type: 'SET_ADMIN_ANALYTICS_LOADING_STATE', payload: 'success' });
+
+            // Cache data if persist is enabled
+            if (cacheOptions.persist) {
+                const cacheEntry = {
+                    data: analyticsData,
+                    metadata: generateCacheMetadata('success', cacheOptions.ttl)
+                };
+                saveToLocalStorage(cacheKey, cacheEntry);
+            }
+
+            setRequestPending(cacheKey, false);
             return analyticsData;
         } catch (error) {
             console.error("Error fetching admin analytics:", error);
+            dispatch({ type: 'SET_ADMIN_ANALYTICS_LOADING_STATE', payload: 'error' });
+            setRequestPending(cacheKey, false);
             return null;
         }
-    }, [user, state.isAdmin]);
+    }, [user, state.isAdmin, state.adminAnalytics, state.adminAnalyticsLoadingState, dispatch, isRequestPending, setRequestPending]);
 
     // Get admin settings
-    const getAdminSettings = useCallback(async () => {
+    const getAdminSettings = useCallback(async (options?: CacheOptions) => {
         if (!user || !state.isAdmin) return null;
+
+        const cacheOptions = { ...DEFAULT_CACHE_OPTIONS, ...options };
+        const cacheKey = cacheOptions.cacheKey || 'adminSettings';
+
+        // Check if we're already loading this data
+        if (isRequestPending(cacheKey)) {
+            console.log(`Request already pending for ${cacheKey}`);
+            return state.adminSettings;
+        }
+
+        // Check if data is already in state
+        if (state.adminSettings) {
+            // Check if we need to update loading state
+            if (state.adminSettingsLoadingState !== 'success') {
+                dispatch({ type: 'SET_ADMIN_SETTINGS_LOADING_STATE', payload: 'success' });
+            }
+            return state.adminSettings;
+        }
+
+        // Check if data is in localStorage cache
+        if (cacheOptions.persist) {
+            const cachedData = loadFromLocalStorage(cacheKey);
+            if (cachedData && !isCacheExpired(cachedData.metadata)) {
+                // Use cached data
+                dispatch({ type: 'SET_ADMIN_SETTINGS', payload: cachedData.data });
+                dispatch({ type: 'SET_ADMIN_SETTINGS_LOADING_STATE', payload: 'success' });
+                return cachedData.data;
+            }
+        }
+
+        // Set loading state
+        dispatch({ type: 'SET_ADMIN_SETTINGS_LOADING_STATE', payload: 'loading' });
+
+        // Mark request as pending
+        setRequestPending(cacheKey, true);
 
         try {
             // First check if the admin collection exists and create it if not
@@ -753,6 +1024,18 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             if (settingsDoc.exists()) {
                 const settingsData = settingsDoc.data() as AdminSettings;
                 dispatch({ type: 'SET_ADMIN_SETTINGS', payload: settingsData });
+                dispatch({ type: 'SET_ADMIN_SETTINGS_LOADING_STATE', payload: 'success' });
+
+                // Cache data if persist is enabled
+                if (cacheOptions.persist) {
+                    const cacheEntry = {
+                        data: settingsData,
+                        metadata: generateCacheMetadata('success', cacheOptions.ttl)
+                    };
+                    saveToLocalStorage(cacheKey, cacheEntry);
+                }
+
+                setRequestPending(cacheKey, false);
                 return settingsData;
             } else {
                 // Create default settings if they don't exist
@@ -769,13 +1052,27 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
                 await setDoc(settingsRef, defaultSettings);
                 dispatch({ type: 'SET_ADMIN_SETTINGS', payload: defaultSettings });
+                dispatch({ type: 'SET_ADMIN_SETTINGS_LOADING_STATE', payload: 'success' });
+
+                // Cache data if persist is enabled
+                if (cacheOptions.persist) {
+                    const cacheEntry = {
+                        data: defaultSettings,
+                        metadata: generateCacheMetadata('success', cacheOptions.ttl)
+                    };
+                    saveToLocalStorage(cacheKey, cacheEntry);
+                }
+
+                setRequestPending(cacheKey, false);
                 return defaultSettings;
             }
         } catch (error) {
             console.error("Error fetching admin settings:", error);
+            dispatch({ type: 'SET_ADMIN_SETTINGS_LOADING_STATE', payload: 'error' });
+            setRequestPending(cacheKey, false);
             return null;
         }
-    }, [user, state.isAdmin]);
+    }, [user, state.isAdmin, state.adminSettings, state.adminSettingsLoadingState, dispatch, isRequestPending, setRequestPending]);
 
     // Update admin settings
     const updateAdminSettings = useCallback(async (settings: Partial<AdminSettings>) => {
@@ -793,6 +1090,17 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                     ...settings
                 };
                 dispatch({ type: 'SET_ADMIN_SETTINGS', payload: updatedSettings });
+
+                // Update cache if it exists
+                const cacheKey = 'adminSettings';
+                const cachedData = loadFromLocalStorage(cacheKey);
+                if (cachedData) {
+                    const cacheEntry = {
+                        data: updatedSettings,
+                        metadata: generateCacheMetadata('success', cachedData.metadata.expiresAt - Date.now())
+                    };
+                    saveToLocalStorage(cacheKey, cacheEntry);
+                }
             }
 
             return true;
@@ -800,7 +1108,239 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             console.error("Error updating admin settings:", error);
             return false;
         }
-    }, [user, state.isAdmin, state.adminSettings]);
+    }, [user, state.isAdmin, state.adminSettings, dispatch]);
+
+    // --- BOOKMARKING LOGIC ---
+    // Get all bookmarked lessons for the user from Firestore
+    const getBookmarkedLessons = useCallback(async (options?: CacheOptions) => {
+        if (!user) return;
+
+        const cacheOptions = { ...DEFAULT_CACHE_OPTIONS, ...options };
+        const cacheKey = cacheOptions.cacheKey || 'bookmarks';
+
+        // Check if we're already loading this data
+        if (isRequestPending(cacheKey)) {
+            console.log(`Request already pending for ${cacheKey}`);
+            return;
+        }
+
+        // Check if data is already in state
+        if (state.bookmarkedLessons && Object.keys(state.bookmarkedLessons).length > 0) {
+            // Check if we need to update loading state
+            if (state.bookmarksLoadingState !== 'success') {
+                dispatch({ type: 'SET_BOOKMARKS_LOADING_STATE', payload: 'success' });
+            }
+            return;
+        }
+
+        // Check if data is in localStorage cache
+        if (cacheOptions.persist) {
+            const cachedData = loadFromLocalStorage(cacheKey);
+            if (cachedData && !isCacheExpired(cachedData.metadata)) {
+                // Use cached data
+                dispatch({ type: 'SET_BOOKMARKED_LESSONS', payload: cachedData.data });
+                dispatch({ type: 'SET_BOOKMARKS_LOADING_STATE', payload: 'success' });
+                return;
+            }
+        }
+
+        // Set loading state
+        dispatch({ type: 'SET_BOOKMARKS_LOADING_STATE', payload: 'loading' });
+
+        // Mark request as pending
+        setRequestPending(cacheKey, true);
+
+        try {
+            const bookmarksRef = collection(firestoreDB, `users/${user.uid}/bookmarks`);
+            const snapshot = await getDocs(bookmarksRef);
+            const bookmarks: BookmarkedLessons = {};
+
+            snapshot.forEach(docSnap => {
+                const data = docSnap.data();
+                if (data.courseId && data.lessonId) {
+                    if (!bookmarks[data.courseId]) bookmarks[data.courseId] = [];
+                    bookmarks[data.courseId].push(data.lessonId);
+                }
+            });
+
+            dispatch({ type: 'SET_BOOKMARKED_LESSONS', payload: bookmarks });
+            dispatch({ type: 'SET_BOOKMARKS_LOADING_STATE', payload: 'success' });
+
+            // Cache data if persist is enabled
+            if (cacheOptions.persist) {
+                const cacheEntry = {
+                    data: bookmarks,
+                    metadata: generateCacheMetadata('success', cacheOptions.ttl)
+                };
+                saveToLocalStorage(cacheKey, cacheEntry);
+            } setRequestPending(cacheKey, false);
+        } catch (error) {
+            console.error('Error fetching bookmarks:', error);
+            dispatch({ type: 'SET_BOOKMARKS_LOADING_STATE', payload: 'error' });
+            setRequestPending(cacheKey, false);
+        }
+    }, [user, dispatch, isRequestPending, setRequestPending]);
+
+    // Toggle bookmark for a lesson (add/remove in Firestore and update state)
+    const toggleBookmarkLesson = useCallback(async (courseId: string, lessonId: string) => {
+        if (!user) return;
+        const isBookmarked = state.bookmarkedLessons?.[courseId]?.includes(lessonId);
+        const bookmarkDocRef = doc(firestoreDB, `users/${user.uid}/bookmarks/${courseId}_${lessonId}`);
+        try {
+            if (isBookmarked) {
+                await deleteDoc(bookmarkDocRef);
+            } else {
+                await setDoc(bookmarkDocRef, { courseId, lessonId, createdAt: Date.now() });
+            }
+            dispatch({ type: 'TOGGLE_BOOKMARK_LESSON', payload: { courseId, lessonId } });
+
+            // Update cache if it exists
+            const cacheKey = 'bookmarks';
+            const cachedData = loadFromLocalStorage(cacheKey);
+            if (cachedData) {
+                const updatedBookmarks = { ...state.bookmarkedLessons };
+                const cacheEntry = {
+                    data: updatedBookmarks,
+                    metadata: generateCacheMetadata('success', cachedData.metadata.expiresAt - Date.now())
+                };
+                saveToLocalStorage(cacheKey, cacheEntry);
+            }
+        } catch (error) {
+            console.error('Error toggling bookmark:', error);
+        }
+    }, [user, state.bookmarkedLessons, dispatch]);
+
+    // --- WISHLIST LOGIC ---    // Get all wishlist courses for the user from Firestore
+    const getWishlistCourses = useCallback(async (options?: CacheOptions) => {
+        if (!user) return;
+
+        const cacheOptions = { ...DEFAULT_CACHE_OPTIONS, ...options };
+        const cacheKey = cacheOptions.cacheKey || 'wishlist';
+
+        // Check if we're already loading this data
+        if (isRequestPending(cacheKey)) {
+            console.log(`Request already pending for ${cacheKey}`);
+            return;
+        }
+
+        // Only check state if we don't force refresh
+        if (!cacheOptions.forceRefresh) {
+            // Check if data is already in state
+            if (state.wishlistCourses && state.wishlistCourses.length > 0 && state.wishlistLoadingState === 'success') {
+                return;
+            }
+        }
+
+        // Check if data is in localStorage cache
+        if (cacheOptions.persist) {
+            const cachedData = loadFromLocalStorage(cacheKey);
+            if (cachedData && !isCacheExpired(cachedData.metadata)) {
+                // Use cached data
+                dispatch({ type: 'SET_WISHLIST_COURSES', payload: cachedData.data });
+                dispatch({ type: 'SET_WISHLIST_LOADING_STATE', payload: 'success' });
+                return;
+            }
+        }
+
+        // Set loading state
+        dispatch({ type: 'SET_WISHLIST_LOADING_STATE', payload: 'loading' });
+
+        // Mark request as pending
+        setRequestPending(cacheKey, true);
+
+        try {
+            const wishlistRef = collection(firestoreDB, `users/${user.uid}/wishlist`);
+            const snapshot = await getDocs(wishlistRef);
+            const wishlist: string[] = [];
+
+            snapshot.forEach(docSnap => {
+                const data = docSnap.data();
+                if (data.courseId) {
+                    wishlist.push(data.courseId);
+                }
+            });
+
+            dispatch({ type: 'SET_WISHLIST_COURSES', payload: wishlist });
+            dispatch({ type: 'SET_WISHLIST_LOADING_STATE', payload: 'success' });
+
+            // Cache data if persist is enabled
+            if (cacheOptions.persist) {
+                const cacheEntry = {
+                    data: wishlist,
+                    metadata: generateCacheMetadata('success', cacheOptions.ttl)
+                };
+                saveToLocalStorage(cacheKey, cacheEntry);
+            } setRequestPending(cacheKey, false);
+        } catch (error) {
+            console.error('Error fetching wishlist:', error);
+            dispatch({ type: 'SET_WISHLIST_LOADING_STATE', payload: 'error' });
+            setRequestPending(cacheKey, false);
+        }
+    }, [user, dispatch, isRequestPending, setRequestPending]);
+
+    // Add a course to wishlist
+    const addToWishlist = useCallback(async (courseId: string) => {
+        if (!user) return;
+        try {
+            const wishlistDocRef = doc(firestoreDB, `users/${user.uid}/wishlist/${courseId}`);
+            await setDoc(wishlistDocRef, { courseId, createdAt: Date.now() });
+            dispatch({ type: 'ADD_TO_WISHLIST', payload: courseId });
+
+            // Update cache if it exists
+            const cacheKey = 'wishlist';
+            const cachedData = loadFromLocalStorage(cacheKey);
+            if (cachedData) {
+                const updatedWishlist = [...state.wishlistCourses];
+                if (!updatedWishlist.includes(courseId)) {
+                    updatedWishlist.push(courseId);
+                }
+                const cacheEntry = {
+                    data: updatedWishlist,
+                    metadata: generateCacheMetadata('success', cachedData.metadata.expiresAt - Date.now())
+                };
+                saveToLocalStorage(cacheKey, cacheEntry);
+            }
+        } catch (error) {
+            console.error('Error adding to wishlist:', error);
+        }
+    }, [user, state.wishlistCourses, dispatch]);
+
+    // Remove a course from wishlist
+    const removeFromWishlist = useCallback(async (courseId: string) => {
+        if (!user) return;
+        try {
+            const wishlistDocRef = doc(firestoreDB, `users/${user.uid}/wishlist/${courseId}`);
+            await deleteDoc(wishlistDocRef);
+            dispatch({ type: 'REMOVE_FROM_WISHLIST', payload: courseId });
+
+            // Update cache if it exists
+            const cacheKey = 'wishlist';
+            const cachedData = loadFromLocalStorage(cacheKey);
+            if (cachedData) {
+                const updatedWishlist = state.wishlistCourses.filter((id: string) => id !== courseId);
+                const cacheEntry = {
+                    data: updatedWishlist,
+                    metadata: generateCacheMetadata('success', cachedData.metadata.expiresAt - Date.now())
+                };
+                saveToLocalStorage(cacheKey, cacheEntry);
+            }
+        } catch (error) {
+            console.error('Error removing from wishlist:', error);
+        }
+    }, [user, state.wishlistCourses, dispatch]);
+
+    // Onboarding modal logic
+    const [showOnboarding, setShowOnboarding] = useState(false);
+    useEffect(() => {
+        if (user && !authLoading) {
+            // Check localStorage for onboarding completion
+            const onboardingKey = `onboarding-complete-${user.uid}`;
+            const completed = localStorage.getItem(onboardingKey);
+            if (!completed) {
+                setShowOnboarding(true);
+            }
+        }
+    }, [user, authLoading]);
 
     useEffect(() => {
         // Store the auth unsubscribe function in a variable so we can clean up
@@ -870,65 +1410,71 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
             dispatch({ type: 'SET_PRODUCTS', payload: filteredProducts });
         });
-    }, []);
+    }, []); useEffect(() => {
+        let mounted = true;
+        let unsubscribes: Unsubscribe[] = [];
 
-    useEffect(() => {
         const fetchCourses = async () => {
-            const q = query(collection(firestoreDB, "courses"), where("status", "==", "active"));
-            const querySnapshot = await getDocs(q);
+            // Check if courses are already fetched to avoid duplicate requests
+            if (Object.keys(state.courses).length > 0) {
+                return () => {
+                    unsubscribes.forEach(unsubscribe => unsubscribe());
+                };
+            }
 
-            // First set all courses in the state
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                data.id = doc.id;
-                dispatch({ type: 'SET_COURSES', payload: { courseId: doc.id, course: data } });
-            });
+            // Set loading state for courses
+            dispatch({ type: 'SET_COURSE_LOADING_STATE', payload: { courseId: 'all', status: 'loading' } });
 
-            // Then fetch lessons for each course
-            const unsubscribes: Unsubscribe[] = [];
-            querySnapshot.forEach((doc) => {
-                const courseId = doc.id;
-                const db = getFirestore(firebaseApp);
+            try {
+                const q = query(collection(firestoreDB, "courses"), where("status", "==", "active"));
+                const querySnapshot = await getDocs(q);
 
-                const lessonsCollection = collection(db, `courses/${courseId}/lessons`);
-                const q = query(lessonsCollection, where("status", "==", "active"));
-                const unsubscribe = onSnapshot(q, (querySnapshot) => {
-                    querySnapshot.forEach((lessonDoc) => {
-                        const data = lessonDoc.data();
-                        data.id = lessonDoc.id;
-                        // Dispatch each lesson individually with its own ID
-                        dispatch({
-                            type: 'SET_LESSONS',
-                            payload: {
-                                courseId: courseId,
-                                lessonId: lessonDoc.id,
-                                lesson: data
-                            }
-                        });
+                // First set all courses in the state
+                if (mounted) {
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        data.id = doc.id;
+                        dispatch({ type: 'SET_COURSES', payload: { courseId: doc.id, course: data } });
+                        dispatch({ type: 'SET_COURSE_LOADING_STATE', payload: { courseId: doc.id, status: 'success' } });
                     });
-                    console.log("Lessons fetched for course", courseId);
-                });
 
-                unsubscribes.push(unsubscribe);
-            });
+                    // Then fetch lessons for each course, but only if still mounted
+                    if (mounted) {
+                        querySnapshot.forEach((doc) => {
+                            const courseId = doc.id;
+                            getCourseLessons(courseId, { persist: true, ttl: 30 * 60 * 1000 }); // Cache for 30 minutes
+                        });
 
-            // Return cleanup function to unsubscribe from all listeners
-            return () => {
-                unsubscribes.forEach(unsubscribe => unsubscribe());
-            };
+                        // Set loading state to success
+                        dispatch({ type: 'SET_COURSE_LOADING_STATE', payload: { courseId: 'all', status: 'success' } });
+                    }
+                }
+
+                // Return cleanup function to unsubscribe from all listeners
+                return () => {
+                    unsubscribes.forEach(unsubscribe => unsubscribe());
+                };
+            } catch (error) {
+                console.error("Error fetching courses:", error);
+                if (mounted) {
+                    dispatch({ type: 'SET_COURSE_LOADING_STATE', payload: { courseId: 'all', status: 'error' } });
+                }
+                return () => { };
+            }
         }
 
         const unsubscribePromise = fetchCourses();
 
         // Clean up function
         return () => {
+            mounted = false;
             unsubscribePromise.then(cleanup => {
                 if (typeof cleanup === 'function') {
                     cleanup();
                 }
             });
         };
-    }, []);
+    }, [getCourseLessons, state.courses, dispatch]);
 
     useEffect(() => {
         if (user) {
@@ -953,7 +1499,221 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             dispatch({ type: 'SET_USER_PAID_PRODUCTS', payload: [] });
             return () => { }; // Return a no-op function when user is null
         }
-    }, [user]); return (
+    }, [user]);    // Fetch bookmarks and wishlist on login
+    useEffect(() => {
+        if (user) {
+            getBookmarkedLessons({ persist: true, ttl: 30 * 60 * 1000 }); // Cache for 30 minutes
+            getWishlistCourses({ persist: true, ttl: 30 * 60 * 1000 }); // Cache for 30 minutes
+        }
+    }, [user]);    // Fetch a single course by ID
+    const fetchCourseById = useCallback(async (courseId: string, options: CacheOptions = DEFAULT_CACHE_OPTIONS) => {
+        const cacheKey = options.cacheKey || generateCacheKey('course', courseId);
+
+        // Optimization: If the course is already in state, don't fetch it again
+        if (state.courses && state.courses[courseId]) {
+            return;
+        }
+
+        // Check if we're already fetching this course
+        if (isRequestPending(cacheKey)) {
+            return;
+        }
+
+        // Check cache first if not already pending
+        if (options.persist) {
+            const cachedData = loadFromLocalStorage(cacheKey);
+            if (cachedData && !isCacheExpired(cachedData.metadata)) {
+                dispatch({ type: 'SET_COURSES', payload: { courseId, course: cachedData.data } });
+                dispatch({ type: 'SET_COURSE_LOADING_STATE', payload: { courseId, status: 'success' } });
+                return;
+            }
+        }
+
+        // Mark request as pending
+        dispatch({ type: 'SET_PENDING_REQUEST', payload: { key: cacheKey, isPending: true } });
+
+        // Set loading state
+        dispatch({ type: 'SET_COURSE_LOADING_STATE', payload: { courseId, status: 'loading' } });
+
+        try {
+            const courseRef = doc(firestoreDB, "courses", courseId);
+            const courseSnap = await getDoc(courseRef);
+
+            if (courseSnap.exists()) {
+                const courseData = courseSnap.data();
+                courseData.id = courseSnap.id;
+
+                // Update state
+                dispatch({ type: 'SET_COURSES', payload: { courseId, course: courseData } });
+                dispatch({ type: 'SET_COURSE_LOADING_STATE', payload: { courseId, status: 'success' } });                // Cache the result if needed
+                if (options.persist) {
+                    saveToLocalStorage(cacheKey, courseData, generateCacheMetadata(
+                        'success', typeof options.ttl === 'number' ? options.ttl : undefined));
+                }
+            } else {
+                console.log("No such course exists!");
+                dispatch({ type: 'SET_COURSE_LOADING_STATE', payload: { courseId, status: 'error' } });
+            }
+        } catch (error) {
+            console.error("Error fetching course:", error);
+            dispatch({ type: 'SET_COURSE_LOADING_STATE', payload: { courseId, status: 'error' } });
+        } finally {
+            // Clear pending request
+            dispatch({ type: 'SET_PENDING_REQUEST', payload: { key: cacheKey, isPending: false } });
+        }
+    }, [dispatch, isRequestPending, state.courses]);
+
+    // Fetch lessons for a specific course
+    const fetchLessonsForCourse = useCallback(async (courseId: string, options: CacheOptions = DEFAULT_CACHE_OPTIONS) => {
+        const cacheKey = options.cacheKey || generateCacheKey('lessons', courseId);
+
+        // Check if we're already fetching these lessons
+        if (isRequestPending(cacheKey)) {
+            return;
+        }
+
+        // Check cache first if not already pending
+        if (options.persist) {
+            const cachedData = loadFromLocalStorage(cacheKey);
+            if (cachedData && !isCacheExpired(cachedData.metadata)) {
+                dispatch({ type: 'SET_LESSONS', payload: { courseId, lessons: cachedData.data } });
+                dispatch({ type: 'SET_LESSON_LOADING_STATE', payload: { courseId, status: 'success' } });
+                return;
+            }
+        }
+
+        // Mark request as pending
+        dispatch({ type: 'SET_PENDING_REQUEST', payload: { key: cacheKey } });
+
+        // Set loading state
+        dispatch({ type: 'SET_LESSON_LOADING_STATE', payload: { courseId, status: 'loading' } });
+
+        try {
+            const q = query(collection(firestoreDB, "courses", courseId, "lessons"));
+            const querySnapshot = await getDocs(q);
+
+            const lessonsData: Record<string, any> = {};
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                data.id = doc.id;
+                lessonsData[doc.id] = data;
+            });
+
+            // Update state
+            dispatch({ type: 'SET_LESSONS', payload: { courseId, lessons: lessonsData } });
+            dispatch({ type: 'SET_LESSON_LOADING_STATE', payload: { courseId, status: 'success' } });            // Cache the result if needed
+            if (options.persist) {
+                saveToLocalStorage(cacheKey, lessonsData, generateCacheMetadata(
+                    'success', typeof options.ttl === 'number' ? options.ttl : undefined));
+            }
+        } catch (error) {
+            console.error("Error fetching lessons:", error);
+            dispatch({ type: 'SET_LESSON_LOADING_STATE', payload: { courseId, status: 'error' } });
+        } finally {
+            // Clear pending request
+            dispatch({ type: 'CLEAR_PENDING_REQUEST', payload: { key: cacheKey } });
+        }
+    }, [dispatch, isRequestPending]);
+
+    // Get an individual course by ID - server compatible helper
+    const getCourseById = useCallback(async (courseId: string): Promise<any> => {
+        if (!courseId) {
+            console.error('getCourseById: courseId is required');
+            return null;
+        }
+
+        try {
+            // Try from state cache first
+            const courseFromCache = state.courses[courseId];
+            if (courseFromCache) {
+                return courseFromCache;
+            }
+
+            // If not in state, fetch directly
+            const courseRef = doc(firestoreDB, 'courses', courseId);
+            const courseSnap = await getDoc(courseRef);
+
+            if (courseSnap.exists()) {
+                const courseData = {
+                    id: courseSnap.id,
+                    ...courseSnap.data()
+                };
+
+                // Update state
+                dispatch({
+                    type: 'SET_COURSES',
+                    payload: { courseId, course: courseData }
+                });
+
+                return courseData;
+            } else {
+                console.log(`No course found with ID: ${courseId}`);
+                return null;
+            }
+        } catch (error) {
+            console.error(`Error getting course ${courseId}:`, error);
+            return null;
+        }
+    }, [dispatch, state.courses]);
+
+    // Get an individual lesson by ID - server compatible helper
+    const getLessonById = useCallback(async (courseId: string, lessonId: string): Promise<any> => {
+        if (!courseId || !lessonId) {
+            console.error(`getLessonById: Invalid parameters: courseId=${courseId}, lessonId=${lessonId}`);
+            return null;
+        }
+
+        try {
+            // Try from state cache first
+            const lessonFromCache = state.lessons[courseId]?.[lessonId];
+            if (lessonFromCache) {
+                return lessonFromCache;
+            }
+
+            // If not in state, fetch directly
+            const lessonRef = doc(firestoreDB, 'courses', courseId, 'lessons', lessonId);
+            const lessonSnap = await getDoc(lessonRef);
+
+            if (lessonSnap.exists()) {
+                const lessonData = {
+                    id: lessonSnap.id,
+                    ...lessonSnap.data()
+                };
+
+                // Update state
+                dispatch({
+                    type: 'SET_LESSONS',
+                    payload: { courseId, lessonId, lesson: lessonData }
+                });
+
+                return lessonData;
+            } else {
+                console.log(`No lesson found with ID: ${lessonId} in course: ${courseId}`);
+
+                // For debugging purposes - list available lessons
+                try {
+                    const lessonsCollection = collection(firestoreDB, 'courses', courseId, 'lessons');
+                    const lessonsSnapshot = await getDocs(lessonsCollection);
+
+                    if (!lessonsSnapshot.empty) {
+                        console.log(`Available lessons in course ${courseId}:`);
+                        lessonsSnapshot.forEach(doc => console.log(`- ${doc.id}: ${doc.data().name || 'Unnamed'}`));
+                    } else {
+                        console.log(`No lessons found in course ${courseId}`);
+                    }
+                } catch (listError) {
+                    console.error('Error listing available lessons:', listError);
+                }
+
+                return null;
+            }
+        } catch (error) {
+            console.error(`Error getting lesson ${lessonId} in course ${courseId}:`, error);
+            return null;
+        }
+    }, [dispatch, state.lessons]);
+
+    return (
         <AppContext.Provider value={{
             isDark,
             toggleTheme,
@@ -969,27 +1729,69 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             updateModal,
             products: state.products,
             courses: state.courses,
+            courseLoadingStates: state.courseLoadingStates,
             lessons: state.lessons,
+            lessonLoadingStates: state.lessonLoadingStates,
             getCourseLessons,
             userPaidProducts: state.userPaidProducts,
             reviews: state.reviews,
+            reviewLoadingStates: state.reviewLoadingStates,
             getCourseReviews,
             lessonProgress: state.lessonProgress,
             saveLessonProgress,
             markLessonComplete,
             users: state.users,
+            userLoadingState: state.userLoadingState,
             getAllUsers,
             assignCourseToUser,
             adminAnalytics: state.adminAnalytics,
+            adminAnalyticsLoadingState: state.adminAnalyticsLoadingState,
             getAdminAnalytics,
             adminSettings: state.adminSettings,
+            adminSettingsLoadingState: state.adminSettingsLoadingState,
             getAdminSettings,
-            updateAdminSettings
+            updateAdminSettings,
+            bookmarkedLessons: state.bookmarkedLessons,
+            bookmarksLoadingState: state.bookmarksLoadingState,
+            toggleBookmarkLesson,
+            getBookmarkedLessons,
+            wishlistCourses: state.wishlistCourses,
+            wishlistLoadingState: state.wishlistLoadingState,
+            addToWishlist,
+            removeFromWishlist,
+            getWishlistCourses,
+            clearCache,
+            clearAllCache,
+            getCacheStatus,
+            fetchCourseById,
+            fetchLessonsForCourse,
+            getCourseById,
+            getLessonById,
         }}>
             {children}
             {state.modals.map((modal: any) => (
                 <ModalComponent key={modal.id} {...modal} />
             ))}
+            {showOnboarding && (
+                <ModalComponent
+                    id="onboarding"
+                    isOpen={true}
+                    modalHeader="Welcome!"
+                    modalBody={<OnboardingModal onClose={() => {
+                        setShowOnboarding(false);
+                        if (user) {
+                            localStorage.setItem(`onboarding-complete-${user.uid}`, 'true');
+                        }
+                    }} />}
+                    hideCloseButton={true}
+                    hideCloseIcon={false}
+                    backdrop="blur"
+                    size="md"
+                    scrollBehavior="inside"
+                    isDismissable={false}
+                    footerDisabled={true}
+                />
+            )}
         </AppContext.Provider>
     );
 };

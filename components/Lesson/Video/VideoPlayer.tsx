@@ -27,6 +27,7 @@ interface VideoPlayerProps {
   markLessonComplete: (courseId: string, lessonId: string) => void;
   setIsCompleted: (isCompleted: boolean) => void;
   setProgressSaved: (isSaved: boolean) => void;
+  isOfflineMode?: boolean;
 }
 
 export const VideoPlayer: React.FC<VideoPlayerProps> = ({

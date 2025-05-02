@@ -10,12 +10,9 @@ import LessonSettings from "@/components/Lesson/Settings/LessonSettings";
 import LessonNotes from "@/components/Lesson/Notes/LessonNotes";
 import LessonResources from "@/components/Lesson/Resources/LessonResources";
 import QASection from "@/components/Lesson/QA/QASection";
-import { Lesson as LessonInterface, AppContextProps, LessonResource } from "@/types";
-
-interface LessonProps {
-    lesson: LessonInterface;
-    onClose?: () => void;
-}
+import { Lesson as LessonInterface, AppContextProps, LessonResource, LessonProps } from "@/types";
+import { useToast } from "@/components/Toast";
+import { FiBookmark, FiBookmarkFilled } from '@/components/icons/FeatherIcons';
 
 export default function Lesson({ lesson, onClose }: LessonProps) {
     const [prevLessonId, setPrevLessonId] = useState<string | null>(null);
@@ -27,13 +24,14 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
     const [noteContent, setNoteContent] = useState("");
     const videoRef = useRef<HTMLVideoElement>(null);
     const router = useRouter();
+    const toast = useToast();
 
     const context = useContext(AppContext) as AppContextProps;
     if (!context) {
         throw new Error("You probably forgot to put <AppProvider>.");
     }
 
-    const { lessons, lessonProgress, saveLessonProgress, markLessonComplete } = context;
+    const { lessons, lessonProgress, saveLessonProgress, markLessonComplete, bookmarkedLessons, toggleBookmarkLesson } = context;
     const courseId = lesson.courseId || '';
 
     // Find previous and next lessons for navigation
@@ -139,8 +137,23 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
     // Handle marking lesson as complete
     const handleMarkComplete = useCallback(() => {
         setIsCompleted(true);
-        markLessonComplete(courseId, lesson.id);
-    }, [courseId, lesson.id, markLessonComplete]);
+        try {
+            markLessonComplete(courseId, lesson.id);
+            toast.showToast({
+                type: 'success',
+                title: 'Lesson Completed',
+                message: 'You have completed this lesson!',
+                duration: 4000
+            });
+        } catch (error) {
+            toast.showToast({
+                type: 'error',
+                title: 'Error',
+                message: 'Could not mark lesson as complete. Please try again.',
+                duration: 6000
+            });
+        }
+    }, [courseId, lesson.id, markLessonComplete, toast]);
 
     // Handle toggling auto-play preference
     const handleAutoPlayToggle = useCallback((value: boolean) => {
@@ -153,6 +166,12 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
         setSaveProgress(value);
         localStorage.setItem('saveProgress', value.toString());
     }, []);
+
+    // Bookmark state
+    const isBookmarked = bookmarkedLessons?.[courseId]?.includes(lesson.id);
+    const handleBookmark = () => {
+        toggleBookmarkLesson(courseId, lesson.id);
+    };
 
     // Navigate to a different lesson
     const navigateToLesson = (lessonId: string) => {
@@ -180,85 +199,108 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
 
         const currentIndex = sortedLessons.findIndex(l => l.id === lesson.id);
         return ((currentIndex + 1) / totalLessons) * 100;
-    };
-
-    return (
+    }; return (
         <div className="w-full max-w-7xl mx-auto px-4 py-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">                {/* Main Content (2/3 width on large screens) */}                <div className="lg:col-span-2 space-y-8">                    {/* Lesson Navigation */}
-                <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-md rounded-2xl overflow-hidden w-full">
-                    <div className="p-0">
-                        {/* <LessonNavigation
-                            prevLessonId={prevLessonId}
-                            nextLessonId={nextLessonId}
-                            isCompleted={isCompleted}
-                            onNavigateLesson={navigateToLesson}
-                            onClose={onClose}
-                        /> */}
-                    </div>
-                </Card>
-
-                {/* Video Player Section */}
-                {lesson.videoUrl && (
-                    <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-md overflow-hidden rounded-xl">
-                        <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
-                            <video
-                                ref={videoRef}
-                                className="absolute inset-0 w-full h-full bg-black"
-                                src={lesson.videoUrl}
-                                poster={lesson.thumbnailUrl}
-                                controls
-                                onTimeUpdate={handleTimeUpdate}
-                            ></video>
-                        </div>
-
-                        {/* Progress bar for the video */}
-                        <div className="p-5">
-                            <div className="flex items-center justify-between mb-2">
-                                <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)]">
-                                    {lesson.title || lesson.name}
-                                </h3>
-                                <span className="text-sm text-[color:var(--ai-muted)]">
-                                    {lesson.duration || "Tutorial"}
-                                </span>
-                            </div>
-
-                            {/* Video progress indicator */}
-                            <Progress
-                                value={videoProgress}
-                                color="primary"
-                                size="sm"
-                                radius="full"
-                                className="mb-2"
-                            />
-
-                            {/* Course progress indicator */}
-                            <div className="flex items-center justify-between text-xs text-[color:var(--ai-muted)]">
-                                <span>Lesson {calculateProgress() / (100 / Object.keys(lessons[courseId] || {}).length)} of {Object.keys(lessons[courseId] || {}).length}</span>
-                                <span>{Math.round(calculateProgress())}% of course completed</span>
-                            </div>
-                        </div>
-                    </Card>
-                )}
-
-                {/* Lesson Content */}
-                {lesson.content && (
-                    <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-md rounded-xl">
-                        <div className="p-6">
-                            <h2 className="text-xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-4">
-                                Lesson Content
-                            </h2>
-                            <div
-                                className="prose dark:prose-invert max-w-none"
-                                dangerouslySetInnerHTML={{ __html: lesson.content }}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Main Content (2/3 width on large screens) */}
+                <div className="lg:col-span-2 space-y-8">
+                    {/* Lesson Navigation */}
+                    <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-md rounded-2xl overflow-hidden w-full">
+                        <div className="p-0">
+                            <LessonNavigation
+                                prevLessonId={prevLessonId}
+                                nextLessonId={nextLessonId}
+                                isCompleted={isCompleted}
+                                onNavigateLesson={navigateToLesson}
+                                onClose={onClose}
+                                lessons={Object.values(lessons[courseId] || {}).sort((a, b) => (a.order || 0) - (b.order || 0)).map(l => ({
+                                    id: l.id,
+                                    name: l.name,
+                                    order: l.order,
+                                    isCompleted: lessonProgress?.[courseId]?.[l.id]?.isCompleted,
+                                    isCurrent: l.id === lesson.id,
+                                    isLocked: false, // TODO: implement lock logic if needed
+                                    durationMinutes: l.duration ? parseInt(l.duration) : undefined
+                                }))}
+                                currentLessonId={lesson.id}
                             />
                         </div>
                     </Card>
-                )}
 
-                {/* Q&A Section - Moved into main content column */}
-                <QASection lessonId={lesson.id} courseId={courseId} />
-            </div>                {/* Right Sidebar */}
+                    {/* Video Player Section */}
+                    {lesson.videoUrl && (
+                        <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-md overflow-hidden rounded-xl">
+                            <div className="relative w-full aspect-video">
+                                <video
+                                    ref={videoRef}
+                                    className="absolute inset-0 w-full h-full bg-black"
+                                    src={lesson.videoUrl}
+                                    poster={lesson.thumbnailUrl}
+                                    controls
+                                    onTimeUpdate={handleTimeUpdate}
+                                ></video>
+                            </div>
+
+                            {/* Progress bar for the video */}
+                            <div className="p-5">
+                                <div className="flex items-center justify-between mb-2">
+                                    <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)]">
+                                        {lesson.title || lesson.name}
+                                    </h3>
+                                    <span className="text-sm text-[color:var(--ai-muted)]">
+                                        {lesson.duration || "Tutorial"}
+                                    </span>
+                                </div>
+
+                                {/* Video progress indicator */}                            <Progress
+                                    value={videoProgress}
+                                    color="primary"
+                                    size="sm"
+                                    radius="full"
+                                    className="mb-2"
+                                    aria-label="Video playback progress"
+                                />
+
+                                {/* Course progress indicator */}
+                                <div className="flex items-center justify-between text-xs text-[color:var(--ai-muted)]">
+                                    <span>Lesson {calculateProgress() / (100 / Object.keys(lessons[courseId] || {}).length)} of {Object.keys(lessons[courseId] || {}).length}</span>
+                                    <span>{Math.round(calculateProgress())}% of course completed</span>
+                                </div>
+                            </div>
+                        </Card>
+                    )}
+
+                    {/* Lesson Content */}
+                    {lesson.content && (
+                        <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-md rounded-xl">
+                            <div className="p-6">
+                                <h2 className="text-xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-4">
+                                    Lesson Content
+                                </h2>
+                                <div
+                                    className="prose dark:prose-invert max-w-none"
+                                    dangerouslySetInnerHTML={{ __html: lesson.content }}
+                                />
+                            </div>
+                        </Card>
+                    )}                {/* Q&A Section - Moved into main content column */}
+                    <QASection lessonId={lesson.id} courseId={courseId} />
+                </div>
+
+                {/* Right Sidebar */}
                 <div className="lg:col-span-1 space-y-8">
+                    {/* Bookmark Button */}
+                    <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-md rounded-xl overflow-hidden flex items-center justify-between px-6 py-4">
+                        <span className="font-medium text-[color:var(--ai-foreground)]">Bookmark this lesson</span>
+                        <button
+                            aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark lesson'}
+                            onClick={handleBookmark}
+                            className={`btn-icon ${isBookmarked ? 'text-[color:var(--ai-primary)]' : 'text-[color:var(--ai-muted)]'} transition-colors duration-200`}
+                        >
+                            {isBookmarked ? <FiBookmarkFilled size={22} /> : <FiBookmark size={22} />}
+                        </button>
+                    </Card>
+
                     {/* Lesson Settings */}
                     <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-md rounded-xl overflow-hidden">
                         <LessonSettings
@@ -281,16 +323,15 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
                     {lesson.resources && lesson.resources.length > 0 && (
                         <LessonResources
                             resources={
-                                // Ensure resources have the correct shape for LessonResource
-                                lesson.resources.map(r => ({
+                                lesson.resources.map((r: LessonResource) => ({
                                     name: r.name || r.title || '',
                                     url: r.url || '',
                                     type: r.type,
                                     description: r.description
                                 }))
                             }
-                        />
-                    )}</div>
+                        />)}
+                </div>
             </div>
         </div>
     );

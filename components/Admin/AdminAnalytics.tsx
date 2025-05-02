@@ -12,25 +12,35 @@ const AdminAnalytics: React.FC = () => {
 
     const { adminAnalytics, getAdminAnalytics } = context;
     const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null); useEffect(() => {
+        let mounted = true;
 
-    useEffect(() => {
         const fetchAnalytics = async () => {
             setLoading(true);
             try {
-                if (getAdminAnalytics) {
+                if (getAdminAnalytics && mounted) {
                     await getAdminAnalytics();
                 }
             } catch (error) {
                 console.error('Error fetching analytics:', error);
-                setError('Failed to load analytics data');
+                if (mounted) {
+                    setError('Failed to load analytics data');
+                }
             } finally {
-                setLoading(false);
+                if (mounted) {
+                    setLoading(false);
+                }
             }
         };
 
-        fetchAnalytics();
-    }, [getAdminAnalytics]);
+        if (!adminAnalytics) {
+            fetchAnalytics();
+        } else {
+            setLoading(false);
+        }
+
+        return () => { mounted = false; };
+    }, [getAdminAnalytics, adminAnalytics]);
 
     if (loading) {
         return (

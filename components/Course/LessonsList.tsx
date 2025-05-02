@@ -72,27 +72,35 @@ export default function LessonsList({
                 damping: 15
             }
         }
-    };
-
-    // Sort lessons by their order property
-    const sortedLessons = [...lessons].sort((a, b) => {
+    };    // Filter out null or undefined lessons and then sort by order property
+    const sortedLessons = [...lessons].filter(lesson => lesson != null).sort((a, b) => {
         const orderA = a.order || 0;
         const orderB = b.order || 0;
         return orderA - orderB;
-    });    // Calculate total duration in minutes
+    });// Calculate total duration in minutes
     const totalDuration = sortedLessons.reduce((total, lesson) => {
+        // Skip if lesson is undefined or null
+        if (!lesson) return total;
+
         // Use numeric duration with fallback to parsed string duration or 0
         const durationMins =
-            (typeof lesson.duration === 'number' ? lesson.duration :
-                (typeof lesson.duration === 'string' ? parseInt(lesson.duration, 10) : 0));
-        return total + durationMins;
+            (typeof lesson?.duration === 'number' ? lesson.duration :
+                (typeof lesson?.duration === 'string' ? parseInt(lesson.duration, 10) : 0));
+
+        // Handle NaN values that might result from parsing invalid strings
+        return total + (isNaN(durationMins) ? 0 : durationMins);
     }, 0);    // Calculate completed duration (sum of durations of completed lessons)
     const completedDuration = sortedLessons.reduce((total, lesson) => {
-        if (completedLessons[lesson.id]) {
+        // Skip if lesson is undefined or null
+        if (!lesson) return total;
+
+        if (lesson.id && completedLessons[lesson.id]) {
             const durationMins =
-                (typeof lesson.duration === 'number' ? lesson.duration :
-                    (typeof lesson.duration === 'string' ? parseInt(lesson.duration, 10) : 0));
-            return total + durationMins;
+                (typeof lesson?.duration === 'number' ? lesson.duration :
+                    (typeof lesson?.duration === 'string' ? parseInt(lesson.duration, 10) : 0));
+
+            // Handle NaN values that might result from parsing invalid strings
+            return total + (isNaN(durationMins) ? 0 : durationMins);
         }
         return total;
     }, 0);
@@ -150,118 +158,108 @@ export default function LessonsList({
                             <div className="text-[color:var(--ai-primary)] font-medium">
                                 {Object.values(completedLessons).filter(v => v).length} / {sortedLessons.length}
                             </div>
-                            <div className="w-24 h-2 bg-[color:var(--ai-card-border)]/30 rounded-full overflow-hidden">
-                                <div
-                                    className="h-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-full"
-                                    style={{
-                                        width: `${Math.round((Object.values(completedLessons).filter(v => v).length / sortedLessons.length) * 100)}%`
-                                    }}
-                                ></div>
+                            <div className="w-24 h-2 bg-[color:var(--ai-card-border)]/30 rounded-full overflow-hidden">                                <div
+                                className={`h-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-full w-[${Math.round((Object.values(completedLessons).filter(v => v).length / sortedLessons.length) * 100)}%]`}
+                            ></div>
                             </div>
                             <span className="text-[color:var(--ai-muted)]">completed</span>
                         </div>
                     </div>
                 )}
-            </div>
-
-            <motion.div
+            </div>            <motion.div
                 className="space-y-3"
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
             >
-                {sortedLessons.map((lesson, index) => {
-                    const isCompleted = completedLessons[lesson.id];
+                {sortedLessons.filter(lesson => lesson && lesson.id).map((lesson, index) => {
+                    const isCompleted = lesson && lesson.id ? completedLessons[lesson.id] : false;
 
-                    return (
-                        <motion.div
-                            key={lesson.id}
-                            variants={itemVariants}
-                            className={`relative rounded-xl transition-all duration-300 group 
-                                ${userHasAccess || lesson.isFree
-                                    ? 'bg-[color:var(--ai-card-bg)]/80 hover:bg-[color:var(--ai-card-bg)] cursor-pointer shadow hover:shadow-md border border-[color:var(--ai-card-border)]'
-                                    : 'bg-[color:var(--ai-card-bg)]/50 border-dashed cursor-not-allowed border border-[color:var(--ai-card-border)]/50'
-                                }
+                    return (<motion.div
+                        key={lesson?.id || index}
+                        variants={itemVariants}
+                        className={`relative rounded-xl transition-all duration-300 group 
+                                ${userHasAccess || lesson?.isFree
+                                ? 'bg-[color:var(--ai-card-bg)]/80 hover:bg-[color:var(--ai-card-bg)] cursor-pointer shadow hover:shadow-md border border-[color:var(--ai-card-border)]'
+                                : 'bg-[color:var(--ai-card-bg)]/50 border-dashed cursor-not-allowed border border-[color:var(--ai-card-border)]/50'
+                            }
                                 ${isCompleted ? 'ring-1 ring-[color:var(--ai-primary)]/30' : ''}
                             `}
-                        >
-                            {/* Lesson Index Circle */}
-                            <div className={`absolute -left-3 top-1/2 transform -translate-y-1/2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shadow-sm
+                    >
+                        {/* Lesson Index Circle */}
+                        <div className={`absolute -left-3 top-1/2 transform -translate-y-1/2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shadow-sm
                                 ${isCompleted
-                                    ? 'bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white'
-                                    : userHasAccess || lesson.isFree
-                                        ? 'bg-[color:var(--ai-primary)] text-white'
-                                        : 'bg-[color:var(--ai-card-border)] text-[color:var(--ai-muted)]'
-                                }
+                                ? 'bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white'
+                                : userHasAccess || lesson.isFree
+                                    ? 'bg-[color:var(--ai-primary)] text-white'
+                                    : 'bg-[color:var(--ai-card-border)] text-[color:var(--ai-muted)]'
+                            }
                             `}>
-                                {isCompleted ? <FiCheckCircle className="w-3.5 h-3.5" /> : index + 1}
-                            </div>
+                            {isCompleted ? <FiCheckCircle className="w-3.5 h-3.5" /> : index + 1}
+                        </div>
 
-                            {userHasAccess || lesson.isFree ? (
-                                <Link href={`/courses/${courseId}/lessons/${lesson.id}`} className="block p-4">
-                                    <div className="flex justify-between items-center">
-                                        <div className="flex items-start gap-3">
-                                            <div className={`rounded-md p-2 mt-1
+                        {userHasAccess || lesson.isFree ? (
+                            <Link href={`/courses/${courseId}/lessons/${lesson?.id || ''}`} className="block p-4">
+                                <div className="flex justify-between items-center">
+                                    <div className="flex items-start gap-3">
+                                        <div className={`rounded-md p-2 mt-1
                                                 ${isCompleted
-                                                    ? 'bg-[color:var(--ai-primary)]/20 text-[color:var(--ai-primary)]'
-                                                    : 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]'
-                                                }
+                                                ? 'bg-[color:var(--ai-primary)]/20 text-[color:var(--ai-primary)]'
+                                                : 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]'
+                                            }
                                             `}>
-                                                {isCompleted ? <FiCheckCircle className="h-4 w-4" /> : <FiPlay className="h-4 w-4" />}
-                                            </div>
-                                            <div>
-                                                <h3 className={`font-medium transition-colors duration-300 
+                                            {isCompleted ? <FiCheckCircle className="h-4 w-4" /> : <FiPlay className="h-4 w-4" />}
+                                        </div>
+                                        <div>                                                <h3 className={`font-medium transition-colors duration-300 
                                                     ${isCompleted ? 'text-[color:var(--ai-primary)]' : 'group-hover:text-[color:var(--ai-primary)]'}
                                                 `}>
-                                                    {lesson.title}
-                                                </h3>
-                                                <p className="text-sm text-[color:var(--ai-muted)] line-clamp-2 mt-1">
-                                                    {lesson.description || 'No description available'}
-                                                </p>
+                                            {lesson.title || lesson.name || 'Unnamed Lesson'}
+                                        </h3>
+                                            <p className="text-sm text-[color:var(--ai-muted)] line-clamp-2 mt-1">
+                                                {lesson.description || 'No description available'}
+                                            </p>
 
-                                                {lesson.isFree && !userHasAccess && (
-                                                    <span className="inline-block mt-2 text-xs font-medium bg-[color:var(--ai-accent)]/10 text-[color:var(--ai-accent)] px-2 py-0.5 rounded-full">
-                                                        Free Preview
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </div>
-                                        <div className="flex flex-col items-end gap-2">
-                                            <span className="text-sm text-[color:var(--ai-muted)]">
-                                                {lesson.duration}
-                                            </span>
-
-                                            {isCompleted && (
-                                                <span className="text-xs font-medium bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] px-2 py-0.5 rounded-full">
-                                                    Completed
+                                            {lesson.isFree && !userHasAccess && (
+                                                <span className="inline-block mt-2 text-xs font-medium bg-[color:var(--ai-accent)]/10 text-[color:var(--ai-accent)] px-2 py-0.5 rounded-full">
+                                                    Free Preview
                                                 </span>
                                             )}
                                         </div>
                                     </div>
-                                </Link>
-                            ) : (
-                                <div className="p-4">
-                                    <div className="flex justify-between items-center">
-                                        <div className="flex items-start gap-3">
-                                            <div className="rounded-md bg-[color:var(--ai-card-border)]/20 p-2 mt-1">
-                                                <FiLock className="h-4 w-4 text-[color:var(--ai-muted)]" />
-                                            </div>
-                                            <div>
-                                                <h3 className="font-medium text-[color:var(--ai-muted)]">
-                                                    {lesson.title}
-                                                </h3>
-                                                <p className="text-sm text-[color:var(--ai-muted)]/70 line-clamp-2 mt-1">
-                                                    {lesson.description || 'No description available'}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center">
-                                            <span className="text-sm text-[color:var(--ai-muted)]/70">{lesson.duration || 30} min</span>
-                                        </div>
+                                    <div className="flex flex-col items-end gap-2">                                            <span className="text-sm text-[color:var(--ai-muted)]">
+                                        {typeof lesson.duration === 'number' ? `${lesson.duration} min` : lesson.duration || 'N/A'}
+                                    </span>
+
+                                        {isCompleted && (
+                                            <span className="text-xs font-medium bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] px-2 py-0.5 rounded-full">
+                                                Completed
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
-                            )}
-                        </motion.div>
+                            </Link>
+                        ) : (
+                            <div className="p-4">
+                                <div className="flex justify-between items-center">
+                                    <div className="flex items-start gap-3">
+                                        <div className="rounded-md bg-[color:var(--ai-card-border)]/20 p-2 mt-1">
+                                            <FiLock className="h-4 w-4 text-[color:var(--ai-muted)]" />
+                                        </div>
+                                        <div>                                                <h3 className="font-medium text-[color:var(--ai-muted)]">
+                                            {lesson.title || lesson.name || 'Unnamed Lesson'}
+                                        </h3>
+                                            <p className="text-sm text-[color:var(--ai-muted)]/70 line-clamp-2 mt-1">
+                                                {lesson.description || 'No description available'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <span className="text-sm text-[color:var(--ai-muted)]/70">{lesson.duration || 30} min</span>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </motion.div>
                     );
                 })}
             </motion.div>

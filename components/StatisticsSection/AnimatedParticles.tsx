@@ -14,7 +14,8 @@ export default function AnimatedParticles() {
             return parseFloat(((Math.sin(seed * index) * 10000) % 1).toFixed(2));
         }
 
-        for (let i = 0; i < 20; i++) {
+        // Reduce number of particles from 20 to 10 to improve performance
+        for (let i = 0; i < 10; i++) {
             // Create fixed-precision values that will be consistent
             const width = (5 + pseudoRandom(seed, i * 1.1) * 10).toFixed(2);
             const height = (5 + pseudoRandom(seed, i * 2.2) * 15).toFixed(2);

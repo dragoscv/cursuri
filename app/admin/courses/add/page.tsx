@@ -1,18 +1,15 @@
-'use client';
+'use client'
 
-import AddCourse from "@/components/Course/AddCourse";
-import { Card, CardBody } from "@heroui/react";
-import Link from "next/link";
+import AddCourseForm from '@/components/Course/AddCourseForm';
+import { useRouter } from 'next/navigation';
 
 export default function AddCoursePage() {
-    return (
-        <div className="max-w-7xl mx-auto px-4">
+  const router = useRouter();
 
-
-            <Card className="shadow-md">                <CardBody>
-                <AddCourse onClose={() => { }} />
-            </CardBody>
-            </Card>
-        </div>
-    );
+  return (
+    <div className="max-w-3xl mx-auto py-8 px-4">
+      <h1 className="text-2xl font-bold mb-6">Add New Course</h1>
+      <AddCourseForm onClose={() => router.back()} />
+    </div>
+  );
 }

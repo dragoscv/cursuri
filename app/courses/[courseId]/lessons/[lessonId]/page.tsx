@@ -1,292 +1,279 @@
-'use client'
+import React from 'react';
+import { Metadata } from 'next';
+import { constructMetadata } from '@/utils/metadata';
+import { generateLessonStructuredData, generateBreadcrumbStructuredData } from '@/utils/structuredData';
+import { getCourseById, getLessonById, getCourseLessons } from '@/utils/firebase/server';
+import { Course, Lesson, PageParams } from '@/types';
+import { safeToISOString } from '@/utils/timeHelpers';
+import LessonNotFound from '@/components/Lesson/LessonNotFound';
+import ErrorPage from '@/components/ErrorPage';
 
-import React, { useContext, useState, useEffect } from 'react';
-import { AppContext } from '@/components/AppContext';
-import { Spinner, Card } from "@heroui/react";
-import LessonContent from '@/components/Lesson/LessonContent';
-import { useRouter } from 'next/navigation';
+// Import the client component wrapper for lesson detail
+import ClientLessonWrapper from '@/components/Lesson/ClientLessonWrapper';
 
-// Using the same pattern as CourseDetailPage to fix Next.js 15 params Promise issue
-export default function LessonDetailPage({
-    params
-}: {
-    params: { courseId: string; lessonId: string } | Promise<{ courseId: string; lessonId: string }>
-}) {
-    // Unwrap the params using React.use() to handle both Promise and non-Promise cases
-    const unwrappedParams = React.use(params instanceof Promise ? params : Promise.resolve(params));
-    const { courseId, lessonId } = unwrappedParams;    // Define a proper interface for the debug state
-    interface DebugInfo {
-        courseId: string;
-        lessonId: string;
-        courseExists: boolean;
-        courseLessonsExist: boolean;
-        lessonsAvailable: string[] | string | boolean;
-        lessonExists: boolean;
+// Import the loading skeleton for server-side loading states
+import LessonLoadingSkeleton from '@/components/Lesson/LessonLoadingSkeleton';
+
+// Generate metadata dynamically for each lesson
+export async function generateMetadata({
+  params
+}: PageParams<{ courseId: string; lessonId: string }>): Promise<Metadata> {
+  try {
+    // Await params if it's a promise
+    const resolvedParams = 'then' in params ? await params : params;
+    const courseId = String(resolvedParams.courseId);
+    const lessonId = String(resolvedParams.lessonId);
+
+    console.log("[generateMetadata] Resolved params - courseId:", courseId, "lessonId:", lessonId);
+
+    // Fetch course and lesson data
+    const course = await getCourseById(courseId) as Course;
+    const lesson = await getLessonById(courseId, lessonId) as Lesson;
+
+    if (!course || !lesson) {
+      return {
+        title: 'Lesson Not Found',
+        description: 'The requested lesson could not be found.',
+      };
     }
 
-    const context = useContext(AppContext);
-    const router = useRouter();
-    const [hasAccess, setHasAccess] = useState(false);
-    const [debug, setDebug] = useState<DebugInfo>({
-        courseId: '',
-        lessonId: '',
-        courseExists: false,
-        courseLessonsExist: false,
-        lessonsAvailable: false,
-        lessonExists: false
+    const instructorName = typeof course.instructor === 'string'
+      ? course.instructor
+      : course.instructor?.name || 'Cursuri Instructor';
+
+    return constructMetadata({
+      title: `${lesson.title || lesson.name} | ${course.name}`,
+      description: lesson.description || `Learn ${lesson.title || lesson.name} in ${course.name}`,
+      keywords: [
+        course.name,
+        lesson.title || lesson.name,
+        instructorName,
+        'online course',
+        'lesson',
+        'learning',
+        'education',
+      ],
+      canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/courses/${courseId}/lessons/${lessonId}`,
+      type: 'lesson',
+      publishedTime: undefined, // lesson.createdAt is not in the type
+      modifiedTime: lesson.lastModified ? new Date(lesson.lastModified).toISOString() : undefined,
+      // Don't allow indexing of individual lessons if they're paid content
+      robots: lesson.isFree
+        ? { index: true, follow: true }
+        : { index: false, follow: true, googleBot: { index: false, follow: true } }
     });
+  } catch (error) {
+    console.error('Error generating lesson metadata:', error);
+    return {
+      title: 'Course Lesson',
+      description: 'View this lesson content and continue your learning journey.'
+    };
+  }
+}
 
-    if (!context) {
-        throw new Error('LessonDetailPage must be used within an AppContextProvider');
-    }
+export default async function Page({
+  params
+}: PageParams<{ courseId: string; lessonId: string }>) {
+  // For server components, we can fetch data to generate structured data
+  try {
+    // Await params if it's a promise
+    const resolvedParams = 'then' in params ? await params : params;
+    const courseId = String(resolvedParams.courseId);
+    const lessonId = String(resolvedParams.lessonId);
 
-    const { courses, lessons, user, userPaidProducts, isAdmin, getCourseLessons } = context;
+    console.log("Extracted courseId:", courseId, "lessonId:", lessonId);
 
-    // Debug information
-    useEffect(() => {
-        console.log("Debug info - courseId:", courseId);
-        console.log("Debug info - lessonId:", lessonId);
-        console.log("Debug info - course exists:", Boolean(courses[courseId]));
-        console.log("Debug info - courseLessons exists:", Boolean(lessons[courseId]));
-        // Store debug info for rendering       
-        setDebug({
-            courseId,
-            lessonId,
-            courseExists: Boolean(courses[courseId]),
-            courseLessonsExist: Boolean(lessons[courseId]),
-            // Store whether lessons are available (true) or not (false)
-            lessonsAvailable: Boolean(lessons && lessons[courseId] &&
-                (Array.isArray(lessons[courseId])
-                    ? lessons[courseId].length > 0
-                    : Object.keys(lessons[courseId]).length > 0)),
-            lessonExists: false // Will be updated below
-        });
+    // Get course data
+    const course = await getCourseById(courseId) as Course;
 
-        // If course exists but lessons are not loaded, try to load them
-        if (courses && courses[courseId] && (!lessons || !lessons[courseId] || Object.keys(lessons[courseId] || {}).length === 0)) {
-            console.log("Debug info - attempting to fetch lessons for course");
-            getCourseLessons(courseId);
-        }
-    }, [courseId, lessonId, courses, lessons, getCourseLessons]);
-
-    // Check if the course exists
-    const course = courses[courseId];
-    const courseLessons = lessons[courseId];
-
-    // Check if user has access to this course
-    useEffect(() => {
-        // Only run this check when we have the necessary data
-        if (courseId && course) {
-            // First determine if the lesson exists
-            let lessonExists = false;
-            let lesson = null;
-
-            if (courseLessons) {
-                if (Array.isArray(courseLessons)) {
-                    // If courseLessons is an array, find the lesson by id
-                    lesson = courseLessons.find(l => l.id === lessonId);
-                    lessonExists = Boolean(lesson);
-                } else {
-                    // If courseLessons is an object, check if the lessonId exists as a key
-                    lessonExists = Boolean(courseLessons[lessonId]);
-                    lesson = courseLessons[lessonId];
-                }                // Update debug information
-                setDebug((prev: DebugInfo) => ({
-                    ...prev,
-                    lessonExists
-                }));
-            }
-
-            // User is an admin - always has access
-            if (isAdmin) {
-                setHasAccess(true);
-                return;
-            }
-
-            // Check if the course is free
-            if (course.isFree) {
-                setHasAccess(true);
-                return;
-            }
-
-            // Check if the lesson is free (if lesson is loaded)
-            if (lesson && lesson.isFree) {
-                setHasAccess(true);
-                return;
-            }
-
-            // Check if user has purchased the course (via Stripe payments)
-            if (user && userPaidProducts) {
-                const hasPurchased = userPaidProducts.some(product =>
-                    product.metadata?.courseId === courseId
-                );
-
-                if (hasPurchased) {
-                    setHasAccess(true);
-                    return;
-                }
-            }
-
-            // If no access conditions are met, user doesn't have access
-            setHasAccess(false);
-        }
-    }, [courseId, course, courseLessons, lessonId, isAdmin, user, userPaidProducts]);
-
-    // If course doesn't exist, show error
     if (!course) {
-        return (
-            <div className="container mx-auto px-4 py-8">
-                <Card className="p-6 shadow-lg">
-                    <div className="text-center py-10">
-                        <h2 className="text-xl font-semibold mb-4">Course not found</h2>                        <p className="text-gray-600 dark:text-gray-400 mb-6">
-                            The course you&apos;re looking for doesn&apos;t exist or you may not have access to it.
-                        </p>
-                        <button
-                            onClick={() => router.push("/courses")}
-                            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
-                        >
-                            Browse Courses
-                        </button>
-                    </div>
-                </Card>
-            </div>
-        );
+      return <LessonNotFound courseId={courseId} lessonId={lessonId} courseExists={false} />;
     }
 
-    // If lessons aren't loaded yet, show loading state
-    if (!courseLessons) {
-        return (
-            <div className="container mx-auto px-4 py-8">
-                <Card className="p-6 shadow-lg">
-                    <div className="text-center py-10">
-                        <h2 className="text-xl font-semibold mb-4">Loading course content...</h2>
-                        <div className="animate-pulse flex flex-col items-center">
-                            <div className="w-20 h-20 bg-gray-300 dark:bg-gray-700 rounded-full mb-4"></div>
-                            <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/2 mb-2"></div>
-                            <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/3"></div>
-                        </div>
-                    </div>
-                </Card>
-            </div>
-        );
-    }
+    // Try to get the specific lesson
+    let lesson = await getLessonById(courseId, lessonId) as Lesson;
 
-    // Get the lesson, handling both array and object formats
-    let lesson;
-    if (Array.isArray(courseLessons)) {
-        lesson = courseLessons.find(l => l.id === lessonId);
-    } else {
-        lesson = courseLessons[lessonId];
-    }
-
-    // Handle case where lesson is not found
+    // If lesson not found on first try, attempt to load all lessons to see if it's among them
     if (!lesson) {
-        return (
-            <div className="container mx-auto px-4 py-8">
-                <Card className="p-6 shadow-lg">
-                    <div className="text-center py-10">
-                        <h2 className="text-xl font-semibold mb-4">Lesson not found</h2>                        <p className="text-gray-600 dark:text-gray-400 mb-6">
-                            The lesson you&apos;re looking for doesn&apos;t exist or you may not have access to it.
-                        </p>
-                        <div className="space-y-4">
-                            <button
-                                onClick={() => router.push(`/courses/${courseId}`)}
-                                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
-                            >
-                                Return to Course
-                            </button>
+      console.log("Lesson not found, trying to load all course lessons");
 
-                            {/* Debugging information */}
-                            <div className="mt-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-left">
-                                <h3 className="font-bold mb-2">Debugging Information:</h3>
-                                <ul className="list-disc pl-5 space-y-1 text-sm">                                    <li>Course ID: {debug.courseId}</li>
-                                    <li>Lesson ID: {debug.lessonId}</li>                                    <li>Course Exists: {debug.courseExists ? 'Yes' : 'No'}</li>
-                                    <li>Course Lessons Loaded: {debug.courseLessonsExist ? 'Yes' : 'No'}</li>
-                                    <li>Lessons Available: {debug.lessonsAvailable ? 'Yes' : 'No'}</li>
-                                    <li>Lesson Exists: {debug.lessonExists ? 'Yes' : 'No'}</li>
-                                </ul>
-                                <div className="mt-2">
-                                    <button
-                                        onClick={() => getCourseLessons(courseId)}
-                                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm"
-                                    >
-                                        Retry Loading Lessons
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </Card>
-            </div>
-        );
+      // Load all course lessons
+      const allLessons = await getCourseLessons(courseId);
+
+      // Check if our target lesson is among them
+      if (allLessons && allLessons[lessonId]) {
+        console.log("Found lesson in course lessons collection");
+        lesson = allLessons[lessonId] as Lesson;
+      } else {
+        console.log("No such lesson exists even after loading all lessons!");
+        return <LessonNotFound courseId={courseId} lessonId={lessonId} courseExists={true} />;
+      }
     }
 
-    // Check if user has access to view this lesson
-    if (!hasAccess && !lesson.isFree && !isAdmin) {
-        return (
-            <div className="container mx-auto px-4 py-8">
-                <Card className="p-6 shadow-lg">
-                    <div className="text-center py-10">
-                        <h2 className="text-xl font-semibold mb-4">Access Denied</h2>
-                        <p className="text-gray-600 dark:text-gray-400 mb-6">
-                            You need to enroll in this course to access this lesson.
-                        </p>
-                        <div className="flex justify-center gap-4">
-                            <button
-                                onClick={() => router.push(`/courses/${courseId}`)}
-                                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
-                            >
-                                Go to Course
-                            </button>
-                            {!user && (
-                                <button
-                                    onClick={() => router.push("/login")}
-                                    className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
-                                >
-                                    Log In
-                                </button>
-                            )}
-                        </div>
-                    </div>
-                </Card>
-            </div>
-        );
-    }
+    // At this point we have a lesson
+    // Generate URLs for structured data
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cursuri.com';
+    const courseUrl = `${siteUrl}/courses/${courseId}`;
+    const lessonUrl = `${courseUrl}/lessons/${lessonId}`;
 
-    // For navigation, we need ordered lessons
-    let sortedLessons = [];
-    if (courseLessons) {
-        if (Array.isArray(courseLessons)) {
-            sortedLessons = [...courseLessons].sort((a, b) => {
-                const orderA = a.order || 0;
-                const orderB = b.order || 0;
-                return orderA - orderB;
-            });
-        } else {
-            sortedLessons = Object.values(courseLessons).sort((a, b) => {
-                const orderA = a.order || 0;
-                const orderB = b.order || 0;
-                return orderA - orderB;
-            });
-        }
-    }
+    // Get instructor name
+    const instructorName = typeof course.instructor === 'string'
+      ? course.instructor
+      : course.instructor?.name || 'Cursuri Instructor';
 
-    // Find current lesson index in the sorted array
-    const currentIndex = sortedLessons.findIndex(l => l.id === lessonId);
+    const courseData = {
+      title: course.name,
+      description: course.description || '',
+      instructorName,
+      slug: course.id,
+      createdAt: safeToISOString(course.createdAt),
+      updatedAt: safeToISOString(course.updatedAt)
+    };
 
-    // Get previous and next lessons based on the sorted order
-    const previousLesson = currentIndex > 0 ? sortedLessons[currentIndex - 1] : null;
-    const nextLesson = currentIndex < sortedLessons.length - 1 ? sortedLessons[currentIndex + 1] : null;
-
-    return (
-        <div className="container mx-auto px-4 py-8">
-            <LessonContent
-                lesson={lesson}
-                prevLessonId={previousLesson ? previousLesson.id : null}
-                nextLessonId={nextLesson ? nextLesson.id : null}
-                onNavigateLesson={(lessonId) => router.push(`/courses/${courseId}/lessons/${lessonId}`)}
-                onClose={() => router.push(`/courses/${courseId}`)}
-            />
-        </div>
+    // Generate structured data for the lesson
+    const lessonStructuredData = generateLessonStructuredData(
+      lesson,
+      courseData,
+      courseUrl,
+      lessonUrl
     );
+
+    // Generate breadcrumb structured data
+    const breadcrumbStructuredData = generateBreadcrumbStructuredData([
+      {
+        name: "Home",
+        url: siteUrl,
+        position: 1
+      },
+      {
+        name: "Courses",
+        url: `${siteUrl}/courses`,
+        position: 2
+      },
+      {
+        name: course.name,
+        url: courseUrl,
+        position: 3
+      },
+      {
+        name: lesson.title || lesson.name,
+        url: lessonUrl,
+        position: 4
+      }
+    ]);
+
+    // Return the lesson detail with structured data
+    return (
+      <>
+        {/* Add JSON-LD structured data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: lessonStructuredData }}
+        />
+
+        {/* Add breadcrumb structured data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: breadcrumbStructuredData }}
+        />        {/* Render the lesson component with explicit string params */}
+        <ClientLessonWrapper params={{
+          courseId: String(courseId),
+          lessonId: String(lessonId)
+        }} />
+      </>
+    );
+  } catch (error) {
+    console.error('Error rendering lesson page:', error);    // Fallback if data fetch fails - ensure we pass resolved params
+    try {
+      // Get params again since we might be in the error catch block
+      console.log("Using fallback path");      // Handle params safely in the fallback path
+      const resolvedParamsFallback = 'then' in params ? await params : params;
+      const courseIdFallback = resolvedParamsFallback ? String(resolvedParamsFallback.courseId) : '';
+      const lessonIdFallback = resolvedParamsFallback ? String(resolvedParamsFallback.lessonId) : '';
+
+      console.log("Fallback params - courseId:", courseIdFallback, "lessonId:", lessonIdFallback);
+
+      // First check if the course exists
+      const courseFallback = await getCourseById(courseIdFallback);
+
+      if (!courseFallback) {
+        return (
+          <div className="flex flex-col items-center justify-center min-h-screen p-4">
+            <h1 className="text-2xl font-bold mb-4">Course Not Found</h1>
+            <p className="mb-6">The course you're looking for doesn't exist.</p>
+            <a
+              href="/courses"
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Browse Courses
+            </a>
+          </div>
+        );
+      }
+
+      // Then check if the lesson exists
+      const lessonExists = await getLessonById(courseIdFallback, lessonIdFallback);
+
+      if (!lessonExists) {
+        console.log("No such lesson exists in fallback path!");
+        // Return a consistent error message with debugging information
+        return (
+          <div className="flex flex-col items-center justify-center min-h-screen p-4">
+            <h1 className="text-2xl font-bold mb-4">Lesson Not Found</h1>
+            <p className="mb-6">The lesson you're looking for doesn't exist or you may not have access to it.</p>
+            <a
+              href={`/courses/${courseIdFallback}`}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Return to Course
+            </a>
+            {/* Debugging information */}
+            <div className="mt-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-left max-w-lg w-full">
+              <h3 className="font-bold mb-2">Debugging Information:</h3>
+              <ul className="list-disc pl-5 space-y-1 text-sm">
+                <li>Course ID: {courseIdFallback}</li>
+                <li>Lesson ID: {lessonIdFallback}</li>
+                <li>Course Exists: {courseFallback ? 'Yes' : 'No'}</li>
+                <li>Course Lessons Loaded: Yes</li>
+                <li>Lessons Available: Yes</li>
+                <li>Lesson Exists: No</li>
+              </ul>
+            </div>
+          </div>
+        );
+      }      // If course exists but we had an error, pass the params to the component
+      // The component will handle access control and rendering
+      return <ClientLessonWrapper params={{
+        courseId: courseIdFallback,
+        lessonId: lessonIdFallback
+      }} />;
+    } catch (fallbackError) {
+      console.error("Error in fallback path:", fallbackError);      // Last resort fallback - try to extract params directly
+      try {
+        const lastResortParams = 'then' in params ? await params : params;
+        if (lastResortParams && typeof lastResortParams.courseId === 'string' && typeof lastResortParams.lessonId === 'string') {
+          return <ClientLessonWrapper params={{
+            courseId: lastResortParams.courseId,
+            lessonId: lastResortParams.lessonId
+          }} />;
+        }
+      } catch (err) {
+        console.error("Error in last resort param extraction:", err);
+      }
+
+      // Ultimate fallback - return an error page
+      return (
+        <div className="flex flex-col items-center justify-center min-h-screen p-4">
+          <h1 className="text-2xl font-bold mb-4">Error Loading Lesson</h1>
+          <p className="mb-6">There was a problem loading this lesson. Please try again later.</p>
+          <a
+            href="/courses"
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Back to Courses
+          </a>
+        </div>
+      );
+    }
+  }
 }

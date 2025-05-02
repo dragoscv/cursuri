@@ -98,6 +98,23 @@ body {
   }
 }
 
+/* Animation delay utilities */
+.animate-delay-500 {
+  animation-delay: 500ms;
+}
+
+.animate-delay-1000 {
+  animation-delay: 1000ms;
+}
+
+.animate-delay-1500 {
+  animation-delay: 1500ms;
+}
+
+.animate-delay-2000 {
+  animation-delay: 2000ms;
+}
+
 .data-flow-path {
   stroke-dasharray: 20;
   animation: data-flow 3s linear infinite;

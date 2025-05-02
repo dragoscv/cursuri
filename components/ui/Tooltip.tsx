@@ -104,9 +104,7 @@ export default function Tooltip({
         return () => {
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
         };
-    }, []);
-
-    useEffect(() => {
+    }, []); useEffect(() => {
         if (isVisible) {
             window.addEventListener('scroll', updatePosition, true);
             window.addEventListener('resize', updatePosition);
@@ -116,6 +114,8 @@ export default function Tooltip({
                 window.removeEventListener('resize', updatePosition);
             };
         }
+
+        return undefined; // Return empty cleanup function when tooltip is not visible
     }, [isVisible]);
 
     // Calculate arrow position and styling based on placement

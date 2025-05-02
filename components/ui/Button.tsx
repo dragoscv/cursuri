@@ -79,8 +79,12 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
         endContent,
         className = '',
         children,
+        onClick,
         ...rest
     } = props;
+
+    // Handle deprecated onClick by mapping it to onPress
+    const eventHandlers = onClick ? { onPress: onClick } : {};
 
     // Map our variant to HeroUI's variant
     const getHeroVariant = (): HeroButtonProps['variant'] => {
@@ -100,7 +104,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
             default:
                 return 'solid';
         }
-    };    // Construct the className based on the props
+    };
+
+    // Construct the className based on the props
     const getButtonClasses = () => {
         const classes = ['btn', 'cursor-pointer'];
 
@@ -135,7 +141,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
         if (size === 'xs') return 'sm';
         if (size === 'xl') return 'lg';
         return size as HeroButtonProps['size'];
-    };    // Pass through the HeroUI Button with our custom classes
+    };
+
+    // Pass through the HeroUI Button with our custom classes
     return (
         <HeroButton
             ref={ref}
@@ -144,8 +152,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
             isDisabled={isLoading || rest.isDisabled}
             startContent={isLoading ? null : startContent}
             endContent={isLoading ? null : endContent}
-            // Use a more deterministic approach for class names
             className={className}
+            {...eventHandlers}
             {...rest}
         >
             {isLoading && loadingText ? loadingText : children}

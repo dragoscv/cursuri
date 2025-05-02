@@ -7,32 +7,41 @@ import { stripePayments } from "@/utils/firebase/stripe";
 import { firebaseApp } from "@/utils/firebase/firebase.config";
 import LoadingButton from "./Buttons/LoadingButton";
 import Login from "./Login";
-import { Button, Badge, Chip } from "@heroui/react";
+import { Button, Badge, Chip, Spinner } from "@heroui/react";
 import { motion, useAnimation, useInView } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { FiClock, FiUsers, FiStar } from "./icons/FeatherIcons";
+import { FiClock, FiUsers, FiStar, FiAlertCircle } from "./icons/FeatherIcons";
+import { useToast } from "@/components/Toast";
+import { CacheStatus } from "@/types";
 
 export default function Courses() {
     const [loadingPayment, setLoadingPayment] = useState(false)
-    const [loadingCourseId, setLoadingCourseId] = useState<string | null>(null)
-
-    // For animation
+    const [loadingCourseId, setLoadingCourseId] = useState<string | null>(null)    // For animation
     const controls = useAnimation()
     const ref = useRef(null)
-    const isInView = useInView(ref, { once: false, amount: 0.2 })
+    const isInView = useInView(ref, { once: false, amount: 0.2 });
 
     useEffect(() => {
         if (isInView) {
-            controls.start('visible')
+            controls.start('visible');
         }
-    }, [controls, isInView])
+    }, [controls, isInView]);
 
     const router = useRouter();
     const context = useContext(AppContext)
     if (!context) {
         throw new Error("You probably forgot to put <AppProvider>.")
     }
-    const { courses, products, openModal, closeModal, userPaidProducts, user } = context
+    const {
+        courses,
+        products,
+        openModal,
+        closeModal,
+        userPaidProducts,
+        user,
+        courseLoadingStates
+    } = context
+    const toast = useToast();
 
     const buyCourse = useCallback(async (priceId: string, courseId: string) => {
         if (!user) {
@@ -66,15 +75,27 @@ export default function Courses() {
                     courseId: courseId
                 }
             })
+            toast.showToast({
+                type: 'success',
+                title: 'Redirecting to payment',
+                message: 'You are being redirected to Stripe to complete your purchase.',
+                duration: 4000
+            });
             window.location.assign(session.url);
         } catch (error) {
             console.error("Payment error:", error);
+            toast.showToast({
+                type: 'error',
+                title: 'Payment Error',
+                message: 'There was a problem starting the payment process. Please try again.',
+                duration: 6000
+            });
         } finally {
             setLoadingPayment(false)
             setLoadingCourseId(null)
         }
 
-    }, [closeModal, openModal, user]);
+    }, [closeModal, openModal, user, toast]);
 
     const handleCourseClick = useCallback((course: any) => {
         // Navigate to the course page using Next.js client-side navigation
@@ -268,8 +289,7 @@ export default function Courses() {
                             {topic}
                         </div>
                     ))}
-                </div>
-            </motion.div>
+                </div>            </motion.div>
 
             <motion.div
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
@@ -277,7 +297,34 @@ export default function Courses() {
                 initial="hidden"
                 animate={controls}
             >
-                {Object.keys(courses).map((key: any) => {
+                {/* Loading state when courses are being fetched */}
+                {courseLoadingStates && courseLoadingStates['all'] === 'loading' && (
+                    <div className="col-span-full flex flex-col items-center justify-center py-16">
+                        <Spinner size="lg" color="primary" className="mb-4" />
+                        <p className="text-[color:var(--ai-muted)] text-lg">Loading courses...</p>
+                    </div>
+                )}
+
+                {/* Error state when courses failed to load */}
+                {courseLoadingStates && courseLoadingStates['all'] === 'error' && (
+                    <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
+                        <FiAlertCircle className="w-12 h-12 text-red-500 mb-4" />
+                        <h3 className="text-xl font-semibold mb-2">Failed to load courses</h3>
+                        <p className="text-[color:var(--ai-muted)] mb-6">There was a problem loading the courses. Please try refreshing the page.</p>
+                        <Button color="primary" onClick={() => window.location.reload()}>
+                            Refresh Page
+                        </Button>
+                    </div>
+                )}
+
+                {/* Display courses when loaded successfully */}
+                {courseLoadingStates && courseLoadingStates['all'] === 'success' && Object.keys(courses).length === 0 && (
+                    <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
+                        <p className="text-[color:var(--ai-muted)] text-lg">No courses available at the moment.</p>
+                    </div>
+                )}
+
+                {courseLoadingStates && courseLoadingStates['all'] === 'success' && Object.keys(courses).map((key: any) => {
                     const course = courses[key];
                     const { amount, currency, priceId } = getCoursePrice(course);
                     const purchased = isPurchased(course.id);
@@ -440,13 +487,12 @@ export default function Courses() {
                                                 Enroll Now
                                             </Button>
                                         )
-                                    )}
-                                </div>
+                                    )}                                </div>
                             </div>
                         </motion.div>
                     )
                 })}
             </motion.div>
         </div>
-    )
+    );
 }

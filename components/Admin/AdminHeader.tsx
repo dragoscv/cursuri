@@ -46,9 +46,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onTabChange, activeTab = 'das
                                 </svg>
                                 <span className="ml-2 text-xl font-bold text-gray-900 dark:text-white">Admin</span>
                             </div>
-                        </Link>
-
-                        <nav className="ml-8 hidden md:flex space-x-4">
+                        </Link>                        <nav className="ml-8 hidden md:flex space-x-4">
                             <NavLink
                                 label="Dashboard"
                                 isActive={activeTab === 'dashboard'}
@@ -60,14 +58,29 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onTabChange, activeTab = 'das
                                 onClick={() => handleNavigation('courses')}
                             />
                             <NavLink
+                                label="Batch Ops"
+                                isActive={activeTab === 'batchOperations'}
+                                onClick={() => handleNavigation('batchOperations')}
+                            />
+                            <NavLink
                                 label="Users"
                                 isActive={activeTab === 'users'}
                                 onClick={() => handleNavigation('users')}
                             />
                             <NavLink
+                                label="Enhanced Users"
+                                isActive={activeTab === 'enhancedUsers'}
+                                onClick={() => handleNavigation('enhancedUsers')}
+                            />
+                            <NavLink
                                 label="Analytics"
                                 isActive={activeTab === 'analytics'}
                                 onClick={() => handleNavigation('analytics')}
+                            />
+                            <NavLink
+                                label="Engagement"
+                                isActive={activeTab === 'courseEngagement'}
+                                onClick={() => handleNavigation('courseEngagement')}
                             />
                             <NavLink
                                 label="Settings"

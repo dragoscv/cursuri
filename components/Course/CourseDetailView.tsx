@@ -29,11 +29,34 @@ export default function CourseDetailView({
         const enhancedCourse = { ...course };
 
         // Add lesson count from actual lessons data
-        enhancedCourse.lessonsCount = courseLessons ? courseLessons.length : 0;
-
-        // Calculate minutes of content
+        enhancedCourse.lessonsCount = courseLessons ? courseLessons.length : 0;        // Calculate minutes of content
         const totalMinutes = courseLessons ? courseLessons.reduce((acc, lesson) => {
-            return acc + (lesson.durationMinutes || 0);
+            // Ensure lesson is defined
+            if (!lesson) return acc;
+
+            // Handle different duration property types with enhanced safety checks
+            let durationMins = 0;
+
+            // First try durationMinutes field
+            if (lesson.durationMinutes !== undefined) {
+                if (typeof lesson.durationMinutes === 'number') {
+                    durationMins = lesson.durationMinutes;
+                } else if (typeof lesson.durationMinutes === 'string') {
+                    const parsed = parseInt(lesson.durationMinutes, 10);
+                    if (!isNaN(parsed)) durationMins = parsed;
+                }
+            }
+            // Fall back to duration field if durationMinutes is not available
+            else if (lesson.duration !== undefined) {
+                if (typeof lesson.duration === 'number') {
+                    durationMins = lesson.duration;
+                } else if (typeof lesson.duration === 'string') {
+                    const parsed = parseInt(lesson.duration, 10);
+                    if (!isNaN(parsed)) durationMins = parsed;
+                }
+            }
+
+            return acc + durationMins;
         }, 0) : 0;
 
         // Format duration based on total minutes

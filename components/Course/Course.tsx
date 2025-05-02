@@ -38,12 +38,25 @@ export default function Course({ courseId }: CourseProps) {
     const course = courses[courseId]
     const hasAccess = userPaidProducts?.find((userPaidProduct: UserPaidProduct) =>
         userPaidProduct.metadata.courseId === courseId
-    )
-
-    useEffect(() => {
+    )    useEffect(() => {
         // We only need to get course reviews, as lessons are already available in the context
         getCourseReviews(courseId)
-    }, [courseId, getCourseReviews]);
+
+        // Debug what courses and lessons we have in the context
+        console.log('Current AppContext state:', {
+            courseId,
+            course,
+            hasCourseLessons: !!lessons[courseId],
+            lessonKeys: lessons[courseId] ? Object.keys(lessons[courseId]) : [],
+            allLessonKeys: Object.keys(lessons)
+        });
+
+        // Make sure course lessons are loaded
+        if (!lessons[courseId]) {
+            console.log('Explicitly loading lessons for course:', courseId);
+            getCourseLessons(courseId);
+        }
+    }, [courseId, getCourseReviews, lessons, getCourseLessons, course]);
 
     useEffect(() => {
         if (lessons[courseId]) {
@@ -57,22 +70,45 @@ export default function Course({ courseId }: CourseProps) {
         if (hasAccess || isAdmin || lesson.isFree) {
             router.push(`/courses/${courseId}/lessons/${lesson.id}`)
         }
-    }
+    }    const sortedLessons = (): Lesson[] => {
+        if (!lessons || !courseId || !lessons[courseId]) {
+            console.warn(`No lessons found for courseId: ${courseId}`, { lessons });
+            return [];
+        }
 
-    const sortedLessons = (): Lesson[] => {
-        if (!lessons[courseId]) return []
+        // Debug the data structure
+        console.log(`Lessons data structure for course ${courseId}:`,
+            { isArray: Array.isArray(lessons[courseId]), keys: Object.keys(lessons[courseId]) }
+        );
 
         // Handle both possible data structures: object with lesson IDs as keys or array of lessons
         let lessonsArray: Lesson[];
+
         if (Array.isArray(lessons[courseId])) {
             lessonsArray = lessons[courseId];
-        } else {
+        } else if (typeof lessons[courseId] === 'object' && lessons[courseId] !== null) {
+            // Only try to get values if it's a non-null object
             lessonsArray = Object.values(lessons[courseId]);
+        } else {
+            // If it's neither an array nor an object, return an empty array
+            console.warn('Lessons data has unexpected format', { lessons: lessons[courseId], courseId });
+            return [];
         }
 
+        // Validate that we have lessons before sorting
+        if (!lessonsArray || lessonsArray.length === 0) {
+            console.warn('No lessons array after conversion', { lessons, courseId });
+            return [];
+        }
+
+        // Filter out any null/undefined lessons
+        lessonsArray = lessonsArray.filter(lesson => lesson != null);
+
+        console.log(`Found ${lessonsArray.length} lessons for course ${courseId}`);
+
         return lessonsArray.sort((a: Lesson, b: Lesson) => {
-            const orderA = a.order || 0;
-            const orderB = b.order || 0;
+            const orderA = a?.order || 0;
+            const orderB = b?.order || 0;
             return orderA - orderB;
         });
     }
@@ -346,7 +382,85 @@ export default function Course({ courseId }: CourseProps) {
                         </div>
                     </div>
                 )}
-            </div>
+            </div>            {/* Certificate Download Button */}
+            {hasAccess && courseProgress === 100 && user && (
+                <div className="my-6">
+                    <Card className="border border-[color:var(--ai-primary)]/20 bg-gradient-to-r from-[color:var(--ai-primary)]/5 to-[color:var(--ai-card-bg)] shadow-md">
+                        <div className="p-6 flex flex-col md:flex-row items-center justify-between">
+                            <div className="flex items-center space-x-4 mb-4 md:mb-0">
+                                <div className="w-12 h-12 rounded-full bg-[color:var(--ai-primary)]/10 flex items-center justify-center text-[color:var(--ai-primary)]">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="28"
+                                        height="28"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="1.5"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    >
+                                        <circle cx="12" cy="8" r="7"></circle>
+                                        <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-bold">Course Completed!</h3>
+                                    <p className="text-[color:var(--ai-muted)]">Congratulations on finishing this course</p>
+                                </div>
+                            </div>
+                            <Button
+                                color="primary"
+                                size="lg"
+                                onClick={async () => {
+                                    try {
+                                        const token = await user.getIdToken();
+                                        const res = await fetch('/api/certificate', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'Authorization': `Bearer ${token}`,
+                                            },
+                                            body: JSON.stringify({ courseId }),
+                                        });
+                                        if (!res.ok) throw new Error('Failed to generate certificate');
+                                        const blob = await res.blob();
+                                        const url = window.URL.createObjectURL(blob);
+                                        const a = document.createElement('a');
+                                        a.href = url;
+                                        a.download = `certificate-${courseId}.pdf`;
+                                        document.body.appendChild(a);
+                                        a.click();
+                                        a.remove();
+                                        window.URL.revokeObjectURL(url);
+                                    } catch (err) {
+                                        alert('Could not download certificate. Please try again.');
+                                    }
+                                }}
+                                startContent={
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="18"
+                                        height="18"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    >
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="7 10 12 15 17 10"></polyline>
+                                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                                    </svg>
+                                }
+                            >
+                                Download Certificate
+                            </Button>
+                        </div>
+                    </Card>
+                </div>
+            )}
         </div>
     )
 }

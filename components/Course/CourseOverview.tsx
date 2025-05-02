@@ -1,13 +1,17 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { motion } from 'framer-motion';
 import { Course } from '@/types';
-import { FiCheckCircle, FiTarget, FiCalendar, FiBookOpen, FiFileText, FiAward, FiUser } from '../icons/FeatherIcons';
+import { FiCheckCircle, FiTarget, FiCalendar, FiBookOpen, FiFileText, FiAward, FiUser, FiLink } from '../icons/FeatherIcons';
+import { AppContext } from '../AppContext';
 
-interface CourseOverviewProps {
-    course: Course;
-}
+// ...existing code...
+import { CourseOverviewProps } from "@/types";
+// ...existing code...
+
 
 const CourseOverview: React.FC<CourseOverviewProps> = ({ course }) => {
+    const context = useContext(AppContext);
+
     // Sample benefits if not provided
     const benefits = course.benefits || [
         "Learn key concepts and best practices",
@@ -140,6 +144,60 @@ const CourseOverview: React.FC<CourseOverviewProps> = ({ course }) => {
                     </div>
                 </motion.div>
             </motion.div>
+
+            {/* Prerequisites */}
+            {course.prerequisites && course.prerequisites.length > 0 && (
+                <motion.div
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
+                >
+                    <motion.div
+                        variants={itemVariants}
+                        className="border border-[color:var(--ai-card-border)] rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)] shadow-sm"
+                    >
+                        <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 border-b border-[color:var(--ai-card-border)]">
+                            <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
+                                <FiLink className="mr-2 text-[color:var(--ai-primary)]" />
+                                <span>Prerequisites</span>
+                            </h3>
+                        </div>
+                        <div className="p-4">
+                            <div className="space-y-3">                                {course.prerequisites.map((prerequisiteId, index) => {
+                                // Look up the prerequisite course from context
+                                const prerequisiteCourse = context?.courses?.[prerequisiteId];
+
+                                return (
+                                    <motion.div
+                                        key={prerequisiteId}
+                                        variants={itemVariants}
+                                        className="flex items-center gap-3"
+                                    >
+                                        <div className="w-8 h-8 rounded-md bg-[color:var(--ai-primary)]/10 flex items-center justify-center flex-shrink-0">
+                                            <FiLink className="text-[color:var(--ai-primary)]" size={16} />
+                                        </div>
+                                        <div className="flex-1">
+                                            <a
+                                                href={`/courses/${prerequisiteId}`}
+                                                className="text-sm font-medium text-[color:var(--ai-foreground)] hover:text-[color:var(--ai-primary)] transition-colors"
+                                            >
+                                                {prerequisiteCourse ? prerequisiteCourse.name : `Course ${prerequisiteId}`}
+                                            </a>
+                                        </div>
+                                        <a
+                                            href={`/courses/${prerequisiteId}`}
+                                            className="text-xs px-3 py-1 rounded-full bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] hover:bg-[color:var(--ai-primary)]/20 transition-colors"
+                                        >
+                                            View Course
+                                        </a>
+                                    </motion.div>
+                                );
+                            })}
+                            </div>
+                        </div>
+                    </motion.div>
+                </motion.div>
+            )}
 
             {/* Additional Course Info if available */}
             {course.additionalInfo && (

@@ -33,12 +33,31 @@ service cloud.firestore {
         allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
         allow write: if request.auth != null && (request.auth.uid == userId || isAdmin());
       }
-      
-      // Adding user activity tracking
+        // Adding user activity tracking
       match /activity/{activityId} {
         allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
         allow create: if request.auth != null && request.auth.uid == userId;
         allow update, delete: if false; // Activities should be immutable once created
+      }
+      
+      // Adding bookmarks collection
+      match /bookmarks/{bookmarkId} {
+        allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+        allow write: if request.auth != null && request.auth.uid == userId;
+        allow delete: if request.auth != null && request.auth.uid == userId;
+      }
+        // Adding wishlist collection
+      match /wishlist/{wishlistItemId} {
+        allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+        allow write: if request.auth != null && request.auth.uid == userId;
+        allow delete: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // Adding achievements collection
+      match /achievements/{achievementId} {
+        allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+        allow write: if request.auth != null && (request.auth.uid == userId || isAdmin());
+        allow delete: if request.auth != null && isAdmin();
       }
     }
     

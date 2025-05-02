@@ -4,15 +4,23 @@ An interactive online course platform built with Next.js, TypeScript, Firebase, 
 
 ## Features
 
-- **Course Marketplace**: Browse and purchase courses with Stripe payment integration
-- **User Authentication**: Firebase authentication for user management
-- **Secure Content Access**: Access to course content only after purchase
-- **Course Lessons**: Organized lesson structure for each course
-- **Review System**: Allow users to leave reviews for courses
-- **Admin Panel**: Course and lesson management for administrators
-- **Responsive Design**: Mobile-friendly interface using TailwindCSS and NextUI
-- **Dark/Light Mode**: Theme toggle functionality
-- **Captions and Transcriptions**: Automatically generate captions and transcriptions for lesson content using Azure Speech Service
+- ✅ **Course Marketplace**: Browse and purchase courses with Stripe payment integration
+- ✅ **User Authentication**: Firebase authentication for user management
+- ✅ **Secure Content Access**: Access to course content only after purchase
+- ✅ **Course Lessons**: Organized lesson structure for each course
+- ✅ **Review System**: Allow users to leave reviews for courses
+- ✅ **Admin Panel**: Course and lesson management for administrators
+- ✅ **Responsive Design**: Mobile-friendly interface using TailwindCSS and NextUI
+- ✅ **Dark/Light Mode**: Theme toggle functionality
+- ✅ **Captions and Transcriptions**: Automatically generate captions and transcriptions for lesson content using Azure Speech Service
+- ✅ **Profile Dashboard**: User profile with purchased courses and account settings
+- ✅ **Wishlist Functionality**: Save courses for later
+- ✅ **Bookmarking**: Bookmark lessons for quick access
+- ✅ **Course Prerequisites System**: Define prerequisites for courses
+- ✅ **Offline Content**: Download lessons for offline viewing
+- ❌ **Course Completion Certificates**: Generate certificates for completed courses
+- ❌ **Advanced Analytics**: Detailed analytics for course engagement
+- ❌ **Achievement System**: Badges and achievements for users
 
 ## Technology Stack
 

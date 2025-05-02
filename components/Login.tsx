@@ -4,6 +4,7 @@ import { signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, si
 import LoadingButton from "./Buttons/LoadingButton"
 import GoogleIcon from "./icons/GoogleIcon"
 import { motion } from "framer-motion";
+import { useToast } from "@/components/Toast";
 
 export default function Login(props: any) {
     // State variables for the enhanced login component
@@ -15,6 +16,7 @@ export default function Login(props: any) {
     const [loadingGoogleLogin, setLoadingGoogleLogin] = useState(false);
     const [loadingEmailLogin, setLoadingEmailLogin] = useState(false);
     const [loadingEmailRegister, setLoadingEmailRegister] = useState(false);
+    const toast = useToast();
 
     // Clear error message when inputs change
     useEffect(() => {
@@ -31,10 +33,22 @@ export default function Login(props: any) {
             const result = await signInWithPopup(firebaseAuth, provider);
             if (result) {
                 props.onClose();
+                toast.showToast({
+                    type: 'success',
+                    title: 'Login Successful',
+                    message: 'You are now signed in with Google.',
+                    duration: 4000
+                });
             }
         } catch (error: any) {
             console.error("Google login error:", error);
             setErrorMessage(error.message || "Failed to sign in with Google");
+            toast.showToast({
+                type: 'error',
+                title: 'Login Error',
+                message: error.message || 'Failed to sign in with Google',
+                duration: 6000
+            });
         } finally {
             setLoadingGoogleLogin(false);
         }
@@ -51,6 +65,12 @@ export default function Login(props: any) {
             const result = await signInWithEmailAndPassword(firebaseAuth, email, password);
             if (result) {
                 props.onClose();
+                toast.showToast({
+                    type: 'success',
+                    title: 'Login Successful',
+                    message: 'You are now signed in.',
+                    duration: 4000
+                });
             }
         } catch (error: any) {
             console.error("Email login error:", error);
@@ -154,6 +174,12 @@ export default function Login(props: any) {
             const result = await createUserWithEmailAndPassword(firebaseAuth, email, password);
             if (result) {
                 props.onClose();
+                toast.showToast({
+                    type: 'success',
+                    title: 'Registration Successful',
+                    message: 'Your account has been created. You are now signed in.',
+                    duration: 4000
+                });
             }
         } catch (error: any) {
             console.error("Registration error:", error);
@@ -162,6 +188,12 @@ export default function Login(props: any) {
             } else {
                 setErrorMessage(error.message || "Registration failed");
             }
+            toast.showToast({
+                type: 'error',
+                title: 'Registration Error',
+                message: error.message || 'Registration failed',
+                duration: 6000
+            });
         } finally {
             setLoadingEmailRegister(false);
         }
@@ -284,7 +316,7 @@ export default function Login(props: any) {
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full p-2.5 bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] rounded-lg focus:ring-2 focus:ring-[color:var(--ai-primary)]/50 focus:border-[color:var(--ai-primary)] text-[color:var(--ai-foreground)]"
+                            className="w-full p-2.5 bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] rounded-lg focus:ring-2 focus:ring-[color:var(--ai-primary)]/50 focus:border-[color:var(--ai-primary)] text-[color:var(--ai-foreground]"
                             placeholder="••••••••"
                             required
                         />

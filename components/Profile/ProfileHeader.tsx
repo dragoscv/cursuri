@@ -1,11 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-interface ProfileHeaderProps {
-    title: string;
-    description?: string;
-    actions?: React.ReactNode;
-}
+import { ProfileHeaderProps } from "@/types";
+// ...existing code...
+
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     title,
@@ -27,7 +25,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
             {/* Animated decorative elements */}
             <div className="absolute top-4 right-14 h-2 w-2 rounded-full bg-[color:var(--ai-primary)]/40 animate-pulse"></div>
-            <div className="absolute top-8 right-8 h-3 w-3 rounded-full bg-[color:var(--ai-secondary)]/30 animate-pulse" style={{ animationDelay: "1s" }}></div>
+            <div className="absolute top-8 right-8 h-3 w-3 rounded-full bg-[color:var(--ai-secondary)]/30 animate-pulse delay-1000"></div>
 
             <motion.div
                 initial={{ opacity: 0, y: -20 }}

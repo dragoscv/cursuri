@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { AppContext } from '@/components/AppContext';
 
 export default function useProfileStats() {
@@ -22,11 +22,19 @@ export default function useProfileStats() {
             lessonName?: string;
             date: Date;
         }[]
-    });
+    });    // Process user data to get statistics    // Create a ref outside the effect to persist across renders
+    const lastSignatureRef = useRef('');
 
-    // Process user data to get statistics
     useEffect(() => {
-        if (!user || !userPaidProducts || !courses) return;
+        if (!user || !userPaidProducts || !courses || userPaidProducts.length === 0) return;
+
+        // Avoid recalculating if there's no change in relevant data
+        const dataSignature = `${userPaidProducts.length}-${Object.keys(courses).length}-${Object.keys(lessonProgress).length}`;
+
+        if (dataSignature === lastSignatureRef.current) {
+            return; // Skip processing if data hasn't changed
+        }
+        lastSignatureRef.current = dataSignature;
 
         let totalLessons = 0;
         let completedLessons = 0;

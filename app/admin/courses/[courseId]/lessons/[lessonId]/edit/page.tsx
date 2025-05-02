@@ -2,7 +2,6 @@
 
 import AddLesson from "@/components/Course/AddLesson";
 import { Card, CardBody } from "@heroui/react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 
 export default function EditLessonPage() {

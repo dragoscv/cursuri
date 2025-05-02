@@ -533,33 +533,18 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
     const renderDropdown = () => {
         if (!isOpen) return null;
 
-        const dropdownStyle: React.CSSProperties = {
-            position: 'absolute',
-            width: '100%',
-            zIndex: 99999, // Much higher z-index to ensure it's above everything
-        };
-
-        // Position dropdown above or below the select
-        if (dropdownPlacement === 'top') {
-            dropdownStyle.bottom = '100%';
-            dropdownStyle.marginBottom = '2px';
-        } else {
-            dropdownStyle.top = '100%';
-            dropdownStyle.marginTop = '2px';
-        }
-
         return (
             <div
                 id="select-dropdown"
                 ref={dropdownRef}
                 className={`
+                    absolute w-full z-[99999]
+                    ${dropdownPlacement === 'top' ? 'bottom-full mb-0.5 origin-bottom' : 'top-full mt-0.5 origin-top'}
                     overflow-auto bg-[color:var(--ai-card-bg)] 
                     border border-[color:var(--ai-card-border)] rounded-lg shadow-xl 
                     animate-in fade-in-0 zoom-in-95 max-h-60
-                    ${dropdownPlacement === 'top' ? 'origin-bottom' : 'origin-top'}
                     ${classNames.listboxWrapper || ''}
                 `}
-                style={dropdownStyle}
             >
                 <ul
                     className={`py-1 ${classNames.listbox || ''}`}
@@ -573,57 +558,61 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
                             const isItemSelected = item.itemKey === (selectedKeys[0] || selectedValue);
                             const isFocused = index === focusedIndex;
 
-                            return (<li
-                                key={item.itemKey}
-                                data-index={index}
-                                className={`
+                            return (
+                                // eslint-disable-next-line
+                                <li
+                                    key={item.itemKey}
+                                    data-index={index}
+                                    className={`
                                         ${sizeStyles.itemPadding} ${sizeStyles.text} cursor-pointer
                                         flex items-center transition-colors duration-150
                                         ${isItemSelected
-                                        ? 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]'
-                                        : isFocused
-                                            ? 'bg-[color:var(--ai-primary)]/5 text-[color:var(--ai-foreground)] outline-none ring-1 ring-[color:var(--ai-primary)]/30'
-                                            : 'hover:bg-[color:var(--ai-card-border)]/30 text-[color:var(--ai-foreground)]'
-                                    }
+                                            ? 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]'
+                                            : isFocused
+                                                ? 'bg-[color:var(--ai-primary)]/5 text-[color:var(--ai-foreground)] outline-none ring-1 ring-[color:var(--ai-primary)]/30'
+                                                : 'hover:bg-[color:var(--ai-card-border)]/30 text-[color:var(--ai-foreground)]'
+                                        }
                                         ${item.isDisabled ? 'opacity-50 cursor-not-allowed' : ''}
                                         ${item.className || ''}
                                         ${classNames.item || ''}
                                     `}
-                                role="option"
-                                aria-selected={isItemSelected}
-                                tabIndex={isFocused ? 0 : -1} onMouseEnter={() => setFocusedIndex(index)} onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    if (!item.isDisabled) {
-                                        // For mouse clicks, close the dropdown after selection (keepOpen = false)
-                                        handleSelect(item.itemKey, item.value || item.itemKey, item.children, false);
-                                    }
-                                }}
-                            >
-                                {item.startContent && (
-                                    <span className="mr-2 flex-shrink-0">
-                                        {item.startContent}
-                                    </span>
-                                )}
-                                <div className="flex flex-col flex-grow">
-                                    <span>{item.children}</span>
-                                    {item.description && (
-                                        <span className="text-[color:var(--ai-muted)] text-xs mt-0.5">
-                                            {item.description}
+                                    role="option"
+                                    aria-selected={isItemSelected ? 'true' : 'false'}
+                                    tabIndex={isFocused ? 0 : -1}
+                                    onMouseEnter={() => setFocusedIndex(index)}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        if (!item.isDisabled) {
+                                            // For mouse clicks, close the dropdown after selection (keepOpen = false)
+                                            handleSelect(item.itemKey, item.value || item.itemKey, item.children, false);
+                                        }
+                                    }}
+                                >
+                                    {item.startContent && (
+                                        <span className="mr-2 flex-shrink-0">
+                                            {item.startContent}
                                         </span>
                                     )}
-                                </div>
-                                {item.endContent && (
-                                    <span className="ml-auto flex-shrink-0">
-                                        {item.endContent}
-                                    </span>
-                                )}
-                                {isItemSelected && (
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2 text-[color:var(--ai-primary)]" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                    </svg>
-                                )}
-                            </li>
+                                    <div className="flex flex-col flex-grow">
+                                        <span>{item.children}</span>
+                                        {item.description && (
+                                            <span className="text-[color:var(--ai-muted)] text-xs mt-0.5">
+                                                {item.description}
+                                            </span>
+                                        )}
+                                    </div>
+                                    {item.endContent && (
+                                        <span className="ml-auto flex-shrink-0">
+                                            {item.endContent}
+                                        </span>
+                                    )}
+                                    {isItemSelected && (
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2 text-[color:var(--ai-primary)]" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                        </svg>
+                                    )}
+                                </li>
                             );
                         })
                     ) : (
@@ -669,6 +658,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
                 </select>
 
                 {/* Custom select trigger */}
+                {/* eslint-disable-next-line jsx-a11y/aria-proptypes */}
                 <button
                     type="button"
                     className={`
@@ -682,7 +672,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
                     `}
                     onClick={() => !isDisabled && setIsOpen(!isOpen)}
                     disabled={isDisabled}
-                    aria-expanded={isOpen}
+                    aria-expanded={isOpen ? 'true' : 'false'}
                     aria-haspopup="listbox"
                 >
                     <div className="flex items-center flex-grow overflow-hidden">
