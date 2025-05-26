@@ -51,6 +51,38 @@ These files are critical for documentation, configuration, access control, and p
 
 ---
 
+## 🧪 Debug Logs & Agent Feedback Loop
+
+Why?
+
+To help users and developers quickly fix bugs, debug logs are captured during runtime when the AI agent detects or triggers an error.
+
+What’s logged?
+
+Timestamped logs (UTC format)
+
+Stack traces
+
+User inputs that triggered the error
+
+Context snapshot (state, props, route, etc.)
+
+Suggested feedback: What the user should do or provide to the agent for resolution
+
+Where?
+
+Logs will be logged in the console in the development environment.
+In production, logs will be sent to a logging service Firebase for analysis.
+This will help the AI agent understand the context of the error and provide better suggestions for resolution.
+
+export const logWithTime = (message: string, ...args: any[]) => {
+const now = new Date();
+const timestamp = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}.${now.getMilliseconds().toString().padStart(3, '0')}`;
+console.log(`[${timestamp}] ${message}`, ...args);
+};
+
+## logWithTime(`⚠️ WARNING: Attempted to mark item as completed but it has no ID`);
+
 ## 💬 Languages
 
 - **HTML** – App markup and semantic structure.

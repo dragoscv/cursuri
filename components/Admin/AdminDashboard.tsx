@@ -3,7 +3,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Spinner } from '@heroui/react';
 import { AppContext } from '@/components/AppContext';
-import { AdminAnalytics } from '@/types';
 import AdminDashboardTabs from './AdminDashboardTabs';
 
 const AdminDashboard: React.FC = () => {

@@ -1,5 +1,5 @@
 import React from "react";
-import { Lesson, Course } from "@/types";
+import { Lesson } from "@/types";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
 
@@ -10,6 +10,7 @@ interface LessonsTableProps {
     onReorder?: (lessonIds: string[]) => void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function LessonsTable({ lessons, courseId, onEdit, onReorder }: LessonsTableProps) {
     // Sort lessons by order
     const sortedLessons = [...lessons].sort((a, b) => (a.order || 0) - (b.order || 0));

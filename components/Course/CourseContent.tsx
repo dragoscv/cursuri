@@ -28,16 +28,19 @@ const CourseContent: React.FC<CourseContentProps> = ({
     isAdmin,
     completedLessons = {},
     handleLessonClick
-}) => {
-    // Debug lessons input
+}) => {    // Debug lessons input with more detailed information
     console.log('CourseContent received lessons:', {
         count: lessons?.length || 0,
-        lessonsEmpty: !lessons || lessons.length === 0,
-        firstLesson: lessons && lessons.length > 0 ? lessons[0] : null
+        isArray: Array.isArray(lessons),
+        isEmpty: !lessons || lessons.length === 0,
+        firstLesson: lessons && lessons.length > 0 ? lessons[0] : null,
+        courseName: course?.name || 'Unknown Course'
     });
 
     // Safely handle potentially invalid lessons input
-    const validLessons = Array.isArray(lessons) ? lessons.filter(lesson => lesson != null) : [];
+    const validLessons = Array.isArray(lessons) ?
+        lessons.filter(lesson => lesson != null && lesson.id) :
+        [];
 
     // Sort lessons by order
     const sortedLessons = [...validLessons].sort((a, b) => {

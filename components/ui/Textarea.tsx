@@ -197,7 +197,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => 
             )}
 
             <div className={textareaWrapperClasses}>
-                {/* eslint-disable-next-line */}
+                { }
                 <textarea
                     ref={ref}
                     value={value}

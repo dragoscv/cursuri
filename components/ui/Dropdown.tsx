@@ -174,10 +174,8 @@ export const DropdownMenu = forwardRef<HTMLUListElement, DropdownMenuProps>((pro
             className={className}
             variant={variant}
             classNames={mergedClassNames}
-            {...rest}
-        >
-            {/* Ensure children are properly formatted for HeroUI */}
-            {(React.Children.toArray(children).filter(child => React.isValidElement(child)) as any)}
+            {...rest}        >
+            {children as any}
         </HeroDropdownMenu>
     );
 });
@@ -259,19 +257,18 @@ export const DropdownItem = forwardRef<HTMLLIElement, DropdownItemProps>((props,
             default:
                 return 'data-[hover=true]:bg-[color:var(--ai-card-border)]/40';
         }
-    };
-
-    // Convert our props to what HeroDropdownItem expects
-    const { key, ...heroProps } = {
+    };    // Convert our props to what HeroDropdownItem expects
+    const heroProps = {
+        key: props.key,
         className: `text-[color:var(--ai-foreground)] rounded-md transition-colors ${getColorClass()} ${className}`,
-        disabled: isDisabled,
-        onClick: onPress,
+        isDisabled: isDisabled,
+        onPress: onPress,
         textValue: textValue,
         ...rest
-    };
+    } as any; // Type assertion to work around HeroUI type compatibility
 
     return (
-        <HeroDropdownItem key={props.key ?? ''} {...heroProps}>
+        <HeroDropdownItem {...heroProps}>
             {children}
         </HeroDropdownItem>
     );
@@ -326,10 +323,8 @@ export const DropdownSection = forwardRef<HTMLDivElement, DropdownSectionProps>(
             className={className}
             showDivider={showDivider}
             title={titleString}
-            {...rest}
-        >
-            {/* Ensure children are properly formatted for HeroUI */}
-            {(React.Children.toArray(children).filter(child => React.isValidElement(child)) as any)}
+            {...rest}        >
+            {children as any}
         </HeroDropdownSection>
     );
 });

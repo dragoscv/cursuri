@@ -1,3 +1,5 @@
+// @ts-check
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     // Setting to false to avoid double rendering in development which can cause performance issues
@@ -6,7 +8,8 @@ const nextConfig = {
         // Warning: This allows production builds to successfully complete even if
         // your project has ESLint errors.
         ignoreDuringBuilds: true,
-    }, typescript: {
+    },
+    typescript: {
         // Don't ignore any TypeScript errors
         ignoreBuildErrors: false,
     },
@@ -18,8 +21,7 @@ const nextConfig = {
             },
         ],
         minimumCacheTTL: 60,
-
     },
 }
 
-module.exports = nextConfig
+export default nextConfig;

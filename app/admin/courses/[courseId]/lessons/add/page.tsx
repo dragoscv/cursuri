@@ -12,7 +12,9 @@ export default function AddLessonPage() {
         <div className="max-w-7xl mx-auto px-4">
 
             <Card className="shadow-md">                <CardBody>
-                <AddLesson courseId={courseId} onClose={() => { }} />
+                <AddLesson courseId={courseId} onClose={() => {
+                    // Navigation handled by AddLesson component
+                }} />
             </CardBody>
             </Card>
         </div>

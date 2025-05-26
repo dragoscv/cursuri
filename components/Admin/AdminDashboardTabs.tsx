@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation';
 interface AdminDashboardTabsProps {
     activeTab: string;
     onTabChange: (tab: string) => void;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     analytics: any;
 }
 

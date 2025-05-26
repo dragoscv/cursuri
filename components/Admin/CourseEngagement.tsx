@@ -1,11 +1,10 @@
 'use client'
 
 import React, { useContext, useEffect, useState } from 'react';
-import { Card, CardBody, CardHeader, Spinner, Divider, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, Button } from '@heroui/react';
+import { Card, CardBody, CardHeader, Spinner, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, Button } from '@heroui/react';
 import { AppContext } from '@/components/AppContext';
-import { collection, getDocs, query, where, getFirestore, orderBy, limit } from 'firebase/firestore';
+import { collection, getFirestore, query } from 'firebase/firestore';
 import { firebaseApp } from '@/utils/firebase/firebase.config';
-import { Course, Lesson } from '@/types';
 
 interface CourseEngagementData {
     courseId: string;
@@ -26,14 +25,11 @@ const CourseEngagement: React.FC = () => {
     const context = useContext(AppContext);
     if (!context) {
         throw new Error("CourseEngagement must be used within an AppProvider");
-    }
-
-    const { courses, lessons } = context;
+    } const { courses } = context;
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [engagementData, setEngagementData] = useState<CourseEngagementData[]>([]);
     const [page, setPage] = useState<number>(1);
-    const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
     const rowsPerPage = 5;
 
     useEffect(() => {
@@ -44,8 +40,8 @@ const CourseEngagement: React.FC = () => {
                 const courseEngagementData: CourseEngagementData[] = [];
 
                 // Process each course to get engagement metrics
-                for (const courseId in courses) {
-                    // Get all progress records for this course
+                for (const courseId in courses) {                    // Get all progress records for this course
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     const progressQuery = query(
                         collection(db, "users"),
                         // We'd ideally use a different collection structure for this

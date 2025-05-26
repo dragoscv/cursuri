@@ -5,8 +5,10 @@ import LoadingButton from "./Buttons/LoadingButton"
 import GoogleIcon from "./icons/GoogleIcon"
 import { motion } from "framer-motion";
 import { useToast } from "@/components/Toast";
+import { validatePassword } from "@/utils/security/passwordValidation";
+import PasswordStrengthMeter from "@/components/ui/PasswordStrengthMeter";
 
-export default function Login(props: any) {
+export default function Login(props: { onClose: () => void }) {
     // State variables for the enhanced login component
     const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
     const [email, setEmail] = useState("");
@@ -16,9 +18,7 @@ export default function Login(props: any) {
     const [loadingGoogleLogin, setLoadingGoogleLogin] = useState(false);
     const [loadingEmailLogin, setLoadingEmailLogin] = useState(false);
     const [loadingEmailRegister, setLoadingEmailRegister] = useState(false);
-    const toast = useToast();
-
-    // Clear error message when inputs change
+    const toast = useToast();    // Clear error message when inputs change
     useEffect(() => {
         if (errorMessage) setErrorMessage("");
     }, [email, password, confirmPassword, activeTab]);
@@ -39,14 +39,14 @@ export default function Login(props: any) {
                     message: 'You are now signed in with Google.',
                     duration: 4000
                 });
-            }
-        } catch (error: any) {
+            }        } catch (error: unknown) {
             console.error("Google login error:", error);
-            setErrorMessage(error.message || "Failed to sign in with Google");
+            const errorMsg = error instanceof Error ? error.message : "Failed to sign in with Google";
+            setErrorMessage(errorMsg);
             toast.showToast({
                 type: 'error',
                 title: 'Login Error',
-                message: error.message || 'Failed to sign in with Google',
+                message: errorMsg,
                 duration: 6000
             });
         } finally {
@@ -148,12 +148,10 @@ export default function Login(props: any) {
     }
 
     // Register with email and password
-    const handleEmailRegister = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        // Validate inputs
-        if (!email || !password) {
-            setErrorMessage("Please enter both email and password");
+    const handleEmailRegister = async () => {
+        // Basic input validation
+        if (!email || !password || !confirmPassword) {
+            setErrorMessage("All fields are required");
             return;
         }
 
@@ -162,8 +160,19 @@ export default function Login(props: any) {
             return;
         }
 
-        if (password.length < 6) {
-            setErrorMessage("Password must be at least 6 characters");
+        // Enhanced security: Use the new password validation utility
+        const validation = validatePassword(password);
+        if (!validation.isValid) {
+            setErrorMessage(
+                <div className="space-y-2">
+                    <p className="font-medium">Password does not meet security requirements:</p>
+                    <ul className="list-disc pl-4 text-sm">
+                        {validation.errors.map((error, index) => (
+                            <li key={index}>{error}</li>
+                        ))}
+                    </ul>
+                </div>
+            );
             return;
         }
 
@@ -181,17 +190,15 @@ export default function Login(props: any) {
                     duration: 4000
                 });
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Registration error:", error);
-            if (error.code === 'auth/email-already-in-use') {
-                setErrorMessage("This email is already registered");
-            } else {
-                setErrorMessage(error.message || "Registration failed");
-            }
+            const errorMsg = error instanceof Error ? error.message : "Registration failed";
+            setErrorMessage(errorMsg);
+            
             toast.showToast({
                 type: 'error',
                 title: 'Registration Error',
-                message: error.message || 'Registration failed',
+                message: errorMsg,
                 duration: 6000
             });
         } finally {
@@ -367,6 +374,7 @@ export default function Login(props: any) {
                             className="w-full p-2.5 bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] rounded-lg focus:ring-2 focus:ring-[color:var(--ai-primary)]/50 focus:border-[color:var(--ai-primary)] text-[color:var(--ai-foreground)]"
                             placeholder="••••••••"
                             required
+                            autoComplete="new-password"
                         />
                     </div>
 
@@ -394,7 +402,15 @@ export default function Login(props: any) {
                         >
                             Create Account
                         </button>
-                    )}
+                    )}                                {/* Password strength meter */}
+                                {activeTab === 'register' && password && (
+                                    <div className="mb-4">
+                                        <PasswordStrengthMeter 
+                                            password={password}
+                                            showRequirements={true}
+                                        />
+                                    </div>
+                                )}
                 </motion.form>
             )}
 

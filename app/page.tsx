@@ -8,7 +8,6 @@ import LearningPathSection from '@/components/LearningPathSection'
 import StatisticsSection from '@/components/StatisticsSection'
 import CallToActionSection from '@/components/CallToActionSection'
 import FeaturedCoursesSection from '@/components/FeaturedCoursesSection'
-import InstructorHighlightsSection from '@/components/InstructorHighlightsSection'
 import RecommendedCoursesSection from '@/components/RecommendedCoursesSection'
 import { constructMetadata } from '@/utils/metadata'
 

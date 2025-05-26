@@ -6,29 +6,22 @@ import { firestoreDB, firebaseStorage } from "@/utils/firebase/firebase.config";
 import { doc, addDoc, collection, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { motion } from "framer-motion";
-import { FiBook, FiClock, FiLayers, FiFileText, FiUser, FiLink } from "../icons/FeatherIcons";
+import { FiClock, FiLayers, FiFileText, FiLink } from "../icons/FeatherIcons";
 import { FiCode, FiDollarSign, FiImage, FiList, FiTag, FiTarget } from "../icons/FeatherIconsExtended";
-import { Course } from "@/types";
+import { StripeProduct } from "@/types/stripe";
+import { CourseData } from "@/types/courseData";
 // Import UI components
 import Card, { CardBody, CardHeader } from "@/components/ui/Card";
-import Textarea from "@/components/ui/Textarea";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
-import Divider from "@/components/ui/Divider";
 import Select, { SelectItem } from "@/components/ui/Select";
-import LoadingButton from "../Buttons/LoadingButton";
 import Switch from "@/components/ui/Switch";
 import Chip from "@/components/ui/Chip";
 import Tooltip from "@/components/ui/Tooltip";
 import CourseNameField from './fields/CourseNameField';
 import CourseDescriptionField from './fields/CourseDescriptionField';
 import InstructorNameField from './fields/InstructorNameField';
-import TagsField from './fields/TagsField';
-import ObjectivesField from './fields/ObjectivesField';
-import RequirementsField from './fields/RequirementsField';
-import PrerequisitesField from './fields/PrerequisitesField';
 import CourseImageField from './fields/CourseImageField';
-import SectionHeader from '@/components/ui/SectionHeader';
 
 interface AddCourseProps {
     onClose: () => void;
@@ -115,14 +108,13 @@ export default function AddCourse(props: AddCourseProps) {
                 setAllowPromoCodes(course.metadata.allowPromoCodes || false);
             }
         }
-    }, [courseId, courses]);
-
-    const addCourse = useCallback(async () => {
+    }, [courseId, courses]); const addCourse = useCallback(async () => {
         setLoading(true);
         try {
-            const priceProduct = products.find((product: any) => product.prices.find((price: any) => price.id === coursePrice));
-            // Prepare course data            
-            const courseData: any = {
+            const priceProduct = products.find(
+                (product: StripeProduct) => product.prices.find((price) => price.id === coursePrice)
+            );            // Prepare course data
+            const courseData: CourseData = {
                 name: courseName,
                 description: courseDescription,
                 price: coursePrice,
@@ -130,6 +122,12 @@ export default function AddCourse(props: AddCourseProps) {
                 repoUrl: repoUrl,
                 status: courseStatus,
                 prerequisites: coursePrerequisites,
+                benefits: courseObjectives, // Map objectives to benefits as per Course interface
+                requirements: courseRequirements,
+                level: courseLevel,
+                duration: estimatedDuration,
+                instructor: instructorName ? { name: instructorName } : "",
+                tags: courseTags,
                 metadata: {
                     level: courseLevel,
                     category: courseCategory,
@@ -143,14 +141,12 @@ export default function AddCourse(props: AddCourseProps) {
                 },
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString()
-            };
-
-            // If image is provided, upload it first
+            };            // If image is provided, upload it first
             if (courseImage) {
                 const storageRef = ref(firebaseStorage, `courses/${courseImage.name}_${Date.now()}`);
                 const snapshot = await uploadBytes(storageRef, courseImage);
                 const downloadURL = await getDownloadURL(snapshot.ref);
-                courseData.imageUrl = downloadURL;
+                (courseData as CourseData).imageUrl = downloadURL;
             }
 
             // Add the course to Firestore
@@ -175,10 +171,8 @@ export default function AddCourse(props: AddCourseProps) {
         setLoading(true);
         try {
             const courseRef = doc(firestoreDB, `courses/${courseId}`);
-            const priceProduct = products.find((product: any) => product.prices.find((price: any) => price.id === coursePrice));
-
-            // Prepare updated data            
-            const updatedData: any = {
+            const priceProduct = products.find((product: StripeProduct) => product.prices.find((price) => price.id === coursePrice));            // Prepare updated data            
+            const updatedData: Partial<CourseData> = {
                 name: courseName,
                 description: courseDescription,
                 price: coursePrice,
@@ -198,14 +192,12 @@ export default function AddCourse(props: AddCourseProps) {
                     allowPromoCodes: allowPromoCodes
                 },
                 updatedAt: new Date().toISOString()
-            };
-
-            // If a new image is selected, upload it first
+            };            // If a new image is selected, upload it first
             if (courseImage) {
                 const storageRef = ref(firebaseStorage, `courses/${courseId}/${courseImage.name}_${Date.now()}`);
                 const snapshot = await uploadBytes(storageRef, courseImage);
                 const downloadURL = await getDownloadURL(snapshot.ref);
-                updatedData.imageUrl = downloadURL;
+                (updatedData as CourseData).imageUrl = downloadURL;
             }
 
             // Update the course in Firestore
@@ -224,9 +216,8 @@ export default function AddCourse(props: AddCourseProps) {
         estimatedDuration, onClose
     ]);
 
-    // Type definitions for input event handlers
+    // Type definitions for input event handlers    // Define event types for form handling
     type InputChangeEvent = React.ChangeEvent<HTMLInputElement>;
-    type TextareaChangeEvent = React.ChangeEvent<HTMLTextAreaElement>;
     type SelectChangeEvent = React.ChangeEvent<HTMLSelectElement>;
     type KeyboardEvent = React.KeyboardEvent<HTMLInputElement>;
 
@@ -426,22 +417,22 @@ export default function AddCourse(props: AddCourseProps) {
                                             <p className="text-sm text-[color:var(--ai-muted)] italic">No category selected</p>
                                         )}
                                     </div>
-                                    <div className="flex gap-2">
-                                        <Input
-                                            placeholder="Add a category"
-                                            variant="bordered"
-                                            value={currentCategory}
-                                            onChange={(e: InputChangeEvent) => setCurrentCategory(e.target.value)}
-                                            onKeyPress={(e: KeyboardEvent) => {
-                                                if (e.key === 'Enter' && currentCategory) {
-                                                    setCourseCategory(currentCategory);
-                                                    setCurrentCategory('');
-                                                }
-                                            }}
-                                            className="bg-[color:var(--ai-card-bg)]/40"
-                                            startContent={<FiFileText className="text-[color:var(--ai-muted)]" size={16} />}
-                                            list="categories"
-                                        />
+                                    <div className="flex gap-2">                                        <Input
+                                        placeholder="Add a category"
+                                        variant="bordered"
+                                        value={currentCategory}
+                                        onChange={(e: InputChangeEvent) => setCurrentCategory(e.target.value)}
+                                        onKeyPress={(e: KeyboardEvent) => {
+                                            if (e.key === 'Enter' && currentCategory) {
+                                                setCourseCategory(currentCategory);
+                                                setCurrentCategory('');
+                                            }
+                                        }}
+                                        className="bg-[color:var(--ai-card-bg)]/40"
+                                        startContent={<FiFileText className="text-[color:var(--ai-muted)]" size={16} />}
+                                        list="categories"
+                                        aria-label="Enter a course category"
+                                    />
                                         <datalist id="categories">
                                             {courseTags.map((tag, index) => (
                                                 <option key={index} value={tag} />
@@ -530,28 +521,28 @@ export default function AddCourse(props: AddCourseProps) {
                             <p className="text-sm text-[color:var(--ai-muted)]">
                                 <span className="font-medium text-[color:var(--ai-foreground)]">Pricing Tip:</span> Choose a competitive price that reflects the value of your course content and target audience.
                             </p>
-                        </div>
-                        <Select
+                        </div>                        <Select
                             label="Course Price"
                             variant="bordered"
                             value={coursePrice}
                             onChange={(e: SelectChangeEvent) => setCoursePrice(e.target.value)}
-                            className="mb-4 bg-[color:var(--ai-card-bg)]/40 relative z-10"
-                            startContent={<FiDollarSign className="text-[color:var(--ai-muted)]" />}
+                            className="mb-4 bg-[color:var(--ai-card-bg)]/40 relative z-10" startContent={<FiDollarSign className="text-[color:var(--ai-muted)]" />}
+                            aria-label="Select course price"
                             classNames={{
                                 label: "text-[color:var(--ai-foreground)] font-medium",
                                 listboxWrapper: "z-[9999]",
                                 trigger: "focus:ring-2 focus:ring-[color:var(--ai-primary)]/20"
                             }}
                         >
-                            <SelectItem itemKey="" value="">Select a price</SelectItem>
-                            {products && products.length > 0 && products.map((product: any) => (
-                                product.prices && product.prices.map((price: any) => (
-                                    <SelectItem itemKey={price.id} value={price.id} key={price.id}>
-                                        {product.name} - {(Number(price.unit_amount) / 100).toFixed(2)} {price.currency}
-                                    </SelectItem>
-                                ))
-                            ))}
+                            <SelectItem itemKey="" value="">Select a price</SelectItem>                            {products && products.length > 0 &&
+                                products.map((product: StripeProduct) => (
+                                    product.prices &&
+                                    product.prices.map((price) => (
+                                        <SelectItem itemKey={price.id} value={price.id} key={price.id}>
+                                            {product.name} - {(Number(price.unit_amount) / 100).toFixed(2)} {price.currency}
+                                        </SelectItem>
+                                    ))
+                                ))}
                         </Select>
                         <div className="flex items-center mt-4">
                             <Switch
@@ -605,16 +596,16 @@ export default function AddCourse(props: AddCourseProps) {
                                             <p className="text-sm text-[color:var(--ai-muted)] italic">No tags added yet</p>
                                         )}
                                     </div>
-                                    <div className="flex gap-2">
-                                        <Input
-                                            placeholder="Add a tag"
-                                            variant="bordered"
-                                            value={currentTag}
-                                            onChange={(e: InputChangeEvent) => setCurrentTag(e.target.value)}
-                                            onKeyPress={(e: KeyboardEvent) => e.key === 'Enter' && handleAddTag()}
-                                            className="bg-[color:var(--ai-card-bg)]/40"
-                                            startContent={<FiTag className="text-[color:var(--ai-muted)]" size={16} />}
-                                        />
+                                    <div className="flex gap-2">                                        <Input
+                                        placeholder="Add a tag"
+                                        variant="bordered"
+                                        value={currentTag}
+                                        onChange={(e: InputChangeEvent) => setCurrentTag(e.target.value)}
+                                        onKeyPress={(e: KeyboardEvent) => e.key === 'Enter' && handleAddTag()}
+                                        className="bg-[color:var(--ai-card-bg)]/40"
+                                        startContent={<FiTag className="text-[color:var(--ai-muted)]" size={16} />}
+                                        aria-label="Enter a tag name"
+                                    />
                                         <Button
                                             color="primary"
                                             onPress={handleAddTag}
@@ -650,16 +641,16 @@ export default function AddCourse(props: AddCourseProps) {
                                             </div>
                                         )}
                                     </div>
-                                    <div className="flex gap-2">
-                                        <Input
-                                            placeholder="Add a learning objective"
-                                            variant="bordered"
-                                            value={currentObjective}
-                                            onChange={(e: InputChangeEvent) => setCurrentObjective(e.target.value)}
-                                            onKeyPress={(e: KeyboardEvent) => e.key === 'Enter' && handleAddObjective()}
-                                            className="bg-[color:var(--ai-card-bg)]/40"
-                                            startContent={<FiTarget className="text-[color:var(--ai-muted)]" size={16} />}
-                                        />
+                                    <div className="flex gap-2">                                        <Input
+                                        placeholder="Add a learning objective"
+                                        variant="bordered"
+                                        value={currentObjective}
+                                        onChange={(e: InputChangeEvent) => setCurrentObjective(e.target.value)}
+                                        onKeyPress={(e: KeyboardEvent) => e.key === 'Enter' && handleAddObjective()}
+                                        className="bg-[color:var(--ai-card-bg)]/40"
+                                        startContent={<FiTarget className="text-[color:var(--ai-muted)]" size={16} />}
+                                        aria-label="Enter a learning objective"
+                                    />
                                         <Button
                                             color="primary"
                                             onPress={handleAddObjective}
@@ -697,16 +688,16 @@ export default function AddCourse(props: AddCourseProps) {
                                             </div>
                                         )}
                                     </div>
-                                    <div className="flex gap-2">
-                                        <Input
-                                            placeholder="Add a requirement"
-                                            variant="bordered"
-                                            value={currentRequirement}
-                                            onChange={(e: InputChangeEvent) => setCurrentRequirement(e.target.value)}
-                                            onKeyPress={(e: KeyboardEvent) => e.key === 'Enter' && handleAddRequirement()}
-                                            className="bg-[color:var(--ai-card-bg)]/40"
-                                            startContent={<FiList className="text-[color:var(--ai-muted)]" size={16} />}
-                                        />
+                                    <div className="flex gap-2">                                        <Input
+                                        placeholder="Add a requirement"
+                                        variant="bordered"
+                                        value={currentRequirement}
+                                        onChange={(e: InputChangeEvent) => setCurrentRequirement(e.target.value)}
+                                        onKeyPress={(e: KeyboardEvent) => e.key === 'Enter' && handleAddRequirement()}
+                                        className="bg-[color:var(--ai-card-bg)]/40"
+                                        startContent={<FiList className="text-[color:var(--ai-muted)]" size={16} />}
+                                        aria-label="Enter a course requirement"
+                                    />
                                         <Button
                                             color="primary"
                                             onPress={handleAddRequirement}
@@ -756,27 +747,27 @@ export default function AddCourse(props: AddCourseProps) {
                                             </div>
                                         )}
                                     </div>
-                                    <div className="flex gap-2">
-                                        <select
-                                            className="flex-1 px-3 py-2 rounded-lg border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/40 text-[color:var(--ai-foreground)] focus:outline-none focus:ring-2 focus:ring-[color:var(--ai-primary)]/20"
-                                            value={selectedPrerequisiteId}
-                                            onChange={(e) => setSelectedPrerequisiteId(e.target.value)}
-                                        >
-                                            <option value="">Select a prerequisite course</option>
-                                            {Object.values(courses)
-                                                .filter(course =>
-                                                    // Don't show the current course
-                                                    course.id !== courseId &&
-                                                    // Don't show courses already selected
-                                                    !coursePrerequisites.includes(course.id)
-                                                )
-                                                .map((course) => (
-                                                    <option key={course.id} value={course.id}>
-                                                        {course.name}
-                                                    </option>
-                                                ))
-                                            }
-                                        </select>
+                                    <div className="flex gap-2">                                        <select
+                                        className="flex-1 px-3 py-2 rounded-lg border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/40 text-[color:var(--ai-foreground)] focus:outline-none focus:ring-2 focus:ring-[color:var(--ai-primary)]/20"
+                                        value={selectedPrerequisiteId}
+                                        onChange={(e) => setSelectedPrerequisiteId(e.target.value)}
+                                        aria-label="Select prerequisite course"
+                                    >
+                                        <option value="">Select a prerequisite course</option>
+                                        {Object.values(courses)
+                                            .filter(course =>
+                                                // Don't show the current course
+                                                course.id !== courseId &&
+                                                // Don't show courses already selected
+                                                !coursePrerequisites.includes(course.id)
+                                            )
+                                            .map((course) => (
+                                                <option key={course.id} value={course.id}>
+                                                    {course.name}
+                                                </option>
+                                            ))
+                                        }
+                                    </select>
                                         <Button
                                             color="primary"
                                             onPress={() => {

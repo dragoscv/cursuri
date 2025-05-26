@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState, useContext } from 'react';
-import { useRouter } from 'next/navigation';
 import { AppContext } from '../../../../components/AppContext';
 import LessonsList from '../../../../components/Course/LessonsList';
 import { Spinner } from "@heroui/react";
@@ -23,10 +22,7 @@ export default function LessonsPage(props: LessonsPageProps) {
 
     if (!context) {
         throw new Error('LessonsPage must be used within an AppContextProvider');
-    }
-
-    const { courses, lessons, userPurchases, user } = context;
-    const router = useRouter();
+    } const { courses, lessons, userPurchases, user } = context;
     const [completedLessons, setCompletedLessons] = useState<Record<string, boolean>>({});
     const [isLoading, setIsLoading] = useState(true);
 

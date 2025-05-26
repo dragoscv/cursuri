@@ -12,9 +12,8 @@ export default function ProfileCourses() {
     const context = useContext(AppContext);
     if (!context) {
         throw new Error("AppContext not found");
-    }
-
-    const { user, courses, userPaidProducts, lessonProgress } = context;
+    } const { user, courses, userPaidProducts, lessonProgress } = context;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [filteredCourses, setFilteredCourses] = useState<any[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState('all'); // all, in-progress, completed
@@ -92,9 +91,8 @@ export default function ProfileCourses() {
                     status: progress === 100 ? 'completed' : progress > 0 ? 'in-progress' : 'not-started'
                 });
             }
-        });
-
-        // Convert the Map back to an array
+        });        // Convert the Map back to an array
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const enhancedCourses = Array.from(courseMap.values()) as any[];
 
         // Apply filters

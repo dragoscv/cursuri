@@ -33,14 +33,15 @@ export default function Course({ courseId }: CourseProps) {
     if (!context) {
         throw new Error("You probably forgot to put <AppProvider>.")
     }
-    const { courses, isAdmin, openModal, closeModal, lessons, getCourseLessons, userPaidProducts, getCourseReviews, lessonProgress, products, user } = context
-
+    const { courses, isAdmin, openModal, closeModal, lessons, getCourseLessons, userPaidProducts, getCourseReviews, lessonProgress, products, user } = context;
     const course = courses[courseId]
     const hasAccess = userPaidProducts?.find((userPaidProduct: UserPaidProduct) =>
         userPaidProduct.metadata.courseId === courseId
-    )    useEffect(() => {
-        // We only need to get course reviews, as lessons are already available in the context
-        getCourseReviews(courseId)
+    )
+
+    useEffect(() => {
+        // We need to get course reviews and ensure lessons are loaded
+        getCourseReviews(courseId);
 
         // Debug what courses and lessons we have in the context
         console.log('Current AppContext state:', {
@@ -51,12 +52,9 @@ export default function Course({ courseId }: CourseProps) {
             allLessonKeys: Object.keys(lessons)
         });
 
-        // Make sure course lessons are loaded
-        if (!lessons[courseId]) {
-            console.log('Explicitly loading lessons for course:', courseId);
-            getCourseLessons(courseId);
-        }
-    }, [courseId, getCourseReviews, lessons, getCourseLessons, course]);
+        // Always fetch lessons when the component mounts to ensure fresh data
+        getCourseLessons(courseId);
+    }, [courseId, getCourseReviews, getCourseLessons, course, lessons]);
 
     useEffect(() => {
         if (lessons[courseId]) {
@@ -70,25 +68,40 @@ export default function Course({ courseId }: CourseProps) {
         if (hasAccess || isAdmin || lesson.isFree) {
             router.push(`/courses/${courseId}/lessons/${lesson.id}`)
         }
-    }    const sortedLessons = (): Lesson[] => {
-        if (!lessons || !courseId || !lessons[courseId]) {
-            console.warn(`No lessons found for courseId: ${courseId}`, { lessons });
+    };
+
+    const sortedLessons = (): Lesson[] => {
+        // More robust validation and initialization logic
+        if (!lessons || !courseId) {
+            console.warn(`Cannot get lessons: Missing lessons object or courseId`, { lessons, courseId });
+            return [];
+        }
+
+        // If lessons[courseId] is undefined or null, return empty array and log it
+        if (!lessons[courseId]) {
+            console.warn(`No lessons found for courseId: ${courseId}. This could be because they're still loading.`, { lessons });
             return [];
         }
 
         // Debug the data structure
         console.log(`Lessons data structure for course ${courseId}:`,
-            { isArray: Array.isArray(lessons[courseId]), keys: Object.keys(lessons[courseId]) }
+            {
+                isArray: Array.isArray(lessons[courseId]),
+                isObject: typeof lessons[courseId] === 'object',
+                isNull: lessons[courseId] === null,
+                keys: Object.keys(lessons[courseId])
+            }
         );
 
         // Handle both possible data structures: object with lesson IDs as keys or array of lessons
         let lessonsArray: Lesson[];
 
         if (Array.isArray(lessons[courseId])) {
-            lessonsArray = lessons[courseId];
+            lessonsArray = [...lessons[courseId]];
         } else if (typeof lessons[courseId] === 'object' && lessons[courseId] !== null) {
             // Only try to get values if it's a non-null object
             lessonsArray = Object.values(lessons[courseId]);
+            console.log(`Converted object to array with ${lessonsArray.length} lessons`);
         } else {
             // If it's neither an array nor an object, return an empty array
             console.warn('Lessons data has unexpected format', { lessons: lessons[courseId], courseId });

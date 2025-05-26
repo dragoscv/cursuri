@@ -1,9 +1,9 @@
 'use client'
 
-import React, { createContext, useState, useEffect, useReducer, useCallback, useRef } from 'react';
+import React, { createContext, useState, useEffect, useReducer, useCallback } from 'react';
 
 import { getProducts } from 'firewand';
-import { firebaseApp, firestoreDB, firebaseAuth, firebaseStorage } from '@/utils/firebase/firebase.config';
+import { firebaseApp, firestoreDB, firebaseAuth } from '@/utils/firebase/firebase.config';
 import { stripePayments } from '@/utils/firebase/stripe';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { doc, collection, getDocs, query, where, onSnapshot, updateDoc, setDoc, getDoc, Timestamp, Unsubscribe, getFirestore, limit, collectionGroup, deleteDoc } from 'firebase/firestore';
@@ -12,6 +12,7 @@ import { useModal } from './contexts/useModal';
 import OnboardingModal from './OnboardingModal';
 
 import { AppContextProps, UserLessonProgress, ColorScheme, UserPreferences, UserProfile, AdminSettings, BookmarkedLessons, CacheOptions, CacheStatus } from '@/types';
+import { UserRole } from '@/utils/firebase/adminAuth';
 import { appReducer, initialState } from './contexts/appReducer';
 import { generateCacheMetadata, isCacheExpired, saveToLocalStorage, loadFromLocalStorage, generateCacheKey, clearLocalStorageCache, clearAllLocalStorageCache } from '@/utils/caching';
 
@@ -284,26 +285,23 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         // Check if we're already loading this data
         if (isRequestPending(cacheKey)) {
             console.log(`Request already pending for ${cacheKey}`);
-            return () => { };
-        }
-
-        // Check if data is already in state
+            return () => { /* No cleanup needed for pending request */ };
+        }        // Check if data is already in state
         const lessons = state.lessons[courseId];
         if (lessons && Object.keys(lessons).length > 0) {
-            // Check if we need to update loading state
-            const loadingState = state.lessonLoadingStates[courseId];
-            if (loadingState !== 'success') {
+            // Check if we need to update loading state for lessons
+            const courseLessonStates = state.lessonLoadingStates[courseId];
+            if (!courseLessonStates || Object.values(courseLessonStates).some(status => status !== 'success')) {
                 dispatch({
                     type: 'SET_LESSON_LOADING_STATE',
                     payload: { courseId, status: 'success' }
                 });
             }
-            return () => { };
-        }
-
-        // Check if data is in localStorage cache
+            return () => { /* No cleanup needed for cached data */ };
+        }        // Check if data is in localStorage cache
         if (cacheOptions.persist) {
-            const cachedData = loadFromLocalStorage(cacheKey); if (cachedData && !isCacheExpired(cachedData.metadata)) {
+            const cachedData = loadFromLocalStorage(cacheKey);
+            if (cachedData && !isCacheExpired(cachedData.metadata)) {
                 // Use cached data
                 Object.entries(cachedData.data as Record<string, unknown>).forEach(([lessonId, lesson]) => {
                     dispatch({
@@ -311,13 +309,12 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                         payload: { courseId, lessonId, lesson }
                     });
                 });
-
                 dispatch({
                     type: 'SET_LESSON_LOADING_STATE',
                     payload: { courseId, status: 'success' }
                 });
 
-                return () => { };
+                return () => { /* No cleanup needed for cached data */ };
             }
         }
 
@@ -328,11 +325,15 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         });
 
         // Mark request as pending
-        setRequestPending(cacheKey, true); try {
+        setRequestPending(cacheKey, true);
+
+        try {
             const db = getFirestore(firebaseApp);
             const lessonsCollection = collection(db, `courses/${courseId}/lessons`);
-            const q = query(lessonsCollection); // Removed status filter to match server implementation            console.log(`Setting up listener for lessons in course: ${courseId}`);
-            const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const lessonsQuery = query(lessonsCollection); // Removed status filter to match server implementation
+            console.log(`Setting up listener for lessons in course: ${courseId}`);
+            const unsubscribe = onSnapshot(lessonsQuery, (querySnapshot) => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const lessonData: Record<string, any> = {};
                 console.log(`Loaded ${querySnapshot.size} lessons for course ${courseId}`);
 
@@ -380,20 +381,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                         metadata: generateCacheMetadata('success', cacheOptions.ttl)
                     };
                     saveToLocalStorage(cacheKey, cacheEntry);
-                }
-
-                // Mark request as no longer pending
-                setRequestPending(cacheKey, false);
-            }, (error) => {
-                console.error("Error fetching lessons:", error);
-
-                // Set loading state to error
-                dispatch({
-                    type: 'SET_LESSON_LOADING_STATE',
-                    payload: { courseId, status: 'error' }
-                });
-
-                // Mark request as no longer pending
+                }                // Mark request as no longer pending
                 setRequestPending(cacheKey, false);
             });
 
@@ -401,7 +389,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             return unsubscribe;
         } catch (error) {
             console.error("Error setting up lessons listener:", error);
-
             // Set loading state to error
             dispatch({
                 type: 'SET_LESSON_LOADING_STATE',
@@ -411,7 +398,8 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             // Mark request as no longer pending
             setRequestPending(cacheKey, false);
 
-            return () => { };
+            // Return a no-op cleanup function
+            return () => { /* No cleanup needed after error */ };
         }
     }, [state.lessons, state.lessonLoadingStates, dispatch, isRequestPending, setRequestPending]);
 
@@ -422,7 +410,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         // Check if we're already loading this data
         if (isRequestPending(cacheKey)) {
             console.log(`Request already pending for ${cacheKey}`);
-            return () => { };
+            return () => { /* No cleanup needed for pending request */ };
         }
 
         // Check if data is already in state
@@ -436,12 +424,14 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                     payload: { courseId, status: 'success' }
                 });
             }
-            return () => { };
+            return () => { /* No cleanup needed for cached data */ };
         }
 
         // Check if data is in localStorage cache
         if (cacheOptions.persist) {
-            const cachedData = loadFromLocalStorage(cacheKey); if (cachedData && !isCacheExpired(cachedData.metadata)) {
+            const cachedData = loadFromLocalStorage(cacheKey);
+
+            if (cachedData && !isCacheExpired(cachedData.metadata)) {
                 // Use cached data
                 const reviewData = cachedData.data as Record<string, any>;
                 if (reviewData && typeof reviewData === 'object') {
@@ -458,7 +448,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                     payload: { courseId, status: 'success' }
                 });
 
-                return () => { };
+                return () => { /* No cleanup needed for localStorage cache */ };
             }
         }
 
@@ -474,9 +464,8 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         try {
             const db = getFirestore(firebaseApp);
             const docRef = collection(db, `courses/${courseId}/reviews`);
-            const q = query(docRef);
-
-            const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const q = query(docRef); const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const reviewData: Record<string, any> = {};
 
                 querySnapshot.forEach((doc) => {
@@ -523,9 +512,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             // Return the unsubscribe function
             return unsubscribe;
         } catch (error) {
-            console.error("Error setting up reviews listener:", error);
-
-            // Set loading state to error
+            console.error("Error setting up reviews listener:", error);            // Set loading state to error
             dispatch({
                 type: 'SET_REVIEW_LOADING_STATE',
                 payload: { courseId, status: 'error' }
@@ -534,7 +521,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             // Mark request as no longer pending
             setRequestPending(cacheKey, false);
 
-            return () => { };
+            return () => { /* No cleanup needed for error case */ };
         }
     }, [state.reviews, state.reviewLoadingStates, dispatch, isRequestPending, setRequestPending]);
 
@@ -588,7 +575,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
     }, [saveLessonProgress]);
 
     const getUserLessonProgress = useCallback(async () => {
-        if (!user) return () => { }; // Return a no-op function when user is null
+        if (!user) return () => { /* No cleanup needed when user is null */ };
 
         try {
             const progressRef = collection(firestoreDB, "users", user.uid, "progress");
@@ -615,12 +602,10 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             return Promise.resolve(unsubscribe);
         } catch (error) {
             console.error("Error fetching lesson progress:", error);
-            return Promise.resolve(() => { }); // Return a Promise that resolves to a no-op function in case of error
+            return Promise.resolve(() => { /* No cleanup needed in error case */ }); // Return a Promise that resolves to a no-op function in case of error
         }
-    }, [user, dispatch]);
-
-    // Get all users (admin only)
-    const getAllUsers = useCallback(async (options?: CacheOptions) => {
+    }, [user, dispatch]);    // Get all users (admin only)
+    const getAllUsers = useCallback(async (options?: CacheOptions): Promise<Record<string, UserProfile> | null> => {
         if (!user || !state.isAdmin) {
             console.log("Not fetching users: User is null or not admin", { user: !!user, isAdmin: state.isAdmin });
             return null;
@@ -642,16 +627,15 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                 dispatch({ type: 'SET_USER_LOADING_STATE', payload: 'success' });
             }
             return state.users;
-        }
-
-        // Check if data is in localStorage cache
+        }        // Check if data is in localStorage cache
         if (cacheOptions.persist) {
             const cachedData = loadFromLocalStorage(cacheKey);
             if (cachedData && !isCacheExpired(cachedData.metadata)) {
                 // Use cached data
-                dispatch({ type: 'SET_USERS', payload: cachedData.data });
+                const userData = cachedData.data as Record<string, UserProfile>;
+                dispatch({ type: 'SET_USERS', payload: userData });
                 dispatch({ type: 'SET_USER_LOADING_STATE', payload: 'success' });
-                return cachedData.data;
+                return userData;
             }
         }
 
@@ -677,9 +661,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                 return {};
             }
 
-            const usersData: Record<string, UserProfile> = {};
-
-            usersSnapshot.forEach((doc) => {
+            const usersData: Record<string, UserProfile> = {}; usersSnapshot.forEach((doc) => {
                 const userData = doc.data();
                 console.log(`Processing user: ${doc.id}`);
 
@@ -688,11 +670,21 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                     email: userData.email || '',
                     displayName: userData.displayName || '',
                     photoURL: userData.photoURL || '',
+                    bio: userData.bio,
+                    role: userData.role || UserRole.USER,
+                    isActive: userData.isActive !== false, // Default to true
+                    permissions: userData.permissions || {
+                        canManageCourses: false,
+                        canManageUsers: false,
+                        canManagePayments: false,
+                        canViewAnalytics: false,
+                        canManageSettings: false,
+                    },
+                    createdAt: userData.createdAt || new Date(),
+                    updatedAt: userData.updatedAt || new Date(),
                     emailVerified: userData.emailVerified || false,
-                    role: userData.role || 'user',
-                    createdAt: userData.createdAt || null,
+                    metadata: userData.metadata,
                     enrollments: userData.enrollments || {},
-                    ...userData
                 };
             });
 
@@ -1340,20 +1332,51 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                 setShowOnboarding(true);
             }
         }
-    }, [user, authLoading]);
-
-    useEffect(() => {
+    }, [user, authLoading]); useEffect(() => {
         // Store the auth unsubscribe function in a variable so we can clean up
-        const unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
+        const unsubscribe = onAuthStateChanged(firebaseAuth, async (user) => {
             if (user) {
                 setUser(user);
-                if (user.email === 'vladulescu.catalin@gmail.com') {
-                    dispatch({ type: 'SET_IS_ADMIN', payload: true });
-                } else {
+
+                // Use new RBAC system
+                try {
+                    // Import admin utilities
+                    const {
+                        getUserProfile,
+                        createOrUpdateUserProfile,
+                        migrateHardcodedAdmin,
+                        isAdmin,
+                        UserRole
+                    } = await import('../utils/firebase/adminAuth');
+
+                    // Check if this is the hardcoded admin that needs migration
+                    let userProfile = await migrateHardcodedAdmin(user);
+
+                    // If not migrated admin, get or create regular profile
+                    if (!userProfile) {
+                        userProfile = await getUserProfile(user.uid);
+
+                        // Create profile if it doesn't exist
+                        if (!userProfile) {
+                            userProfile = await createOrUpdateUserProfile(user, UserRole.USER);
+                        }
+                    }
+
+                    // Update admin status based on role
+                    const adminStatus = isAdmin(userProfile);
+                    dispatch({ type: 'SET_IS_ADMIN', payload: adminStatus });
+
+                    // Store user profile in context for permission checks                    dispatch({ type: 'SET_USER_PROFILE', payload: userProfile });
+
+                } catch (error) {
+                    console.error('Error setting up user profile:', error);
+                    // No fallback to hardcoded admin - use role-based system only
                     dispatch({ type: 'SET_IS_ADMIN', payload: false });
                 }
             } else {
                 setUser(null);
+                dispatch({ type: 'SET_IS_ADMIN', payload: false });
+                dispatch({ type: 'SET_USER_PROFILE', payload: null });
             }
             // Auth check complete, regardless of result
             setAuthLoading(false);
@@ -1391,7 +1414,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                 }
             };
         }
-        return () => { }; // Return a no-op function when there's no user
+        return () => { /* No cleanup needed when there's no user */ };
     }, [user, getUserLessonProgress]);
 
     useEffect(() => {
@@ -1412,7 +1435,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         });
     }, []); useEffect(() => {
         let mounted = true;
-        let unsubscribes: Unsubscribe[] = [];
+        const unsubscribes: Unsubscribe[] = [];
 
         const fetchCourses = async () => {
             // Check if courses are already fetched to avoid duplicate requests
@@ -1459,7 +1482,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                 if (mounted) {
                     dispatch({ type: 'SET_COURSE_LOADING_STATE', payload: { courseId: 'all', status: 'error' } });
                 }
-                return () => { };
+                return () => { /* No cleanup needed in error case */ };
             }
         }
 
@@ -1497,7 +1520,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             };
         } else {
             dispatch({ type: 'SET_USER_PAID_PRODUCTS', payload: [] });
-            return () => { }; // Return a no-op function when user is null
+            return () => { /* No cleanup needed when user is null */ };
         }
     }, [user]);    // Fetch bookmarks and wishlist on login
     useEffect(() => {
@@ -1597,11 +1620,14 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                 const data = doc.data();
                 data.id = doc.id;
                 lessonsData[doc.id] = data;
-            });
+            });            // Initialize the course lessons structure first
+            dispatch({ type: 'INITIALIZE_COURSE_LESSONS', payload: { courseId } });
 
-            // Update state
+            // Update state with all lessons at once using the new bulk update support
             dispatch({ type: 'SET_LESSONS', payload: { courseId, lessons: lessonsData } });
-            dispatch({ type: 'SET_LESSON_LOADING_STATE', payload: { courseId, status: 'success' } });            // Cache the result if needed
+            dispatch({ type: 'SET_LESSON_LOADING_STATE', payload: { courseId, status: 'success' } });
+
+            // Cache the result if needed
             if (options.persist) {
                 saveToLocalStorage(cacheKey, lessonsData, generateCacheMetadata(
                     'success', typeof options.ttl === 'number' ? options.ttl : undefined));
@@ -1611,7 +1637,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             dispatch({ type: 'SET_LESSON_LOADING_STATE', payload: { courseId, status: 'error' } });
         } finally {
             // Clear pending request
-            dispatch({ type: 'CLEAR_PENDING_REQUEST', payload: { key: cacheKey } });
+            dispatch({ type: 'SET_PENDING_REQUEST', payload: { key: cacheKey, isPending: false } });
         }
     }, [dispatch, isRequestPending]);
 
@@ -1720,8 +1746,8 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             colorScheme,
             setColorScheme: handleColorSchemeChange,
             userPreferences,
-            saveUserPreferences,
-            user,
+            saveUserPreferences, user,
+            userProfile: state.userProfile,
             authLoading,
             isAdmin: state.isAdmin,
             openModal,
@@ -1791,7 +1817,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                     isDismissable={false}
                     footerDisabled={true}
                 />
-            )}
-        </AppContext.Provider>
+            )}    </AppContext.Provider>
     );
-};
+}

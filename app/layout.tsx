@@ -7,6 +7,8 @@ import Footer from '@/components/Footer'
 import CookieConsent from '@/components/CookieConsent'
 import BottomNavigation from '@/components/Header/BottomNavigation'
 import { constructMetadata } from '@/utils/metadata'
+// Security initialization import
+import '@/utils/security/initSecurityChecks'
 
 const inter = Inter({ subsets: ['latin'] })
 

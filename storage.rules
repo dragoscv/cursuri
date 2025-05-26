@@ -6,9 +6,17 @@ service firebase.storage {
     function isAuthenticated() {
       return request.auth != null;
     }
-
+    
+    // Helper function to check if user has admin role
     function isAdmin() {
-      return request.auth != null && request.auth.token.email == 'vladulescu.catalin@gmail.com';
+      return request.auth != null && 
+             firestore.exists(/databases/(default)/documents/users/$(request.auth.uid)) &&
+             firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role in ['admin', 'super_admin'] &&
+             firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.isActive == true;
+    }
+      // Combined admin check (uses only role-based authentication)
+    function hasAdminAccess() {
+      return isAdmin();
     }
 
     function isOwner(userId) {
@@ -29,25 +37,25 @@ service firebase.storage {
     // Public files (accessible to everyone)
     match /public/{allPaths=**} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if hasAdminAccess();
     }
 
     // Course images and preview content
     match /courses/{courseId}/{allPaths=**} {
       allow read: if true; // Anyone can view course materials
-      allow write: if isAdmin();
+      allow write: if hasAdminAccess();
     }
 
     // User-specific files
     match /users/{userId}/{allPaths=**} {
-      allow read: if isOwner(userId) || isAdmin();
+      allow read: if isOwner(userId) || hasAdminAccess();
       allow write: if isOwner(userId) && isValidContentType() && isValidFileSize();
     }
 
     // Lesson content - accessible by course owners and admins
     match /lessons/{lessonId}/{allPaths=**} {
       allow read: if isAuthenticated(); // Only authenticated users
-      allow write: if isAdmin();
+      allow write: if hasAdminAccess();
     }
 
     // Profile pictures and user uploads
@@ -58,13 +66,13 @@ service firebase.storage {
 
     // Admin-only area
     match /admin/{allPaths=**} {
-      allow read, write: if isAdmin();
+      allow read, write: if hasAdminAccess();
     }
 
     // Default rule - deny all other access
     match /{allPaths=**} {
       allow read: if isAuthenticated();
-      allow write: if isAdmin();
+      allow write: if hasAdminAccess();
     }
   }
 }

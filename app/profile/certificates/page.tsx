@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AppContext } from '@/components/AppContext';
 import { firestoreDB } from '@/utils/firebase/firebase.config';
-import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
+import { collection, query, getDocs, orderBy } from 'firebase/firestore';
 import Card, { CardBody, CardHeader } from '@/components/ui/Card';
 import Spinner from '../../../components/ui/Spinner';
 import Button from '@/components/ui/Button';
@@ -86,7 +86,7 @@ export default function CertificatesPage() {
             document.body.appendChild(a);
             a.click();
             a.remove();
-            window.URL.revokeObjectURL(url);
+            window.URL.revokeObjectURL(url);        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (err) {
             alert('Could not download certificate. Please try again.');
         }

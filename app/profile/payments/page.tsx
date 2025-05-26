@@ -2,10 +2,10 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from '@/components/AppContext';
-import { Card, CardBody, Button, Chip, Input, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@heroui/react';
+import { Card, CardBody, Button, Chip, Input } from '@heroui/react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { FiDownload, FiFileText, FiCalendar, FiSearch, FiChevronDown, FiFilter, FiArrowDown, FiArrowUp } from '@/components/icons/FeatherIcons';
+import { FiDownload, FiFileText, FiCalendar, FiSearch, FiArrowDown, FiArrowUp } from '@/components/icons/FeatherIcons';
 
 export default function PaymentHistory() {
     const context = useContext(AppContext);
@@ -16,6 +16,7 @@ export default function PaymentHistory() {
     const { user, courses, userPaidProducts } = context;
     const [searchTerm, setSearchTerm] = useState('');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [filteredPayments, setFilteredPayments] = useState<any[]>([]);
 
     // Process payment data
@@ -66,9 +67,8 @@ export default function PaymentHistory() {
         });
 
         setFilteredPayments(filtered);
-    }, [userPaidProducts, courses, searchTerm, sortOrder]);
-
-    // Function to generate and download an invoice
+    }, [userPaidProducts, courses, searchTerm, sortOrder]);    // Function to generate and download an invoice
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const downloadInvoice = (payment: any) => {
         // This would typically call an API to generate an invoice PDF
         // For now, we'll just simulate it with an alert

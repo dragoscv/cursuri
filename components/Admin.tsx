@@ -3,9 +3,8 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AppContext } from "@/components/AppContext";
 import { Tabs, Tab, Button, Card, CardBody, Chip, Divider } from "@heroui/react";
-import { motion } from "framer-motion";
 import { useRouter } from 'next/navigation';
-import { Course, Lesson, CourseWithPriceProduct } from "@/types";
+import { Lesson, CourseWithPriceProduct } from "@/types";
 
 // Import Admin Components
 import AdminDashboard from "./Admin/AdminDashboard";
@@ -16,6 +15,7 @@ import CourseEngagement from "./Admin/CourseEngagement";
 import BatchOperations from "./Admin/BatchOperations";
 import AdminSettings from "./Admin/AdminSettings";
 import AdminHeader from "./Admin/AdminHeader";
+import AdminRoleManagement from "./Admin/AdminRoleManagement";
 
 // Add global type for the tab change function
 declare global {
@@ -26,25 +26,20 @@ declare global {
 
 export default function Admin() {
     const [selectedTab, setSelectedTab] = useState<string>("dashboard"); // Changed default to dashboard
-    const [selectedView, setSelectedView] = useState<"grid" | "list">("grid");
-    const [selectedCourse, setSelectedCourse] = useState<CourseWithPriceProduct | null>(null);
-    const [courseToDelete, setCourseToDelete] = useState<CourseWithPriceProduct | null>(null);
-    const [deleteConfirmOpen, setDeleteConfirmOpen] = useState<boolean>(false);
+    const [selectedView, setSelectedView] = useState<"grid" | "list">("grid"); const [selectedCourse, setSelectedCourse] = useState<CourseWithPriceProduct | null>(null);
 
     const context = useContext(AppContext);
     if (!context) {
         throw new Error("You probably forgot to put <AppProvider>.");
     }
-    const { courses, lessons, openModal, closeModal, isAdmin, products, getCourseLessons, user } = context;
+    const { courses, lessons, isAdmin, getCourseLessons, user, userProfile } = context;
 
-    const router = useRouter();
-
-    // Add a console log to debug admin status
+    const router = useRouter();    // Add a console log to debug admin status
     useEffect(() => {
         console.log("Current user:", user?.email);
         console.log("Is admin:", isAdmin);
-        console.log("Admin detection check:", user?.email === 'vladulescu.catalin@gmail.com');
-    }, [user, isAdmin]);
+        console.log("User profile:", userProfile);
+    }, [user, isAdmin, userProfile]);
 
     // Make the tab change function available globally for the dashboard
     useEffect(() => {
@@ -129,13 +124,13 @@ export default function Admin() {
                     selectedKey={selectedTab}
                     onSelectionChange={(key) => setSelectedTab(key as string)}
                     className="mb-8"
-                >
-                    <Tab key="dashboard" title="Dashboard" />
+                >                    <Tab key="dashboard" title="Dashboard" />
                     <Tab key="courses" title="Courses" />
                     {selectedCourse && <Tab key="courseDetails" title={`Editing: ${selectedCourse.name}`} />}
                     <Tab key="batchOperations" title="Batch Operations" />
                     <Tab key="users" title="Users" />
                     <Tab key="enhancedUsers" title="Enhanced Users" />
+                    <Tab key="roleManagement" title="Role Management" />
                     <Tab key="analytics" title="Analytics" />
                     <Tab key="courseEngagement" title="Course Engagement" />
                     <Tab key="settings" title="Settings" />
@@ -215,18 +210,17 @@ export default function Admin() {
                                             <div className="flex justify-between items-center">
                                                 <div className="text-sm text-gray-500 dark:text-gray-400">
                                                     {formatPrice(course)}
-                                                </div>                                                <div className="flex gap-2">
-                                                    <Button size="sm" color="danger" variant="flat" onPress={(e: any) => {
-                                                        // Delete course logic
-                                                        e.preventDefault?.();
-                                                        e.stopPropagation?.();
-                                                        setCourseToDelete(course);
-                                                        setDeleteConfirmOpen(true);
-                                                    }}
-                                                        className="font-medium text-[color:var(--ai-danger)] bg-[color:var(--ai-danger)]/10 hover:bg-[color:var(--ai-danger)]/20">
-                                                        Delete
-                                                    </Button>
-                                                    <Button size="sm" color="primary" variant="flat" onPress={(e: any) => {
+                                                </div>                                                <div className="flex gap-2">                                                    <Button size="sm" color="danger" variant="flat" onPress={(e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+                                                    // Delete course logic
+                                                    e.preventDefault?.();
+                                                    e.stopPropagation?.();
+                                                    console.log("Delete course:", course.id);
+                                                    // TODO: Implement delete functionality
+                                                }}
+                                                    className="font-medium text-[color:var(--ai-danger)] bg-[color:var(--ai-danger)]/10 hover:bg-[color:var(--ai-danger)]/20">
+                                                    Delete
+                                                </Button>
+                                                    <Button size="sm" color="primary" variant="flat" onPress={(e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
                                                         e.preventDefault?.();
                                                         e.stopPropagation?.();
                                                         handleEditCourse(course);
@@ -459,11 +453,14 @@ export default function Admin() {
                 )}                {/* Users Tab */}
                 {selectedTab === "users" && (
                     <AdminUsers />
-                )}
-
-                {/* Enhanced Users Management Tab */}
+                )}                {/* Enhanced Users Management Tab */}
                 {selectedTab === "enhancedUsers" && (
                     <EnhancedUserManagement />
+                )}
+
+                {/* Role Management Tab */}
+                {selectedTab === "roleManagement" && (
+                    <AdminRoleManagement />
                 )}
 
                 {/* Batch Operations Tab */}

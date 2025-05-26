@@ -1,12 +1,12 @@
 'use client'
 
 import React, { useContext, useEffect, useState } from 'react';
-import { Card, CardBody, CardHeader, Spinner, Divider, Checkbox, Pagination, Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Chip, Select } from '@heroui/react';
+import { Card, CardBody, CardHeader, Divider, Checkbox, Pagination, Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Chip, Select } from '@heroui/react';
 import SelectItem from '@/components/ui/SelectItem';
 import { AppContext } from '@/components/AppContext';
-import { collection, getDocs, query, where, getFirestore, doc, updateDoc, writeBatch, deleteDoc } from 'firebase/firestore';
+import { getFirestore, doc, writeBatch } from 'firebase/firestore';
 import { firebaseApp } from '@/utils/firebase/firebase.config';
-import { Course, Lesson } from '@/types';
+import { Lesson } from '@/types';
 
 type ContentType = 'course' | 'lesson';
 type BatchAction = 'status' | 'delete' | 'category' | 'visibility' | 'price';
@@ -217,8 +217,7 @@ const BatchOperations: React.FC = () => {
       setSuccess(`Successfully applied ${selectedAction} to ${selectedItems.length} items`);
 
       // Close confirmation modal if open
-      setConfirmationOpen(false);
-
+      setConfirmationOpen(false);    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error performing batch operation:', error);
       setError(`Error: ${error.message || 'Unknown error occurred'}`);
@@ -359,9 +358,9 @@ const BatchOperations: React.FC = () => {
                           </td>
                           <td className="px-3 py-2">
                             <div className="font-medium">{item.name}</div>
-                          </td>
-                          {contentType === 'lesson' && (
+                          </td>                          {contentType === 'lesson' && (
                             <td className="px-3 py-2">
+                              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                               <div className="text-sm">{(item as any).courseName}</div>
                             </td>
                           )}

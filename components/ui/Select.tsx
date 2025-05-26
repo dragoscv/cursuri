@@ -559,7 +559,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
                             const isFocused = index === focusedIndex;
 
                             return (
-                                // eslint-disable-next-line
+                                 
                                 <li
                                     key={item.itemKey}
                                     data-index={index}

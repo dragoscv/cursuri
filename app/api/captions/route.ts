@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import fetch from 'node-fetch';
 
 // Import Firebase Admin SDK for server-side operations
-import { initializeApp, getApps, cert } from 'firebase-admin/app';
+import { initializeApp, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
 
@@ -18,9 +18,11 @@ import { getStorage } from 'firebase-admin/storage';
 // For Next.js build and export, we'll use mock objects
 const isBuildTime = process.env.NODE_ENV === 'production' && !process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
 
-// Create mock DB and bucket
-let db: any;
-let bucket: any;
+// Create DB and bucket with proper typing
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let db: any = null;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let bucket: any = null;
 
 // Only initialize Firebase if not in build time
 if (!isBuildTime && !getApps().length) {
@@ -98,6 +100,8 @@ async function generateCaptionsFromAudio(
     language: string = 'en-US'
 ): Promise<{ transcription: string, captions: string }> {
     // This is where you would integrate with a speech service like Azure Speech or Google Speech-to-Text
+    // Language parameter will be used for speech recognition configuration
+    console.log(`Processing audio with language: ${language}`);
 
     // For Azure Speech Service:
     // const speechConfig = SpeechConfig.fromSubscription(

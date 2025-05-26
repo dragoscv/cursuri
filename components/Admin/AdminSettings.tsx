@@ -12,7 +12,7 @@ const AdminSettings: React.FC = () => {
         throw new Error("AdminSettings must be used within an AppProvider");
     }
 
-    const { adminSettings, getAdminSettings, updateAdminSettings } = context;
+    const { getAdminSettings, updateAdminSettings } = context;
     const [loading, setLoading] = useState<boolean>(true);
     const [saving, setSaving] = useState<boolean>(false);
     const [success, setSuccess] = useState<boolean>(false);
@@ -68,6 +68,7 @@ const AdminSettings: React.FC = () => {
         setFormData(prev => ({ ...prev, [name]: isNaN(numberValue) ? 0 : numberValue }));
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleSubmit = async (e: React.FormEvent | any) => {
         e.preventDefault();
 
@@ -259,14 +260,13 @@ const AdminSettings: React.FC = () => {
                                     value={formData.currencyCode}
                                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleSelectChange('currencyCode', e.target.value)}
                                     className="max-w-xs"
-                                >
-                                    {/* @ts-ignore - The SelectItem component from @heroui/react has type conflicts with value prop */}
+                                >                                    {/* @ts-expect-error - The SelectItem component from @heroui/react has type conflicts with value prop */}
                                     <SelectItem key="RON" value="RON">Romanian Leu (RON)</SelectItem>
-                                    {/* @ts-ignore - The SelectItem component from @heroui/react has type conflicts with value prop */}
+                                    {/* @ts-expect-error - The SelectItem component from @heroui/react has type conflicts with value prop */}
                                     <SelectItem key="USD" value="USD">US Dollar (USD)</SelectItem>
-                                    {/* @ts-ignore - The SelectItem component from @heroui/react has type conflicts with value prop */}
+                                    {/* @ts-expect-error - The SelectItem component from @heroui/react has type conflicts with value prop */}
                                     <SelectItem key="EUR" value="EUR">Euro (EUR)</SelectItem>
-                                    {/* @ts-ignore - The SelectItem component from @heroui/react has type conflicts with value prop */}
+                                    {/* @ts-expect-error - The SelectItem component from @heroui/react has type conflicts with value prop */}
                                     <SelectItem key="GBP" value="GBP">British Pound (GBP)</SelectItem>
                                 </Select>
                             </div>

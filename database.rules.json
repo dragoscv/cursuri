@@ -1,0 +1,61 @@
+{
+    "rules": {
+        // Default deny all rule
+        ".read": false,
+        ".write": false,
+        // User data rules - allow users to read and write their own data
+        "users": {
+            "$uid": {
+                // Allow read/write only if the authenticated user ID matches the node being accessed
+                ".read": "auth !== null && auth.uid === $uid",
+                ".write": "auth !== null && auth.uid === $uid",
+                // User chat data
+                "chats": {
+                    ".read": "auth !== null && auth.uid === $uid",
+                    ".write": "auth !== null && auth.uid === $uid"
+                },
+                // User notifications
+                "notifications": {
+                    ".read": "auth !== null && auth.uid === $uid",
+                    ".write": "auth !== null && auth.uid === $uid"
+                },
+                // User presence data (online/offline status)
+                "presence": {
+                    ".read": "auth !== null", // Anyone authenticated can see who's online
+                    ".write": "auth !== null && auth.uid === $uid" // Only the user can update their own status
+                }
+            }
+        },
+        // Course chat rooms - global access for authenticated users
+        "courseChats": {
+            "$courseId": {
+                ".read": "auth !== null", // Any authenticated user can read course chat messages
+                ".write": "auth !== null", // Any authenticated user can write chat messages
+                "messages": {
+                    "$messageId": {
+                        // Validate data structure
+                        ".validate": "newData.hasChildren(['text', 'userId', 'username', 'timestamp'])",
+                        "text": {
+                            ".validate": "newData.isString() && newData.val().length <= 1000"
+                        },
+                        "userId": {
+                            ".validate": "newData.isString() && newData.val() === auth.uid"
+                        },
+                        "username": {
+                            ".validate": "newData.isString()"
+                        },
+                        "timestamp": {
+                            ".validate": "newData.val() <= now"
+                        }
+                    }
+                }
+            }
+        },
+        // Admin-only real-time data
+        "adminData": {
+            // Only accessible by admins (determined by admin role in database)
+            ".read": "auth !== null && root.child('roles').child(auth.uid).child('admin').val() === true",
+            ".write": "auth !== null && root.child('roles').child(auth.uid).child('admin').val() === true"
+        }
+    }
+}

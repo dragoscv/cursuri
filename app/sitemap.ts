@@ -2,8 +2,8 @@ import { MetadataRoute } from 'next'
 import { siteConfig } from '@/utils/metadata'
 import { getCourses } from '@/utils/firebase/server'
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // Get all courses to generate course URLs
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {  // Get all courses to generate course URLs
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let courses: any[] = [];
   try {
     courses = await getCourses();
@@ -58,7 +58,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       // Check if the date is valid
       if (isNaN(lastModDate.getTime())) {
         lastModDate = new Date(); // Use current date as fallback
-      }
+      }    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       console.error("Invalid date for course", course.id);
       lastModDate = new Date(); // Use current date as fallback

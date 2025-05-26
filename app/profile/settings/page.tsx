@@ -1,26 +1,21 @@
 'use client'
 
 
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import { AppContext } from '@/components/AppContext';
-import { Card, CardBody, Tabs, Tab } from '@heroui/react';
+import { Card, CardBody } from '@heroui/react';
 import { Button, Input, Textarea, Switch } from '@/components/ui';
 import ThemeSelector from '@/components/Profile/ThemeSelector';
 import { FiUser, FiMail, FiLock, FiSave, FiBell, FiGlobe, FiSettings } from '@/components/icons/FeatherIcons';
 import { motion } from 'framer-motion';
-import AppSettings from '@/components/Profile/AppSettings';
+import PasswordStrengthMeter from '@/components/ui/PasswordStrengthMeter';
 
 export default function ProfileSettings() {
-    // Message state for theme change
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [message, setMessage] = useState<{ type: string; text: string } | null>(null);
-    // Firebase Auth imports for password change
-    let EmailAuthProvider: typeof import('firebase/auth').EmailAuthProvider;
-    let reauthenticateWithCredential: typeof import('firebase/auth').reauthenticateWithCredential;
-    let updatePassword: typeof import('firebase/auth').updatePassword;
     const context = useContext(AppContext);
     if (!context) throw new Error("AppContext not found");
     const { user, saveUserPreferences } = context;
-    const [selectedTab, setSelectedTab] = useState<string>("account");
     const [form, setForm] = useState({
         displayName: user?.displayName || '',
         email: user?.email || '',
@@ -33,10 +28,11 @@ export default function ProfileSettings() {
         marketingEmails: false,
         language: 'en',
     });
-    const [isLoading, setIsLoading] = useState(false);
-    const showToast = ({ type, title, message }: { type: 'success' | 'error', title: string, message: string }) => {
+    const [isLoading, setIsLoading] = useState(false); const showToast = ({ type, title, message }: { type: 'success' | 'error', title: string, message: string }) => {
         // Replace with your preferred toast/notification system
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         if (window && (window as any).toast) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (window as any).toast[type](message, { title });
         } else {
             alert(`${title}: ${message}`);
@@ -56,18 +52,30 @@ export default function ProfileSettings() {
     };
     const changePassword = async () => {
         if (!user || !user.email) return;
+        
         if (!form.currentPassword) {
             showToast({ type: 'error', title: 'Validation Error', message: 'Please enter your current password.' });
             return;
         }
+        
         if (form.newPassword !== form.confirmPassword) {
             showToast({ type: 'error', title: 'Validation Error', message: 'New passwords do not match.' });
             return;
         }
-        if (form.newPassword.length < 6) {
-            showToast({ type: 'error', title: 'Validation Error', message: 'Password should be at least 6 characters.' });
+        
+        // Enhanced security: Use the password validation utility
+        const { validatePassword } = await import('@/utils/security/passwordValidation');
+        const validation = validatePassword(form.newPassword);
+        
+        if (!validation.isValid) {
+            showToast({ 
+                type: 'error', 
+                title: 'Password Too Weak', 
+                message: validation.errors[0] || 'Password does not meet security requirements.' 
+            });
             return;
         }
+        
         setIsLoading(true);
         try {
             const authMod = await import('firebase/auth');
@@ -77,8 +85,9 @@ export default function ProfileSettings() {
             const credential = EmailAuthProvider.credential(user.email, form.currentPassword);
             await reauthenticateWithCredential(user, credential);
             await updatePassword(user, form.newPassword);
+            
             showToast({ type: 'success', title: 'Password Updated', message: 'Password updated successfully!' });
-            setForm(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmPassword: '' }));
+            setForm(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmPassword: '' }));        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             showToast({ type: 'error', title: 'Update Failed', message: error.message || 'Failed to update password.' });
         } finally {
@@ -94,7 +103,7 @@ export default function ProfileSettings() {
                 courseUpdates: form.courseUpdates,
                 marketingEmails: form.marketingEmails
             });
-            showToast({ type: 'success', title: 'Preferences Updated', message: 'Notification preferences updated successfully!' });
+            showToast({ type: 'success', title: 'Preferences Updated', message: 'Notification preferences updated successfully!' });        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             showToast({ type: 'error', title: 'Update Failed', message: error.message || 'Failed to update notification preferences.' });
         } finally {
@@ -187,6 +196,7 @@ export default function ProfileSettings() {
                                         title: 'Profile Updated',
                                         message: 'Profile details updated successfully!'
                                     });
+                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                 } catch (error: any) {
                                     showToast({
                                         type: 'error',
@@ -247,6 +257,17 @@ export default function ProfileSettings() {
                                     startContent={<FiLock className="text-[color:var(--ai-accent)]" />}
                                     className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-accent)]/70 hover:border-[color:var(--ai-accent)]/40 transition-all duration-300"
                                 />
+                                
+                                {/* Add password strength meter */}
+                                {form.newPassword && (
+                                    <div className="mt-2">
+                                        <PasswordStrengthMeter
+                                            password={form.newPassword}
+                                            showRequirements={false}
+                                            maxErrorsShown={1}
+                                        />
+                                    </div>
+                                )}
                             </div>
 
                             <div>
@@ -397,9 +418,9 @@ export default function ProfileSettings() {
                                         });
                                         showToast({
                                             type: 'success',
-                                            title: 'Language Updated',
-                                            message: 'Language preferences saved successfully!'
+                                            title: 'Language Updated', message: 'Language preferences saved successfully!'
                                         });
+                                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                     } catch (error: any) {
                                         showToast({
                                             type: 'error',

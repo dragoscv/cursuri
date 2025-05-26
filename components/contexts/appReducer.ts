@@ -1,10 +1,99 @@
 // AppContext reducer and initial state
-import { AppContextProps, UserLessonProgress, AdminSettings, CacheStatus } from '@/types';
+import { CacheStatus } from '@/types';
 
-export const initialState = {
+// Define the Modal interface for proper typing
+interface AppModal {
+    id: string;
+    isOpen: boolean;
+    modalBody: React.ReactNode | string;
+    hideCloseIcon?: boolean;
+    hideCloseButton?: boolean;
+    backdrop?: 'blur' | 'opaque' | 'transparent';
+    size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
+    scrollBehavior?: 'inside' | 'outside';
+    isDismissable?: boolean;
+    modalHeader?: React.ReactNode | string;
+    headerDisabled?: boolean;
+    footerDisabled?: boolean;
+    footerButtonText?: string | null;
+    footerButtonClick?: (() => void) | null;
+    modalBottomComponent?: React.ReactNode | null;
+    noReplaceURL?: boolean;
+    onClose?: () => void;
+}
+
+// Define AppState interface
+export interface AppState {
+    modals: AppModal[];
+    products: any[];
+    isAdmin: boolean;
+    userProfile: any | null;
+    courses: Record<string, any>;
+    courseLoadingStates: Record<string, CacheStatus>;
+    lessons: Record<string, any>;
+    lessonLoadingStates: Record<string, Record<string, CacheStatus>>;
+    userPaidProducts: any[];
+    reviews: Record<string, any>;
+    reviewLoadingStates: Record<string, CacheStatus>;
+    lessonProgress: Record<string, any>;
+    users: Record<string, any>;
+    userLoadingState: CacheStatus;
+    adminAnalytics: any | null;
+    adminAnalyticsLoadingState: CacheStatus;
+    adminSettings: any | null;
+    adminSettingsLoadingState: CacheStatus;
+    bookmarkedLessons: Record<string, any>;
+    bookmarksLoadingState: CacheStatus;
+    wishlistCourses: any[];
+    wishlistLoadingState: CacheStatus;
+    pendingRequests: Record<string, boolean>;
+}
+
+// Define action types for better type safety
+type AppActionType =
+    | 'ADD_MODAL'
+    | 'CLOSE_MODAL'
+    | 'UPDATE_MODAL'
+    | 'REMOVE_MODAL'
+    | 'SET_PRODUCTS'
+    | 'SET_IS_ADMIN'
+    | 'SET_USER_PROFILE'
+    | 'SET_COURSES'
+    | 'SET_COURSE_LOADING_STATE'
+    | 'SET_LESSONS'
+    | 'SET_LESSON_LOADING_STATE'
+    | 'SET_USER_PAID_PRODUCTS'
+    | 'SET_REVIEWS'
+    | 'SET_REVIEW_LOADING_STATE'
+    | 'SET_LESSON_PROGRESS'
+    | 'SET_USERS'
+    | 'SET_USER_LOADING_STATE'
+    | 'SET_ADMIN_ANALYTICS'
+    | 'SET_ADMIN_ANALYTICS_LOADING_STATE'
+    | 'SET_ADMIN_SETTINGS'
+    | 'SET_ADMIN_SETTINGS_LOADING_STATE'
+    | 'SET_BOOKMARKED_LESSONS'
+    | 'SET_BOOKMARKS_LOADING_STATE'
+    | 'SET_WISHLIST_COURSES'
+    | 'SET_WISHLIST_LOADING_STATE'
+    | 'SET_PENDING_REQUEST'
+    | 'CLEAR_CACHE'
+    | 'INITIALIZE_COURSE_LESSONS'
+    | 'TOGGLE_BOOKMARK_LESSON'
+    | 'ADD_TO_WISHLIST'
+    | 'REMOVE_FROM_WISHLIST';
+
+// Define AppAction interface
+export interface AppAction {
+    type: AppActionType;
+    payload?: any;
+}
+
+export const initialState: AppState = {
     modals: [],
     products: [],
     isAdmin: false,
+    userProfile: null,
     courses: {},
     courseLoadingStates: {},
     lessons: {},
@@ -26,14 +115,14 @@ export const initialState = {
     pendingRequests: {} as Record<string, boolean>,
 };
 
-export function appReducer(state: any, action: any) {
+export function appReducer(state: AppState, action: AppAction): AppState {
     switch (action.type) {
         case 'ADD_MODAL': {
-            const existingModalIndex = state.modals.findIndex((modal: any) => modal.id === action.payload.id);
+            const existingModalIndex = state.modals.findIndex((modal) => modal.id === action.payload.id);
             if (existingModalIndex !== -1) {
                 return {
                     ...state,
-                    modals: state.modals.map((modal: any, index: any) =>
+                    modals: state.modals.map((modal, index) =>
                         index === existingModalIndex
                             ? { ...modal, ...action.payload, isOpen: true }
                             : modal
@@ -45,8 +134,7 @@ export function appReducer(state: any, action: any) {
         }
         case 'CLOSE_MODAL':
             return {
-                ...state,
-                modals: state.modals.map((modal: any) =>
+                ...state, modals: state.modals.map((modal) =>
                     modal.id === action.payload
                         ? { ...modal, isOpen: false }
                         : modal
@@ -54,23 +142,28 @@ export function appReducer(state: any, action: any) {
             };
         case 'UPDATE_MODAL':
             return {
-                ...state,
-                modals: state.modals.map((modal: any) =>
+                ...state, modals: state.modals.map((modal) =>
                     modal.id === action.payload.id
                         ? { ...modal, ...action.payload }
                         : modal
                 )
-            };
-        case 'SET_PRODUCTS':
+            }; case 'SET_PRODUCTS':
             return { ...state, products: action.payload };
         case 'SET_IS_ADMIN':
             return { ...state, isAdmin: action.payload };
+        case 'SET_USER_PROFILE':
+            return { ...state, userProfile: action.payload };
+
         case 'INITIALIZE_COURSE_LESSONS':
             return {
                 ...state,
                 lessons: {
                     ...state.lessons,
                     [action.payload.courseId]: state.lessons[action.payload.courseId] || {}
+                },
+                lessonLoadingStates: {
+                    ...state.lessonLoadingStates,
+                    [action.payload.courseId]: 'success'
                 }
             };
         case 'SET_COURSES':
@@ -89,17 +182,32 @@ export function appReducer(state: any, action: any) {
                     [action.payload.courseId]: action.payload.status
                 }
             };
+
         case 'SET_LESSONS':
-            return {
-                ...state,
-                lessons: {
-                    ...state.lessons,
-                    [action.payload.courseId]: {
-                        ...state.lessons[action.payload.courseId],
-                        [action.payload.lessonId]: action.payload.lesson
+            // Handle both single lesson update and bulk lessons update
+            if (action.payload.lessonId && action.payload.lesson) {
+                // Single lesson update
+                return {
+                    ...state,
+                    lessons: {
+                        ...state.lessons,
+                        [action.payload.courseId]: {
+                            ...state.lessons[action.payload.courseId],
+                            [action.payload.lessonId]: action.payload.lesson
+                        }
                     }
-                }
-            };
+                };
+            } else if (action.payload.lessons) {
+                // Bulk lessons update
+                return {
+                    ...state,
+                    lessons: {
+                        ...state.lessons,
+                        [action.payload.courseId]: action.payload.lessons
+                    }
+                };
+            }
+            return state;
         case 'SET_LESSON_LOADING_STATE':
             return {
                 ...state,

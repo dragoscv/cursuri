@@ -1,27 +1,13 @@
 'use client'
 
 import React, { useContext, useEffect, useState } from 'react';
-import { Avatar, Button, Card, CardBody, Chip, Divider, Input, Spinner, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Select, Tabs, Tab } from '@heroui/react';
+import { Avatar, Button, Card, CardBody, Chip, Input, Spinner, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Select, Tabs, Tab } from '@heroui/react';
 import SelectItem from '@/components/ui/SelectItem';
 import { AppContext } from '@/components/AppContext';
-import { Course, UserProfile } from '@/types';
+import { UserProfile } from '@/types';
+import { UserRole } from '@/utils/firebase/adminAuth';
 import { firebaseApp } from '@/utils/firebase/firebase.config';
-import { getFirestore, collection, doc, updateDoc, deleteDoc, setDoc, Timestamp, getDocs, query, orderBy, limit } from 'firebase/firestore';
-
-interface UserDetailsSectionProps {
-  user: UserProfile;
-  onEdit: () => void;
-}
-
-interface UserNotesProps {
-  userId: string;
-  userNotes: string;
-  onNotesChange: (notes: string) => void;
-}
-
-interface UserActivityProps {
-  userId: string;
-}
+import { getFirestore, collection, doc, updateDoc, setDoc, Timestamp, getDocs } from 'firebase/firestore';
 
 // Enhanced user management with a more detailed view and activity logs
 const EnhancedUserManagement: React.FC = () => {
@@ -30,7 +16,7 @@ const EnhancedUserManagement: React.FC = () => {
     throw new Error("EnhancedUserManagement must be used within an AppProvider");
   }
 
-  const { users, getAllUsers, courses, assignCourseToUser } = context;
+  const { users, getAllUsers, courses } = context;
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -188,11 +174,9 @@ const EnhancedUserManagement: React.FC = () => {
       console.error('Error saving notes:', error);
     }
   };
-
   const loadUserNotes = async (userId: string) => {
     try {
       const db = getFirestore(firebaseApp);
-      const notesRef = doc(db, `users/${userId}/metadata/notes`);
       const notesDoc = await getDocs(collection(db, `users/${userId}/metadata`));
 
       notesDoc.forEach(doc => {
@@ -368,10 +352,9 @@ const EnhancedUserManagement: React.FC = () => {
                         <span>{user.email}</span>
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <Chip color={user.role === 'admin' ? 'primary' : user.role === 'instructor' ? 'secondary' : 'default'} size="sm">
-                        {user.role || 'user'}
-                      </Chip>
+                    <TableCell>                      <Chip color={user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN ? 'primary' : 'default'} size="sm">
+                      {user.role || UserRole.USER}
+                    </Chip>
                     </TableCell>
                     <TableCell>
                       {user.emailVerified ? (
@@ -442,9 +425,9 @@ const EnhancedUserManagement: React.FC = () => {
           backdrop="blur"
           className="z-50"
           scrollBehavior="inside"
-        >
-          <ModalContent className="overflow-hidden dark:bg-gray-900/95 border border-primary-200/20 dark:border-gray-800 shadow-xl">
-            {(onClose) => (
+        >          <ModalContent className="overflow-hidden dark:bg-gray-900/95 border border-primary-200/20 dark:border-gray-800 shadow-xl">
+            {/* eslint-disable-next-line @typescript-eslint/no-unused-vars */}
+            {(_onClose) => (
               <>
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-r from-primary-500/10 to-secondary-500/10 blur-xl opacity-80 -z-10"></div>
@@ -561,10 +544,9 @@ const EnhancedUserManagement: React.FC = () => {
                               </div>
 
                               <div>
-                                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Role</h3>
-                                <p className="mt-1">
-                                  <Chip color={selectedUser.role === 'admin' ? 'primary' : selectedUser.role === 'instructor' ? 'secondary' : 'default'}>
-                                    {selectedUser.role || 'user'}
+                                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Role</h3>                                <p className="mt-1">
+                                  <Chip color={selectedUser.role === UserRole.ADMIN || selectedUser.role === UserRole.SUPER_ADMIN ? 'primary' : 'default'}>
+                                    {selectedUser.role || UserRole.USER}
                                   </Chip>
                                 </p>
                               </div>
@@ -777,16 +759,15 @@ const EnhancedUserManagement: React.FC = () => {
                           <h3 className="text-lg font-semibold mb-4">Role Permissions</h3>
 
                           <div className="bg-gray-50/80 dark:bg-gray-800/50 p-4 rounded-xl backdrop-blur-sm">
-                            <div className="flex items-center justify-between mb-4">
-                              <div>
-                                <h4 className="font-medium">Current Role</h4>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                  {selectedUser.role === 'admin' ? 'Administrator' :
-                                    selectedUser.role === 'instructor' ? 'Instructor' : 'Regular User'}
-                                </p>
-                              </div>
-                              <Chip color={selectedUser.role === 'admin' ? 'primary' : selectedUser.role === 'instructor' ? 'secondary' : 'default'}>
-                                {selectedUser.role || 'user'}
+                            <div className="flex items-center justify-between mb-4">                              <div>
+                              <h4 className="font-medium">Current Role</h4>
+                              <p className="text-sm text-gray-500 dark:text-gray-400">
+                                {selectedUser.role === UserRole.SUPER_ADMIN ? 'Super Administrator' :
+                                  selectedUser.role === UserRole.ADMIN ? 'Administrator' : 'Regular User'}
+                              </p>
+                            </div>
+                              <Chip color={selectedUser.role === UserRole.ADMIN || selectedUser.role === UserRole.SUPER_ADMIN ? 'primary' : 'default'}>
+                                {selectedUser.role || UserRole.USER}
                               </Chip>
                             </div>
 
@@ -796,17 +777,16 @@ const EnhancedUserManagement: React.FC = () => {
                                 <Chip size="sm" color={selectedUser.role === 'admin' ? 'success' : 'danger'}>
                                   {selectedUser.role === 'admin' ? 'Yes' : 'No'}
                                 </Chip>
-                              </div>
-                              <div className="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-700">
+                              </div>                              <div className="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-700">
                                 <span className="text-sm">Manage courses</span>
-                                <Chip size="sm" color={selectedUser.role === 'admin' || selectedUser.role === 'instructor' ? 'success' : 'danger'}>
-                                  {selectedUser.role === 'admin' || selectedUser.role === 'instructor' ? 'Yes' : 'No'}
+                                <Chip size="sm" color={selectedUser.role === UserRole.ADMIN || selectedUser.role === UserRole.SUPER_ADMIN ? 'success' : 'danger'}>
+                                  {selectedUser.role === UserRole.ADMIN || selectedUser.role === UserRole.SUPER_ADMIN ? 'Yes' : 'No'}
                                 </Chip>
                               </div>
                               <div className="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-700">
                                 <span className="text-sm">Manage users</span>
-                                <Chip size="sm" color={selectedUser.role === 'admin' ? 'success' : 'danger'}>
-                                  {selectedUser.role === 'admin' ? 'Yes' : 'No'}
+                                <Chip size="sm" color={selectedUser.role === UserRole.ADMIN || selectedUser.role === UserRole.SUPER_ADMIN ? 'success' : 'danger'}>
+                                  {selectedUser.role === UserRole.ADMIN || selectedUser.role === UserRole.SUPER_ADMIN ? 'Yes' : 'No'}
                                 </Chip>
                               </div>
                               <div className="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-700">
@@ -814,11 +794,10 @@ const EnhancedUserManagement: React.FC = () => {
                                 <Chip size="sm" color={selectedUser.role === 'admin' ? 'success' : 'danger'}>
                                   {selectedUser.role === 'admin' ? 'Yes' : 'No'}
                                 </Chip>
-                              </div>
-                              <div className="flex items-center justify-between py-2">
+                              </div>                              <div className="flex items-center justify-between py-2">
                                 <span className="text-sm">Create content</span>
-                                <Chip size="sm" color={selectedUser.role === 'admin' || selectedUser.role === 'instructor' ? 'success' : 'danger'}>
-                                  {selectedUser.role === 'admin' || selectedUser.role === 'instructor' ? 'Yes' : 'No'}
+                                <Chip size="sm" color={selectedUser.role === UserRole.ADMIN || selectedUser.role === UserRole.SUPER_ADMIN ? 'success' : 'danger'}>
+                                  {selectedUser.role === UserRole.ADMIN || selectedUser.role === UserRole.SUPER_ADMIN ? 'Yes' : 'No'}
                                 </Chip>
                               </div>
                             </div>

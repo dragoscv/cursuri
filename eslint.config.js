@@ -11,17 +11,34 @@ export default tseslint.config(
     },
     rules: {
       // Add overrides for specific rules here
-      '@next/next/no-html-link-for-pages': 'off',
-      'no-unused-vars': 'warn',
+      '@next/next/no-html-link-for-pages': 'warn',
+      'no-unused-vars': 'off', // Turn off base rule
       '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn',
       'no-empty': 'warn',
-      'no-empty-function': 'warn'
+      'no-empty-function': 'off', // Turn off base rule
+      '@typescript-eslint/no-empty-function': 'warn'
     },
     languageOptions: {
       parserOptions: {
         project: './tsconfig.json'
       }
     }
+  },
+  {
+    ignores: [
+      '.next/**/*',
+      'node_modules/**/*',
+      'dist/**/*',
+      'build/**/*',
+      'coverage/**/*',
+      '**/*.log',
+      'cypress/**/*',
+      '**/*.config.js',
+      '**/*.config.ts',
+      'next.config.js',
+      'postcss.config.js',
+      'tailwind.config.ts'
+    ]
   }
 );

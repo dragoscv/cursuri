@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useContext, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Card, CardBody, Chip } from '@heroui/react';
 import Button from '@/components/ui/Button';
 import { AppContext } from '@/components/AppContext';
@@ -12,8 +11,6 @@ import Link from 'next/link';
 
 export default function CoursesPage() {
     const [selectedView, setSelectedView] = useState<"grid" | "list">("grid");
-    const [courseToDelete, setCourseToDelete] = useState<CourseWithPriceProduct | null>(null);
-    const [deleteConfirmOpen, setDeleteConfirmOpen] = useState<boolean>(false);
 
     const context = useContext(AppContext);
     if (!context) {
@@ -21,7 +18,6 @@ export default function CoursesPage() {
     }
 
     const { courses, openModal, closeModal } = context;
-    const router = useRouter();
 
     // Helper function to safely format price
     const formatPrice = (course: CourseWithPriceProduct): string => {
@@ -34,11 +30,8 @@ export default function CoursesPage() {
             });
         }
         return 'Price not available';
-    };
-
-    // Confirm delete modal
+    };    // Confirm delete modal
     const handleConfirmDelete = (course: CourseWithPriceProduct) => {
-        setCourseToDelete(course);
         openModal({
             id: 'delete-course',
             isOpen: true,

@@ -30,7 +30,7 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
                 // First check if we have the course and lesson in context already
                 const { courses, lessons } = context;
 
-                let currentCourse = courses?.[courseId];
+                const currentCourse = courses?.[courseId];
                 if (!currentCourse) {
                     // If not in state, manually fetch it
                     console.log('Course not in context state, fetching directly');

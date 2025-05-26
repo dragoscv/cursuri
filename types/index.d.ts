@@ -1,6 +1,7 @@
 import { Timestamp, Unsubscribe } from 'firebase/firestore';
 import { User } from 'firebase/auth';
 import { ReactNode } from 'react';
+import { UserRole, UserPermissions } from '../utils/firebase/adminAuth';
 
 // Toast related types
 export type ToastType = 'info' | 'success' | 'warning' | 'error';
@@ -61,10 +62,10 @@ export interface AppContextProps {
     isDark: boolean;
     toggleTheme: () => void;
     colorScheme: ColorScheme;
-    setColorScheme: (scheme: ColorScheme) => void;
-    userPreferences: UserPreferences | null;
+    setColorScheme: (scheme: ColorScheme) => void; userPreferences: UserPreferences | null;
     saveUserPreferences: (preferences: Partial<UserPreferences>) => Promise<boolean>;
     user: User | null;
+    userProfile: UserProfile | null;
     authLoading: boolean;
     openModal: (props: any) => void;
     closeModal: (id: string) => void;
@@ -518,7 +519,11 @@ export interface UserProfile {
     /** The user's bio. */
     bio?: string;
     /** The user's role (e.g. 'user', 'admin', 'instructor'). */
-    role?: string;
+    role: UserRole;
+    /** Whether the user account is active. */
+    isActive: boolean;
+    /** User permissions based on role. */
+    permissions: UserPermissions;
     /** When the user was created. */
     createdAt: Timestamp | Date;
     /** When the user was last updated. */

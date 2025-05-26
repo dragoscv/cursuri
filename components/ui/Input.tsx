@@ -226,7 +226,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
                         {startContent}
                     </div>
                 )}
-                {/* eslint-disable-next-line */}
+                { }
                 <input
                     ref={ref}
                     type={type}

@@ -17,7 +17,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onTabChange, activeTab = 'das
         throw new Error("AdminHeader must be used within an AppProvider");
     }
 
-    const { user, isAdmin } = context;
+    const { user } = context;
     const router = useRouter();
 
     // Handle navigation to different admin sections
