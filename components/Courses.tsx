@@ -1,47 +1,75 @@
 'use client'
 import { useContext, useEffect, useCallback, useState, useRef, useMemo } from "react"
-import { AppContext } from "@/components/AppContext"
-import Course from "@/components/Course/Course"
+import { useAuth, useCourses, useTheme, useModal, useAdmin, useLessons, useReviews, useUserData } from '@/components/contexts/modules'
+import { Course as CourseType, StripeProduct, UserPaidProduct } from "@/types"
+// Note: The Products context is dynamically imported in the component to support backward compatibility
 import { createCheckoutSession } from "firewand";
 import { stripePayments } from "@/utils/firebase/stripe";
 import { firebaseApp } from "@/utils/firebase/firebase.config";
 import LoadingButton from "./Buttons/LoadingButton";
 import Login from "./Login";
-import { Button, Badge, Chip, Spinner } from "@heroui/react";
+import { Button, Chip, Spinner } from "@heroui/react";
 import { motion, useAnimation, useInView } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { FiClock, FiUsers, FiStar, FiAlertCircle } from "./icons/FeatherIcons";
 import { useToast } from "@/components/Toast";
-import { CacheStatus } from "@/types";
+import Image from 'next/image';
 
 export default function Courses() {
     const [loadingPayment, setLoadingPayment] = useState(false)
     const [loadingCourseId, setLoadingCourseId] = useState<string | null>(null)    // For animation
     const controls = useAnimation()
     const ref = useRef(null)
-    const isInView = useInView(ref, { once: false, amount: 0.2 });
-
-    useEffect(() => {
+    const isInView = useInView(ref, { once: false, amount: 0.2 });    useEffect(() => {
         if (isInView) {
             controls.start('visible');
         }
-    }, [controls, isInView]);
-
-    const router = useRouter();
-    const context = useContext(AppContext)
-    if (!context) {
-        throw new Error("You probably forgot to put <AppProvider>.")
-    }
-    const {
-        courses,
-        products,
-        openModal,
-        closeModal,
-        userPaidProducts,
-        user,
-        courseLoadingStates
-    } = context
+    }, [controls, isInView]);    const router = useRouter();    // Use modular contexts
+    const { user } = useAuth();
+    const { state: coursesState } = useCourses();
+    const { courses } = coursesState;
+    const { openModal, closeModal } = useModal();
     const toast = useToast();
+
+    // Use products context - temporary fallback in case the import fails
+    const productsContextAvailable = (() => {
+        try {
+            // eslint-disable-next-line no-unused-vars
+            const { useProducts } = require('@/components/contexts/modules');
+            return true;
+        } catch (e) {
+            return false;
+        }
+    })();
+
+    // If products context is available, use it directly
+    let products: StripeProduct[] = [];
+    let userPaidProducts: UserPaidProduct[] = [];
+    
+    // Temporary fallback for backward compatibility - this will be removed once all components are migrated
+    if (!productsContextAvailable) {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const [productsState, setProductsState] = useState<StripeProduct[]>([]);
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const [userPaidProductsState, setUserPaidProductsState] = useState<UserPaidProduct[]>([]);
+        products = productsState;
+        userPaidProducts = userPaidProductsState;
+    } else {
+        try {
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            const { useProducts } = require('@/components/contexts/modules');
+            // eslint-disable-next-line react-hooks/rules-of-hooks
+            const productsData = useProducts();
+            products = productsData.products;
+            userPaidProducts = productsData.userPaidProducts;
+        } catch (e) {
+            console.error('Error loading products context:', e);
+        }
+    }
+    
+    // Use loading states from courses context
+    const { courseLoadingStates } = coursesState;    // This effect is no longer needed since courseLoadingStates comes from the courses context
+    // The courses context handles loading states internally
 
     const buyCourse = useCallback(async (priceId: string, courseId: string) => {
         if (!user) {
@@ -95,27 +123,21 @@ export default function Courses() {
             setLoadingCourseId(null)
         }
 
-    }, [closeModal, openModal, user, toast]);
-
-    const handleCourseClick = useCallback((course: any) => {
+    }, [closeModal, openModal, user, toast]); const handleCourseClick = useCallback((course: CourseType) => {
         // Navigate to the course page using Next.js client-side navigation
         router.push(`/courses/${course.id}`);
-    }, [router]);
-
-    const getCoursePrice = useCallback((course: any) => {
+    }, [router]);    const getCoursePrice = useCallback((course: CourseType) => {
         if (!course?.priceProduct) return { amount: 0, currency: 'RON', priceId: '' };
-
-        const product = products?.find((product: any) => product.id === course.priceProduct.id);
-        const price = product?.prices.find((price: any) => price.id === course.price);
+        const product = products?.find((product: StripeProduct) => product.id === course.priceProduct!.id);
+        const prices = product?.prices || [];
+        const price = prices.find((price: any) => price.id === course.price);
         return {
-            amount: price?.unit_amount / 100 || 0,
+            amount: price?.unit_amount ? price.unit_amount / 100 : 0,
             currency: price?.currency?.toUpperCase() || 'RON',
             priceId: price?.id || ''
         };
-    }, [products]);
-
-    const isPurchased = useCallback((courseId: string) => {
-        return userPaidProducts?.find((userPaidProduct: any) => userPaidProduct.metadata.courseId === courseId);
+    }, [products]);const isPurchased = useCallback((courseId: string) => {
+        return userPaidProducts?.find((userPaidProduct: UserPaidProduct) => userPaidProduct.metadata.courseId === courseId);
     }, [userPaidProducts]);
 
     // Animation variants
@@ -281,7 +303,7 @@ export default function Courses() {
 
                 {/* Filter chips - decorative */}
                 <div className="flex flex-wrap justify-center gap-2 mt-8">
-                    {aiTopics.map((topic, index) => (
+                    {aiTopics.map((topic) => (
                         <div
                             key={topic}
                             className="py-1.5 px-3 rounded-full text-sm bg-white/10 dark:bg-white/5 text-[color:var(--ai-primary)] dark:text-[color:var(--ai-primary)]/80 border border-[color:var(--ai-card-border)] backdrop-blur-sm cursor-pointer hover:bg-[color:var(--ai-primary)]/10 transition-colors"
@@ -315,17 +337,31 @@ export default function Courses() {
                             Refresh Page
                         </Button>
                     </div>
-                )}
-
-                {/* Display courses when loaded successfully */}
-                {courseLoadingStates && courseLoadingStates['all'] === 'success' && Object.keys(courses).length === 0 && (
+                )}                {/* Display courses when loaded successfully */}
+                {courseLoadingStates && courseLoadingStates['all'] === 'success' && courses && Object.keys(courses).length === 0 && (
                     <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
                         <p className="text-[color:var(--ai-muted)] text-lg">No courses available at the moment.</p>
                     </div>
-                )}
-
-                {courseLoadingStates && courseLoadingStates['all'] === 'success' && Object.keys(courses).map((key: any) => {
-                    const course = courses[key];
+                )}                {courseLoadingStates && courseLoadingStates['all'] === 'success' && courses && Object.keys(courses).map((key: string) => {
+                    const courseData = courses[key];
+                    if (!courseData) return null;
+                      // Map the course context type to the main Course type
+                    const course = {
+                        ...courseData,
+                        name: courseData.title || courseData.id,
+                        title: courseData.title,
+                        id: courseData.id,
+                        description: courseData.description,
+                        imageUrl: courseData.imageUrl,
+                        price: courseData.price,
+                        priceId: courseData.priceId,
+                        status: courseData.status,
+                        createdAt: new Date(courseData.createdAt),
+                        updatedAt: new Date(courseData.updatedAt),
+                        difficulty: courseData.level || 'advanced',
+                        duration: `${courseData.duration || 600} minutes`
+                    } as unknown as CourseType;
+                    
                     const { amount, currency, priceId } = getCoursePrice(course);
                     const purchased = isPurchased(course.id);
                     const isLoading = loadingPayment && loadingCourseId === course.id;
@@ -343,9 +379,8 @@ export default function Courses() {
                                 y: -10,
                                 transition: { duration: 0.3 }
                             }}
-                        >
-                            {/* Decorative gradient border */}
-                            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)] opacity-0 group-hover:opacity-100 -z-10 blur transition-opacity duration-300" style={{ transform: 'translate(-2px, -2px)' }} />
+                        >                            {/* Decorative gradient border */}
+                            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)] opacity-0 group-hover:opacity-100 -z-10 blur transition-opacity duration-300 -translate-x-0.5 -translate-y-0.5" />
 
                             <div className="relative overflow-hidden">
                                 {/* Course difficulty badge */}
@@ -401,12 +436,13 @@ export default function Courses() {
                                     <div className="absolute inset-0 bg-[color:var(--ai-primary)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
 
                                     {/* Animated glow */}
-                                    <div className="absolute -inset-1 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] opacity-0 group-hover:opacity-30 blur-md transition-opacity duration-300 z-[5]"></div>
-
-                                    <img
-                                        src={course.priceProduct && products?.find((product: any) => product?.id === course.priceProduct?.id)?.images?.[0] || null}
-                                        alt={course.name}
+                                    <div className="absolute -inset-1 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] opacity-0 group-hover:opacity-30 blur-md transition-opacity duration-300 z-[5]"></div>                                    <Image
+                                        src={course.imageUrl || '/placeholder-course.svg'}
+                                        alt={course.name || 'Course Image'}
                                         className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        width={400}
+                                        height={225}
+                                        priority={key === Object.keys(courses)[0]}
                                     />
 
                                     {/* Futuristic HUD elements */}
