@@ -154,37 +154,20 @@ export function sanitizeEnvValue(key: string, value: string): string {
  * Logs environment validation results safely
  */
 export function logEnvironmentValidation(): void {
+  // SECURITY: Environment variable logging completely disabled
+  // to prevent any accidental exposure of sensitive configuration
+  // Validation still occurs silently for security checks
+  
   if (typeof window !== 'undefined') {
     // Don't run on client side for security
     return;
   }
 
+  // Perform validation silently - no logging to prevent information disclosure
   const validation = validateEnvironmentVariables();
   
-  console.log('🔧 Environment Variable Validation:');
-  
-  if (validation.isValid) {
-    console.log('✅ All required environment variables are present and valid');
-  } else {
-    console.error('❌ Environment validation failed:');
-    validation.errors.forEach(error => console.error(`  • ${error}`));
-  }
-
-  if (validation.warnings.length > 0) {
-    console.warn('⚠️  Environment warnings:');
-    validation.warnings.forEach(warning => console.warn(`  • ${warning}`));
-  }
-
-  // Log sanitized values in development
-  if (process.env.NODE_ENV === 'development') {
-    console.log('📋 Environment Variables (sanitized):');
-    [...REQUIRED_ENV_VARS, ...OPTIONAL_ENV_VARS].forEach(key => {
-      const value = process.env[key];
-      if (value) {
-        console.log(`  ${key}: ${sanitizeEnvValue(key, value)}`);
-      }
-    });
-  }
+  // All environment variable logging has been removed for security
+  // Applications should handle missing variables gracefully at runtime
 }
 
 /**

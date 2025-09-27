@@ -111,10 +111,10 @@ export default function CourseDetailView({
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: 0.3 }}
-                    className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700"
+                                        className="bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] p-6 rounded-xl shadow-lg border border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)]"
                 >
                     <CourseEnrollment
-                        course={course}
+                        course={courseWithStats}
                         isPurchased={hasAccess || isAdmin}
                     />
                 </motion.div>

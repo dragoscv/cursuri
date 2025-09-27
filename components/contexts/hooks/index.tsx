@@ -72,9 +72,17 @@ export const useLessons = (courseId: string) => {
  */
 export const useAuth = () => {
     const context = useContext(AppContext);
+    
+    // Debug: Log context to help diagnose the issue - UPDATED VERSION
+    console.log('useAuth UPDATED context check:', { 
+        hasContext: !!context, 
+        hasUser: context?.user !== undefined,
+        hasAuthLoading: context?.authLoading !== undefined,
+        hasIsAdmin: context?.isAdmin !== undefined
+    });
 
     if (!context) {
-        throw new Error('useAuth must be used within an AppContextProvider');
+        throw new Error('useAuth must be used within an AppContextProvider - UPDATED');
     }
 
     const { user, authLoading, isAdmin } = context;

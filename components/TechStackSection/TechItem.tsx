@@ -27,17 +27,13 @@ export default function TechItem({ name, Icon, description, color, index }: Tech
     return (
         <motion.div
             variants={itemVariants}
-            className="p-6 rounded-xl bg-white dark:bg-[color:var(--ai-card-bg)] shadow-md hover:shadow-lg dark:shadow-[color:var(--ai-card-border)]/10 transition-shadow border border-transparent dark:border-[color:var(--ai-card-border)]/30"
+            className="p-6 rounded-xl bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] shadow-md hover:shadow-lg dark:shadow-[color:var(--ai-card-border)]/10 transition-shadow border border-[color:var(--ai-card-border)]/30 dark:border-[color:var(--ai-card-border)]/30"
         >
             <div className="flex items-center mb-4">
                 <div
-                    className="p-2 rounded-lg mr-4"
-                    style={{
-                        backgroundColor: `${color}15`,
-                        color: color
-                    }}
+                    className="p-2 rounded-lg mr-4 bg-[color:var(--ai-primary)]/10"
                 >
-                    <Icon size={28} className="text-[color:var(--ai-foreground)]" />
+                    <Icon size={28} className="text-[color:var(--ai-primary)]" />
                 </div>
                 <h3 className="text-xl font-bold text-[color:var(--ai-foreground)]">{name}</h3>
             </div>

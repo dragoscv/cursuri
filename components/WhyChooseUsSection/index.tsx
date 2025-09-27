@@ -26,9 +26,9 @@ export default function WhyChooseUsSection() {
             >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">                    <ScrollAnimationWrapper>
                     <div className="text-center mb-16">
-                        <h2 className="text-4xl font-bold text-[color:var(--ai-foreground)] mb-4">
+                        <h2 className="text-4xl font-bold text-white mb-4">
                             Why Choose Our Platform
-                        </h2>                        <p className="text-xl text-[color:var(--ai-muted)] max-w-3xl mx-auto">
+                        </h2>                        <p className="text-xl text-white/80 max-w-3xl mx-auto">
                             We&apos;ve designed our learning experience with developers in mind, focusing on what matters most
                         </p>
                     </div>
@@ -58,7 +58,7 @@ export default function WhyChooseUsSection() {
                                     <circle cx="10" cy="10" r="2" fill="currentColor" fillOpacity="0.8" />
                                 </pattern>
                             </defs>
-                            <rect width="404" height="784" fill="url(#pattern-circles)" className="text-[color:var(--ai-foreground)]" />
+                            <rect width="404" height="784" fill="url(#pattern-circles)" className="text-white/20" />
                         </svg>
                         <svg className="absolute left-0 bottom-0 h-full transform -translate-x-1/2" width="404" height="784" fill="none" viewBox="0 0 404 784">
                             <defs>
@@ -66,7 +66,7 @@ export default function WhyChooseUsSection() {
                                     <circle cx="10" cy="10" r="2" fill="currentColor" fillOpacity="0.8" />
                                 </pattern>
                             </defs>
-                            <rect width="404" height="784" fill="url(#pattern-circles-2)" className="text-[color:var(--ai-foreground)]" />
+                            <rect width="404" height="784" fill="url(#pattern-circles-2)" className="text-white/20" />
                         </svg>                </div>
                 </div>
             </ParallaxSection>

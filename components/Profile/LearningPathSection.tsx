@@ -14,7 +14,7 @@ export default function LearningPathSection() {
 
     if (loading) {
         return (
-            <Card className="border border-[color:var(--ai-card-border)] bg-white dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-md overflow-hidden mb-8">
+            <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-md overflow-hidden mb-8">
                 <div className="h-1 w-full bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-accent)] to-[color:var(--ai-secondary)]"></div>
                 <CardBody className="p-6">
                     <h2 className="text-lg font-semibold mb-5 text-[color:var(--ai-foreground)] flex items-center gap-2">
@@ -36,7 +36,7 @@ export default function LearningPathSection() {
 
     if (error) {
         return (
-            <Card className="border border-[color:var(--ai-card-border)] bg-white dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-md overflow-hidden mb-8">
+            <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-md overflow-hidden mb-8">
                 <div className="h-1 w-full bg-gradient-to-r from-[color:var(--ai-error)] to-[color:var(--ai-error-dark)]"></div>
                 <CardBody className="p-6">
                     <h2 className="text-lg font-semibold mb-5 text-[color:var(--ai-foreground)] flex items-center gap-2">
@@ -56,7 +56,7 @@ export default function LearningPathSection() {
     // No courses to display
     if (courseNodes.length === 0) {
         return (
-            <Card className="border border-[color:var(--ai-card-border)] bg-white dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-md overflow-hidden mb-8">
+            <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-md overflow-hidden mb-8">
                 <div className="h-1 w-full bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-accent)] to-[color:var(--ai-secondary)]"></div>
                 <CardBody className="p-6">
                     <h2 className="text-lg font-semibold mb-5 text-[color:var(--ai-foreground)] flex items-center gap-2">
@@ -83,7 +83,7 @@ export default function LearningPathSection() {
     // Standard view with current and next course
     if (!expandedView) {
         return (
-            <Card className="border border-[color:var(--ai-card-border)] bg-white dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-md overflow-hidden mb-8">
+            <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-md overflow-hidden mb-8">
                 <div className="h-1 w-full bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-accent)] to-[color:var(--ai-secondary)]"></div>
                 <CardBody className="p-6">
                     <div className="flex justify-between items-center mb-5">
@@ -163,7 +163,7 @@ export default function LearningPathSection() {
 
     // Expanded view with all courses in learning path
     return (
-        <Card className="border border-[color:var(--ai-card-border)] bg-white dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-md overflow-hidden mb-8">
+        <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-md overflow-hidden mb-8">
             <div className="h-1 w-full bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-accent)] to-[color:var(--ai-secondary)]"></div>
             <CardBody className="p-6">
                 <div className="flex justify-between items-center mb-5">

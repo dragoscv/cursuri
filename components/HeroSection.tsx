@@ -1,8 +1,9 @@
 'use client'
 
-import React, { useEffect, useRef, useMemo, useState } from 'react'
+import React, { useEffect, useRef, useMemo, useState, useContext } from 'react'
 import Button from '@/components/ui/Button'
-import { useAuth, useCourses, useReviews, useModal, useProducts } from '@/components/contexts/modules'
+// import { useAuth, useCourses, useReviews, useModal, useProducts } from '@/components/contexts/modules'
+import { AppContext } from '@/components/AppContext'
 import Login from './Login'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
@@ -26,53 +27,19 @@ import {
 } from './icons/tech'
 
 export default function HeroSection() {
-    // Use direct modular context hooks instead of migration tool
+    // Use AppContext instead of modular hooks to avoid context issues
     const router = useRouter()
-    const { user } = useAuth()
-    const { state: coursesState } = useCourses()
-    const { courses } = coursesState
-    const { state: reviewsState } = useReviews()
-    const { reviews } = reviewsState
-    const { openModal, closeModal } = useModal()
+    const context = useContext(AppContext);
     
-    // Temporary workaround until Products context is fully implemented
-    // Note: Need to add the new context to the project's modules index
-    const [userPaidProducts, setUserPaidProducts] = useState<UserPaidProduct[]>([])
+    if (!context) {
+        console.error('HeroSection: AppContext not available');
+        return <div>Loading...</div>;
+    }
     
-    // Place a comment for future developers to use the proper context
-    // TODO: Replace this temporary state with the proper Products context:
-    // const { userPaidProducts } = useProducts(); 
+    const { user, courses, reviews, openModal, closeModal, userPaidProducts } = context; 
     
-    // Fetch a simplified version of userPaidProducts for this component
-    useEffect(() => {
-        if (!user) {
-            setUserPaidProducts([]);
-            return;
-        }
-        
-        // Simulate products for now (will be replaced by context)
-        // This keeps the component working during the migration
-        const simulatedProducts: UserPaidProduct[] = [];
-        
-        // Generate some data based on courses
-        Object.keys(courses).forEach((courseId, index) => {
-            if (index % 3 === 0) { // Simulate some purchases (every 3rd course)
-                simulatedProducts.push({
-                    id: `simulated-${courseId}`,
-                    productId: `product-${courseId}`,
-                    metadata: {
-                        courseId,
-                        userId: user.uid,
-                    },
-                    status: 'succeeded',
-                    purchaseDate: new Date().toISOString(),
-                    created: Date.now() / 1000
-                });
-            }
-        });
-        
-        setUserPaidProducts(simulatedProducts);
-    }, [user, courses]);
+    // Note: userPaidProducts now comes directly from AppContext
+    // No longer need to simulate products since AppContext provides real data
     
     const particlesRef = useRef<HTMLDivElement>(null)
 
@@ -116,7 +83,7 @@ export default function HeroSection() {
                 // Count technologies mentioned in course
                 const course = courses[courseId]
                 if (course && course.tags) {
-                    course.tags.forEach(tag => {
+                    course.tags.forEach((tag: string) => {
                         technologiesMap.set(tag, (technologiesMap.get(tag) || 0) + 1)
                     })
                 }
@@ -354,7 +321,7 @@ export default function HeroSection() {
                     {Array.from({ length: 100 }).map((_, i) => (
                         <div
                             key={i}
-                            className="col-span-1 bg-white h-8 animate-pulse"
+                            className="col-span-1 bg-white/10 dark:bg-white/5 h-8 animate-pulse"
                             style={{
                                 animationDelay: `${i * 0.1}s`,
                                 opacity: gridOpacities[i]
@@ -426,7 +393,7 @@ export default function HeroSection() {
                 >
                     <div>
                         <motion.h1
-                            className="text-4xl md:text-5xl lg:text-6xl font-bold text-[color:var(--ai-foreground-inverse)] tracking-tight"
+                            className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight"
                             variants={itemVariants}
                         >
                             <span className="block">Master Modern</span>
@@ -436,7 +403,7 @@ export default function HeroSection() {
                         </motion.h1>
 
                         <motion.p
-                            className="mt-6 text-lg md:text-xl text-[color:var(--ai-foreground-inverse)]/90"
+                            className="mt-6 text-lg md:text-xl text-white/90"
                             variants={itemVariants}
                         >
                             Learn in-demand technologies from industry experts. Build real-world projects
@@ -463,7 +430,7 @@ export default function HeroSection() {
                                 color="secondary"
                                 size="lg"
                                 radius="full"
-                                className="px-8 py-6 text-lg font-medium border-[color:var(--ai-secondary)]/50 text-[color:var(--ai-foreground-inverse)] backdrop-blur-sm hover:bg-white/10 transform hover:-translate-y-1 transition-all duration-300"
+                                className="px-8 py-6 text-lg font-medium border-white/50 text-white backdrop-blur-sm hover:bg-white/10 transform hover:-translate-y-1 transition-all duration-300"
                                 onClick={() => router.push('/courses')}
                             >
                                 Explore Courses
@@ -491,8 +458,8 @@ export default function HeroSection() {
                                     </div>
                                 ))}
                                 </div>
-                                <div className="text-sm text-[color:var(--ai-foreground-inverse)]/90 font-medium">
-                                    <span className="text-[color:var(--ai-secondary)] font-semibold">{stats.totalStudents}+</span> developers already enrolled
+                                <div className="text-sm text-white/90 font-medium">
+                                    <span className="text-[color:var(--ai-accent)] font-semibold">{stats.totalStudents}+</span> developers already enrolled
                                 </div>
                             </div>
                         </motion.div>
@@ -505,7 +472,7 @@ export default function HeroSection() {
                             {stats.topTechnologies.map((tech) => (
                                 <span
                                     key={tech}
-                                    className="px-3 py-1 text-xs rounded-full bg-[color:var(--ai-primary)]/20 text-[color:var(--ai-foreground-inverse)]/90 border border-[color:var(--ai-secondary)]/30 backdrop-blur-sm flex items-center"
+                                    className="px-3 py-1 text-xs rounded-full bg-white/20 text-white/90 border border-white/30 backdrop-blur-sm flex items-center"
                                 >
                                     {getTechIcon(tech)}
                                     {tech}
@@ -539,8 +506,8 @@ export default function HeroSection() {
                             <div className="absolute inset-0 flex items-center justify-center">
                                 <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-[color:var(--ai-primary)]/40 to-transparent" />
 
-                                <div className="absolute top-4 right-4 flex items-center gap-2 bg-black/30 backdrop-blur-md px-3 py-1.5 rounded-full text-xs text-[color:var(--ai-secondary)] border border-[color:var(--ai-secondary)]/30">
-                                    <span className="inline-block h-2 w-2 rounded-full bg-[color:var(--ai-secondary)] animate-pulse"></span>
+                                <div className="absolute top-4 right-4 flex items-center gap-2 bg-black/30 backdrop-blur-md px-3 py-1.5 rounded-full text-xs text-[color:var(--ai-accent)] border border-[color:var(--ai-accent)]/30">
+                                    <span className="inline-block h-2 w-2 rounded-full bg-[color:var(--ai-accent)] animate-pulse"></span>
                                     Project-Based Learning
                                 </div>
 
@@ -548,7 +515,7 @@ export default function HeroSection() {
                                 {techNodes.slice(0, 3).map((tech, i) => (
                                     <div
                                         key={tech}
-                                        className="absolute bg-[color:var(--ai-primary)]/20 backdrop-blur-sm border border-[color:var(--ai-secondary)]/30 rounded-lg px-2 py-1 text-xs text-[color:var(--ai-foreground-inverse)]/90 flex items-center"
+                                        className="absolute bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg px-2 py-1 text-xs text-white/90 flex items-center"
                                         style={{
                                             top: `${20 + i * 20}%`,
                                             left: `${10 + i * 25}%`,
@@ -577,21 +544,21 @@ export default function HeroSection() {
                                 </svg>
                             </div>
                             <div>
-                                <p className="text-sm font-medium text-[color:var(--ai-foreground-inverse)]">{stats.totalCourses} Courses Available</p>
-                                <p className="text-xs text-[color:var(--ai-foreground-inverse)]/80">Project-based curriculum</p>
+                                <p className="text-sm font-medium text-white">{stats.totalCourses} Courses Available</p>
+                                <p className="text-xs text-white/80">Project-based curriculum</p>
                             </div>
                         </div>
 
                         <div className="absolute -top-6 -right-6 z-10 rounded-lg bg-white/10 backdrop-blur-md border border-[color:var(--ai-secondary)]/30 shadow-xl p-4 transform hover:scale-105 transition-transform duration-300">
                             <div className="text-center">
-                                <p className="text-sm font-medium text-[color:var(--ai-foreground-inverse)]/90">Student Rating</p>
+                                <p className="text-sm font-medium text-white/90">Student Rating</p>
                                 <div className="flex items-center justify-center mt-1">
                                     <svg className="h-5 w-5 text-[color:var(--ai-accent)]" viewBox="0 0 20 20" fill="currentColor">
                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                     </svg>
                                 </div>
-                                <p className="mt-1 text-xl font-bold text-[color:var(--ai-foreground-inverse)]">{stats.avgRating}<span className="text-sm text-[color:var(--ai-foreground-inverse)]/70">/5</span></p>
-                                <p className="text-xs text-[color:var(--ai-foreground-inverse)]/70">from {stats.totalReviews || 42} reviews</p>
+                                <p className="mt-1 text-xl font-bold text-white">{stats.avgRating}<span className="text-sm text-white/70">/5</span></p>
+                                <p className="text-xs text-white/70">from {stats.totalReviews || 42} reviews</p>
                             </div>
                         </div>
                     </motion.div>
@@ -600,9 +567,9 @@ export default function HeroSection() {
 
             {/* Scroll indicator */}
             <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
-                <p className="text-[color:var(--ai-foreground-inverse)]/80 text-sm mb-2">Scroll to explore</p>
+                <p className="text-white/80 text-sm mb-2">Scroll to explore</p>
                 <motion.div
-                    className="w-8 h-12 rounded-full border-2 border-[color:var(--ai-secondary)]/60 flex justify-center p-2"
+                    className="w-8 h-12 rounded-full border-2 border-white/60 flex justify-center p-2"
                     initial={{ opacity: 0.6 }}
                     animate={{
                         opacity: [0.6, 1, 0.6],
@@ -610,7 +577,7 @@ export default function HeroSection() {
                     }}
                 >
                     <motion.div
-                        className="w-1 h-2 bg-[color:var(--ai-secondary)]/80 rounded-full"
+                        className="w-1 h-2 bg-white/80 rounded-full"
                         animate={{
                             y: [0, 15, 0],
                             transition: { duration: 1.5, repeat: Infinity }

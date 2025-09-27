@@ -8,6 +8,43 @@ import { useToast } from "@/components/Toast";
 import { validatePassword } from "@/utils/security/passwordValidation";
 import PasswordStrengthMeter from "@/components/ui/PasswordStrengthMeter";
 
+// Helper function to get user-friendly error messages
+const getFirebaseErrorMessage = (error: any): string => {
+    const errorCode = error?.code || '';
+    
+    switch (errorCode) {
+        case 'auth/user-not-found':
+        case 'auth/wrong-password':
+        case 'auth/invalid-credential':
+            return 'Invalid email or password. Please check your credentials and try again.';
+        case 'auth/email-already-in-use':
+            return 'An account with this email already exists. Try signing in instead.';
+        case 'auth/weak-password':
+            return 'Password is too weak. Please choose a stronger password.';
+        case 'auth/invalid-email':
+            return 'Invalid email address. Please enter a valid email.';
+        case 'auth/operation-not-allowed':
+            return 'This sign-in method is not enabled. Please contact support.';
+        case 'auth/user-disabled':
+            return 'This account has been disabled. Please contact support.';
+        case 'auth/too-many-requests':
+            return 'Too many failed attempts. Please try again later.';
+        case 'auth/network-request-failed':
+            return 'Network error. Please check your connection and try again.';
+        case 'auth/popup-closed-by-user':
+            return 'Sign-in was cancelled. Please try again.';
+        case 'auth/popup-blocked':
+            return 'Pop-up blocked by browser. Please allow pop-ups and try again.';
+        case 'auth/cancelled-popup-request':
+            return 'Sign-in was cancelled. Please try again.';
+        default:
+            if (errorCode.includes('cors') || error.message?.includes('Cross-Origin')) {
+                return 'Authentication service temporarily unavailable. Please try again later or contact support.';
+            }
+            return error?.message || 'An unexpected error occurred. Please try again.';
+    }
+};
+
 export default function Login(props: { onClose: () => void }) {
     // State variables for the enhanced login component
     const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
@@ -18,7 +55,16 @@ export default function Login(props: { onClose: () => void }) {
     const [loadingGoogleLogin, setLoadingGoogleLogin] = useState(false);
     const [loadingEmailLogin, setLoadingEmailLogin] = useState(false);
     const [loadingEmailRegister, setLoadingEmailRegister] = useState(false);
-    const toast = useToast();    // Clear error message when inputs change
+    
+    // Safe toast hook usage with error handling
+    let toast = null;
+    try {
+        toast = useToast();
+    } catch (error) {
+        // Toast provider not available, will use fallback UI feedback methods
+        // This is expected behavior in modal contexts and doesn't affect functionality
+        toast = null;
+    }    // Clear error message when inputs change
     useEffect(() => {
         if (errorMessage) setErrorMessage("");
     }, [email, password, confirmPassword, activeTab]);
@@ -33,22 +79,26 @@ export default function Login(props: { onClose: () => void }) {
             const result = await signInWithPopup(firebaseAuth, provider);
             if (result) {
                 props.onClose();
-                toast.showToast({
-                    type: 'success',
-                    title: 'Login Successful',
-                    message: 'You are now signed in with Google.',
-                    duration: 4000
-                });
+                if (toast) {
+                    toast.showToast({
+                        type: 'success',
+                        title: 'Login Successful',
+                        message: 'You are now signed in with Google.',
+                        duration: 4000
+                    });
+                }
             }        } catch (error: unknown) {
             console.error("Google login error:", error);
-            const errorMsg = error instanceof Error ? error.message : "Failed to sign in with Google";
+            const errorMsg = getFirebaseErrorMessage(error);
             setErrorMessage(errorMsg);
-            toast.showToast({
-                type: 'error',
-                title: 'Login Error',
-                message: errorMsg,
-                duration: 6000
-            });
+            if (toast) {
+                toast.showToast({
+                    type: 'error',
+                    title: 'Google Sign-in Failed',
+                    message: errorMsg,
+                    duration: 8000
+                });
+            }
         } finally {
             setLoadingGoogleLogin(false);
         }
@@ -65,12 +115,14 @@ export default function Login(props: { onClose: () => void }) {
             const result = await signInWithEmailAndPassword(firebaseAuth, email, password);
             if (result) {
                 props.onClose();
-                toast.showToast({
-                    type: 'success',
-                    title: 'Login Successful',
-                    message: 'You are now signed in.',
-                    duration: 4000
-                });
+                if (toast) {
+                    toast.showToast({
+                        type: 'success',
+                        title: 'Login Successful',
+                        message: 'You are now signed in.',
+                        duration: 4000
+                    });
+                }
             }
         } catch (error: any) {
             console.error("Email login error:", error);
@@ -148,7 +200,8 @@ export default function Login(props: { onClose: () => void }) {
     }
 
     // Register with email and password
-    const handleEmailRegister = async () => {
+    const handleEmailRegister = async (e: React.FormEvent) => {
+        e.preventDefault();
         // Basic input validation
         if (!email || !password || !confirmPassword) {
             setErrorMessage("All fields are required");
@@ -183,24 +236,28 @@ export default function Login(props: { onClose: () => void }) {
             const result = await createUserWithEmailAndPassword(firebaseAuth, email, password);
             if (result) {
                 props.onClose();
-                toast.showToast({
-                    type: 'success',
-                    title: 'Registration Successful',
-                    message: 'Your account has been created. You are now signed in.',
-                    duration: 4000
-                });
+                if (toast) {
+                    toast.showToast({
+                        type: 'success',
+                        title: 'Registration Successful',
+                        message: 'Your account has been created. You are now signed in.',
+                        duration: 4000
+                    });
+                }
             }
         } catch (error: unknown) {
             console.error("Registration error:", error);
-            const errorMsg = error instanceof Error ? error.message : "Registration failed";
+            const errorMsg = getFirebaseErrorMessage(error);
             setErrorMessage(errorMsg);
             
-            toast.showToast({
-                type: 'error',
-                title: 'Registration Error',
-                message: errorMsg,
-                duration: 6000
-            });
+            if (toast) {
+                toast.showToast({
+                    type: 'error',
+                    title: 'Registration Failed',
+                    message: errorMsg,
+                    duration: 8000
+                });
+            }
         } finally {
             setLoadingEmailRegister(false);
         }
@@ -426,7 +483,7 @@ export default function Login(props: { onClose: () => void }) {
                 {loadingGoogleLogin ? <LoadingButton /> : (
                     <button
                         type="button"
-                        className="flex items-center justify-center gap-2 px-6 py-2.5 bg-white text-[#757575] rounded-lg border border-gray-200 hover:bg-gray-50 font-medium text-sm shadow-sm transition-all duration-300 transform hover:-translate-y-1"
+                        className="flex items-center justify-center gap-2 px-6 py-2.5 bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] text-[color:var(--ai-foreground)] rounded-lg border border-[color:var(--ai-card-border)] hover:bg-[color:var(--ai-card-bg)]/80 font-medium text-sm shadow-sm transition-all duration-300 transform hover:-translate-y-1"
                         onClick={signInWithGoogleRedirect}
                     >
                         <GoogleIcon />

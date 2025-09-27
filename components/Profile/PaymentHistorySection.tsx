@@ -45,7 +45,7 @@ export default function PaymentHistorySection() {
 
     if (loading) {
         return (
-            <Card className="border border-[color:var(--ai-card-border)] bg-white dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-md overflow-hidden mb-8">
+            <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-md overflow-hidden mb-8">
                 <div className="h-1 w-full bg-gradient-to-r from-[color:var(--ai-secondary)] via-[color:var(--ai-accent)] to-[color:var(--ai-primary)]"></div>
                 <CardBody className="p-6">
                     <h2 className="text-lg font-semibold mb-5 text-[color:var(--ai-foreground)] flex items-center gap-2">
@@ -64,7 +64,7 @@ export default function PaymentHistorySection() {
 
     if (error) {
         return (
-            <Card className="border border-[color:var(--ai-card-border)] bg-white dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-md overflow-hidden mb-8">
+            <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-md overflow-hidden mb-8">
                 <div className="h-1 w-full bg-gradient-to-r from-[color:var(--ai-error)] to-[color:var(--ai-error-dark)]"></div>
                 <CardBody className="p-6">
                     <h2 className="text-lg font-semibold mb-5 text-[color:var(--ai-foreground)] flex items-center gap-2">
@@ -83,7 +83,7 @@ export default function PaymentHistorySection() {
     }
 
     return (
-        <Card className="border border-[color:var(--ai-card-border)] bg-white dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-md overflow-hidden mb-8">
+        <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-md overflow-hidden mb-8">
             <div className="h-1 w-full bg-gradient-to-r from-[color:var(--ai-secondary)] via-[color:var(--ai-accent)] to-[color:var(--ai-primary)]"></div>
             <CardBody className="p-6">
                 <h2 className="text-lg font-semibold mb-5 text-[color:var(--ai-foreground)] flex items-center gap-2">

@@ -11,9 +11,21 @@ export async function GET(request: NextRequest) {
         const courseId = searchParams.get('courseId');
         const lessonId = searchParams.get('lessonId');
 
+        // Validate required parameters
         if (!courseId || !lessonId) {
+            // Log for debugging but this is expected behavior for malformed requests
+            console.log(`Sync-lesson API: Missing required parameters. courseId: ${courseId}, lessonId: ${lessonId}`);
             return NextResponse.json({
                 error: 'Missing required parameters',
+                success: false
+            }, { status: 400 });
+        }
+
+        // Validate parameter format (basic validation)
+        if (courseId.length < 10 || lessonId.length < 10) {
+            console.log(`Sync-lesson API: Invalid parameter format. courseId: ${courseId}, lessonId: ${lessonId}`);
+            return NextResponse.json({
+                error: 'Invalid parameter format',
                 success: false
             }, { status: 400 });
         }
@@ -23,13 +35,16 @@ export async function GET(request: NextRequest) {
 
         // If not found, load all lessons for the course
         if (!lesson) {
-            console.log(`Lesson ${lessonId} not found directly. Loading all course lessons...`);
+            console.log(`Sync-lesson API: Lesson ${lessonId} not found directly. Loading all course lessons...`);
             const allLessons = await getCourseLessons(courseId);
 
             // Check if the lesson exists in the returned collection
             if (allLessons[lessonId]) {
                 lesson = allLessons[lessonId];
-                console.log('Found lesson in complete course lessons');
+                console.log('Sync-lesson API: Found lesson in complete course lessons');
+            } else {
+                // This is expected behavior for non-existent lessons
+                console.log(`Sync-lesson API: Lesson ${lessonId} does not exist in course ${courseId}`);
             }
         }
 
@@ -40,7 +55,8 @@ export async function GET(request: NextRequest) {
             lessonId
         });
     } catch (error) {
-        console.error('Error in sync-lesson API:', error);
+        // This indicates a real problem and should be logged as an error
+        console.error('Sync-lesson API: Unexpected error:', error);
         return NextResponse.json({
             error: 'Internal server error',
             success: false

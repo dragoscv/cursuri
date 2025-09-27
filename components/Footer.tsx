@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { AppContext } from './AppContext';
 import { AppContextProps } from '@/types';
-import GithubIcon from './icons/GitHubIcon';
+import GithubIcon from './icons/GithubIcon';
 import TikTokIcon from './icons/TikTokIcon';
 import WebsiteIcon from './icons/WebsiteIcon';
 import packageInfo from '../package.json';
@@ -21,7 +21,7 @@ const Footer = () => {
     const appVersion = packageInfo.version;
 
     return (
-        <footer className="bg-white dark:bg-[color:var(--ai-background)] border-t border-[color:var(--ai-card-border)]">
+        <footer className="bg-[color:var(--ai-background)] dark:bg-[color:var(--ai-background)] border-t border-[color:var(--ai-card-border)]">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {/* Left column - About */}
@@ -55,7 +55,7 @@ const Footer = () => {
                                 </Link>
                             </li>                            <li>
                                 <Button
-                                    onClick={toggleTheme}
+                                    onPress={toggleTheme}
                                     variant="light"
                                     className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] p-0 min-w-0"
                                 >

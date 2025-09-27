@@ -25,7 +25,7 @@ export default function FeatureCard({ icon, title, description, index }: Feature
     };
     return (
         <motion.div
-            className="bg-white dark:bg-[color:var(--ai-card-bg)] backdrop-filter backdrop-blur-lg rounded-xl p-6 h-full border border-[color:var(--ai-card-border)] shadow-lg dark:shadow-[color:var(--ai-card-border)]/20"
+            className="bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] backdrop-filter backdrop-blur-lg rounded-xl p-6 h-full border border-[color:var(--ai-card-border)] shadow-lg dark:shadow-[color:var(--ai-card-border)]/20"
             variants={itemVariants}
             whileHover={{
                 y: -5,

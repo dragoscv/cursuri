@@ -9,6 +9,7 @@ import { stripePayments } from "@/utils/firebase/stripe";
 import { firebaseApp } from "@/utils/firebase/firebase.config";
 import Login from "../Login";
 import { Course } from '@/types';
+import { getCoursePrice as getUnifiedCoursePrice } from '@/utils/pricing';
 import { FiLink } from '../icons/FeatherIcons/FiLink';
 
 interface CoursesListProps {
@@ -94,13 +95,13 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
         router.push(`/courses/${course.id}`);
     }, [router]);
 
+    // Use unified pricing logic
     const getCoursePrice = useCallback((course: any) => {
-        const product = products?.find((product: any) => product.id === course.priceProduct?.id);
-        const price = product?.prices?.find((price: any) => price.id === course.price);
+        const priceInfo = getUnifiedCoursePrice(course, products);
         return {
-            amount: price?.unit_amount ? price.unit_amount / 100 : course.price || 0,
-            currency: price?.currency?.toUpperCase() || 'RON',
-            priceId: price?.id
+            amount: priceInfo.amount,
+            currency: priceInfo.currency,
+            priceId: priceInfo.priceId
         };
     }, [products]); const isPurchased = useCallback((courseId: string) => {
         return userPaidProducts?.find((userPaidProduct: any) =>
@@ -188,7 +189,7 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
                     <motion.div
                         key={course.id}
                         id={course.id}
-                        className="group flex flex-col overflow-hidden rounded-xl bg-white dark:bg-[color:var(--ai-card-bg)] shadow-md border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/50 hover:shadow-lg transition-all duration-300"
+                        className="group flex flex-col overflow-hidden rounded-xl bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] shadow-md border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/50 hover:shadow-lg transition-all duration-300"
                         variants={courseVariants}
                         initial="hidden"
                         animate="visible"

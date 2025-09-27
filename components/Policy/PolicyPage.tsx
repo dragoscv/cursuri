@@ -11,7 +11,7 @@ interface PolicyPageProps {
 export default function PolicyPage({ title, lastUpdated, children }: PolicyPageProps) {
     return (
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <Card className="p-6 border border-[color:var(--ai-card-border)] bg-white dark:bg-[color:var(--ai-card-bg)] shadow-xl">
+            <Card className="p-6 border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] shadow-xl">
                 <CardBody>
                     <h1 className="text-3xl font-bold mb-8 text-center text-[color:var(--ai-foreground)] bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">{title}</h1>
 

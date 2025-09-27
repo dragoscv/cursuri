@@ -204,7 +204,7 @@ export default function FeaturedReviews() {
                             {/* Gradient border animation */}
                             <div className="absolute -inset-[1px] bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)] rounded-2xl opacity-70 blur-[2px] group-hover:opacity-100 transition-opacity duration-300" />
 
-                            <div className="relative rounded-2xl bg-white dark:bg-[color:var(--ai-card-bg)]/90 backdrop-blur-sm p-6 h-full flex flex-col">
+                            <div className="relative rounded-2xl bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)]/90 backdrop-blur-sm p-6 h-full flex flex-col">
                                 {/* Tech circuit pattern */}
                                 <div className="absolute top-0 right-0 w-40 h-40 opacity-[0.03] dark:opacity-[0.05]">
                                     <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">

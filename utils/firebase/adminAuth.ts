@@ -101,11 +101,13 @@ export async function createOrUpdateUserProfile(
 ): Promise<UserProfile> {
     const permissions = customPermissions
         ? { ...DEFAULT_PERMISSIONS[role], ...customPermissions }
-        : DEFAULT_PERMISSIONS[role]; const userProfile: UserProfile = {
+        : DEFAULT_PERMISSIONS[role];
+
+    const userProfile: UserProfile = {
             id: user.uid,
             email: user.email || '',
-            displayName: user.displayName || undefined,
-            photoURL: user.photoURL || undefined,
+            displayName: user.displayName || '',
+            photoURL: user.photoURL || '',
             role,
             isActive: true,
             permissions,

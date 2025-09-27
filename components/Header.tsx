@@ -12,6 +12,7 @@ import MobileBreadcrumbs from "@/components/Header/MobileBreadcrumbs";
 import UserDropdown from "@/components/Header/UserDropdown";
 import AuthActions from "@/components/Header/AuthActions";
 import AdminActions from "@/components/Header/AdminActions";
+import ThemeToggle from "@/components/Header/ThemeToggle";
 
 /**
  * Main Header component for the application
@@ -22,6 +23,7 @@ export default function Header() {
         throw new Error("Missing context value");
     }
 
+    const { user } = context;
     const [isScrolled, setIsScrolled] = useState(false);
 
     // Add scroll event listener to detect when the page is scrolled
@@ -56,25 +58,30 @@ export default function Header() {
             {/* Mobile breadcrumbs section */}
             <MobileBreadcrumbs />
 
-            {/* Right side content with search, auth and user actions */}
-            <NavbarContent justify="end" as="div">
+            {/* Right side content with search, theme toggle, auth and user actions */}
+            <NavbarContent justify="end" as="div" className="flex items-center gap-4">
                 {/* Search Bar */}
-                <NavbarItem>
+                <NavbarItem className="flex-shrink-0">
                     <SearchBar />
                 </NavbarItem>
 
+                {/* Theme Toggle */}
+                <NavbarItem className="flex-shrink-0">
+                    <ThemeToggle />
+                </NavbarItem>
+
                 {/* Admin Actions - only visible if user is admin */}
-                <NavbarItem className="hidden md:flex">
+                <NavbarItem className="hidden md:flex flex-shrink-0">
                     <AdminActions />
                 </NavbarItem>
 
-                {/* Auth Actions - only visible if user is not logged in */}
-                <NavbarItem className="hidden md:flex">
+                {/* Auth Actions - visible on desktop when not logged in, visible on mobile when not logged in */}
+                <NavbarItem className={`flex-shrink-0 ${user ? 'hidden md:flex' : 'flex'}`}>
                     <AuthActions />
                 </NavbarItem>
 
-                {/* User Dropdown Menu - always visible, handles logged in/out states */}
-                <NavbarItem>
+                {/* User Dropdown Menu - only visible when user is logged in */}
+                <NavbarItem className="flex-shrink-0">
                     <UserDropdown />
                 </NavbarItem>
             </NavbarContent>

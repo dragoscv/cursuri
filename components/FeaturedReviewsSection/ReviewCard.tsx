@@ -39,7 +39,7 @@ export function ReviewCard({ review, index }: ReviewCardProps) {
             initial="hidden"
             animate={controls}
             variants={cardVariants}
-            className="bg-white dark:bg-[color:var(--ai-card-bg)] rounded-xl p-6 shadow-lg dark:shadow-[color:var(--ai-card-border)]/10 border border-transparent dark:border-[color:var(--ai-card-border)]/30"
+            className="bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] rounded-xl p-6 shadow-lg dark:shadow-[color:var(--ai-card-border)]/10 border border-[color:var(--ai-card-border)]/30 dark:border-[color:var(--ai-card-border)]/30"
         >
             <div className="flex justify-between items-start mb-4">
                 <div>

@@ -15,7 +15,7 @@ export default function StatsCard({ icon, title, value, footer, colorClass }: St
         <motion.div
             whileHover={{ y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)' }}
             transition={{ duration: 0.3 }}
-        >            <Card className="border border-[color:var(--ai-card-border)] overflow-hidden h-full rounded-xl shadow-sm bg-white dark:bg-[color:var(--ai-card-bg)]">
+        >            <Card className="border border-[color:var(--ai-card-border)] overflow-hidden h-full rounded-xl shadow-sm bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)]">
                 <div className={`absolute top-0 right-0 w-24 h-24 -mt-8 -mr-8 rounded-full bg-gradient-to-br ${colorClass} opacity-20 blur-sm`}></div>
                 <div className="absolute bottom-0 left-0 w-16 h-16 -mb-6 -ml-6 rounded-full bg-gradient-to-br ${colorClass} opacity-10 blur-sm"></div>
 

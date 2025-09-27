@@ -59,8 +59,20 @@ export async function getCourseById(courseId: string): Promise<DocumentData | nu
             return null;
         }
     } catch (error) {
-        console.error(`Error getting course ${courseId}:`, error);
-        return null;
+    // Distinguish between expected (document not found) vs unexpected errors
+    if (error && typeof error === 'object' && 'code' in error) {
+        const firebaseError = error as { code: string; message: string };
+        if (firebaseError.code === 'permission-denied') {
+            console.log(`Access denied for course ${courseId} - this may be expected based on security rules`);
+        } else if (firebaseError.code === 'not-found') {
+            console.log(`Course ${courseId} not found in database`);
+        } else {
+            console.error(`Firebase error getting course ${courseId}:`, firebaseError.code, firebaseError.message);
+        }
+    } else {
+        console.error(`Unexpected error getting course ${courseId}:`, error);
+    }
+    return null;
     }
 }
 
@@ -154,7 +166,19 @@ export async function getLessonById(courseId: string, lessonId: string): Promise
             return null;
         }
     } catch (error) {
-        console.error(`Error getting lesson ${lessonId} in course ${courseId}:`, error);
+        // Distinguish between expected vs unexpected Firebase errors
+        if (error && typeof error === 'object' && 'code' in error) {
+            const firebaseError = error as { code: string; message: string };
+            if (firebaseError.code === 'permission-denied') {
+                console.log(`Access denied for lesson ${lessonId} in course ${courseId} - this may be expected based on security rules`);
+            } else if (firebaseError.code === 'not-found') {
+                console.log(`Lesson ${lessonId} not found in course ${courseId}`);
+            } else {
+                console.error(`Firebase error getting lesson ${lessonId} in course ${courseId}:`, firebaseError.code, firebaseError.message);
+            }
+        } else {
+            console.error(`Unexpected error getting lesson ${lessonId} in course ${courseId}:`, error);
+        }
         return null;
     }
 }
@@ -187,7 +211,19 @@ export async function getCourseLessons(courseId: string): Promise<Record<string,
         console.log(`Fetched ${Object.keys(lessons).length} lessons for course ${courseId}`);
         return lessons;
     } catch (error) {
-        console.error(`Error fetching lessons for course ${courseId}:`, error);
+        // Distinguish between expected vs unexpected Firebase errors  
+        if (error && typeof error === 'object' && 'code' in error) {
+            const firebaseError = error as { code: string; message: string };
+            if (firebaseError.code === 'permission-denied') {
+                console.log(`Access denied for lessons in course ${courseId} - this may be expected based on security rules`);
+            } else if (firebaseError.code === 'not-found') {
+                console.log(`Course ${courseId} not found when fetching lessons`);
+            } else {
+                console.error(`Firebase error getting lessons for course ${courseId}:`, firebaseError.code, firebaseError.message);
+            }
+        } else {
+            console.error(`Unexpected error getting lessons for course ${courseId}:`, error);
+        }
         return {};
     }
 }

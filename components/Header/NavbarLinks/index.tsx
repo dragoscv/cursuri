@@ -22,7 +22,7 @@ export default function NavbarLinks() {
         <NavbarContent className="hidden sm:flex gap-4" justify="center">
             <NavbarItem>
                 <Link
-                    href="/#courses-section"
+                    href="/courses"
                     className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition-colors"
                 >
                     Courses
@@ -30,7 +30,7 @@ export default function NavbarLinks() {
             </NavbarItem>
             <NavbarItem>
                 <Link
-                    href="#"
+                    href="/about"
                     className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition-colors"
                 >
                     About
@@ -38,7 +38,7 @@ export default function NavbarLinks() {
             </NavbarItem>
             <NavbarItem>
                 <Link
-                    href="#"
+                    href="/contact"
                     className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition-colors"
                 >
                     Contact

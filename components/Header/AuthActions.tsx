@@ -37,7 +37,7 @@ export default function AuthActions() {
             onClose: () => closeModal('login'),
             classNames: {
                 backdrop: "z-50 backdrop-blur-md backdrop-saturate-150 bg-black/60 w-screen min-h-[100dvh] fixed inset-0",
-                base: "z-50 mx-auto my-auto rounded-xl shadow-xl border border-[color:var(--ai-card-border)] bg-white dark:bg-[color:var(--ai-card-bg)] overflow-hidden h-auto min-h-0",
+                base: "z-50 mx-auto my-auto rounded-xl shadow-xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] overflow-hidden h-auto min-h-0",
                 wrapper: "z-50 w-full flex flex-col justify-center items-center overflow-hidden min-h-[100dvh]",
                 content: "h-auto min-h-0",
             },
@@ -45,19 +45,46 @@ export default function AuthActions() {
     };
 
     return (
-        <div className="flex gap-3">
+        <div className="flex items-center gap-2 md:gap-3">
             <Button
                 variant="flat"
-                color="primary"
+                size="sm"
                 onClick={handleOpenLoginModal}
-                className="font-medium text-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10 hover:bg-[color:var(--ai-primary)]/20"
+                className="
+                    font-medium 
+                    text-[color:var(--ai-primary)] 
+                    bg-[color:var(--ai-primary)]/10 
+                    hover:bg-[color:var(--ai-primary)]/20
+                    border border-[color:var(--ai-primary)]/20
+                    hover:border-[color:var(--ai-primary)]/30
+                    rounded-lg
+                    px-3 py-2 md:px-4 md:py-2
+                    transition-all duration-200
+                    min-w-[60px] md:min-w-[70px]
+                    text-sm
+                "
             >
                 Login
             </Button>
             <Button
-                color="primary"
+                variant="primary"
+                size="sm" 
                 onClick={handleOpenLoginModal}
-                className="font-medium bg-[color:var(--ai-primary)] text-white hover:bg-[color:var(--ai-primary)]/90"
+                style={{
+                    background: 'linear-gradient(to right, var(--ai-primary), var(--ai-secondary))'
+                }}
+                className="
+                    font-medium 
+                    text-white 
+                    hover:opacity-90
+                    hover:shadow-md hover:shadow-[color:var(--ai-primary)]/25
+                    rounded-lg
+                    px-3 py-2 md:px-4 md:py-2
+                    transition-all duration-200
+                    min-w-[70px] md:min-w-[80px]
+                    text-sm
+                    border-0
+                "
             >
                 Sign Up
             </Button>

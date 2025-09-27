@@ -17,8 +17,8 @@ export default function BottomNavigation() {
     const isHomepage = pathname === '/';
     const isAdminRoute = pathname.startsWith('/admin');
 
-    // Hide navigation on homepage if user is not authenticated or on admin routes
-    if ((isHomepage && !isAuthenticated) || isAdminRoute) {
+    // Hide navigation if user is not authenticated or on admin routes
+    if (!isAuthenticated || isAdminRoute) {
         return null;
     }
 

@@ -93,7 +93,7 @@ export default function CallToActionSection() {
                         {Array.from({ length: 50 }).map((_, i) => (
                             <div
                                 key={i}
-                                className="col-span-1 bg-white h-8 animate-pulse"
+                                className="col-span-1 bg-white/10 dark:bg-white/5 h-8 animate-pulse"
                                 style={{
                                     animationDelay: `${i * 0.1}s`,
                                     opacity: gridOpacities[i]
@@ -139,7 +139,7 @@ export default function CallToActionSection() {
                     </ScrollAnimationWrapper>
 
                     <ScrollAnimationWrapper delay={0.1}>
-                        <p className="text-xl text-indigo-200 mb-8">
+                        <p className="text-xl text-white/80 mb-8">
                             Join thousands of students already learning on our platform and accelerate your career.
                         </p>
                     </ScrollAnimationWrapper>
@@ -186,19 +186,19 @@ export default function CallToActionSection() {
                     {/* Trust badges */}
                     <ScrollAnimationWrapper delay={0.3}>
                         <div className="mt-12 flex flex-wrap justify-center items-center gap-8">
-                            <div className="text-indigo-200 flex items-center">
+                            <div className="text-white/80 flex items-center">
                                 <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                 </svg>
                                 <span>30-Day Money Back Guarantee</span>
                             </div>
-                            <div className="text-indigo-200 flex items-center">
+                            <div className="text-white/80 flex items-center">
                                 <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                 </svg>
                                 <span>Lifetime Access</span>
                             </div>
-                            <div className="text-indigo-200 flex items-center">
+                            <div className="text-white/80 flex items-center">
                                 <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                 </svg>

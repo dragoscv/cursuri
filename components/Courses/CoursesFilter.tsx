@@ -60,7 +60,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
     };
 
     return (
-        <div className="mb-8 bg-white dark:bg-[color:var(--ai-card-bg)] rounded-xl p-4 border border-[color:var(--ai-card-border)] shadow-xl">
+        <div className="mb-8 bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] rounded-xl p-4 border border-[color:var(--ai-card-border)] shadow-xl">
             <div className="flex flex-col md:flex-row gap-4">
                 {/* Search input */}
                 <div className="flex-1">
@@ -81,7 +81,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
                 <div className="md:w-60 relative">
                     <div
                         onClick={() => setIsSelectOpen(!isSelectOpen)}
-                        className="w-full cursor-pointer bg-white dark:bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-lg px-4 py-2.5 text-left flex items-center justify-between hover:border-[color:var(--ai-primary)]/50 transition-colors duration-200"
+                        className="w-full cursor-pointer bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-lg px-4 py-2.5 text-left flex items-center justify-between hover:border-[color:var(--ai-primary)]/50 transition-colors duration-200"
                     >
                         <span className="block truncate">
                             {selectedCategory === 'all' ? 'All Categories' : selectedCategory}
@@ -109,7 +109,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
 
                             {/* Dropdown options */}
                             <div
-                                className="absolute z-20 mt-1 w-full bg-white dark:bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-lg shadow-lg max-h-60 overflow-y-auto"
+                                className="absolute z-20 mt-1 w-full bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-lg shadow-lg max-h-60 overflow-y-auto"
                                 style={{
                                     transformOrigin: 'top center',
                                     animation: 'scaleIn 0.15s ease-out forwards'

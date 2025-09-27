@@ -43,7 +43,7 @@ export default function LearningPathSection() {
             }
         }
     }; return (
-        <section className="relative w-full py-24 bg-white dark:bg-[color:var(--ai-background)] overflow-hidden">
+        <section className="relative w-full py-24 bg-[color:var(--ai-background)] dark:bg-[color:var(--ai-background)] overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <ScrollAnimationWrapper>
                     <div className="text-center mb-16">
@@ -78,7 +78,7 @@ export default function LearningPathSection() {
 
                                         {/* Content section with glass morphism effect */}
                                         <motion.div
-                                            className="relative flex-grow p-8 rounded-xl bg-white/80 dark:bg-[color:var(--ai-card-bg)]/90 backdrop-blur-md border border-[color:var(--ai-card-border)] shadow-xl"
+                                            className="relative flex-grow p-8 rounded-xl bg-[color:var(--ai-card-bg)]/90 dark:bg-[color:var(--ai-card-bg)]/90 backdrop-blur-md border border-[color:var(--ai-card-border)] shadow-xl"
                                             variants={fadeInUpVariants}
                                             initial="hidden"
                                             whileInView="visible"

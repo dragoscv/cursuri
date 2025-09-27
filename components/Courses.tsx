@@ -1,7 +1,8 @@
 'use client'
 import { useContext, useEffect, useCallback, useState, useRef, useMemo } from "react"
 import { useAuth, useCourses, useTheme, useModal, useAdmin, useLessons, useReviews, useUserData } from '@/components/contexts/modules'
-import { Course as CourseType, StripeProduct, UserPaidProduct } from "@/types"
+import { Course as CourseType, UserPaidProduct } from "@/types"
+import { StripeProduct } from "@/types/stripe"
 // Note: The Products context is dynamically imported in the component to support backward compatibility
 import { createCheckoutSession } from "firewand";
 import { stripePayments } from "@/utils/firebase/stripe";
@@ -14,6 +15,8 @@ import { useRouter } from "next/navigation";
 import { FiClock, FiUsers, FiStar, FiAlertCircle } from "./icons/FeatherIcons";
 import { useToast } from "@/components/Toast";
 import Image from 'next/image';
+
+import { getCoursePrice as getUnifiedCoursePrice } from '@/utils/pricing';
 
 export default function Courses() {
     const [loadingPayment, setLoadingPayment] = useState(false)
@@ -126,15 +129,13 @@ export default function Courses() {
     }, [closeModal, openModal, user, toast]); const handleCourseClick = useCallback((course: CourseType) => {
         // Navigate to the course page using Next.js client-side navigation
         router.push(`/courses/${course.id}`);
-    }, [router]);    const getCoursePrice = useCallback((course: CourseType) => {
-        if (!course?.priceProduct) return { amount: 0, currency: 'RON', priceId: '' };
-        const product = products?.find((product: StripeProduct) => product.id === course.priceProduct!.id);
-        const prices = product?.prices || [];
-        const price = prices.find((price: any) => price.id === course.price);
+    }, [router]);    // Use unified pricing logic
+    const getCoursePrice = useCallback((course: CourseType) => {
+        const priceInfo = getUnifiedCoursePrice(course, products);
         return {
-            amount: price?.unit_amount ? price.unit_amount / 100 : 0,
-            currency: price?.currency?.toUpperCase() || 'RON',
-            priceId: price?.id || ''
+            amount: priceInfo.amount,
+            currency: priceInfo.currency,
+            priceId: priceInfo.priceId
         };
     }, [products]);const isPurchased = useCallback((courseId: string) => {
         return userPaidProducts?.find((userPaidProduct: UserPaidProduct) => userPaidProduct.metadata.courseId === courseId);

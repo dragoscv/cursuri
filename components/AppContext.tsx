@@ -37,6 +37,9 @@ const DEFAULT_CACHE_OPTIONS: CacheOptions = {
 };
 
 export const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
+    // Debug: Log that the provider is being initialized
+    console.log('AppContextProvider: Initializing...');
+    
     const [isDark, setIsDark] = useState(false);
     const [colorScheme, setColorScheme] = useState<ColorScheme>('modern-purple');
     const [user, setUser] = useState<User | null>(null);
@@ -1739,6 +1742,9 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         }
     }, [dispatch, state.lessons]);
 
+    // Debug: Log context value being provided
+    console.log('AppContext: Providing context with user:', !!user, 'authLoading:', authLoading, 'isAdmin:', state.isAdmin);
+
     return (
         <AppContext.Provider value={{
             isDark,
@@ -1746,7 +1752,8 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             colorScheme,
             setColorScheme: handleColorSchemeChange,
             userPreferences,
-            saveUserPreferences, user,
+            saveUserPreferences,
+            user,
             userProfile: state.userProfile,
             authLoading,
             isAdmin: state.isAdmin,

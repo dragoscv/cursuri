@@ -31,6 +31,11 @@ export default function UserDropdown() {
 
     const { user, openModal, closeModal, isAdmin } = context;
 
+    // Don't render the dropdown if no user is authenticated
+    if (!user) {
+        return null;
+    }
+
     const handleSignOut = async () => {
         await signOut(firebaseAuth);
     }
@@ -170,7 +175,7 @@ export default function UserDropdown() {
                                 onClose: () => closeModal('login'),
                                 classNames: {
                                     backdrop: "z-50 backdrop-blur-md backdrop-saturate-150 bg-black/60 w-screen min-h-[100dvh] fixed inset-0",
-                                    base: "z-50 mx-auto my-auto rounded-xl shadow-xl border border-[color:var(--ai-card-border)] bg-white dark:bg-[color:var(--ai-card-bg)] overflow-hidden h-auto min-h-0",
+                                    base: "z-50 mx-auto my-auto rounded-xl shadow-xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] overflow-hidden h-auto min-h-0",
                                     wrapper: "z-50 w-full flex flex-col justify-center items-center overflow-hidden min-h-[100dvh]",
                                     content: "h-auto min-h-0",
                                 },
@@ -207,7 +212,7 @@ export default function UserDropdown() {
             classNames={{
                 base: "py-1 px-1 rounded-lg bg-gradient-to-br from-white to-default-200 dark:from-[color:var(--ai-card-bg)]/90 dark:to-[color:var(--ai-background)]/70 z-[9999]",
                 arrow: "bg-default-200",
-                backdrop: "fixed backdrop-blur-md backdrop-saturate-150 bg-white/70 dark:bg-[color:var(--ai-background)]/60 w-screen h-screen inset-0",
+                backdrop: "fixed backdrop-blur-md backdrop-saturate-150 bg-[color:var(--ai-card-bg)]/70 dark:bg-[color:var(--ai-background)]/60 w-screen h-screen inset-0",
                 content: "z-[9999] flex flex-col justify-start items-end shadow-xl",
             }}
             className="z-[9999] relative"

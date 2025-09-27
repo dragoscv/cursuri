@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Course, ModalProps } from '../../types';
-import { AppContext } from '../AppContext';
+import { getCoursePrice as getUnifiedCoursePrice } from '@/utils/pricing';
+import { AppContext } from '@/components/AppContext';
 import { Button, Progress, Chip, Divider, Card } from '@heroui/react';
 import { motion } from 'framer-motion';
 import {
@@ -34,7 +35,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
         throw new Error('CourseEnrollment must be used within an AppContextProvider');
     }
 
-    const { user, openModal } = context;
+    const { user, openModal, closeModal } = context;
     const [isLoading, setIsLoading] = useState(false);
 
     // Check if the user has completed all prerequisites before enrolling
@@ -89,8 +90,8 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                 id: "login-modal",
                 isOpen: true,
                 modalHeader: "Login Required",
-                modalBody: <Login />,
-                onClose: () => { }
+                modalBody: <Login onClose={() => closeModal("login-modal")} />,
+                onClose: () => closeModal("login-modal")
             });
             return;
         }
@@ -146,10 +147,13 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
         // For paid courses
         if (!course.isFree) {
             try {
-                const priceId = course.priceProduct?.prices?.[0]?.id || '';
+                // Use unified pricing to get the correct price ID
+                const { products } = context;
+                const priceInfo = getUnifiedCoursePrice(course, products);
+                const priceId = priceInfo.priceId;
 
                 if (!priceId) {
-                    console.error("Price ID not found for course:", course.id);
+                    console.error("Price ID not found for course:", course.id, priceInfo);
                     setIsLoading(false);
                     return;
                 }
@@ -175,21 +179,16 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
         }
     };
 
-    // Format price for display
+    // Format price for display using unified pricing logic
     const displayPrice = () => {
-        if (course.isFree) return 'Free';
-
-        if (course.priceProduct?.prices?.[0]?.unit_amount) {
-            const amount = course.priceProduct.prices[0].unit_amount / 100;
-            const currency = course.priceProduct.prices[0].currency || 'RON';
-
-            return new Intl.NumberFormat('ro-RO', {
-                style: 'currency',
-                currency: currency
-            }).format(amount);
+        const { products } = context;
+        const priceInfo = getUnifiedCoursePrice(course, products);
+        
+        if (course.isFree || priceInfo.amount === 0) {
+            return 'Free';
         }
-
-        return course.price || '$49.99';
+        
+        return priceInfo.formatted;
     };    // Calculate discount if there's an original price
     const originalPrice = typeof course.originalPrice === 'string' ? parseFloat(course.originalPrice) : (course.originalPrice || 0);
     const price = typeof course.price === 'string' ? parseFloat(course.price) : (course.price || 0);
@@ -369,7 +368,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                                 color="primary"
                                 className="w-full bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-primary)] py-6 font-medium text-white transition-all duration-500 shadow-lg hover:shadow-xl hover:shadow-[color:var(--ai-primary)]/20 group-hover:bg-gradient-to-r group-hover:from-[color:var(--ai-secondary)] group-hover:via-[color:var(--ai-primary)] group-hover:to-[color:var(--ai-secondary)]"
                                 size="lg"
-                                onPress={handleEnrollClick}
+                                onClick={handleEnrollClick}
                                 startContent={
                                     <div className="relative">
                                         {course.isFree ? (
@@ -515,7 +514,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                                 color="default"
                                 variant="flat"
                                 className="w-full bg-[color:var(--ai-card-border)]/20 hover:bg-[color:var(--ai-card-border)]/30 transition-colors"
-                                onPress={() => {
+                                onClick={() => {
                                     openModal({
                                         id: 'login',
                                         isOpen: true,

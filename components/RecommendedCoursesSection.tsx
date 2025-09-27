@@ -80,7 +80,7 @@ export default function RecommendedCoursesSection() {
                     {recommendedCourses.map((course) => (
                         <div
                             key={course.id}
-                            className="flex flex-col rounded-xl bg-white dark:bg-[color:var(--ai-card-bg)] shadow-lg border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/50 transition-all duration-300 overflow-hidden"
+                            className="flex flex-col rounded-xl bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] shadow-lg border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/50 transition-all duration-300 overflow-hidden"
                         >
                             <div
                                 className="relative h-44 w-full cursor-pointer overflow-hidden"

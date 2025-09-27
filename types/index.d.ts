@@ -160,7 +160,11 @@ export interface ModalProps {
     /** Whether to replace the URL or not. */
     noReplaceURL?: boolean;
     /** Additional class names to apply to the modal. */
-    classNames?: {};
+    classNames?: {
+        backdrop?: string;
+        base?: string;
+        [key: string]: string | undefined;
+    };
     modalBottomComponent?: ReactNode;
     /** Course data when opening course-related modals */
     course?: Course;

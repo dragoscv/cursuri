@@ -1,10 +1,11 @@
 'use client'
 
-import React from 'react'
+import React, { useContext } from 'react'
 import Button from '@/components/ui/Button'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import { useAuth, useModal } from '@/components/contexts/hooks'
+// import { useAuth, useModal } from '@/components/contexts/hooks/index'
+import { AppContext } from '@/components/AppContext'
 import Login from '@/components/Login'
 import ParticlesAnimation from './ParticlesAnimation'
 import TechIcons from './TechIcons'
@@ -12,8 +13,15 @@ import { useHeroStats } from './hooks/useHeroStats'
 
 export default function HeroSection() {
     const router = useRouter()
-    const { user } = useAuth()
-    const { openModal, closeModal } = useModal()
+    
+    // Inline useAuth to bypass caching issue
+    const context = useContext(AppContext);
+    console.log('HeroSection: AppContext =', !!context, context?.user, context?.authLoading);
+    const user = context?.user || null;
+    const { openModal, closeModal } = context || {};
+    
+    // const { user } = useAuth()
+    // const { openModal, closeModal } = useModal()
     const stats = useHeroStats()
 
     const handleGetStarted = () => {

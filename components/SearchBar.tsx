@@ -128,11 +128,7 @@ export default function SearchBar() {
         router.push(`/courses/${courseId}`)
     }
 
-    // If not on homepage, don't render the component
-    if (!isHomePage) {
-        return null
-    }
-
+    // Render search component on all pages
     return (
         <div ref={searchContainerRef} className="relative z-50">
             {/* Search toggle button */}
@@ -164,7 +160,7 @@ export default function SearchBar() {
             {/* Search modal */}
             {isSearchOpen && (
                 <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 px-4 bg-black/30 backdrop-blur-sm">
-                    <div className="w-full max-w-2xl bg-white dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-2xl overflow-hidden">
+                    <div className="w-full max-w-2xl bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-2xl overflow-hidden">
                         <div className="p-4">
                             <Input
                                 ref={searchInputRef}
@@ -172,6 +168,12 @@ export default function SearchBar() {
                                 placeholder="Search for courses..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' && searchResults.length > 0) {
+                                        // Select first result when Enter is pressed
+                                        handleSelectCourse(searchResults[0].id)
+                                    }
+                                }}
                                 startContent={(
                                     <SearchIcon className="w-5 h-5 text-[color:var(--ai-muted)]" />
                                 )}
@@ -189,7 +191,7 @@ export default function SearchBar() {
                                 }
                                 classNames={{
                                     base: "w-full",
-                                    inputWrapper: "bg-white dark:bg-[color:var(--ai-card-bg)]"
+                                    inputWrapper: "bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)]"
                                 }}
                             />
                         </div>

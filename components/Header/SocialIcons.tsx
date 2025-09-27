@@ -1,5 +1,5 @@
 import React from 'react';
-import GitHubIcon from '@/components/icons/GitHubIcon';
+import GithubIcon from '@/components/icons/GithubIcon';
 import WebsiteIcon from '@/components/icons/WebsiteIcon';
 import TikTokIcon from '@/components/icons/TikTokIcon';
 import InstagramIcon from '@/components/icons/InstagramIcon';
@@ -17,7 +17,7 @@ export default function SocialIcons() {
                 className="cursor-pointer p-2 rounded-lg hover:bg-[color:var(--ai-card-border)]/30 dark:hover:bg-[color:var(--ai-card-border)]/20 transition-colors"
                 aria-label="GitHub"
             >
-                <GitHubIcon className="text-[color:var(--ai-primary)]" size={20} />
+                <GithubIcon className="text-[color:var(--ai-primary)]" size={20} />
             </a>
             <a
                 href="https://dragoscatalin.ro"

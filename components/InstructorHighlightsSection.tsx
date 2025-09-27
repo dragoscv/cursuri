@@ -50,7 +50,7 @@ export default function InstructorHighlightsSection() {
                             viewport={{ once: true }}
                             transition={{ duration: 0.5, delay: idx * 0.1 }}
                         >
-                            <Card className="flex flex-col items-center p-8 bg-white dark:bg-[color:var(--ai-card-bg)] shadow-lg rounded-2xl border border-[color:var(--ai-card-border)] hover:shadow-xl transition-all duration-300">
+                            <Card className="flex flex-col items-center p-8 bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] shadow-lg rounded-2xl border border-[color:var(--ai-card-border)] hover:shadow-xl transition-all duration-300">
                                 <Avatar src={instructor.photoUrl} alt={instructor.name} size="xl" className="mb-4 shadow-md" />
                                 <h3 className="text-xl font-semibold text-[color:var(--ai-foreground)] mb-1 text-center">{instructor.name}</h3>
                                 <p className="text-sm text-[color:var(--ai-primary)] mb-2 text-center">{instructor.title}</p>

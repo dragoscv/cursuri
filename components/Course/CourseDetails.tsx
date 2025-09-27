@@ -128,7 +128,7 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({ course, lessons = 
                             exit="hidden"
                         >
                             {courseId && (
-                                <div className="bg-white dark:bg-[color:var(--ai-card-bg)]/30 rounded-xl p-1 shadow-inner">                                    <LessonsList
+                                <div className="bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)]/30 rounded-xl p-1 shadow-inner">                                    <LessonsList
                                     lessons={lessons || []}
                                     course={course}
                                     courseId={courseId}
@@ -146,7 +146,7 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({ course, lessons = 
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: index * 0.1 }}
-                                            className="border border-[color:var(--ai-card-border)] rounded-lg overflow-hidden bg-white dark:bg-[color:var(--ai-card-bg)]/60 shadow-sm hover:shadow-md transition-shadow"
+                                            className="border border-[color:var(--ai-card-border)] rounded-lg overflow-hidden bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)]/60 shadow-sm hover:shadow-md transition-shadow"
                                         >
                                             <div className="bg-gradient-to-r from-[color:var(--ai-card-bg)]/50 to-[color:var(--ai-card-bg)]/80 p-3 sm:p-4 font-medium border-l-4 border-[color:var(--ai-primary)]">
                                                 {module.title || `Module ${index + 1}`}
@@ -240,7 +240,7 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({ course, lessons = 
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: index * 0.1 }}
-                                            className="bg-white dark:bg-[color:var(--ai-card-bg)]/60 rounded-xl p-3 sm:p-5 shadow-sm hover:shadow-md transition-shadow border border-[color:var(--ai-card-border)]"
+                                            className="bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)]/60 rounded-xl p-3 sm:p-5 shadow-sm hover:shadow-md transition-shadow border border-[color:var(--ai-card-border)]"
                                         >
                                             <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
                                                 <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] flex items-center justify-center text-white font-medium text-base sm:text-lg shadow-md">

@@ -21,7 +21,7 @@ export default function ProfileCoursesFilter({
             <div className="flex flex-col md:flex-row gap-4 items-center">
                 <div className="relative w-full md:max-w-xs">
                     <Input
-                        className="bg-white dark:bg-[color:var(--ai-card-bg)] border-[color:var(--ai-card-border)]/30 rounded-lg"
+                        className="bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] border-[color:var(--ai-card-border)]/30 rounded-lg"
                         placeholder="Search your courses"
                         startContent={
                             <div className="bg-[color:var(--ai-primary)]/10 p-1 rounded-full">

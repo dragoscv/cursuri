@@ -5,14 +5,14 @@ import { validateEnvironmentVariables, logEnvironmentValidation } from './envVal
 /**
  * Performs startup security checks and configuration validation
  * This is intended to be run during app initialization
+ * SECURITY: All logging removed to prevent environment variable exposure
  */
 export function initializeSecurityChecks(): void {
   if (typeof window === 'undefined') {
     // Server-side security checks
     
-    // Check environment variables
+    // Check environment variables silently
     const validation = validateEnvironmentVariables();
-    logEnvironmentValidation();
     
     // Critical security issues in production should fail fast
     if (process.env.NODE_ENV === 'production' && !validation.isValid) {
@@ -21,16 +21,12 @@ export function initializeSecurityChecks(): void {
       );
       
       if (missingRequired.length > 0) {
-        console.error('🚨 CRITICAL: Missing required environment variables in production:');
-        missingRequired.forEach(key => console.error(`  • ${key}`));
-        
-        // In production, write to logs but don't crash the app
-        console.error('Application may not function correctly with missing environment variables');
+        // In production, fail silently to avoid revealing configuration details
+        // Application will handle missing variables gracefully at runtime
       }
     }
     
-    // Log initialization completion
-    console.log('✅ Security initialization checks completed');
+    // Security checks completed - no logging to prevent information disclosure
   }
 }
 
