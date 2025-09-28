@@ -220,7 +220,7 @@ export default function FeaturedReviews() {
                                     {Array.from({ length: 5 }).map((_, i) => (
                                         <svg
                                             key={i}
-                                            className={`h-5 w-5 ${i < review.rating ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600'}`}
+                                            className={`h-5 w-5 ${i < review.rating ? 'text-yellow-400' : 'text-[color:var(--ai-muted)] dark:text-[color:var(--ai-muted-foreground)]'}`}
                                             fill="currentColor"
                                             viewBox="0 0 20 20"
                                         >

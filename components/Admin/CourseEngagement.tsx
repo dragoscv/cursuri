@@ -124,8 +124,8 @@ const CourseEngagement: React.FC = () => {
     if (error) {
         return (
             <div className="text-center py-12">
-                <h2 className="text-2xl font-bold text-red-500 mb-4">{error}</h2>
-                <p className="text-gray-600 dark:text-gray-400">Please try again later</p>
+                                            <h2 className="text-2xl font-bold text-[color:var(--ai-danger)] mb-4">{error}</h2>
+                <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Please try again later</p>
             </div>
         );
     }
@@ -151,28 +151,28 @@ const CourseEngagement: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <Card className="shadow-md">
                     <CardBody className="text-center p-6">
-                        <div className="text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">
+                                                        <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">
                             {Object.keys(courses).length}
                         </div>
-                        <p className="text-gray-600 dark:text-gray-400">Total Courses</p>
+                        <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Total Courses</p>
                     </CardBody>
                 </Card>
 
                 <Card className="shadow-md">
                     <CardBody className="text-center p-6">
-                        <div className="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-2">
+                                                        <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[color:var(--ai-primary)] mb-2">
                             {engagementData.reduce((sum, course) => sum + course.totalStudents, 0).toLocaleString()}
                         </div>
-                        <p className="text-gray-600 dark:text-gray-400">Total Enrollments</p>
+                        <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Total Enrollments</p>
                     </CardBody>
                 </Card>
 
                 <Card className="shadow-md">
                     <CardBody className="text-center p-6">
-                        <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">
+                        <div className="text-4xl font-bold text-[color:var(--ai-success)] dark:text-[color:var(--ai-success)] mb-2">
                             {Math.round(engagementData.reduce((sum, course) => sum + course.completionRate, 0) / engagementData.length)}%
                         </div>
-                        <p className="text-gray-600 dark:text-gray-400">Avg. Completion Rate</p>
+                        <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Avg. Completion Rate</p>
                     </CardBody>
                 </Card>
 
@@ -181,7 +181,7 @@ const CourseEngagement: React.FC = () => {
                         <div className="text-4xl font-bold text-purple-600 dark:text-purple-400 mb-2">
                             {formatTime(Math.round(engagementData.reduce((sum, course) => sum + course.averageTime, 0) / engagementData.length))}
                         </div>
-                        <p className="text-gray-600 dark:text-gray-400">Avg. Completion Time</p>
+                        <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Avg. Completion Time</p>
                     </CardBody>
                 </Card>
             </div>
@@ -204,7 +204,7 @@ const CourseEngagement: React.FC = () => {
                         <TableBody>
                             {paginatedData.length > 0 ? (
                                 paginatedData.map((course) => (
-                                    <TableRow key={course.courseId} className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
+                                    <TableRow key={course.courseId} className="cursor-pointer hover:bg-[color:var(--ai-card-bg)] hover:border-[color:var(--ai-card-border)]">
                                         <TableCell>
                                             <div className="font-medium">{course.courseName}</div>
                                         </TableCell>
@@ -212,9 +212,9 @@ const CourseEngagement: React.FC = () => {
                                         <TableCell>
                                             <div className="flex items-center">
                                                 <span className="mr-2">{course.completionRate.toFixed(1)}%</span>
-                                                <div className="w-24 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                                <div className="w-24 h-2 bg-[color:var(--ai-card-border)] rounded-full overflow-hidden">
                                                     <div
-                                                        className="h-full bg-green-500 rounded-full"
+                                                        className="h-full bg-[color:var(--ai-success)]/100 rounded-full"
                                                         style={{ width: `${course.completionRate}%` }}
                                                     ></div>
                                                 </div>
@@ -225,7 +225,7 @@ const CourseEngagement: React.FC = () => {
                                         <TableCell>
                                             <div className="w-full h-6 flex rounded-full overflow-hidden">
                                                 <div
-                                                    className="h-full bg-green-500"
+                                                    className="h-full bg-[color:var(--ai-success)]/100"
                                                     style={{ width: `${(course.progressData?.completeCount || 0) / course.totalStudents * 100}%` }}
                                                     title={`Completed: ${course.progressData?.completeCount || 0} students`}
                                                 ></div>
@@ -235,12 +235,12 @@ const CourseEngagement: React.FC = () => {
                                                     title={`In Progress: ${course.progressData?.inProgressCount || 0} students`}
                                                 ></div>
                                                 <div
-                                                    className="h-full bg-gray-300 dark:bg-gray-600"
+                                                    className="h-full bg-[color:var(--ai-muted-foreground)]"
                                                     style={{ width: `${(course.progressData?.notStartedCount || 0) / course.totalStudents * 100}%` }}
                                                     title={`Not Started: ${course.progressData?.notStartedCount || 0} students`}
                                                 ></div>
                                             </div>
-                                            <div className="flex justify-between text-xs text-gray-500 mt-1">
+                                            <div className="flex justify-between text-xs text-[color:var(--ai-muted-foreground)] mt-1">
                                                 <span>Completed</span>
                                                 <span>In Progress</span>
                                                 <span>Not Started</span>
@@ -251,7 +251,7 @@ const CourseEngagement: React.FC = () => {
                             ) : (
                                 <TableRow>
                                     <TableCell colSpan={6} className="text-center py-8">
-                                        <p className="text-gray-500 dark:text-gray-400">No courses found</p>
+                                        <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">No courses found</p>
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -272,20 +272,20 @@ const CourseEngagement: React.FC = () => {
             </Card>
 
             {/* Legend for the engagement chart */}
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Engagement Chart Legend</h3>
+            <div className="bg-[color:var(--ai-card-bg)]/80 dark:bg-[color:var(--ai-card-border)]/50 rounded-lg p-4">
+                <h3 className="text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-3">Engagement Chart Legend</h3>
                 <div className="flex flex-wrap gap-4">
                     <div className="flex items-center">
-                        <div className="w-4 h-4 bg-green-500 rounded-sm mr-2"></div>
-                        <span className="text-sm text-gray-600 dark:text-gray-400">Completed</span>
+                        <div className="w-4 h-4 bg-[color:var(--ai-success)]/100 rounded-sm mr-2"></div>
+                        <span className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Completed</span>
                     </div>
                     <div className="flex items-center">
                         <div className="w-4 h-4 bg-yellow-500 rounded-sm mr-2"></div>
-                        <span className="text-sm text-gray-600 dark:text-gray-400">In Progress</span>
+                        <span className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">In Progress</span>
                     </div>
                     <div className="flex items-center">
-                        <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded-sm mr-2"></div>
-                        <span className="text-sm text-gray-600 dark:text-gray-400">Not Started</span>
+                        <div className="w-4 h-4 bg-[color:var(--ai-muted-foreground)] rounded-sm mr-2"></div>
+                        <span className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Not Started</span>
                     </div>
                 </div>
             </div>
@@ -294,3 +294,4 @@ const CourseEngagement: React.FC = () => {
 };
 
 export default CourseEngagement;
+

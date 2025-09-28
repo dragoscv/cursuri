@@ -59,7 +59,7 @@ const Footer = () => {
                                     variant="light"
                                     className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] p-0 min-w-0"
                                 >
-                                    {isDark ? 'Light Mode' : 'Dark Mode'}
+                                    {isDark ? 'Dark Mode' : 'Light Mode'}
                                 </Button>
                             </li>
                         </ul>

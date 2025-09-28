@@ -330,8 +330,8 @@ const LessonItem: React.FC<LessonItemProps> = ({ lesson, index, isCompleted, isA
         {isCompleted && (
             <div className="absolute left-0 top-0 bottom-0 flex items-center">
                 <div className="w-1 h-full bg-gradient-to-b from-[color:var(--ai-success, #10b981)] to-[color:var(--ai-success, #10b981)]/70"></div>
-                <div className="absolute -left-2 bg-[color:var(--ai-success, #10b981)] rounded-full w-4 h-4 flex items-center justify-center border-2 border-white dark:border-gray-800">
-                    <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+                <div className="absolute -left-2 bg-[color:var(--ai-success, #10b981)] rounded-full w-4 h-4 flex items-center justify-center border-2 border-[color:var(--ai-card-bg)] dark:border-[color:var(--ai-background)]">
+                    <div className="w-1.5 h-1.5 bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-background)] rounded-full"></div>
                 </div>
             </div>
         )}            <div className={`
@@ -345,8 +345,8 @@ const LessonItem: React.FC<LessonItemProps> = ({ lesson, index, isCompleted, isA
             `}>
             {isCompleted ? <FiCheck size={24} className="text-white" /> : getIcon()}
             {isCompleted && (
-                <div className="absolute -top-2 -right-2 w-6 h-6 bg-[color:var(--ai-success, #10b981)] rounded-full flex items-center justify-center border-2 border-white dark:border-gray-800 shadow-md">
-                    <div className="w-2 h-2 bg-white rounded-full"></div>
+                <div className="absolute -top-2 -right-2 w-6 h-6 bg-[color:var(--ai-success, #10b981)] rounded-full flex items-center justify-center border-2 border-[color:var(--ai-card-bg)] dark:border-[color:var(--ai-background)] shadow-md">
+                    <div className="w-2 h-2 bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-background)] rounded-full"></div>
                 </div>
             )}
 

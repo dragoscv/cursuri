@@ -183,11 +183,11 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
     const displayPrice = () => {
         const { products } = context;
         const priceInfo = getUnifiedCoursePrice(course, products);
-        
+
         if (course.isFree || priceInfo.amount === 0) {
             return 'Free';
         }
-        
+
         return priceInfo.formatted;
     };    // Calculate discount if there's an original price
     const originalPrice = typeof course.originalPrice === 'string' ? parseFloat(course.originalPrice) : (course.originalPrice || 0);
@@ -479,7 +479,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                                     >
                                         <div className="flex items-center gap-2">
                                             {hasPurchased ? (
-                                                <FiCheck className="text-green-500" size={16} />
+                                                <FiCheck className="text-[color:var(--ai-success)]" size={16} />
                                             ) : (
                                                 <FiLock className="text-amber-500" size={16} />
                                             )}

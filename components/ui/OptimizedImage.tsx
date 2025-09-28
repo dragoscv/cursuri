@@ -123,7 +123,7 @@ export default function OptimizedImage({
 
             {/* Loading placeholder */}
             {isLoading && (
-                <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse">
+                <div className="absolute inset-0 bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-border)] animate-pulse">
                     <div className="flex items-center justify-center h-full">
                         <div className="w-8 h-8 border-2 border-purple-300 border-t-purple-600 rounded-full animate-spin" />
                     </div>
@@ -132,8 +132,8 @@ export default function OptimizedImage({
 
             {/* Error state */}
             {hasError && (
-                <div className="absolute inset-0 bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                    <div className="text-center text-gray-500 dark:text-gray-400">
+                <div className="absolute inset-0 bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-border)] flex items-center justify-center">
+                    <div className="text-center text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted)]">
                         <svg
                             className="w-12 h-12 mx-auto mb-2"
                             fill="none"

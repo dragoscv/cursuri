@@ -1334,7 +1334,7 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                                             ...completionCriteria,
                                                             watchPercentage: parseInt(e.target.value)
                                                         })}
-                                                        className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                                                        className="w-full h-2 bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-border)] rounded-lg appearance-none cursor-pointer"
                                                         aria-label="Video watch percentage"
                                                         title="Set required video watch percentage for completion"
                                                     />

@@ -380,7 +380,7 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
                                     <button
                                         type="button"
                                         aria-label="Copy course link"
-                                        className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800/40 transition"
+                                        className="p-2 rounded-full hover:bg-[color:var(--ai-card-bg)] dark:hover:bg-[color:var(--ai-card-border)]/40 transition"
                                         onClick={() => handleShare(course)}
                                     >
                                         <FiLink size={18} />

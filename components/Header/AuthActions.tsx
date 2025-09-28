@@ -68,7 +68,7 @@ export default function AuthActions() {
             </Button>
             <Button
                 variant="primary"
-                size="sm" 
+                size="sm"
                 onClick={handleOpenLoginModal}
                 style={{
                     background: 'linear-gradient(to right, var(--ai-primary), var(--ai-secondary))'

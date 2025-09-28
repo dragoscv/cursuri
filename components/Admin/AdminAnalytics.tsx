@@ -53,8 +53,8 @@ const AdminAnalytics: React.FC = () => {
     if (error) {
         return (
             <div className="text-center py-12">
-                <h2 className="text-2xl font-bold text-red-500 mb-4">{error}</h2>
-                <p className="text-gray-600 dark:text-gray-400">Please try again later</p>
+                                            <h2 className="text-2xl font-bold text-[color:var(--ai-danger)] mb-4">{error}</h2>
+                <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Please try again later</p>
             </div>
         );
     }
@@ -109,7 +109,7 @@ const AdminAnalytics: React.FC = () => {
                                             style={{ height: `${heightPercentage}%` }}
                                             title={`${item.amount.toLocaleString('ro-RO', { style: 'currency', currency: 'RON' })}`}
                                         ></div>
-                                        <div className="mt-2 text-xs text-gray-600 dark:text-gray-400 transform -rotate-45 origin-top-left">
+                                        <div className="mt-2 text-xs text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] transform -rotate-45 origin-top-left">
                                             {item.label}
                                         </div>
                                     </div>
@@ -118,7 +118,7 @@ const AdminAnalytics: React.FC = () => {
                         </div>
                     ) : (
                         <div className="h-64 flex items-center justify-center">
-                            <p className="text-gray-500 dark:text-gray-400">No revenue data available</p>
+                            <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">No revenue data available</p>
                         </div>
                     )}
 
@@ -126,7 +126,7 @@ const AdminAnalytics: React.FC = () => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         <div className="text-center">
-                            <h3 className="text-gray-500 dark:text-gray-400 text-sm mb-1">Total Revenue</h3>
+                            <h3 className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] text-sm mb-1">Total Revenue</h3>
                             <p className="text-2xl font-bold">
                                 {(adminAnalytics?.totalRevenue || 0).toLocaleString('ro-RO', {
                                     style: 'currency',
@@ -135,7 +135,7 @@ const AdminAnalytics: React.FC = () => {
                             </p>
                         </div>
                         <div className="text-center">
-                            <h3 className="text-gray-500 dark:text-gray-400 text-sm mb-1">Average Per Sale</h3>
+                            <h3 className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] text-sm mb-1">Average Per Sale</h3>
                             <p className="text-2xl font-bold">
                                 {adminAnalytics && adminAnalytics.totalRevenue && adminAnalytics.newSales ?
                                     (adminAnalytics.totalRevenue / adminAnalytics.newSales).toLocaleString('ro-RO', {
@@ -146,14 +146,14 @@ const AdminAnalytics: React.FC = () => {
                             </p>
                         </div>
                         <div className="text-center">
-                            <h3 className="text-gray-500 dark:text-gray-400 text-sm mb-1">Sales This Month</h3>
+                            <h3 className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] text-sm mb-1">Sales This Month</h3>
                             <p className="text-2xl font-bold">
                                 {adminAnalytics?.newSales || 0}
                             </p>
                         </div>
                         <div className="text-center">
-                            <h3 className="text-gray-500 dark:text-gray-400 text-sm mb-1">Revenue Growth</h3>
-                            <p className="text-2xl font-bold text-green-500">
+                            <h3 className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] text-sm mb-1">Revenue Growth</h3>
+                            <p className="text-2xl font-bold text-[color:var(--ai-success)]">
                                 +{sortedMonthlyRevenue.length > 1 ? '12%' : '0%'}
                             </p>
                         </div>
@@ -170,13 +170,13 @@ const AdminAnalytics: React.FC = () => {
                     <CardBody>
                         <div className="h-52 flex items-center justify-center">
                             <div className="text-center">
-                                <div className="text-4xl font-bold">{adminAnalytics?.totalUsers || 0}</div>
-                                <p className="text-gray-500 dark:text-gray-400 mt-2">Total Users</p>
+                                <div className="text-2xl sm:text-3xl lg:text-4xl font-bold">{adminAnalytics?.totalUsers || 0}</div>
+                                <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mt-2">Total Users</p>
                                 <div className="mt-4 flex items-center justify-center">
-                                    <svg className="h-5 w-5 text-green-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <svg className="h-5 w-5 text-[color:var(--ai-success)] mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
                                     </svg>
-                                    <span className="text-green-600 dark:text-green-400 font-medium">
+                                    <span className="text-[color:var(--ai-success)] dark:text-[color:var(--ai-success)] font-medium">
                                         +{adminAnalytics?.newUsers || 0} in the last 30 days
                                     </span>
                                 </div>
@@ -191,20 +191,20 @@ const AdminAnalytics: React.FC = () => {
                     </CardHeader>
                     <CardBody>
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <div className="text-center p-4 bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-lg">
                                 <div className="text-3xl font-bold">{adminAnalytics?.totalCourses || 0}</div>
-                                <p className="text-gray-500 dark:text-gray-400 mt-2">Active Courses</p>
+                                <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mt-2">Active Courses</p>
                             </div>
-                            <div className="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <div className="text-center p-4 bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-lg">
                                 <div className="text-3xl font-bold">{adminAnalytics?.totalLessons || 0}</div>
-                                <p className="text-gray-500 dark:text-gray-400 mt-2">Total Lessons</p>
+                                <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mt-2">Total Lessons</p>
                             </div>
-                            <div className="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg col-span-2">
+                            <div className="text-center p-4 bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-lg col-span-2">
                                 <div className="text-3xl font-bold">
                                     {adminAnalytics && adminAnalytics.totalCourses > 0 ?
                                         (adminAnalytics.totalLessons / adminAnalytics.totalCourses).toFixed(1) : 0}
                                 </div>
-                                <p className="text-gray-500 dark:text-gray-400 mt-2">Avg. Lessons per Course</p>
+                                <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mt-2">Avg. Lessons per Course</p>
                             </div>
                         </div>
                     </CardBody>
@@ -219,24 +219,24 @@ const AdminAnalytics: React.FC = () => {
                 <CardBody>
                     {adminAnalytics?.popularCourses && adminAnalytics.popularCourses.length > 0 ? (
                         <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                <thead className="bg-gray-50 dark:bg-gray-800">
+                            <table className="min-w-full divide-y divide-[color:var(--ai-card-border)]">
+                                <thead className="bg-[color:var(--ai-card-bg)] border-b border-[color:var(--ai-card-border)]">
                                     <tr>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] uppercase tracking-wider">
                                             Rank
                                         </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] uppercase tracking-wider">
                                             Course Name
                                         </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] uppercase tracking-wider">
                                             Enrollments
                                         </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] uppercase tracking-wider">
                                             % of Total
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                                <tbody className="bg-[color:var(--ai-card-bg)] divide-y divide-[color:var(--ai-card-border)]">
                                     {adminAnalytics.popularCourses.map((course, index) => {
                                         const totalEnrollments = adminAnalytics.popularCourses.reduce(
                                             (sum, c) => sum + c.enrollments, 0
@@ -245,7 +245,7 @@ const AdminAnalytics: React.FC = () => {
                                             (course.enrollments / totalEnrollments) * 100 : 0;
 
                                         return (
-                                            <tr key={course.courseId} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                                            <tr key={course.courseId} className="hover:bg-[color:var(--ai-card-bg)] dark:hover:bg-[color:var(--ai-card-border)]">
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center">
                                                         <div className="h-8 w-8 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400 flex items-center justify-center font-semibold">
@@ -254,21 +254,21 @@ const AdminAnalytics: React.FC = () => {
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="text-sm font-medium text-gray-900 dark:text-white">
+                                                    <div className="text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">
                                                         {course.courseName}
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                                                     {course.enrollments}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="relative w-24 h-4 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                                    <div className="relative w-24 h-4 bg-[color:var(--ai-card-border)] rounded-full overflow-hidden">
                                                         <div
                                                             className="absolute top-0 left-0 h-full bg-primary-500"
                                                             style={{ width: `${percentage}%` }}
                                                         ></div>
                                                     </div>
-                                                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                                    <div className="text-xs text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mt-1">
                                                         {percentage.toFixed(1)}%
                                                     </div>
                                                 </td>
@@ -280,7 +280,7 @@ const AdminAnalytics: React.FC = () => {
                         </div>
                     ) : (
                         <div className="text-center py-8">
-                            <p className="text-gray-500 dark:text-gray-400">No course enrollment data available</p>
+                            <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">No course enrollment data available</p>
                         </div>
                     )}
                 </CardBody>
@@ -290,3 +290,4 @@ const AdminAnalytics: React.FC = () => {
 };
 
 export default AdminAnalytics;
+

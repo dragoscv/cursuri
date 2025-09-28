@@ -49,7 +49,7 @@ export default function PasswordStrengthMeter({
       </div>
       
       {/* Progress bar */}
-      <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+              <div className="w-full bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-border)] rounded-full h-2">
         <div 
           className="h-2 rounded-full transition-all duration-300 ease-in-out"
           style={{ 
@@ -61,13 +61,13 @@ export default function PasswordStrengthMeter({
       
       {/* Requirements list */}
       {showRequirements && (
-        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-xs mt-2">
+                <ul className="mt-2 text-sm bg-[color:var(--ai-card-bg)]/50 dark:bg-[color:var(--ai-card-border)]/50 rounded-lg p-2">
           {requirementsList.map(req => (
             <li key={req.id} className="flex items-center">
-              <span className={`mr-1 text-sm ${req.satisfied ? 'text-green-500' : 'text-gray-400'}`}>
+              <span className={`mr-1 text-sm ${req.satisfied ? 'text-[color:var(--ai-success)]' : 'text-[color:var(--ai-muted-foreground)]'}`}>
                 {req.satisfied ? '✓' : '○'}
               </span>
-              <span className={req.satisfied ? 'text-gray-700 dark:text-gray-300' : 'text-gray-500 dark:text-gray-400'}>
+              <span className={req.satisfied ? 'text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]' : 'text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]'}>
                 {req.label}
               </span>
             </li>

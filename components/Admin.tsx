@@ -196,7 +196,7 @@ export default function Admin() {
                                     <Card key={course.id} className="cursor-pointer hover:shadow-lg transition-shadow">
                                         <CardBody onClick={() => handleViewCourse(course)}>
                                             <div className="flex justify-between items-start mb-2">
-                                                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{course.name}</h3>
+                                                <h3 className="text-xl font-semibold text-[color:var(--ai-foreground)]">{course.name}</h3>
                                                 <Chip
                                                     color={course.status === "active" ? "success" : "warning"}
                                                     size="sm"
@@ -204,11 +204,11 @@ export default function Admin() {
                                                     {course.status}
                                                 </Chip>
                                             </div>
-                                            <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
+                                            <p className="text-[color:var(--ai-muted-foreground)] mb-4 line-clamp-2">
                                                 {course.description || 'No description available'}
                                             </p>
                                             <div className="flex justify-between items-center">
-                                                <div className="text-sm text-gray-500 dark:text-gray-400">
+                                                <div className="text-sm text-[color:var(--ai-muted-foreground)]">
                                                     {formatPrice(course)}
                                                 </div>                                                <div className="flex gap-2">                                                    <Button size="sm" color="danger" variant="flat" onPress={(e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
                                                     // Delete course logic
@@ -243,7 +243,7 @@ export default function Admin() {
                     <div>
                         <div className="mb-8">
                             <div className="flex justify-between items-center mb-6">
-                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{selectedCourse.name}</h2>
+                                <h2 className="text-2xl font-bold text-[color:var(--ai-foreground)]">{selectedCourse.name}</h2>
                                 <div className="flex gap-2">                                    <Button
                                     color="primary"
                                     onPress={() => handleAddLesson(selectedCourse.id)}
@@ -275,33 +275,33 @@ export default function Admin() {
                                         <h3 className="text-xl font-semibold mb-4">Course Details</h3>
                                         <div className="space-y-4">
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-1">
                                                     Course Name
                                                 </label>
                                                 <input
                                                     title="Course Name"
                                                     aria-label="Course Name"
                                                     type="text"
-                                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                                                    className="w-full px-3 py-2 border border-[color:var(--ai-card-border)] rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-[color:var(--ai-card-bg)] text-[color:var(--ai-foreground)]"
                                                     value={selectedCourse.name}
                                                     readOnly
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-1">
                                                     Description
                                                 </label>
                                                 <textarea
                                                     title="Course Description"
                                                     aria-label="Course Description"
                                                     rows={4}
-                                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                                                    className="w-full px-3 py-2 border border-[color:var(--ai-card-border)] rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-[color:var(--ai-card-bg)] text-[color:var(--ai-foreground)]"
                                                     value={selectedCourse.description || ''}
                                                     readOnly
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-1">
                                                     Status
                                                 </label>
                                                 <div className="flex items-center">
@@ -314,7 +314,7 @@ export default function Admin() {
                                                 </div>
                                             </div>
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-1">
                                                     Price
                                                 </label>
                                                 <div className="text-lg font-medium">
@@ -330,7 +330,7 @@ export default function Admin() {
                                         <h3 className="text-xl font-semibold mb-4">Course Statistics</h3>
                                         <div className="space-y-4">
                                             <div>
-                                                <label className="text-sm text-gray-500 dark:text-gray-400">
+                                                <label className="text-sm text-[color:var(--ai-muted-foreground)]">
                                                     Number of Lessons
                                                 </label>
                                                 <p className="text-2xl font-bold">
@@ -339,7 +339,7 @@ export default function Admin() {
                                             </div>
                                             <Divider />
                                             <div>
-                                                <label className="text-sm text-gray-500 dark:text-gray-400">
+                                                <label className="text-sm text-[color:var(--ai-muted-foreground)]">
                                                     Enrolled Students
                                                 </label>
                                                 <p className="text-2xl font-bold">
@@ -349,7 +349,7 @@ export default function Admin() {
                                             </div>
                                             <Divider />
                                             <div>
-                                                <label className="text-sm text-gray-500 dark:text-gray-400">
+                                                <label className="text-sm text-[color:var(--ai-muted-foreground)]">
                                                     Average Rating
                                                 </label>
                                                 <div className="flex items-center">
@@ -358,7 +358,7 @@ export default function Admin() {
                                                         {[1, 2, 3, 4, 5].map((star) => (
                                                             <svg
                                                                 key={star}
-                                                                className="w-5 h-5 text-gray-300"
+                                                                className="w-5 h-5 text-[color:var(--ai-muted-foreground)]"
                                                                 fill="currentColor"
                                                                 viewBox="0 0 20 20"
                                                             >
@@ -377,35 +377,35 @@ export default function Admin() {
                                 <h3 className="text-xl font-semibold mb-4">Lessons</h3>
                                 <div className="overflow-hidden">
                                     {lessons[selectedCourse.id] && Object.keys(lessons[selectedCourse.id]).length > 0 ? (
-                                        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                            <thead className="bg-gray-50 dark:bg-gray-700">
+                                        <table className="min-w-full divide-y divide-[color:var(--ai-card-border)]">
+                                            <thead className="bg-[color:var(--ai-card-bg)]">
                                                 <tr>
-                                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[color:var(--ai-muted-foreground)] uppercase tracking-wider">
                                                         #
                                                     </th>
-                                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[color:var(--ai-muted-foreground)] uppercase tracking-wider">
                                                         Lesson Name
                                                     </th>
-                                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[color:var(--ai-muted-foreground)] uppercase tracking-wider">
                                                         Status
                                                     </th>
-                                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[color:var(--ai-muted-foreground)] uppercase tracking-wider">
                                                         Actions
                                                     </th>
                                                 </tr>
                                             </thead>
-                                            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                            <tbody className="bg-[color:var(--ai-card-bg)] divide-y divide-[color:var(--ai-card-border)]">
                                                 {Object.values(lessons[selectedCourse.id])
                                                     .sort((a: Lesson, b: Lesson) => (a.order || 0) - (b.order || 0))
                                                     .map((lesson: Lesson, index: number) => (
-                                                        <tr key={lesson.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                                        <tr key={lesson.id} className="hover:bg-[color:var(--ai-card-border)]">
+                                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--ai-muted-foreground)]">
                                                                 {index + 1}
                                                             </td>
                                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                                <div className="text-sm font-medium text-gray-900 dark:text-white">{lesson.name}</div>
+                                                                <div className="text-sm font-medium text-[color:var(--ai-foreground)]">{lesson.name}</div>
                                                                 {lesson.description && (
-                                                                    <div className="text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs">
+                                                                    <div className="text-sm text-[color:var(--ai-muted-foreground)] truncate max-w-xs">
                                                                         {lesson.description}
                                                                     </div>
                                                                 )}
@@ -418,7 +418,7 @@ export default function Admin() {
                                                                     {lesson.status}
                                                                 </Chip>
                                                             </td>
-                                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--ai-muted-foreground)]">
                                                                 <div className="flex gap-2">                                                                    <Button
                                                                     size="sm"
                                                                     color="primary"
@@ -436,7 +436,7 @@ export default function Admin() {
                                         </table>
                                     ) : (
                                         <div className="text-center py-8">
-                                            <p className="text-gray-500 dark:text-gray-400 mb-4">No lessons found for this course</p>                                            <Button
+                                            <p className="text-[color:var(--ai-muted-foreground)] mb-4">No lessons found for this course</p>                                            <Button
                                                 color="primary"
                                                 onPress={() => handleAddLesson(selectedCourse.id)}
                                                 size="sm"
@@ -486,3 +486,5 @@ export default function Admin() {
         </>
     );
 }
+
+

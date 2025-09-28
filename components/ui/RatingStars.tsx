@@ -58,7 +58,7 @@ const RatingStars: React.FC<RatingStarsProps> = ({
                             size={typeof size === 'string' ?
                                 (size === 'sm' ? 16 : size === 'md' ? 20 : 24) :
                                 size}
-                            className={filled ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300 dark:text-gray-500'}
+                            className={filled ? 'text-yellow-400 fill-yellow-400' : 'text-[color:var(--ai-muted)] dark:text-[color:var(--ai-muted-foreground)]'}
                         />
                     </div>
                 );

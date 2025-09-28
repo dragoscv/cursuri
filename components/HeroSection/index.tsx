@@ -13,13 +13,13 @@ import { useHeroStats } from './hooks/useHeroStats'
 
 export default function HeroSection() {
     const router = useRouter()
-    
+
     // Inline useAuth to bypass caching issue
     const context = useContext(AppContext);
     console.log('HeroSection: AppContext =', !!context, context?.user, context?.authLoading);
     const user = context?.user || null;
     const { openModal, closeModal } = context || {};
-    
+
     // const { user } = useAuth()
     // const { openModal, closeModal } = useModal()
     const stats = useHeroStats()
@@ -49,7 +49,7 @@ export default function HeroSection() {
     }
 
     return (
-        <section className="relative w-full bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 dark:from-gray-900 dark:via-purple-950 dark:to-gray-900 overflow-hidden">
+        <section className="relative w-full bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 dark:from-[color:var(--ai-background)] dark:via-[color:var(--ai-card-bg)] dark:to-[color:var(--ai-background)] overflow-hidden">
             {/* Particle animation */}
             <ParticlesAnimation />
 
@@ -83,7 +83,7 @@ export default function HeroSection() {
                         </span>
                     </h1>
 
-                    <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-3xl mx-auto">
+                    <p className="text-lg md:text-xl text-white/80 dark:text-[color:var(--ai-muted-foreground)] mb-8 max-w-3xl mx-auto">
                         Cursuri practice de programare pentru dezvoltatori care vor să își accelereze cariera.
                         Învață tehnologii moderne direct de la experți în domeniu.
                     </p>
@@ -107,7 +107,7 @@ export default function HeroSection() {
                             size="lg"
                             color="secondary"
                             variant="ghost"
-                            className="px-8 py-6 border border-gray-300 text-white"
+                            className="px-8 py-6 border border-white/30 dark:border-[color:var(--ai-card-border)] text-white"
                         >
                             Explorează tehnologiile
                         </Button>
@@ -115,24 +115,24 @@ export default function HeroSection() {
 
                     {/* Stats display */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-4xl mx-auto">
-                        <div className="bg-white bg-opacity-10 dark:bg-gray-800 dark:bg-opacity-30 backdrop-blur-sm rounded-xl p-4">
+                        <div className="bg-white bg-opacity-10 dark:bg-[color:var(--ai-card-bg)]/30 backdrop-blur-sm rounded-xl p-4">
                             <div className="text-3xl md:text-4xl font-bold text-white">{stats.totalCourses}+</div>
-                            <div className="text-gray-300 text-sm">Cursuri</div>
+                            <div className="text-white/60 dark:text-[color:var(--ai-muted-foreground)] text-sm">Cursuri</div>
                         </div>
 
-                        <div className="bg-white bg-opacity-10 dark:bg-gray-800 dark:bg-opacity-30 backdrop-blur-sm rounded-xl p-4">
+                        <div className="bg-white bg-opacity-10 dark:bg-[color:var(--ai-card-bg)]/30 backdrop-blur-sm rounded-xl p-4">
                             <div className="text-3xl md:text-4xl font-bold text-white">{stats.totalStudents}+</div>
-                            <div className="text-gray-300 text-sm">Studenți</div>
+                            <div className="text-white/60 dark:text-[color:var(--ai-muted-foreground)] text-sm">Studenți</div>
                         </div>
 
-                        <div className="bg-white bg-opacity-10 dark:bg-gray-800 dark:bg-opacity-30 backdrop-blur-sm rounded-xl p-4">
+                        <div className="bg-white bg-opacity-10 dark:bg-[color:var(--ai-card-bg)]/30 backdrop-blur-sm rounded-xl p-4">
                             <div className="text-3xl md:text-4xl font-bold text-white">{stats.totalReviews}+</div>
-                            <div className="text-gray-300 text-sm">Recenzii</div>
+                            <div className="text-white/60 dark:text-[color:var(--ai-muted-foreground)] text-sm">Recenzii</div>
                         </div>
 
-                        <div className="bg-white bg-opacity-10 dark:bg-gray-800 dark:bg-opacity-30 backdrop-blur-sm rounded-xl p-4">
+                        <div className="bg-white bg-opacity-10 dark:bg-[color:var(--ai-card-bg)]/30 backdrop-blur-sm rounded-xl p-4">
                             <div className="text-3xl md:text-4xl font-bold text-white">{stats.avgRating}</div>
-                            <div className="text-gray-300 text-sm">Rating mediu</div>
+                            <div className="text-white/60 dark:text-[color:var(--ai-muted-foreground)] text-sm">Rating mediu</div>
                         </div>
                     </div>
                 </motion.div>

@@ -59,20 +59,20 @@ export async function getCourseById(courseId: string): Promise<DocumentData | nu
             return null;
         }
     } catch (error) {
-    // Distinguish between expected (document not found) vs unexpected errors
-    if (error && typeof error === 'object' && 'code' in error) {
-        const firebaseError = error as { code: string; message: string };
-        if (firebaseError.code === 'permission-denied') {
-            console.log(`Access denied for course ${courseId} - this may be expected based on security rules`);
-        } else if (firebaseError.code === 'not-found') {
-            console.log(`Course ${courseId} not found in database`);
+        // Distinguish between expected (document not found) vs unexpected errors
+        if (error && typeof error === 'object' && 'code' in error) {
+            const firebaseError = error as { code: string; message: string };
+            if (firebaseError.code === 'permission-denied') {
+                console.log(`Access denied for course ${courseId} - this may be expected based on security rules`);
+            } else if (firebaseError.code === 'not-found') {
+                console.log(`Course ${courseId} not found in database`);
+            } else {
+                console.error(`Firebase error getting course ${courseId}:`, firebaseError.code, firebaseError.message);
+            }
         } else {
-            console.error(`Firebase error getting course ${courseId}:`, firebaseError.code, firebaseError.message);
+            console.error(`Unexpected error getting course ${courseId}:`, error);
         }
-    } else {
-        console.error(`Unexpected error getting course ${courseId}:`, error);
-    }
-    return null;
+        return null;
     }
 }
 

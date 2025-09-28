@@ -192,7 +192,7 @@ const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>((props, ref) => {
 
                 {errorMessage && isInvalid && (
                     <p
-                        className={`mt-1 text-xs text-red-500 ${classNames.errorMessage || ''}`}
+                        className={`mt-1 text-xs text-[color:var(--ai-danger)] ${classNames.errorMessage || ''}`}
                     >
                         {errorMessage}
                     </p>
@@ -205,3 +205,4 @@ const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>((props, ref) => {
 RadioGroup.displayName = 'RadioGroup';
 
 export default RadioGroup;
+

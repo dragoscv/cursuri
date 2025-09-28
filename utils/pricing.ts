@@ -89,7 +89,7 @@ export function getCoursePrice(course: any, products?: any[]): PriceInfo {
         if (!isNaN(numericPrice) && numericPrice > 0) {
             return {
                 amount: numericPrice,
-                currency: 'RON', 
+                currency: 'RON',
                 priceId: '',
                 formatted: new Intl.NumberFormat('ro-RO', {
                     style: 'currency',

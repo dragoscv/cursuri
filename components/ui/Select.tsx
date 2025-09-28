@@ -278,7 +278,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
 
     // Generate color-specific styles
     const getColorStyles = () => {
-        if (isInvalid) return 'border-red-500 focus-within:border-red-500 focus-within:ring-red-500/20';
+        if (isInvalid) return 'border-[color:var(--ai-danger)] focus-within:border-[color:var(--ai-danger)] focus-within:ring-red-500/20';
 
         switch (color) {
             case 'primary':
@@ -290,7 +290,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
             case 'warning':
                 return 'focus-within:border-yellow-500 focus-within:ring-yellow-500/20';
             case 'danger':
-                return 'focus-within:border-red-500 focus-within:ring-red-500/20';
+                return 'focus-within:border-[color:var(--ai-danger)] focus-within:ring-red-500/20';
             default:
                 return 'focus-within:border-[color:var(--ai-card-border)] focus-within:ring-[color:var(--ai-foreground)]/20';
         }
@@ -631,7 +631,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
                 <label className={`block mb-1.5 text-sm font-medium ${isDisabled ? 'text-[color:var(--ai-muted)]' : 'text-[color:var(--ai-foreground)]'
                     } ${classNames.label || ''}`}>
                     {label}
-                    {isRequired && <span className="ml-1 text-red-500">*</span>}
+                    {isRequired && <span className="ml-1 text-[color:var(--ai-danger)]">*</span>}
                 </label>
             )}            <div
                 ref={selectRef}
@@ -698,7 +698,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
             </div>
 
             {errorMessage && isInvalid && (
-                <p className={`mt-1 text-xs text-red-500 ${classNames.errorMessage || ''}`}>
+                <p className={`mt-1 text-xs text-[color:var(--ai-danger)] ${classNames.errorMessage || ''}`}>
                     {errorMessage}
                 </p>
             )}
@@ -715,3 +715,4 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
 Select.displayName = 'Select';
 
 export default Select;
+

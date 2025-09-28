@@ -112,7 +112,7 @@ const AdminSidebar: React.FC = () => {
 
                     {/* Sign Out Button - Only visible on desktop */}
                     <div
-                        className="hidden md:flex items-center gap-3 px-6 py-3.5 mx-2 my-1 transition-all duration-200 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 cursor-pointer"
+                        className="hidden md:flex items-center gap-3 px-6 py-3.5 mx-2 my-1 transition-all duration-200 rounded-lg text-[color:var(--ai-danger)] hover:bg-[color:var(--ai-danger)] dark:hover:bg-[color:var(--ai-danger)]/10 cursor-pointer"
                         onClick={handleSignOut}
                     >
                         <div className="p-1.5 rounded-full">
@@ -127,3 +127,4 @@ const AdminSidebar: React.FC = () => {
 };
 
 export default AdminSidebar;
+

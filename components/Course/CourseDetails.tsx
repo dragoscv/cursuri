@@ -11,9 +11,10 @@ interface CourseDetailsProps {
     course: Course;
     lessons?: Lesson[];
     courseId?: string;
+    hasAccess?: boolean;
 }
 
-export const CourseDetails: React.FC<CourseDetailsProps> = ({ course, lessons = [], courseId }) => {
+export const CourseDetails: React.FC<CourseDetailsProps> = ({ course, lessons = [], courseId, hasAccess = false }) => {
     // For handling tab selection in URL
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -133,7 +134,7 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({ course, lessons = 
                                     course={course}
                                     courseId={courseId}
                                     completedLessons={{}}
-                                    userHasAccess={true}
+                                    userHasAccess={hasAccess}
                                 />
                                 </div>
                             )}

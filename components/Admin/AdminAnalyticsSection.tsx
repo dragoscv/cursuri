@@ -20,7 +20,7 @@ export default function AdminAnalyticsSection({ analytics }: AdminAnalyticsSecti
                                     <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold mr-3">
                                         {index + 1}
                                     </div>
-                                    <h3 className="font-medium text-gray-800 dark:text-gray-200">
+                                    <h3 className="font-medium text-[color:var(--ai-foreground)]">
                                         {course.courseName}
                                     </h3>
                                 </div>
@@ -31,7 +31,7 @@ export default function AdminAnalyticsSection({ analytics }: AdminAnalyticsSecti
                         ))}
                     </div>
                 ) : (
-                    <p className="text-gray-500 dark:text-gray-400 text-center py-4">
+                    <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] text-center py-4">
                         No enrollment data available yet
                     </p>
                 )}

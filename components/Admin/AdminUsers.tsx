@@ -107,8 +107,8 @@ const AdminUsers: React.FC = () => {
     if (error) {
         return (
             <div className="text-center py-12">
-                <h2 className="text-2xl font-bold text-red-500 mb-4">{error}</h2>
-                <p className="text-gray-600 dark:text-gray-400">Please try again later</p>
+                <h2 className="text-2xl font-bold text-[color:var(--ai-danger)] mb-4">{error}</h2>
+                <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Please try again later</p>
             </div>
         );
     }
@@ -125,7 +125,7 @@ const AdminUsers: React.FC = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full"
                         startContent={
-                            <svg className="text-gray-400 dark:text-gray-600 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <svg className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted)] h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
                         }
@@ -152,7 +152,7 @@ const AdminUsers: React.FC = () => {
                                                 <Avatar src={user.photoURL || ""} name={user.displayName || user.email} className="mr-3" />
                                                 <div>
                                                     <p className="font-medium">{user.displayName || 'No Name'}</p>
-                                                    <p className="text-xs text-gray-500">ID: {user.id.substring(0, 8)}...</p>
+                                                    <p className="text-xs text-[color:var(--ai-muted-foreground)]">ID: {user.id.substring(0, 8)}...</p>
                                                 </div>
                                             </div>
                                         </TableCell>
@@ -183,7 +183,7 @@ const AdminUsers: React.FC = () => {
                             ) : (
                                 <TableRow>
                                     <TableCell colSpan={5} className="text-center py-8">
-                                        <p className="text-gray-500 dark:text-gray-400">No users found</p>
+                                        <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">No users found</p>
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -231,12 +231,12 @@ const AdminUsers: React.FC = () => {
                             }
                         }
                     }}
-                >                    <ModalContent className="overflow-hidden dark:bg-gray-900/95 border border-primary-200/20 dark:border-gray-800 shadow-xl">
+                >                    <ModalContent className="overflow-hidden dark:bg-[color:var(--ai-card-bg)]/95 border border-primary-200/20 dark:border-[color:var(--ai-card-border)] shadow-xl">
                         {() => (
                             <>
                                 <div className="relative">
                                     <div className="absolute inset-0 bg-gradient-to-r from-primary-500/10 to-secondary-500/10 blur-xl opacity-80 -z-10"></div>
-                                    <ModalHeader className="border-b border-primary-100 dark:border-gray-800 text-primary-900 dark:text-primary-100">User Details</ModalHeader>
+                                    <ModalHeader className="border-b border-primary-100 dark:border-[color:var(--ai-card-border)] text-primary-900 dark:text-primary-100">User Details</ModalHeader>
                                     <ModalBody className="py-6">
                                         <div className="flex items-center mb-6">
                                             <Avatar
@@ -246,8 +246,8 @@ const AdminUsers: React.FC = () => {
                                                 size="lg"
                                             />
                                             <div>
-                                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{selectedUser.displayName || 'No Name'}</h2>
-                                                <p className="text-gray-600 dark:text-gray-400">{selectedUser.email}</p>
+                                                <h2 className="text-2xl font-bold text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">{selectedUser.displayName || 'No Name'}</h2>
+                                                <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">{selectedUser.email}</p>
                                                 <div className="flex mt-2">
                                                     <Chip color={selectedUser.role === 'admin' ? 'primary' : 'default'} size="sm" className="mr-2">
                                                         {selectedUser.role || 'user'}
@@ -264,15 +264,15 @@ const AdminUsers: React.FC = () => {
                                         <Divider className="my-4" />
 
                                         <div className="mb-4">
-                                            <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Account Details</h3>
-                                            <div className="grid grid-cols-2 gap-4 bg-gray-50/80 dark:bg-gray-800/50 p-4 rounded-xl backdrop-blur-sm">
+                                            <h3 className="text-lg font-semibold mb-2 text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">Account Details</h3>
+                                            <div className="grid grid-cols-2 gap-4 bg-[color:var(--ai-card-bg)]/80 dark:bg-[color:var(--ai-card-border)]/50 p-4 rounded-xl backdrop-blur-sm">
                                                 <div>
-                                                    <p className="text-sm text-gray-500 dark:text-gray-400">User ID</p>
-                                                    <p className="font-medium text-gray-900 dark:text-white">{selectedUser.id}</p>
+                                                    <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">User ID</p>
+                                                    <p className="font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">{selectedUser.id}</p>
                                                 </div>
                                                 <div>
-                                                    <p className="text-sm text-gray-500 dark:text-gray-400">Created On</p>
-                                                    <p className="font-medium text-gray-900 dark:text-white">{selectedUser.createdAt ?
+                                                    <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Created On</p>
+                                                    <p className="font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">{selectedUser.createdAt ?
                                                         (typeof selectedUser.createdAt === 'object' && 'seconds' in selectedUser.createdAt
                                                             ? new Date(selectedUser.createdAt.seconds * 1000).toLocaleDateString()
                                                             : new Date(selectedUser.createdAt).toLocaleDateString())
@@ -283,7 +283,7 @@ const AdminUsers: React.FC = () => {
 
                                         <div className="mb-4">
                                             <div className="flex items-center justify-between mb-2">
-                                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Enrolled Courses</h3>                                                <Button
+                                                <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">Enrolled Courses</h3>                                                <Button
                                                     size="sm"
                                                     color="primary"
                                                     variant="flat"
@@ -301,10 +301,10 @@ const AdminUsers: React.FC = () => {
                                                     {Object.entries(selectedUser.enrollments).map(([courseId, enrollment]) => {
                                                         const course = courses[courseId];
                                                         return (
-                                                            <div key={courseId} className="flex justify-between items-center p-4 bg-gray-50/80 dark:bg-gray-800/50 rounded-xl border border-primary-100 dark:border-gray-800 backdrop-blur-sm">
+                                                            <div key={courseId} className="flex justify-between items-center p-4 bg-[color:var(--ai-card-bg)]/80 dark:bg-[color:var(--ai-card-border)]/50 rounded-xl border border-primary-100 dark:border-[color:var(--ai-card-border)] backdrop-blur-sm">
                                                                 <div>
-                                                                    <p className="font-medium text-gray-900 dark:text-white">{course?.name || 'Unknown Course'}</p>
-                                                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                                    <p className="font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">{course?.name || 'Unknown Course'}</p>
+                                                                    <p className="text-xs text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                                                                         Enrolled: {enrollment.enrolledAt ?
                                                                             (typeof enrollment.enrolledAt === 'object' && 'seconds' in enrollment.enrolledAt
                                                                                 ? new Date(enrollment.enrolledAt.seconds * 1000).toLocaleDateString()
@@ -322,11 +322,11 @@ const AdminUsers: React.FC = () => {
                                                     })}
                                                 </div>
                                             ) : (
-                                                <div className="text-center py-8 bg-gray-50/80 dark:bg-gray-800/50 rounded-xl border border-dashed border-primary-200 dark:border-gray-700 backdrop-blur-sm">
-                                                    <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <div className="text-center py-8 bg-[color:var(--ai-card-bg)]/80 dark:bg-[color:var(--ai-card-border)]/50 rounded-xl border border-dashed border-primary-200 dark:border-[color:var(--ai-card-border)] backdrop-blur-sm">
+                                                    <svg className="mx-auto h-12 w-12 text-[color:var(--ai-muted-foreground)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                                                     </svg>
-                                                    <p className="mt-2 text-gray-500 dark:text-gray-400">No enrolled courses</p>                                                    <Button
+                                                    <p className="mt-2 text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">No enrolled courses</p>                                                    <Button
                                                         color="primary"
                                                         variant="flat"
                                                         size="sm"
@@ -339,7 +339,7 @@ const AdminUsers: React.FC = () => {
                                             )}
                                         </div>
                                     </ModalBody>
-                                    <ModalFooter className="border-t border-primary-100 dark:border-gray-800">                                        <Button
+                                    <ModalFooter className="border-t border-primary-100 dark:border-[color:var(--ai-card-border)]">                                        <Button
                                         color="default"
                                         onPress={closeModal}
                                         className="font-medium text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-border)]/20"
@@ -389,12 +389,12 @@ const AdminUsers: React.FC = () => {
                         }
                     }
                 }}
-            >                <ModalContent className="overflow-hidden dark:bg-gray-900/95 border border-primary-200/20 dark:border-gray-800 shadow-xl">
+            >                <ModalContent className="overflow-hidden dark:bg-[color:var(--ai-card-bg)]/95 border border-primary-200/20 dark:border-[color:var(--ai-card-border)] shadow-xl">
                     {() => (
                         <>
                             <div className="relative">
                                 <div className="absolute inset-0 bg-gradient-to-r from-primary-500/20 to-secondary-500/20 blur-xl opacity-80 -z-10"></div>
-                                <ModalHeader className="flex flex-col gap-1 border-b border-primary-100 dark:border-gray-800">
+                                <ModalHeader className="flex flex-col gap-1 border-b border-primary-100 dark:border-[color:var(--ai-card-border)]">
                                     <div className="flex items-center gap-2">
                                         <div className="bg-gradient-to-br from-primary-500 to-secondary-500 p-2 rounded-lg">
                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
@@ -405,7 +405,7 @@ const AdminUsers: React.FC = () => {
                                             Assign Course
                                         </span>
                                     </div>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                                    <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                                         Grant course access to this user
                                     </p>
                                 </ModalHeader>
@@ -417,8 +417,8 @@ const AdminUsers: React.FC = () => {
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                                 </svg>
                                             </div>
-                                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Course Assigned Successfully</h3>
-                                            <p className="text-gray-500 dark:text-gray-400">
+                                            <h3 className="text-xl font-bold text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">Course Assigned Successfully</h3>
+                                            <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                                                 The course has been assigned to {selectedUser?.displayName || selectedUser?.email}
                                             </p>
                                             <div className="mt-6">                                                <Button
@@ -433,20 +433,20 @@ const AdminUsers: React.FC = () => {
                                     ) : (
                                         <>
                                             {selectedUser && (
-                                                <div className="mb-6 bg-gray-50/80 dark:bg-gray-800/50 p-4 rounded-xl backdrop-blur-sm">
-                                                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Assigning course to:</p>
+                                                <div className="mb-6 bg-[color:var(--ai-card-bg)]/80 dark:bg-[color:var(--ai-card-border)]/50 p-4 rounded-xl backdrop-blur-sm">
+                                                    <p className="text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">Assigning course to:</p>
                                                     <div className="flex items-center">
                                                         <Avatar src={selectedUser.photoURL || ""} name={selectedUser.displayName || selectedUser.email} className="mr-3" size="md" />
                                                         <div>
-                                                            <p className="font-medium text-gray-900 dark:text-white">{selectedUser.displayName || 'No Name'}</p>
-                                                            <p className="text-sm text-gray-500 dark:text-gray-400">{selectedUser.email}</p>
+                                                            <p className="font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">{selectedUser.displayName || 'No Name'}</p>
+                                                            <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">{selectedUser.email}</p>
                                                         </div>
                                                     </div>
                                                 </div>
                                             )}
 
                                             <div className="mb-2">
-                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                <label className="block text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">
                                                     Select Course
                                                 </label>
                                                 <div className="relative">
@@ -458,23 +458,23 @@ const AdminUsers: React.FC = () => {
                                                         variant="bordered"
                                                         size="lg"
                                                         labelPlacement="outside" classNames={{
-                                                            trigger: "h-12 bg-gray-50/80 dark:bg-gray-800/50 backdrop-blur-sm border-primary-200 dark:border-gray-700",
-                                                            value: "text-gray-900 dark:text-white",
+                                                            trigger: "h-12 bg-[color:var(--ai-card-bg)]/80 dark:bg-[color:var(--ai-card-border)]/50 backdrop-blur-sm border-primary-200 dark:border-[color:var(--ai-card-border)]",
+                                                            value: "text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]",
                                                         }}
                                                     >
                                                         {Object.values(courses).map((course: Course) => (
-                                                            <SelectItem key={course.id} value={course.id} textValue={course.name} className="text-gray-900 dark:text-white">
+                                                            <SelectItem key={course.id} value={course.id} textValue={course.name} className="text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">
                                                                 {course.name}
                                                             </SelectItem>
                                                         ))}
                                                     </Select>
-                                                    <div className="absolute right-3 top-3 pointer-events-none text-gray-500">
+                                                    <div className="absolute right-3 top-3 pointer-events-none text-[color:var(--ai-muted-foreground)]">
                                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                                             <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                                                         </svg>
                                                     </div>
                                                 </div>
-                                                <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                                <p className="mt-2 text-xs text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                                                     The selected course will be immediately available to this user.
                                                 </p>
                                             </div>
@@ -482,7 +482,7 @@ const AdminUsers: React.FC = () => {
                                     )}
                                 </ModalBody>
                                 {!assignSuccess && (
-                                    <ModalFooter className="border-t border-primary-100 dark:border-gray-800">                                        <Button
+                                    <ModalFooter className="border-t border-primary-100 dark:border-[color:var(--ai-card-border)]">                                        <Button
                                         color="default"
                                         variant="light"
                                         onPress={closeAssignCourseModal}
@@ -511,3 +511,4 @@ const AdminUsers: React.FC = () => {
 };
 
 export default AdminUsers;
+

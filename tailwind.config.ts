@@ -20,12 +20,12 @@ const config: Config = {
         'ai-muted': 'var(--ai-muted)',
         'ai-card-bg': 'var(--ai-card-bg)',
         'ai-card-border': 'var(--ai-card-border)',
-        
+
         // Success, Warning, Error colors
         'ai-success': 'var(--ai-success, #10b981)',
         'ai-warning': 'var(--ai-warning, #f59e0b)',
         'ai-error': 'var(--ai-error, #ef4444)',
-        
+
         // Legacy support
         'primary': 'var(--ai-primary)',
         'secondary': 'var(--ai-secondary)',

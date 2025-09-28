@@ -107,7 +107,7 @@ export default function AdminRoleManagement({ className }: AdminRoleManagementPr
         return (
             <Card className={className}>
                 <CardBody>
-                    <p className="text-center text-gray-500">
+                    <p className="text-center text-[color:var(--ai-muted-foreground)]">
                         You don't have permission to manage user roles.
                     </p>
                 </CardBody>
@@ -127,7 +127,7 @@ export default function AdminRoleManagement({ className }: AdminRoleManagementPr
                     <CardHeader className="flex justify-between items-center">
                         <div>
                             <h3 className="text-lg font-semibold">Admin Role Management</h3>
-                            <p className="text-sm text-gray-500">Manage administrative roles and permissions</p>
+                            <p className="text-sm text-[color:var(--ai-muted-foreground)]">Manage administrative roles and permissions</p>
                         </div>
                         <Button
                             color="primary"
@@ -155,7 +155,7 @@ export default function AdminRoleManagement({ className }: AdminRoleManagementPr
                                     <TableCell>
                                         <div>
                                             <p className="font-semibold">{adminUser.displayName || 'No name'}</p>
-                                            <p className="text-sm text-gray-500">
+                                            <p className="text-sm text-[color:var(--ai-muted-foreground)]">
                                                 Created: {adminUser.createdAt instanceof Date ? adminUser.createdAt.toLocaleDateString() : new Date(adminUser.createdAt.seconds * 1000).toLocaleDateString()}
                                             </p>
                                         </div>
@@ -197,7 +197,7 @@ export default function AdminRoleManagement({ className }: AdminRoleManagementPr
 
                         {adminUsers.length === 0 && !loading && (
                             <div className="text-center py-8">
-                                <p className="text-gray-500">No admin users found.</p>
+                                <p className="text-[color:var(--ai-muted-foreground)]">No admin users found.</p>
                             </div>
                         )}
                     </CardBody>

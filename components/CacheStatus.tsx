@@ -213,7 +213,7 @@ export default function CacheStatus() {
             </CardBody>
             <Divider />
             <CardFooter className="p-4">
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-[color:var(--ai-muted-foreground)]">
                     Cache TTL: 5 minutes by default. Data is persisted to localStorage when the persist option is enabled.
                 </p>
             </CardFooter>

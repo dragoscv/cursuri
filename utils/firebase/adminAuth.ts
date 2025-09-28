@@ -104,17 +104,17 @@ export async function createOrUpdateUserProfile(
         : DEFAULT_PERMISSIONS[role];
 
     const userProfile: UserProfile = {
-            id: user.uid,
-            email: user.email || '',
-            displayName: user.displayName || '',
-            photoURL: user.photoURL || '',
-            role,
-            isActive: true,
-            permissions,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            emailVerified: user.emailVerified,
-        };
+        id: user.uid,
+        email: user.email || '',
+        displayName: user.displayName || '',
+        photoURL: user.photoURL || '',
+        role,
+        isActive: true,
+        permissions,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        emailVerified: user.emailVerified,
+    };
 
     try {
         // Check if user profile already exists

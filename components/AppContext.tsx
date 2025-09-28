@@ -39,7 +39,7 @@ const DEFAULT_CACHE_OPTIONS: CacheOptions = {
 export const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
     // Debug: Log that the provider is being initialized
     console.log('AppContextProvider: Initializing...');
-    
+
     const [isDark, setIsDark] = useState(false);
     const [colorScheme, setColorScheme] = useState<ColorScheme>('modern-purple');
     const [user, setUser] = useState<User | null>(null);

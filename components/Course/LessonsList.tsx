@@ -82,25 +82,26 @@ export default function LessonsList({
         // Skip if lesson is undefined or null
         if (!lesson) return total;
 
-        // Use numeric duration with fallback to parsed string duration or 0
-        const durationMins =
-            (typeof lesson?.duration === 'number' ? lesson.duration :
-                (typeof lesson?.duration === 'string' ? parseInt(lesson.duration, 10) : 0));
+        // Use duration with fallback to 30 minutes
+        const durationMins = typeof lesson?.duration === 'number' && lesson.duration > 0
+            ? lesson.duration
+            : typeof lesson?.duration === 'string' && !isNaN(parseInt(lesson.duration, 10)) && parseInt(lesson.duration, 10) > 0
+                ? parseInt(lesson.duration, 10)
+                : 30;
 
-        // Handle NaN values that might result from parsing invalid strings
-        return total + (isNaN(durationMins) ? 0 : durationMins);
+        return total + durationMins;
     }, 0);    // Calculate completed duration (sum of durations of completed lessons)
     const completedDuration = sortedLessons.reduce((total, lesson) => {
         // Skip if lesson is undefined or null
         if (!lesson) return total;
 
         if (lesson.id && completedLessons[lesson.id]) {
-            const durationMins =
-                (typeof lesson?.duration === 'number' ? lesson.duration :
-                    (typeof lesson?.duration === 'string' ? parseInt(lesson.duration, 10) : 0));
-
-            // Handle NaN values that might result from parsing invalid strings
-            return total + (isNaN(durationMins) ? 0 : durationMins);
+            const durationMins = typeof lesson?.duration === 'number' && lesson.duration > 0
+                ? lesson.duration
+                : typeof lesson?.duration === 'string' && !isNaN(parseInt(lesson.duration, 10)) && parseInt(lesson.duration, 10) > 0
+                    ? parseInt(lesson.duration, 10)
+                    : 30;
+            return total + durationMins;
         }
         return total;
     }, 0);
@@ -227,7 +228,11 @@ export default function LessonsList({
                                         </div>
                                     </div>
                                     <div className="flex flex-col items-end gap-2">                                            <span className="text-sm text-[color:var(--ai-muted)]">
-                                        {typeof lesson.duration === 'number' ? `${lesson.duration} min` : lesson.duration || 'N/A'}
+                                        {typeof lesson.duration === 'number' && lesson.duration > 0 
+                                            ? `${lesson.duration} min` 
+                                            : typeof lesson.duration === 'string' && !isNaN(parseInt(lesson.duration, 10)) && parseInt(lesson.duration, 10) > 0
+                                                ? `${parseInt(lesson.duration, 10)} min`
+                                                : '30 min'}
                                     </span>
 
                                         {isCompleted && (
@@ -254,7 +259,13 @@ export default function LessonsList({
                                         </div>
                                     </div>
                                     <div className="flex items-center">
-                                        <span className="text-sm text-[color:var(--ai-muted)]/70">{lesson.duration || 30} min</span>
+                                        <span className="text-sm text-[color:var(--ai-muted)]/70">
+                                            {typeof lesson.duration === 'number' && lesson.duration > 0 
+                                                ? `${lesson.duration} min` 
+                                                : typeof lesson.duration === 'string' && !isNaN(parseInt(lesson.duration, 10)) && parseInt(lesson.duration, 10) > 0
+                                                    ? `${parseInt(lesson.duration, 10)} min`
+                                                    : '30 min'}
+                                        </span>
                                     </div>
                                 </div>
                             </div>

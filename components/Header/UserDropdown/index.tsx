@@ -210,7 +210,7 @@ export default function UserDropdown() {
             placement="bottom-end"
             backdrop="blur"
             classNames={{
-                base: "py-1 px-1 rounded-lg bg-gradient-to-br from-white to-default-200 dark:from-[color:var(--ai-card-bg)]/90 dark:to-[color:var(--ai-background)]/70 z-[9999]",
+                base: "py-1 px-1 rounded-lg bg-gradient-to-br from-[color:var(--ai-card-bg)] to-[color:var(--ai-card-bg)]/80 dark:from-[color:var(--ai-card-bg)]/90 dark:to-[color:var(--ai-background)]/70 z-[9999]",
                 arrow: "bg-default-200",
                 backdrop: "fixed backdrop-blur-md backdrop-saturate-150 bg-[color:var(--ai-card-bg)]/70 dark:bg-[color:var(--ai-background)]/60 w-screen h-screen inset-0",
                 content: "z-[9999] flex flex-col justify-start items-end shadow-xl",

@@ -30,17 +30,17 @@ export default function HeroSection() {
     // Use AppContext instead of modular hooks to avoid context issues
     const router = useRouter()
     const context = useContext(AppContext);
-    
+
     if (!context) {
         console.error('HeroSection: AppContext not available');
         return <div>Loading...</div>;
     }
-    
-    const { user, courses, reviews, openModal, closeModal, userPaidProducts } = context; 
-    
+
+    const { user, courses, reviews, openModal, closeModal, userPaidProducts } = context;
+
     // Note: userPaidProducts now comes directly from AppContext
     // No longer need to simulate products since AppContext provides real data
-    
+
     const particlesRef = useRef<HTMLDivElement>(null)
 
     // Calculate real statistics from the database
@@ -72,7 +72,8 @@ export default function HeroSection() {
             Object.keys(reviews).forEach(courseId => {
                 const courseReviews = reviews[courseId]
                 if (courseReviews) {
-                    Object.keys(courseReviews).forEach(reviewId => {                        reviewCount++
+                    Object.keys(courseReviews).forEach(reviewId => {
+                        reviewCount++
                         const review = courseReviews[reviewId]
                         if (review && typeof review === 'object' && 'rating' in review && review.rating) {
                             ratingSum += review.rating
@@ -109,7 +110,8 @@ export default function HeroSection() {
                 avgRating: reviewCount > 0 ? +(ratingSum / reviewCount).toFixed(1) : 4.8,
                 topTechnologies: finalTechnologies
             })
-        }    }, [courses, userPaidProducts, reviews]);
+        }
+    }, [courses, userPaidProducts, reviews]);
 
     const handleGetStarted = () => {
         if (!user) {

@@ -89,7 +89,7 @@ export default function FeaturedCoursesSection() {
                 </div>
                 <div className="mt-auto flex items-center justify-between">
                   <span className="text-lg font-bold text-[color:var(--ai-foreground)]">
-                    {course.isFree ? <span className="text-green-600 dark:text-green-400">Free</span> : `${course.price || ''} RON`}
+                    {course.isFree ? <span className="text-[color:var(--ai-success)] dark:text-[color:var(--ai-success)]">Free</span> : `${course.price || ''} RON`}
                   </span>
                   <Button color="primary" onClick={() => router.push(`/courses/${course.id}`)} className="rounded-full px-4">
                     View
@@ -103,3 +103,4 @@ export default function FeaturedCoursesSection() {
     </section>
   );
 }
+

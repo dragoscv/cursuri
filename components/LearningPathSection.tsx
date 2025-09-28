@@ -47,7 +47,7 @@ export default function LearningPathSection() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <ScrollAnimationWrapper>
                     <div className="text-center mb-16">
-                        <h2 className="text-4xl font-bold mb-4 text-[color:var(--ai-foreground)]">
+                        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 text-[color:var(--ai-foreground)]">
                             Your Learning Journey
                         </h2>
                         <p className="text-xl text-[color:var(--ai-muted)] max-w-3xl mx-auto">

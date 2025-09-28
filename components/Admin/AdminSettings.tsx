@@ -120,7 +120,7 @@ const AdminSettings: React.FC = () => {
             </div>
 
             {success && (
-                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 p-4 rounded-lg">
+                <div className="bg-[color:var(--ai-success)]/10 border border-[color:var(--ai-success)]/30 text-[color:var(--ai-success)] p-4 rounded-lg">
                     <div className="flex items-center">
                         <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -131,7 +131,7 @@ const AdminSettings: React.FC = () => {
             )}
 
             {error && (
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 p-4 rounded-lg">
+                <div className="bg-[color:var(--ai-danger)]/10 border border-[color:var(--ai-danger)]/30 text-[color:var(--ai-danger)] rounded-lg p-4 mb-6">
                     <div className="flex items-center">
                         <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -150,7 +150,7 @@ const AdminSettings: React.FC = () => {
                     <CardBody>
                         <div className="space-y-6">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <label className="block text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">
                                     Site Name
                                 </label>
                                 <Input
@@ -162,7 +162,7 @@ const AdminSettings: React.FC = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <label className="block text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">
                                     Site Description
                                 </label>
                                 <Textarea
@@ -175,7 +175,7 @@ const AdminSettings: React.FC = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <label className="block text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">
                                     Contact Email
                                 </label>
                                 <Input
@@ -199,8 +199,8 @@ const AdminSettings: React.FC = () => {
                         <div className="space-y-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <h3 className="text-base font-medium text-gray-900 dark:text-gray-100">Allow User Registration</h3>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                                    <h3 className="text-base font-medium text-[color:var(--ai-foreground)]">Allow User Registration</h3>
+                                    <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                                         When disabled, new users cannot register
                                     </p>
                                 </div>                                <Switch
@@ -215,8 +215,8 @@ const AdminSettings: React.FC = () => {
 
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <h3 className="text-base font-medium text-gray-900 dark:text-gray-100">Allow Social Login</h3>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                                    <h3 className="text-base font-medium text-[color:var(--ai-foreground)]">Allow Social Login</h3>
+                                    <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                                         When enabled, users can sign in with Google and other providers
                                     </p>
                                 </div>
@@ -239,8 +239,8 @@ const AdminSettings: React.FC = () => {
                         <div className="space-y-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <h3 className="text-base font-medium text-gray-900 dark:text-gray-100">Payment Processing</h3>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                                    <h3 className="text-base font-medium text-[color:var(--ai-foreground)]">Payment Processing</h3>
+                                    <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                                         When disabled, users cannot make purchases
                                     </p>
                                 </div>
@@ -254,7 +254,7 @@ const AdminSettings: React.FC = () => {
                             <Divider />
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <label className="block text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">
                                     Currency
                                 </label>                                <Select
                                     value={formData.currencyCode}
@@ -272,7 +272,7 @@ const AdminSettings: React.FC = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <label className="block text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">
                                     Tax Rate (%)
                                 </label>
                                 <Input
@@ -295,3 +295,6 @@ const AdminSettings: React.FC = () => {
 };
 
 export default AdminSettings;
+
+
+

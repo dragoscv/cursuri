@@ -110,8 +110,8 @@ function QASection({ lessonId, courseId }: QAProps) {
                             isLoading={isLoading}
                         />
                     ) : (
-                        <div className="text-center py-8 bg-gray-50/50 dark:bg-gray-800/30 rounded-lg">
-                            <p className="text-gray-600 dark:text-gray-400">
+                        <div className="text-center py-8 bg-[color:var(--ai-card-bg)]/50 dark:bg-[color:var(--ai-card-border)]/30 rounded-lg">
+                            <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                                 No questions yet. Be the first to ask!
                             </p>
                         </div>

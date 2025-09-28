@@ -214,8 +214,8 @@ const EnhancedUserManagement: React.FC = () => {
   if (error) {
     return (
       <div className="text-center py-12">
-        <h2 className="text-2xl font-bold text-red-500 mb-4">{error}</h2>
-        <p className="text-gray-600 dark:text-gray-400">Please try again later</p>
+                                    <h2 className="text-2xl font-bold text-[color:var(--ai-danger)] mb-4">{error}</h2>
+        <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Please try again later</p>
       </div>
     );
   }
@@ -232,7 +232,7 @@ const EnhancedUserManagement: React.FC = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full"
             startContent={
-              <svg className="text-gray-400 dark:text-gray-600 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <svg className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted)] h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             }
@@ -245,7 +245,7 @@ const EnhancedUserManagement: React.FC = () => {
         <CardBody>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">
                 Filter by Role
               </label>
               <Select
@@ -261,7 +261,7 @@ const EnhancedUserManagement: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">
                 Filter by Verification
               </label>              <Select
                 value={verificationFilter}
@@ -275,7 +275,7 @@ const EnhancedUserManagement: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">
                 Filter by Activity
               </label>              <Select
                 value={activityFilter}
@@ -289,7 +289,7 @@ const EnhancedUserManagement: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">
                 Sort By
               </label>
               <div className="flex gap-2">                <Select
@@ -337,13 +337,13 @@ const EnhancedUserManagement: React.FC = () => {
             <TableBody>
               {paginatedUsers.length > 0 ? (
                 paginatedUsers.map((user) => (
-                  <TableRow key={user.id} className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800" onClick={() => handleRowClick(user)}>
+                  <TableRow key={user.id} className="cursor-pointer hover:bg-[color:var(--ai-card-bg)] dark:hover:bg-[color:var(--ai-card-border)]" onClick={() => handleRowClick(user)}>
                     <TableCell>
                       <div className="flex items-center">
                         <Avatar src={user.photoURL || ""} name={user.displayName || user.email} className="mr-3" />
                         <div>
                           <p className="font-medium">{user.displayName || 'No Name'}</p>
-                          <p className="text-xs text-gray-500">ID: {user.id.substring(0, 8)}...</p>
+                          <p className="text-xs text-[color:var(--ai-muted-foreground)]">ID: {user.id.substring(0, 8)}...</p>
                         </div>
                       </div>
                     </TableCell>
@@ -396,7 +396,7 @@ const EnhancedUserManagement: React.FC = () => {
               ) : (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-8">
-                    <p className="text-gray-500 dark:text-gray-400">No users found</p>
+                    <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">No users found</p>
                   </TableCell>
                 </TableRow>
               )}
@@ -425,13 +425,13 @@ const EnhancedUserManagement: React.FC = () => {
           backdrop="blur"
           className="z-50"
           scrollBehavior="inside"
-        >          <ModalContent className="overflow-hidden dark:bg-gray-900/95 border border-primary-200/20 dark:border-gray-800 shadow-xl">
+        >          <ModalContent className="overflow-hidden dark:bg-[color:var(--ai-card-bg)]/95 border border-primary-200/20 dark:border-[color:var(--ai-card-border)] shadow-xl">
             {/* eslint-disable-next-line @typescript-eslint/no-unused-vars */}
             {(_onClose) => (
               <>
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-r from-primary-500/10 to-secondary-500/10 blur-xl opacity-80 -z-10"></div>
-                  <ModalHeader className="border-b border-primary-100 dark:border-gray-800 text-primary-900 dark:text-primary-100">
+                  <ModalHeader className="border-b border-primary-100 dark:border-[color:var(--ai-card-border)] text-primary-900 dark:text-primary-100">
                     <div className="flex items-center">
                       <Avatar
                         src={selectedUser.photoURL || ""}
@@ -441,12 +441,12 @@ const EnhancedUserManagement: React.FC = () => {
                       />
                       <div>
                         <h2 className="text-xl font-bold">{selectedUser.displayName || selectedUser.email}</h2>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">{selectedUser.email}</p>
+                        <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">{selectedUser.email}</p>
                       </div>
                     </div>
                   </ModalHeader>
 
-                  <div className="border-b border-primary-100 dark:border-gray-800">
+                  <div className="border-b border-primary-100 dark:border-[color:var(--ai-card-border)]">
                     <Tabs
                       aria-label="User details tabs"
                       selectedKey={selectedTab}
@@ -473,7 +473,7 @@ const EnhancedUserManagement: React.FC = () => {
                         {editMode ? (
                           <div className="space-y-4">
                             <div>
-                              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                              <label className="block text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">
                                 Display Name
                               </label>
                               <Input
@@ -485,7 +485,7 @@ const EnhancedUserManagement: React.FC = () => {
                             </div>
 
                             <div>
-                              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                              <label className="block text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">
                                 Bio
                               </label>
                               <textarea
@@ -493,13 +493,13 @@ const EnhancedUserManagement: React.FC = () => {
                                 value={editedUserData.bio || ''}
                                 onChange={handleInputChange}
                                 placeholder="User bio"
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                                className="w-full px-3 py-2 border border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)] rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]"
                                 rows={4}
                               />
                             </div>
 
                             <div>
-                              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                              <label className="block text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">
                                 Role
                               </label>                              <Select
                                 value={editedUserData.role || 'user'}
@@ -532,19 +532,19 @@ const EnhancedUserManagement: React.FC = () => {
                           </div>
                         ) : (
                           <>
-                            <div className="bg-gray-50/80 dark:bg-gray-800/50 p-4 rounded-xl backdrop-blur-sm space-y-4">
+                            <div className="bg-[color:var(--ai-card-bg)]/80 dark:bg-[color:var(--ai-card-border)]/50 p-4 rounded-xl backdrop-blur-sm space-y-4">
                               <div>
-                                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Display Name</h3>
+                                <h3 className="text-sm font-medium text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Display Name</h3>
                                 <p className="mt-1 text-lg font-semibold">{selectedUser.displayName || 'Not set'}</p>
                               </div>
 
                               <div>
-                                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Email</h3>
+                                <h3 className="text-sm font-medium text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Email</h3>
                                 <p className="mt-1">{selectedUser.email}</p>
                               </div>
 
                               <div>
-                                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Role</h3>                                <p className="mt-1">
+                                <h3 className="text-sm font-medium text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Role</h3>                                <p className="mt-1">
                                   <Chip color={selectedUser.role === UserRole.ADMIN || selectedUser.role === UserRole.SUPER_ADMIN ? 'primary' : 'default'}>
                                     {selectedUser.role || UserRole.USER}
                                   </Chip>
@@ -552,14 +552,14 @@ const EnhancedUserManagement: React.FC = () => {
                               </div>
 
                               <div>
-                                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Bio</h3>
+                                <h3 className="text-sm font-medium text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Bio</h3>
                                 <p className="mt-1">{selectedUser.bio || 'No bio provided'}</p>
                               </div>
                             </div>
 
-                            <div className="bg-gray-50/80 dark:bg-gray-800/50 p-4 rounded-xl backdrop-blur-sm space-y-4">
+                            <div className="bg-[color:var(--ai-card-bg)]/80 dark:bg-[color:var(--ai-card-border)]/50 p-4 rounded-xl backdrop-blur-sm space-y-4">
                               <div>
-                                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Account Created</h3>
+                                <h3 className="text-sm font-medium text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Account Created</h3>
                                 <p className="mt-1">
                                   {selectedUser.createdAt ?
                                     (typeof selectedUser.createdAt === 'object' && 'seconds' in selectedUser.createdAt
@@ -570,7 +570,7 @@ const EnhancedUserManagement: React.FC = () => {
                               </div>
 
                               <div>
-                                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Last Updated</h3>
+                                <h3 className="text-sm font-medium text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Last Updated</h3>
                                 <p className="mt-1">
                                   {selectedUser.updatedAt ?
                                     (typeof selectedUser.updatedAt === 'object' && 'seconds' in selectedUser.updatedAt
@@ -581,7 +581,7 @@ const EnhancedUserManagement: React.FC = () => {
                               </div>
 
                               <div>
-                                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Email Verification</h3>
+                                <h3 className="text-sm font-medium text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Email Verification</h3>
                                 <p className="mt-1">
                                   {selectedUser.emailVerified ? (
                                     <Chip color="success">Verified</Chip>
@@ -630,10 +630,10 @@ const EnhancedUserManagement: React.FC = () => {
                             {Object.entries(selectedUser.enrollments).map(([courseId, enrollment]) => {
                               const course = courses[courseId];
                               return (
-                                <div key={courseId} className="flex justify-between items-center p-4 bg-gray-50/80 dark:bg-gray-800/50 rounded-xl border border-primary-100 dark:border-gray-800 backdrop-blur-sm">
+                                <div key={courseId} className="flex justify-between items-center p-4 bg-[color:var(--ai-card-bg)]/80 dark:bg-[color:var(--ai-card-border)]/50 rounded-xl border border-primary-100 dark:border-[color:var(--ai-card-border)] backdrop-blur-sm">
                                   <div>
-                                    <p className="font-medium text-gray-900 dark:text-white">{course?.name || 'Unknown Course'}</p>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                    <p className="font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">{course?.name || 'Unknown Course'}</p>
+                                    <p className="text-xs text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                                       Enrolled: {enrollment.enrolledAt ?
                                         (typeof enrollment.enrolledAt === 'object' && 'seconds' in enrollment.enrolledAt
                                           ? new Date(enrollment.enrolledAt.seconds * 1000).toLocaleDateString()
@@ -654,11 +654,11 @@ const EnhancedUserManagement: React.FC = () => {
                             })}
                           </div>
                         ) : (
-                          <div className="text-center py-8 bg-gray-50/80 dark:bg-gray-800/50 rounded-xl border border-dashed border-primary-200 dark:border-gray-700 backdrop-blur-sm">
-                            <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <div className="text-center py-8 bg-[color:var(--ai-card-bg)]/80 dark:bg-[color:var(--ai-card-border)]/50 rounded-xl border border-dashed border-primary-200 dark:border-[color:var(--ai-card-border)] backdrop-blur-sm">
+                            <svg className="mx-auto h-12 w-12 text-[color:var(--ai-muted-foreground)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                             </svg>
-                            <p className="mt-2 text-gray-500 dark:text-gray-400">No enrolled courses</p>
+                            <p className="mt-2 text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">No enrolled courses</p>
                             <Button
                               color="primary"
                               variant="flat"
@@ -676,7 +676,7 @@ const EnhancedUserManagement: React.FC = () => {
                     {selectedTab === "notes" && (
                       <div className="space-y-4">
                         <h3 className="text-lg font-semibold">Admin Notes</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                        <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                           These notes are only visible to administrators and are not shown to the user.
                         </p>
 
@@ -684,7 +684,7 @@ const EnhancedUserManagement: React.FC = () => {
                           value={userNotes}
                           onChange={(e) => handleNotesChange(e.target.value)}
                           placeholder="Add notes about this user..."
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                          className="w-full px-3 py-2 border border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)] rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]"
                           rows={8}
                         />
                       </div>
@@ -695,13 +695,13 @@ const EnhancedUserManagement: React.FC = () => {
                       <div className="space-y-4">
                         <h3 className="text-lg font-semibold">User Activity</h3>
 
-                        <div className="relative border-l-2 border-gray-200 dark:border-gray-700 pl-4 ml-2 space-y-6">
+                        <div className="relative border-l-2 border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)] pl-4 ml-2 space-y-6">
                           {/* Example activities - in a real app, you'd fetch these from the database */}
                           <div className="relative">
                             <div className="absolute -left-6 mt-1 h-4 w-4 rounded-full bg-primary-500"></div>
                             <div className="flex flex-col">
                               <p className="font-medium">Account created</p>
-                              <p className="text-sm text-gray-500 dark:text-gray-400">
+                              <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                                 {selectedUser.createdAt ?
                                   (typeof selectedUser.createdAt === 'object' && 'seconds' in selectedUser.createdAt
                                     ? new Date(selectedUser.createdAt.seconds * 1000).toLocaleString()
@@ -713,10 +713,10 @@ const EnhancedUserManagement: React.FC = () => {
 
                           {selectedUser.emailVerified && (
                             <div className="relative">
-                              <div className="absolute -left-6 mt-1 h-4 w-4 rounded-full bg-green-500"></div>
+                              <div className="absolute -left-6 mt-1 h-4 w-4 rounded-full bg-[color:var(--ai-success)]/20"></div>
                               <div className="flex flex-col">
                                 <p className="font-medium">Email verified</p>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">Date unavailable</p>
+                                <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Date unavailable</p>
                               </div>
                             </div>
                           )}
@@ -726,14 +726,14 @@ const EnhancedUserManagement: React.FC = () => {
                               <div className="absolute -left-6 mt-1 h-4 w-4 rounded-full bg-blue-500"></div>
                               <div className="flex flex-col">
                                 <p className="font-medium">Enrolled in {courses[courseId]?.name || 'a course'}</p>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                                   {enrollment.enrolledAt ?
                                     (typeof enrollment.enrolledAt === 'object' && 'seconds' in enrollment.enrolledAt
                                       ? new Date(enrollment.enrolledAt.seconds * 1000).toLocaleString()
                                       : new Date(enrollment.enrolledAt).toLocaleString())
                                     : 'Unknown date'}
                                 </p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                <p className="text-xs text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mt-1">
                                   Via: {enrollment.source === 'admin' ? 'Admin assignment' : 'Self purchase'}
                                 </p>
                               </div>
@@ -742,10 +742,10 @@ const EnhancedUserManagement: React.FC = () => {
 
                           {/* Example placeholder activities */}
                           <div className="relative opacity-50">
-                            <div className="absolute -left-6 mt-1 h-4 w-4 rounded-full bg-gray-400"></div>
+                            <div className="absolute -left-6 mt-1 h-4 w-4 rounded-full bg-[color:var(--ai-muted)]"></div>
                             <div className="flex flex-col">
                               <p className="font-medium">Last login</p>
-                              <p className="text-sm text-gray-500 dark:text-gray-400">Data not available</p>
+                              <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Data not available</p>
                             </div>
                           </div>
                         </div>
@@ -758,10 +758,10 @@ const EnhancedUserManagement: React.FC = () => {
                         <div>
                           <h3 className="text-lg font-semibold mb-4">Role Permissions</h3>
 
-                          <div className="bg-gray-50/80 dark:bg-gray-800/50 p-4 rounded-xl backdrop-blur-sm">
+                          <div className="bg-[color:var(--ai-card-bg)]/80 dark:bg-[color:var(--ai-card-border)]/50 p-4 rounded-xl backdrop-blur-sm">
                             <div className="flex items-center justify-between mb-4">                              <div>
                               <h4 className="font-medium">Current Role</h4>
-                              <p className="text-sm text-gray-500 dark:text-gray-400">
+                              <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                                 {selectedUser.role === UserRole.SUPER_ADMIN ? 'Super Administrator' :
                                   selectedUser.role === UserRole.ADMIN ? 'Administrator' : 'Regular User'}
                               </p>
@@ -772,24 +772,24 @@ const EnhancedUserManagement: React.FC = () => {
                             </div>
 
                             <div className="space-y-3">
-                              <div className="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-700">
+                              <div className="flex items-center justify-between py-2 border-b border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)]">
                                 <span className="text-sm">Access admin dashboard</span>
                                 <Chip size="sm" color={selectedUser.role === 'admin' ? 'success' : 'danger'}>
                                   {selectedUser.role === 'admin' ? 'Yes' : 'No'}
                                 </Chip>
-                              </div>                              <div className="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-700">
+                              </div>                              <div className="flex items-center justify-between py-2 border-b border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)]">
                                 <span className="text-sm">Manage courses</span>
                                 <Chip size="sm" color={selectedUser.role === UserRole.ADMIN || selectedUser.role === UserRole.SUPER_ADMIN ? 'success' : 'danger'}>
                                   {selectedUser.role === UserRole.ADMIN || selectedUser.role === UserRole.SUPER_ADMIN ? 'Yes' : 'No'}
                                 </Chip>
                               </div>
-                              <div className="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-700">
+                              <div className="flex items-center justify-between py-2 border-b border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)]">
                                 <span className="text-sm">Manage users</span>
                                 <Chip size="sm" color={selectedUser.role === UserRole.ADMIN || selectedUser.role === UserRole.SUPER_ADMIN ? 'success' : 'danger'}>
                                   {selectedUser.role === UserRole.ADMIN || selectedUser.role === UserRole.SUPER_ADMIN ? 'Yes' : 'No'}
                                 </Chip>
                               </div>
-                              <div className="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-700">
+                              <div className="flex items-center justify-between py-2 border-b border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)]">
                                 <span className="text-sm">Access analytics</span>
                                 <Chip size="sm" color={selectedUser.role === 'admin' ? 'success' : 'danger'}>
                                   {selectedUser.role === 'admin' ? 'Yes' : 'No'}
@@ -823,7 +823,7 @@ const EnhancedUserManagement: React.FC = () => {
                             <Button
                               color="danger"
                               variant="flat"
-                              className="font-medium flex-1 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                              className="font-medium flex-1 bg-[color:var(--ai-danger)]/10 text-[color:var(--ai-danger)]"
                               size="lg"
                             >
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
@@ -837,7 +837,7 @@ const EnhancedUserManagement: React.FC = () => {
                     )}
                   </ModalBody>
 
-                  <ModalFooter className="border-t border-primary-100 dark:border-gray-800">
+                  <ModalFooter className="border-t border-primary-100 dark:border-[color:var(--ai-card-border)]">
                     <Button
                       color="default"
                       variant="light"
@@ -858,3 +858,4 @@ const EnhancedUserManagement: React.FC = () => {
 };
 
 export default EnhancedUserManagement;
+

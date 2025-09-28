@@ -24,17 +24,17 @@ export default function AdminRevenueSection({ analytics }: AdminRevenueSectionPr
               .slice(0, 6)
               .map(([month, revenue]) => (
                 <div key={month} className="flex items-center justify-between py-2">
-                  <div className="font-medium text-gray-800 dark:text-gray-200">
+                  <div className="font-medium text-[color:var(--ai-foreground)]">
                     {month}
                   </div>
-                  <div className="font-medium text-gray-900 dark:text-gray-100">
+                  <div className="font-medium text-[color:var(--ai-foreground)]">
                     {revenue.toLocaleString('ro-RO', { style: 'currency', currency: 'RON' })}
                   </div>
                 </div>
               ))}
           </div>
         ) : (
-          <p className="text-gray-500 dark:text-gray-400 text-center py-4">
+          <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] text-center py-4">
             No revenue data available yet
           </p>
         )}

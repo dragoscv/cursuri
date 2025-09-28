@@ -33,7 +33,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onTabChange, activeTab = 'das
     };
 
     return (
-        <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+        <header className="bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-background)] border-b border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     <div className="flex items-center">
@@ -44,7 +44,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onTabChange, activeTab = 'das
                                     <path d="M3 16L12 20L21 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                     <path d="M3 12L12 16L21 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
-                                <span className="ml-2 text-xl font-bold text-gray-900 dark:text-white">Admin</span>
+                                <span className="ml-2 text-xl font-bold text-[color:var(--ai-foreground)]">Admin</span>
                             </div>
                         </Link>                        <nav className="ml-8 hidden md:flex space-x-4">
                             <NavLink
@@ -109,10 +109,10 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onTabChange, activeTab = 'das
                                         name={user?.displayName || 'Admin'}
                                         className="mr-2"
                                     />
-                                    <span className="hidden sm:block font-medium text-gray-700 dark:text-gray-200">
+                                    <span className="hidden sm:block font-medium text-[color:var(--ai-foreground)]">
                                         {user?.displayName || user?.email || 'Admin'}
                                     </span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1 text-[color:var(--ai-muted-foreground)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </div>

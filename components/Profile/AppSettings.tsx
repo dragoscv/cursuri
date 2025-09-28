@@ -164,8 +164,8 @@ const AppSettings: React.FC<AppSettingsProps> = ({ userId }) => {
                     <div className="flex flex-col gap-4">
                         <div className="flex items-center justify-between">
                             <div>
-                                <h3 className="text-base font-medium text-gray-900 dark:text-gray-100">Email Notifications</h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                <h3 className="text-base font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">Email Notifications</h3>
+                                <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                                     Receive general email notifications about your account
                                 </p>
                             </div>
@@ -180,8 +180,8 @@ const AppSettings: React.FC<AppSettingsProps> = ({ userId }) => {
 
                         <div className="flex items-center justify-between">
                             <div>
-                                <h3 className="text-base font-medium text-gray-900 dark:text-gray-100">Course Updates</h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                <h3 className="text-base font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">Course Updates</h3>
+                                <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                                     Receive notifications about updates to courses you're enrolled in
                                 </p>
                             </div>
@@ -196,8 +196,8 @@ const AppSettings: React.FC<AppSettingsProps> = ({ userId }) => {
 
                         <div className="flex items-center justify-between">
                             <div>
-                                <h3 className="text-base font-medium text-gray-900 dark:text-gray-100">New Lesson Alerts</h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                <h3 className="text-base font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">New Lesson Alerts</h3>
+                                <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                                     Get notified when new lessons are added to your enrolled courses
                                 </p>
                             </div>
@@ -213,8 +213,8 @@ const AppSettings: React.FC<AppSettingsProps> = ({ userId }) => {
 
                         <div className="flex items-center justify-between">
                             <div>
-                                <h3 className="text-base font-medium text-gray-900 dark:text-gray-100">Comment Replies</h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                <h3 className="text-base font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">Comment Replies</h3>
+                                <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                                     Get notified when someone replies to your comments or questions
                                 </p>
                             </div>
@@ -230,8 +230,8 @@ const AppSettings: React.FC<AppSettingsProps> = ({ userId }) => {
 
                         <div className="flex items-center justify-between">
                             <div>
-                                <h3 className="text-base font-medium text-gray-900 dark:text-gray-100">Certificate Notifications</h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                <h3 className="text-base font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">Certificate Notifications</h3>
+                                <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                                     Get notified when you earn a new certificate
                                 </p>
                             </div>
@@ -247,8 +247,8 @@ const AppSettings: React.FC<AppSettingsProps> = ({ userId }) => {
 
                         <div className="flex items-center justify-between">
                             <div>
-                                <h3 className="text-base font-medium text-gray-900 dark:text-gray-100">Payment Receipts</h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                <h3 className="text-base font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">Payment Receipts</h3>
+                                <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                                     Receive receipts for payments and purchases
                                 </p>
                             </div>
@@ -264,8 +264,8 @@ const AppSettings: React.FC<AppSettingsProps> = ({ userId }) => {
 
                         <div className="flex items-center justify-between">
                             <div>
-                                <h3 className="text-base font-medium text-gray-900 dark:text-gray-100">Weekly Learning Digest</h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                <h3 className="text-base font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">Weekly Learning Digest</h3>
+                                <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                                     Receive a weekly summary of your learning progress
                                 </p>
                             </div>
@@ -281,8 +281,8 @@ const AppSettings: React.FC<AppSettingsProps> = ({ userId }) => {
 
                         <div className="flex items-center justify-between">
                             <div>
-                                <h3 className="text-base font-medium text-gray-900 dark:text-gray-100">Marketing Emails</h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                <h3 className="text-base font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">Marketing Emails</h3>
+                                <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                                     Receive emails about new courses, promotions, and updates
                                 </p>
                             </div>
@@ -308,8 +308,8 @@ const AppSettings: React.FC<AppSettingsProps> = ({ userId }) => {
                     <div className="flex flex-col gap-4">
                         <div className="flex items-center justify-between">
                             <div>
-                                <h3 className="text-base font-medium text-gray-900 dark:text-gray-100">Public Profile</h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                <h3 className="text-base font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">Public Profile</h3>
+                                <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                                     Allow other users to see your profile information
                                 </p>
                             </div>
@@ -324,8 +324,8 @@ const AppSettings: React.FC<AppSettingsProps> = ({ userId }) => {
 
                         <div className="flex items-center justify-between">
                             <div>
-                                <h3 className="text-base font-medium text-gray-900 dark:text-gray-100">Public Progress</h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                <h3 className="text-base font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">Public Progress</h3>
+                                <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                                     Share your course progress with other users
                                 </p>
                             </div>
@@ -341,8 +341,8 @@ const AppSettings: React.FC<AppSettingsProps> = ({ userId }) => {
 
                         <div className="flex items-center justify-between">
                             <div>
-                                <h3 className="text-base font-medium text-gray-900 dark:text-gray-100">Show Achievements</h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                <h3 className="text-base font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">Show Achievements</h3>
+                                <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                                     Display your achievements and badges on your profile
                                 </p>
                             </div>
@@ -358,8 +358,8 @@ const AppSettings: React.FC<AppSettingsProps> = ({ userId }) => {
 
                         <div className="flex items-center justify-between">
                             <div>
-                                <h3 className="text-base font-medium text-gray-900 dark:text-gray-100">Activity Feed</h3>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                <h3 className="text-base font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">Activity Feed</h3>
+                                <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                                     Share your learning activity with other users
                                 </p>
                             </div>
@@ -386,7 +386,7 @@ const AppSettings: React.FC<AppSettingsProps> = ({ userId }) => {
                 </CardHeader>
                 <CardBody>
                     <div className="space-y-4">
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                        <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                             Manage your personal data and account information.
                         </p>
 
@@ -417,9 +417,9 @@ const AppSettings: React.FC<AppSettingsProps> = ({ userId }) => {
                 </CardBody>
             </Card>
 
-            <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">About Your Data</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+            <div className="bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] p-4 rounded-lg border border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)]">
+                <h3 className="text-sm font-medium text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mb-2">About Your Data</h3>
+                <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                     We handle your data in accordance with our <a href="/privacy-policy" className="text-primary-600 dark:text-primary-400 hover:underline">Privacy Policy</a>.
                     You can request a copy of your data or delete your account at any time.
                 </p>

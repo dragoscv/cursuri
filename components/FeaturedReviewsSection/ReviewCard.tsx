@@ -63,10 +63,10 @@ export function ReviewCard({ review, index }: ReviewCardProps) {
                     </div>
                 )}
                 <div>
-                    <h4 className="font-medium text-gray-900 dark:text-white">
+                    <h4 className="font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">
                         {review.author?.name || review.userName || "Anonymous User"}
                     </h4>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                         {review.author?.role || review.userRole || "Student"}
                     </p>
                 </div>      </div>

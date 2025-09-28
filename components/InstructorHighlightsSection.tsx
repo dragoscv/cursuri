@@ -36,7 +36,7 @@ const instructors = [
 
 export default function InstructorHighlightsSection() {
     return (
-        <section className="w-full py-16 bg-gradient-to-b from-[color:var(--ai-background)]/80 to-white dark:to-gray-900">
+        <section className="w-full py-16 bg-gradient-to-b from-[color:var(--ai-background)]/80 to-[color:var(--ai-card-bg)] dark:to-[color:var(--ai-background)]">
             <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 className="text-3xl font-bold text-[color:var(--ai-foreground)] mb-8 text-center">
                     Meet Our Instructors

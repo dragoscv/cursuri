@@ -104,6 +104,7 @@ export default function CourseDetailView({
                         course={course}
                         courseId={courseId}
                         lessons={courseLessons}
+                        hasAccess={hasAccess}
                     />
                 </motion.div>
 
@@ -111,7 +112,7 @@ export default function CourseDetailView({
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: 0.3 }}
-                                        className="bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] p-6 rounded-xl shadow-lg border border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)]"
+                    className="bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] p-6 rounded-xl shadow-lg border border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)]"
                 >
                     <CourseEnrollment
                         course={courseWithStats}

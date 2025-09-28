@@ -160,7 +160,7 @@ export default function LessonDetailComponent({
                 <Card className="p-6 shadow-lg">
                     <div className="text-center py-10">
                         <h2 className="text-xl font-semibold mb-4">Course not found</h2>
-                        <p className="text-gray-600 dark:text-gray-400 mb-6">
+                        <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mb-6">
                             The course you&apos;re looking for doesn&apos;t exist or you may not have access to it.
                         </p>
                         <button
@@ -183,9 +183,9 @@ export default function LessonDetailComponent({
                     <div className="text-center py-10">
                         <h2 className="text-xl font-semibold mb-4">Loading course content...</h2>
                         <div className="animate-pulse flex flex-col items-center">
-                            <div className="w-20 h-20 bg-gray-300 dark:bg-gray-700 rounded-full mb-4"></div>
-                            <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/2 mb-2"></div>
-                            <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/3"></div>
+                            <div className="w-20 h-20 bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-border)] rounded-full mb-4"></div>
+                            <div className="h-4 bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-border)] rounded w-1/2 mb-2"></div>
+                            <div className="h-4 bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-border)] rounded w-1/3"></div>
                         </div>
                     </div>
                 </Card>
@@ -223,7 +223,7 @@ export default function LessonDetailComponent({
                 <Card className="p-6 shadow-lg">
                     <div className="text-center py-10">
                         <h2 className="text-xl font-semibold mb-4">Lesson not found</h2>
-                        <p className="text-gray-600 dark:text-gray-400 mb-6">
+                        <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mb-6">
                             The lesson you&apos;re looking for doesn&apos;t exist or you may not have access to it.
                         </p>
                         <div className="space-y-4">
@@ -243,7 +243,7 @@ export default function LessonDetailComponent({
                             </button>
 
                             {/* Debugging information */}
-                            <div className="mt-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-left">
+                            <div className="mt-6 p-4 bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-border)] rounded-lg text-left">
                                 <h3 className="font-bold mb-2">Debugging Information:</h3>
                                 <ul className="list-disc pl-5 space-y-1 text-sm">
                                     <li>Course ID: {debug.courseId}</li>
@@ -276,7 +276,7 @@ export default function LessonDetailComponent({
                 <Card className="p-6 shadow-lg">
                     <div className="text-center py-10">
                         <h2 className="text-xl font-semibold mb-4">Access Denied</h2>
-                        <p className="text-gray-600 dark:text-gray-400 mb-6">
+                        <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mb-6">
                             You need to enroll in this course to access this lesson.
                         </p>
                         <div className="flex justify-center gap-4">
@@ -289,7 +289,7 @@ export default function LessonDetailComponent({
                             {!user && (
                                 <button
                                     onClick={() => router.push("/login")}
-                                    className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                                    className="px-4 py-2 bg-[color:var(--ai-muted)] hover:bg-[color:var(--ai-muted-foreground)] text-white rounded-lg transition-colors"
                                 >
                                     Log In
                                 </button>

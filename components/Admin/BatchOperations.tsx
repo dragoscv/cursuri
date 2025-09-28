@@ -60,7 +60,7 @@ const BatchOperations: React.FC = () => {
         );
       case 'delete':
         return (
-          <div className="text-red-500 font-semibold mb-4">
+          <div className="text-[color:var(--ai-danger)] font-semibold mb-4">
             Warning: This action cannot be undone!
           </div>
         );
@@ -235,7 +235,7 @@ const BatchOperations: React.FC = () => {
       <Card>
         <CardHeader>
           <h1 className="text-2xl font-bold">Batch Operations</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
             Perform actions on multiple courses or lessons at once
           </p>
         </CardHeader>
@@ -311,8 +311,8 @@ const BatchOperations: React.FC = () => {
                       </Button>
                     </div>
 
-                    {error && <div className="mt-2 text-red-500">{error}</div>}
-                    {success && <div className="mt-2 text-green-500">{success}</div>}
+                    {error && <div className="mt-2 text-[color:var(--ai-danger)]">{error}</div>}
+                    {success && <div className="mt-2 text-[color:var(--ai-success)]">{success}</div>}
                   </div>
                 )}
               </div>
@@ -348,7 +348,7 @@ const BatchOperations: React.FC = () => {
                     paginatedItems.map((item) => {
                       // Pre-compute all cells for this row
                       return (
-                        <tr key={item.id} className="border-b border-gray-200 dark:border-gray-700">
+                        <tr key={item.id} className="border-b border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)]">
                           <td className="px-3 py-2">
                             <Checkbox
                               isSelected={selectedItems.includes(item.id)}
@@ -378,7 +378,7 @@ const BatchOperations: React.FC = () => {
                             </td>
                           )}
                           <td className="px-3 py-2">
-                            <div className="text-sm text-gray-500 dark:text-gray-400">
+                            <div className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                               {'createdAt' in item && item.createdAt ? new Date(item.createdAt.toString()).toLocaleDateString() : 'Unknown'}
                             </div>
                           </td>
@@ -433,3 +433,4 @@ const BatchOperations: React.FC = () => {
 };
 
 export default BatchOperations;
+

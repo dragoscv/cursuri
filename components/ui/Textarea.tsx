@@ -143,7 +143,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => 
 
     // Generate color-specific styles
     const getColorStyles = () => {
-        if (isInvalid) return 'border-red-500 focus-within:border-red-500 focus-within:ring-red-500/20';
+        if (isInvalid) return 'border-[color:var(--ai-danger)] focus-within:border-[color:var(--ai-danger)] focus-within:ring-red-500/20';
 
         switch (color) {
             case 'primary':
@@ -155,7 +155,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => 
             case 'warning':
                 return 'focus-within:border-yellow-500 focus-within:ring-yellow-500/20';
             case 'danger':
-                return 'focus-within:border-red-500 focus-within:ring-red-500/20';
+                return 'focus-within:border-[color:var(--ai-danger)] focus-within:ring-red-500/20';
             default:
                 return 'focus-within:border-[color:var(--ai-card-border)] focus-within:ring-[color:var(--ai-foreground)]/20';
         }
@@ -192,7 +192,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => 
             {label && (
                 <label className={labelClasses}>
                     {label}
-                    {isRequired && <span className="ml-1 text-red-500">*</span>}
+                    {isRequired && <span className="ml-1 text-[color:var(--ai-danger)]">*</span>}
                 </label>
             )}
 
@@ -216,7 +216,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => 
             </div>
 
             {errorMessage && isInvalid && (
-                <p className={`mt-1 text-xs text-red-500 ${classNames.errorMessage || ''}`}>
+                <p className={`mt-1 text-xs text-[color:var(--ai-danger)] ${classNames.errorMessage || ''}`}>
                     {errorMessage}
                 </p>
             )}
@@ -233,3 +233,4 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => 
 Textarea.displayName = 'Textarea';
 
 export default Textarea;
+

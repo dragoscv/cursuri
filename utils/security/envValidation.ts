@@ -67,7 +67,7 @@ export function validateEnvironmentVariables(): EnvValidationResult {
   // Check required variables
   REQUIRED_ENV_VARS.forEach(varName => {
     const value = process.env[varName];
-    
+
     if (!value) {
       missing.push(varName);
       errors.push(`Missing required environment variable: ${varName}`);
@@ -75,7 +75,7 @@ export function validateEnvironmentVariables(): EnvValidationResult {
     }
 
     // Check for dangerous placeholder values
-    if (DANGEROUS_VALUES.some(dangerous => 
+    if (DANGEROUS_VALUES.some(dangerous =>
       value.toLowerCase().includes(dangerous.toLowerCase()))) {
       errors.push(`${varName} contains placeholder/development value: ${value}`);
     }
@@ -90,8 +90,8 @@ export function validateEnvironmentVariables(): EnvValidationResult {
   // Check optional variables for placeholder values
   OPTIONAL_ENV_VARS.forEach(varName => {
     const value = process.env[varName];
-    
-    if (value && DANGEROUS_VALUES.some(dangerous => 
+
+    if (value && DANGEROUS_VALUES.some(dangerous =>
       value.toLowerCase().includes(dangerous.toLowerCase()))) {
       warnings.push(`${varName} appears to contain placeholder value: ${value}`);
     }
@@ -126,7 +126,7 @@ export function validateEnvironmentVariables(): EnvValidationResult {
  */
 export function sanitizeEnvValue(key: string, value: string): string {
   if (!value) return '<empty>';
-  
+
   // Always mask API keys
   if (key.toLowerCase().includes('api_key') || key.toLowerCase().includes('secret')) {
     if (value.length <= 8) return '***';
@@ -157,7 +157,7 @@ export function logEnvironmentValidation(): void {
   // SECURITY: Environment variable logging completely disabled
   // to prevent any accidental exposure of sensitive configuration
   // Validation still occurs silently for security checks
-  
+
   if (typeof window !== 'undefined') {
     // Don't run on client side for security
     return;
@@ -165,7 +165,7 @@ export function logEnvironmentValidation(): void {
 
   // Perform validation silently - no logging to prevent information disclosure
   const validation = validateEnvironmentVariables();
-  
+
   // All environment variable logging has been removed for security
   // Applications should handle missing variables gracefully at runtime
 }
@@ -176,29 +176,29 @@ export function logEnvironmentValidation(): void {
 export function performSecurityChecks(): void {
   if (typeof window !== 'undefined') {
     // Client-side security checks
-    
+
     // Check if development tools are open
     const devtools = /./;
-    devtools.toString = function() {
+    devtools.toString = function () {
       console.warn('⚠️ Developer tools detected. Ensure you trust this website.');
       return 'Developer tools detected';
     };
     console.log('%c', devtools);
 
     // Check for localhost in production
-    if (window.location.hostname !== 'localhost' && 
-        window.location.hostname !== '127.0.0.1' &&
-        window.location.protocol !== 'https:') {
+    if (window.location.hostname !== 'localhost' &&
+      window.location.hostname !== '127.0.0.1' &&
+      window.location.protocol !== 'https:') {
       console.warn('⚠️ Application is not running over HTTPS in production');
     }
 
   } else {
     // Server-side security checks
     const validation = validateEnvironmentVariables();
-    
+
     if (!validation.isValid) {
       console.error('🚨 CRITICAL: Environment validation failed. Application may not function correctly.');
-      
+
       // In production, consider failing fast
       if (process.env.NODE_ENV === 'production') {
         throw new Error('Critical environment validation failed');

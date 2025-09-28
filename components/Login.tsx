@@ -11,7 +11,7 @@ import PasswordStrengthMeter from "@/components/ui/PasswordStrengthMeter";
 // Helper function to get user-friendly error messages
 const getFirebaseErrorMessage = (error: any): string => {
     const errorCode = error?.code || '';
-    
+
     switch (errorCode) {
         case 'auth/user-not-found':
         case 'auth/wrong-password':
@@ -55,7 +55,7 @@ export default function Login(props: { onClose: () => void }) {
     const [loadingGoogleLogin, setLoadingGoogleLogin] = useState(false);
     const [loadingEmailLogin, setLoadingEmailLogin] = useState(false);
     const [loadingEmailRegister, setLoadingEmailRegister] = useState(false);
-    
+
     // Safe toast hook usage with error handling
     let toast = null;
     try {
@@ -87,7 +87,8 @@ export default function Login(props: { onClose: () => void }) {
                         duration: 4000
                     });
                 }
-            }        } catch (error: unknown) {
+            }
+        } catch (error: unknown) {
             console.error("Google login error:", error);
             const errorMsg = getFirebaseErrorMessage(error);
             setErrorMessage(errorMsg);
@@ -249,7 +250,7 @@ export default function Login(props: { onClose: () => void }) {
             console.error("Registration error:", error);
             const errorMsg = getFirebaseErrorMessage(error);
             setErrorMessage(errorMsg);
-            
+
             if (toast) {
                 toast.showToast({
                     type: 'error',
@@ -340,7 +341,7 @@ export default function Login(props: { onClose: () => void }) {
             {/* Error message */}
             {errorMessage && (
                 <motion.div
-                    className="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-4 w-full max-w-xs"
+                                                    className="bg-[color:var(--ai-danger)]/10 text-[color:var(--ai-danger)] p-3 rounded-lg text-sm mb-4 w-full max-w-xs"
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
@@ -460,14 +461,14 @@ export default function Login(props: { onClose: () => void }) {
                             Create Account
                         </button>
                     )}                                {/* Password strength meter */}
-                                {activeTab === 'register' && password && (
-                                    <div className="mb-4">
-                                        <PasswordStrengthMeter 
-                                            password={password}
-                                            showRequirements={true}
-                                        />
-                                    </div>
-                                )}
+                    {activeTab === 'register' && password && (
+                        <div className="mb-4">
+                            <PasswordStrengthMeter
+                                password={password}
+                                showRequirements={true}
+                            />
+                        </div>
+                    )}
                 </motion.form>
             )}
 

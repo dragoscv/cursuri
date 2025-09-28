@@ -25,7 +25,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({ user, openModal
                 textValue="Profile Details"
             >
                 <div
-                    className='cursor-pointer hover:bg-slate-800/40 rounded-lg p-2 border-0'
+                    className='cursor-pointer hover:bg-[color:var(--ai-card-bg)]/40 dark:hover:bg-[color:var(--ai-card-border)]/40 rounded-lg p-2 border-0'
                     onClick={() => openModal({
                         id: 'profile',
                         isOpen: true,

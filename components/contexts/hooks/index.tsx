@@ -72,10 +72,10 @@ export const useLessons = (courseId: string) => {
  */
 export const useAuth = () => {
     const context = useContext(AppContext);
-    
+
     // Debug: Log context to help diagnose the issue - UPDATED VERSION
-    console.log('useAuth UPDATED context check:', { 
-        hasContext: !!context, 
+    console.log('useAuth UPDATED context check:', {
+        hasContext: !!context,
         hasUser: context?.user !== undefined,
         hasAuthLoading: context?.authLoading !== undefined,
         hasIsAdmin: context?.isAdmin !== undefined

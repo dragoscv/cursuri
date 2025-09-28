@@ -16,7 +16,7 @@ export default function CourseAccessRequired({ courseId }: CourseAccessRequiredP
                     <h1 className="text-2xl font-bold text-center">Course Access Required</h1>
                 </CardHeader>
                 <CardBody className="text-center">
-                    <p className="text-gray-500 dark:text-gray-400 mb-6">
+                    <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mb-6">
                         You need to purchase this course to access the lessons.
                     </p>
                     <Link href={`/courses/${courseId}`}>

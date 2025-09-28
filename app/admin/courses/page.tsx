@@ -156,7 +156,7 @@ export default function CoursesPage() {
                                                 color={course.status === "active" ? "success" : "warning"}
                                                 size="sm"
                                                 className={course.status === "active"
-                                                    ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400"
+                                                    ? "bg-[color:var(--ai-success)]/10 text-[color:var(--ai-success)]"
                                                     : "bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400"}
                                             >
                                                 {course.status}

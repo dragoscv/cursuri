@@ -120,7 +120,7 @@ export default function RecommendedCoursesSection() {
                                 <div className="mt-auto flex items-center justify-between gap-2">
                                     <div className="text-xl font-bold text-[color:var(--ai-foreground)]">
                                         {course.isFree ? (
-                                            <span className="text-green-600 dark:text-green-400">Free</span>
+                                            <span className="text-[color:var(--ai-success)] dark:text-[color:var(--ai-success)]">Free</span>
                                         ) : (
                                             <span>{course.price ? `${course.price} RON` : 'Paid'}</span>
                                         )}
@@ -157,7 +157,7 @@ export default function RecommendedCoursesSection() {
                                         <button
                                             type="button"
                                             aria-label="Copy course link"
-                                            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800/40 transition"
+                                            className="p-2 rounded-full hover:bg-[color:var(--ai-card-bg)] dark:hover:bg-[color:var(--ai-card-border)]/40 transition"
                                             onClick={() => handleShare(course)}
                                         >
                                             <FiLink size={18} />
@@ -172,3 +172,4 @@ export default function RecommendedCoursesSection() {
         </section>
     );
 }
+

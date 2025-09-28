@@ -35,7 +35,7 @@ export default function LessonsTable({ lessons, courseId, onEdit, onReorder }: L
                             <td className="px-4 py-3 font-medium text-[color:var(--ai-foreground)]">{lesson.name}</td>
                             <td className="px-4 py-3 text-[color:var(--ai-muted)]">{lesson.type}</td>
                             <td className="px-4 py-3">
-                                <span className={`inline-block px-2 py-1 rounded text-xs font-semibold ${lesson.status === "active" ? "bg-green-100 text-green-700" : "bg-gray-200 text-gray-600"}`}>
+                                <span className={`inline-block px-2 py-1 rounded text-xs font-semibold ${lesson.status === "active" ? "bg-[color:var(--ai-success)]/10 text-[color:var(--ai-success)]" : "bg-[color:var(--ai-card-border)] text-[color:var(--ai-muted-foreground)]"}`}>
                                     {lesson.status}
                                 </span>
                             </td>

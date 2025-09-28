@@ -10,22 +10,22 @@ import { validateEnvironmentVariables, logEnvironmentValidation } from './envVal
 export function initializeSecurityChecks(): void {
   if (typeof window === 'undefined') {
     // Server-side security checks
-    
+
     // Check environment variables silently
     const validation = validateEnvironmentVariables();
-    
+
     // Critical security issues in production should fail fast
     if (process.env.NODE_ENV === 'production' && !validation.isValid) {
-      const missingRequired = validation.missing.filter(v => 
+      const missingRequired = validation.missing.filter(v =>
         !v.includes('MEASUREMENT') // Non-critical vars
       );
-      
+
       if (missingRequired.length > 0) {
         // In production, fail silently to avoid revealing configuration details
         // Application will handle missing variables gracefully at runtime
       }
     }
-    
+
     // Security checks completed - no logging to prevent information disclosure
   }
 }

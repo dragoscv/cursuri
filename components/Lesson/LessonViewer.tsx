@@ -71,7 +71,7 @@ export default function LessonViewer({ courseId, lessonId }: LessonViewerProps) 
     if (error) {
         return (
             <div className="p-6 text-center">
-                <h2 className="text-2xl font-bold text-red-500 mb-4">Error: {error}</h2>
+                <h2 className="text-2xl font-bold text-[color:var(--ai-danger)] mb-4">Error: {error}</h2>
                 <p className="mb-6">There was a problem loading this lesson.</p>
                 <div className="flex flex-col md:flex-row gap-4 justify-center">
                     <Button color="primary" onClick={() => router.push(`/courses/${courseId}`)}>
@@ -112,3 +112,4 @@ export default function LessonViewer({ courseId, lessonId }: LessonViewerProps) 
 
     return <LessonContent lesson={lessonData} course={context.courses[courseId]} />;
 }
+

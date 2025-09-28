@@ -23,11 +23,11 @@ export default function Courses() {
     const [loadingCourseId, setLoadingCourseId] = useState<string | null>(null)    // For animation
     const controls = useAnimation()
     const ref = useRef(null)
-    const isInView = useInView(ref, { once: false, amount: 0.2 });    useEffect(() => {
+    const isInView = useInView(ref, { once: false, amount: 0.2 }); useEffect(() => {
         if (isInView) {
             controls.start('visible');
         }
-    }, [controls, isInView]);    const router = useRouter();    // Use modular contexts
+    }, [controls, isInView]); const router = useRouter();    // Use modular contexts
     const { user } = useAuth();
     const { state: coursesState } = useCourses();
     const { courses } = coursesState;
@@ -48,7 +48,7 @@ export default function Courses() {
     // If products context is available, use it directly
     let products: StripeProduct[] = [];
     let userPaidProducts: UserPaidProduct[] = [];
-    
+
     // Temporary fallback for backward compatibility - this will be removed once all components are migrated
     if (!productsContextAvailable) {
         // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -69,7 +69,7 @@ export default function Courses() {
             console.error('Error loading products context:', e);
         }
     }
-    
+
     // Use loading states from courses context
     const { courseLoadingStates } = coursesState;    // This effect is no longer needed since courseLoadingStates comes from the courses context
     // The courses context handles loading states internally
@@ -137,7 +137,7 @@ export default function Courses() {
             currency: priceInfo.currency,
             priceId: priceInfo.priceId
         };
-    }, [products]);const isPurchased = useCallback((courseId: string) => {
+    }, [products]); const isPurchased = useCallback((courseId: string) => {
         return userPaidProducts?.find((userPaidProduct: UserPaidProduct) => userPaidProduct.metadata.courseId === courseId);
     }, [userPaidProducts]);
 
@@ -331,7 +331,7 @@ export default function Courses() {
                 {/* Error state when courses failed to load */}
                 {courseLoadingStates && courseLoadingStates['all'] === 'error' && (
                     <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
-                        <FiAlertCircle className="w-12 h-12 text-red-500 mb-4" />
+                                                        <FiAlertCircle className="w-12 h-12 text-[color:var(--ai-danger)] mb-4" />
                         <h3 className="text-xl font-semibold mb-2">Failed to load courses</h3>
                         <p className="text-[color:var(--ai-muted)] mb-6">There was a problem loading the courses. Please try refreshing the page.</p>
                         <Button color="primary" onClick={() => window.location.reload()}>
@@ -346,7 +346,7 @@ export default function Courses() {
                 )}                {courseLoadingStates && courseLoadingStates['all'] === 'success' && courses && Object.keys(courses).map((key: string) => {
                     const courseData = courses[key];
                     if (!courseData) return null;
-                      // Map the course context type to the main Course type
+                    // Map the course context type to the main Course type
                     const course = {
                         ...courseData,
                         name: courseData.title || courseData.id,
@@ -362,7 +362,7 @@ export default function Courses() {
                         difficulty: courseData.level || 'advanced',
                         duration: `${courseData.duration || 600} minutes`
                     } as unknown as CourseType;
-                    
+
                     const { amount, currency, priceId } = getCoursePrice(course);
                     const purchased = isPurchased(course.id);
                     const isLoading = loadingPayment && loadingCourseId === course.id;

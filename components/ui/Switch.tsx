@@ -173,7 +173,7 @@ const Switch = forwardRef<HTMLInputElement, SwitchProps>((props, ref) => {
                         className={`
                             ${sizeStyles.thumb}
                             absolute left-0.5 top-1/2 -translate-y-1/2
-                            rounded-full bg-white shadow-sm
+                            rounded-full bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-foreground)] shadow-sm
                             transition-all duration-200 ease-in-out
                             ${isSelected ? sizeStyles.thumbTranslate : ''}
                             ${classNames.thumb || ''}
