@@ -48,6 +48,7 @@ export default function UserDropdown() {
             <DropdownSection
                 aria-label="Profile & Actions"
                 showDivider
+                {...({} as any)}
             >
                 <DropdownItem
                     key="profile-info"
@@ -67,7 +68,7 @@ export default function UserDropdown() {
     };    // Actions section (Profile Dashboard)
     const renderActionsSection = () => {
         return (
-            <DropdownSection aria-label="Actions" showDivider>
+            <DropdownSection aria-label="Actions" showDivider {...({} as any)}>
                 {user && (
                     <>
                         <DropdownItem
@@ -105,7 +106,7 @@ export default function UserDropdown() {
         if (!isAdmin) return null;
 
         return (
-            <DropdownSection aria-label="Admin Actions" showDivider>
+            <DropdownSection aria-label="Admin Actions" showDivider {...({} as any)}>
                 <DropdownItem
                     key="adminDashboard"
                     textValue="Admin Dashboard"
@@ -126,7 +127,7 @@ export default function UserDropdown() {
     // Core actions section (Suggestions, Login/Logout)
     const renderCoreActionsSection = () => {
         return (
-            <DropdownSection aria-label="Actions" showDivider>
+            <DropdownSection aria-label="Actions" showDivider {...({} as any)}>
                 {/* Suggestions Item */}
                 <DropdownItem
                     key="suggestions"
@@ -193,7 +194,7 @@ export default function UserDropdown() {
     // Social Icons Section
     const renderSocialSection = () => {
         return (
-            <DropdownSection aria-label="Social Links">
+            <DropdownSection aria-label="Social Links" {...({} as any)}>
                 <DropdownItem
                     key="social"
                     textValue="Social"

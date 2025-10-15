@@ -228,8 +228,8 @@ export default function LessonsList({
                                         </div>
                                     </div>
                                     <div className="flex flex-col items-end gap-2">                                            <span className="text-sm text-[color:var(--ai-muted)]">
-                                        {typeof lesson.duration === 'number' && lesson.duration > 0 
-                                            ? `${lesson.duration} min` 
+                                        {typeof lesson.duration === 'number' && lesson.duration > 0
+                                            ? `${lesson.duration} min`
                                             : typeof lesson.duration === 'string' && !isNaN(parseInt(lesson.duration, 10)) && parseInt(lesson.duration, 10) > 0
                                                 ? `${parseInt(lesson.duration, 10)} min`
                                                 : '30 min'}
@@ -260,8 +260,8 @@ export default function LessonsList({
                                     </div>
                                     <div className="flex items-center">
                                         <span className="text-sm text-[color:var(--ai-muted)]/70">
-                                            {typeof lesson.duration === 'number' && lesson.duration > 0 
-                                                ? `${lesson.duration} min` 
+                                            {typeof lesson.duration === 'number' && lesson.duration > 0
+                                                ? `${lesson.duration} min`
                                                 : typeof lesson.duration === 'string' && !isNaN(parseInt(lesson.duration, 10)) && parseInt(lesson.duration, 10) > 0
                                                     ? `${parseInt(lesson.duration, 10)} min`
                                                     : '30 min'}

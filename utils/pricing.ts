@@ -124,5 +124,5 @@ export function formatPrice(amount: number, currency: string = 'RON'): string {
  */
 export function hasValidPrice(course: any): boolean {
     const priceInfo = getCoursePrice(course);
-    return priceInfo.amount > 0 || course?.isFree;
+    return priceInfo.amount > 0 || !!course?.isFree;
 }

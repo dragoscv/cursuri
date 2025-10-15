@@ -68,10 +68,7 @@ const AdminSettings: React.FC = () => {
         setFormData(prev => ({ ...prev, [name]: isNaN(numberValue) ? 0 : numberValue }));
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleSubmit = async (e: React.FormEvent | any) => {
-        e.preventDefault();
-
+    const handleSubmit = async () => {
         if (!updateAdminSettings) {
             setError('Update functionality is not available');
             return;

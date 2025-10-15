@@ -331,7 +331,7 @@ export default function Courses() {
                 {/* Error state when courses failed to load */}
                 {courseLoadingStates && courseLoadingStates['all'] === 'error' && (
                     <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
-                                                        <FiAlertCircle className="w-12 h-12 text-[color:var(--ai-danger)] mb-4" />
+                        <FiAlertCircle className="w-12 h-12 text-[color:var(--ai-danger)] mb-4" />
                         <h3 className="text-xl font-semibold mb-2">Failed to load courses</h3>
                         <p className="text-[color:var(--ai-muted)] mb-6">There was a problem loading the courses. Please try refreshing the page.</p>
                         <Button color="primary" onClick={() => window.location.reload()}>

@@ -19,8 +19,10 @@ const firebaseConfig = {
     measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
-// Initialize Firebase
-export const firebaseApp = initializeApp(firebaseConfig);
+// Initialize Firebase (check for existing app to avoid conflicts in testing)
+import { getApps } from "firebase/app";
+
+export const firebaseApp = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 export const firestoreDB = getFirestore(firebaseApp);
 export const firebaseAuth = getAuth(firebaseApp);
 export const firebaseStorage = getStorage(firebaseApp);

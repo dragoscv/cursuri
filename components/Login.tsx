@@ -341,7 +341,7 @@ export default function Login(props: { onClose: () => void }) {
             {/* Error message */}
             {errorMessage && (
                 <motion.div
-                                                    className="bg-[color:var(--ai-danger)]/10 text-[color:var(--ai-danger)] p-3 rounded-lg text-sm mb-4 w-full max-w-xs"
+                    className="bg-[color:var(--ai-danger)]/10 text-[color:var(--ai-danger)] p-3 rounded-lg text-sm mb-4 w-full max-w-xs"
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}

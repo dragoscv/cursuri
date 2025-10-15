@@ -2,7 +2,8 @@
 
 import React, { useContext, useState, useEffect } from "react";
 import { AppContext } from "@/components/AppContext";
-import { Tabs, Tab, Button, Card, CardBody, Chip, Divider } from "@heroui/react";
+import { Tabs, Tab, Card, CardBody, Chip, Divider } from "@heroui/react";
+import { Button as HeroButton } from "@heroui/react";
 import { useRouter } from 'next/navigation';
 import { Lesson, CourseWithPriceProduct } from "@/types";
 
@@ -145,7 +146,7 @@ export default function Admin() {
                 {selectedTab === "courses" && (
                     <div>
                         <div className="flex justify-between items-center mb-6">
-                            <div className="flex items-center gap-4">                                <Button
+                            <div className="flex items-center gap-4">                                <HeroButton
                                 color={selectedView === "grid" ? "primary" : "default"}
                                 variant={selectedView === "grid" ? "solid" : "light"}
                                 onPress={() => setSelectedView("grid")}
@@ -159,7 +160,7 @@ export default function Admin() {
                                     <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                                 </svg>
                                 <span className="ml-2">Grid</span>
-                            </Button>                                <Button
+                            </HeroButton>                                <HeroButton
                                 color={selectedView === "list" ? "primary" : "default"}
                                 variant={selectedView === "list" ? "solid" : "light"}
                                 onPress={() => setSelectedView("list")}
@@ -173,8 +174,8 @@ export default function Admin() {
                                         <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
                                     </svg>
                                     <span className="ml-2">List</span>
-                                </Button>
-                            </div>                            <Button
+                                </HeroButton>
+                            </div>                            <HeroButton
                                 color="primary"
                                 onPress={handleAddCourse}
                                 className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium shadow-sm hover:shadow-md hover:shadow-[color:var(--ai-primary)]/20 transition-all"
@@ -185,7 +186,7 @@ export default function Admin() {
                                 )}
                             >
                                 Add Course
-                            </Button>
+                            </HeroButton>
                         </div>
 
                         {/* Course list components remain unchanged */}
@@ -210,7 +211,7 @@ export default function Admin() {
                                             <div className="flex justify-between items-center">
                                                 <div className="text-sm text-[color:var(--ai-muted-foreground)]">
                                                     {formatPrice(course)}
-                                                </div>                                                <div className="flex gap-2">                                                    <Button size="sm" color="danger" variant="flat" onPress={(e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+                                                </div>                                                <div className="flex gap-2">                                                    <HeroButton size="sm" color="danger" variant="flat" onPress={(e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
                                                     // Delete course logic
                                                     e.preventDefault?.();
                                                     e.stopPropagation?.();
@@ -219,15 +220,15 @@ export default function Admin() {
                                                 }}
                                                     className="font-medium text-[color:var(--ai-danger)] bg-[color:var(--ai-danger)]/10 hover:bg-[color:var(--ai-danger)]/20">
                                                     Delete
-                                                </Button>
-                                                    <Button size="sm" color="primary" variant="flat" onPress={(e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+                                                </HeroButton>
+                                                    <HeroButton size="sm" color="primary" variant="flat" onPress={(e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
                                                         e.preventDefault?.();
                                                         e.stopPropagation?.();
                                                         handleEditCourse(course);
                                                     }}
                                                         className="font-medium text-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10 hover:bg-[color:var(--ai-primary)]/20">
                                                         Edit Course
-                                                    </Button>
+                                                    </HeroButton>
                                                 </div>
                                             </div>
                                         </CardBody>
@@ -244,7 +245,7 @@ export default function Admin() {
                         <div className="mb-8">
                             <div className="flex justify-between items-center mb-6">
                                 <h2 className="text-2xl font-bold text-[color:var(--ai-foreground)]">{selectedCourse.name}</h2>
-                                <div className="flex gap-2">                                    <Button
+                                <div className="flex gap-2">                                    <HeroButton
                                     color="primary"
                                     onPress={() => handleAddLesson(selectedCourse.id)}
                                     className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium shadow-sm hover:shadow-md hover:shadow-[color:var(--ai-primary)]/20 transition-all"
@@ -255,7 +256,7 @@ export default function Admin() {
                                     )}
                                 >
                                     Add Lesson
-                                </Button>                                    <Button
+                                </HeroButton>                                    <HeroButton
                                     color="default"
                                     variant="light"
                                     onPress={() => {
@@ -265,7 +266,7 @@ export default function Admin() {
                                     className="font-medium text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-border)]/20"
                                 >
                                         Back to Courses
-                                    </Button>
+                                    </HeroButton>
                                 </div>
                             </div>
 
@@ -396,9 +397,10 @@ export default function Admin() {
                                             </thead>
                                             <tbody className="bg-[color:var(--ai-card-bg)] divide-y divide-[color:var(--ai-card-border)]">
                                                 {Object.values(lessons[selectedCourse.id])
+                                                    .filter((lesson: Lesson) => lesson && lesson.id)
                                                     .sort((a: Lesson, b: Lesson) => (a.order || 0) - (b.order || 0))
                                                     .map((lesson: Lesson, index: number) => (
-                                                        <tr key={lesson.id} className="hover:bg-[color:var(--ai-card-border)]">
+                                                        <tr key={`lesson-${lesson.id}-${index}`} className="hover:bg-[color:var(--ai-card-border)]">
                                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--ai-muted-foreground)]">
                                                                 {index + 1}
                                                             </td>
@@ -419,7 +421,7 @@ export default function Admin() {
                                                                 </Chip>
                                                             </td>
                                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--ai-muted-foreground)]">
-                                                                <div className="flex gap-2">                                                                    <Button
+                                                                <div className="flex gap-2">                                                                    <HeroButton
                                                                     size="sm"
                                                                     color="primary"
                                                                     variant="flat"
@@ -427,7 +429,7 @@ export default function Admin() {
                                                                     className="font-medium text-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10 hover:bg-[color:var(--ai-primary)]/20"
                                                                 >
                                                                     Edit Lesson
-                                                                </Button>
+                                                                </HeroButton>
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -436,14 +438,14 @@ export default function Admin() {
                                         </table>
                                     ) : (
                                         <div className="text-center py-8">
-                                            <p className="text-[color:var(--ai-muted-foreground)] mb-4">No lessons found for this course</p>                                            <Button
+                                            <p className="text-[color:var(--ai-muted-foreground)] mb-4">No lessons found for this course</p>                                            <HeroButton
                                                 color="primary"
                                                 onPress={() => handleAddLesson(selectedCourse.id)}
                                                 size="sm"
                                                 className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium shadow-sm hover:shadow-md hover:shadow-[color:var(--ai-primary)]/20 transition-all"
                                             >
                                                 Add First Lesson
-                                            </Button>
+                                            </HeroButton>
                                         </div>
                                     )}
                                 </div>

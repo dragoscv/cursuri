@@ -214,7 +214,7 @@ const EnhancedUserManagement: React.FC = () => {
   if (error) {
     return (
       <div className="text-center py-12">
-                                    <h2 className="text-2xl font-bold text-[color:var(--ai-danger)] mb-4">{error}</h2>
+        <h2 className="text-2xl font-bold text-[color:var(--ai-danger)] mb-4">{error}</h2>
         <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Please try again later</p>
       </div>
     );

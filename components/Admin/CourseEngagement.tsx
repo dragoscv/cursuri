@@ -124,7 +124,7 @@ const CourseEngagement: React.FC = () => {
     if (error) {
         return (
             <div className="text-center py-12">
-                                            <h2 className="text-2xl font-bold text-[color:var(--ai-danger)] mb-4">{error}</h2>
+                <h2 className="text-2xl font-bold text-[color:var(--ai-danger)] mb-4">{error}</h2>
                 <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Please try again later</p>
             </div>
         );
@@ -151,7 +151,7 @@ const CourseEngagement: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <Card className="shadow-md">
                     <CardBody className="text-center p-6">
-                                                        <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">
+                        <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">
                             {Object.keys(courses).length}
                         </div>
                         <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Total Courses</p>
@@ -160,7 +160,7 @@ const CourseEngagement: React.FC = () => {
 
                 <Card className="shadow-md">
                     <CardBody className="text-center p-6">
-                                                        <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[color:var(--ai-primary)] mb-2">
+                        <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[color:var(--ai-primary)] mb-2">
                             {engagementData.reduce((sum, course) => sum + course.totalStudents, 0).toLocaleString()}
                         </div>
                         <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Total Enrollments</p>

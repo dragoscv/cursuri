@@ -21,66 +21,110 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
     const [isLoading, setIsLoading] = useState(true);
     const [lesson, setLesson] = useState<LessonType | null>(null);
     const [course, setCourse] = useState<Course | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        let mounted = true;
+        let timeoutId: NodeJS.Timeout | null = null;
+
         const fetchData = async () => {
-            if (!context) return;
+            if (!context) {
+                console.log('No context available yet');
+                return;
+            }
+
+            if (!mounted) return;
 
             try {
-                // First check if we have the course and lesson in context already
-                const { courses, lessons } = context;
+                setIsLoading(true);
+                const { courses, lessons, fetchCourseById, getCourseLessons } = context;
 
-                const currentCourse = courses?.[courseId];
+                console.log('[ClientLessonWrapper] Fetching lesson data:', { courseId, lessonId });
+
+                // First, ensure the course is loaded
+                let currentCourse = courses?.[courseId];
                 if (!currentCourse) {
-                    // If not in state, manually fetch it
-                    console.log('Course not in context state, fetching directly');
-                    setIsLoading(true);
-
-                    // You could add a direct fetching mechanism here
-                    // For now, we'll redirect to course page if not found
-                    router.push(`/courses/${courseId}`);
-                    return;
-                }
-
-                setCourse(currentCourse);
-
-                // Try getting the lesson from context
-                let currentLesson: LessonType | null = null;
-
-                if (lessons[courseId] && lessons[courseId][lessonId]) {
-                    currentLesson = lessons[courseId][lessonId] as LessonType;
-                } else {
-                    // Load lessons for the course if they're not already loaded
-                    console.log('Lessons not in context state, initiating load');
-                    // You could trigger a fetch here if needed
-
-                    // For now, we'll wait a moment to see if lessons load
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-
-                    // Check again after waiting
-                    if (lessons[courseId] && lessons[courseId][lessonId]) {
-                        currentLesson = lessons[courseId][lessonId] as LessonType;
-                    } else {
-                        console.log('Lesson not found after waiting');
+                    console.log('[ClientLessonWrapper] Course not in context, fetching...');
+                    if (fetchCourseById) {
+                        await fetchCourseById(courseId);
+                        // Wait for state to update
+                        await new Promise(resolve => { timeoutId = setTimeout(resolve, 100); });
+                        if (!mounted) return;
+                        currentCourse = context.courses?.[courseId];
                     }
                 }
 
-                if (currentLesson) {
-                    setLesson(currentLesson);
-                } else {
-                    console.log('Could not find lesson, redirecting to course');
-                    router.push(`/courses/${courseId}`);
+                if (!currentCourse) {
+                    console.warn('[ClientLessonWrapper] Could not load course');
+                    if (mounted) {
+                        setError('Course not found');
+                        setIsLoading(false);
+                    }
                     return;
                 }
+
+                if (mounted) {
+                    setCourse(currentCourse);
+                    console.log('[ClientLessonWrapper] Course loaded:', currentCourse.name);
+                }
+
+                // Now ensure lessons are loaded for this course
+                let currentLesson: LessonType | null = null;
+
+                // Check if lessons are already in context
+                if (lessons[courseId] && lessons[courseId][lessonId]) {
+                    currentLesson = lessons[courseId][lessonId] as LessonType;
+                    console.log('[ClientLessonWrapper] Lesson found in context');
+                } else {
+                    // Lessons not loaded yet, fetch them
+                    console.log('[ClientLessonWrapper] Lessons not in context, fetching...');
+                    if (getCourseLessons) {
+                        await getCourseLessons(courseId);
+                        // Wait for state to update with a longer timeout
+                        await new Promise(resolve => { timeoutId = setTimeout(resolve, 1000); });
+                        if (!mounted) return;
+                        
+                        // Check again after fetching
+                        if (context.lessons[courseId] && context.lessons[courseId][lessonId]) {
+                            currentLesson = context.lessons[courseId][lessonId] as LessonType;
+                            console.log('[ClientLessonWrapper] Lesson found after fetching');
+                        } else {
+                            console.warn('[ClientLessonWrapper] Lesson not found after fetching');
+                            console.log('[ClientLessonWrapper] Available lessons:', 
+                                context.lessons[courseId] ? Object.keys(context.lessons[courseId]) : 'none');
+                        }
+                    }
+                }
+
+                if (mounted) {
+                    if (currentLesson) {
+                        setLesson(currentLesson);
+                        setError(null);
+                    } else {
+                        console.warn('[ClientLessonWrapper] Lesson not found:', { courseId, lessonId });
+                        setError('Lesson not found or you may not have access to it');
+                    }
+                    setIsLoading(false);
+                }
             } catch (error) {
-                console.error('Error loading lesson:', error);
-            } finally {
-                setIsLoading(false);
+                console.warn('[ClientLessonWrapper] Error loading lesson:', error);
+                if (mounted) {
+                    setError('Error loading lesson');
+                    setIsLoading(false);
+                }
             }
         };
 
         fetchData();
-    }, [context, courseId, lessonId, router]);
+
+        // Cleanup function
+        return () => {
+            mounted = false;
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+        };
+    }, [context, courseId, lessonId]);
 
     // Return loading state while we fetch the data
     if (isLoading) {
@@ -90,27 +134,83 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
                 <p className="mt-4 text-[color:var(--ai-muted)]">Loading lesson...</p>
             </div>
         );
-    }    // If we have a lesson, render it
-    if (lesson) {
+    }
+
+    // If we have an error, show error message with detailed debugging
+    if (error) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen p-4">
+                <h1 className="text-2xl font-bold mb-4">Error Loading Lesson</h1>
+                <p className="mb-6 text-[color:var(--ai-muted)]">{error}</p>
+                
+                {/* Debugging information */}
+                {context && (
+                    <div className="mb-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-left max-w-2xl w-full">
+                        <h3 className="font-bold mb-2 text-sm">Debug Information:</h3>
+                        <div className="space-y-1 text-xs font-mono">
+                            <div>
+                                <strong>Requested Lesson ID:</strong> {lessonId}
+                            </div>
+                            <div>
+                                <strong>Course ID:</strong> {courseId}
+                            </div>
+                            <div>
+                                <strong>Course Loaded:</strong> {course ? 'Yes' : 'No'}
+                            </div>
+                            {course && (
+                                <div>
+                                    <strong>Course Name:</strong> {course.name}
+                                </div>
+                            )}
+                            <div>
+                                <strong>Lessons Loaded:</strong> {context.lessons[courseId] ? 'Yes' : 'No'}
+                            </div>
+                            {context.lessons[courseId] && (
+                                <>
+                                    <div>
+                                        <strong>Available Lesson Count:</strong> {Object.keys(context.lessons[courseId]).length}
+                                    </div>
+                                    <div>
+                                        <strong>Available Lesson IDs:</strong>
+                                        <div className="pl-4 mt-1 max-h-40 overflow-y-auto">
+                                            {Object.keys(context.lessons[courseId]).map(id => (
+                                                <div key={id} className={id === lessonId ? 'text-green-600 font-bold' : ''}>
+                                                    {id} {id === lessonId && '← (Requested)'}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                <button
+                    onClick={() => router.push(`/courses/${courseId}`)}
+                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                    Return to Course
+                </button>
+            </div>
+        );
+    }
+
+    // If we have a lesson, render it
+    if (lesson && course) {
         return <LessonContent
             lesson={lesson}
-            course={course || undefined}
+            course={course}
             onClose={() => router.push(`/courses/${courseId}`)}
-            onNavigateLesson={(lessonId) => router.push(`/courses/${courseId}/lessons/${lessonId}`)}
+            onNavigateLesson={(newLessonId) => router.push(`/courses/${courseId}/lessons/${newLessonId}`)}
         />;
     }
 
-    // Otherwise show an error message
+    // Otherwise show a generic message (shouldn't reach here normally)
     return (
         <div className="flex flex-col items-center justify-center min-h-screen p-4">
-            <h1 className="text-2xl font-bold mb-4">Lesson Not Found</h1>
-            <p className="mb-6">The lesson you're looking for doesn't exist or you may not have access to it.</p>
-            <button
-                onClick={() => router.push(`/courses/${courseId}`)}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-                Return to Course
-            </button>
+            <Spinner size="lg" color="primary" />
+            <p className="mt-4 text-[color:var(--ai-muted)]">Loading lesson content...</p>
         </div>
     );
 }

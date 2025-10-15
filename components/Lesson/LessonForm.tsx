@@ -15,7 +15,7 @@ import Select, { SelectItem } from '@/components/ui/Select';
 import Switch from '@/components/ui/Switch';
 import Chip from '@/components/ui/Chip';
 import Tooltip from '@/components/ui/Tooltip';
-import Tabs, { Tab } from '@/components/ui/Tabs';
+import { Tabs, Tab } from '@heroui/react';
 import Accordion, { AccordionItem } from '../ui/Accordion';
 import Checkbox from '@/components/ui/Checkbox';
 import RichTextEditor from '@/components/Lesson/QA/RichTextEditor';
@@ -625,14 +625,10 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
             </div>
 
             {/* Tabbed Interface */}
-            <Tabs selectedKey={activeTab}
-                onSelectionChange={(key: string | number) => setActiveTab(key as string)}
+            <Tabs 
+                selectedKey={activeTab}
+                onSelectionChange={(key: React.Key) => setActiveTab(String(key))}
                 className="mb-8"
-                classNames={{
-                    tab: "data-[selected=true]:text-[color:var(--ai-primary)] data-[selected=true]:border-[color:var(--ai-primary)]",
-                    cursor: "bg-[color:var(--ai-primary)]/10",
-                    tabList: "bg-[color:var(--ai-card-bg)]/40 border-b border-[color:var(--ai-card-border)]"
-                }}
             >
                 <Tab key="basic" title="Basic Information">
                     <Card className="shadow-xl border border-[color:var(--ai-card-border)] overflow-hidden mb-8 hover:shadow-[color:var(--ai-primary)]/5 transition-all rounded-xl">
@@ -663,12 +659,14 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                         <div className="h-0.5 w-full bg-gradient-to-r from-[color:var(--ai-primary)]/50 to-[color:var(--ai-secondary)]/50 mt-1 rounded-full"></div>
                                     </div>
                                     <div className="mb-6">
-                                        <label className="block text-[color:var(--ai-foreground)] font-medium mb-2">Lesson Description</label>
+                                        <label className="block text-[color:var(--ai-foreground)] font-medium mb-2">
+                                            Lesson Description
+                                        </label>
                                         <RichTextEditor
                                             value={lessonDescription}
                                             onChange={(_text, html) => setLessonDescription(html)}
                                             placeholder="Provide a detailed description of the lesson"
-                                            minHeight={180}
+                                            minHeight={250}
                                         />
                                     </div>
 
@@ -1140,7 +1138,7 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                     </Card>
                 </Tab>
 
-                <Tab key="quiz" title="Quiz & Assessment" isDisabled={!hasQuiz}>
+                <Tab key="quiz" title="Quiz & Assessment">
                     <Card className="shadow-xl border border-[color:var(--ai-card-border)] overflow-hidden mb-8 hover:shadow-[color:var(--ai-primary)]/5 transition-all rounded-xl">
                         <CardHeader className="flex gap-3 px-6 py-4 border-b border-[color:var(--ai-card-border)]/60 bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-transparent">
                             <FiHelpCircle className="text-[color:var(--ai-primary)]" size={20} />

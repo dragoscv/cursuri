@@ -45,36 +45,36 @@ export default function CourseDetail({ courseId }: { courseId: string }) {
   // Get lessons for this course from context
   const courseLessons = lessons && courseId && lessons[courseId]
     ? (() => {
-        const lessonsData = lessons[courseId];
-        
-        // Handle the case where lessons data might be nested
-        if (Array.isArray(lessonsData)) {
-          // If it's already an array, filter out non-lesson items
-          return lessonsData.filter((item: any) => 
-            item && typeof item === 'object' && 
-            (item.name || item.title || item.description || item.file || item.order !== undefined) &&
-            !(item.timestamp && item.expiresAt)
+      const lessonsData = lessons[courseId];
+
+      // Handle the case where lessons data might be nested
+      if (Array.isArray(lessonsData)) {
+        // If it's already an array, filter out non-lesson items
+        return lessonsData.filter((item: any) =>
+          item && typeof item === 'object' &&
+          (item.name || item.title || item.description || item.file || item.order !== undefined) &&
+          !(item.timestamp && item.expiresAt)
+        );
+      } else if (lessonsData && typeof lessonsData === 'object') {
+        // Check if this is the nested structure {data: ..., metadata: ...}
+        if ('data' in lessonsData && 'metadata' in lessonsData) {
+          return Object.values(lessonsData.data);
+        } else {
+          // This is a direct lesson object structure {lessonId: lesson, lessonId2: lesson2, ...}
+          const allValues = Object.values(lessonsData);
+
+          // Filter to only include actual lesson objects (not strings or other data)
+          return allValues.filter((item: any) =>
+            item &&
+            typeof item === 'object' &&
+            !Array.isArray(item) &&
+            (item.name || item.title || item.description || item.file || item.order !== undefined || item.id)
           );
-        } else if (lessonsData && typeof lessonsData === 'object') {
-          // Check if this is the nested structure {data: ..., metadata: ...}
-          if ('data' in lessonsData && 'metadata' in lessonsData) {
-            return Object.values(lessonsData.data);
-          } else {
-            // This is a direct lesson object structure {lessonId: lesson, lessonId2: lesson2, ...}
-            const allValues = Object.values(lessonsData);
-            
-            // Filter to only include actual lesson objects (not strings or other data)
-            return allValues.filter((item: any) => 
-              item && 
-              typeof item === 'object' && 
-              !Array.isArray(item) &&
-              (item.name || item.title || item.description || item.file || item.order !== undefined || item.id)
-            );
-          }
         }
-        
-        return [];
-      })()
+      }
+
+      return [];
+    })()
     : [];
 
   // Check if the course has been purchased

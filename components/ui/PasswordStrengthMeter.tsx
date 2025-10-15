@@ -47,21 +47,21 @@ export default function PasswordStrengthMeter({
           </span>
         </div>
       </div>
-      
+
       {/* Progress bar */}
-              <div className="w-full bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-border)] rounded-full h-2">
-        <div 
+      <div className="w-full bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-border)] rounded-full h-2">
+        <div
           className="h-2 rounded-full transition-all duration-300 ease-in-out"
-          style={{ 
+          style={{
             width: `${Math.max(4, strengthInfo.percentage)}%`,
             backgroundColor: strengthInfo.color
           }}
         ></div>
       </div>
-      
+
       {/* Requirements list */}
       {showRequirements && (
-                <ul className="mt-2 text-sm bg-[color:var(--ai-card-bg)]/50 dark:bg-[color:var(--ai-card-border)]/50 rounded-lg p-2">
+        <ul className="mt-2 text-sm bg-[color:var(--ai-card-bg)]/50 dark:bg-[color:var(--ai-card-border)]/50 rounded-lg p-2">
           {requirementsList.map(req => (
             <li key={req.id} className="flex items-center">
               <span className={`mr-1 text-sm ${req.satisfied ? 'text-[color:var(--ai-success)]' : 'text-[color:var(--ai-muted-foreground)]'}`}>
@@ -74,7 +74,7 @@ export default function PasswordStrengthMeter({
           ))}
         </ul>
       )}
-      
+
       {/* Errors */}
       {showErrors && validation && validation.errors.length > 0 && (
         <ul className="text-sm text-red-500 mt-1 space-y-1 list-disc pl-4">

@@ -12,8 +12,9 @@ interface LessonsTableProps {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function LessonsTable({ lessons, courseId, onEdit, onReorder }: LessonsTableProps) {
-    // Sort lessons by order
-    const sortedLessons = [...lessons].sort((a, b) => (a.order || 0) - (b.order || 0));
+    // Filter out invalid lessons and sort by order
+    const validLessons = lessons.filter(lesson => lesson && lesson.id);
+    const sortedLessons = [...validLessons].sort((a, b) => (a.order || 0) - (b.order || 0));
 
     return (
         <div className="overflow-x-auto rounded-xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/60 shadow-md">
@@ -29,8 +30,8 @@ export default function LessonsTable({ lessons, courseId, onEdit, onReorder }: L
                     </tr>
                 </thead>
                 <tbody className="bg-transparent divide-y divide-[color:var(--ai-card-border)]">
-                    {sortedLessons.map((lesson) => (
-                        <tr key={lesson.id} className="hover:bg-[color:var(--ai-primary)]/5 transition-all">
+                    {sortedLessons.map((lesson, index) => (
+                        <tr key={`lesson-${lesson.id}-${index}`} className="hover:bg-[color:var(--ai-primary)]/5 transition-all">
                             <td className="px-4 py-3 font-mono text-sm text-[color:var(--ai-foreground)]">{lesson.order ?? "-"}</td>
                             <td className="px-4 py-3 font-medium text-[color:var(--ai-foreground)]">{lesson.name}</td>
                             <td className="px-4 py-3 text-[color:var(--ai-muted)]">{lesson.type}</td>

@@ -57,6 +57,11 @@ const Tabs = forwardRef<HTMLDivElement, TabsProps>((props, ref) => {
         tabContent: `${defaultClassNames.tabContent} ${classNames.tabContent || ''}`,
     };
 
+    // Filter out any invalid children (non-Tab components, null, undefined, etc.)
+    const validChildren = React.Children.toArray(children).filter(child => 
+        React.isValidElement(child)
+    );
+
     return (
         <HeroTabs
             ref={ref}
@@ -64,7 +69,7 @@ const Tabs = forwardRef<HTMLDivElement, TabsProps>((props, ref) => {
             classNames={mergedClassNames}
             {...rest}
         >
-            {children}
+            {validChildren}
         </HeroTabs>
     );
 });

@@ -26,21 +26,23 @@ export default function HeroSection() {
 
     const handleGetStarted = () => {
         if (!user) {
-            openModal({
-                id: 'login',
-                isOpen: true,
-                hideCloseButton: false,
-                backdrop: 'blur',
-                size: 'full',
-                scrollBehavior: 'inside',
-                isDismissable: true,
-                modalHeader: 'Autentificare',
-                modalBody: <Login onClose={() => closeModal('login')} />,
-                headerDisabled: true,
-                footerDisabled: true,
-                noReplaceURL: true,
-                onClose: () => closeModal('login'),
-            })
+            if (openModal && closeModal) {
+                openModal({
+                    id: 'login',
+                    isOpen: true,
+                    hideCloseButton: false,
+                    backdrop: 'blur',
+                    size: 'full',
+                    scrollBehavior: 'inside',
+                    isDismissable: true,
+                    modalHeader: 'Autentificare',
+                    modalBody: <Login onClose={() => closeModal('login')} />,
+                    headerDisabled: true,
+                    footerDisabled: true,
+                    noReplaceURL: true,
+                    onClose: () => closeModal('login'),
+                })
+            }
         } else {
             // Smooth scroll to courses section
             const coursesSection = document.getElementById('courses-section')

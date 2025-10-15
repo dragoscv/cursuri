@@ -1,114 +1,90 @@
 import '@testing-library/jest-dom';
 
-// Mock Next.js router
-jest.mock('next/router', () => ({
-  useRouter() {
-    return {
-      route: '/',
-      pathname: '/',
-      query: {},
-      asPath: '/',
-      push: jest.fn(),
-      replace: jest.fn(),
-      back: jest.fn(),
-    };
-  },
-}));
+// Add fetch polyfill for Node.js environment (required for Firebase/Firewand)
+global.fetch = global.fetch || async function (url, options = {}) {
+  return new Promise((resolve) => {
+    resolve(new Response('{}', { status: 200, statusText: 'OK' }));
+  });
+};
 
-// Mock Next.js navigation (App Router)
-jest.mock('next/navigation', () => ({
-  useRouter() {
-    return {
-      push: jest.fn(),
-      replace: jest.fn(),
-      back: jest.fn(),
-      forward: jest.fn(),
-      refresh: jest.fn(),
-      prefetch: jest.fn(),
-    };
-  },
-  usePathname: jest.fn(() => '/'),
-  useSearchParams: jest.fn(() => new URLSearchParams()),
-  useParams: jest.fn(() => ({ courseId: 'test-course-id' })),
-}));
+// Firebase will be mocked via moduleNameMapper in jest.config.js
+// This avoids ESM import issues while providing functional testing
 
-// Mock Firebase
-jest.mock('firebase/app', () => ({
-  initializeApp: jest.fn(() => ({})),
-  getApps: jest.fn(() => []),
-  registerVersion: jest.fn(), // Add this for firewand compatibility
-}));
+// Mock Firebase globals for tests that expect them
+global.firebaseApp = {
+  name: '[DEFAULT]',
+  options: { projectId: 'test-project' }
+};
 
-jest.mock('firebase/auth', () => ({
-  getAuth: jest.fn(() => ({})),
-  signInWithEmailAndPassword: jest.fn(),
-  createUserWithEmailAndPassword: jest.fn(),
-  signOut: jest.fn(),
-  onAuthStateChanged: jest.fn(),
-}));
-
-jest.mock('firebase/firestore', () => ({
-  getFirestore: jest.fn(() => ({})),
+global.firestoreDB = {
+  app: global.firebaseApp,
   collection: jest.fn(),
-  doc: jest.fn(),
-  getDocs: jest.fn(),
-  getDoc: jest.fn(),
-  addDoc: jest.fn(),
-  updateDoc: jest.fn(),
-  deleteDoc: jest.fn(),
-  setDoc: jest.fn(),
-  query: jest.fn(),
-  where: jest.fn(),
-  orderBy: jest.fn(),
-  limit: jest.fn(),
-  onSnapshot: jest.fn(),
-  collectionGroup: jest.fn(),
-  deleteDoc: jest.fn(),
-  Timestamp: {
-    now: jest.fn(() => ({ seconds: 0, nanoseconds: 0 })),
-    fromDate: jest.fn((date) => ({ seconds: Math.floor(date.getTime() / 1000), nanoseconds: 0 })),
-  },
-}));
+  doc: jest.fn()
+};
 
-// Mock Firewand
-jest.mock('firewand', () => ({
-  getProducts: jest.fn(() => Promise.resolve([])),
-  getStripePayments: jest.fn(() => ({})),
-  createCheckoutSession: jest.fn(() => Promise.resolve({ url: 'https://checkout.stripe.com/test' })),
-}));
-
-// Mock Firebase config
-jest.mock('@/utils/firebase/firebase.config', () => ({
-  firebaseApp: {},
-  firestoreDB: {},
-  firebaseAuth: {},
-}));
-
-// Mock Stripe utilities
-jest.mock('@/utils/firebase/stripe', () => ({
-  stripePayments: jest.fn(() => ({})),
-}));
-
-// Mock Framer Motion
-jest.mock('framer-motion', () => ({
-  motion: {
-    div: 'div',
-    span: 'span',
-    p: 'p',
-    button: 'button',
-    section: 'section',
-    article: 'article',
-    h1: 'h1',
-    h2: 'h2',
-    h3: 'h3',
-  },
-  AnimatePresence: ({ children }) => children,
-}));
-
-// Global test timeout
+// Global test timeout for real Firebase operations
 jest.setTimeout(30000);
 
-// Setup for window.matchMedia
+// Real Request and Response classes (Node.js 18+ has these built-in)
+// Keep for backwards compatibility if needed
+if (typeof global.Request === 'undefined') {
+  global.Request = class Request {
+    constructor(url, init = {}) {
+      this.url = url;
+      this.method = init.method || 'GET';
+      this.headers = new Map(Object.entries(init.headers || {}));
+      this.body = init.body;
+    }
+
+    async json() {
+      try {
+        return JSON.parse(this.body || '{}');
+      } catch {
+        return {};
+      }
+    }
+
+    async text() {
+      return this.body || '';
+    }
+  };
+}
+
+if (typeof global.Response === 'undefined') {
+  global.Response = class Response {
+    constructor(body, init = {}) {
+      this.body = body;
+      this.status = init.status || 200;
+      this.statusText = init.statusText || 'OK';
+      this.headers = new Map(Object.entries(init.headers || {}));
+      this.ok = this.status >= 200 && this.status < 300;
+    }
+
+    static json(data, init = {}) {
+      return new Response(JSON.stringify(data), {
+        ...init,
+        headers: {
+          'Content-Type': 'application/json',
+          ...init.headers
+        }
+      });
+    }
+
+    async json() {
+      try {
+        return JSON.parse(this.body);
+      } catch {
+        return {};
+      }
+    }
+
+    async text() {
+      return this.body || '';
+    }
+  };
+}
+
+// Only mock browser APIs that don't exist in Node.js test environment
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: jest.fn().mockImplementation(query => ({
@@ -123,17 +99,16 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
-// Mock IntersectionObserver
+// Mock browser-only APIs
 global.IntersectionObserver = class IntersectionObserver {
-  constructor() {}
+  constructor() { }
   observe() { return null; }
   disconnect() { return null; }
   unobserve() { return null; }
 };
 
-// Mock ResizeObserver
 global.ResizeObserver = class ResizeObserver {
-  constructor() {}
+  constructor() { }
   observe() { return null; }
   disconnect() { return null; }
   unobserve() { return null; }
