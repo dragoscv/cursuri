@@ -58,7 +58,7 @@ const Tabs = forwardRef<HTMLDivElement, TabsProps>((props, ref) => {
     };
 
     // Filter out any invalid children (non-Tab components, null, undefined, etc.)
-    const validChildren = React.Children.toArray(children).filter(child => 
+    const validChildren = React.Children.toArray(children).filter(child =>
         React.isValidElement(child)
     );
 

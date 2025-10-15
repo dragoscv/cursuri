@@ -625,7 +625,7 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
             </div>
 
             {/* Tabbed Interface */}
-            <Tabs 
+            <Tabs
                 selectedKey={activeTab}
                 onSelectionChange={(key: React.Key) => setActiveTab(String(key))}
                 className="mb-8"

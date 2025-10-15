@@ -23,16 +23,16 @@ export default function AdminLessonsListPage() {
             try {
                 setIsLoading(true);
                 console.log(`[AdminLessonsListPage] Fetching lessons for course: ${courseId}`);
-                
+
                 const db = getFirestore(firebaseApp);
                 const lessonsCollection = collection(db, `courses/${courseId}/lessons`);
                 const querySnapshot = await getDocs(lessonsCollection);
-                
+
                 const lessonsData = querySnapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
                 }));
-                
+
                 console.log(`[AdminLessonsListPage] Found ${lessonsData.length} lessons:`, lessonsData);
                 setLessons(lessonsData);
             } catch (error) {
@@ -57,7 +57,7 @@ export default function AdminLessonsListPage() {
                     Add Lesson
                 </Button>
             </div>
-            
+
             {isLoading ? (
                 <div className="text-center py-8 text-[color:var(--ai-muted)]">
                     Loading lessons...

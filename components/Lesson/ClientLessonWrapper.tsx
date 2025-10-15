@@ -83,14 +83,14 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
                         // Wait for state to update with a longer timeout
                         await new Promise(resolve => { timeoutId = setTimeout(resolve, 1000); });
                         if (!mounted) return;
-                        
+
                         // Check again after fetching
                         if (context.lessons[courseId] && context.lessons[courseId][lessonId]) {
                             currentLesson = context.lessons[courseId][lessonId] as LessonType;
                             console.log('[ClientLessonWrapper] Lesson found after fetching');
                         } else {
                             console.warn('[ClientLessonWrapper] Lesson not found after fetching');
-                            console.log('[ClientLessonWrapper] Available lessons:', 
+                            console.log('[ClientLessonWrapper] Available lessons:',
                                 context.lessons[courseId] ? Object.keys(context.lessons[courseId]) : 'none');
                         }
                     }
@@ -142,7 +142,7 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
             <div className="flex flex-col items-center justify-center min-h-screen p-4">
                 <h1 className="text-2xl font-bold mb-4">Error Loading Lesson</h1>
                 <p className="mb-6 text-[color:var(--ai-muted)]">{error}</p>
-                
+
                 {/* Debugging information */}
                 {context && (
                     <div className="mb-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-left max-w-2xl w-full">
