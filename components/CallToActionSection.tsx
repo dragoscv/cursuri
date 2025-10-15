@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, memo } from 'react';
 import { motion } from 'framer-motion';
 import Button from '@/components/ui/Button';
 import ScrollAnimationWrapper from './animations/ScrollAnimationWrapper';
 import { useContext } from 'react';
 import { AppContext } from './AppContext';
 
-export default function CallToActionSection() {
+const CallToActionSection = memo(function CallToActionSection() {
     const context = useContext(AppContext);
 
     if (!context) {
@@ -15,6 +15,12 @@ export default function CallToActionSection() {
     }
 
     const { openModal, closeModal, user } = context;
+
+    // Memoize hover/tap animation props
+    const buttonHoverProps = useMemo(() => ({
+        whileHover: { scale: 1.05 },
+        whileTap: { scale: 0.95 }
+    }), []);
 
     // Pre-calculate grid opacity values to avoid hydration mismatch
     const gridOpacities = useMemo(() => {
@@ -24,7 +30,7 @@ export default function CallToActionSection() {
         });
     }, []);
 
-    // Pre-calculate floating orbs properties
+    // Pre-calculate floating orbs properties with animation configs
     const floatingOrbs = useMemo(() => {
         // Use a seeded random function for consistent values between server and client
         const seededRandom = (seed: number): number => {
@@ -42,6 +48,10 @@ export default function CallToActionSection() {
             const yMoveSeed = i * 8.6;
             const durationSeed = i * 9.7;
 
+            const xMove = seededRandom(xMoveSeed) * 50 - 25;
+            const yMove = seededRandom(yMoveSeed) * 50 - 25;
+            const duration = 5 + seededRandom(durationSeed) * 5;
+
             // Use fixed string values for ALL properties to prevent hydration mismatches
             return {
                 key: i,
@@ -49,9 +59,17 @@ export default function CallToActionSection() {
                 height: (seededRandom(heightSeed) * 200 + 50).toFixed(4),
                 top: (seededRandom(topSeed) * 100).toFixed(4),
                 left: (seededRandom(leftSeed) * 100).toFixed(4),
-                xMove: (seededRandom(xMoveSeed) * 50 - 25).toFixed(4),
-                yMove: (seededRandom(yMoveSeed) * 50 - 25).toFixed(4),
-                duration: (5 + seededRandom(durationSeed) * 5).toFixed(4)
+                // Pre-compute animation objects to avoid recreation
+                animate: {
+                    x: [0, xMove],
+                    y: [0, yMove],
+                },
+                transition: {
+                    duration: duration,
+                    repeat: Infinity,
+                    repeatType: 'reverse' as const,
+                    ease: 'easeInOut' as const,
+                }
             };
         });
     }, []);
@@ -115,16 +133,8 @@ export default function CallToActionSection() {
                                 top: `${orb.top}%`,
                                 left: `${orb.left}%`,
                             }}
-                            animate={{
-                                x: [0, parseFloat(orb.xMove)],
-                                y: [0, parseFloat(orb.yMove)],
-                            }}
-                            transition={{
-                                duration: parseFloat(orb.duration),
-                                repeat: Infinity,
-                                repeatType: 'reverse',
-                                ease: 'easeInOut',
-                            }}
+                            animate={orb.animate}
+                            transition={orb.transition}
                         />
                     ))}
                 </div>
@@ -146,10 +156,7 @@ export default function CallToActionSection() {
 
                     <ScrollAnimationWrapper delay={0.2}>
                         <div className="flex flex-col sm:flex-row justify-center gap-4">
-                            <motion.div
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                            >
+                            <motion.div {...buttonHoverProps}>
                                 <Button
                                     color="primary"
                                     size="lg"
@@ -161,10 +168,7 @@ export default function CallToActionSection() {
                                 </Button>
                             </motion.div>
 
-                            <motion.div
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                            >
+                            <motion.div {...buttonHoverProps}>
                                 <Button
                                     variant="secondary"
                                     color="secondary"
@@ -210,4 +214,6 @@ export default function CallToActionSection() {
             </div>
         </section>
     );
-}
+});
+
+export default CallToActionSection;

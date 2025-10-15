@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useContext } from 'react'
+import React, { useContext, useMemo } from 'react'
 import Button from '@/components/ui/Button'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
@@ -11,7 +11,7 @@ import ParticlesAnimation from './ParticlesAnimation'
 import TechIcons from './TechIcons'
 import { useHeroStats } from './hooks/useHeroStats'
 
-export default function HeroSection() {
+const HeroSection = React.memo(function HeroSection() {
     const router = useRouter()
 
     // Inline useAuth to bypass caching issue
@@ -23,6 +23,18 @@ export default function HeroSection() {
     // const { user } = useAuth()
     // const { openModal, closeModal } = useModal()
     const stats = useHeroStats()
+
+    // Memoize animation props to prevent recreation
+    const heroAnimationProps = useMemo(() => ({
+        initial: { opacity: 0, y: 20 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6 }
+    }), []);
+
+    const statsAnimateProps = useMemo(() => ({
+        opacity: [0.5, 1, 0.5],
+        scale: [1, 1.05, 1]
+    }), []);
 
     const handleGetStarted = () => {
         if (!user) {
@@ -73,9 +85,7 @@ export default function HeroSection() {
             {/* Hero content */}
             <div className="container mx-auto px-4 py-20 md:py-32 flex flex-col items-center justify-center min-h-[80vh] relative z-10">
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
+                    {...heroAnimationProps}
                     className="text-center"
                 >
                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
@@ -141,4 +151,6 @@ export default function HeroSection() {
             </div>
         </section>
     )
-}
+});
+
+export default HeroSection;

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { Input, Button } from '@heroui/react'  // Updated to use HeroUI
 import { useRouter, usePathname } from 'next/navigation'
 import { useContext } from 'react'
@@ -26,6 +26,11 @@ export default function SearchBar() {
     }
 
     const { courses, products } = context
+
+    // Memoize startContent to prevent recreation
+    const searchIconSmall = useMemo(() => <SearchIcon className="w-4 h-4" />, []);
+    const searchIconMedium = useMemo(() => <SearchIcon className="w-5 h-5" />, []);
+    const searchIconMuted = useMemo(() => <SearchIcon className="w-5 h-5 text-[color:var(--ai-muted)]" />, []);
 
     // Close search on click outside
     useEffect(() => {
@@ -136,9 +141,7 @@ export default function SearchBar() {
                 variant="light"
                 onClick={() => setIsSearchOpen(true)}
                 className="hidden md:flex items-center gap-2 text-sm text-[color:var(--ai-muted)]"
-                startContent={(
-                    <SearchIcon className="w-4 h-4" />
-                )}
+                startContent={searchIconSmall}
             >
                 Search courses...
                 <kbd className="px-2 py-1 ml-2 text-xs font-semibold text-[color:var(--ai-foreground)] bg-[color:var(--ai-card-bg)]/80 border border-[color:var(--ai-card-border)] rounded-md">
@@ -154,7 +157,7 @@ export default function SearchBar() {
                 className="md:hidden"
                 aria-label="Search"
             >
-                <SearchIcon className="w-5 h-5" />
+                {searchIconMedium}
             </Button>
 
             {/* Search modal */}
@@ -174,9 +177,7 @@ export default function SearchBar() {
                                         handleSelectCourse(searchResults[0].id)
                                     }
                                 }}
-                                startContent={(
-                                    <SearchIcon className="w-5 h-5 text-[color:var(--ai-muted)]" />
-                                )}
+                                startContent={searchIconMuted}
                                 endContent={
                                     searchQuery && (
                                         <Button

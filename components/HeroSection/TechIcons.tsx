@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
     TypeScriptIcon,
@@ -40,9 +40,9 @@ type TechIconsProps = {
     technologies: string[];
 };
 
-export default function TechIcons({ technologies }: TechIconsProps) {
-    // Animation variants for the tech icons
-    const containerVariants = {
+const TechIcons = React.memo(function TechIcons({ technologies }: TechIconsProps) {
+    // Memoize animation variants to prevent recreation
+    const containerVariants = useMemo(() => ({
         hidden: { opacity: 0 },
         show: {
             opacity: 1,
@@ -51,12 +51,12 @@ export default function TechIcons({ technologies }: TechIconsProps) {
                 delayChildren: 0.3
             }
         }
-    };
+    }), []);
 
-    const itemVariants = {
+    const itemVariants = useMemo(() => ({
         hidden: { scale: 0, opacity: 0 },
         show: { scale: 1, opacity: 1 }
-    };
+    }), []);
 
     return (
         <motion.div

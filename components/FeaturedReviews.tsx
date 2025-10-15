@@ -1,12 +1,12 @@
 'use client'
 
-import React, { useRef, useEffect, useContext, useState, useMemo } from 'react'
+import React, { useRef, useEffect, useContext, useState, useMemo, memo } from 'react'
 import { motion, useInView, useAnimation } from 'framer-motion'
 import { AppContext } from './AppContext'
 import { Review } from '@/types'
 import { Button } from './ui'
 
-export default function FeaturedReviews() {
+const FeaturedReviews = memo(function FeaturedReviews() {
     const controls = useAnimation()
     const ref = useRef(null)
     const isInView = useInView(ref, { once: false, amount: 0.3 })
@@ -32,7 +32,9 @@ export default function FeaturedReviews() {
         if (Object.keys(courses).length > 0) {
             fetchReviews()
         }
-    }, [courses, getCourseReviews])
+        // Only run once when component mounts or when courses initially load
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     // Process reviews and select featured ones when reviews or courses change
     useEffect(() => {
@@ -127,7 +129,8 @@ export default function FeaturedReviews() {
         return featuredReviews;
     }, [featuredReviews]);
 
-    const containerVariants = {
+    // Memoize animation variants to prevent recreation
+    const containerVariants = useMemo(() => ({
         hidden: { opacity: 0 },
         visible: {
             opacity: 1,
@@ -135,9 +138,9 @@ export default function FeaturedReviews() {
                 staggerChildren: 0.2
             }
         }
-    }
+    }), []);
 
-    const cardVariants = {
+    const cardVariants = useMemo(() => ({
         hidden: { y: 50, opacity: 0 },
         visible: {
             y: 0,
@@ -148,7 +151,7 @@ export default function FeaturedReviews() {
                 stiffness: 100
             }
         }
-    }
+    }), []);
 
     return (
         <section className="py-20 relative overflow-hidden" ref={ref}>
@@ -295,4 +298,6 @@ export default function FeaturedReviews() {
             </div>
         </section>
     )
-}
+});
+
+export default FeaturedReviews;

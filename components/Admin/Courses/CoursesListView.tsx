@@ -34,7 +34,8 @@ export default function CoursesListView({
                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[color:var(--ai-foreground)] uppercase tracking-wider">
                             Actions
                         </th>
-                    </tr>                    </thead>
+                    </tr>
+                </thead>
                 <tbody className="bg-[color:var(--ai-card-bg)]/80 divide-y divide-[color:var(--ai-card-border)]/40">
                     {Object.values(courses).map((course: CourseWithPriceProduct) => (
                         <tr key={course.id} className="hover:bg-[color:var(--ai-primary)]/5 transition-colors duration-200">

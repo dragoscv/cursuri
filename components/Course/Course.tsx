@@ -54,7 +54,9 @@ export default function Course({ courseId }: CourseProps) {
 
         // Always fetch lessons when the component mounts to ensure fresh data
         getCourseLessons(courseId);
-    }, [courseId, getCourseReviews, getCourseLessons, course, lessons]);
+        // Only run when courseId changes, not when data updates
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [courseId]);
 
     useEffect(() => {
         if (lessons[courseId]) {

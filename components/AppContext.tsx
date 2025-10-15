@@ -17,6 +17,7 @@ import { appReducer, initialState } from './contexts/appReducer';
 import { generateCacheMetadata, isCacheExpired, saveToLocalStorage, loadFromLocalStorage, generateCacheKey, clearLocalStorageCache, clearAllLocalStorageCache } from '@/utils/caching';
 
 export const AppContext = createContext<AppContextProps | undefined>(undefined);
+AppContext.displayName = 'AppContext';
 
 // Default user preferences
 const defaultUserPreferences: UserPreferences = {
@@ -383,7 +384,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                         data: lessonData,
                         metadata: generateCacheMetadata('success', cacheOptions.ttl)
                     };
-                    saveToLocalStorage(cacheKey, cacheEntry);
+                    saveToLocalStorage(cacheKey, cacheEntry.data, cacheEntry.metadata);
                 }                // Mark request as no longer pending
                 setRequestPending(cacheKey, false);
             });
@@ -416,21 +417,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             return () => { /* No cleanup needed for pending request */ };
         }
 
-        // Check if data is already in state
-        const reviews = state.reviews[courseId];
-        if (reviews && Object.keys(reviews).length > 0) {
-            // Check if we need to update loading state
-            const loadingState = state.reviewLoadingStates[courseId];
-            if (loadingState !== 'success') {
-                dispatch({
-                    type: 'SET_REVIEW_LOADING_STATE',
-                    payload: { courseId, status: 'success' }
-                });
-            }
-            return () => { /* No cleanup needed for cached data */ };
-        }
-
-        // Check if data is in localStorage cache
+        // Check if data is in localStorage cache first
         if (cacheOptions.persist) {
             const cachedData = loadFromLocalStorage(cacheKey);
 
@@ -494,7 +481,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                         data: reviewData,
                         metadata: generateCacheMetadata('success', cacheOptions.ttl)
                     };
-                    saveToLocalStorage(cacheKey, cacheEntry);
+                    saveToLocalStorage(cacheKey, cacheEntry.data, cacheEntry.metadata);
                 }
 
                 // Mark request as no longer pending
@@ -526,7 +513,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
             return () => { /* No cleanup needed for error case */ };
         }
-    }, [state.reviews, state.reviewLoadingStates, dispatch, isRequestPending, setRequestPending]);
+    }, [dispatch, isRequestPending, setRequestPending]);
 
     const saveLessonProgress = useCallback(async (courseId: string, lessonId: string, position: number, isCompleted: boolean = false) => {
         if (!user) return;
@@ -701,7 +688,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                     data: usersData,
                     metadata: generateCacheMetadata('success', cacheOptions.ttl)
                 };
-                saveToLocalStorage(cacheKey, cacheEntry);
+                saveToLocalStorage(cacheKey, cacheEntry.data, cacheEntry.metadata);
             }
 
             setRequestPending(cacheKey, false);
@@ -950,7 +937,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                     data: analyticsData,
                     metadata: generateCacheMetadata('success', cacheOptions.ttl)
                 };
-                saveToLocalStorage(cacheKey, cacheEntry);
+                saveToLocalStorage(cacheKey, cacheEntry.data, cacheEntry.metadata);
             }
 
             setRequestPending(cacheKey, false);
@@ -1027,7 +1014,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                         data: settingsData,
                         metadata: generateCacheMetadata('success', cacheOptions.ttl)
                     };
-                    saveToLocalStorage(cacheKey, cacheEntry);
+                    saveToLocalStorage(cacheKey, cacheEntry.data, cacheEntry.metadata);
                 }
 
                 setRequestPending(cacheKey, false);
@@ -1055,7 +1042,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                         data: defaultSettings,
                         metadata: generateCacheMetadata('success', cacheOptions.ttl)
                     };
-                    saveToLocalStorage(cacheKey, cacheEntry);
+                    saveToLocalStorage(cacheKey, cacheEntry.data, cacheEntry.metadata);
                 }
 
                 setRequestPending(cacheKey, false);
@@ -1094,7 +1081,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                         data: updatedSettings,
                         metadata: generateCacheMetadata('success', cachedData.metadata.expiresAt - Date.now())
                     };
-                    saveToLocalStorage(cacheKey, cacheEntry);
+                    saveToLocalStorage(cacheKey, cacheEntry.data, cacheEntry.metadata);
                 }
             }
 
@@ -1167,7 +1154,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                     data: bookmarks,
                     metadata: generateCacheMetadata('success', cacheOptions.ttl)
                 };
-                saveToLocalStorage(cacheKey, cacheEntry);
+                saveToLocalStorage(cacheKey, cacheEntry.data, cacheEntry.metadata);
             } setRequestPending(cacheKey, false);
         } catch (error) {
             console.error('Error fetching bookmarks:', error);
@@ -1198,7 +1185,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                     data: updatedBookmarks,
                     metadata: generateCacheMetadata('success', cachedData.metadata.expiresAt - Date.now())
                 };
-                saveToLocalStorage(cacheKey, cacheEntry);
+                saveToLocalStorage(cacheKey, cacheEntry.data, cacheEntry.metadata);
             }
         } catch (error) {
             console.error('Error toggling bookmark:', error);
@@ -1264,7 +1251,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                     data: wishlist,
                     metadata: generateCacheMetadata('success', cacheOptions.ttl)
                 };
-                saveToLocalStorage(cacheKey, cacheEntry);
+                saveToLocalStorage(cacheKey, cacheEntry.data, cacheEntry.metadata);
             } setRequestPending(cacheKey, false);
         } catch (error) {
             console.error('Error fetching wishlist:', error);
@@ -1293,7 +1280,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                     data: updatedWishlist,
                     metadata: generateCacheMetadata('success', cachedData.metadata.expiresAt - Date.now())
                 };
-                saveToLocalStorage(cacheKey, cacheEntry);
+                saveToLocalStorage(cacheKey, cacheEntry.data, cacheEntry.metadata);
             }
         } catch (error) {
             console.error('Error adding to wishlist:', error);
@@ -1317,7 +1304,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                     data: updatedWishlist,
                     metadata: generateCacheMetadata('success', cachedData.metadata.expiresAt - Date.now())
                 };
-                saveToLocalStorage(cacheKey, cacheEntry);
+                saveToLocalStorage(cacheKey, cacheEntry.data, cacheEntry.metadata);
             }
         } catch (error) {
             console.error('Error removing from wishlist:', error);

@@ -8,7 +8,7 @@ import { fallbackReviews } from './fallbackReviewData'
 import ScrollAnimationWrapper from '../animations/ScrollAnimationWrapper'
 import { Review } from '@/types'
 
-export default function FeaturedReviewsSection() {
+const FeaturedReviewsSection = React.memo(function FeaturedReviewsSection() {
     // Get featured reviews using our custom hook
     const featuredReviews = useFeaturedReviews(3)
 
@@ -17,7 +17,8 @@ export default function FeaturedReviewsSection() {
         return featuredReviews.length > 0 ? featuredReviews : fallbackReviews
     }, [featuredReviews])
 
-    const containerVariants = {
+    // Memoize animation variants to prevent recreation
+    const containerVariants = useMemo(() => ({
         hidden: { opacity: 0 },
         visible: {
             opacity: 1,
@@ -25,7 +26,7 @@ export default function FeaturedReviewsSection() {
                 staggerChildren: 0.2
             }
         }
-    };
+    }), []);
 
     return (
         <section className="py-16 bg-[color:var(--section-light-bg)] dark:bg-[color:var(--section-dark-bg)]">
@@ -59,4 +60,6 @@ export default function FeaturedReviewsSection() {
             </div>
         </section>
     )
-}
+});
+
+export default FeaturedReviewsSection;

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useMemo } from 'react'
 import { motion, useInView, useAnimation } from 'framer-motion'
 import { Review } from '@/types'
 import RatingStars from '../ui/RatingStars'
@@ -10,7 +10,7 @@ export type ReviewCardProps = {
     index: number;
 }
 
-export function ReviewCard({ review, index }: ReviewCardProps) {
+export const ReviewCard = React.memo(function ReviewCard({ review, index }: ReviewCardProps) {
     const controls = useAnimation()
     const ref = useRef(null)
     const isInView = useInView(ref, { once: false, amount: 0.3 })
@@ -21,7 +21,8 @@ export function ReviewCard({ review, index }: ReviewCardProps) {
         }
     }, [controls, isInView])
 
-    const cardVariants = {
+    // Memoize cardVariants with index dependency to prevent recreation
+    const cardVariants = useMemo(() => ({
         hidden: { opacity: 0, y: 50 },
         visible: {
             opacity: 1,
@@ -31,7 +32,7 @@ export function ReviewCard({ review, index }: ReviewCardProps) {
                 delay: 0.1 * index
             }
         }
-    };
+    }), [index]);
 
     return (
         <motion.div
@@ -72,7 +73,7 @@ export function ReviewCard({ review, index }: ReviewCardProps) {
                 </div>      </div>
         </motion.div>
     )
-}
+});
 
 // Add a named export as well as default export for better compatibility
 export default ReviewCard;

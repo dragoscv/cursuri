@@ -1,14 +1,15 @@
 'use client'
 
-import React from 'react'
+import React, { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import ScrollAnimationWrapper from '../animations/ScrollAnimationWrapper'
 import ParallaxSection from '../animations/ParallaxSection'
 import FeatureCard from './FeatureCard'
 import { features } from './featuresData'
 
-export default function WhyChooseUsSection() {
-    const containerVariants = {
+const WhyChooseUsSection = React.memo(function WhyChooseUsSection() {
+    // Memoize containerVariants to prevent recreation
+    const containerVariants = useMemo(() => ({
         hidden: { opacity: 0 },
         visible: {
             opacity: 1,
@@ -16,7 +17,7 @@ export default function WhyChooseUsSection() {
                 staggerChildren: 0.1
             }
         }
-    }
+    }), []);
     return (
         <section className="relative w-full">
             <ParallaxSection
@@ -72,4 +73,6 @@ export default function WhyChooseUsSection() {
             </ParallaxSection>
         </section>
     )
-}
+});
+
+export default WhyChooseUsSection;

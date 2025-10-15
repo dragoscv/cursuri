@@ -4,7 +4,7 @@ import React, { useMemo } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import ScrollAnimationWrapper from './animations/ScrollAnimationWrapper';
 
-export default function StatisticsSection() {
+const StatisticsSection = React.memo(function StatisticsSection() {
     const ref = React.useRef(null);
     const { scrollYProgress } = useScroll({
         target: ref,
@@ -13,6 +13,24 @@ export default function StatisticsSection() {
 
     // Create parallax effect for the background
     const y = useTransform(scrollYProgress, [0, 1], [0, 100]);
+
+    // Memoize stat card hover props
+    const statCardHoverProps = useMemo(() => ({
+        scale: 1.03,
+        boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+    }), []);
+
+    // Memoize background animation props
+    const backgroundAnimateProps = useMemo(() => ({
+        backgroundPosition: ["0% 0%", "100% 100%"]
+    }), []);
+
+    const backgroundTransitionProps = useMemo(() => ({
+        duration: 15,
+        repeat: Infinity,
+        repeatType: "reverse" as const,
+        ease: "linear"
+    }), []);
 
     const stats = [
         { value: "15+", label: "Courses", icon: "📚", color: "from-[color:var(--ai-primary)] to-[color:var(--ai-primary)]/80" },
@@ -77,14 +95,8 @@ export default function StatisticsSection() {
                         y,
                         backgroundPosition: "0% 0%",
                     }}
-                    animate={{
-                        backgroundPosition: ["0% 0%", "100% 100%"]
-                    }}
-                    transition={{
-                        duration: 15,
-                        repeat: Infinity,
-                        repeatType: "reverse"
-                    }}
+                    animate={backgroundAnimateProps}
+                    transition={backgroundTransitionProps}
                 />
 
                 {/* Subtle dot pattern overlay - reduced opacity */}
@@ -117,10 +129,7 @@ export default function StatisticsSection() {
                                 <motion.div
                                     className={`flex flex-col items-center justify-center p-4 md:p-6 rounded-2xl bg-gradient-to-br ${stat.color} bg-opacity-20 backdrop-filter backdrop-blur-md border border-white/10 h-full text-center shadow-lg transform transition-all duration-300`}
                                     variants={counterVariants}
-                                    whileHover={{
-                                        scale: 1.03,
-                                        boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
-                                    }}
+                                    whileHover={statCardHoverProps}
                                 >
                                     <div className="text-2xl md:text-4xl mb-2 md:mb-3 bg-white/20 p-3 rounded-full">{stat.icon}</div>
                                     <motion.div
@@ -195,4 +204,6 @@ export default function StatisticsSection() {
             </div>
         </section>
     );
-}
+});
+
+export default StatisticsSection;

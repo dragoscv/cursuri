@@ -1,10 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import ScrollAnimationWrapper from './animations/ScrollAnimationWrapper';
 
-export default function LearningPathSection() {
+const LearningPathSection = React.memo(function LearningPathSection() {
     const pathSteps = [
         {
             number: "01",
@@ -105,4 +105,6 @@ export default function LearningPathSection() {
             </div>
         </section>
     );
-}
+});
+
+export default LearningPathSection;

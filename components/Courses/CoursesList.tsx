@@ -1,4 +1,4 @@
-import React, { useContext, useCallback } from 'react';
+import React, { useContext, useCallback, memo, useMemo } from 'react';
 import { AppContext } from '../AppContext';
 import { Button, Chip, Progress } from '@heroui/react';
 import { motion } from 'framer-motion';
@@ -17,7 +17,7 @@ interface CoursesListProps {
     category?: string;
 }
 
-export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) => {
+export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList({ filter, category }) {
     const router = useRouter();
     const context = useContext(AppContext);
 
@@ -26,6 +26,12 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
     } const { courses, products, openModal, closeModal, userPaidProducts, user, lessonProgress, lessons } = context;
     const [loadingPayment, setLoadingPayment] = React.useState(false);
     const [loadingCourseId, setLoadingCourseId] = React.useState<string | null>(null);
+
+    // Memoize hover animation props
+    const cardHoverProps = useMemo(() => ({
+        y: -5,
+        transition: { duration: 0.3, ease: "easeOut" }
+    }), []);
 
     // Filter courses based on filter and category props
     const filteredCourses = React.useMemo(() => {
@@ -193,10 +199,7 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
                         variants={courseVariants}
                         initial="hidden"
                         animate="visible"
-                        whileHover={{
-                            y: -5,
-                            transition: { duration: 0.3, ease: "easeOut" }
-                        }}
+                        whileHover={cardHoverProps}
                     >
                         <div className="relative overflow-hidden">
                             {/* Difficulty badge */}
@@ -393,6 +396,6 @@ export const CoursesList: React.FC<CoursesListProps> = ({ filter, category }) =>
             })}
         </div>
     );
-};
+});
 
 export default CoursesList;

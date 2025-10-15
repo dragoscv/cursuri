@@ -1,13 +1,14 @@
 'use client'
 
-import React from 'react'
+import React, { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import ScrollAnimationWrapper from '../animations/ScrollAnimationWrapper'
 import TechItem from './TechItem'
 import { technologies } from './techData'
 
-export default function TechStackSection() {
-    const containerVariants = {
+const TechStackSection = React.memo(function TechStackSection() {
+    // Memoize containerVariants to prevent recreation
+    const containerVariants = useMemo(() => ({
         hidden: { opacity: 0 },
         visible: {
             opacity: 1,
@@ -15,7 +16,7 @@ export default function TechStackSection() {
                 staggerChildren: 0.1
             }
         }
-    }; return (
+    }), []); return (
         <section className="relative w-full py-20 bg-[color:var(--section-light-bg)] dark:bg-[color:var(--section-dark-bg)]">
             <div className="container mx-auto px-4">
                 <ScrollAnimationWrapper>
@@ -49,4 +50,6 @@ export default function TechStackSection() {
             </div>
         </section>
     )
-}
+});
+
+export default TechStackSection;

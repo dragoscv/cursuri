@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import CoursesFilter from './Courses/CoursesFilter';
 import CoursesList from './Courses/CoursesList';
 
-export default function AvailableCoursesSection() {
+const AvailableCoursesSection = React.memo(function AvailableCoursesSection() {
     // State for filter and category, as in /courses/page.tsx
     const [filter, setFilter] = useState('');
     const [category, setCategory] = useState('all');
@@ -26,4 +26,6 @@ export default function AvailableCoursesSection() {
             </div>
         </section>
     );
-}
+});
+
+export default AvailableCoursesSection;

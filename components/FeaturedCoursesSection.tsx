@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 // Show top N most popular or highest-rated courses
 const FEATURED_COUNT = 3;
 
-export default function FeaturedCoursesSection() {
+const FeaturedCoursesSection = React.memo(function FeaturedCoursesSection() {
   const context = useContext(AppContext);
   const router = useRouter();
   const courses = context?.courses || {};
@@ -102,5 +102,7 @@ export default function FeaturedCoursesSection() {
       </div>
     </section>
   );
-}
+});
+
+export default FeaturedCoursesSection;
 

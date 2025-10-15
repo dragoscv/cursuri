@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useMemo, useState, useContext } from 'react'
+import React, { useEffect, useRef, useMemo, useState, useContext, memo } from 'react'
 import Button from '@/components/ui/Button'
 // import { useAuth, useCourses, useReviews, useModal, useProducts } from '@/components/contexts/modules'
 import { AppContext } from '@/components/AppContext'
@@ -26,7 +26,7 @@ import {
     ReactNativeIcon
 } from './icons/tech'
 
-export default function HeroSection() {
+const HeroSection = memo(function HeroSection() {
     // Use AppContext instead of modular hooks to avoid context issues
     const router = useRouter()
     const context = useContext(AppContext);
@@ -36,81 +36,86 @@ export default function HeroSection() {
         return <div>Loading...</div>;
     }
 
-    const { user, courses, reviews, openModal, closeModal, userPaidProducts } = context;
+    // Extract only needed values to reduce dependency on full context
+    const { user, openModal, closeModal } = context;
+
+    // Use useMemo for expensive context values to prevent unnecessary recalculations
+    const courses = useMemo(() => context.courses, [context.courses]);
+    const reviews = useMemo(() => context.reviews, [context.reviews]);
+    const userPaidProducts = useMemo(() => context.userPaidProducts, [context.userPaidProducts]);
 
     // Note: userPaidProducts now comes directly from AppContext
     // No longer need to simulate products since AppContext provides real data
 
     const particlesRef = useRef<HTMLDivElement>(null)
 
-    // Calculate real statistics from the database
-    const [stats, setStats] = useState({
-        totalCourses: 0,
-        totalStudents: 0,
-        totalReviews: 0,
-        avgRating: 0,
-        topTechnologies: ['TypeScript', 'React', 'Firebase', 'Node.js', 'Tailwind CSS']
-    })
-
-    // Update stats based on real data
-    useEffect(() => {
-        if (Object.keys(courses).length > 0) {
-            // Calculate total courses
-            const totalCourses = Object.keys(courses).length
-
-            // Calculate total students (unique users who have purchased courses)
-            const uniqueStudents = new Set(userPaidProducts.map(product => product.metadata?.userId || ''))
-            const totalStudents = uniqueStudents.size > 0 ? uniqueStudents.size : userPaidProducts.length
-
-            // Calculate total reviews and average rating
-            let reviewCount = 0
-            let ratingSum = 0
-
-            // Gather all course categories/technologies
-            const technologiesMap = new Map()
-
-            Object.keys(reviews).forEach(courseId => {
-                const courseReviews = reviews[courseId]
-                if (courseReviews) {
-                    Object.keys(courseReviews).forEach(reviewId => {
-                        reviewCount++
-                        const review = courseReviews[reviewId]
-                        if (review && typeof review === 'object' && 'rating' in review && review.rating) {
-                            ratingSum += review.rating
-                        }
-                    })
-                }
-
-                // Count technologies mentioned in course
-                const course = courses[courseId]
-                if (course && course.tags) {
-                    course.tags.forEach((tag: string) => {
-                        technologiesMap.set(tag, (technologiesMap.get(tag) || 0) + 1)
-                    })
-                }
-            })
-
-            // Get top technologies based on frequency
-            const topTechnologies = Array.from(technologiesMap.entries())
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 5)
-                .map(entry => entry[0])
-
-            // Default to curated list if not enough data
-            const defaultTechnologies = ['TypeScript', 'React', 'Firebase', 'Node.js', 'Tailwind CSS']
-            const finalTechnologies = topTechnologies.length >= 3 ?
-                topTechnologies :
-                defaultTechnologies
-
-            setStats({
-                totalCourses,
-                // If no real data, show a reasonable number
-                totalStudents: totalStudents || Math.max(50, totalCourses * 10),
-                totalReviews: reviewCount,
-                avgRating: reviewCount > 0 ? +(ratingSum / reviewCount).toFixed(1) : 4.8,
-                topTechnologies: finalTechnologies
-            })
+    // Calculate real statistics from the database using useMemo instead of useEffect
+    const stats = useMemo(() => {
+        if (Object.keys(courses).length === 0) {
+            return {
+                totalCourses: 0,
+                totalStudents: 0,
+                totalReviews: 0,
+                avgRating: 4.8,
+                topTechnologies: ['TypeScript', 'React', 'Firebase', 'Node.js', 'Tailwind CSS']
+            };
         }
+
+        // Calculate total courses
+        const totalCourses = Object.keys(courses).length
+
+        // Calculate total students (unique users who have purchased courses)
+        const uniqueStudents = new Set(userPaidProducts.map(product => product.metadata?.userId || ''))
+        const totalStudents = uniqueStudents.size > 0 ? uniqueStudents.size : userPaidProducts.length
+
+        // Calculate total reviews and average rating
+        let reviewCount = 0
+        let ratingSum = 0
+
+        // Gather all course categories/technologies
+        const technologiesMap = new Map()
+
+        Object.keys(reviews).forEach(courseId => {
+            const courseReviews = reviews[courseId]
+            if (courseReviews) {
+                Object.keys(courseReviews).forEach(reviewId => {
+                    reviewCount++
+                    const review = courseReviews[reviewId]
+                    if (review && typeof review === 'object' && 'rating' in review && review.rating) {
+                        ratingSum += review.rating
+                    }
+                })
+            }
+
+            // Count technologies mentioned in course
+            const course = courses[courseId]
+            if (course && course.tags) {
+                course.tags.forEach((tag: string) => {
+                    technologiesMap.set(tag, (technologiesMap.get(tag) || 0) + 1)
+                })
+            }
+        })
+
+        // Get top technologies based on frequency
+        const topTechnologies = Array.from(technologiesMap.entries())
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5)
+            .map(entry => entry[0])
+
+        // Default to curated list if not enough data
+        const defaultTechnologies = ['TypeScript', 'React', 'Firebase', 'Node.js', 'Tailwind CSS']
+        const finalTechnologies = topTechnologies.length >= 3 ?
+            topTechnologies :
+            defaultTechnologies
+
+        return {
+            totalCourses,
+            // If no real data, show a reasonable number
+            totalStudents: totalStudents || Math.max(50, totalCourses * 10),
+            totalReviews: reviewCount,
+            avgRating: reviewCount > 0 ? +(ratingSum / reviewCount).toFixed(1) : 4.8,
+            topTechnologies: finalTechnologies
+        };
     }, [courses, userPaidProducts, reviews]);
 
     const handleGetStarted = () => {
@@ -226,7 +231,8 @@ export default function HeroSection() {
         return Array.from({ length: 100 }).map((_, i) => Number(generateOpacity(i)));
     }, []);
 
-    const containerVariants = {
+    // Memoize animation variants to prevent recreation on every render
+    const containerVariants = useMemo(() => ({
         hidden: { opacity: 0 },
         visible: {
             opacity: 1,
@@ -235,9 +241,9 @@ export default function HeroSection() {
                 staggerChildren: 0.2
             }
         }
-    }
+    }), []);
 
-    const itemVariants = {
+    const itemVariants = useMemo(() => ({
         hidden: { y: 20, opacity: 0 },
         visible: {
             y: 0,
@@ -247,7 +253,7 @@ export default function HeroSection() {
                 stiffness: 100
             }
         }
-    }
+    }), []);
 
     // Pre-calculate SVG coordinates to prevent hydration errors
     const nodePoints = useMemo(() => {
@@ -589,4 +595,6 @@ export default function HeroSection() {
             </div>
         </div>
     )
-}
+});
+
+export default HeroSection;

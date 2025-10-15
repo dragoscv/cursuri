@@ -6,7 +6,7 @@ import { Button } from '@heroui/react';
 import { useRouter } from 'next/navigation';
 import { FiLink } from './icons/FeatherIcons/FiLink';
 
-export default function RecommendedCoursesSection() {
+const RecommendedCoursesSection = React.memo(function RecommendedCoursesSection() {
     const context = useContext(AppContext);
     const router = useRouter();
     const user = context?.user;
@@ -171,5 +171,7 @@ export default function RecommendedCoursesSection() {
             </div>
         </section>
     );
-}
+});
+
+export default RecommendedCoursesSection;
 

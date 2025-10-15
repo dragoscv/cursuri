@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import Card from './ui/Card';
 import Avatar from './ui/Avatar';
 import Chip from './ui/Chip';
@@ -34,7 +34,7 @@ const instructors = [
     },
 ];
 
-export default function InstructorHighlightsSection() {
+const InstructorHighlightsSection = React.memo(function InstructorHighlightsSection() {
     return (
         <section className="w-full py-16 bg-gradient-to-b from-[color:var(--ai-background)]/80 to-[color:var(--ai-card-bg)] dark:to-[color:var(--ai-background)]">
             <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -67,4 +67,6 @@ export default function InstructorHighlightsSection() {
             </div>
         </section>
     );
-}
+});
+
+export default InstructorHighlightsSection;
