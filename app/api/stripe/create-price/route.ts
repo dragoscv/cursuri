@@ -16,9 +16,9 @@ export async function POST(request: NextRequest) {
         // Require admin authentication
         const authResult = await requireAdmin(request);
         if (authResult instanceof NextResponse) return authResult;
-        
+
         const user = authResult.user!;
-        
+
         // Rate limiting: 20 requests per minute for admin operations
         if (!checkRateLimit(`stripe-create-price:${user.uid}`, 20, 60000)) {
             return NextResponse.json(
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
                 { status: 429 }
             );
         }
-        
+
         const { productName, productDescription, amount, currency, metadata } = await request.json();
 
         // Validate required fields

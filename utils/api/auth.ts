@@ -40,7 +40,7 @@ export interface AuthResult {
  */
 function initializeFirebaseAdmin(): void {
     const isBuild = process.env.NODE_ENV !== 'production' || !process.env.FIREBASE_PRIVATE_KEY;
-    
+
     if (!getApps().length) {
         try {
             if (!isBuild) {
@@ -120,7 +120,7 @@ export async function verifyAuthentication(request: NextRequest): Promise<AuthRe
         // Get user profile from Firestore to check role and permissions
         const db = getFirestore();
         const userDoc = await db.collection('users').doc(decodedToken.uid).get();
-        
+
         let role = UserRole.USER;
         let permissions: Record<string, boolean> = {};
 
@@ -143,7 +143,7 @@ export async function verifyAuthentication(request: NextRequest): Promise<AuthRe
 
     } catch (error: unknown) {
         console.error('Authentication error:', error);
-        
+
         // Handle specific Firebase auth errors
         if (error instanceof Error) {
             if (error.message.includes('expired')) {
@@ -221,14 +221,14 @@ export function hasPermission(user: AuthenticatedUser, permission: string): bool
  */
 export async function requireAuth(request: NextRequest): Promise<AuthResult | NextResponse> {
     const authResult = await verifyAuthentication(request);
-    
+
     if (!authResult.success) {
         return NextResponse.json(
             { error: authResult.error || 'Authentication required' },
             { status: authResult.statusCode || 401 }
         );
     }
-    
+
     return authResult;
 }
 
@@ -252,21 +252,21 @@ export async function requireAuth(request: NextRequest): Promise<AuthResult | Ne
  */
 export async function requireAdmin(request: NextRequest): Promise<AuthResult | NextResponse> {
     const authResult = await verifyAuthentication(request);
-    
+
     if (!authResult.success) {
         return NextResponse.json(
             { error: authResult.error || 'Authentication required' },
             { status: authResult.statusCode || 401 }
         );
     }
-    
+
     if (!authResult.user || !isAdmin(authResult.user)) {
         return NextResponse.json(
             { error: 'Admin access required. You do not have sufficient permissions.' },
             { status: 403 }
         );
     }
-    
+
     return authResult;
 }
 
@@ -279,21 +279,21 @@ export async function requireAdmin(request: NextRequest): Promise<AuthResult | N
  */
 export async function requireSuperAdmin(request: NextRequest): Promise<AuthResult | NextResponse> {
     const authResult = await verifyAuthentication(request);
-    
+
     if (!authResult.success) {
         return NextResponse.json(
             { error: authResult.error || 'Authentication required' },
             { status: authResult.statusCode || 401 }
         );
     }
-    
+
     if (!authResult.user || !isSuperAdmin(authResult.user)) {
         return NextResponse.json(
             { error: 'Super admin access required. You do not have sufficient permissions.' },
             { status: 403 }
         );
     }
-    
+
     return authResult;
 }
 
@@ -389,13 +389,13 @@ export function checkRateLimit(
 export function cleanupRateLimitStore(): void {
     const now = Date.now();
     const keysToDelete: string[] = [];
-    
+
     rateLimitStore.forEach((record, key) => {
         if (now > record.resetTime) {
             keysToDelete.push(key);
         }
     });
-    
+
     keysToDelete.forEach(key => rateLimitStore.delete(key));
 }
 

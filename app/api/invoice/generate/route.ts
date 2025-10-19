@@ -21,15 +21,15 @@ export async function POST(request: NextRequest) {
         // Require authentication
         const authResult = await requireAuth(request);
         if (authResult instanceof NextResponse) return authResult;
-        
+
         const authenticatedUser = authResult.user!;
-        
+
         const { paymentId, userId } = await request.json();
 
         if (!paymentId || !userId) {
             return NextResponse.json({ error: 'Missing payment ID or user ID' }, { status: 400 });
         }
-        
+
         // Verify user can access this resource (owner or admin)
         if (!canAccessResource(authenticatedUser, userId)) {
             return NextResponse.json(
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
                 { status: 403 }
             );
         }
-        
+
         // Rate limiting: 10 invoices per minute per user
         if (!checkRateLimit(`invoice:${authenticatedUser.uid}`, 10, 60000)) {
             return NextResponse.json(

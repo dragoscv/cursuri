@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
                 { status: 429 }
             );
         }
-        
+
         const searchParams = request.nextUrl.searchParams;
         const courseId = searchParams.get('courseId');
         const lessonId = searchParams.get('lessonId');

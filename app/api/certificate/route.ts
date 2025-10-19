@@ -29,10 +29,10 @@ export async function POST(req: NextRequest) {
     // Require authentication
     const authResult = await requireAuth(req);
     if (authResult instanceof NextResponse) return authResult;
-    
+
     const user = authResult.user!;
     const userId = user.uid;
-    
+
     // Rate limiting: 5 certificates per minute per user
     if (!checkRateLimit(`certificate:${userId}`, 5, 60000)) {
       return NextResponse.json(
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { courseId } = await req.json();
-    
+
     if (!courseId) {
       return NextResponse.json(
         { error: 'Course ID is required' },
@@ -54,11 +54,11 @@ export async function POST(req: NextRequest) {
     const db = getFirestore();
     const userDoc = await db.collection('users').doc(userId).get();
     const courseDoc = await db.collection('courses').doc(courseId).get();
-    
+
     if (!userDoc.exists || !courseDoc.exists) {
       return NextResponse.json({ error: 'User or course not found' }, { status: 404 });
     }
-    
+
     // Verify course completion before generating certificate
     const progressDoc = await db
       .collection('users')
@@ -66,28 +66,28 @@ export async function POST(req: NextRequest) {
       .collection('progress')
       .doc(courseId)
       .get();
-    
+
     if (!progressDoc.exists) {
       return NextResponse.json(
         { error: 'Course not enrolled or completed' },
         { status: 403 }
       );
     }
-    
+
     const progressData = progressDoc.data();
     const completionPercentage = progressData?.completionPercentage || 0;
-    
+
     // Require at least 90% completion to generate certificate
     if (completionPercentage < 90) {
       return NextResponse.json(
-        { 
+        {
           error: 'Course not completed. Minimum 90% completion required for certificate.',
           currentProgress: completionPercentage
         },
         { status: 403 }
       );
     }
-    
+
     const userData = userDoc.data();
     const course = courseDoc.data();
 
