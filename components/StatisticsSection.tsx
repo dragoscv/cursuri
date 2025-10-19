@@ -155,7 +155,7 @@ const StatisticsSection = React.memo(function StatisticsSection() {
                     <div className="mt-10 text-center">
                         <ScrollAnimationWrapper delay={0.4}>
                             <p className="text-white/80 text-sm md:text-base max-w-2xl mx-auto">
-                                Join thousands of students who are already enhancing their skills through our platform.
+                                Join thousands of learners who are already enhancing their skills in AI, marketing, data science, and more through our platform.
                             </p>
                         </ScrollAnimationWrapper>
                     </div>

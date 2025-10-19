@@ -13,14 +13,19 @@ import { constructMetadata } from '@/utils/metadata'
 
 export const metadata: Metadata = constructMetadata({
   title: 'Home',
-  description: 'Advance your career with expert-led online courses in programming, technology, and digital skills. Learn at your own pace with our comprehensive curriculum.',
+  description: 'Transform your career with expert-led online courses in AI, Machine Learning, Digital Marketing, Data Science, Cybersecurity, and more. Learn at your own pace with project-based curriculum.',
   keywords: [
     'online courses',
-    'programming courses',
-    'technology education',
-    'learn to code',
-    'professional development',
-    'digital skills',
+    'AI courses',
+    'machine learning courses',
+    'digital marketing',
+    'data science',
+    'cybersecurity training',
+    'prompt engineering',
+    'generative AI',
+    'cloud computing',
+    'business skills',
+    'career development',
     'online learning platform'
   ]
 });

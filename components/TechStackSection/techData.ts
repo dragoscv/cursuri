@@ -22,51 +22,51 @@ export interface TechItem {
 
 export const technologies: TechItem[] = [
     {
+        name: 'Python',
+        icon: JavaScriptIcon, // Placeholder - can be updated with Python icon
+        description: 'Master AI, data science, and automation with Python programming',
+        color: '#3776AB'
+    },
+    {
+        name: 'AI & ML',
+        icon: TypeScriptIcon, // Placeholder - can be updated with AI icon
+        description: 'Learn Machine Learning, Deep Learning, and Generative AI',
+        color: '#FF6B6B'
+    },
+    {
+        name: 'Data Science',
+        icon: MongoDBIcon, // Placeholder - can be updated with Data icon
+        description: 'Analyze data, build visualizations, and extract insights',
+        color: '#4ECDC4'
+    },
+    {
+        name: 'Digital Marketing',
+        icon: FirebaseIcon, // Placeholder - can be updated with Marketing icon
+        description: 'Master SEO, social media, content marketing, and analytics',
+        color: '#FF9F1C'
+    },
+    {
         name: 'React',
         icon: ReactIcon,
         description: 'Build interactive UIs with the most popular frontend library',
         color: '#61DAFB'
     },
     {
-        name: 'TypeScript',
-        icon: TypeScriptIcon,
-        description: 'Develop with type safety and increased code quality',
-        color: '#3178C6'
+        name: 'Cloud Computing',
+        icon: NodeJsIcon, // Placeholder - can be updated with Cloud icon
+        description: 'Deploy and scale applications on AWS, Azure, and Google Cloud',
+        color: '#00A8E8'
     },
     {
-        name: 'Next.js',
-        icon: NextJsIcon,
-        description: 'Create full-stack web applications with the React framework',
-        color: '#000000'
+        name: 'Cybersecurity',
+        icon: NoSQLIcon, // Placeholder - can be updated with Security icon
+        description: 'Learn ethical hacking, network security, and risk management',
+        color: '#E63946'
     },
     {
-        name: 'Node.js',
-        icon: NodeJsIcon,
-        description: 'Build scalable network applications with JavaScript runtime',
-        color: '#339933'
-    },
-    {
-        name: 'Firebase',
-        icon: FirebaseIcon,
-        description: 'Accelerate app development with fully managed backend infrastructure',
-        color: '#FFCA28'
-    },
-    {
-        name: 'Tailwind CSS',
-        icon: TailwindCssIcon,
-        description: 'Design beautiful interfaces with utility-first CSS framework',
-        color: '#06B6D4'
-    },
-    {
-        name: 'MongoDB',
-        icon: MongoDBIcon,
-        description: 'Work with flexible, scalable document databases',
-        color: '#47A248'
-    },
-    {
-        name: 'JavaScript',
-        icon: JavaScriptIcon,
-        description: 'Master the language of the web with modern ES6+ features',
-        color: '#F7DF1E'
+        name: 'Business Strategy',
+        icon: TailwindCssIcon, // Placeholder - can be updated with Business icon
+        description: 'Develop leadership, project management, and strategic thinking',
+        color: '#9B51E0'
     }
 ];

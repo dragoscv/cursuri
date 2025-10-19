@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
     title: 'About Us | Cursuri',
-    description: 'Learn about our mission to provide high-quality programming courses and help developers advance their careers.',
+    description: 'Learn about our mission to provide high-quality courses in AI, Marketing, Data Science, and essential skills to help professionals advance their careers.',
 }
 
 export default function AboutPage() {
@@ -15,7 +15,7 @@ export default function AboutPage() {
                         About Cursuri
                     </h1>
                     <p className="text-xl text-[color:var(--ai-muted)] max-w-2xl mx-auto">
-                        We're passionate about empowering developers with the skills and knowledge needed to succeed in today's fast-paced tech industry.
+                        We're passionate about empowering learners with the skills and knowledge needed to thrive in the AI era and beyond.
                     </p>
                 </div>
 
@@ -24,10 +24,10 @@ export default function AboutPage() {
                     <h2 className="text-3xl font-bold text-[color:var(--ai-foreground)] mb-6">Our Mission</h2>
                     <div className="bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-xl p-8">
                         <p className="text-lg text-[color:var(--ai-foreground)] leading-relaxed mb-4">
-                            At Cursuri, we believe that high-quality education should be accessible to everyone. Our mission is to bridge the gap between traditional education and industry demands by providing practical, project-based learning experiences.
+                            At Cursuri, we believe that high-quality education should be accessible to everyone. Our mission is to bridge the gap between traditional education and industry demands by providing practical, project-based learning experiences across diverse fields.
                         </p>
                         <p className="text-lg text-[color:var(--ai-foreground)] leading-relaxed">
-                            We focus on modern technologies and real-world applications, ensuring our students are ready to tackle the challenges of professional software development from day one.
+                            From Artificial Intelligence and Data Science to Digital Marketing and Business Strategy, we focus on real-world applications that prepare our students for success in the rapidly evolving professional landscape.
                         </p>
                     </div>
                 </div>
@@ -42,7 +42,7 @@ export default function AboutPage() {
                             </div>
                             <h3 className="text-xl font-semibold text-[color:var(--ai-foreground)] mb-3">Project-Based Learning</h3>
                             <p className="text-[color:var(--ai-muted)]">
-                                Learn by building real-world projects that you can add to your portfolio. Every course includes hands-on projects that mirror industry workflows.
+                                Learn by building real-world projects across various domains - from AI models and data visualizations to marketing campaigns and business solutions that you can showcase in your portfolio.
                             </p>
                         </div>
 
@@ -72,7 +72,7 @@ export default function AboutPage() {
                             </div>
                             <h3 className="text-xl font-semibold text-[color:var(--ai-foreground)] mb-3">Community Support</h3>
                             <p className="text-[color:var(--ai-muted)]">
-                                Join a community of learners and professionals. Get help when you need it and share your knowledge with others.
+                                Join a diverse community of learners and professionals from various industries. Get help when you need it and share your knowledge with others.
                             </p>
                         </div>
                     </div>
@@ -118,7 +118,7 @@ export default function AboutPage() {
                 <div className="text-center bg-gradient-to-r from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 rounded-xl p-8">
                     <h2 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-4">Ready to Start Learning?</h2>
                     <p className="text-[color:var(--ai-muted)] mb-6">
-                        Join thousands of developers who have advanced their careers with our courses.
+                        Join thousands of learners who have advanced their careers with our courses in AI, Marketing, Data Science, and more.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <a

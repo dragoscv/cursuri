@@ -288,17 +288,15 @@ const HeroSection = memo(function HeroSection() {
         });
     }, []);
 
-    // Programming languages and frameworks for the floating tech nodes
+    // Skills and technologies for the floating nodes
     const techNodes = [
-        'TypeScript',
-        'React',
-        'Node.js',
-        'JavaScript',
-        'Firebase',
-        'Tailwind CSS'
-    ]
-
-    // Map technology names to their corresponding icon components
+        'AI & ML',
+        'Data Science',
+        'Marketing',
+        'Python',
+        'Business',
+        'Cloud Computing'
+    ]    // Map technology names to their corresponding icon components
     const getTechIcon = (tech: string) => {
         const iconMap: Record<string, React.FC<{ className?: string; size?: number }>> = {
             'TypeScript': TypeScriptIcon,
@@ -404,9 +402,9 @@ const HeroSection = memo(function HeroSection() {
                             className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight"
                             variants={itemVariants}
                         >
-                            <span className="block">Master Modern</span>
+                            <span className="block">Transform Your Career with</span>
                             <span className="bg-clip-text text-transparent bg-gradient-to-r from-[color:var(--ai-secondary)] to-[color:var(--ai-primary)] pb-2">
-                                Web Development
+                                AI & In-Demand Skills
                             </span>
                         </motion.h1>
 
@@ -414,8 +412,8 @@ const HeroSection = memo(function HeroSection() {
                             className="mt-6 text-lg md:text-xl text-white/90"
                             variants={itemVariants}
                         >
-                            Learn in-demand technologies from industry experts. Build real-world projects
-                            with TypeScript, React, Firebase, Node.js, and more.
+                            Master AI, Machine Learning, Digital Marketing, Data Science, and more.
+                            Learn from industry experts and build real-world projects that accelerate your career.
                         </motion.p>
 
                         <motion.div
@@ -467,7 +465,7 @@ const HeroSection = memo(function HeroSection() {
                                 ))}
                                 </div>
                                 <div className="text-sm text-white/90 font-medium">
-                                    <span className="text-[color:var(--ai-accent)] font-semibold">{stats.totalStudents}+</span> developers already enrolled
+                                    <span className="text-[color:var(--ai-accent)] font-semibold">{stats.totalStudents}+</span> learners already enrolled
                                 </div>
                             </div>
                         </motion.div>

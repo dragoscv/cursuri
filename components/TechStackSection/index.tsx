@@ -21,10 +21,10 @@ const TechStackSection = React.memo(function TechStackSection() {
             <div className="container mx-auto px-4">
                 <ScrollAnimationWrapper>
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[color:var(--ai-foreground)]">Tehnologii pe care le vei învăța</h2>
+                        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[color:var(--ai-foreground)]">Skills You'll Master</h2>
                         <p className="text-[color:var(--ai-muted)] max-w-2xl mx-auto">
-                            Explorează stack-ul modern de tehnologii web și mobile pe care îl acoperim în cursurile noastre.
-                            Fiecare tehnologie este predată prin proiecte practice.
+                            Explore the modern technologies and skills across AI, development, marketing, and data science.
+                            Each skill is taught through practical, real-world projects.
                         </p>
                     </div>
 

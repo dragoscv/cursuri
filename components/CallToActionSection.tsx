@@ -144,13 +144,13 @@ const CallToActionSection = memo(function CallToActionSection() {
                 <div className="max-w-3xl mx-auto text-center">
                     <ScrollAnimationWrapper>
                         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-6">
-                            Ready to Become a Pro Developer?
+                            Ready to Transform Your Career?
                         </h2>
                     </ScrollAnimationWrapper>
 
                     <ScrollAnimationWrapper delay={0.1}>
                         <p className="text-xl text-white/80 mb-8">
-                            Join thousands of students already learning on our platform and accelerate your career.
+                            Join thousands of learners already mastering AI, marketing, data science, and in-demand skills on our platform.
                         </p>
                     </ScrollAnimationWrapper>
 
