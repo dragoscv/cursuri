@@ -9,9 +9,13 @@ import AdminPageHeader from '@/components/Admin/AdminPageHeader';
 import { CourseWithPriceProduct } from '@/types';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { doc, deleteDoc } from 'firebase/firestore';
+import { firestoreDB } from '@/utils/firebase/firebase.config';
+import { useToast } from '@/components/Toast/ToastContext';
 
 export default function CoursesPage() {
     const [selectedView, setSelectedView] = useState<"grid" | "list">("grid");
+    const [deletingCourse, setDeletingCourse] = useState<string | null>(null);
 
     const context = useContext(AppContext);
     if (!context) {
@@ -19,6 +23,7 @@ export default function CoursesPage() {
     }
 
     const { courses, openModal, closeModal } = context;
+    const { showToast } = useToast();
 
     // Helper function to safely format price
     const formatPrice = (course: CourseWithPriceProduct): string => {
@@ -31,31 +36,59 @@ export default function CoursesPage() {
             });
         }
         return 'Price not available';
-    };    // Confirm delete modal
+    };    // Delete course function
+    const handleDeleteCourse = async (courseId: string, courseName: string) => {
+        setDeletingCourse(courseId);
+        try {
+            // Delete course from Firestore
+            await deleteDoc(doc(firestoreDB, 'courses', courseId));
+
+            showToast({
+                type: 'success',
+                title: 'Course Deleted',
+                message: `Successfully deleted "${courseName}"`,
+                duration: 5000
+            });
+
+            closeModal('delete-course');
+        } catch (error) {
+            console.error('Error deleting course:', error);
+            showToast({
+                type: 'error',
+                title: 'Failed to Delete Course',
+                message: error instanceof Error ? error.message : 'Failed to delete course. Please try again.',
+                duration: 6000
+            });
+        } finally {
+            setDeletingCourse(null);
+        }
+    };
+
+    // Confirm delete modal
     const handleConfirmDelete = (course: CourseWithPriceProduct) => {
         openModal({
             id: 'delete-course',
             isOpen: true,
             modalHeader: 'Confirm Delete',
             modalBody: (<div className="p-4">
-                <p className="mb-4">Are you sure you want to delete the course &quot;{course.name}&quot;?</p>                <div className="flex justify-end gap-2">
+                <p className="mb-4">Are you sure you want to delete the course &quot;{course.name}&quot;?</p>
+                <p className="text-sm text-[color:var(--ai-muted)] mb-4">This action cannot be undone. All lessons and progress data will be permanently deleted.</p>
+                <div className="flex justify-end gap-2">
                     <Button
                         variant="bordered"
                         onClick={() => closeModal('delete-course')}
+                        disabled={deletingCourse === course.id}
                         className="bg-[color:var(--ai-card-bg)]/80 border border-[color:var(--ai-card-border)]/50 text-[color:var(--ai-foreground)] rounded-full hover:bg-[color:var(--ai-card-border)]/20 transition-colors"
                     >
                         Cancel
                     </Button>
                     <Button
                         variant="primary"
-                        onClick={() => {
-                            // Delete course logic would go here
-                            console.log(`Deleting course: ${course.id}`);
-                            closeModal('delete-course');
-                        }}
-                        className="bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-full shadow-sm hover:shadow-md hover:shadow-red-500/20 transition-all"
+                        onClick={() => handleDeleteCourse(course.id!, course.name)}
+                        disabled={deletingCourse === course.id}
+                        className="bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-full shadow-sm hover:shadow-md hover:shadow-red-500/20 transition-all disabled:opacity-50"
                     >
-                        Delete
+                        {deletingCourse === course.id ? 'Deleting...' : 'Delete'}
                     </Button>
                 </div>
             </div>
