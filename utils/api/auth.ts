@@ -40,11 +40,16 @@ export interface AuthResult {
  * Skip during build time or when credentials aren't available
  */
 function initializeFirebaseAdmin(): void {
-    const isBuild = process.env.NODE_ENV !== 'production' || !process.env.FIREBASE_PRIVATE_KEY;
+    // Check if we have the required credentials
+    const hasCredentials = !!(
+        process.env.FIREBASE_PROJECT_ID &&
+        process.env.FIREBASE_CLIENT_EMAIL &&
+        process.env.FIREBASE_PRIVATE_KEY
+    );
 
     if (!getApps().length) {
         try {
-            if (!isBuild) {
+            if (hasCredentials) {
                 initializeApp({
                     credential: cert({
                         projectId: process.env.FIREBASE_PROJECT_ID || '',
@@ -53,7 +58,8 @@ function initializeFirebaseAdmin(): void {
                     }),
                 });
             } else {
-                // For build time, use a minimal configuration
+                // For build time or when credentials aren't available, use a minimal configuration
+                console.warn('Firebase Admin SDK credentials not found. API authentication will not work.');
                 initializeApp({
                     projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'mock-project-id',
                 });
@@ -84,13 +90,19 @@ export async function verifyAuthentication(request: NextRequest): Promise<AuthRe
         // Initialize Firebase Admin if needed
         initializeFirebaseAdmin();
 
-        // Check if we're in build mode
-        const isBuild = process.env.NODE_ENV !== 'production' || !process.env.FIREBASE_PRIVATE_KEY;
-        if (isBuild) {
-            // During build, return a mock success for type checking
+        // Check if we have required Firebase Admin credentials
+        const hasCredentials = !!(
+            process.env.FIREBASE_PROJECT_ID &&
+            process.env.FIREBASE_CLIENT_EMAIL &&
+            process.env.FIREBASE_PRIVATE_KEY
+        );
+
+        if (!hasCredentials) {
+            // If credentials are missing, authentication cannot proceed
+            console.error('Firebase Admin credentials not configured');
             return {
                 success: false,
-                error: 'Build mode - authentication disabled',
+                error: 'Server authentication is not configured. Please contact administrator.',
                 statusCode: 503
             };
         }
