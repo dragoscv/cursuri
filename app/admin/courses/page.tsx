@@ -77,7 +77,7 @@ export default function CoursesPage() {
                     <Button
                         variant="bordered"
                         onClick={() => closeModal('delete-course')}
-                        disabled={deletingCourse === course.id}
+                        isDisabled={deletingCourse === course.id}
                         className="bg-[color:var(--ai-card-bg)]/80 border border-[color:var(--ai-card-border)]/50 text-[color:var(--ai-foreground)] rounded-full hover:bg-[color:var(--ai-card-border)]/20 transition-colors"
                     >
                         Cancel
@@ -85,8 +85,8 @@ export default function CoursesPage() {
                     <Button
                         variant="primary"
                         onClick={() => handleDeleteCourse(course.id!, course.name)}
-                        disabled={deletingCourse === course.id}
-                        className="bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-full shadow-sm hover:shadow-md hover:shadow-red-500/20 transition-all disabled:opacity-50"
+                        isDisabled={deletingCourse === course.id}
+                        className="bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-full shadow-sm hover:shadow-md hover:shadow-red-500/20 transition-all"
                     >
                         {deletingCourse === course.id ? 'Deleting...' : 'Delete'}
                     </Button>
