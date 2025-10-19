@@ -22,6 +22,7 @@ export interface AuthenticatedUser {
     emailVerified: boolean;
     role: UserRole;
     permissions?: Record<string, boolean>;
+    displayName?: string;
 }
 
 /**
@@ -137,7 +138,8 @@ export async function verifyAuthentication(request: NextRequest): Promise<AuthRe
                 email: decodedToken.email,
                 emailVerified: decodedToken.email_verified || false,
                 role: role,
-                permissions: permissions
+                permissions: permissions,
+                displayName: decodedToken.name
             }
         };
 
