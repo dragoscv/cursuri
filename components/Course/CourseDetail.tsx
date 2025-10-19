@@ -82,6 +82,8 @@ export default function CourseDetail({ courseId }: { courseId: string }) {
     (product) => product.metadata?.courseId === courseId
   );
 
+  // Separate access logic: admins can VIEW content but shouldn't show as "enrolled"
+  // Only show enrollment UI if actually purchased
   const hasAccess = isPurchased || isAdmin;  // Add structured data
   useEffect(() => {
     if (!course) {
@@ -145,6 +147,7 @@ export default function CourseDetail({ courseId }: { courseId: string }) {
       courseLessons={courseLessons}
       hasAccess={hasAccess}
       isAdmin={isAdmin}
+      isPurchased={isPurchased}
     />
   );
 }

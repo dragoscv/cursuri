@@ -2,13 +2,13 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { AppContext } from './AppContext';
+import { AppContext } from '../AppContext';
 import { AppContextProps } from '@/types';
-import GithubIcon from './icons/GithubIcon';
-import TikTokIcon from './icons/TikTokIcon';
-import WebsiteIcon from './icons/WebsiteIcon';
-import packageInfo from '../package.json';
-import Button from './ui/Button';
+import GithubIcon from '../icons/GithubIcon';
+import TikTokIcon from '../icons/TikTokIcon';
+import WebsiteIcon from '../icons/WebsiteIcon';
+import packageInfo from '../../package.json';
+import Button from '../ui/Button';
 
 const Footer = () => {
     const context = React.useContext(AppContext) as AppContextProps;

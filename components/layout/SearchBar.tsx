@@ -4,9 +4,9 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Input, Button } from '@heroui/react'  // Updated to use HeroUI
 import { useRouter, usePathname } from 'next/navigation'
 import { useContext } from 'react'
-import { AppContext } from './AppContext'
-import SearchIcon from './icons/SearchIcon'
-import CloseIcon from './icons/CloseIcon'
+import { AppContext } from '../AppContext'
+import SearchIcon from '../icons/SearchIcon'
+import CloseIcon from '../icons/CloseIcon'
 
 export default function SearchBar() {
     const [isSearchOpen, setIsSearchOpen] = useState(false)

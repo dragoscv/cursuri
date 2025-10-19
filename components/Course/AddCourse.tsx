@@ -36,6 +36,9 @@ export default function AddCourse(props: AddCourseProps) {
     const [coursePrice, setCoursePrice] = useState("");
     const [repoUrl, setRepoUrl] = useState("");
     const [loading, setLoading] = useState(false);
+    const [customPriceAmount, setCustomPriceAmount] = useState("");
+    const [customPriceCurrency, setCustomPriceCurrency] = useState("ron");
+    const [creatingPrice, setCreatingPrice] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [courseImage, setCourseImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -273,6 +276,47 @@ export default function AddCourse(props: AddCourseProps) {
     // Handle removing requirement
     const handleRemoveRequirement = (requirement: string) => {
         setCourseRequirements(courseRequirements.filter(r => r !== requirement));
+    };
+
+    const handleCreateCustomPrice = async () => {
+        if (!customPriceAmount || !courseName) {
+            alert("Please enter a price amount and course name");
+            return;
+        }
+
+        setCreatingPrice(true);
+        try {
+            const response = await fetch('/api/stripe/create-price', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    productName: courseName,
+                    productDescription: courseDescription || courseName,
+                    amount: Math.round(parseFloat(customPriceAmount) * 100), // Convert to cents
+                    currency: customPriceCurrency,
+                    metadata: {
+                        app: 'cursuri'
+                    }
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to create price');
+            }
+
+            const data = await response.json();
+            setCoursePrice(data.priceId);
+            setCustomPriceAmount("");
+            alert(`Price created successfully! ${data.amount / 100} ${data.currency.toUpperCase()}`);
+
+            // Reload products to get the new price
+            window.location.reload();
+        } catch (error) {
+            console.error('Error creating price:', error);
+            alert('Failed to create price. Please try again.');
+        } finally {
+            setCreatingPrice(false);
+        }
     };
 
     return (
@@ -544,6 +588,63 @@ export default function AddCourse(props: AddCourseProps) {
                                     ))
                                 ))}
                         </Select>
+
+                        <div className="border border-[color:var(--ai-card-border)]/50 rounded-xl p-4 mt-4 bg-[color:var(--ai-card-bg)]/20">
+                            <h3 className="text-sm font-medium text-[color:var(--ai-foreground)] mb-3 flex items-center gap-2">
+                                <FiDollarSign className="text-[color:var(--ai-primary)]" />
+                                Create New Price
+                            </h3>
+                            <p className="text-xs text-[color:var(--ai-muted)] mb-4">
+                                Don't see the price you want? Create a new one for this course.
+                            </p>
+                            <div className="grid grid-cols-2 gap-3 mb-3">
+                                <Input
+                                    label="Price Amount"
+                                    variant="bordered"
+                                    placeholder="100.00"
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    value={customPriceAmount}
+                                    onChange={(e: InputChangeEvent) => setCustomPriceAmount(e.target.value)}
+                                    className="bg-[color:var(--ai-card-bg)]/40"
+                                    classNames={{
+                                        label: "text-[color:var(--ai-foreground)] text-sm font-medium"
+                                    }}
+                                    startContent={<FiDollarSign className="text-[color:var(--ai-muted)]" />}
+                                />
+                                <Select
+                                    label="Currency"
+                                    variant="bordered"
+                                    value={customPriceCurrency}
+                                    onChange={(e: SelectChangeEvent) => setCustomPriceCurrency(e.target.value)}
+                                    className="bg-[color:var(--ai-card-bg)]/40 relative z-10"
+                                    classNames={{
+                                        label: "text-[color:var(--ai-foreground)] text-sm font-medium",
+                                        listboxWrapper: "z-[9999]"
+                                    }}
+                                >
+                                    <SelectItem itemKey="ron" value="ron">RON (Romanian Leu)</SelectItem>
+                                    <SelectItem itemKey="usd" value="usd">USD (US Dollar)</SelectItem>
+                                    <SelectItem itemKey="eur" value="eur">EUR (Euro)</SelectItem>
+                                </Select>
+                            </div>
+                            <Button
+                                color="secondary"
+                                variant="flat"
+                                onPress={handleCreateCustomPrice}
+                                isLoading={creatingPrice}
+                                isDisabled={!customPriceAmount || !courseName}
+                                className="w-full"
+                                size="sm"
+                            >
+                                {creatingPrice ? 'Creating Price...' : 'Create Price in Stripe'}
+                            </Button>
+                            {!courseName && (
+                                <p className="text-xs text-warning mt-2">Please enter a course name first</p>
+                            )}
+                        </div>
+
                         <div className="flex items-center mt-4">
                             <Switch
                                 size="sm"

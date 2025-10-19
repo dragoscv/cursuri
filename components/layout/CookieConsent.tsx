@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useContext } from 'react';
-import { AppContext } from './AppContext';
+import { AppContext } from '../AppContext';
 import { Button, Progress } from '@heroui/react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';

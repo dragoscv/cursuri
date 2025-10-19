@@ -176,6 +176,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
     } = props; const [isOpen, setIsOpen] = useState(false);
     const [selectedValue, setSelectedValue] = useState<string>('');
     const [selectedLabel, setSelectedLabel] = useState<React.ReactNode>(''); const [dropdownPlacement, setDropdownPlacement] = useState<'bottom' | 'top'>('bottom');
+    const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
     const selectRef = useRef<HTMLDivElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -187,6 +188,13 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
             const windowHeight = window.innerHeight;
             const spaceBelow = windowHeight - rect.bottom;
             const spaceAbove = rect.top;
+
+            // Update position for portal rendering
+            setDropdownPosition({
+                top: rect.bottom + window.scrollY,
+                left: rect.left + window.scrollX,
+                width: rect.width
+            });
 
             // If there's not enough space below and more space above, place dropdown above
             if (spaceBelow < 100 && spaceAbove > spaceBelow) {
@@ -202,19 +210,26 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
         if (isOpen) {
             updateDropdownPlacement();
             window.addEventListener('resize', updateDropdownPlacement);
+            window.addEventListener('scroll', updateDropdownPlacement, true);
         }
 
         return () => {
             window.removeEventListener('resize', updateDropdownPlacement);
+            window.removeEventListener('scroll', updateDropdownPlacement, true);
         };
-    }, [isOpen]);// Close dropdown when clicking outside
+    }, [isOpen]);
+
+    // Close dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             // Only run when dropdown is open
             if (!isOpen) return;
 
-            // Close if the click is outside the select component
-            if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
+            const target = event.target as Node;
+
+            // Close if the click is outside both the select component and the dropdown
+            if (selectRef.current && !selectRef.current.contains(target) &&
+                dropdownRef.current && !dropdownRef.current.contains(target)) {
                 setIsOpen(false);
             }
         };
@@ -323,7 +338,9 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
         }
     };
 
-    const sizeStyles = getSizeStyles(); const handleSelect = (itemKey: string, itemValue: string, itemLabel: React.ReactNode, keepOpen: boolean = false) => {
+    const sizeStyles = getSizeStyles();
+
+    const handleSelect = (itemKey: string, itemValue: string, itemLabel: React.ReactNode, keepOpen: boolean = false) => {
         // Immediately update local state for UI responsiveness
         setSelectedValue(itemValue);
         setSelectedLabel(itemLabel);
@@ -398,8 +415,12 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
 
             selectItems.push(itemProps);
         }
-    });    // State to track keyboard navigation
-    const [focusedIndex, setFocusedIndex] = useState<number>(-1);    // Handle keyboard navigation with improved scrolling
+    });
+
+    // State to track keyboard navigation
+    const [focusedIndex, setFocusedIndex] = useState<number>(-1);
+
+    // Handle keyboard navigation with improved scrolling
     useEffect(() => {
         if (!isOpen) return;
 
@@ -511,7 +532,9 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
         return () => {
             window.removeEventListener('keydown', handleKeyDown, { capture: true });
         };
-    }, [isOpen, focusedIndex, selectItems]);    // Reset focused index when dropdown opens/closes
+    }, [isOpen, focusedIndex, selectItems]);
+
+    // Reset focused index when dropdown opens/closes
     useEffect(() => {
         if (isOpen) {
             // Set focus to selected item if available
@@ -522,24 +545,38 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
         } else {
             setFocusedIndex(-1);
         }
-    }, [isOpen, selectedKeys, selectedValue, selectItems]);    // Keep track of previous focused index without auto-selecting on hover
-    const prevFocusedIndexRef = useRef<number>(-1);    // Add a ref to track keyboard navigation vs mouse hover
+    }, [isOpen, selectedKeys, selectedValue, selectItems]);
+
+    // Keep track of previous focused index without auto-selecting on hover
+    const prevFocusedIndexRef = useRef<number>(-1);
+
+    // Add a ref to track keyboard navigation vs mouse hover
     const isKeyboardNavigationRef = useRef<boolean>(false);
 
     // Add a handler for keyboard arrow key navigation
     const handleKeyboardNavigation = (key: 'ArrowUp' | 'ArrowDown') => {
         isKeyboardNavigationRef.current = true;
-    };// Create dropdown component within the component itself
+    };
+
+    // Create dropdown component with portal for proper z-index stacking
     const renderDropdown = () => {
         if (!isOpen) return null;
 
-        return (
+        const dropdownContent = (
             <div
                 id="select-dropdown"
                 ref={dropdownRef}
+                style={{
+                    position: 'absolute',
+                    top: dropdownPlacement === 'top'
+                        ? `${dropdownPosition.top - (dropdownRef.current?.offsetHeight || 0) - 4}px`
+                        : `${dropdownPosition.top + 4}px`,
+                    left: `${dropdownPosition.left}px`,
+                    width: `${dropdownPosition.width}px`,
+                    zIndex: 99999,
+                }}
                 className={`
-                    absolute w-full z-[99999]
-                    ${dropdownPlacement === 'top' ? 'bottom-full mb-0.5 origin-bottom' : 'top-full mt-0.5 origin-top'}
+                    ${dropdownPlacement === 'top' ? 'origin-bottom' : 'origin-top'}
                     overflow-auto bg-[color:var(--ai-card-bg)] 
                     border border-[color:var(--ai-card-border)] rounded-lg shadow-xl 
                     animate-in fade-in-0 zoom-in-95 max-h-60
@@ -559,7 +596,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
                             const isFocused = index === focusedIndex;
 
                             return (
-                                 
+
                                 <li
                                     key={item.itemKey}
                                     data-index={index}
@@ -623,6 +660,13 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
                 </ul>
             </div>
         );
+
+        // Use portal to render dropdown at document root for proper z-index stacking
+        if (typeof window !== 'undefined') {
+            return createPortal(dropdownContent, document.body);
+        }
+
+        return null;
     };
 
     return (
@@ -633,10 +677,12 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
                     {label}
                     {isRequired && <span className="ml-1 text-[color:var(--ai-danger)]">*</span>}
                 </label>
-            )}            <div
+            )}
+            <div
                 ref={selectRef}
                 className="relative w-full"
-            >                {/* Hidden native select for form submission */}
+            >
+                {/* Hidden native select for form submission */}
                 <select
                     ref={selectInputRef as React.RefObject<HTMLSelectElement>}
                     className="sr-only"

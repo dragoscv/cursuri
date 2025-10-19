@@ -1,7 +1,7 @@
 'use client';
 
 import { useContext } from 'react';
-import { AppContext } from './AppContext';
+import { AppContext } from '../AppContext';
 import { CacheStatus as CacheStatusType } from '@/types';
 import { Button, Badge, Card, CardBody, CardFooter, CardHeader, Divider } from '@heroui/react';
 

@@ -11,6 +11,7 @@ interface CourseDetailProps {
     courseLessons: any[];
     hasAccess: boolean;
     isAdmin: boolean;
+    isPurchased?: boolean; // Add isPurchased prop
 }
 
 export default function CourseDetailView({
@@ -18,7 +19,8 @@ export default function CourseDetailView({
     courseId,
     courseLessons,
     hasAccess,
-    isAdmin
+    isAdmin,
+    isPurchased = false
 }: CourseDetailProps) {
     const [courseWithStats, setCourseWithStats] = useState(course);
     const context = useContext(AppContext);
@@ -116,7 +118,7 @@ export default function CourseDetailView({
                 >
                     <CourseEnrollment
                         course={courseWithStats}
-                        isPurchased={hasAccess || isAdmin}
+                        isPurchased={isPurchased}
                     />
                 </motion.div>
             </div>

@@ -18,6 +18,7 @@ export const stripePayments = (firebaseApp: FirebaseApp): StripePayments => getS
 export const newCheckoutSession = async (priceId: string, promoCode?: string) => {
     const payments = stripePayments(firebaseApp);
     const paymentConfig: any = {
+        mode: "payment", // One-time payment mode
         price: priceId,
         allow_promotion_codes: true,
         success_url: `${window.location.href}?paymentStatus=success`,

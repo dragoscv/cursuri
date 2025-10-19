@@ -29,7 +29,7 @@ An interactive online course platform built with Next.js, TypeScript, Firebase, 
 - **Styling**: TailwindCSS 4.1.2, NextUI
 - **UI Components**: @heroui/react, framer-motion
 - **Authentication & Database**: Firebase (Authentication, Firestore, Storage)
-- **Payment Processing**: Stripe via @invertase/firestore-stripe-payments
+- **Payment Processing**: Stripe via firewand (local package)
 - **Speech Services**: Azure Speech Service for transcription and caption generation
 - **Deployment**: Vercel (recommended)
 

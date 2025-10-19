@@ -69,8 +69,8 @@ export default function ModalComponent({ isOpen, onClose, hideCloseIcon, hideClo
     // Default class names
     const defaultClassNames = {
         backdrop: "z-50 backdrop-blur-md backdrop-saturate-150 bg-white/70 dark:bg-[color:var(--ai-background)]/60 w-screen min-h-[100dvh] fixed inset-0",
-        wrapper: "z-50 min-h-[100dvh] w-full flex flex-col justify-center items-center overflow-hidden",
-        base: "z-50 flex min-h-[100dvh] w-full flex-col justify-start items-end outline-none bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)]",
+        wrapper: "z-50 min-h-[100dvh] w-full flex flex-col justify-center items-center overflow-y-auto p-4",
+        base: "z-50 flex w-full max-w-full flex-col my-auto outline-none bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] rounded-lg",
         body: "z-50 flex flex-col justify-start items-center w-full",
         header: "flex flex-row justify-between items-center w-full p-2 border-b border-[color:var(--ai-card-border)] text-[color:var(--ai-foreground)]",
         closeButton: "z-50 flex flex-row justify-end items-center rounded-full text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-border)]/40 dark:hover:bg-[color:var(--ai-card-border)]/20 p-2 pr-4 cursor-pointer scale-150",

@@ -6,7 +6,7 @@ import { getProducts } from 'firewand';
 import { firebaseApp, firestoreDB, firebaseAuth } from '@/utils/firebase/firebase.config';
 import { stripePayments } from '@/utils/firebase/stripe';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { doc, collection, getDocs, query, where, onSnapshot, updateDoc, setDoc, getDoc, Timestamp, Unsubscribe, getFirestore, limit, collectionGroup, deleteDoc } from 'firebase/firestore';
+import { doc, collection, getDocs, query, where, onSnapshot, updateDoc, setDoc, getDoc, Timestamp, Unsubscribe, getFirestore, limit, collectionGroup, deleteDoc, serverTimestamp } from 'firebase/firestore';
 import ModalComponent from '@/components/Modal';
 import { useModal } from './contexts/useModal';
 import OnboardingModal from './OnboardingModal';
@@ -1314,14 +1314,23 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
     // Onboarding modal logic
     const [showOnboarding, setShowOnboarding] = useState(false);
     useEffect(() => {
-        if (user && !authLoading) {
-            // Check localStorage for onboarding completion
-            const onboardingKey = `onboarding-complete-${user.uid}`;
-            const completed = localStorage.getItem(onboardingKey);
-            if (!completed) {
-                setShowOnboarding(true);
+        const checkOnboarding = async () => {
+            if (user && !authLoading) {
+                try {
+                    // Check Firestore for onboarding completion
+                    const userDocRef = doc(firestoreDB, 'users', user.uid);
+                    const userDoc = await getDoc(userDocRef);
+                    const completed = userDoc.exists() && userDoc.data()?.onboardingCompleted;
+
+                    if (!completed) {
+                        setShowOnboarding(true);
+                    }
+                } catch (error) {
+                    console.error('Error checking onboarding status:', error);
+                }
             }
-        }
+        };
+        checkOnboarding();
     }, [user, authLoading]); useEffect(() => {
         // Store the auth unsubscribe function in a variable so we can clean up
         const unsubscribe = onAuthStateChanged(firebaseAuth, async (user) => {
@@ -1797,10 +1806,21 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                     id="onboarding"
                     isOpen={true}
                     modalHeader="Welcome!"
-                    modalBody={<OnboardingModal onClose={() => {
+                    modalBody={<OnboardingModal onClose={async () => {
                         setShowOnboarding(false);
                         if (user) {
-                            localStorage.setItem(`onboarding-complete-${user.uid}`, 'true');
+                            try {
+                                // Save to Firestore
+                                const userDocRef = doc(firestoreDB, 'users', user.uid);
+                                await updateDoc(userDocRef, {
+                                    onboardingCompleted: true,
+                                    onboardingCompletedAt: serverTimestamp()
+                                });
+                                // Also save to localStorage as backup
+                                localStorage.setItem(`onboarding-complete-${user.uid}`, 'true');
+                            } catch (error) {
+                                console.error('Error saving onboarding status:', error);
+                            }
                         }
                     }} />}
                     hideCloseButton={true}

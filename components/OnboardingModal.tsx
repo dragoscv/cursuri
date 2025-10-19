@@ -7,16 +7,16 @@ interface OnboardingModalProps {
 
 const steps = [
     {
-        title: 'Welcome to Cursuri!',
-        description: 'Get started by exploring our course catalog and customizing your profile.'
+        title: 'Welcome to Cursuri Platform',
+        description: 'Your comprehensive learning journey starts here. Explore our extensive catalog of professionally curated courses designed to elevate your skills and advance your career. Customize your profile, set learning goals, and track your progress as you master new technologies and concepts.'
     },
     {
-        title: 'Track Your Progress',
-        description: 'Mark lessons as complete and see your learning journey unfold.'
+        title: 'Personalized Learning Experience',
+        description: 'Take control of your educational journey with our advanced progress tracking system. Mark lessons as complete, monitor your achievements, and receive personalized recommendations based on your learning patterns. Your dashboard provides real-time insights into your skill development and completion milestones.'
     },
     {
-        title: 'Join the Community',
-        description: 'Leave reviews, ask questions, and connect with other learners.'
+        title: 'Engage with Our Community',
+        description: 'Join thousands of learners in our vibrant community. Share your experiences through course reviews, participate in discussions, ask questions, and collaborate with peers. Our community-driven approach ensures you have the support and resources needed to succeed in your learning objectives.'
     }
 ];
 

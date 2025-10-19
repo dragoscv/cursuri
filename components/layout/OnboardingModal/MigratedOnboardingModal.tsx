@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@heroui/react';
-import { useAuth } from '../contexts/modules';
+import { useAuth } from '../../contexts/modules';
 
 const steps = [
     {

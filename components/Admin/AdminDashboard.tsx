@@ -3,7 +3,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Spinner } from '@heroui/react';
 import { AppContext } from '@/components/AppContext';
-import AdminDashboardTabs from './AdminDashboardTabs';
+import AdminAnalyticsSection from './AdminAnalyticsSection';
+import AdminLessonsSection from './AdminLessonsSection';
+import AdminRevenueSection from './AdminRevenueSection';
 
 const AdminDashboard: React.FC = () => {
     const context = useContext(AppContext);
@@ -14,11 +16,13 @@ const AdminDashboard: React.FC = () => {
     const { adminAnalytics, getAdminAnalytics } = context;
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [activeTab, setActiveTab] = useState<string>('analytics'); useEffect(() => {
+
+    useEffect(() => {
         let mounted = true;
 
         const fetchAnalytics = async () => {
             setLoading(true);
+            setError(null); // Reset error state
             try {
                 if (getAdminAnalytics && mounted) {
                     await getAdminAnalytics();
@@ -42,7 +46,8 @@ const AdminDashboard: React.FC = () => {
         }
 
         return () => { mounted = false; };
-    }, [getAdminAnalytics, adminAnalytics]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [adminAnalytics]); // Only depend on adminAnalytics, not getAdminAnalytics to prevent infinite loop
 
     if (loading) {
         return (
@@ -59,10 +64,31 @@ const AdminDashboard: React.FC = () => {
                 <p className="text-[color:var(--ai-muted-foreground)]">Please try again later</p>
             </div>
         );
-    } return (
+    }
+
+    return (
         <div className="space-y-8">
-            <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-            <AdminDashboardTabs activeTab={activeTab} onTabChange={setActiveTab} analytics={adminAnalytics ?? null} />
+            <div>
+                <h1 className="text-3xl font-bold text-[color:var(--ai-foreground)]">
+                    Admin Dashboard
+                </h1>
+                <p className="text-[color:var(--ai-muted)] mt-2">
+                    Overview of your platform analytics and performance
+                </p>
+            </div>
+
+            {/* Analytics Content - Sidebar handles navigation to other sections */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2">
+                    <AdminAnalyticsSection analytics={adminAnalytics ?? null} />
+                </div>
+                <div>
+                    <AdminLessonsSection analytics={adminAnalytics ?? null} />
+                </div>
+                <div className="lg:col-span-3 mt-6">
+                    <AdminRevenueSection analytics={adminAnalytics ?? null} />
+                </div>
+            </div>
         </div>
     );
 };

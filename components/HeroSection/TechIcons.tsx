@@ -97,4 +97,6 @@ const TechIcons = React.memo(function TechIcons({ technologies }: TechIconsProps
             })}
         </motion.div>
     );
-}
+});
+
+export default TechIcons;

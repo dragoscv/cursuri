@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react"
 import { firebaseAuth } from "@/utils/firebase/firebase.config";
 import { signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, fetchSignInMethodsForEmail } from "firebase/auth";
-import LoadingButton from "./Buttons/LoadingButton"
-import GoogleIcon from "./icons/GoogleIcon"
+import LoadingButton from "../Buttons/LoadingButton"
+import GoogleIcon from "../icons/GoogleIcon"
 import { motion } from "framer-motion";
 import { useToast } from "@/components/Toast";
 import { validatePassword } from "@/utils/security/passwordValidation";
