@@ -77,6 +77,7 @@ const createMockContext = (overrides = {}) => ({
   addToWishlist: jest.fn(),
   removeFromWishlist: jest.fn(),
   getWishlistCourses: jest.fn(),
+  refreshProducts: jest.fn(),
   clearCache: jest.fn(),
   clearAllCache: jest.fn(),
   getCacheStatus: jest.fn(),

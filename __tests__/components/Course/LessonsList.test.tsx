@@ -65,6 +65,7 @@ const createMockContext = (overrides: Partial<AppContextProps> = {}): AppContext
     closeModal: jest.fn(),
     updateModal: jest.fn(),
     products: [],
+    refreshProducts: jest.fn(),
     isAdmin: false,
     courses: {},
     courseLoadingStates: {},

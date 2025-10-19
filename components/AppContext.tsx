@@ -1413,12 +1413,15 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         return () => { /* No cleanup needed when there's no user */ };
     }, [user, getUserLessonProgress]);
 
-    useEffect(() => {
-        const payments = stripePayments(firebaseApp);
-        getProducts(payments, {
-            includePrices: true,
-            activeOnly: true,
-        }).then((products) => {
+    // Function to refresh products from Stripe
+    const refreshProducts = useCallback(async () => {
+        try {
+            const payments = stripePayments(firebaseApp);
+            const products = await getProducts(payments, {
+                includePrices: true,
+                activeOnly: true,
+            });
+
             // Filter products by app name in metadata
             const appName = process.env.NEXT_PUBLIC_APP_NAME;
             const filteredProducts = appName
@@ -1428,8 +1431,14 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                 : products;
 
             dispatch({ type: 'SET_PRODUCTS', payload: filteredProducts });
-        });
-    }, []); useEffect(() => {
+        } catch (error) {
+            console.error('Error refreshing products:', error);
+        }
+    }, []);
+
+    useEffect(() => {
+        refreshProducts();
+    }, [refreshProducts]); useEffect(() => {
         let mounted = true;
         const unsubscribes: Unsubscribe[] = [];
 
@@ -1751,6 +1760,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             closeModal,
             updateModal,
             products: state.products,
+            refreshProducts,
             courses: state.courses,
             courseLoadingStates: state.courseLoadingStates,
             lessons: state.lessons,

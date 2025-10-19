@@ -63,7 +63,7 @@ export default function AddCourse(props: AddCourseProps) {
     if (!context) {
         throw new Error("You probably forgot to put <AppProvider>.");
     }
-    const { products, courses, user } = context;
+    const { products, courses, user, refreshProducts } = context;
 
     useEffect(() => {
         // If courseId is provided, we're in edit mode
@@ -317,10 +317,11 @@ export default function AddCourse(props: AddCourseProps) {
             const data = await response.json();
             setCoursePrice(data.priceId);
             setCustomPriceAmount("");
-            alert(`Price created successfully! ${data.amount / 100} ${data.currency.toUpperCase()}`);
 
-            // Reload products to get the new price
-            window.location.reload();
+            // Refresh products to get the new price without page reload
+            await refreshProducts();
+
+            alert(`Price created successfully! ${data.amount / 100} ${data.currency.toUpperCase()}`);
         } catch (error) {
             console.error('Error creating price:', error);
             alert('Failed to create price. Please try again.');

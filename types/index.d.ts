@@ -71,6 +71,7 @@ export interface AppContextProps {
     closeModal: (id: string) => void;
     updateModal: (props: any) => void;
     products: any[];
+    refreshProducts: () => Promise<void>;
     isAdmin: boolean;
     courses: Record<string, Course>;
     courseLoadingStates: Record<string, CacheStatus>;
