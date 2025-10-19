@@ -7,18 +7,18 @@
  */
 export function sanitizeDataForLogging(data: any): any {
   if (!data) return data;
-  
+
   // Handle primitive types
   if (typeof data !== 'object') return data;
-  
+
   // Handle arrays
   if (Array.isArray(data)) {
     return data.map(sanitizeDataForLogging);
   }
-  
+
   // Handle objects
   const sanitized: Record<string, any> = {};
-  
+
   Object.entries(data).forEach(([key, value]) => {
     // Sanitize keys that might contain sensitive information
     if (isSensitiveKey(key)) {
@@ -29,7 +29,7 @@ export function sanitizeDataForLogging(data: any): any {
       sanitized[key] = value;
     }
   });
-  
+
   return sanitized;
 }
 
@@ -38,12 +38,12 @@ export function sanitizeDataForLogging(data: any): any {
  */
 function isSensitiveKey(key: string): boolean {
   const sensitiveKeys = [
-    'password', 'token', 'secret', 'key', 'apiKey', 'api_key', 
+    'password', 'token', 'secret', 'key', 'apiKey', 'api_key',
     'credential', 'auth', 'private', 'cvv', 'credit', 'card',
     'social', 'ssn', 'fiscal', 'idNumber'
   ];
-  
-  return sensitiveKeys.some(sensitiveKey => 
+
+  return sensitiveKeys.some(sensitiveKey =>
     key.toLowerCase().includes(sensitiveKey.toLowerCase())
   );
 }
@@ -53,10 +53,10 @@ function isSensitiveKey(key: string): boolean {
  */
 function maskSensitiveValue(value: any): string {
   if (value === null || value === undefined) return '[null]';
-  
+
   const stringValue = String(value);
   if (stringValue.length <= 4) return '***';
-  
+
   return `${stringValue.substring(0, 2)}***${stringValue.substring(stringValue.length - 2)}`;
 }
 
@@ -65,15 +65,25 @@ function maskSensitiveValue(value: any): string {
  * @param headers - Response headers object
  */
 export function addSecurityHeaders(headers: Headers): void {
-  // Security headers according to OWASP recommendations
-  headers.set('Content-Security-Policy', 
-    "default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebase.com;");
+  // Security headers according to OWASP recommendations with Next.js compatibility
+  // Note: Using blob: for worker-src to support Next.js web workers
+  headers.set('Content-Security-Policy',
+    "default-src 'self'; " +
+    "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://unpkg.com https://www.googletagmanager.com https://www.google-analytics.com blob:; " +
+    "script-src-elem 'self' https://unpkg.com https://www.googletagmanager.com https://www.google-analytics.com; " +
+    "worker-src 'self' blob:; " +
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+    "img-src 'self' data: https: blob:; " +
+    "font-src 'self' data: https://fonts.gstatic.com; " +
+    "connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebase.com https://www.google-analytics.com https://analytics.google.com; " +
+    "frame-src 'self' https://www.youtube.com https://player.vimeo.com;"
+  );
   headers.set('X-Content-Type-Options', 'nosniff');
   headers.set('X-Frame-Options', 'SAMEORIGIN');
   headers.set('X-XSS-Protection', '1; mode=block');
   headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-  
+
   // Prevent caching of sensitive data
   headers.set('Cache-Control', 'no-store, max-age=0');
   headers.set('Pragma', 'no-cache');
@@ -85,19 +95,19 @@ export function addSecurityHeaders(headers: Headers): void {
 export function validateApiRequest(request: Request): { isValid: boolean; error?: string } {
   const contentType = request.headers.get('Content-Type');
   const contentLength = request.headers.get('Content-Length');
-  
+
   // Validate content type for POST/PUT/PATCH requests
   if (['POST', 'PUT', 'PATCH'].includes(request.method)) {
-    if (!contentType || 
-        (!contentType.includes('application/json') && 
-         !contentType.includes('multipart/form-data') &&
-         !contentType.includes('application/x-www-form-urlencoded'))) {
-      return { 
-        isValid: false, 
-        error: `Invalid Content-Type: ${contentType || 'not provided'}` 
+    if (!contentType ||
+      (!contentType.includes('application/json') &&
+        !contentType.includes('multipart/form-data') &&
+        !contentType.includes('application/x-www-form-urlencoded'))) {
+      return {
+        isValid: false,
+        error: `Invalid Content-Type: ${contentType || 'not provided'}`
       };
     }
-    
+
     // Validate payload size to prevent DoS
     const size = parseInt(contentLength || '0', 10);
     if (size > 10 * 1024 * 1024) { // 10MB limit
@@ -107,6 +117,6 @@ export function validateApiRequest(request: Request): { isValid: boolean; error?
       };
     }
   }
-  
+
   return { isValid: true };
 }
