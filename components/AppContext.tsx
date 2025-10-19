@@ -1414,8 +1414,54 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
     }, [user, getUserLessonProgress]);
 
     // Function to refresh products from Stripe
-    const refreshProducts = useCallback(async () => {
+    const refreshProducts = useCallback(async (newProductData?: { productId: string, productName: string, priceId: string, amount: number, currency: string }) => {
         try {
+            // If new product data is provided, add it immediately to the state
+            if (newProductData) {
+                const newPrice = {
+                    id: newProductData.priceId,
+                    product: newProductData.productId,
+                    active: true,
+                    currency: newProductData.currency,
+                    unit_amount: newProductData.amount,
+                    type: 'one_time' as const,
+                    billing_scheme: 'per_unit' as const,
+                    metadata: {
+                        app: 'cursuri'
+                    }
+                };
+
+                // Find existing product or create new one
+                const existingProducts = [...state.products];
+                const existingProductIndex = existingProducts.findIndex(
+                    (p: any) => p.id === newProductData.productId || p.name === newProductData.productName
+                );
+
+                if (existingProductIndex >= 0) {
+                    // Add price to existing product
+                    if (!existingProducts[existingProductIndex].prices) {
+                        existingProducts[existingProductIndex].prices = [];
+                    }
+                    existingProducts[existingProductIndex].prices.push(newPrice);
+                } else {
+                    // Create new product with the price
+                    const newProduct = {
+                        id: newProductData.productId,
+                        name: newProductData.productName,
+                        active: true,
+                        metadata: {
+                            app: 'cursuri'
+                        },
+                        prices: [newPrice]
+                    };
+                    existingProducts.push(newProduct);
+                }
+
+                dispatch({ type: 'SET_PRODUCTS', payload: existingProducts });
+                return; // Don't fetch from Firestore if we just added it manually
+            }
+
+            // Otherwise, fetch from Firestore
             const payments = stripePayments(firebaseApp);
             const products = await getProducts(payments, {
                 includePrices: true,
@@ -1434,7 +1480,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         } catch (error) {
             console.error('Error refreshing products:', error);
         }
-    }, []);
+    }, [state.products]);
 
     useEffect(() => {
         refreshProducts();

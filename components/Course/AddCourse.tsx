@@ -2,6 +2,7 @@
 
 import { useState, useContext, useEffect, useCallback } from "react";
 import { AppContext } from "@/components/AppContext";
+import { useToast } from "@/components/Toast/ToastContext";
 import { firestoreDB, firebaseStorage } from "@/utils/firebase/firebase.config";
 import { doc, addDoc, collection, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -64,6 +65,7 @@ export default function AddCourse(props: AddCourseProps) {
         throw new Error("You probably forgot to put <AppProvider>.");
     }
     const { products, courses, user, refreshProducts } = context;
+    const { showToast } = useToast();
 
     useEffect(() => {
         // If courseId is provided, we're in edit mode
@@ -280,7 +282,12 @@ export default function AddCourse(props: AddCourseProps) {
 
     const handleCreateCustomPrice = async () => {
         if (!customPriceAmount || !courseName) {
-            alert("Please enter a price amount and course name");
+            showToast({
+                type: 'warning',
+                title: 'Missing Information',
+                message: 'Please enter a price amount and course name',
+                duration: 4000
+            });
             return;
         }
 
@@ -315,16 +322,33 @@ export default function AddCourse(props: AddCourseProps) {
             }
 
             const data = await response.json();
+
+            // Update products immediately with the new price (avoids waiting for webhook sync)
+            await refreshProducts({
+                productId: data.productId,
+                productName: data.productName,
+                priceId: data.priceId,
+                amount: data.amount,
+                currency: data.currency
+            });
+
             setCoursePrice(data.priceId);
             setCustomPriceAmount("");
 
-            // Refresh products to get the new price without page reload
-            await refreshProducts();
-
-            alert(`Price created successfully! ${data.amount / 100} ${data.currency.toUpperCase()}`);
+            showToast({
+                type: 'success',
+                title: 'Price Created!',
+                message: `Successfully created price: ${data.amount / 100} ${data.currency.toUpperCase()}`,
+                duration: 5000
+            });
         } catch (error) {
             console.error('Error creating price:', error);
-            alert('Failed to create price. Please try again.');
+            showToast({
+                type: 'error',
+                title: 'Failed to Create Price',
+                message: error instanceof Error ? error.message : 'Failed to create price. Please try again.',
+                duration: 6000
+            });
         } finally {
             setCreatingPrice(false);
         }
