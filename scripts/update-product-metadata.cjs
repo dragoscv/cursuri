@@ -1,6 +1,8 @@
 // Update Stripe products with app metadata
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 require('dotenv').config({ path: '.env.local' });
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: '2025-09-30.clover',
+});
 
 const products = [
   { id: 'prod_TEtmaMCdwwMjKn', courseId: 'eVpevoMNR2H46wliWRwH' },

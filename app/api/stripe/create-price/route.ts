@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin, checkRateLimit } from '@/utils/api/auth';
+import Stripe from 'stripe';
 
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    apiVersion: '2025-09-30.clover',
+});
 
 /**
  * Create Stripe Price - ADMIN ONLY
