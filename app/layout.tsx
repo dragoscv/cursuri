@@ -22,8 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="has-[section[role='dialog'][data-open='true']]:overflow-hidden transition-all ease-in-out duration-500">
       <head>
-        <script src="https://unpkg.com/react-scan/dist/auto.global.js" async />
-        {/* rest of your scripts go under */}
+        {/* React Scan removed - causes CSP issues in production */}
       </head>
       <body className={`${inter.className} bg-[rgb(var(--background-start-rgb))]`}>        <Providers>
         {/* Fixed header at the top */}

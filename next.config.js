@@ -22,6 +22,30 @@ const nextConfig = {
         ],
         minimumCacheTTL: 60,
     },
+    // Add headers for proper CSP configuration
+    async headers() {
+        return [
+            {
+                source: '/(.*)',
+                headers: [
+                    {
+                        key: 'Content-Security-Policy',
+                        value: [
+                            "default-src 'self'",
+                            "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://unpkg.com",
+                            "script-src-elem 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://unpkg.com",
+                            "worker-src 'self' blob:",
+                            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+                            "img-src 'self' data: https: blob:",
+                            "font-src 'self' data: https://fonts.gstatic.com",
+                            "connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebase.com https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://*.analytics.google.com wss://*.firebaseio.com",
+                            "frame-src 'self' https://www.youtube.com https://player.vimeo.com",
+                        ].join('; '),
+                    },
+                ],
+            },
+        ];
+    },
 }
 
 export default nextConfig;
