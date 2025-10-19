@@ -63,7 +63,7 @@ export default function AddCourse(props: AddCourseProps) {
     if (!context) {
         throw new Error("You probably forgot to put <AppProvider>.");
     }
-    const { products, courses } = context;
+    const { products, courses, user } = context;
 
     useEffect(() => {
         // If courseId is provided, we're in edit mode
@@ -286,9 +286,18 @@ export default function AddCourse(props: AddCourseProps) {
 
         setCreatingPrice(true);
         try {
+            // Get Firebase ID token for authentication
+            const idToken = await user?.getIdToken();
+            if (!idToken) {
+                throw new Error('You must be logged in to create prices');
+            }
+
             const response = await fetch('/api/stripe/create-price', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
+                },
                 body: JSON.stringify({
                     productName: courseName,
                     productDescription: courseDescription || courseName,
@@ -301,7 +310,8 @@ export default function AddCourse(props: AddCourseProps) {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to create price');
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to create price');
             }
 
             const data = await response.json();
