@@ -2,16 +2,48 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { firebaseApp } from '@/utils/firebase/firebase.config';
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
+import { requireAuth, canAccessResource, checkRateLimit } from '@/utils/api/auth';
 
 // Initialize Firebase
 const db = getFirestore(firebaseApp);
 
+/**
+ * Generate Invoice PDF
+ * 
+ * Security:
+ * - Requires user authentication
+ * - Users can only generate invoices for their own payments
+ * - Admins can generate invoices for any user
+ * - Rate limited to 10 invoices per minute per user
+ */
 export async function POST(request: NextRequest) {
     try {
+        // Require authentication
+        const authResult = await requireAuth(request);
+        if (authResult instanceof NextResponse) return authResult;
+        
+        const authenticatedUser = authResult.user!;
+        
         const { paymentId, userId } = await request.json();
 
         if (!paymentId || !userId) {
             return NextResponse.json({ error: 'Missing payment ID or user ID' }, { status: 400 });
+        }
+        
+        // Verify user can access this resource (owner or admin)
+        if (!canAccessResource(authenticatedUser, userId)) {
+            return NextResponse.json(
+                { error: 'Forbidden. You can only generate invoices for your own payments.' },
+                { status: 403 }
+            );
+        }
+        
+        // Rate limiting: 10 invoices per minute per user
+        if (!checkRateLimit(`invoice:${authenticatedUser.uid}`, 10, 60000)) {
+            return NextResponse.json(
+                { error: 'Rate limit exceeded. Please try again later.' },
+                { status: 429 }
+            );
         }
 
         // Get payment details from Firebase

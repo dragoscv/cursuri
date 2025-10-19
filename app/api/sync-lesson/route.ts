@@ -1,12 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getLessonById, getCourseLessons } from '@/utils/firebase/server';
+import { checkRateLimit } from '@/utils/api/auth';
 
 /**
  * API endpoint to sync lesson data
  * This helps resolve issues when directly accessing lesson URLs
+ * 
+ * Security:
+ * - Public endpoint (no auth required for lesson existence check)
+ * - Rate limited to 60 requests per minute per IP
+ * - Does not return sensitive lesson content
  */
 export async function GET(request: NextRequest) {
     try {
+        // Rate limiting by IP address for public endpoint
+        const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
+        if (!checkRateLimit(`sync-lesson:${ip}`, 60, 60000)) {
+            return NextResponse.json(
+                { error: 'Rate limit exceeded. Please try again later.' },
+                { status: 429 }
+            );
+        }
+        
         const searchParams = request.nextUrl.searchParams;
         const courseId = searchParams.get('courseId');
         const lessonId = searchParams.get('lessonId');

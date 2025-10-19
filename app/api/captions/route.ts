@@ -174,6 +174,23 @@ export async function POST(req: Request) {
                 transcription: "Mock transcription content"
             });
         }
+        
+        // Import auth utilities dynamically to avoid build issues
+        const { requireAdmin, checkRateLimit } = await import('@/utils/api/auth');
+        
+        // Require admin authentication (only admins can generate captions)
+        const authResult = await requireAdmin(req as NextRequest);
+        if (authResult instanceof NextResponse) return authResult;
+        
+        const user = authResult.user!;
+        
+        // Rate limiting: 5 caption generations per minute per admin
+        if (!checkRateLimit(`captions:${user.uid}`, 5, 60000)) {
+            return NextResponse.json(
+                { error: 'Rate limit exceeded. Please try again later.' },
+                { status: 429 }
+            );
+        }
 
         // Parse incoming request
         const body = await req.json();

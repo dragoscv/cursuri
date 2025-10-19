@@ -1,33 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
-import { getApps, initializeApp, cert } from 'firebase-admin/app';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { requireAuth, checkRateLimit } from '@/utils/api/auth';
 
-// Initialize Firebase Admin SDK if not already initialized
-// Skip during build time or when credentials aren't available
-const isBuild = process.env.NODE_ENV !== 'production' || !process.env.FIREBASE_PRIVATE_KEY;
-if (!getApps().length) {
-  try {
-    if (!isBuild) {
-      initializeApp({
-        credential: cert({
-          projectId: process.env.FIREBASE_PROJECT_ID || '',
-          clientEmail: process.env.FIREBASE_CLIENT_EMAIL || '',
-          privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n') || '',
-        }),
-      });
-    } else {
-      // For build time, use a minimal configuration
-      initializeApp({
-        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'mock-project-id',
-      });
-    }
-  } catch (error) {
-    console.error("Failed to initialize Firebase Admin in certificate route:", error);
-  }
-}
-
+/**
+ * Generate Course Completion Certificate
+ * 
+ * Security:
+ * - Requires user authentication
+ * - Verifies course completion before generating certificate
+ * - Rate limited to 5 certificates per minute per user
+ * - User can only generate certificates for courses they completed
+ */
 export async function POST(req: NextRequest) {
   try {
     // Check if we're in build mode
@@ -42,21 +26,69 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Require authentication
+    const authResult = await requireAuth(req);
+    if (authResult instanceof NextResponse) return authResult;
+    
+    const user = authResult.user!;
+    const userId = user.uid;
+    
+    // Rate limiting: 5 certificates per minute per user
+    if (!checkRateLimit(`certificate:${userId}`, 5, 60000)) {
+      return NextResponse.json(
+        { error: 'Rate limit exceeded. Please try again later.' },
+        { status: 429 }
+      );
+    }
+
     const { courseId } = await req.json();
-    const authHeader = req.headers.get('authorization');
-    if (!authHeader) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    const idToken = authHeader.replace('Bearer ', '');
-    const decoded = await getAuth().verifyIdToken(idToken);
-    const userId = decoded.uid;
+    
+    if (!courseId) {
+      return NextResponse.json(
+        { error: 'Course ID is required' },
+        { status: 400 }
+      );
+    }
 
     // Fetch user and course info
     const db = getFirestore();
     const userDoc = await db.collection('users').doc(userId).get();
     const courseDoc = await db.collection('courses').doc(courseId).get();
+    
     if (!userDoc.exists || !courseDoc.exists) {
       return NextResponse.json({ error: 'User or course not found' }, { status: 404 });
     }
-    const user = userDoc.data();
+    
+    // Verify course completion before generating certificate
+    const progressDoc = await db
+      .collection('users')
+      .doc(userId)
+      .collection('progress')
+      .doc(courseId)
+      .get();
+    
+    if (!progressDoc.exists) {
+      return NextResponse.json(
+        { error: 'Course not enrolled or completed' },
+        { status: 403 }
+      );
+    }
+    
+    const progressData = progressDoc.data();
+    const completionPercentage = progressData?.completionPercentage || 0;
+    
+    // Require at least 90% completion to generate certificate
+    if (completionPercentage < 90) {
+      return NextResponse.json(
+        { 
+          error: 'Course not completed. Minimum 90% completion required for certificate.',
+          currentProgress: completionPercentage
+        },
+        { status: 403 }
+      );
+    }
+    
+    const userData = userDoc.data();
     const course = courseDoc.data();
 
     // Generate a more professional certificate

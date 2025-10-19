@@ -1,9 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAdmin, checkRateLimit } from '@/utils/api/auth';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
+/**
+ * Create Stripe Price - ADMIN ONLY
+ * 
+ * Security:
+ * - Requires admin authentication
+ * - Rate limited to 20 requests per minute per admin
+ * - Validates all input parameters
+ */
 export async function POST(request: NextRequest) {
     try {
+        // Require admin authentication
+        const authResult = await requireAdmin(request);
+        if (authResult instanceof NextResponse) return authResult;
+        
+        const user = authResult.user!;
+        
+        // Rate limiting: 20 requests per minute for admin operations
+        if (!checkRateLimit(`stripe-create-price:${user.uid}`, 20, 60000)) {
+            return NextResponse.json(
+                { error: 'Rate limit exceeded. Please try again later.' },
+                { status: 429 }
+            );
+        }
+        
         const { productName, productDescription, amount, currency, metadata } = await request.json();
 
         // Validate required fields
@@ -77,7 +100,8 @@ export async function POST(request: NextRequest) {
             priceId: price.id,
             amount: price.unit_amount,
             currency: price.currency,
-            message: 'Price created successfully'
+            message: 'Price created successfully',
+            createdBy: user.uid
         });
 
     } catch (error: any) {
