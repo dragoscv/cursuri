@@ -3,43 +3,53 @@ import { validateApiRequest, addSecurityHeaders } from '@/utils/security/apiSecu
 import { validateEnvironmentVariables } from '@/utils/security/envValidation';
 
 /**
- * Security middleware to protect API routes
- * Applies validation and security headers to all API requests
+ * Security middleware to protect API routes and apply CSP headers
+ * Applies validation and security headers to all requests
  */
 export async function middleware(request: NextRequest) {
-  // Skip middleware in development for non-API routes to improve DX
-  if (process.env.NODE_ENV === 'development' && !request.nextUrl.pathname.startsWith('/api')) {
-    return NextResponse.next();
-  }
-
   // Initialize response
   const response = NextResponse.next();
-  
-  // Apply security headers to all responses
+
+  // Apply comprehensive Content Security Policy
+  const cspHeader = [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://unpkg.com",
+    "script-src-elem 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://unpkg.com",
+    "worker-src 'self' blob:",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "img-src 'self' data: https: blob:",
+    "font-src 'self' data: https://fonts.gstatic.com",
+    "connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebase.com https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://*.google-analytics.com wss://*.firebaseio.com",
+    "frame-src 'self' https://www.youtube.com https://player.vimeo.com",
+  ].join('; ');
+
+  response.headers.set('Content-Security-Policy', cspHeader);
+
+  // Apply additional security headers
   addSecurityHeaders(response.headers);
-  
+
   // For API routes, perform additional validation
   if (request.nextUrl.pathname.startsWith('/api')) {
     // Check environment variables are properly configured
     if (process.env.NODE_ENV === 'production') {
       const envValidation = validateEnvironmentVariables();
-      
+
       if (!envValidation.isValid) {
-        console.error('⚠️ API accessed with invalid environment configuration:', 
+        console.error('⚠️ API accessed with invalid environment configuration:',
           envValidation.errors.join(', '));
       }
     }
-    
+
     // Validate API request format
     const validation = validateApiRequest(request);
-    
+
     if (!validation.isValid) {
       return new NextResponse(
-        JSON.stringify({ 
-          error: 'Bad Request', 
+        JSON.stringify({
+          error: 'Bad Request',
           message: validation.error || 'Invalid request format'
         }),
-        { 
+        {
           status: 400,
           headers: {
             'Content-Type': 'application/json',
@@ -47,7 +57,7 @@ export async function middleware(request: NextRequest) {
         }
       );
     }
-    
+
     // Add API-specific headers
     response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -59,12 +69,7 @@ export async function middleware(request: NextRequest) {
 // Configure the paths this middleware applies to
 export const config = {
   matcher: [
-    // API routes
-    '/api/:path*',
-    // Authentication routes
-    '/auth/:path*',
-    // Protected routes
-    '/profile/:path*',
-    '/admin/:path*',
+    // Apply to all routes for CSP headers
+    '/((?!_next/static|_next/image|favicon.ico).*)',
   ],
 };
