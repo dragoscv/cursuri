@@ -19,17 +19,21 @@ import {
   addDoc,
   collection,
   CollectionReference,
+  deleteField,
+  doc,
   DocumentData,
   DocumentReference,
   DocumentSnapshot,
   Firestore,
   FirestoreDataConverter,
   FirestoreError,
+  getDoc,
   getFirestore,
   onSnapshot,
   QueryDocumentSnapshot,
   Timestamp,
   Unsubscribe,
+  updateDoc,
 } from "firebase/firestore";
 import { StripePayments, StripePaymentsError } from "./init";
 import { getCurrentUser } from "./user";
@@ -585,9 +589,10 @@ class FirestoreSessionDAO implements SessionDAO {
 
   private async clearInvalidCustomerId(uid: string, customerId: string | null): Promise<void> {
     try {
-      const customerDoc = await this.firestore.collection(this.customersCollection).doc(uid).get();
+      const customerDocRef = doc(this.firestore, this.customersCollection, uid);
+      const customerDoc = await getDoc(customerDocRef);
 
-      if (customerDoc.exists) {
+      if (customerDoc.exists()) {
         const customerData = customerDoc.data();
         const updates: any = {};
         let needsUpdate = false;
@@ -595,7 +600,7 @@ class FirestoreSessionDAO implements SessionDAO {
         // Check and remove stripeId if it matches the invalid customer ID
         if (customerData?.stripeId) {
           if (!customerId || customerData.stripeId === customerId) {
-            updates.stripeId = this.firestore.FieldValue.delete();
+            updates.stripeId = deleteField();
             needsUpdate = true;
             console.log(`Removing invalid stripeId: ${customerData.stripeId}`);
           }
@@ -604,14 +609,14 @@ class FirestoreSessionDAO implements SessionDAO {
         // Check and remove stripeCustomerId if it matches the invalid customer ID
         if (customerData?.stripeCustomerId) {
           if (!customerId || customerData.stripeCustomerId === customerId) {
-            updates.stripeCustomerId = this.firestore.FieldValue.delete();
+            updates.stripeCustomerId = deleteField();
             needsUpdate = true;
             console.log(`Removing invalid stripeCustomerId: ${customerData.stripeCustomerId}`);
           }
         }
 
         if (needsUpdate) {
-          await customerDoc.ref.update(updates);
+          await updateDoc(customerDocRef, updates);
           console.log(`Successfully cleared invalid customer ID for user ${uid}`);
         }
       }
