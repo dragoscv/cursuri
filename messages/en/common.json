@@ -1,0 +1,308 @@
+{
+    "nav": {
+        "home": "Home",
+        "courses": "Courses",
+        "about": "About",
+        "contact": "Contact",
+        "admin": "Admin",
+        "profile": "Profile",
+        "allCourses": "All Courses",
+        "featuredCourses": "Featured Courses",
+        "testimonials": "Testimonials"
+    },
+    "buttons": {
+        "login": "Login",
+        "signup": "Sign Up",
+        "logout": "Logout",
+        "save": "Save",
+        "cancel": "Cancel",
+        "submit": "Submit",
+        "edit": "Edit",
+        "delete": "Delete",
+        "add": "Add",
+        "search": "Search",
+        "close": "Close",
+        "continue": "Continue",
+        "back": "Back",
+        "next": "Next",
+        "finish": "Finish",
+        "download": "Download",
+        "upload": "Upload",
+        "apply": "Apply",
+        "reset": "Reset",
+        "confirm": "Confirm"
+    },
+    "theme": {
+        "toggle": "Toggle Theme",
+        "light": "Light Mode",
+        "dark": "Dark Mode"
+    },
+    "footer": {
+        "about": "Quality programming courses to help you master modern web and mobile development.",
+        "quickLinks": "Quick Links",
+        "connect": "Connect",
+        "contactEmail": "Contact us at",
+        "copyright": "All rights reserved.",
+        "version": "Version"
+    },
+    "loading": "Loading...",
+    "saving": "Saving...",
+    "saved": "Saved",
+    "error": "Error",
+    "errors": {
+        "failedToGenerate": "Failed to generate",
+        "failedToDownload": "Failed to download",
+        "somethingWentWrong": "Something went wrong",
+        "lessonNotFound": "Lesson Not Found",
+        "courseNotFound": "Course not found",
+        "accessDenied": "Access Denied",
+        "loadingError": "Error Loading Lesson",
+        "lessonNotAvailable": "Lesson Not Available",
+        "noVideoAvailable": "No video available for this lesson"
+    },
+    "states": {
+        "loading": "Loading",
+        "processing": "Processing",
+        "saving": "Saving"
+    },
+    "fallbacks": {
+        "notSpecified": "Not specified",
+        "unknownDate": "Unknown date",
+        "anonymous": "Anonymous",
+        "noName": "No name",
+        "notAvailable": "Not available"
+    },
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Info",
+    "notFound": "Not Found",
+    "unauthorized": "Unauthorized",
+    "forbidden": "Forbidden",
+    "serverError": "Server Error",
+    "language": "Language",
+    "switchLanguage": "Switch Language",
+    "search": {
+        "placeholder": "Search for courses...",
+        "startTyping": "Start typing to search for courses",
+        "noResults": "No courses found for \"{query}\"",
+        "viewCourse": "View Course",
+        "keyboard": {
+            "esc": "ESC",
+            "enter": "Enter",
+            "arrows": "↑↓",
+            "toClose": "to close",
+            "toNavigate": "to navigate",
+            "toSelect": "to select"
+        }
+    },
+    "userMenu": {
+        "signedInAs": "Signed in as",
+        "profileDashboard": "Profile Dashboard",
+        "settings": "Settings",
+        "adminDashboard": "Admin Dashboard",
+        "suggestions": "Suggestions",
+        "login": "Login",
+        "logout": "Logout"
+    },
+    "emptyStates": {
+        "noCoursesAvailable": "No courses available",
+        "startCreatingCourse": "Start by creating your first course",
+        "noLessonsAvailable": "No lessons available",
+        "noPaymentRecords": "No Payment Records Found",
+        "noRecentActivity": "No recent activity yet",
+        "noOfflineContent": "No offline content yet",
+        "noOptionsAvailable": "No options available",
+        "imageNotAvailable": "Image not available",
+        "noCourseInProgress": "No course in progress"
+    },
+    "status": {
+        "free": "Free",
+        "featured": "Featured",
+        "mostPopular": "Most Popular",
+        "completed": "Completed",
+        "inProgress": "In Progress",
+        "notStarted": "Not Started",
+        "enrolled": "Enrolled",
+        "courseRating": "Course Rating"
+    },
+    "courseActions": {
+        "enroll": "Enroll",
+        "buyNow": "Buy Now",
+        "continue": "Continue",
+        "viewCourse": "View Course",
+        "startLearning": "Start Learning"
+    },
+    "views": {
+        "grid": "Grid",
+        "list": "List",
+        "view": "View"
+    },
+    "cookieConsent": {
+        "title": "Cookie Consent",
+        "autoAcceptIn": "Auto-accept in {seconds}s",
+        "message": "We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies, our",
+        "privacyPolicy": "Privacy Policy",
+        "termsConditions": "Terms and Conditions",
+        "gdprPolicy": "GDPR Policy",
+        "decline": "Decline",
+        "acceptAll": "Accept All"
+    },
+    "cacheStatus": {
+        "title": "Cache Status",
+        "clearAllCache": "Clear All Cache",
+        "cached": "Cached",
+        "loading": "Loading",
+        "error": "Error",
+        "notLoaded": "Not Loaded",
+        "refresh": "Refresh",
+        "clear": "Clear",
+        "courses": "Courses",
+        "lessons": "Lessons",
+        "reviews": "Reviews",
+        "users": "Users",
+        "analytics": "Analytics",
+        "settings": "Settings",
+        "bookmarks": "Bookmarks",
+        "wishlist": "Wishlist"
+    },
+    "errorPage": {
+        "pageNotFound": "Page Not Found",
+        "pageNotFoundMessage": "The page you are looking for doesn't exist or has been moved.",
+        "goToHomepage": "Go to Homepage",
+        "goBack": "Go Back",
+        "errorIllustration": "Error illustration"
+    },
+    "videoPlayer": {
+        "noVideoAvailable": "No video available for this lesson",
+        "playVideo": "Play video",
+        "pauseVideo": "Pause video",
+        "rewind": "Rewind 10 seconds",
+        "forward": "Forward 10 seconds",
+        "playbackSpeed": "Playback speed",
+        "normalSpeed": "1x (Normal)",
+        "toggleFullscreen": "Toggle fullscreen",
+        "play": "Play",
+        "pause": "Pause",
+        "mute": "Mute",
+        "unmute": "Unmute",
+        "volume": "Volume",
+        "settings": "Settings",
+        "quality": "Quality",
+        "captions": "Captions",
+        "enableCaptions": "Enable captions",
+        "disableCaptions": "Disable captions",
+        "lessonCompleted": "Lesson completed",
+        "markLessonComplete": "Mark lesson as complete",
+        "keyboardShortcuts": "Keyboard Shortcuts:",
+        "shortcuts": {
+            "space": "Space",
+            "playPause": "Play/Pause",
+            "arrows": "←/→",
+            "seek": "Seek ±10s",
+            "f": "F",
+            "fullscreen": "Fullscreen",
+            "m": "M",
+            "muteKey": "Mute"
+        }
+    },
+    "fileUpload": {
+        "uploadLessonFile": "Upload lesson file",
+        "uploadAdditionalFile": "Upload additional file",
+        "uploadImage": "Upload image",
+        "dragDropFiles": "Drag and drop files here",
+        "selectFile": "Select file",
+        "removeAttachment": "Remove attachment",
+        "uploadProgress": "Upload progress",
+        "downloadProgress": "Download progress"
+    },
+    "socialSharing": {
+        "shareOnFacebook": "Share on Facebook",
+        "shareOnTwitter": "Share on Twitter",
+        "shareOnLinkedIn": "Share on LinkedIn",
+        "copyLink": "Copy course link",
+        "linkCopied": "Link copied!",
+        "shareThisCourse": "Share this course"
+    },
+    "ariaLabels": {
+        "closeNotification": "Close notification",
+        "profileActions": "Profile & Actions",
+        "userActions": "User Actions",
+        "adminActions": "Admin Actions",
+        "socialLinks": "Social Links",
+        "chartOptions": "Chart options",
+        "searchInput": "Search",
+        "autoAcceptCountdown": "Auto-accept countdown",
+        "currentProgress": "Current course progress",
+        "videoWatchPercentage": "Video watch percentage"
+    },
+    "placeholders": {
+        "yourEmail": "your@email.com",
+        "yourName": "Your name",
+        "searchCourses": "Search for courses...",
+        "searchQuestions": "Search questions...",
+        "searchPayments": "Search payments",
+        "yourQuestion": "What's your question about this lesson?",
+        "questionDetails": "Provide as much detail as possible about your question... What have you tried? What exactly is confusing you?",
+        "takeNotes": "Take notes about this lesson...",
+        "writeNotes": "Write your notes here..."
+    },
+    "notifications": {
+        "success": {
+            "passwordUpdated": "Password Updated",
+            "passwordUpdatedMessage": "Password updated successfully!",
+            "profileUpdated": "Profile Updated",
+            "profileUpdatedMessage": "Profile updated successfully!",
+            "preferencesUpdated": "Preferences Updated",
+            "preferencesUpdatedMessage": "Notification preferences updated successfully!",
+            "languageUpdated": "Language Updated",
+            "languageUpdatedMessage": "Language preferences saved successfully!",
+            "courseDeleted": "Course Deleted",
+            "courseDeletedMessage": "Course has been deleted successfully",
+            "settingsSaved": "Settings Saved",
+            "settingsSavedMessage": "Your settings have been saved successfully",
+            "offlineContentRemoved": "Offline content has been removed",
+            "allOfflineContentRemoved": "All offline content has been removed",
+            "lessonCompleted": "Lesson Completed",
+            "lessonCompletedMessage": "You have completed this lesson!",
+            "priceCreated": "Price Created!",
+            "priceCreatedMessage": "Successfully created price: {amount} {currency}",
+            "redirectingToPayment": "Redirecting to payment",
+            "redirectingToPaymentMessage": "You are being redirected to Stripe to complete your purchase."
+        },
+        "error": {
+            "validationError": "Validation Error",
+            "enterCurrentPassword": "Please enter your current password.",
+            "passwordsDoNotMatch": "New passwords do not match.",
+            "updateFailed": "Update Failed",
+            "updateFailedMessage": "Failed to update. Please try again.",
+            "passwordUpdateFailed": "Failed to update password.",
+            "preferencesUpdateFailed": "Failed to update notification preferences.",
+            "genericError": "An error occurred. Please try again.",
+            "offlineLoadFailed": "Error loading offline content",
+            "offlineRemoveFailed": "Failed to remove offline content",
+            "offlineClearFailed": "Failed to clear offline content",
+            "markCompleteFailed": "Error",
+            "markCompleteFailedMessage": "Could not mark lesson as complete. Please try again.",
+            "priceCreationFailed": "Failed to Create Price",
+            "priceCreationFailedMessage": "Failed to create price. Please try again.",
+            "paymentError": "Payment Error",
+            "paymentErrorMessage": "There was a problem starting the payment process. Please try again."
+        },
+        "warning": {
+            "unsavedChanges": "Unsaved Changes",
+            "unsavedChangesMessage": "You have unsaved changes. Are you sure you want to leave?",
+            "missingInformation": "Missing Information",
+            "missingInformationMessage": "Please enter a price amount and course name"
+        },
+        "info": {
+            "processing": "Processing",
+            "pleaseWait": "Please wait..."
+        }
+    },
+    "confirmDialogs": {
+        "confirmDelete": "Confirm Delete",
+        "confirmDeleteMessage": "Are you sure you want to delete this item?",
+        "confirmAction": "Confirm Action",
+        "cannotBeUndone": "This action cannot be undone."
+    }
+}

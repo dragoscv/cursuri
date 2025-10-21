@@ -4,6 +4,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { AppContext } from "@/components/AppContext";
 import { Navbar, NavbarContent, NavbarItem } from "@heroui/react";
 import SearchBar from "@/components/SearchBar";
+import { useTranslations } from 'next-intl';
 
 // Import modular Header components
 import NavbarBrand from "@/components/Header/NavbarBrand";
@@ -13,11 +14,13 @@ import UserDropdown from "@/components/Header/UserDropdown";
 import AuthActions from "@/components/Header/AuthActions";
 import AdminActions from "@/components/Header/AdminActions";
 import ThemeToggle from "@/components/Header/ThemeToggle";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 /**
  * Main Header component for the application
  */
 export default function Header() {
+    const t = useTranslations('common');
     const context = useContext(AppContext);
     if (!context) {
         throw new Error("Missing context value");
@@ -58,11 +61,16 @@ export default function Header() {
             {/* Mobile breadcrumbs section */}
             <MobileBreadcrumbs />
 
-            {/* Right side content with search, theme toggle, auth and user actions */}
+            {/* Right side content with search, language switcher, theme toggle, auth and user actions */}
             <NavbarContent justify="end" as="div" className="flex items-center gap-4">
                 {/* Search Bar */}
                 <NavbarItem className="flex-shrink-0">
                     <SearchBar />
+                </NavbarItem>
+
+                {/* Language Switcher */}
+                <NavbarItem className="flex-shrink-0">
+                    <LanguageSwitcher />
                 </NavbarItem>
 
                 {/* Theme Toggle */}

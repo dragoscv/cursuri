@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardBody, Button } from '@heroui/react';
 import { FiCalendar, FiBook, FiChevronRight } from '@/components/icons/FeatherIcons';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 interface ActivityItem {
     type: string;
@@ -17,6 +18,7 @@ interface RecentActivityProps {
 }
 
 export default function RecentActivity({ activities }: RecentActivityProps) {
+    const t = useTranslations('profile.recentActivity');
     return (
         <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-md overflow-hidden">
             <div className="h-1 w-full bg-gradient-to-r from-[color:var(--ai-secondary)] via-[color:var(--ai-accent)] to-[color:var(--ai-primary)]"></div>
@@ -25,7 +27,7 @@ export default function RecentActivity({ activities }: RecentActivityProps) {
                     <div className="p-1.5 rounded-full bg-[color:var(--ai-secondary)]/10">
                         <FiCalendar className="text-[color:var(--ai-secondary)]" />
                     </div>
-                    Recent Activity
+                    {t('title')}
                 </h2>
 
                 {activities.length > 0 ? (
@@ -40,10 +42,10 @@ export default function RecentActivity({ activities }: RecentActivityProps) {
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-medium text-[color:var(--ai-foreground)]">
-                                        {activity.lessonName ? `Continued "${activity.lessonName}"` : `Accessed "${activity.courseName}"`}
+                                        {activity.lessonName ? `${t('continued')} "${activity.lessonName}"` : `${t('accessed')} "${activity.courseName}"`}
                                     </p>
                                     <p className="text-xs text-[color:var(--ai-muted)] truncate">
-                                        Course: {activity.courseName}
+                                        {t('courseLabel')}: {activity.courseName}
                                     </p>
                                     <p className="text-xs text-[color:var(--ai-muted)] flex items-center gap-1">
                                         <span className="inline-block h-1.5 w-1.5 rounded-full bg-[color:var(--ai-secondary)]/50"></span>
@@ -62,14 +64,14 @@ export default function RecentActivity({ activities }: RecentActivityProps) {
                         <div className="inline-flex items-center justify-center mb-3 p-3 rounded-full bg-[color:var(--ai-primary)]/10">
                             <FiBook className="h-6 w-6 text-[color:var(--ai-primary)]" />
                         </div>
-                        <p className="text-[color:var(--ai-foreground)] font-medium mb-1">No recent activity yet</p>
-                        <p className="text-[color:var(--ai-muted)] text-sm mb-4">Start exploring courses to track your learning journey</p>                        <Link href="/courses">
+                        <p className="text-[color:var(--ai-foreground)] font-medium mb-1">{t('noActivity')}</p>
+                        <p className="text-[color:var(--ai-muted)] text-sm mb-4">{t('noActivityDesc')}</p>                        <Link href="/courses">
                             <Button
                                 size="sm"
                                 color="primary"
                                 className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium rounded-lg shadow-md hover:shadow-[0_4px_12px_-4px_rgba(var(--ai-primary-rgb),0.5)] transition-all duration-300 hover:-translate-y-0.5"
                             >
-                                Browse Courses
+                                {t('browseCourses')}
                             </Button>
                         </Link>
                     </div>

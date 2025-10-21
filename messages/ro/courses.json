@@ -1,0 +1,225 @@
+{
+    "metadata": {
+        "title": "Cursuri Online | Cursuri",
+        "description": "Explorează catalogul nostru cuprinzător de cursuri online în programare, dezvoltare web, AI, data science și multe altele. Învață în ritmul tău și avansează-ți cariera.",
+        "keywords": "cursuri online, cursuri programare, dezvoltare web, cursuri AI, data science, învățare tehnologie, dezvoltare profesională, cursuri coding, învață să programezi, educație tech"
+    },
+    "title": "Cursuri",
+  "allCourses": "Toate Cursurile",
+  "myCourses": "Cursurile Mele",
+  "buyCourse": "Cumpără Cursul",
+  "enrollNow": "Înscrie-te Acum",
+  "startLearning": "Începe să Înveți",
+  "continueLearning": "Continuă Învățarea",
+  "courseDetails": "Detalii Curs",
+  "lessons": "Lecții",
+  "duration": "Durată",
+  "level": "Nivel",
+  "price": "Preț",
+  "free": "Gratuit",
+  "instructor": "Instructor",
+  "students": "Studenți",
+  "rating": "Evaluare",
+  "reviews": "Recenzii",
+  "description": "Descriere",
+  "whatYouWillLearn": "Ce Vei Învăța",
+  "requirements": "Cerințe",
+  "includes": "Acest curs include",
+  "certificate": "Certificat",
+  "lifetime": "Acces pe viață",
+  "featured": "Cursuri Recomandate",
+  "filter": {
+    "searchPlaceholder": "Caută cursuri...",
+    "allCategories": "Toate Categoriile",
+    "activeFilters": "Filtre active:",
+    "clearAll": "Șterge toate",
+    "clearSearchFilter": "Șterge filtrul de căutare",
+    "clearCategoryFilter": "Șterge filtrul de categorie"
+  },
+  "card": {
+    "enrolled": "Înscris",
+    "enrolledCount": "{count} înscriși",
+    "mostPopular": "Cel Mai Popular",
+    "advanced": "Avansat",
+    "intermediate": "Intermediar",
+    "beginner": "Începător",
+    "weeks": "{count} săptămâni"
+  },
+  "header": {
+    "badge": "Curriculum AI",
+    "title": "Cursuri AI de Ultimă Generație",
+    "subtitle": "Stăpânește tehnologiile care modelează viitorul nostru cu cursuri concepute de experți AI pentru inovatorii de mâine."
+  },
+  "loading": {
+    "loadingCourses": "Se încarcă cursurile...",
+    "failedToLoad": "Nu s-au putut încărca cursurile",
+    "errorMessage": "A apărut o problemă la încărcarea cursurilor. Te rugăm să reîmprospătezi pagina.",
+    "refreshPage": "Reîmprospătează Pagina",
+    "noCourses": "Nu sunt cursuri disponibile momentan."
+  },
+  "tabs": {
+    "content": "Conținut",
+    "overview": "Prezentare Generală",
+    "reviews": "Recenzii",
+    "resources": "Resurse",
+    "courseResources": "Resurse Curs"
+  },
+  "enrollment": {
+    "youreEnrolled": "Ești Înscris",
+    "active": "Activ",
+    "yourProgress": "Progresul Tău",
+    "percentComplete": "{percent}% finalizat",
+    "lessonsProgress": "{completed}/{total} lecții",
+    "inProgress": "În progres",
+    "continueButton": "Continuă Învățarea",
+    "whatYouHaveAccess": "La ce ai acces:",
+    "lessonsAvailable": "{count} lecții disponibile",
+    "lifetimeAccess": "Acces pe viață",
+    "limitedTimeOffer": "Ofertă pe timp limitat",
+    "certificateUponCompletion": "Certificat la finalizare",
+    "premiumSupport": "Suport premium",
+    "enrollButton": "Înscrie-te Acum",
+    "buyNow": "Cumpără Acum",
+    "startLearning": "Începe să Înveți",
+    "free": "Gratuit",
+    "loginRequired": "Autentificare Necesară",
+    "prerequisitesRequired": "Cerințe Prealabile Necesare",
+    "prerequisitesDescription": "Înainte de a te înscrie la acest curs, trebuie să finalizezi următoarele cursuri prealabile:",
+    "completePrerequisites": "Finalizează aceste cerințe prealabile pentru a debloca acest curs.",
+    "viewCourse": "Vezi Cursul",
+    "enrollFirst": "Înscrie-te Mai Întâi",
+    "thisCourseCosts": "Acest curs costă",
+    "getInstantAccess": "Obține acces instant la:",
+    "onDemandVideo": "Conținut video la cerere",
+    "downloadableResources": "Resurse descărcabile",
+    "fullLifetimeAccess": "Acces complet pe viață",
+    "accessOnMobileDesktop": "Acces pe mobil și desktop",
+    "completionCertificate": "Certificat de finalizare",
+    "moneyBackGuarantee": "Garanție de returnare a banilor de 30 de zile",
+    "alreadyHaveAccount": "Ai deja un cont? Autentifică-te pentru a cumpăra acest curs",
+    "signInToPurchase": "Autentifică-te pentru a cumpăra"
+  },
+  "prerequisites": {
+    "title": "Cerințe Prealabile",
+    "required": "Acest curs necesită finalizarea cursurilor prealabile înainte de înscriere."
+  },
+  "lessonsList": {
+    "courseContent": "Conținutul Cursului",
+    "lessons": "{count} lecții",
+    "totalDuration": "{duration} total",
+    "remaining": "{duration} rămas",
+    "completed": "finalizat",
+    "completedBadge": "Finalizat",
+    "freePreview": "Previzualizare Gratuită",
+    "locked": "Blocat",
+    "noLessonsYet": "Nicio lecție disponibilă încă",
+    "noLessonsDescription": "Acest curs este încă în dezvoltare. Verifică din nou în curând pentru conținut nou!",
+    "unnamedLesson": "Lecție Fără Nume",
+    "noDescription": "Nicio descriere disponibilă"
+  },
+  "admin": {
+    "addLesson": "Adaugă Lecție"
+  },
+  "overview": {
+    "courseDescription": "Descrierea Cursului",
+    "whatYouWillLearn": "Ce Vei Învăța",
+    "requirements": "Cerințe",
+    "prerequisites": "Prereşezite",
+    "viewCourse": "Vezi Cursul",
+    "additionalInformation": "Informații Suplimentare",
+    "instructor": "Instructor",
+    "sampleBenefits": {
+      "keyConceptsAndBestPractices": "Învăță concepte cheie și cele mai bune practici",
+      "buildRealWorldProjects": "Construiește proiecte din lumea reală",
+      "modernDevelopmentTechniques": "Înțelege tehnici moderne de dezvoltare",
+      "practicalSkills": "Obține competențe practice căutate de angajatori"
+    },
+    "sampleRequirements": {
+      "basicProgramming": "Înțelegere de bază a conceptelor de programare",
+      "computerAndInternet": "Computer cu conexiune la internet",
+      "willingnessToLearn": "Dorință de a învăța și practica"
+    }
+  },
+  "reviewsSection": {
+    "writeReview": "Scrie o Recenzie",
+    "yourThoughts": "Părerea ta despre acest curs",
+    "shareExperience": "Împărtășește experiența ta cu acest curs...",
+    "yourRating": "Evaluarea ta:",
+    "mustBeLoggedIn": "Trebuie să fii autentificat pentru a scrie o recenzie",
+    "reviewPosted": "Recenzie publicată cu succes!",
+    "submitReview": "Trimite Recenzia",
+    "loginToReview": "Autentifică-te pentru Recenzie",
+    "studentReviews": "Recenzii Studenți",
+    "noReviewsYet": "Încă nu există recenzii",
+    "beTheFirst": "Fii primul care împărtășește experiența cu acest curs!",
+    "recently": "Recent"
+  },
+  "content": {
+    "yourProgress": "Progresul Tău",
+    "lessonsCompleted": "{completed} din {total} lecții finalizate",
+    "lesson": "lecție",
+    "lessons": "lecții",
+    "someContentLocked": "O Parte din Conținut este Blocat",
+    "purchaseToUnlock": "Cumpără acest curs pentru a debloca toate lecțiile. Lecțiile gratuite de previzualizare sunt accesibile tuturor.",
+    "courseContent": "Conținutul Cursului",
+    "lessonsCount": "{count} lecții",
+    "additionalLessons": "Lecții Suplimentare",
+    "noLessonsAvailable": "Nicio lecție disponibilă",
+    "noLessonsYet": "Acest curs nu are încă lecții.",
+    "free": "Gratuit",
+    "locked": "Blocat",
+    "completed": "Finalizat",
+    "completedBadge": "FINALIZAT",
+        "inProgress": "În Curs"
+  },
+  "form": {
+    "labels": {
+      "estimatedDuration": "Durată Estimată",
+      "repositoryUrl": "URL Repository",
+      "difficultyLevel": "Nivel Dificultate",
+      "coursePrice": "Preț Curs",
+      "priceAmount": "Sumă Preț",
+      "courseName": "Nume Curs",
+      "selectPrice": "Selectează un preț",
+      "selectPrerequisite": "Selectează un curs prerequisit"
+    },
+    "sections": {
+      "courseContentDetails": "Detalii Conținut Curs",
+      "courseContentDetailsDesc": "Îmbunătățește cursul tău cu informații suplimentare",
+      "courseSummary": "Rezumat Curs",
+      "courseSummaryDesc": "Verifică detaliile cursului înainte de publicare",
+      "afterCreating": "După crearea cursului tău"
+    }
+  },
+  "actions": {
+    "editCourse": "Editează Curs",
+    "createNewCourse": "Creează Curs Nou",
+    "updateCourse": "Actualizează Curs",
+    "createCourse": "Creează Curs",
+    "createPrice": "Creează Preț în Stripe",
+    "creatingPrice": "Se Creează Preț...",
+    "congratulationsFinish": "Felicitări pentru finalizarea acestui curs"
+  },
+  "fallbacks": {
+    "unknownCourse": "Curs Necunoscut",
+    "unknownInstructor": "Instructor Necunoscut",
+    "cursuriInstructor": "Instructor Cursuri",
+    "unnamedLesson": "Lecție Fără Nume",
+    "noDescription": "Fără descriere disponibilă",
+    "notSpecified": "Nespecificat",
+    "allLevels": "Toate Nivelurile"
+  },
+  "captions": {
+    "noContentAvailable": "Fără conținut disponibil",
+    "processing": "Se procesează...",
+    "regenerateCaptions": "Regenerează Subtitrări"
+  },
+  "courseMetadata": {
+    "courseNotFound": "Curs Negăsit",
+    "viewDetails": "Vezi Detalii"
+  },
+  "messages": {
+    "certificateAvailable": "Certificat disponibil la finalizare",
+    "promotionCodesEnabled": "Coduri promoționale activate"
+  }
+}

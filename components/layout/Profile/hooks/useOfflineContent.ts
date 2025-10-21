@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useContext } from 'react';
+import { useTranslations } from 'next-intl';
 import { Course, Lesson, AppContextProps } from '@/types';
 import { AppContext } from '@/components/AppContext';
 import {
@@ -35,6 +36,7 @@ interface UseOfflineContentReturn {
 export function useOfflineContent(): UseOfflineContentReturn {
   const { courses } = useContext(AppContext) as AppContextProps;
   const { showToast } = useToast();
+  const t = useTranslations('common.notifications');
 
   const [offlineContent, setOfflineContent] = useState<OfflineContent[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -162,17 +164,17 @@ export function useOfflineContent(): UseOfflineContentReturn {
       // Update local state
       setOfflineContent(prev =>
         prev.filter(content => !(content.id === id && content.type === type))
-      );
+      });
 
       showToast({
         type: 'success',
-        message: 'Offline content has been removed'
+        message: t('success.offlineContentRemoved'),
       });
     } catch (error) {
       console.error('Error removing offline content:', error);
       showToast({
         type: 'error',
-        message: 'Failed to remove offline content'
+        message: t('error.offlineRemoveFailed'),
       });
     }
   }, [toast]);
@@ -213,13 +215,13 @@ export function useOfflineContent(): UseOfflineContentReturn {
 
       showToast({
         type: 'success',
-        message: 'All offline content has been removed'
+        message: t('success.allOfflineContentRemoved')
       });
     } catch (error) {
       console.error('Error clearing offline content:', error);
       showToast({
         type: 'error',
-        message: 'Failed to clear offline content'
+        message: t('error.offlineClearFailed'),
       });
     }
   }, [offlineContent, showToast]);

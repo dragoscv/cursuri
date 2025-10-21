@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useContext } from 'react';
+import { useTranslations } from 'next-intl';
 import { AppContext } from '@/components/AppContext';
 import { firestoreDB } from '@/utils/firebase/firebase.config';
 import { collection, query, getDocs, orderBy } from 'firebase/firestore';
@@ -23,6 +24,7 @@ export default function CertificatesPage() {
     const [certificates, setCertificates] = useState<Certificate[]>([]);
     const [allCertificates, setAllCertificates] = useState<Certificate[]>([]);
     const [loading, setLoading] = useState(true);
+    const t = useTranslations('profile');
 
     const context = useContext(AppContext);
     if (!context) {
@@ -76,7 +78,7 @@ export default function CertificatesPage() {
                 body: JSON.stringify({ courseId }),
             });
 
-            if (!res.ok) throw new Error('Failed to generate certificate');
+            if (!res.ok) throw new Error(t('certificatesPage.errors.failedToGenerate'));
 
             const blob = await res.blob();
             const url = window.URL.createObjectURL(blob);
@@ -88,7 +90,7 @@ export default function CertificatesPage() {
             a.remove();
             window.URL.revokeObjectURL(url);        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (err) {
-            alert('Could not download certificate. Please try again.');
+            alert(t('certificatesPage.errors.couldNotDownload'));
         }
     };
 
@@ -111,8 +113,8 @@ export default function CertificatesPage() {
     if (certificates.length === 0) {
         return (
             <EmptyState
-                title="No certificates yet"
-                description="Complete courses to earn certificates that will be displayed here."
+                title={t('certificatesPage.emptyState.title')}
+                description={t('certificatesPage.emptyState.description')}
                 icon={
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -130,7 +132,7 @@ export default function CertificatesPage() {
                         <path d="M12 8v8"></path>
                     </svg>
                 }
-                actionText="Browse courses"
+                actionText={t('certificatesPage.actions.browseCourses')}
                 actionHref="/courses"
             />
         );
@@ -138,7 +140,7 @@ export default function CertificatesPage() {
 
     return (
         <div className="space-y-6">            <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold">Your Certificates</h2>
+            <h2 className="text-2xl font-bold">{t('certificatesPage.yourCertificates')}</h2>
 
             <div className="flex items-center space-x-2">
                 <select
@@ -190,7 +192,7 @@ export default function CertificatesPage() {
                                 <div className="flex flex-col space-y-4">
                                     <div className="flex justify-between items-start">
                                         <div>
-                                            <p className="text-sm text-[color:var(--ai-muted)]">Awarded on</p>
+                                            <p className="text-sm text-[color:var(--ai-muted)]">{t('certificatesPage.awardedOn')}</p>
                                             <p>{formatDate(certificate.completionDate)}</p>
                                         </div>
 
@@ -199,7 +201,7 @@ export default function CertificatesPage() {
                                             variant="flat"
                                             onClick={() => downloadCertificate(certificate.certificateId, certificate.courseId)}
                                         >
-                                            Download
+                                            {t('certificatesPage.actions.download')}
                                         </Button>
                                     </div>
 
@@ -221,8 +223,8 @@ export default function CertificatesPage() {
                                                 <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
                                             </svg>
                                             <div>
-                                                <p className="text-sm font-medium">Certificate of Completion</p>
-                                                <p className="text-xs text-[color:var(--ai-muted)]">Cursuri Online Platform</p>
+                                                <p className="text-sm font-medium">{t('certificatesPage.certificateOfCompletion')}</p>
+                                                <p className="text-xs text-[color:var(--ai-muted)]">{t('certificatesPage.platformName')}</p>
                                             </div>
                                         </div>
                                     </div>

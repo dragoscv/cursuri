@@ -7,8 +7,10 @@ import { useContext } from 'react'
 import { AppContext } from '../AppContext'
 import SearchIcon from '../icons/SearchIcon'
 import CloseIcon from '../icons/CloseIcon'
+import { useTranslations } from 'next-intl'
 
 export default function SearchBar() {
+    const t = useTranslations('common')
     const [isSearchOpen, setIsSearchOpen] = useState(false)
     const [searchQuery, setSearchQuery] = useState('')
     const [searchResults, setSearchResults] = useState<any[]>([])
@@ -140,7 +142,7 @@ export default function SearchBar() {
                     <SearchIcon className="w-4 h-4" />
                 )}
             >
-                Search courses...
+                {t('search.placeholder')}
                 <kbd className="px-2 py-1 ml-2 text-xs font-semibold text-[color:var(--ai-foreground)] bg-[color:var(--ai-card-bg)]/80 border border-[color:var(--ai-card-border)] rounded-md">
                     ⌘K
                 </kbd>
@@ -165,7 +167,7 @@ export default function SearchBar() {
                             <Input
                                 ref={searchInputRef}
                                 type="text"
-                                placeholder="Search for courses..."
+                                placeholder={t('search.placeholder')}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 onKeyDown={(e) => {
@@ -232,12 +234,12 @@ export default function SearchBar() {
                                     ))}
                                 </div>) : searchQuery ? (
                                     <div className="p-8 text-center text-[color:var(--ai-muted)]">
-                                        <p>No courses found for &quot;{searchQuery}&quot;</p>
+                                        <p>{t('search.noResults', { query: searchQuery })}</p>
                                     </div>
                                 ) : (
                                 <div className="p-4 border-t border-[color:var(--ai-card-border)]">
                                     <p className="text-sm text-[color:var(--ai-muted)] text-center">
-                                        Start typing to search for courses
+                                        {t('search.startTyping')}
                                     </p>
                                 </div>
                             )}
@@ -249,9 +251,9 @@ export default function SearchBar() {
                                 <div className="flex items-center gap-3">
                                     <div className="flex items-center gap-1">
                                         <kbd className="px-1.5 py-0.5 font-semibold text-[color:var(--ai-foreground)] bg-[color:var(--ai-card-border)]/30 border border-[color:var(--ai-card-border)] rounded-md">
-                                            ESC
+                                            {t('search.keyboard.esc')}
                                         </kbd>
-                                        <span>to close</span>
+                                        <span>{t('search.keyboard.toClose')}</span>
                                     </div>
                                     <div className="flex items-center gap-1">
                                         <kbd className="px-1.5 py-0.5 font-semibold text-[color:var(--ai-foreground)] bg-[color:var(--ai-card-border)]/30 border border-[color:var(--ai-card-border)] rounded-md">
@@ -260,14 +262,14 @@ export default function SearchBar() {
                                         <kbd className="px-1.5 py-0.5 font-semibold text-[color:var(--ai-foreground)] bg-[color:var(--ai-card-border)]/30 border border-[color:var(--ai-card-border)] rounded-md">
                                             ↓
                                         </kbd>
-                                        <span>to navigate</span>
+                                        <span>{t('search.keyboard.toNavigate')}</span>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-1">
                                     <kbd className="px-1.5 py-0.5 font-semibold text-[color:var(--ai-foreground)] bg-[color:var(--ai-card-border)]/30 border border-[color:var(--ai-card-border)] rounded-md">
-                                        Enter
+                                        {t('search.keyboard.enter')}
                                     </kbd>
-                                    <span>to select</span>
+                                    <span>{t('search.keyboard.toSelect')}</span>
                                 </div>
                             </div>
                         </div>

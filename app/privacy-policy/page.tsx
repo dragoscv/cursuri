@@ -1,144 +1,157 @@
-'use client'
-
 import React from 'react'
+import { getTranslations } from 'next-intl/server'
+import { Metadata } from 'next'
 import PolicyPage from '@/components/Policy/PolicyPage'
 
-export default function PrivacyPolicy() {
+export async function generateMetadata(): Promise<Metadata> {
+    const t = await getTranslations('legal.privacy');
+    
+    return {
+        title: t('title'),
+        description: t('sections.introduction.content.welcome'),
+    };
+}
+
+export default async function PrivacyPolicy() {
+    const t = await getTranslations('legal.privacy');
+    
     return (
-        <PolicyPage title="Privacy Policy" lastUpdated="April 4, 2025">
-            <h2 className="text-2xl font-semibold mt-8 mb-4">1. Introduction</h2>            <p>
-                Welcome to Cursuri (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;). We are committed to protecting your privacy and personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our services.
+        <PolicyPage title={t('title')} lastUpdated={t('lastUpdated')}>
+            <h2 className="text-2xl font-semibold mt-8 mb-4">{t('sections.introduction.title')}</h2>
+            <p>
+                {t('sections.introduction.content.welcome')}
             </p>
             <p>
-                Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the site.
+                {t('sections.introduction.content.readCarefully')}
             </p>
 
-            <h2 className="text-2xl font-semibold mt-8 mb-4">2. Information We Collect</h2>
-            <h3 className="text-xl font-medium mt-6 mb-2">Personal Information</h3>
+            <h2 className="text-2xl font-semibold mt-8 mb-4">{t('sections.informationWeCollect.title')}</h2>
+            <h3 className="text-xl font-medium mt-6 mb-2">{t('sections.informationWeCollect.personalInformation.title')}</h3>
             <p>
-                We may collect personal information that you voluntarily provide to us when you:
+                {t('sections.informationWeCollect.personalInformation.intro')}
             </p>
             <ul className="list-disc pl-6 mb-4">
-                <li>Register for an account</li>
-                <li>Purchase a course</li>
-                <li>Sign up for our newsletter</li>
-                <li>Contact us</li>
-                <li>Participate in surveys or contests</li>
+                <li>{t('sections.informationWeCollect.personalInformation.situations.0')}</li>
+                <li>{t('sections.informationWeCollect.personalInformation.situations.1')}</li>
+                <li>{t('sections.informationWeCollect.personalInformation.situations.2')}</li>
+                <li>{t('sections.informationWeCollect.personalInformation.situations.3')}</li>
+                <li>{t('sections.informationWeCollect.personalInformation.situations.4')}</li>
             </ul>
             <p>
-                This information may include:
+                {t('sections.informationWeCollect.personalInformation.types.intro')}
             </p>
             <ul className="list-disc pl-6 mb-4">
-                <li>Name</li>
-                <li>Email address</li>
-                <li>Phone number</li>
-                <li>Billing information</li>
-                <li>Educational background</li>
-                <li>Profile information</li>
+                <li>{t('sections.informationWeCollect.personalInformation.types.items.0')}</li>
+                <li>{t('sections.informationWeCollect.personalInformation.types.items.1')}</li>
+                <li>{t('sections.informationWeCollect.personalInformation.types.items.2')}</li>
+                <li>{t('sections.informationWeCollect.personalInformation.types.items.3')}</li>
+                <li>{t('sections.informationWeCollect.personalInformation.types.items.4')}</li>
+                <li>{t('sections.informationWeCollect.personalInformation.types.items.5')}</li>
             </ul>
 
-            <h3 className="text-xl font-medium mt-6 mb-2">Usage Information</h3>
+            <h3 className="text-xl font-medium mt-6 mb-2">{t('sections.informationWeCollect.usageInformation.title')}</h3>
             <p>
-                We automatically collect certain information when you visit, use, or navigate our platform. This information does not reveal your specific identity but may include:
+                {t('sections.informationWeCollect.usageInformation.intro')}
             </p>
             <ul className="list-disc pl-6 mb-4">
-                <li>Device and browser information</li>
-                <li>IP address</li>
-                <li>Operating system</li>
-                <li>Referring URLs</li>
-                <li>Pages viewed</li>
-                <li>Time spent on pages</li>
-                <li>Course progress and activity</li>
+                <li>{t('sections.informationWeCollect.usageInformation.items.0')}</li>
+                <li>{t('sections.informationWeCollect.usageInformation.items.1')}</li>
+                <li>{t('sections.informationWeCollect.usageInformation.items.2')}</li>
+                <li>{t('sections.informationWeCollect.usageInformation.items.3')}</li>
+                <li>{t('sections.informationWeCollect.usageInformation.items.4')}</li>
+                <li>{t('sections.informationWeCollect.usageInformation.items.5')}</li>
+                <li>{t('sections.informationWeCollect.usageInformation.items.6')}</li>
             </ul>
 
-            <h2 className="text-2xl font-semibold mt-8 mb-4">3. How We Use Your Information</h2>
+            <h2 className="text-2xl font-semibold mt-8 mb-4">{t('sections.howWeUseInformation.title')}</h2>
             <p>
-                We use the information we collect for various purposes, including to:
+                {t('sections.howWeUseInformation.intro')}
             </p>
             <ul className="list-disc pl-6 mb-4">
-                <li>Provide, operate, and maintain our services</li>
-                <li>Process and complete transactions</li>
-                <li>Send administrative information</li>
-                <li>Respond to inquiries and offer support</li>
-                <li>Send marketing and promotional communications</li>
-                <li>Improve user experience</li>
-                <li>Develop new products and services</li>
-                <li>Prevent fraudulent transactions</li>
-                <li>Monitor usage patterns and analyze trends</li>
+                <li>{t('sections.howWeUseInformation.purposes.0')}</li>
+                <li>{t('sections.howWeUseInformation.purposes.1')}</li>
+                <li>{t('sections.howWeUseInformation.purposes.2')}</li>
+                <li>{t('sections.howWeUseInformation.purposes.3')}</li>
+                <li>{t('sections.howWeUseInformation.purposes.4')}</li>
+                <li>{t('sections.howWeUseInformation.purposes.5')}</li>
+                <li>{t('sections.howWeUseInformation.purposes.6')}</li>
+                <li>{t('sections.howWeUseInformation.purposes.7')}</li>
+                <li>{t('sections.howWeUseInformation.purposes.8')}</li>
             </ul>
 
-            <h2 className="text-2xl font-semibold mt-8 mb-4">4. Cookies and Similar Technologies</h2>
+            <h2 className="text-2xl font-semibold mt-8 mb-4">{t('sections.cookiesAndTracking.title')}</h2>
             <p>
-                We use cookies and similar tracking technologies to track activity on our platform and hold certain information. Cookies are files with a small amount of data which may include an anonymous unique identifier.
+                {t('sections.cookiesAndTracking.intro')}
             </p>
             <p>
-                Types of cookies we use:
+                {t('sections.cookiesAndTracking.typesIntro')}
             </p>
             <ul className="list-disc pl-6 mb-4">
-                <li><strong>Essential cookies:</strong> Necessary for the platform to function properly</li>
-                <li><strong>Functionality cookies:</strong> Allow us to remember your preferences and settings</li>
-                <li><strong>Analytics cookies:</strong> Help us understand how visitors interact with our platform</li>
-                <li><strong>Marketing cookies:</strong> Allow us to deliver relevant advertisements</li>
+                <li><strong>{t('sections.cookiesAndTracking.types.essential')}</strong></li>
+                <li><strong>{t('sections.cookiesAndTracking.types.functionality')}</strong></li>
+                <li><strong>{t('sections.cookiesAndTracking.types.analytics')}</strong></li>
+                <li><strong>{t('sections.cookiesAndTracking.types.marketing')}</strong></li>
             </ul>
             <p>
-                You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some portions of our platform.
+                {t('sections.cookiesAndTracking.browserSettings')}
             </p>
 
-            <h2 className="text-2xl font-semibold mt-8 mb-4">5. Data Sharing and Disclosure</h2>
+            <h2 className="text-2xl font-semibold mt-8 mb-4">{t('sections.dataSharing.title')}</h2>
             <p>
-                We may share your information with third parties in the following situations:
+                {t('sections.dataSharing.intro')}
             </p>
             <ul className="list-disc pl-6 mb-4">
-                <li><strong>Business partners:</strong> To offer certain products, services, or promotions</li>
-                <li><strong>Service providers:</strong> To help us operate our business and platform</li>
-                <li><strong>Affiliates:</strong> With our parent company, subsidiaries, and affiliates</li>
-                <li><strong>Legal requirements:</strong> To comply with law, regulation, or legal process</li>
-                <li><strong>Protection of rights:</strong> To protect the rights, property, or safety of Cursuri, our users, or others</li>
-                <li><strong>Business transfers:</strong> In connection with any merger, sale of company assets, financing, or acquisition</li>
+                <li><strong>{t('sections.dataSharing.situations.businessPartners')}</strong></li>
+                <li><strong>{t('sections.dataSharing.situations.serviceProviders')}</strong></li>
+                <li><strong>{t('sections.dataSharing.situations.affiliates')}</strong></li>
+                <li><strong>{t('sections.dataSharing.situations.legalRequirements')}</strong></li>
+                <li><strong>{t('sections.dataSharing.situations.protectionOfRights')}</strong></li>
+                <li><strong>{t('sections.dataSharing.situations.businessTransfers')}</strong></li>
             </ul>
 
-            <h2 className="text-2xl font-semibold mt-8 mb-4">6. Data Security</h2>
+            <h2 className="text-2xl font-semibold mt-8 mb-4">{t('sections.dataSecurity.title')}</h2>
             <p>
-                We have implemented appropriate technical and organizational security measures to protect your personal information from accidental loss, unauthorized access, use, alteration, and disclosure. However, please note that no method of transmission over the Internet or electronic storage is 100% secure.
+                {t('sections.dataSecurity.content')}
             </p>
 
-            <h2 className="text-2xl font-semibold mt-8 mb-4">7. Data Retention</h2>
+            <h2 className="text-2xl font-semibold mt-8 mb-4">{t('sections.dataRetention.title')}</h2>
             <p>
-                We will retain your personal information only for as long as is necessary for the purposes set out in this privacy policy, or as needed to comply with our legal obligations, resolve disputes, and enforce our agreements.
+                {t('sections.dataRetention.content')}
             </p>
 
-            <h2 className="text-2xl font-semibold mt-8 mb-4">8. Your Rights</h2>
+            <h2 className="text-2xl font-semibold mt-8 mb-4">{t('sections.yourRights.title')}</h2>
             <p>
-                Depending on your location, you may have rights concerning your personal information, such as:
+                {t('sections.yourRights.intro')}
             </p>
             <ul className="list-disc pl-6 mb-4">
-                <li>Access to your personal information</li>
-                <li>Correction of inaccurate or incomplete information</li>
-                <li>Erasure of your personal information</li>
-                <li>Restriction of processing of your personal information</li>
-                <li>Data portability</li>
-                <li>Objection to processing</li>
-                <li>Withdrawal of consent</li>
+                <li>{t('sections.yourRights.rights.0')}</li>
+                <li>{t('sections.yourRights.rights.1')}</li>
+                <li>{t('sections.yourRights.rights.2')}</li>
+                <li>{t('sections.yourRights.rights.3')}</li>
+                <li>{t('sections.yourRights.rights.4')}</li>
+                <li>{t('sections.yourRights.rights.5')}</li>
+                <li>{t('sections.yourRights.rights.6')}</li>
             </ul>
             <p>
-                To exercise these rights, please contact us using the details provided below.
+                {t('sections.yourRights.exercise')}
             </p>
 
-            <h2 className="text-2xl font-semibold mt-8 mb-4">9. Children&apos;s Privacy</h2>
+            <h2 className="text-2xl font-semibold mt-8 mb-4">{t('sections.childrensPrivacy.title')}</h2>
             <p>
-                Our platform is not intended for individuals under 16 years of age. We do not knowingly collect personal information from children under 16. If we learn we have collected personal information from a child under 16, we will delete this information.
+                {t('sections.childrensPrivacy.content')}
             </p>
 
-            <h2 className="text-2xl font-semibold mt-8 mb-4">10. Changes to This Privacy Policy</h2>            <p>
-                We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the &quot;Last Updated&quot; date. You are advised to review this Privacy Policy periodically for any changes.
-            </p>
-
-            <h2 className="text-2xl font-semibold mt-8 mb-4">11. Contact Us</h2>
+            <h2 className="text-2xl font-semibold mt-8 mb-4">{t('sections.changesToPolicy.title')}</h2>
             <p>
-                If you have any questions about this Privacy Policy, please contact us at:
+                {t('sections.changesToPolicy.content')}
+            </p>
+
+            <h2 className="text-2xl font-semibold mt-8 mb-4">{t('sections.contact.title')}</h2>
+            <p>
+                {t('sections.contact.intro')}
             </p>
             <ul className="list-none mb-4">
-                <li>Email: contact@cursuri.dev</li>
+                <li>{t('sections.contact.email')}</li>
             </ul>
         </PolicyPage>
     )

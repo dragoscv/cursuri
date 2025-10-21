@@ -93,9 +93,9 @@ export default function CourseDetail({ courseId }: { courseId: string }) {
     // Generate structured data
     const structuredData = generateCourseStructuredData({
       title: course.title || course.name || 'Course',
-      description: course.description || 'No description available',
+      description: course.description || t('fallbacks.noDescription'),
       instructorName: course.instructorName || (typeof course.instructor === 'string' ?
-        course.instructor : course.instructor?.name) || 'Cursuri Instructor', updatedAt: course.updatedAt ?
+        course.instructor : course.instructor?.name) || t('fallbacks.cursuriInstructor'), updatedAt: course.updatedAt ?
           (typeof course.updatedAt === 'string' ?
             course.updatedAt : course.updatedAt.toString()) :
           undefined,
@@ -110,7 +110,7 @@ export default function CourseDetail({ courseId }: { courseId: string }) {
       ratingCount: course.reviewCount, lessons: courseLessons
         .filter(lesson => lesson !== null && lesson !== undefined) // Filter out null/undefined lessons
         .map(lesson => ({
-          title: lesson?.title || lesson?.name || 'Unnamed Lesson',
+          title: lesson?.title || lesson?.name || t('fallbacks.unnamedLesson'),
           duration: typeof lesson?.duration === 'string' ?
             parseInt(lesson.duration) : lesson?.duration || 0
         }))

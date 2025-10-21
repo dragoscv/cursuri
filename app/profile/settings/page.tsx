@@ -9,10 +9,13 @@ import ThemeSelector from '@/components/Profile/ThemeSelector';
 import { FiUser, FiMail, FiLock, FiSave, FiBell, FiGlobe, FiSettings } from '@/components/icons/FeatherIcons';
 import { motion } from 'framer-motion';
 import PasswordStrengthMeter from '@/components/ui/PasswordStrengthMeter';
+import { useTranslations } from 'next-intl';
 
 export default function ProfileSettings() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [message, setMessage] = useState<{ type: string; text: string } | null>(null);
+    const t = useTranslations('common.notifications');
+    const tProfile = useTranslations('profile.settingsPage');
     const context = useContext(AppContext);
     if (!context) throw new Error("AppContext not found");
     const { user, saveUserPreferences } = context;
@@ -54,12 +57,12 @@ export default function ProfileSettings() {
         if (!user || !user.email) return;
         
         if (!form.currentPassword) {
-            showToast({ type: 'error', title: 'Validation Error', message: 'Please enter your current password.' });
+            showToast({ type: 'error', title: t('error.validationError'), message: t('error.enterCurrentPassword') });
             return;
         }
         
         if (form.newPassword !== form.confirmPassword) {
-            showToast({ type: 'error', title: 'Validation Error', message: 'New passwords do not match.' });
+            showToast({ type: 'error', title: t('error.validationError'), message: t('error.passwordsDoNotMatch') });
             return;
         }
         
@@ -70,8 +73,8 @@ export default function ProfileSettings() {
         if (!validation.isValid) {
             showToast({ 
                 type: 'error', 
-                title: 'Password Too Weak', 
-                message: validation.errors[0] || 'Password does not meet security requirements.' 
+                title: tProfile('settingsPage.validation.passwordTooWeak'), 
+                message: validation.errors[0] || tProfile('settingsPage.validation.passwordDoesNotMeetRequirements') 
             });
             return;
         }
@@ -86,10 +89,10 @@ export default function ProfileSettings() {
             await reauthenticateWithCredential(user, credential);
             await updatePassword(user, form.newPassword);
             
-            showToast({ type: 'success', title: 'Password Updated', message: 'Password updated successfully!' });
+            showToast({ type: 'success', title: t('success.passwordUpdated.title'), message: t('success.passwordUpdated.message') });
             setForm(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmPassword: '' }));        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
-            showToast({ type: 'error', title: 'Update Failed', message: error.message || 'Failed to update password.' });
+            showToast({ type: 'error', title: t('error.updateFailed'), message: error.message || t('error.passwordUpdateFailed') });
         } finally {
             setIsLoading(false);
         }
@@ -103,9 +106,9 @@ export default function ProfileSettings() {
                 courseUpdates: form.courseUpdates,
                 marketingEmails: form.marketingEmails
             });
-            showToast({ type: 'success', title: 'Preferences Updated', message: 'Notification preferences updated successfully!' });        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            showToast({ type: 'success', title: t('success.preferencesUpdated.title'), message: t('success.preferencesUpdated.message') });        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
-            showToast({ type: 'error', title: 'Update Failed', message: error.message || 'Failed to update notification preferences.' });
+            showToast({ type: 'error', title: t('error.updateFailed'), message: error.message || t('error.preferencesUpdateFailed') });
         } finally {
             setIsLoading(false);
         }
@@ -119,9 +122,9 @@ export default function ProfileSettings() {
     return (
         <div className="space-y-6">
             <div className="mb-6">
-                <h1 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-2">Account Settings</h1>
+                <h1 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-2">{tProfile('accountSettings')}</h1>
                 <p className="text-[color:var(--ai-muted)]">
-                    Manage your profile and account preferences.
+                    {tProfile('updateYourProfile')}
                 </p>
             </div>            {/* Profile Information */}
             <Card className="border border-[color:var(--ai-card-border)]/50 shadow-lg rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)]/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
@@ -131,17 +134,17 @@ export default function ProfileSettings() {
                         <div className="p-2 rounded-full bg-gradient-to-r from-[color:var(--ai-primary)]/20 to-[color:var(--ai-secondary)]/20">
                             <FiUser className="text-[color:var(--ai-primary)]" />
                         </div>
-                        Profile Information
+                        {tProfile('profile')}
                     </h2>                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
-                                Display Name
+                                {tProfile('nameLabel')}
                             </label>
                             <Input
                                 name="displayName"
                                 value={form.displayName}
                                 onChange={handleChange}
-                                placeholder="Your name"
+                                placeholder={tProfile('namePlaceholder')}
                                 startContent={<FiUser className="text-[color:var(--ai-primary)]" />}
                                 className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-primary)]/70 hover:border-[color:var(--ai-primary)]/40 transition-all duration-300"
                             />
@@ -149,28 +152,27 @@ export default function ProfileSettings() {
 
                         <div>
                             <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
-                                Email Address
+                                {tProfile('emailLabel')}
                             </label>
                             <Input
                                 name="email"
                                 value={form.email}
                                 disabled
                                 readOnly
-                                startContent={<FiMail className="text-[color:var(--ai-primary)]" />}
+                                startContent={<FiMail className="text-[color:var(--ai-primary)]" />
                                 className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/30 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 text-[color:var(--ai-foreground)]/70"
-                                description="Email address cannot be changed"
                             />
                         </div>
 
                         <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
-                                Bio
+                                {tProfile('bioLabel')}
                             </label>
                             <Textarea
                                 name="bio"
                                 value={form.bio}
                                 onChange={handleChange}
-                                placeholder="Tell us about yourself"
+                                placeholder={tProfile('bioPlaceholder')}
                                 className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-primary)]/70 hover:border-[color:var(--ai-primary)]/40 transition-all duration-300"
                             />
                         </div>
@@ -193,15 +195,15 @@ export default function ProfileSettings() {
                                     });
                                     showToast({
                                         type: 'success',
-                                        title: 'Profile Updated',
-                                        message: 'Profile details updated successfully!'
+                                        title: t('success.profileUpdated.title'),
+                                        message: t('success.profileUpdated.message')
                                     });
                                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                 } catch (error: any) {
                                     showToast({
                                         type: 'error',
-                                        title: 'Update Failed',
-                                        message: error.message || 'Failed to update profile.'
+                                        title: t('error.updateFailed'),
+                                        message: error.message || t('error.updateFailed')
                                     });
                                 } finally {
                                     setIsLoading(false);
@@ -210,7 +212,7 @@ export default function ProfileSettings() {
                             isLoading={isLoading}
                             className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] border-none text-white font-medium px-5 py-2 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
                         >
-                            Save Profile
+                            {tProfile('saveChanges')}
                         </Button>
                     </div>                </CardBody>
             </Card>
@@ -228,18 +230,18 @@ export default function ProfileSettings() {
                             <div className="p-2 rounded-full bg-gradient-to-r from-[color:var(--ai-accent)]/20 to-[color:var(--ai-secondary)]/20">
                                 <FiLock className="text-[color:var(--ai-accent)]" />
                             </div>
-                            Password Settings
+                            {tProfile('security')}
                         </h2>                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
                                 <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
-                                    Current Password
+                                    {tProfile('currentPasswordLabel')}
                                 </label>
                                 <Input
                                     type="password"
                                     name="currentPassword"
                                     value={form.currentPassword}
                                     onChange={handleChange}
-                                    placeholder="Enter current password"
+                                    placeholder={tProfile('currentPasswordPlaceholder')}
                                     startContent={<FiLock className="text-[color:var(--ai-accent)]" />}
                                     className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-accent)]/70 hover:border-[color:var(--ai-accent)]/40 transition-all duration-300"
                                 />
@@ -247,13 +249,13 @@ export default function ProfileSettings() {
 
                             <div>
                                 <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
-                                    New Password
+                                    {tProfile('newPasswordLabel')}
                                 </label>
                                 <Input
                                     type="password"
                                     name="newPassword" value={form.newPassword}
                                     onChange={handleChange}
-                                    placeholder="Enter new password"
+                                    placeholder={tProfile('newPasswordPlaceholder')}
                                     startContent={<FiLock className="text-[color:var(--ai-accent)]" />}
                                     className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-accent)]/70 hover:border-[color:var(--ai-accent)]/40 transition-all duration-300"
                                 />
@@ -272,14 +274,14 @@ export default function ProfileSettings() {
 
                             <div>
                                 <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
-                                    Confirm Password
+                                    {tProfile('confirmPasswordLabel')}
                                 </label>
                                 <Input
                                     type="password"
                                     name="confirmPassword"
                                     value={form.confirmPassword}
                                     onChange={handleChange}
-                                    placeholder="Confirm new password"
+                                    placeholder={tProfile('confirmPasswordPlaceholder')}
                                     startContent={<FiLock className="text-[color:var(--ai-accent)]" />}
                                     className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-accent)]/70 hover:border-[color:var(--ai-accent)]/40 transition-all duration-300"
                                 />
@@ -292,7 +294,7 @@ export default function ProfileSettings() {
                                 isLoading={isLoading}
                                 className="bg-gradient-to-r from-[color:var(--ai-accent)] to-[color:var(--ai-secondary)] border-none text-white font-medium px-5 py-2 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
                             >
-                                Update Password
+                                {tProfile('updatePassword')}
                             </Button>
                         </div>
                     </CardBody>
@@ -312,12 +314,12 @@ export default function ProfileSettings() {
                             <div className="p-2 rounded-full bg-gradient-to-r from-[color:var(--ai-success)]/20 to-[color:var(--ai-primary)]/20">
                                 <FiBell className="text-[color:var(--ai-success)]" />
                             </div>
-                            Notification Preferences
+                            {tProfile('notificationSettings')}
                         </h2>                        <div className="space-y-6 py-2">
                             <div className="flex justify-between items-center p-3 rounded-lg bg-[color:var(--ai-card-bg)]/50 hover:bg-[color:var(--ai-card-bg)] transition-all duration-300 border border-[color:var(--ai-card-border)]/30">
                                 <div>
-                                    <h3 className="text-sm font-medium text-[color:var(--ai-foreground)]">Email Notifications</h3>
-                                    <p className="text-xs text-[color:var(--ai-muted)]">Receive important updates via email</p>
+                                    <h3 className="text-sm font-medium text-[color:var(--ai-foreground)]">{tProfile('emailLabel')}</h3>
+                                    <p className="text-xs text-[color:var(--ai-muted)]">{tProfile('settingsPage.notificationDescriptions.courseUpdates')}</p>
                                 </div>
                                 <Switch
                                     isSelected={form.emailNotifications}
@@ -331,8 +333,8 @@ export default function ProfileSettings() {
 
                             <div className="flex justify-between items-center p-3 rounded-lg bg-[color:var(--ai-card-bg)]/50 hover:bg-[color:var(--ai-card-bg)] transition-all duration-300 border border-[color:var(--ai-card-border)]/30">
                                 <div>
-                                    <h3 className="text-sm font-medium text-[color:var(--ai-foreground)]">Course Updates</h3>
-                                    <p className="text-xs text-[color:var(--ai-muted)]">Get notified when courses you're enrolled in are updated</p>
+                                    <h3 className="text-sm font-medium text-[color:var(--ai-foreground)]">{tProfile('courseUpdates')}</h3>
+                                    <p className="text-xs text-[color:var(--ai-muted)]">{tProfile('settingsPage.notificationDescriptions.courseUpdates')}</p>
                                 </div>
                                 <Switch
                                     isSelected={form.courseUpdates}
@@ -346,8 +348,8 @@ export default function ProfileSettings() {
 
                             <div className="flex justify-between items-center p-3 rounded-lg bg-[color:var(--ai-card-bg)]/50 hover:bg-[color:var(--ai-card-bg)] transition-all duration-300 border border-[color:var(--ai-card-border)]/30">
                                 <div>
-                                    <h3 className="text-sm font-medium text-[color:var(--ai-foreground)]">Marketing Emails</h3>
-                                    <p className="text-xs text-[color:var(--ai-muted)]">Receive promotions and special offers</p>
+                                    <h3 className="text-sm font-medium text-[color:var(--ai-foreground)]">{tProfile('marketingEmails')}</h3>
+                                    <p className="text-xs text-[color:var(--ai-muted)]">{tProfile('settingsPage.notificationDescriptions.marketingEmails')}</p>
                                 </div>
                                 <Switch
                                     isSelected={form.marketingEmails}
@@ -366,7 +368,7 @@ export default function ProfileSettings() {
                                 isLoading={isLoading}
                                 className="bg-gradient-to-r from-[color:var(--ai-success)] to-[color:var(--ai-primary)] border-none text-white font-medium px-5 py-2 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
                             >
-                                Save Preferences
+                                {tProfile('saveChanges')}
                             </Button>
                         </div>
                     </CardBody>
@@ -386,13 +388,13 @@ export default function ProfileSettings() {
                             <div className="p-2 rounded-full bg-gradient-to-r from-[color:var(--ai-primary)]/20 to-[color:var(--ai-accent)]/20">
                                 <FiGlobe className="text-[color:var(--ai-primary)]" />
                             </div>
-                            Language Settings
+                            {tProfile('language')}
                         </h2>                        <div className="mb-6">
                             <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
-                                Preferred Language
+                                {tProfile('languagePreference')}
                             </label>
                             <select
-                                title="Language"
+                                title={tProfile('selectLanguage')}
                                 className="w-full px-4 py-3 border border-[color:var(--ai-card-border)]/50 rounded-lg shadow-sm 
                                 focus:outline-none focus:ring-2 focus:ring-[color:var(--ai-primary)]/20 focus:border-[color:var(--ai-primary)]/70 
                                 bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm text-[color:var(--ai-foreground)]
@@ -400,8 +402,8 @@ export default function ProfileSettings() {
                                 value={form.language}
                                 onChange={(e) => setForm(prev => ({ ...prev, language: e.target.value }))}
                             >
-                                <option value="en">English</option>
-                                <option value="ro">Romanian</option>
+                                <option value="en">{tProfile('english')}</option>
+                                <option value="ro">{tProfile('romanian')}</option>
                                 <option value="es">Spanish</option>
                                 <option value="fr">French</option>
                                 <option value="de">German</option>
@@ -418,14 +420,14 @@ export default function ProfileSettings() {
                                         });
                                         showToast({
                                             type: 'success',
-                                            title: 'Language Updated', message: 'Language preferences saved successfully!'
+                                            title: t('success.languageUpdated.title'), message: t('success.languageUpdated.message')
                                         });
                                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                     } catch (error: any) {
                                         showToast({
                                             type: 'error',
-                                            title: 'Update Failed',
-                                            message: error.message || 'Failed to update language preferences.'
+                                            title: t('error.updateFailed'),
+                                            message: error.message || t('error.updateFailed')
                                         });
                                     } finally {
                                         setIsLoading(false);
@@ -434,7 +436,7 @@ export default function ProfileSettings() {
                                 isLoading={isLoading}
                                 className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-accent)] border-none text-white font-medium px-5 py-2 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
                             >
-                                Save Language
+                                {tProfile('saveChanges')}
                             </Button>
                         </div>
                     </CardBody>                </Card>
@@ -450,13 +452,11 @@ export default function ProfileSettings() {
                     <div className="h-1 w-full bg-gradient-to-r from-[color:var(--ai-secondary)]/80 to-[color:var(--ai-accent)]/80"></div>
                     <CardBody className="p-6">
                         <h2 className="text-lg font-semibold mb-6 text-[color:var(--ai-foreground)] flex items-center gap-2">
-                            <div className="p-2 rounded-full bg-gradient-to-r from-[color:var(--ai-secondary)]/20 to-[color:var(--ai-accent)]/20">
-                                <FiSettings className="text-[color:var(--ai-secondary)]" />
-                            </div>
-                            Appearance Settings
-                        </h2>
-
-                        <ThemeSelector
+                        <div className="p-2 rounded-full bg-gradient-to-r from-[color:var(--ai-secondary)]/20 to-[color:var(--ai-accent)]/20">
+                            <FiSettings className="text-[color:var(--ai-secondary)]" />
+                        </div>
+                        {tProfile('appearance')}
+                    </h2>                        <ThemeSelector
                             onThemeChange={(theme: string) => {
                                 setMessage({
                                     type: 'success',

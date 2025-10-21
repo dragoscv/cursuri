@@ -2,15 +2,16 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 
 type FeatureCardProps = {
-    icon: string;
-    title: string;
-    description: string;
+    featureKey: string;
     index: number;
 }
 
-export default function FeatureCard({ icon, title, description, index }: FeatureCardProps) {
+export default function FeatureCard({ featureKey, index }: FeatureCardProps) {
+    const t = useTranslations('home.whyChooseUs.features');
+
     const itemVariants = {
         hidden: { y: 20, opacity: 0 },
         visible: {
@@ -35,9 +36,9 @@ export default function FeatureCard({ icon, title, description, index }: Feature
                 '--hover-bg': 'rgba(var(--ai-primary-rgb), 0.07)'
             } as React.CSSProperties}
         >
-            <div className="text-3xl mb-4 text-[color:var(--ai-primary)]">{icon}</div>
-            <h3 className="text-xl font-bold text-[color:var(--ai-foreground)] mb-2">{title}</h3>
-            <p className="text-[color:var(--ai-muted)]">{description}</p>
+            <div className="text-3xl mb-4 text-[color:var(--ai-primary)]">{t(`${featureKey}.icon`)}</div>
+            <h3 className="text-xl font-bold text-[color:var(--ai-foreground)] mb-2">{t(`${featureKey}.title`)}</h3>
+            <p className="text-[color:var(--ai-muted)]">{t(`${featureKey}.description`)}</p>
         </motion.div>
     )
 }

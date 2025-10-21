@@ -2,11 +2,14 @@
 
 import React, { useMemo } from 'react'
 import { motion } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 import ScrollAnimationWrapper from '../animations/ScrollAnimationWrapper'
 import TechItem from './TechItem'
 import { technologies } from './techData'
 
 const TechStackSection = React.memo(function TechStackSection() {
+    const t = useTranslations('home.techStack');
+
     // Memoize containerVariants to prevent recreation
     const containerVariants = useMemo(() => ({
         hidden: { opacity: 0 },
@@ -21,10 +24,9 @@ const TechStackSection = React.memo(function TechStackSection() {
             <div className="container mx-auto px-4">
                 <ScrollAnimationWrapper>
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[color:var(--ai-foreground)]">Skills You'll Master</h2>
+                        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[color:var(--ai-foreground)]">{t('title')}</h2>
                         <p className="text-[color:var(--ai-muted)] max-w-2xl mx-auto">
-                            Explore the modern technologies and skills across AI, development, marketing, and data science.
-                            Each skill is taught through practical, real-world projects.
+                            {t('subtitle')}
                         </p>
                     </div>
 
@@ -37,10 +39,9 @@ const TechStackSection = React.memo(function TechStackSection() {
                     >
                         {technologies.map((tech, index) => (
                             <TechItem
-                                key={tech.name}
-                                name={tech.name}
+                                key={tech.key}
+                                techKey={tech.key}
                                 Icon={tech.icon}
-                                description={tech.description}
                                 color={tech.color}
                                 index={index}
                             />

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useContext, useMemo, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { AppContext } from './AppContext';
 import { Course } from '@/types';
 import { Button } from '@heroui/react';
@@ -11,6 +12,8 @@ import { getCoursePrice as getUnifiedCoursePrice } from '@/utils/pricing';
 const FEATURED_COUNT = 3;
 
 const FeaturedCoursesSection = React.memo(function FeaturedCoursesSection() {
+  const t = useTranslations('home.featuredCourses');
+  const tCommon = useTranslations('common');
   const context = useContext(AppContext);
   const router = useRouter();
   const courses = context?.courses || {};
@@ -48,7 +51,7 @@ const FeaturedCoursesSection = React.memo(function FeaturedCoursesSection() {
     <section className="w-full py-16 bg-gradient-to-b from-[color:var(--ai-primary)]/5 to-transparent">
       <div className="container max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-bold text-center mb-8 text-[color:var(--ai-foreground)]">
-          Featured Courses
+          {t('title')}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {featuredCourses.map((course) => {
@@ -103,10 +106,10 @@ const FeaturedCoursesSection = React.memo(function FeaturedCoursesSection() {
                   </div>
                   <div className="mt-auto flex items-center justify-between">
                     <span className="text-lg font-bold text-[color:var(--ai-foreground)]">
-                      {course.isFree ? <span className="text-[color:var(--ai-success)] dark:text-[color:var(--ai-success)]">Free</span> : `${amount} ${currency}`}
+                      {course.isFree ? <span className="text-[color:var(--ai-success)] dark:text-[color:var(--ai-success)]">{tCommon('status.free')}</span> : `${amount} ${currency}`}
                     </span>
                     <Button color="primary" onClick={() => router.push(`/courses/${course.id}`)} className="rounded-full px-4">
-                      View
+                      {tCommon('views.view')}
                     </Button>
                   </div>
                 </div>

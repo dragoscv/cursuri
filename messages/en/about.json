@@ -1,0 +1,55 @@
+{
+    "metadata": {
+        "title": "About Us | Cursuri",
+        "description": "Learn about our mission to provide high-quality courses in AI, Marketing, Data Science, and essential skills to help professionals advance their careers."
+    },
+    "hero": {
+        "title": "About Cursuri",
+        "subtitle": "We're passionate about empowering learners with the skills and knowledge needed to thrive in the AI era and beyond."
+    },
+    "mission": {
+        "title": "Our Mission",
+        "paragraph1": "At Cursuri, we believe that high-quality education should be accessible to everyone. Our mission is to bridge the gap between traditional education and industry demands by providing practical, project-based learning experiences across diverse fields.",
+        "paragraph2": "From Artificial Intelligence and Data Science to Digital Marketing and Business Strategy, we focus on real-world applications that prepare our students for success in the rapidly evolving professional landscape."
+    },
+    "whatWeOffer": {
+        "title": "What We Offer",
+        "projectBased": {
+            "title": "Project-Based Learning",
+            "description": "Learn by building real-world projects across various domains - from AI models and data visualizations to marketing campaigns and business solutions that you can showcase in your portfolio."
+        },
+        "expertInstructors": {
+            "title": "Expert Instructors",
+            "description": "Our instructors are experienced professionals working in the industry. They bring real-world insights and best practices to every lesson."
+        },
+        "upToDate": {
+            "title": "Up-to-Date Content",
+            "description": "Technology evolves rapidly, and so do our courses. We regularly update content to ensure you're learning the latest tools and techniques."
+        },
+        "community": {
+            "title": "Community Support",
+            "description": "Join a diverse community of learners and professionals from various industries. Get help when you need it and share your knowledge with others."
+        }
+    },
+    "values": {
+        "title": "Our Values",
+        "quality": {
+            "title": "Quality First",
+            "description": "We never compromise on quality. Every course is carefully crafted and thoroughly tested."
+        },
+        "accessibility": {
+            "title": "Accessibility",
+            "description": "Learning should be accessible to everyone, regardless of background or experience level."
+        },
+        "improvement": {
+            "title": "Continuous Improvement",
+            "description": "We're always learning and improving, just like our students."
+        }
+    },
+    "cta": {
+        "title": "Ready to Start Learning?",
+        "description": "Join thousands of learners who have advanced their careers with our courses in AI, Marketing, Data Science, and more.",
+        "browseCourses": "Browse Courses",
+        "contactUs": "Contact Us"
+    }
+}

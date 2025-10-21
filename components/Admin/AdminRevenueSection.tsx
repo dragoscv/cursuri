@@ -1,5 +1,8 @@
+'use client'
+
 import React from 'react';
 import { Card, CardBody } from '@heroui/react';
+import { useLocale } from 'next-intl';
 import { AdminAnalytics } from '@/types';
 
 interface AdminRevenueSectionProps {
@@ -7,6 +10,7 @@ interface AdminRevenueSectionProps {
 }
 
 export default function AdminRevenueSection({ analytics }: AdminRevenueSectionProps) {
+  const locale = useLocale();
   if (!analytics) return null;
   return (
     <Card className="shadow-md mb-8">
@@ -28,7 +32,7 @@ export default function AdminRevenueSection({ analytics }: AdminRevenueSectionPr
                     {month}
                   </div>
                   <div className="font-medium text-[color:var(--ai-foreground)]">
-                    {revenue.toLocaleString('ro-RO', { style: 'currency', currency: 'RON' })}
+                    {revenue.toLocaleString(locale, { style: 'currency', currency: 'RON' })}
                   </div>
                 </div>
               ))}

@@ -5,6 +5,7 @@ import { AppContext } from "@/components/AppContext";
 import { Tabs, Tab, Card, CardBody, Chip, Divider } from "@heroui/react";
 import { Button as HeroButton } from "@heroui/react";
 import { useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import { Lesson, CourseWithPriceProduct } from "@/types";
 
 // Import Admin Components
@@ -26,6 +27,7 @@ declare global {
 }
 
 export default function Admin() {
+    const locale = useLocale();
     const [selectedTab, setSelectedTab] = useState<string>("dashboard"); // Changed default to dashboard
     const [selectedView, setSelectedView] = useState<"grid" | "list">("grid"); const [selectedCourse, setSelectedCourse] = useState<CourseWithPriceProduct | null>(null);
 
@@ -99,7 +101,7 @@ export default function Admin() {
         if (course.priceProduct?.prices?.[0]?.unit_amount !== undefined) {
             const amount = course.priceProduct.prices[0].unit_amount / 100;
             const currency = course.priceProduct.prices[0].currency || 'RON';
-            return amount.toLocaleString('ro-RO', {
+            return amount.toLocaleString(locale, {
                 style: 'currency',
                 currency: currency,
             });

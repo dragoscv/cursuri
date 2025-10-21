@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { AppContext } from '../AppContext';
 import { Input, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from '@heroui/react';
 import { Course } from '../../types';
+import { useTranslations } from 'next-intl';
 
 interface CoursesFilterProps {
     onFilterChange: (filter: string) => void;
@@ -16,6 +17,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
     currentFilter,
     currentCategory
 }) => {
+    const t = useTranslations('courses.filter');
     const context = useContext(AppContext);
     const [searchText, setSearchText] = useState(currentFilter);
     const [selectedCategory, setSelectedCategory] = useState(currentCategory || 'all');
@@ -65,7 +67,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
                 {/* Search input */}
                 <div className="flex-1">
                     <Input
-                        placeholder="Search courses..."
+                        placeholder={t('searchPlaceholder')}
                         value={searchText}
                         onChange={(e) => setSearchText(e.target.value)}
                         startContent={
@@ -84,7 +86,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
                         className="w-full cursor-pointer bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-lg px-4 py-2.5 text-left flex items-center justify-between hover:border-[color:var(--ai-primary)]/50 transition-colors duration-200"
                     >
                         <span className="block truncate">
-                            {selectedCategory === 'all' ? 'All Categories' : selectedCategory}
+                            {selectedCategory === 'all' ? t('allCategories') : selectedCategory}
                         </span>
                         <span className="pointer-events-none">
                             <svg
@@ -123,7 +125,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
                                         setIsSelectOpen(false);
                                     }}
                                 >
-                                    All Categories
+                                    {t('allCategories')}
                                 </div>
 
                                 {categories.map((category) => (
@@ -153,12 +155,12 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
             {/* Selected filters display */}
             {(currentFilter || currentCategory !== 'all') && (
                 <div className="mt-4 flex flex-wrap gap-2 items-center">
-                    <span className="text-sm text-[color:var(--ai-muted)]">Active filters:</span>                    {currentFilter && (
+                    <span className="text-sm text-[color:var(--ai-muted)]">{t('activeFilters')}</span>                    {currentFilter && (
                         <div className="inline-flex items-center gap-1 bg-[color:var(--ai-primary)]/10 dark:bg-[color:var(--ai-primary)]/20 text-[color:var(--ai-primary)] px-3 py-1 rounded-full text-sm">
                             <span>&quot;{currentFilter}&quot;</span>
                             <button
-                                title="Clear search filter"
-                                aria-label="Clear search filter" onClick={() => {
+                                title={t('clearSearchFilter')}
+                                aria-label={t('clearSearchFilter')} onClick={() => {
                                     setSearchText('');
                                     onFilterChange('');
                                 }}
@@ -175,8 +177,8 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
                         <div className="inline-flex items-center gap-1 bg-[color:var(--ai-primary)]/10 dark:bg-[color:var(--ai-primary)]/20 text-[color:var(--ai-primary)] px-3 py-1 rounded-full text-sm">
                             <span>{currentCategory}</span>
                             <button
-                                title="Clear category filter"
-                                aria-label="Clear category filter" onClick={() => {
+                                title={t('clearCategoryFilter')}
+                                aria-label={t('clearCategoryFilter')} onClick={() => {
                                     setSelectedCategory('all');
                                     onCategoryChange('all');
                                 }}
@@ -191,8 +193,8 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
 
                     {(currentFilter || currentCategory !== 'all') && (
                         <button
-                            title="Clear all filters"
-                            aria-label="Clear all filters"
+                            title={t('clearAll')}
+                            aria-label={t('clearAll')}
                             onClick={() => {
                                 setSearchText('');
                                 setSelectedCategory('all');
@@ -201,7 +203,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
                             }}
                             className="text-sm text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] underline cursor-pointer"
                         >
-                            Clear all
+                            {t('clearAll')}
                         </button>
                     )}
                 </div>

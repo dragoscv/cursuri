@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Course, ModalProps } from '../../types';
 import { getCoursePrice as getUnifiedCoursePrice } from '@/utils/pricing';
+import { useTranslations } from 'next-intl';
 import { AppContext } from '@/components/AppContext';
 import { Button, Progress, Chip, Divider, Card } from '@heroui/react';
 import { motion } from 'framer-motion';
@@ -37,6 +38,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
 
     const { user, openModal, closeModal } = context;
     const [isLoading, setIsLoading] = useState(false);
+    const t = useTranslations('courses.enrollment');
 
     // Check if the user has completed all prerequisites before enrolling
     const checkPrerequisites = () => {
@@ -89,7 +91,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
             openModal({
                 id: "login-modal",
                 isOpen: true,
-                modalHeader: "Login Required",
+                modalHeader: t('loginRequired'),
                 modalBody: <Login onClose={() => closeModal("login-modal")} />,
                 onClose: () => closeModal("login-modal")
             });
@@ -105,11 +107,11 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
             openModal({
                 id: "prerequisites-modal",
                 isOpen: true,
-                modalHeader: "Complete Prerequisites First",
+                modalHeader: t('prerequisitesRequired'),
                 modalBody: (
                     <div className="p-4">
                         <p className="mb-4 text-[color:var(--ai-muted)]">
-                            Before enrolling in this course, you need to complete the following prerequisite courses:
+                            {t('prerequisitesDescription')}
                         </p>
                         <div className="space-y-2 mb-4">
                             {prerequisiteCheck.missingCourses.map((missingCourse: any) => (
@@ -129,13 +131,13 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                                             window.location.href = `/courses/${missingCourse.id}`;
                                         }}
                                     >
-                                        View Course
+                                        {t('viewCourse')}
                                     </Button>
                                 </div>
                             ))}
                         </div>
                         <p className="text-sm text-[color:var(--ai-muted)]">
-                            Complete these prerequisites to unlock this course.
+                            {t('completePrerequisites')}
                         </p>
                     </div>
                 ),
@@ -185,7 +187,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
         const priceInfo = getUnifiedCoursePrice(course, products);
 
         if (course.isFree || priceInfo.amount === 0) {
-            return 'Free';
+            return t('free');
         }
 
         return priceInfo.formatted;
@@ -207,18 +209,18 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                                 <FiCheck className="text-emerald-500" size={18} />
                             </div>
                             <h3 className="font-bold text-lg text-[color:var(--ai-foreground)]">
-                                You&apos;re Enrolled
+                                {t('youreEnrolled')}
                             </h3>
                         </div>
                         <Chip color="success" variant="flat" className="bg-emerald-500/10 text-emerald-500 font-medium">
-                            Active
+                            {t('active')}
                         </Chip>
                     </div>                    {/* Progress card */}
                     <div className="bg-gradient-to-br from-emerald-50/10 via-teal-50/5 to-emerald-50/10 dark:from-emerald-900/10 dark:via-teal-900/5 dark:to-emerald-900/10 backdrop-blur-sm rounded-xl p-5 border border-emerald-200/20 dark:border-emerald-800/20 shadow-sm hover:shadow-md transition-all duration-300 mb-6">
                         <div className="flex items-center justify-between mb-3">
-                            <span className="text-sm font-medium bg-gradient-to-r from-emerald-600 to-teal-500 dark:from-emerald-400 dark:to-teal-300 bg-clip-text text-transparent">Your Progress</span>
+                            <span className="text-sm font-medium bg-gradient-to-r from-emerald-600 to-teal-500 dark:from-emerald-400 dark:to-teal-300 bg-clip-text text-transparent">{t('yourProgress')}</span>
                             <span className="text-xs bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-2.5 py-1 rounded-full font-medium">
-                                Continue Learning
+                                {t('inProgress')}
                             </span>
                         </div>                        <Progress
                             value={30}
@@ -228,8 +230,8 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                             aria-label="Course progress"
                         />
                         <div className="flex justify-between items-center text-xs text-[color:var(--ai-muted)]">
-                            <span className="font-medium">30% complete</span>
-                            <span>{course.lessonsCount ? `${Math.round(course.lessonsCount * 0.3)}/${course.lessonsCount} lessons` : 'In progress'}</span>
+                            <span className="font-medium">{t('percentComplete', { percent: 30 })}</span>
+                            <span>{course.lessonsCount ? t('lessonsProgress', { completed: Math.round(course.lessonsCount * 0.3), total: course.lessonsCount }) : t('inProgress')}</span>
                         </div>
                     </div>
 
@@ -251,7 +253,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                                 endContent={<FiArrowRight className="text-lg ml-1 group-hover:translate-x-1 transition-transform duration-200" />}
                                 startContent={<FiPlayCircle className="text-xl" />}
                             >
-                                Continue Learning
+                                {t('continueButton')}
                             </Button>
                         </div>
                     </motion.div>
@@ -259,21 +261,21 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                     <Divider className="my-6" />
 
                     <h4 className="text-sm font-semibold text-[color:var(--ai-foreground)] mb-4">
-                        What you have access to:
+                        {t('whatYouHaveAccess')}
                     </h4>                    {/* Features grid for better visual arrangement */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-5">
                         <div className="flex items-center gap-3 text-[color:var(--ai-muted)] group">
                             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
                                 <FiBook className="flex-shrink-0" />
                             </div>
-                            <span className="font-medium transition-colors duration-300 group-hover:text-[color:var(--ai-foreground)]">{course.lessonsCount || '10+'} lessons available</span>
+                            <span className="font-medium transition-colors duration-300 group-hover:text-[color:var(--ai-foreground)]">{t('lessonsAvailable', { count: course.lessonsCount || '10+' })}</span>
                         </div>
 
                         <div className="flex items-center gap-3 text-[color:var(--ai-muted)] group">
                             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
                                 <FiClock className="flex-shrink-0" />
                             </div>
-                            <span className="font-medium transition-colors duration-300 group-hover:text-[color:var(--ai-foreground)]">Lifetime access</span>
+                            <span className="font-medium transition-colors duration-300 group-hover:text-[color:var(--ai-foreground)]">{t('lifetimeAccess')}</span>
                         </div>
 
                         {course.certificate && (
@@ -281,14 +283,14 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
                                     <FiAward className="flex-shrink-0" />
                                 </div>
-                                <span className="font-medium transition-colors duration-300 group-hover:text-[color:var(--ai-foreground)]">Certificate upon completion</span>
+                                <span className="font-medium transition-colors duration-300 group-hover:text-[color:var(--ai-foreground)]">{t('certificateUponCompletion')}</span>
                             </div>
                         )}
                         <div className="flex items-center gap-3 text-[color:var(--ai-muted)] group">
                             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
                                 <FiMessageSquare className="flex-shrink-0" />
                             </div>
-                            <span className="font-medium transition-colors duration-300 group-hover:text-[color:var(--ai-foreground)]">Premium support</span>
+                            <span className="font-medium transition-colors duration-300 group-hover:text-[color:var(--ai-foreground)]">{t('premiumSupport')}</span>
                         </div>
                     </div></div>
             </>
@@ -324,7 +326,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                         {course.limitedOffer && (
                             <div className="bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 text-xs font-medium flex items-center gap-1 py-1.5 px-2.5 rounded-full">
                                 <FiClock className="animate-pulse" />
-                                <span>Limited time offer</span>
+                                <span>{t('enrollment.limitedTimeOffer')}</span>
                             </div>
                         )}
                     </div>
@@ -332,7 +334,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                     {course.moneyBackGuarantee && (
                         <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 text-xs font-medium mb-3">
                             <FiCheck className="text-emerald-500" />
-                            <span>30-day money-back guarantee</span>
+                            <span>{t('moneyBackGuarantee')}</span>
                         </div>
                     )}
                 </div>
@@ -380,7 +382,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                                 }
                             >
                                 <span className="relative z-10 tracking-wide font-semibold text-white flex items-center gap-2 transition-all duration-300 group-hover:tracking-wider">
-                                    {course.isFree ? 'Enroll Now - Free' : 'Buy Now'}
+                                    {course.isFree ? `${t('enrollButton')} - ${t('free')}` : t('buyNow')}
 
                                     {/* Arrow with enhanced hover animation */}
                                     {!course.isFree && (
@@ -397,7 +399,9 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                     {/* Course benefits heading with accent line */}
                     <div className="flex items-center gap-2 mb-4">
                         <div className="h-0.5 w-6 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"></div>
-                        <h4 className="font-bold text-[color:var(--ai-foreground)]">This course includes:</h4>
+                        <div className="mb-6">
+                            <h4 className="font-bold text-[color:var(--ai-foreground)]">{t('getInstantAccess')}</h4>
+                        </div>
                     </div>
 
                     {/* Course features grid */}                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -405,21 +409,21 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
                                 <FiBook className="flex-shrink-0" />
                             </div>
-                            <span className="text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)] transition-colors duration-300 font-medium">{course.lessonsCount || '10+'} lessons</span>
+                            <span className="text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)] transition-colors duration-300 font-medium">{t('lessonsAvailable', { count: course.lessonsCount || '10+' })}</span>
                         </div>
 
                         <div className="flex items-center gap-3 group">
                             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
                                 <FiClock className="flex-shrink-0" />
                             </div>
-                            <span className="text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)] transition-colors duration-300 font-medium">{course.duration || '5 hours'} of content</span>
+                            <span className="text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)] transition-colors duration-300 font-medium">{t('onDemandVideo')}</span>
                         </div>
 
                         <div className="flex items-center gap-3 group">
                             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
                                 <FiPlayCircle className="flex-shrink-0" />
                             </div>
-                            <span className="text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)] transition-colors duration-300 font-medium">Full lifetime access</span>
+                            <span className="text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)] transition-colors duration-300 font-medium">{t('fullLifetimeAccess')}</span>
                         </div>
 
                         {course.certificate && (
@@ -427,7 +431,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
                                     <FiAward className="flex-shrink-0" />
                                 </div>
-                                <span className="text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)] transition-colors duration-300 font-medium">Certificate of completion</span>
+                                <span className="text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)] transition-colors duration-300 font-medium">{t('completionCertificate')}</span>
                             </div>
                         )}
 
@@ -436,14 +440,14 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
                                     <FiDownload className="flex-shrink-0" />
                                 </div>
-                                <span className="text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)] transition-colors duration-300 font-medium">Downloadable resources</span>
+                                <span className="text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)] transition-colors duration-300 font-medium">{t('downloadableResources')}</span>
                             </div>
                         )}
                         <div className="flex items-center gap-3 group">
                             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
                                 <FiMessageSquare className="flex-shrink-0" />
                             </div>
-                            <span className="text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)] transition-colors duration-300 font-medium">Premium support</span>
+                            <span className="text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)] transition-colors duration-300 font-medium">{t('premiumSupport')}</span>
                         </div>
                     </div>
                 </div>
@@ -453,10 +457,10 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                     <div className="mb-4 p-4 rounded-lg bg-[color:var(--ai-primary)]/5 border border-[color:var(--ai-primary)]/20">
                         <div className="flex items-center gap-2 mb-2">
                             <FiLink className="text-[color:var(--ai-primary)]" />
-                            <h3 className="font-medium text-[color:var(--ai-foreground)]">Prerequisites</h3>
+                            <h3 className="font-medium text-[color:var(--ai-foreground)]">{t('prerequisitesRequired')}</h3>
                         </div>
                         <p className="text-sm text-[color:var(--ai-muted)] mb-3">
-                            This course requires the completion of prerequisite course(s) before enrollment.
+                            {t('completePrerequisites')}
                         </p>
 
                         {/* Check prerequisites before enrolling */}
@@ -492,7 +496,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                                                 href={`/courses/${prerequisiteId}`}
                                                 className="text-xs px-2 py-1 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 hover:bg-amber-500/30 transition-colors"
                                             >
-                                                Enroll First
+                                                {t('enrollFirst')}
                                             </a>
                                         )}
                                     </div>
@@ -508,7 +512,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                         <Divider className="my-6" />
                         <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-[color:var(--ai-accent)]/5 rounded-lg p-4">
                             <p className="text-sm text-[color:var(--ai-muted)] mb-3 text-center">
-                                Already have an account? Sign in to purchase this course
+                                {t('alreadyHaveAccount')}
                             </p>
                             <Button
                                 color="default"
@@ -525,7 +529,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                                     });
                                 }}
                             >
-                                Sign in to purchase
+                                {t('signInToPurchase')}
                             </Button>
                         </div>                    </>
                 )}

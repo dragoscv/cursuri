@@ -11,6 +11,7 @@ import Login from "../Login";
 import { Course } from '@/types';
 import { getCoursePrice as getUnifiedCoursePrice } from '@/utils/pricing';
 import { FiLink } from '../icons/FeatherIcons/FiLink';
+import { useTranslations } from 'next-intl';
 
 interface CoursesListProps {
     filter?: string;
@@ -18,6 +19,7 @@ interface CoursesListProps {
 }
 
 export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList({ filter, category }) {
+    const t = useTranslations('common');
     const router = useRouter();
     const context = useContext(AppContext);
 
@@ -218,7 +220,7 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
                                 <div className="absolute top-4 right-4 z-20">
                                     <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-yellow-400/90 text-xs font-semibold text-yellow-900 shadow">
                                         <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
-                                        Most Popular
+                                        {t('status.mostPopular')}
                                     </span>
                                 </div>
                             )}
@@ -237,7 +239,7 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
                                             </svg>
                                         }
                                     >
-                                        Enrolled
+                                        {t('status.enrolled')}
                                     </Chip>
                                 </div>
                             )}
@@ -318,7 +320,7 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
                                 {/* Price */}
                                 <div className="text-xl font-bold text-[color:var(--ai-foreground)]">
                                     {course.isFree ?
-                                        <span className="text-green-600 dark:text-green-400">Free</span> :
+                                        <span className="text-green-600 dark:text-green-400">{t('status.free')}</span> :
                                         <span>{amount} {currency}</span>
                                     }
                                 </div>
@@ -335,7 +337,7 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
                                             </svg>
                                         }
                                     >
-                                        Continue
+                                        {t('courseActions.continue')}
                                     </Button>
                                 ) : (
                                     isLoading ? (
@@ -346,7 +348,7 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
                                             onClick={() => buyCourse(priceId, course.id)}
                                             className="rounded-full px-4"
                                         >
-                                            {course.isFree ? 'Enroll' : 'Buy Now'}
+                                            {course.isFree ? t('courseActions.enroll') : t('courseActions.buyNow')}
                                         </Button>
                                     )
                                 )}

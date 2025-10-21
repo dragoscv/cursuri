@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useContext } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { AppContext } from '../AppContext';
 import LessonContent from './LessonContent';
 import { Course, Lesson as LessonType } from '@/types';
@@ -15,6 +16,7 @@ interface ClientLessonWrapperProps {
 }
 
 export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps) {
+    const t = useTranslations('lessons.wrapper');
     const { courseId, lessonId } = params;
     const context = useContext(AppContext);
     const router = useRouter();
@@ -131,7 +133,7 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
         return (
             <div className="flex flex-col items-center justify-center min-h-screen p-4">
                 <Spinner size="lg" color="primary" />
-                <p className="mt-4 text-[color:var(--ai-muted)]">Loading lesson...</p>
+                <p className="mt-4 text-[color:var(--ai-muted)]">{t('loadingContent')}</p>
             </div>
         );
     }
@@ -140,38 +142,38 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
     if (error) {
         return (
             <div className="flex flex-col items-center justify-center min-h-screen p-4">
-                <h1 className="text-2xl font-bold mb-4">Error Loading Lesson</h1>
+                <h1 className="text-2xl font-bold mb-4">{t('errorLoading')}</h1>
                 <p className="mb-6 text-[color:var(--ai-muted)]">{error}</p>
 
                 {/* Debugging information */}
                 {context && (
                     <div className="mb-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-left max-w-2xl w-full">
-                        <h3 className="font-bold mb-2 text-sm">Debug Information:</h3>
+                        <h3 className="font-bold mb-2 text-sm">{t('debugInfo')}</h3>
                         <div className="space-y-1 text-xs font-mono">
                             <div>
-                                <strong>Requested Lesson ID:</strong> {lessonId}
+                                <strong>{t('requestedLessonId')}</strong> {lessonId}
                             </div>
                             <div>
-                                <strong>Course ID:</strong> {courseId}
+                                <strong>{t('courseId')}</strong> {courseId}
                             </div>
                             <div>
-                                <strong>Course Loaded:</strong> {course ? 'Yes' : 'No'}
+                                <strong>{t('courseLoaded')}</strong> {course ? t('yes') : t('no')}
                             </div>
                             {course && (
                                 <div>
-                                    <strong>Course Name:</strong> {course.name}
+                                    <strong>{t('courseName')}</strong> {course.name}
                                 </div>
                             )}
                             <div>
-                                <strong>Lessons Loaded:</strong> {context.lessons[courseId] ? 'Yes' : 'No'}
+                                <strong>{t('lessonsLoaded')}</strong> {context.lessons[courseId] ? t('yes') : t('no')}
                             </div>
                             {context.lessons[courseId] && (
                                 <>
                                     <div>
-                                        <strong>Available Lesson Count:</strong> {Object.keys(context.lessons[courseId]).length}
+                                        <strong>{t('availableLessonCount')}</strong> {Object.keys(context.lessons[courseId]).length}
                                     </div>
                                     <div>
-                                        <strong>Available Lesson IDs:</strong>
+                                        <strong>{t('availableLessonIds')}</strong>
                                         <div className="pl-4 mt-1 max-h-40 overflow-y-auto">
                                             {Object.keys(context.lessons[courseId]).map(id => (
                                                 <div key={id} className={id === lessonId ? 'text-green-600 font-bold' : ''}>
@@ -190,7 +192,7 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
                     onClick={() => router.push(`/courses/${courseId}`)}
                     className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                    Return to Course
+                    {t('returnToCourse')}
                 </button>
             </div>
         );
@@ -210,7 +212,7 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
     return (
         <div className="flex flex-col items-center justify-center min-h-screen p-4">
             <Spinner size="lg" color="primary" />
-            <p className="mt-4 text-[color:var(--ai-muted)]">Loading lesson content...</p>
+            <p className="mt-4 text-[color:var(--ai-muted)]">{t('loadingContent')}</p>
         </div>
     );
 }

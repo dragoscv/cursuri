@@ -1,33 +1,39 @@
 import { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 
-export const metadata: Metadata = {
-    title: 'Contact Us | Cursuri',
-    description: 'Get in touch with us. We\'d love to hear from you about our courses or any questions you might have.',
+export async function generateMetadata(): Promise<Metadata> {
+    const t = await getTranslations('contact.metadata');
+    return {
+        title: t('title'),
+        description: t('description'),
+    };
 }
 
-export default function ContactPage() {
+export default async function ContactPage() {
+    const t = await getTranslations('contact');
+    
     return (
         <div className="min-h-screen bg-[color:var(--ai-background)] pt-20 pb-16">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Hero Section */}
                 <div className="text-center mb-16">
                     <h1 className="text-4xl md:text-5xl font-bold text-[color:var(--ai-foreground)] mb-6">
-                        Contact Us
+                        {t('hero.title')}
                     </h1>
                     <p className="text-xl text-[color:var(--ai-muted)] max-w-2xl mx-auto">
-                        Have a question about our courses or need help getting started? We'd love to hear from you.
+                        {t('hero.subtitle')}
                     </p>
                 </div>
 
                 <div className="grid lg:grid-cols-2 gap-12">
                     {/* Contact Form */}
                     <div className="bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-xl p-8">
-                        <h2 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-6">Send us a Message</h2>
+                        <h2 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-6">{t('form.title')}</h2>
 
                         <form className="space-y-6">
                             <div>
                                 <label htmlFor="name" className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
-                                    Full Name
+                                    {t('form.labels.name')}
                                 </label>
                                 <input
                                     type="text"
@@ -35,13 +41,13 @@ export default function ContactPage() {
                                     name="name"
                                     required
                                     className="w-full px-4 py-3 bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[color:var(--ai-primary)] focus:border-transparent text-[color:var(--ai-foreground)]"
-                                    placeholder="Your full name"
+                                    placeholder={t('form.placeholders.name')}
                                 />
                             </div>
 
                             <div>
                                 <label htmlFor="email" className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
-                                    Email Address
+                                    {t('form.labels.email')}
                                 </label>
                                 <input
                                     type="email"
@@ -49,32 +55,32 @@ export default function ContactPage() {
                                     name="email"
                                     required
                                     className="w-full px-4 py-3 bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[color:var(--ai-primary)] focus:border-transparent text-[color:var(--ai-foreground)]"
-                                    placeholder="your@email.com"
+                                    placeholder={t('form.placeholders.email')}
                                 />
                             </div>
 
                             <div>
                                 <label htmlFor="subject" className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
-                                    Subject
+                                    {t('form.labels.subject')}
                                 </label>
                                 <select
                                     id="subject"
                                     name="subject"
                                     className="w-full px-4 py-3 bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[color:var(--ai-primary)] focus:border-transparent text-[color:var(--ai-foreground)]"
                                 >
-                                    <option value="">Select a subject</option>
-                                    <option value="course-inquiry">Course Inquiry</option>
-                                    <option value="technical-support">Technical Support</option>
-                                    <option value="billing">Billing Question</option>
-                                    <option value="partnership">Partnership Opportunity</option>
-                                    <option value="feedback">Feedback</option>
-                                    <option value="other">Other</option>
+                                    <option value="">{t('form.subjects.placeholder')}</option>
+                                    <option value="course-inquiry">{t('form.subjects.courseInquiry')}</option>
+                                    <option value="technical-support">{t('form.subjects.technicalSupport')}</option>
+                                    <option value="billing">{t('form.subjects.billing')}</option>
+                                    <option value="partnership">{t('form.subjects.partnership')}</option>
+                                    <option value="feedback">{t('form.subjects.feedback')}</option>
+                                    <option value="other">{t('form.subjects.other')}</option>
                                 </select>
                             </div>
 
                             <div>
                                 <label htmlFor="message" className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
-                                    Message
+                                    {t('form.labels.message')}
                                 </label>
                                 <textarea
                                     id="message"
@@ -82,7 +88,7 @@ export default function ContactPage() {
                                     rows={5}
                                     required
                                     className="w-full px-4 py-3 bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[color:var(--ai-primary)] focus:border-transparent text-[color:var(--ai-foreground)] resize-vertical"
-                                    placeholder="Tell us how we can help you..."
+                                    placeholder={t('form.placeholders.message')}
                                 />
                             </div>
 
@@ -90,7 +96,7 @@ export default function ContactPage() {
                                 type="submit"
                                 className="w-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white py-3 px-6 rounded-lg font-medium hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-[color:var(--ai-primary)] focus:ring-offset-2"
                             >
-                                Send Message
+                                {t('form.submitButton')}
                             </button>
                         </form>
                     </div>
@@ -99,7 +105,7 @@ export default function ContactPage() {
                     <div className="space-y-8">
                         {/* Contact Info */}
                         <div className="bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-xl p-8">
-                            <h2 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-6">Get in Touch</h2>
+                            <h2 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-6">{t('info.title')}</h2>
 
                             <div className="space-y-6">
                                 <div className="flex items-start gap-4">
@@ -107,12 +113,12 @@ export default function ContactPage() {
                                         <span className="text-white text-sm">📧</span>
                                     </div>
                                     <div>
-                                        <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-1">Email</h3>
+                                        <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-1">{t('info.email.title')}</h3>
                                         <a
                                             href="mailto:contact@cursuri.dev"
                                             className="text-[color:var(--ai-primary)] hover:underline"
                                         >
-                                            contact@cursuri.dev
+                                            {t('info.email.value')}
                                         </a>
                                     </div>
                                 </div>
@@ -122,9 +128,9 @@ export default function ContactPage() {
                                         <span className="text-white text-sm">🕒</span>
                                     </div>
                                     <div>
-                                        <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-1">Response Time</h3>
+                                        <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-1">{t('info.responseTime.title')}</h3>
                                         <p className="text-[color:var(--ai-muted)]">
-                                            We typically respond within 24 hours during business days.
+                                            {t('info.responseTime.description')}
                                         </p>
                                     </div>
                                 </div>
@@ -134,9 +140,9 @@ export default function ContactPage() {
                                         <span className="text-white text-sm">🌍</span>
                                     </div>
                                     <div>
-                                        <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-1">Global Support</h3>
+                                        <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-1">{t('info.globalSupport.title')}</h3>
                                         <p className="text-[color:var(--ai-muted)]">
-                                            We provide support to students worldwide in English and Romanian.
+                                            {t('info.globalSupport.description')}
                                         </p>
                                     </div>
                                 </div>
@@ -145,27 +151,27 @@ export default function ContactPage() {
 
                         {/* FAQ */}
                         <div className="bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-xl p-8">
-                            <h2 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-6">Frequently Asked Questions</h2>
+                            <h2 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-6">{t('faq.title')}</h2>
 
                             <div className="space-y-4">
                                 <div>
-                                    <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-2">Do you offer refunds?</h3>
+                                    <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-2">{t('faq.refunds.question')}</h3>
                                     <p className="text-[color:var(--ai-muted)]">
-                                        Yes, we offer a 30-day money-back guarantee on all courses.
+                                        {t('faq.refunds.answer')}
                                     </p>
                                 </div>
 
                                 <div>
-                                    <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-2">Can I access courses on mobile?</h3>
+                                    <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-2">{t('faq.mobile.question')}</h3>
                                     <p className="text-[color:var(--ai-muted)]">
-                                        Absolutely! Our platform is fully responsive and works great on all devices.
+                                        {t('faq.mobile.answer')}
                                     </p>
                                 </div>
 
                                 <div>
-                                    <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-2">Do you provide certificates?</h3>
+                                    <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-2">{t('faq.certificates.question')}</h3>
                                     <p className="text-[color:var(--ai-muted)]">
-                                        Yes, you'll receive a certificate of completion for each course you finish.
+                                        {t('faq.certificates.answer')}
                                     </p>
                                 </div>
                             </div>
@@ -173,7 +179,7 @@ export default function ContactPage() {
 
                         {/* Social Links */}
                         <div className="bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-xl p-8">
-                            <h2 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-6">Follow Us</h2>
+                            <h2 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-6">{t('social.title')}</h2>
 
                             <div className="flex gap-4">
                                 <a

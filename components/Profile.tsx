@@ -1,8 +1,9 @@
 import { useContext } from "react"
+import { useLocale } from 'next-intl'
 import { AppContext } from "@/components/AppContext"
 
 export default function Profile(props: any) {
-
+    const locale = useLocale();
     const context = useContext(AppContext)
     if (!context) {
         throw new Error("You probably forgot to put <AppProvider>.")
@@ -22,7 +23,7 @@ export default function Profile(props: any) {
                             >
                                 <div className="flex flex-row items-center justify-between p-4 gap-4">
                                     <span className="text-sm font-medium text-[color:var(--ai-foreground)]">
-                                        {new Date(userPaidProduct.created * 1000).toLocaleDateString('ro-RO', {
+                                        {new Date(userPaidProduct.created * 1000).toLocaleDateString(locale, {
                                             year: 'numeric',
                                             month: 'long',
                                             day: 'numeric',
@@ -46,7 +47,7 @@ export default function Profile(props: any) {
                                         Object.keys(courses).map((key: any) => {
                                             if (courses[key]?.id === userPaidProduct?.metadata?.courseId &&
                                                 courses[key]?.priceProduct?.prices?.[0]?.unit_amount) {
-                                                return (courses[key].priceProduct.prices[0].unit_amount / 100).toLocaleString('ro-RO', {
+                                                return (courses[key].priceProduct.prices[0].unit_amount / 100).toLocaleString(locale, {
                                                     style: 'currency',
                                                     currency: 'RON',
                                                 })

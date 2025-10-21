@@ -2,20 +2,23 @@
 
 import React, { useMemo } from 'react'
 import { motion } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 import { ReviewCard } from './ReviewCard'
 import { useFeaturedReviews } from './hooks/useFeaturedReviews'
-import { fallbackReviews } from './fallbackReviewData'
+import { getFallbackReviews } from './fallbackReviewData'
 import ScrollAnimationWrapper from '../animations/ScrollAnimationWrapper'
 import { Review } from '@/types'
 
 const FeaturedReviewsSection = React.memo(function FeaturedReviewsSection() {
+    const t = useTranslations('home.reviews');
+
     // Get featured reviews using our custom hook
     const featuredReviews = useFeaturedReviews(3)
 
     // Fallback to mock data if no featured reviews are available
     const displayReviews = useMemo(() => {
-        return featuredReviews.length > 0 ? featuredReviews : fallbackReviews
-    }, [featuredReviews])
+        return featuredReviews.length > 0 ? featuredReviews : getFallbackReviews(t)
+    }, [featuredReviews, t])
 
     // Memoize animation variants to prevent recreation
     const containerVariants = useMemo(() => ({
@@ -34,11 +37,10 @@ const FeaturedReviewsSection = React.memo(function FeaturedReviewsSection() {
                 <ScrollAnimationWrapper>
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[color:var(--ai-foreground)]">
-                            What Our Students Say
+                            {t('title')}
                         </h2>
                         <p className="text-[color:var(--ai-muted)] max-w-2xl mx-auto">
-                            Hear from our community of developers who have transformed their skills
-                            through our courses.
+                            {t('subtitle')}
                         </p>
                     </div>
                 </ScrollAnimationWrapper>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardBody, Progress, Button, Tabs, Tab } from '@heroui/react';
 import { FiTrendingUp, FiBarChart2, FiPieChart, FiList } from '@/components/icons/FeatherIcons';
 import ProgressChart from './charts/ProgressChart';
+import { useTranslations } from 'next-intl';
 
 interface DashboardProgressProps {
     courseCompletionPercentage: number;
@@ -26,6 +27,7 @@ export default function DashboardProgress({
     courses,
     lessonProgress
 }: DashboardProgressProps) {
+    const t = useTranslations('profile.progress');
     const [viewType, setViewType] = useState<'chart' | 'list'>('chart');
     const [chartType, setChartType] = useState<'bar' | 'doughnut'>('doughnut');
 
@@ -77,7 +79,7 @@ export default function DashboardProgress({
     // Prepare data for completion overview chart
     const getOverviewChartData = () => {
         return {
-            labels: ['Completed', 'In Progress'],
+            labels: [t('completed'), t('inProgress')],
             data: [completedCourses, totalCoursesEnrolled - completedCourses],
             colors: ['#10B981', '#7446ED'], // Green and Purple
         };
@@ -98,7 +100,7 @@ export default function DashboardProgress({
                         <div className="p-1.5 rounded-full bg-[color:var(--ai-primary)]/10">
                             <FiTrendingUp className="text-[color:var(--ai-primary)]" />
                         </div>
-                        Your Learning Progress
+                        {t('title')}
                     </h2>
                     <div className="flex gap-2">
                         <Button
@@ -138,13 +140,13 @@ export default function DashboardProgress({
                                 title={
                                     <div className="flex items-center gap-2">
                                         <FiPieChart />
-                                        <span>Pie Chart</span>
+                                        <span>{t('pieChart')}</span>
                                     </div>
                                 }
                             >
                                 <div className="flex flex-wrap gap-4 justify-around mt-4">
                                     <div className="text-center">
-                                        <h3 className="text-sm font-medium mb-2 text-[color:var(--ai-muted)]">Course Completion</h3>
+                                        <h3 className="text-sm font-medium mb-2 text-[color:var(--ai-muted)]">{t('courseCompletion')}</h3>
                                         <ProgressChart
                                             data={getOverviewChartData()}
                                             type="doughnut"
@@ -153,7 +155,7 @@ export default function DashboardProgress({
                                         />
                                     </div>
                                     <div className="text-center">
-                                        <h3 className="text-sm font-medium mb-2 text-[color:var(--ai-muted)]">Lessons Completed Per Course</h3>
+                                        <h3 className="text-sm font-medium mb-2 text-[color:var(--ai-muted)]">{t('lessonsCompleted')}</h3>
                                         <ProgressChart
                                             data={getCourseChartData()}
                                             type="doughnut"
@@ -168,7 +170,7 @@ export default function DashboardProgress({
                                 title={
                                     <div className="flex items-center gap-2">
                                         <FiBarChart2 />
-                                        <span>Bar Chart</span>
+                                        <span>{t('barChart')}</span>
                                     </div>
                                 }
                             >
@@ -189,7 +191,7 @@ export default function DashboardProgress({
                                 <div className="flex justify-between mb-3">
                                     <span className="text-sm font-medium text-[color:var(--ai-foreground)]/90 dark:text-[color:var(--ai-foreground)]/80 flex items-center gap-2">
                                         <span className="inline-block h-2 w-2 rounded-full bg-[color:var(--ai-primary)]"></span>
-                                        Course Completion
+                                        {t('courseCompletion')}
                                     </span>
                                     <span className="text-sm font-medium bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] px-2 py-0.5 rounded-full">
                                         {completedCourses}/{totalCoursesEnrolled}
@@ -207,7 +209,7 @@ export default function DashboardProgress({
                                 <div className="flex justify-between mb-3">
                                     <span className="text-sm font-medium text-[color:var(--ai-foreground)]/90 dark:text-[color:var(--ai-foreground)]/80 flex items-center gap-2">
                                         <span className="inline-block h-2 w-2 rounded-full bg-[color:var(--ai-success)]"></span>
-                                        Lesson Completion
+                                        {t('lessonCompletion')}
                                     </span>
                                     <span className="text-sm font-medium bg-[color:var(--ai-success)]/10 text-[color:var(--ai-success)] px-2 py-0.5 rounded-full">
                                         {completedLessons}/{totalLessons}
@@ -263,7 +265,7 @@ export default function DashboardProgress({
                         </div>
 
                         <div className="mt-6 pt-5 border-t border-[color:var(--ai-card-border)]/30">
-                            <h3 className="text-sm font-semibold mb-4 text-[color:var(--ai-foreground)]">Course-by-Course Progress</h3>
+                            <h3 className="text-sm font-semibold mb-4 text-[color:var(--ai-foreground)]">{t('courseByCourse')}</h3>
 
                             <div className="space-y-5">
                                 {userPaidProducts.map((product, index) => {

@@ -10,25 +10,17 @@ import CallToActionSection from '@/components/CallToActionSection'
 import FeaturedCoursesSection from '@/components/FeaturedCoursesSection'
 import RecommendedCoursesSection from '@/components/RecommendedCoursesSection'
 import { constructMetadata } from '@/utils/metadata'
+import { getTranslations } from 'next-intl/server'
 
-export const metadata: Metadata = constructMetadata({
-  title: 'Home',
-  description: 'Transform your career with expert-led online courses in AI, Machine Learning, Digital Marketing, Data Science, Cybersecurity, and more. Learn at your own pace with project-based curriculum.',
-  keywords: [
-    'online courses',
-    'AI courses',
-    'machine learning courses',
-    'digital marketing',
-    'data science',
-    'cybersecurity training',
-    'prompt engineering',
-    'generative AI',
-    'cloud computing',
-    'business skills',
-    'career development',
-    'online learning platform'
-  ]
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('home.metadata');
+  
+  return constructMetadata({
+    title: t('title'),
+    description: t('description'),
+    keywords: t('keywords').split(', ')
+  });
+}
 
 export default function Home() {
   return (

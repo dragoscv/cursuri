@@ -4,6 +4,7 @@ import React, { useContext, useMemo } from 'react'
 import Button from '@/components/ui/Button'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 // import { useAuth, useModal } from '@/components/contexts/hooks/index'
 import { AppContext } from '@/components/AppContext'
 import Login from '@/components/Login'
@@ -13,6 +14,7 @@ import { useHeroStats } from './hooks/useHeroStats'
 
 const HeroSection = React.memo(function HeroSection() {
     const router = useRouter()
+    const t = useTranslations('home.hero');
 
     // Inline useAuth to bypass caching issue
     const context = useContext(AppContext);
@@ -89,15 +91,14 @@ const HeroSection = React.memo(function HeroSection() {
                     className="text-center"
                 >
                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
-                        Dezvoltă-ți cariera în
+                        {t('title')}
                         <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
-                            {' '}programare
+                            {' '}{t('titleHighlight')}
                         </span>
                     </h1>
 
                     <p className="text-lg md:text-xl text-white/80 dark:text-[color:var(--ai-muted-foreground)] mb-8 max-w-3xl mx-auto">
-                        Cursuri practice de programare pentru dezvoltatori care vor să își accelereze cariera.
-                        Învață tehnologii moderne direct de la experți în domeniu.
+                        {t('subtitle')}
                     </p>
 
                     <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
@@ -108,7 +109,7 @@ const HeroSection = React.memo(function HeroSection() {
                             variant="solid"
                             className="px-8 py-6"
                         >
-                            Începe acum
+                            {t('button')}
                         </Button>
 
                         <Button
@@ -121,7 +122,7 @@ const HeroSection = React.memo(function HeroSection() {
                             variant="ghost"
                             className="px-8 py-6 border border-white/30 dark:border-[color:var(--ai-card-border)] text-white"
                         >
-                            Explorează tehnologiile
+                            {t('exploreButton')}
                         </Button>
                     </div>
 
@@ -129,22 +130,22 @@ const HeroSection = React.memo(function HeroSection() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-4xl mx-auto">
                         <div className="bg-white bg-opacity-10 dark:bg-[color:var(--ai-card-bg)]/30 backdrop-blur-sm rounded-xl p-4">
                             <div className="text-3xl md:text-4xl font-bold text-white">{stats.totalCourses}+</div>
-                            <div className="text-white/60 dark:text-[color:var(--ai-muted-foreground)] text-sm">Cursuri</div>
+                            <div className="text-white/60 dark:text-[color:var(--ai-muted-foreground)] text-sm">{t('floatingStats.courses')}</div>
                         </div>
 
                         <div className="bg-white bg-opacity-10 dark:bg-[color:var(--ai-card-bg)]/30 backdrop-blur-sm rounded-xl p-4">
                             <div className="text-3xl md:text-4xl font-bold text-white">{stats.totalStudents}+</div>
-                            <div className="text-white/60 dark:text-[color:var(--ai-muted-foreground)] text-sm">Studenți</div>
+                            <div className="text-white/60 dark:text-[color:var(--ai-muted-foreground)] text-sm">{t('floatingStats.students')}</div>
                         </div>
 
                         <div className="bg-white bg-opacity-10 dark:bg-[color:var(--ai-card-bg)]/30 backdrop-blur-sm rounded-xl p-4">
                             <div className="text-3xl md:text-4xl font-bold text-white">{stats.totalReviews}+</div>
-                            <div className="text-white/60 dark:text-[color:var(--ai-muted-foreground)] text-sm">Recenzii</div>
+                            <div className="text-white/60 dark:text-[color:var(--ai-muted-foreground)] text-sm">{t('floatingStats.reviews')}</div>
                         </div>
 
                         <div className="bg-white bg-opacity-10 dark:bg-[color:var(--ai-card-bg)]/30 backdrop-blur-sm rounded-xl p-4">
                             <div className="text-3xl md:text-4xl font-bold text-white">{stats.avgRating}</div>
-                            <div className="text-white/60 dark:text-[color:var(--ai-muted-foreground)] text-sm">Rating mediu</div>
+                            <div className="text-white/60 dark:text-[color:var(--ai-muted-foreground)] text-sm">{t('floatingStats.rating')}</div>
                         </div>
                     </div>
                 </motion.div>

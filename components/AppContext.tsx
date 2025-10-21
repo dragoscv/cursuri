@@ -332,7 +332,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             const db = getFirestore(firebaseApp);
             const lessonsCollection = collection(db, `courses/${courseId}/lessons`);
             const lessonsQuery = query(lessonsCollection); // Removed status filter to match server implementation
-            console.log(`Setting up listener for lessons in course: ${courseId}`);
+            console.log(`[LISTENER ATTACHED] Lessons listener for course: ${courseId}`);
             const unsubscribe = onSnapshot(lessonsQuery, (querySnapshot) => {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const lessonData: Record<string, any> = {};
@@ -387,7 +387,10 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             });
 
             // Return the unsubscribe function
-            return unsubscribe;
+            return () => {
+                console.log(`[LISTENER DETACHED] Lessons listener for course: ${courseId}`);
+                unsubscribe();
+            };
         } catch (error) {
             console.error("Error setting up lessons listener:", error);
             // Set loading state to error
@@ -402,7 +405,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             // Return a no-op cleanup function
             return () => { /* No cleanup needed after error */ };
         }
-    }, [state.lessons, state.lessonLoadingStates, dispatch, isRequestPending, setRequestPending]);
+    }, [state.lessonLoadingStates, dispatch, isRequestPending, setRequestPending]); // Removed state.lessons to prevent re-subscription
 
     const getCourseReviews = useCallback(async (courseId: string, options?: CacheOptions) => {
         const cacheOptions = { ...DEFAULT_CACHE_OPTIONS, ...options };
@@ -451,7 +454,9 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         try {
             const db = getFirestore(firebaseApp);
             const docRef = collection(db, `courses/${courseId}/reviews`);
-            const q = query(docRef); const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const q = query(docRef);
+            console.log(`[LISTENER ATTACHED] Reviews listener for course: ${courseId}`);
+            const unsubscribe = onSnapshot(q, (querySnapshot) => {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const reviewData: Record<string, any> = {};
 
@@ -497,7 +502,10 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             });
 
             // Return the unsubscribe function
-            return unsubscribe;
+            return () => {
+                console.log(`[LISTENER DETACHED] Reviews listener for course: ${courseId}`);
+                unsubscribe();
+            };
         } catch (error) {
             console.error("Error setting up reviews listener:", error);            // Set loading state to error
             dispatch({
@@ -567,6 +575,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         try {
             const progressRef = collection(firestoreDB, "users", user.uid, "progress");
             const q = query(progressRef);
+            console.log(`[LISTENER ATTACHED] User progress listener for user: ${user.uid}`);
 
             // Explicitly type this as a Firebase Unsubscribe function
             const unsubscribe: Unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -586,7 +595,10 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             });
 
             // Since this is an async function, we need to return a Promise that resolves to the unsubscribe function
-            return Promise.resolve(unsubscribe);
+            return Promise.resolve(() => {
+                console.log(`[LISTENER DETACHED] User progress listener for user: ${user.uid}`);
+                unsubscribe();
+            });
         } catch (error) {
             console.error("Error fetching lesson progress:", error);
             return Promise.resolve(() => { /* No cleanup needed in error case */ }); // Return a Promise that resolves to a no-op function in case of error
@@ -1411,7 +1423,8 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             };
         }
         return () => { /* No cleanup needed when there's no user */ };
-    }, [user, getUserLessonProgress]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user]); // getUserLessonProgress removed to prevent re-subscription loop
 
     // Function to refresh products from Stripe
     const refreshProducts = useCallback(async (newProductData?: { productId: string, productName: string, priceId: string, amount: number, currency: string }) => {
@@ -1484,7 +1497,10 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
     useEffect(() => {
         refreshProducts();
-    }, [refreshProducts]); useEffect(() => {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []); // Run only once on mount to avoid infinite loop
+
+    useEffect(() => {
         let mounted = true;
         const unsubscribes: Unsubscribe[] = [];
 
@@ -1552,6 +1568,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
     useEffect(() => {
         if (user) {
+            console.log(`[LISTENER ATTACHED] Payments listener for user: ${user.uid}`);
             const collectionRef = collection(firestoreDB, `customers/${user.uid}/payments`);
             const q = query(collectionRef);
             const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -1565,6 +1582,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             });
             // Properly type the unsubscribe function to avoid type errors
             return () => {
+                console.log(`[LISTENER DETACHED] Payments listener for user: ${user.uid}`);
                 if (typeof unsubscribe === 'function') {
                     unsubscribe();
                 }

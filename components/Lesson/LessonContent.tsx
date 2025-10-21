@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useContext, useCallback, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { AppContext } from '../AppContext';
 import { Lesson, Course, AppContextProps, Resource, LessonSettingsProps, QAProps } from '@/types';
 import { Button, Card, Chip, Divider, Badge } from '@heroui/react';
@@ -251,7 +252,7 @@ function LessonContent({ lesson, course, prevLessonId = null, nextLessonId = nul
 
                         {/* Course Progress Indicator */}
                         <div className="flex items-center gap-2 mb-2">
-                            <span className="text-sm text-[color:var(--ai-muted)]">Course Progress</span>
+                            <span className="text-sm text-[color:var(--ai-muted)]">{t('courseProgress')}</span>
                             <span className="font-semibold text-[color:var(--ai-primary)]">{Math.round(calculateProgress())}%</span>
                         </div>                    <div className={styles.progressContainer}>
                             <div

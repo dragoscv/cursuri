@@ -5,8 +5,10 @@ import useLearningPath, { CourseNode } from './hooks/useLearningPath';
 import { AppContext } from '@/components/AppContext';
 import { AppContextProps } from '@/types';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 export default function LearningPathSection() {
+    const t = useTranslations('profile.learningPathSection');
     const { currentCourse, nextCourse, currentProgress, courseNodes, loading, error } = useLearningPath();
     const [expandedView, setExpandedView] = useState(false);
     const context = React.useContext(AppContext) as AppContextProps;
@@ -21,7 +23,7 @@ export default function LearningPathSection() {
                         <span className="p-1.5 rounded-full bg-[color:var(--ai-primary)]/10">
                             <FiTrendingUp className="text-[color:var(--ai-primary)]" />
                         </span>
-                        Learning Path
+                        {t('title')}
                     </h2>
                     <div className="animate-pulse">
                         <div className="h-6 bg-[color:var(--ai-card-border)] rounded w-1/3 mb-3"></div>
@@ -43,10 +45,10 @@ export default function LearningPathSection() {
                         <span className="p-1.5 rounded-full bg-[color:var(--ai-error)]/10">
                             <FiTrendingUp className="text-[color:var(--ai-error)]" />
                         </span>
-                        Learning Path
+                        {t('title')}
                     </h2>
                     <div className="text-[color:var(--ai-error)]">
-                        Failed to load learning path data. Please try again later.
+                        {t('loadingError')}
                     </div>
                 </CardBody>
             </Card>
@@ -63,16 +65,16 @@ export default function LearningPathSection() {
                         <span className="p-1.5 rounded-full bg-[color:var(--ai-primary)]/10">
                             <FiTrendingUp className="text-[color:var(--ai-primary)]" />
                         </span>
-                        Learning Path
+                        {t('title')}
                     </h2>
                     <div className="text-[color:var(--ai-muted)] text-center py-6">
-                        <p className="mb-3">You haven't enrolled in any courses yet.</p>
+                        <p className="mb-3">{t('noCoursesYet')}</p>
                         <Button
                             color="primary"
                             variant="solid"
                             onClick={() => window.location.href = '/courses'}
                         >
-                            Browse Courses
+                            {t('browseCourses')}
                         </Button>
                     </div>
                 </CardBody>
@@ -99,13 +101,13 @@ export default function LearningPathSection() {
                             size="sm"
                             onClick={() => setExpandedView(true)}
                         >
-                            View Full Path
+                            {t('viewFullPath')}
                         </Button>
                     </div>
 
                     {currentCourse ? (
                         <div className="mb-4">
-                            <div className="text-sm text-[color:var(--ai-muted)] mb-1">Current Course</div>
+                            <div className="text-sm text-[color:var(--ai-muted)] mb-1">{t('currentCourse')}</div>
                             <div className="font-medium text-[color:var(--ai-foreground)] mb-2">{currentCourse}</div>                            <Progress
                                 value={currentProgress}
                                 aria-label="Current course progress"
@@ -114,17 +116,17 @@ export default function LearningPathSection() {
                                     indicator: 'bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-full'
                                 }}
                             />
-                            <div className="text-xs text-[color:var(--ai-muted)] mt-1">{currentProgress}% completed</div>
+                            <div className="text-xs text-[color:var(--ai-muted)] mt-1">{currentProgress}% {t('completed')}</div>
                         </div>
                     ) : (
                         <div className="mb-4">
-                            <div className="text-sm text-[color:var(--ai-muted)] mb-2">No course in progress</div>
+                            <div className="text-sm text-[color:var(--ai-muted)] mb-2">{t('noCourseInProgress')}</div>
                         </div>
                     )}
 
                     {nextCourse && (
                         <div>
-                            <div className="text-sm text-[color:var(--ai-muted)] mb-1">Next Up</div>
+                            <div className="text-sm text-[color:var(--ai-muted)] mb-1">{t('nextUp')}</div>
                             <div className="font-medium text-[color:var(--ai-primary)]">{nextCourse}</div>
                         </div>
                     )}
@@ -171,15 +173,15 @@ export default function LearningPathSection() {
                         <span className="p-1.5 rounded-full bg-[color:var(--ai-primary)]/10">
                             <FiTrendingUp className="text-[color:var(--ai-primary)]" />
                         </span>
-                        Learning Path Visualization
+                        {t('title')}
                     </h2>
                     <Button
                         color="primary"
                         variant="ghost"
                         size="sm"
-                        onClick={() => setExpandedView(false)}
+                        onClick={() => setExpandedView(true)}
                     >
-                        Collapse View
+                        {t('viewFullPath')}
                     </Button>
                 </div>
 

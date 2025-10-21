@@ -3,6 +3,7 @@ import React, { useContext, useCallback, useEffect, useState } from "react";
 import { AppContext } from "@/components/AppContext";
 import LessonsTable from "@/components/Admin/LessonsTable";
 import { useParams, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import Button from "@/components/ui/Button";
 import { collection, getDocs, getFirestore } from "firebase/firestore";
 import { firebaseApp } from "@/utils/firebase/firebase.config";
@@ -12,6 +13,7 @@ export default function AdminLessonsListPage() {
     const router = useRouter();
     const courseId = params.courseId as string;
     const context = useContext(AppContext);
+    const t = useTranslations('admin');
     const [isLoading, setIsLoading] = useState(true);
     const [lessons, setLessons] = useState<any[]>([]);
 
@@ -52,7 +54,7 @@ export default function AdminLessonsListPage() {
     return (
         <div className="max-w-7xl mx-auto px-4 py-8">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">Lessons</h1>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">{t('lessons.title')}</h1>
                 <Button color="primary" onPress={() => router.push(`/admin/courses/${courseId}/lessons/add`)}>
                     Add Lesson
                 </Button>

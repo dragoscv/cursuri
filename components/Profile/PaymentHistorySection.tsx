@@ -3,8 +3,10 @@ import { Card, CardBody, Button, Spinner, Tooltip } from '@heroui/react';
 import { FiCreditCard, FiDownload, FiAlertCircle, FiSearch } from '@/components/icons/FeatherIcons';
 import usePaymentHistory from './hooks/usePaymentHistory';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 export default function PaymentHistorySection() {
+    const t = useTranslations('profile.payment');
     const { payments, loading, error, downloadInvoice } = usePaymentHistory();
     const [downloadingInvoices, setDownloadingInvoices] = useState<Record<string, boolean>>({});
 
@@ -98,11 +100,11 @@ export default function PaymentHistorySection() {
                         <table className="min-w-full text-sm">
                             <thead>
                                 <tr className="text-left text-[color:var(--ai-muted)] border-b border-[color:var(--ai-card-border)]/20">
-                                    <th className="py-2 pr-4">Course</th>
-                                    <th className="py-2 pr-4">Amount</th>
-                                    <th className="py-2 pr-4">Date</th>
-                                    <th className="py-2 pr-4">Status</th>
-                                    <th className="py-2 pr-4">Invoice</th>
+                                    <th className="py-2 pr-4">{t('tableHeaders.course')}</th>
+                                    <th className="py-2 pr-4">{t('tableHeaders.amount')}</th>
+                                    <th className="py-2 pr-4">{t('tableHeaders.date')}</th>
+                                    <th className="py-2 pr-4">{t('tableHeaders.status')}</th>
+                                    <th className="py-2 pr-4">{t('tableHeaders.invoice')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -125,9 +127,9 @@ export default function PaymentHistorySection() {
                                                     payment.status === 'processing' ? 'bg-[color:var(--ai-warning)]/10 text-[color:var(--ai-warning)]' :
                                                         'bg-[color:var(--ai-error)]/10 text-[color:var(--ai-error)]'}`}
                                             >
-                                                {payment.status === 'succeeded' ? 'Paid' :
-                                                    payment.status === 'processing' ? 'Processing' :
-                                                        'Failed'}
+                                                {payment.status === 'succeeded' ? t('status.succeeded') :
+                                                    payment.status === 'processing' ? t('status.processing') :
+                                                        t('status.failed')}
                                             </span>
                                         </td>
                                         <td className="py-2 pr-4">
@@ -144,13 +146,13 @@ export default function PaymentHistorySection() {
                                                             <FiDownload size={16} />
                                                     }
                                                 >
-                                                    {downloadingInvoices[payment.id] ? 'Generating...' : 'Download'}
+                                                    {downloadingInvoices[payment.id] ? t('generating') : t('download')}
                                                 </Button>
                                             ) : (
-                                                <Tooltip content="Invoice available after payment is completed">
+                                                <Tooltip content={t('invoiceAvailableAfterPayment')}>
                                                     <span className="text-[color:var(--ai-muted)] flex items-center gap-1">
                                                         <FiDownload size={16} />
-                                                        Unavailable
+                                                        {t('unavailable')}
                                                     </span>
                                                 </Tooltip>
                                             )}
@@ -165,15 +167,15 @@ export default function PaymentHistorySection() {
                         <div className="w-16 h-16 mx-auto bg-[color:var(--ai-muted)]/10 rounded-full flex items-center justify-center mb-4">
                             <FiSearch className="text-[color:var(--ai-secondary)]" size={24} />
                         </div>
-                        <h3 className="text-lg font-medium text-[color:var(--ai-foreground)] mb-2">No Payment Records Found</h3>
-                        <p className="text-[color:var(--ai-muted)] mb-4">Your purchase history will appear here once you buy a course.</p>
+                        <h3 className="text-lg font-medium text-[color:var(--ai-foreground)] mb-2">{t('noPaymentRecords')}</h3>
+                        <p className="text-[color:var(--ai-muted)] mb-4">{t('noPaymentRecordsDesc')}</p>
                         <Button
                             as="a"
                             href="/courses"
                             color="primary"
                             variant="solid"
                         >
-                            Browse Courses
+                            {t('browseCourses')}
                         </Button>
                     </div>
                 )}

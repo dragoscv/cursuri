@@ -17,11 +17,13 @@ import { signOut } from "firebase/auth";
 import Login from "@/components/Login";
 import AddCourse from "@/components/Course/AddCourse";
 import SocialIcons from "@/components/Header/SocialIcons";
+import { useTranslations } from 'next-intl';
 
 /**
  * UserDropdown component that handles the user menu functionality
  */
 export default function UserDropdown() {
+    const t = useTranslations('common');
     const router = useRouter();
     const context = useContext(AppContext);
 
@@ -59,7 +61,7 @@ export default function UserDropdown() {
                         className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 rounded-lg p-2 border-0 transition-colors"
                         onClick={() => router.push('/profile')}
                     >
-                        <p className="font-semibold text-[color:var(--ai-foreground)]">Signed in as</p>
+                        <p className="font-semibold text-[color:var(--ai-foreground)]">{t('userMenu.signedInAs')}</p>
                         <p className="font-semibold text-[color:var(--ai-foreground)]">{user?.displayName ? user?.displayName : user?.email ? user?.email : user?.phoneNumber ? user?.phoneNumber : user?.uid}</p>
                     </div>
                 </DropdownItem>
@@ -81,7 +83,7 @@ export default function UserDropdown() {
                                 onClick={() => router.push('/profile')}
                             >
                                 <UserIcon className="text-[color:var(--ai-primary)]" size={18} />
-                                Profile Dashboard
+                                {t('userMenu.profileDashboard')}
                             </div>
                         </DropdownItem>
                         <DropdownItem
@@ -94,7 +96,7 @@ export default function UserDropdown() {
                                 onClick={() => router.push('/profile/settings')}
                             >
                                 <FiSettings className="text-[color:var(--ai-primary)]" size={18} />
-                                Settings
+                                {t('userMenu.settings')}
                             </div>
                         </DropdownItem>
                     </>
@@ -117,7 +119,7 @@ export default function UserDropdown() {
                         onClick={() => router.push('/admin')}
                     >
                         <ShieldIcon className="text-[color:var(--ai-primary)]" size={18} />
-                        Admin Dashboard
+                        {t('userMenu.adminDashboard')}
                     </div>
                 </DropdownItem>
             </DropdownSection>
@@ -136,7 +138,7 @@ export default function UserDropdown() {
                 >
                     <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors flex items-center gap-2">
                         <MessageSquareIcon className="text-[color:var(--ai-primary)]" size={18} />
-                        Suggestions
+                        {t('userMenu.suggestions')}
                     </div>
                 </DropdownItem>
 
@@ -150,7 +152,7 @@ export default function UserDropdown() {
                         onClick={handleSignOut}
                     >
                             <LogOutIcon className="text-[color:var(--ai-error)]" size={18} color="var(--ai-error)" />
-                            Logout
+                            {t('userMenu.logout')}
                         </div>
                     </DropdownItem>
                 ) : (
@@ -168,7 +170,7 @@ export default function UserDropdown() {
                                 size: 'md',
                                 scrollBehavior: 'inside',
                                 isDismissable: true,
-                                modalHeader: 'Autentificare',
+                                modalHeader: t('userMenu.login'),
                                 modalBody: <Login onClose={() => closeModal('login')} />,
                                 headerDisabled: true,
                                 footerDisabled: true,
@@ -183,7 +185,7 @@ export default function UserDropdown() {
                             })}
                         >
                             <UserIcon className="text-[color:var(--ai-success)]" size={18} />
-                            Login
+                            {t('userMenu.login')}
                         </div>
                     </DropdownItem>
                 )}

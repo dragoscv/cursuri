@@ -2,9 +2,12 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { Card, CardBody, CardHeader, Spinner, Divider } from '@heroui/react';
+import { useLocale, useTranslations } from 'next-intl';
 import { AppContext } from '@/components/AppContext';
 
 const AdminAnalytics: React.FC = () => {
+    const t = useTranslations('admin.analytics');
+    const locale = useLocale();
     const context = useContext(AppContext);
     if (!context) {
         throw new Error("AdminAnalytics must be used within an AppProvider");
@@ -54,7 +57,7 @@ const AdminAnalytics: React.FC = () => {
         return (
             <div className="text-center py-12">
                 <h2 className="text-2xl font-bold text-[color:var(--ai-danger)] mb-4">{error}</h2>
-                <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Please try again later</p>
+                <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">{t('pleaseTryAgain')}</p>
             </div>
         );
     }
@@ -89,12 +92,12 @@ const AdminAnalytics: React.FC = () => {
 
     return (
         <div className="space-y-8">
-            <h1 className="text-3xl font-bold">Analytics</h1>
+            <h1 className="text-3xl font-bold">{t('title')}</h1>
 
             {/* Revenue Chart */}
             <Card className="shadow-md">
                 <CardHeader className="pb-0">
-                    <h2 className="text-xl font-semibold">Revenue Over Time</h2>
+                    <h2 className="text-xl font-semibold">{t('revenueOverTime')}</h2>
                 </CardHeader>
                 <CardBody>
                     {sortedMonthlyRevenue.length > 0 ? (
@@ -107,7 +110,7 @@ const AdminAnalytics: React.FC = () => {
                                         <div
                                             className="w-full bg-primary-500 rounded-t"
                                             style={{ height: `${heightPercentage}%` }}
-                                            title={`${item.amount.toLocaleString('ro-RO', { style: 'currency', currency: 'RON' })}`}
+                                            title={`${item.amount.toLocaleString(locale, { style: 'currency', currency: 'RON' })}`}
                                         ></div>
                                         <div className="mt-2 text-xs text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] transform -rotate-45 origin-top-left">
                                             {item.label}
@@ -118,7 +121,7 @@ const AdminAnalytics: React.FC = () => {
                         </div>
                     ) : (
                         <div className="h-64 flex items-center justify-center">
-                            <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">No revenue data available</p>
+                            <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">{t('noRevenueData')}</p>
                         </div>
                     )}
 
@@ -126,19 +129,19 @@ const AdminAnalytics: React.FC = () => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         <div className="text-center">
-                            <h3 className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] text-sm mb-1">Total Revenue</h3>
+                            <h3 className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] text-sm mb-1">{t('totalRevenue')}</h3>
                             <p className="text-2xl font-bold">
-                                {(adminAnalytics?.totalRevenue || 0).toLocaleString('ro-RO', {
+                                {(adminAnalytics?.totalRevenue || 0).toLocaleString(locale, {
                                     style: 'currency',
                                     currency: 'RON'
                                 })}
                             </p>
                         </div>
                         <div className="text-center">
-                            <h3 className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] text-sm mb-1">Average Per Sale</h3>
+                            <h3 className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] text-sm mb-1">{t('averagePerSale')}</h3>
                             <p className="text-2xl font-bold">
                                 {adminAnalytics && adminAnalytics.totalRevenue && adminAnalytics.newSales ?
-                                    (adminAnalytics.totalRevenue / adminAnalytics.newSales).toLocaleString('ro-RO', {
+                                    (adminAnalytics.totalRevenue / adminAnalytics.newSales).toLocaleString(locale, {
                                         style: 'currency',
                                         currency: 'RON',
                                         maximumFractionDigits: 0
@@ -146,13 +149,13 @@ const AdminAnalytics: React.FC = () => {
                             </p>
                         </div>
                         <div className="text-center">
-                            <h3 className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] text-sm mb-1">Sales This Month</h3>
+                            <h3 className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] text-sm mb-1">{t('salesThisMonth')}</h3>
                             <p className="text-2xl font-bold">
                                 {adminAnalytics?.newSales || 0}
                             </p>
                         </div>
                         <div className="text-center">
-                            <h3 className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] text-sm mb-1">Revenue Growth</h3>
+                            <h3 className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] text-sm mb-1">{t('revenueGrowth')}</h3>
                             <p className="text-2xl font-bold text-[color:var(--ai-success)]">
                                 +{sortedMonthlyRevenue.length > 1 ? '12%' : '0%'}
                             </p>
@@ -165,13 +168,13 @@ const AdminAnalytics: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card className="shadow-md">
                     <CardHeader>
-                        <h2 className="text-xl font-semibold">User Growth</h2>
+                        <h2 className="text-xl font-semibold">{t('userGrowth')}</h2>
                     </CardHeader>
                     <CardBody>
                         <div className="h-52 flex items-center justify-center">
                             <div className="text-center">
                                 <div className="text-2xl sm:text-3xl lg:text-4xl font-bold">{adminAnalytics?.totalUsers || 0}</div>
-                                <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mt-2">Total Users</p>
+                                <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mt-2">{t('totalUsers')}</p>
                                 <div className="mt-4 flex items-center justify-center">
                                     <svg className="h-5 w-5 text-[color:var(--ai-success)] mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
@@ -187,17 +190,17 @@ const AdminAnalytics: React.FC = () => {
 
                 <Card className="shadow-md">
                     <CardHeader>
-                        <h2 className="text-xl font-semibold">Course Statistics</h2>
+                        <h2 className="text-xl font-semibold">{t('courseStatistics')}</h2>
                     </CardHeader>
                     <CardBody>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="text-center p-4 bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-lg">
                                 <div className="text-3xl font-bold">{adminAnalytics?.totalCourses || 0}</div>
-                                <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mt-2">Active Courses</p>
+                                <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mt-2">{t('activeCourses')}</p>
                             </div>
                             <div className="text-center p-4 bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-lg">
                                 <div className="text-3xl font-bold">{adminAnalytics?.totalLessons || 0}</div>
-                                <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mt-2">Total Lessons</p>
+                                <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mt-2">{t('totalLessons')}</p>
                             </div>
                             <div className="text-center p-4 bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-lg col-span-2">
                                 <div className="text-3xl font-bold">
@@ -211,10 +214,10 @@ const AdminAnalytics: React.FC = () => {
                 </Card>
             </div>
 
-            {/* Popular Courses Table */}
+            {/* Popular Courses List */}
             <Card className="shadow-md">
                 <CardHeader>
-                    <h2 className="text-xl font-semibold">Popular Courses</h2>
+                    <h2 className="text-xl font-semibold">{t('popularCourses')}</h2>
                 </CardHeader>
                 <CardBody>
                     {adminAnalytics?.popularCourses && adminAnalytics.popularCourses.length > 0 ? (

@@ -3,6 +3,7 @@ import { useContext, useEffect, useCallback, useState, useRef, useMemo } from "r
 import { useAuth, useCourses, useTheme, useModal, useAdmin, useLessons, useReviews, useUserData } from '@/components/contexts/modules'
 import { Course as CourseType, UserPaidProduct } from "@/types"
 import { StripeProduct } from "@/types/stripe"
+import { useTranslations } from 'next-intl'
 // Note: The Products context is dynamically imported in the component to support backward compatibility
 import { createCheckoutSession } from "firewand";
 import { stripePayments } from "@/utils/firebase/stripe";
@@ -27,7 +28,9 @@ export default function Courses() {
         if (isInView) {
             controls.start('visible');
         }
-    }, [controls, isInView]); const router = useRouter();    // Use modular contexts
+    }, [controls, isInView]); const router = useRouter();
+    const t = useTranslations('courses');
+    const tNotif = useTranslations('common.notifications');    // Use modular contexts
     const { user } = useAuth();
     const { state: coursesState } = useCourses();
     const { courses } = coursesState;
@@ -108,8 +111,8 @@ export default function Courses() {
             })
             toast.showToast({
                 type: 'success',
-                title: 'Redirecting to payment',
-                message: 'You are being redirected to Stripe to complete your purchase.',
+                title: tNotif('success.redirectingToPayment'),
+                message: tNotif('success.redirectingToPaymentMessage'),
                 duration: 4000
             });
             window.location.assign(session.url);
@@ -117,8 +120,8 @@ export default function Courses() {
             console.error("Payment error:", error);
             toast.showToast({
                 type: 'error',
-                title: 'Payment Error',
-                message: 'There was a problem starting the payment process. Please try again.',
+                title: tNotif('error.paymentError'),
+                message: tNotif('error.paymentErrorMessage'),
                 duration: 6000
             });
         } finally {
@@ -293,12 +296,12 @@ export default function Courses() {
             >
                 <div className="text-center">
                     <span className="inline-block py-1 px-3 rounded-full text-sm font-medium bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]/90 border border-[color:var(--ai-secondary)]/30 mb-4">
-                        AI Curriculum
+                        {t('header.badge')}
                     </span>
                     <h2 className="text-3xl font-bold text-[color:var(--ai-foreground)] mb-4 sm:text-4xl">
-                        Cutting-Edge AI Courses
+                        {t('header.title')}
                     </h2>                    <p className="max-w-2xl mx-auto text-lg text-[color:var(--ai-muted)]">
-                        Master the technologies shaping our future with courses designed by AI experts for tomorrow&apos;s innovators.
+                        {t('header.subtitle')}
                     </p>
                 </div>
 
@@ -324,7 +327,7 @@ export default function Courses() {
                 {courseLoadingStates && courseLoadingStates['all'] === 'loading' && (
                     <div className="col-span-full flex flex-col items-center justify-center py-16">
                         <Spinner size="lg" color="primary" className="mb-4" />
-                        <p className="text-[color:var(--ai-muted)] text-lg">Loading courses...</p>
+                        <p className="text-[color:var(--ai-muted)] text-lg">{t('loading.loadingCourses')}</p>
                     </div>
                 )}
 
@@ -332,16 +335,16 @@ export default function Courses() {
                 {courseLoadingStates && courseLoadingStates['all'] === 'error' && (
                     <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
                         <FiAlertCircle className="w-12 h-12 text-[color:var(--ai-danger)] mb-4" />
-                        <h3 className="text-xl font-semibold mb-2">Failed to load courses</h3>
-                        <p className="text-[color:var(--ai-muted)] mb-6">There was a problem loading the courses. Please try refreshing the page.</p>
+                        <h3 className="text-xl font-semibold mb-2">{t('loading.failedToLoad')}</h3>
+                        <p className="text-[color:var(--ai-muted)] mb-6">{t('loading.errorMessage')}</p>
                         <Button color="primary" onClick={() => window.location.reload()}>
-                            Refresh Page
+                            {t('loading.refreshPage')}
                         </Button>
                     </div>
                 )}                {/* Display courses when loaded successfully */}
                 {courseLoadingStates && courseLoadingStates['all'] === 'success' && courses && Object.keys(courses).length === 0 && (
                     <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
-                        <p className="text-[color:var(--ai-muted)] text-lg">No courses available at the moment.</p>
+                        <p className="text-[color:var(--ai-muted)] text-lg">{t('loading.noCourses')}</p>
                     </div>
                 )}                {courseLoadingStates && courseLoadingStates['all'] === 'success' && courses && Object.keys(courses).map((key: string) => {
                     const courseData = courses[key];
@@ -392,7 +395,7 @@ export default function Courses() {
                                         size="sm"
                                         className="text-xs font-medium backdrop-blur-sm bg-black/20"
                                     >
-                                        {course.difficulty || 'Advanced'}
+                                        {course.difficulty ? t(`card.${course.difficulty.toLowerCase()}`) : t('card.advanced')}
                                     </Chip>
                                 </div>
 
@@ -417,7 +420,7 @@ export default function Courses() {
                                             size="sm"
                                             className="text-xs font-medium"
                                         >
-                                            Enrolled
+                                            {t('card.enrolled')}
                                         </Chip>
                                     </div>
                                 )}
@@ -455,7 +458,7 @@ export default function Courses() {
 
                                         <div className="bg-black/40 backdrop-blur-sm px-2 py-1 rounded-md text-white text-xs flex items-center">
                                             <FiUsers className="w-3.5 h-3.5 mr-1" />
-                                            {Math.floor(Math.random() * 200) + 100} enrolled
+                                            {t('card.enrolledCount', { count: Math.floor(Math.random() * 200) + 100 })}
                                         </div>
                                     </div>
                                 </div>
@@ -510,7 +513,7 @@ export default function Courses() {
                                             onClick={() => handleCourseClick(course)}
                                             className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:shadow-lg hover:shadow-emerald-500/30 transform group-hover:scale-105 transition-all duration-300"
                                         >
-                                            Continue Learning
+                                            {t('continueLearning')}
                                         </Button>
                                     ) : (
                                         isLoading ? (
@@ -521,7 +524,7 @@ export default function Courses() {
                                                 onClick={() => buyCourse(priceId, course.id)}
                                                 className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] hover:shadow-lg hover:shadow-[color:var(--ai-primary)]/30 transform group-hover:scale-105 transition-all duration-300"
                                             >
-                                                Enroll Now
+                                                {t('enrollNow')}
                                             </Button>
                                         )
                                     )}                                </div>

@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useContext } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card, Spinner } from '@heroui/react';
 import { FiMessageSquare } from '@/components/icons/FeatherIcons';
 import { AppContext } from '@/components/AppContext';
@@ -11,6 +12,7 @@ import QuestionsList from './QuestionsList';
 import AskQuestionForm from './AskQuestionForm';
 
 function QASection({ lessonId, courseId }: QAProps) {
+    const t = useTranslations('lessons.qa');
     const [questions, setQuestions] = useState<Question[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const context = useContext(AppContext);
@@ -79,7 +81,7 @@ function QASection({ lessonId, courseId }: QAProps) {
                 <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 -m-5 mb-4 border-b border-[color:var(--ai-card-border)]">
                     <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
                         <FiMessageSquare className="mr-2 text-[color:var(--ai-primary)]" />
-                        <span>Questions & Answers</span>
+                        <span>{t('title')}</span>
                     </h3>
                 </div>
 
@@ -94,7 +96,7 @@ function QASection({ lessonId, courseId }: QAProps) {
                 <div className="space-y-4">
                     <div className="flex justify-between items-center">
                         <div className="text-sm font-medium text-[color:var(--ai-foreground)]">
-                            {questions.length > 0 ? `Questions (${questions.length})` : "Questions"}
+                            {questions.length > 0 ? `${t('title')} (${questions.length})` : t('title')}
                         </div>
                     </div>
 
@@ -112,7 +114,7 @@ function QASection({ lessonId, courseId }: QAProps) {
                     ) : (
                         <div className="text-center py-8 bg-[color:var(--ai-card-bg)]/50 dark:bg-[color:var(--ai-card-border)]/30 rounded-lg">
                             <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
-                                No questions yet. Be the first to ask!
+                                {t('noQuestionsFound')}
                             </p>
                         </div>
                     )}

@@ -9,6 +9,7 @@ import {
     setDoc,
     Timestamp
 } from 'firebase/firestore'
+import { useTranslations } from 'next-intl'
 import { firestoreDB } from '@/utils/firebase/firebase.config'
 import { useParams } from "next/navigation"
 import { Button, Textarea } from "@heroui/react"
@@ -35,6 +36,7 @@ export default function Reviews({ courseId: propCourseId }: { courseId: string }
 
     const params = useParams()
     const courseId = propCourseId || params.courseId
+    const t = useTranslations('courses.reviewsSection')
 
     const getReviews = async () => {
         setError('')
@@ -66,7 +68,7 @@ export default function Reviews({ courseId: propCourseId }: { courseId: string }
         setIsSubmitting(true)
 
         if (!user) {
-            setError('You must be logged in to write a review')
+            setError(t('mustBeLoggedIn'))
             setIsSubmitting(false)
             return
         }
@@ -82,7 +84,7 @@ export default function Reviews({ courseId: propCourseId }: { courseId: string }
             });
             setReview('')
             setStars(5)
-            setSuccess('Review posted successfully!')
+            setSuccess(t('reviewPosted'))
             getReviews()
         } catch (error: any) {
             setError(error?.message || 'Unknown error occurred')
@@ -130,7 +132,7 @@ export default function Reviews({ courseId: propCourseId }: { courseId: string }
                 <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 border-b border-[color:var(--ai-card-border)]">
                     <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
                         <FiEdit className="mr-2 text-[color:var(--ai-primary)]" />
-                        <span>Write a Review</span>
+                        <span>{t('writeReview')}</span>
                     </h3>
                 </div>
 
@@ -138,10 +140,10 @@ export default function Reviews({ courseId: propCourseId }: { courseId: string }
                     <form onSubmit={handleReview}>
                         <div className="space-y-4">
                             <div>
-                                <label htmlFor="review" className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-1">Your thoughts on this course</label>
+                                <label htmlFor="review" className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-1">{t('yourThoughts')}</label>
                                 <Textarea
                                     id="review"
-                                    placeholder="Share your experience with this course..."
+                                    placeholder={t('shareExperience')}
                                     value={review}
                                     onChange={(e) => setReview(e.target.value)}
                                     className="w-full bg-[color:var(--ai-card-bg)] border-[color:var(--ai-card-border)]"
@@ -149,7 +151,7 @@ export default function Reviews({ courseId: propCourseId }: { courseId: string }
                                     variant="bordered"
                                     required
                                 />
-                            </div>                            <div className="flex items-center gap-2">                                <label className="block text-sm font-medium text-[color:var(--ai-foreground)]">Your rating:</label>                                <RatingStars
+                            </div>                            <div className="flex items-center gap-2">                                <label className="block text-sm font-medium text-[color:var(--ai-foreground)]">{t('yourRating')}</label>                                <RatingStars
                                 size="lg"
                                 defaultValue={Number(stars)}
                                 value={Number(stars)}
@@ -186,7 +188,7 @@ export default function Reviews({ courseId: propCourseId }: { courseId: string }
                                         </svg>
                                     }
                                 >
-                                    {user ? 'Submit Review' : 'Login to Review'}
+                                    {user ? t('submitReview') : t('loginToReview')}
                                 </Button>
                             </div>
                         </div>
@@ -202,7 +204,7 @@ export default function Reviews({ courseId: propCourseId }: { courseId: string }
                 <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 border-b border-[color:var(--ai-card-border)]">
                     <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
                         <FiMessageCircle className="mr-2 text-[color:var(--ai-primary)]" />
-                        <span>Student Reviews</span>
+                        <span>{t('studentReviews')}</span>
                         {reviews.length > 0 && (
                             <span className="ml-2 text-xs bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] px-2 py-0.5 rounded-full">
                                 {reviews.length}
@@ -229,7 +231,7 @@ export default function Reviews({ courseId: propCourseId }: { courseId: string }
                                         <div className="flex-1">
                                             <div className="font-medium text-[color:var(--ai-foreground)]">{review.userName}</div>
                                             <div className="text-xs text-[color:var(--ai-muted)]">
-                                                {review.timestamp ? new Date(review.timestamp.toDate()).toLocaleDateString() : 'Recently'}
+                                                {review.timestamp ? new Date(review.timestamp.toDate()).toLocaleDateString() : t('recently')}
                                             </div>
                                         </div>                                        <div className="flex items-center bg-[color:var(--ai-accent)]/10 px-2 py-1 rounded-full shadow-sm">                                        <RatingStars
                                             size="sm"
@@ -254,9 +256,9 @@ export default function Reviews({ courseId: propCourseId }: { courseId: string }
                     ) : (
                         <div className="flex flex-col items-center justify-center py-12 text-center">
                             <FiStar className="w-16 h-16 text-[color:var(--ai-muted)]/40 mb-4" />
-                            <h3 className="text-lg font-medium text-[color:var(--ai-foreground)] mb-1">No reviews yet</h3>
+                            <h3 className="text-lg font-medium text-[color:var(--ai-foreground)] mb-1">{t('noReviewsYet')}</h3>
                             <p className="text-sm text-[color:var(--ai-muted)]">
-                                Be the first to share your experience with this course!
+                                {t('beTheFirst')}
                             </p>
                         </div>
                     )}

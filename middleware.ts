@@ -3,8 +3,11 @@ import { validateApiRequest, addSecurityHeaders } from '@/utils/security/apiSecu
 import { validateEnvironmentVariables } from '@/utils/security/envValidation';
 
 /**
- * Security middleware to protect API routes and apply CSP headers
- * Applies validation and security headers to all requests
+ * Security middleware only - NO URL-based i18n routing
+ * 
+ * Locale is determined purely from cookies in i18n/request.ts
+ * - Protects API routes with security validation
+ * - Applies comprehensive security headers to all requests
  */
 export async function middleware(request: NextRequest) {
   // Initialize response

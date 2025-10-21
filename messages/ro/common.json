@@ -1,0 +1,308 @@
+{
+    "nav": {
+        "home": "Acasă",
+        "courses": "Cursuri",
+        "about": "Despre",
+        "contact": "Contact",
+        "admin": "Admin",
+        "profile": "Profil",
+        "allCourses": "Toate Cursurile",
+        "featuredCourses": "Cursuri Recomandate",
+        "testimonials": "Testimoniale"
+    },
+    "buttons": {
+        "login": "Autentificare",
+        "signup": "Înregistrare",
+        "logout": "Deconectare",
+        "save": "Salvează",
+        "cancel": "Anulează",
+        "submit": "Trimite",
+        "edit": "Editează",
+        "delete": "Șterge",
+        "add": "Adaugă",
+        "search": "Caută",
+        "close": "Închide",
+        "continue": "Continuă",
+        "back": "Înapoi",
+        "next": "Următorul",
+        "finish": "Finalizează",
+        "download": "Descarcă",
+        "upload": "Încarcă",
+        "apply": "Aplică",
+        "reset": "Resetează",
+        "confirm": "Confirmă"
+    },
+    "theme": {
+        "toggle": "Schimbă Tema",
+        "light": "Mod Luminos",
+        "dark": "Mod Întunecat"
+    },
+    "footer": {
+        "about": "Cursuri de programare de calitate pentru a te ajuta să stăpânești dezvoltarea web și mobilă modernă.",
+        "quickLinks": "Link-uri Rapide",
+        "connect": "Conectează-te",
+        "contactEmail": "Contactează-ne la",
+        "copyright": "Toate drepturile rezervate.",
+        "version": "Versiunea"
+    },
+    "loading": "Se încarcă...",
+    "saving": "Se salvează...",
+    "saved": "Salvat",
+    "error": "Eroare",
+    "success": "Succes",
+    "warning": "Avertisment",
+    "info": "Informație",
+    "notFound": "Nu a Fost Găsit",
+    "unauthorized": "Neautorizat",
+    "forbidden": "Interzis",
+    "serverError": "Eroare de Server",
+    "language": "Limbă",
+    "switchLanguage": "Schimbă Limba",
+    "search": {
+        "placeholder": "Caută cursuri...",
+        "startTyping": "Începe să scrii pentru a căuta cursuri",
+        "noResults": "Nu s-au găsit cursuri pentru \"{query}\"",
+        "viewCourse": "Vezi Cursul",
+        "keyboard": {
+            "esc": "ESC",
+            "enter": "Enter",
+            "arrows": "↑↓",
+            "toClose": "pentru a închide",
+            "toNavigate": "pentru a naviga",
+            "toSelect": "pentru a selecta"
+        }
+    },
+    "userMenu": {
+        "signedInAs": "Conectat ca",
+        "profileDashboard": "Tablou de Bord Profil",
+        "settings": "Setări",
+        "adminDashboard": "Tablou de Bord Admin",
+        "suggestions": "Sugestii",
+        "login": "Autentificare",
+        "logout": "Deconectare"
+    },
+    "emptyStates": {
+        "noCoursesAvailable": "Nu sunt cursuri disponibile",
+        "startCreatingCourse": "Începe prin a crea primul tău curs",
+        "noLessonsAvailable": "Nu sunt lecții disponibile",
+        "noPaymentRecords": "Nu s-au Găsit Înregistrări de Plată",
+        "noRecentActivity": "Fără activitate recentă",
+        "noOfflineContent": "Fără conținut offline",
+        "noOptionsAvailable": "Nu sunt opțiuni disponibile",
+        "imageNotAvailable": "Imagine indisponibilă",
+        "noCourseInProgress": "Niciun curs în desfășurare"
+    },
+    "errors": {
+        "lessonNotFound": "Lecția Nu a Fost Găsită",
+        "courseNotFound": "Cursul nu a fost găsit",
+        "accessDenied": "Acces Interzis",
+        "loadingError": "Eroare la Încărcarea Lecției",
+        "lessonNotAvailable": "Lecția Nu Este Disponibilă",
+        "noVideoAvailable": "Nu există video disponibil pentru această lecție",
+        "failedToGenerate": "Eroare la generare",
+        "failedToDownload": "Eroare la descărcare",
+        "somethingWentWrong": "Ceva nu a mers bine"
+    },
+    "states": {
+        "loading": "Se încarcă",
+        "processing": "Se procesează",
+        "saving": "Se salvează"
+    },
+    "fallbacks": {
+        "notSpecified": "Nespecificat",
+        "unknownDate": "Dată Necunoscută",
+        "anonymous": "Anonim",
+        "noName": "Fără Nume",
+        "notAvailable": "Indisponibil"
+    },
+    "status": {
+        "free": "Gratuit",
+        "featured": "Recomandat",
+        "mostPopular": "Cel Mai Popular",
+        "completed": "Finalizat",
+        "inProgress": "În Desfășurare",
+        "notStarted": "Neînceput",
+        "enrolled": "Înscris",
+        "courseRating": "Evaluare Curs"
+    },
+    "courseActions": {
+        "enroll": "Înscrie-te",
+        "buyNow": "Cumpără Acum",
+        "continue": "Continuă",
+        "viewCourse": "Vezi Curs",
+        "startLearning": "Începe Învățarea"
+    },
+    "views": {
+        "grid": "Grilă",
+        "list": "Listă",
+        "view": "Vizualizare"
+    },
+    "cookieConsent": {
+        "title": "Consimțământ Cookie-uri",
+        "autoAcceptIn": "Acceptare automată în {seconds}s",
+        "message": "Folosim cookie-uri pentru a îmbunătăți experiența ta. Continuând să vizitezi acest site, ești de acord cu utilizarea cookie-urilor noastre, cu",
+        "privacyPolicy": "Politica de Confidențialitate",
+        "termsConditions": "Termeni și Condiții",
+        "gdprPolicy": "Politica GDPR",
+        "decline": "Refuză",
+        "acceptAll": "Acceptă Toate"
+    },
+    "cacheStatus": {
+        "title": "Stare Cache",
+        "clearAllCache": "Șterge Tot Cache-ul",
+        "cached": "Stocat în Cache",
+        "loading": "Se încarcă",
+        "error": "Eroare",
+        "notLoaded": "Neîncărcat",
+        "refresh": "Reîmprospătează",
+        "clear": "Șterge",
+        "courses": "Cursuri",
+        "lessons": "Lecții",
+        "reviews": "Recenzii",
+        "users": "Utilizatori",
+        "analytics": "Analize",
+        "settings": "Setări",
+        "bookmarks": "Marcaje",
+        "wishlist": "Listă dorințe"
+    },
+    "errorPage": {
+        "pageNotFound": "Pagină Negăsită",
+        "pageNotFoundMessage": "Pagina pe care o cauți nu există sau a fost mutată.",
+        "goToHomepage": "Mergi la Pagina Principală",
+        "goBack": "Înapoi",
+        "errorIllustration": "Ilustrație eroare"
+    },
+    "videoPlayer": {
+        "noVideoAvailable": "Niciun videoclip disponibil pentru această lecție",
+        "playVideo": "Redare video",
+        "pauseVideo": "Pauză video",
+        "rewind": "Derulează înapoi 10 secunde",
+        "forward": "Derulează înainte 10 secunde",
+        "playbackSpeed": "Viteză redare",
+        "normalSpeed": "1x (Normal)",
+        "toggleFullscreen": "Comută ecran complet",
+        "play": "Redare",
+        "pause": "Pauză",
+        "mute": "Dezactivează sunetul",
+        "unmute": "Activează sunetul",
+        "volume": "Volum",
+        "settings": "Setări",
+        "quality": "Calitate",
+        "captions": "Subtitrări",
+        "enableCaptions": "Activează subtitrări",
+        "disableCaptions": "Dezactivează subtitrări",
+        "lessonCompleted": "Lecție finalizată",
+        "markLessonComplete": "Marchează lecția ca finalizată",
+        "keyboardShortcuts": "Comenzi Rapide Tastatură:",
+        "shortcuts": {
+            "space": "Spațiu",
+            "playPause": "Redare/Pauză",
+            "arrows": "←/→",
+            "seek": "Derulare ±10s",
+            "f": "F",
+            "fullscreen": "Ecran complet",
+            "m": "M",
+            "muteKey": "Mut"
+        }
+    },
+    "fileUpload": {
+        "uploadLessonFile": "Încarcă fișier lecție",
+        "uploadAdditionalFile": "Încarcă fișier adițional",
+        "uploadImage": "Încarcă imagine",
+        "dragDropFiles": "Trage și plasează fișiere aici",
+        "selectFile": "Selectează fișier",
+        "removeAttachment": "Elimină atașament",
+        "uploadProgress": "Progres încărcare",
+        "downloadProgress": "Progres descărcare"
+    },
+    "socialSharing": {
+        "shareOnFacebook": "Distribuie pe Facebook",
+        "shareOnTwitter": "Distribuie pe Twitter",
+        "shareOnLinkedIn": "Distribuie pe LinkedIn",
+        "copyLink": "Copiază link-ul cursului",
+        "linkCopied": "Link copiat!",
+        "shareThisCourse": "Distribuie acest curs"
+    },
+    "ariaLabels": {
+        "closeNotification": "Închide notificarea",
+        "profileActions": "Profil & Acțiuni",
+        "userActions": "Acțiuni Utilizator",
+        "adminActions": "Acțiuni Admin",
+        "socialLinks": "Link-uri Social",
+        "chartOptions": "Opțiuni grafic",
+        "searchInput": "Căutare",
+        "autoAcceptCountdown": "Numărătoare inversă acceptare automată",
+        "currentProgress": "Progres curs curent",
+        "videoWatchPercentage": "Procent vizualizare video"
+    },
+    "placeholders": {
+        "yourEmail": "adresa@ta.com",
+        "yourName": "Numele tău",
+        "searchCourses": "Caută cursuri...",
+        "searchQuestions": "Caută întrebări...",
+        "searchPayments": "Caută plăți",
+        "yourQuestion": "Care este întrebarea ta despre această lecție?",
+        "questionDetails": "Oferă cât mai multe detalii despre întrebarea ta... Ce ai încercat? Ce anume te confundă?",
+        "takeNotes": "Notează despre această lecție...",
+        "writeNotes": "Scrie notițele aici..."
+    },
+    "notifications": {
+        "success": {
+            "passwordUpdated": "Parolă Actualizată",
+            "passwordUpdatedMessage": "Parola a fost actualizată cu succes!",
+            "profileUpdated": "Profil Actualizat",
+            "profileUpdatedMessage": "Profilul a fost actualizat cu succes!",
+            "preferencesUpdated": "Preferințe Actualizate",
+            "preferencesUpdatedMessage": "Preferințele de notificare au fost actualizate cu succes!",
+            "languageUpdated": "Limbă Actualizată",
+            "languageUpdatedMessage": "Preferințele de limbă au fost salvate cu succes!",
+            "courseDeleted": "Curs Șters",
+            "courseDeletedMessage": "Cursul a fost șters cu succes",
+            "settingsSaved": "Setări salvate",
+            "settingsSavedMessage": "Setările tale au fost salvate cu succes",
+            "offlineContentRemoved": "Conținutul offline a fost eliminat",
+            "allOfflineContentRemoved": "Tot conținutul offline a fost eliminat",
+            "lessonCompleted": "Lecție finalizată",
+            "lessonCompletedMessage": "Ai finalizat această lecție!",
+            "priceCreated": "Preț creat!",
+            "priceCreatedMessage": "Preț creat cu succes: {amount} {currency}",
+            "redirectingToPayment": "Redirecționare către plată",
+            "redirectingToPaymentMessage": "Ești redirecționat către Stripe pentru a finaliza achiziția."
+        },
+        "error": {
+            "validationError": "Eroare de Validare",
+            "enterCurrentPassword": "Te rugăm să introduci parola curentă.",
+            "passwordsDoNotMatch": "Parolele noi nu se potrivesc.",
+            "updateFailed": "Actualizare Eșuată",
+            "updateFailedMessage": "Actualizarea a eșuat. Te rugăm să încerci din nou.",
+            "passwordUpdateFailed": "Actualizarea parolei a eșuat.",
+            "preferencesUpdateFailed": "Nu s-au putut actualiza preferințele de notificare.",
+            "genericError": "A apărut o eroare. Te rugăm să încerci din nou.",
+            "offlineLoadFailed": "Eroare la încărcarea conținutului offline",
+            "offlineRemoveFailed": "Nu s-a putut elimina conținutul offline",
+            "offlineClearFailed": "Nu s-a putut șterge conținutul offline",
+            "markCompleteFailed": "Eroare",
+            "markCompleteFailedMessage": "Nu s-a putut marca lecția ca finalizată. Te rugăm să încerci din nou.",
+            "priceCreationFailed": "Eroare la crearea prețului",
+            "priceCreationFailedMessage": "Nu s-a putut crea prețul. Te rugăm să încerci din nou.",
+            "paymentError": "Eroare de plată",
+            "paymentErrorMessage": "A apărut o problemă la inițierea procesului de plată. Te rugăm să încerci din nou."
+        },
+        "warning": {
+            "unsavedChanges": "Modificări nesalvate",
+            "unsavedChangesMessage": "Ai modificări nesalvate. Ești sigur că vrei să părăsești pagina?",
+            "missingInformation": "Informații lipsă",
+            "missingInformationMessage": "Te rugăm să introduci suma prețului și numele cursului"
+        },
+        "info": {
+            "processing": "Se procesează",
+            "pleaseWait": "Te rugăm să aștepți..."
+        }
+    },
+    "confirmDialogs": {
+        "confirmDelete": "Confirmă Ștergerea",
+        "confirmDeleteMessage": "Ești sigur că vrei să ștergi acest element?",
+        "confirmAction": "Confirmă Acțiunea",
+        "cannotBeUndone": "Această acțiune nu poate fi anulată."
+    }
+}

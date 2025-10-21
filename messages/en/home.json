@@ -1,0 +1,217 @@
+{
+    "metadata": {
+        "title": "Home",
+        "description": "Transform your career with expert-led online courses in AI, Machine Learning, Digital Marketing, Data Science, Cybersecurity, and more. Learn at your own pace with project-based curriculum.",
+        "keywords": "online courses, AI courses, machine learning courses, digital marketing, data science, cybersecurity training, prompt engineering, generative AI, cloud computing, business skills, career development, online learning platform"
+    },
+    "hero": {
+        "title": {
+            "line1": "Transform Your Career with",
+            "line2": "AI & In-Demand Skills"
+        },
+        "subtitle": "Master AI, Machine Learning, Digital Marketing, Data Science, and more. Learn from industry experts and build real-world projects that accelerate your career.",
+        "getStarted": "Get Started",
+        "exploreCourses": "Explore Courses",
+        "learnersEnrolled": "learners already enrolled",
+        "projectBased": "Project-Based Learning",
+        "stats": {
+            "studentRating": "Student Rating",
+            "reviews": "from {count} reviews",
+            "courses": "Courses Available",
+            "students": "Active Students",
+            "rating": "Average Rating"
+        },
+        "scrollToExplore": "Scroll to explore"
+    },
+    "whyChooseUs": {
+        "title": "Why Choose Our Platform",
+        "subtitle": "Discover what makes our learning experience unique and effective",
+        "features": {
+            "projectBased": {
+                "icon": "🚀",
+                "title": "Project-Based Learning",
+                "description": "Build real-world projects in AI, marketing, data science, and more that you can showcase in your portfolio."
+            },
+            "experts": {
+                "icon": "👨‍💻",
+                "title": "Expert Instructors",
+                "description": "Learn from industry professionals with years of practical experience across technology, business, and creative fields."
+            },
+            "updates": {
+                "icon": "🔄",
+                "title": "Continuous Updates",
+                "description": "All courses are regularly updated with the latest trends, tools, and best practices in each field."
+            },
+            "aiPowered": {
+                "icon": "🤖",
+                "title": "AI-Powered Learning",
+                "description": "Master cutting-edge AI tools and techniques to stay ahead in the rapidly evolving digital landscape."
+            },
+            "community": {
+                "icon": "🤝",
+                "title": "Supportive Community",
+                "description": "Join a diverse community of learners from various industries and get help when you need it."
+            },
+            "anywhere": {
+                "icon": "📱",
+                "title": "Learn Anywhere",
+                "description": "Access courses on any device, anytime, with our responsive platform designed for modern learners."
+            }
+        },
+        "expertInstructors": "Expert Instructors",
+        "expertInstructorsDesc": "Learn from industry professionals with years of real-world experience",
+        "projectBased": "Project-Based Learning",
+        "projectBasedDesc": "Build real-world projects and create an impressive portfolio",
+        "lifetimeAccess": "Lifetime Access",
+        "lifetimeAccessDesc": "Access your courses anytime, anywhere, forever",
+        "certificates": "Certificates",
+        "certificatesDesc": "Earn certificates to showcase your achievements",
+        "community": "Active Community",
+        "communityDesc": "Join thousands of learners and get support when you need it",
+        "upToDate": "Always Up-to-Date",
+        "upToDateDesc": "Content regularly updated with the latest industry trends"
+    },
+    "techStack": {
+        "title": "Skills You'll Master",
+        "subtitle": "Explore the modern technologies and skills across AI, development, marketing, and data science. Each skill is taught through practical, real-world projects.",
+        "technologies": {
+            "python": {
+                "name": "Python",
+                "description": "Master AI, data science, and automation with Python programming"
+            },
+            "aiml": {
+                "name": "AI & ML",
+                "description": "Learn Machine Learning, Deep Learning, and Generative AI"
+            },
+            "dataScience": {
+                "name": "Data Science",
+                "description": "Analyze data, build visualizations, and extract insights"
+            },
+            "marketing": {
+                "name": "Digital Marketing",
+                "description": "Master SEO, social media, content marketing, and analytics"
+            },
+            "react": {
+                "name": "React",
+                "description": "Build interactive UIs with the most popular frontend library"
+            },
+            "cloud": {
+                "name": "Cloud Computing",
+                "description": "Deploy and scale applications on AWS, Azure, and Google Cloud"
+            },
+            "security": {
+                "name": "Cybersecurity",
+                "description": "Learn ethical hacking, network security, and risk management"
+            },
+            "business": {
+                "name": "Business Strategy",
+                "description": "Develop leadership, project management, and strategic thinking"
+            }
+        }
+    },
+    "cta": {
+        "title": "Ready to Start Your Learning Journey?",
+        "subtitle": "Join thousands of students already learning on our platform",
+        "button": "Browse All Courses"
+    },
+    "statistics": {
+        "courses": {
+            "value": "15+",
+            "label": "Courses",
+            "icon": "📚"
+        },
+        "students": {
+            "value": "2,500+",
+            "label": "Students",
+            "icon": "👨\u200d🎓"
+        },
+        "hours": {
+            "value": "10,000+",
+            "label": "Hours of Content",
+            "icon": "⏱️"
+        },
+        "rating": {
+            "value": "4.8",
+            "label": "Average Rating",
+            "icon": "⭐"
+        }
+    },
+    "learningPath": {
+        "title": "Your Learning Journey",
+        "subtitle": "Follow our structured path from beginner to professional",
+        "steps": {
+            "fundamentals": {
+                "number": "01",
+                "title": "Core Fundamentals",
+                "description": "Master the essential building blocks of modern web development with HTML, CSS, and JavaScript."
+            },
+            "frontend": {
+                "number": "02",
+                "title": "Frontend Development",
+                "description": "Build interactive user interfaces with React, TypeScript, and modern CSS frameworks."
+            },
+            "backend": {
+                "number": "03",
+                "title": "Backend Integration",
+                "description": "Create robust server-side applications with Node.js and integrate with databases."
+            },
+            "fullstack": {
+                "number": "04",
+                "title": "Full Stack Projects",
+                "description": "Combine frontend and backend skills to build complete, production-ready applications."
+            }
+        }
+    },
+    "reviews": {
+        "title": "What Our Students Say",
+        "subtitle": "Hear from our community of developers who have transformed their skills through our courses.",
+        "sectionTitle": "Voices of Our AI Community",
+        "sectionSubtitle": "Discover how our AI curriculum is empowering professionals to break new ground in machine learning and artificial intelligence.",
+        "badge": "Success Stories",
+        "viewAll": "View All Success Stories",
+        "fallback": {
+            "review1": {
+                "content": "The AI prediction models taught in this course completely transformed my approach to data analysis. The real-time feedback system makes learning intuitive and effective.",
+                "author": "Alex Johnson",
+                "role": "AI Research Engineer",
+                "courseType": "Predictive Analysis"
+            },
+            "review2": {
+                "content": "I've taken many ML courses before, but the neural network visualization tools here made complex concepts crystal clear. The hands-on projects with cutting-edge tech were invaluable.",
+                "author": "Maria Garcia",
+                "role": "Machine Learning Specialist",
+                "courseType": "Neural Networks"
+            },
+            "review3": {
+                "content": "This platform's approach to teaching transformer models is revolutionary. I went from basic understanding to implementing advanced NLP systems in just weeks.",
+                "author": "David Kim",
+                "role": "NLP Developer",
+                "courseType": "NLP & Transformers"
+            }
+        }
+    },
+    "availableCourses": {
+        "title": "Available Courses",
+        "subtitle": "Explore our comprehensive course catalog",
+        "viewAll": "View All Courses",
+        "filterBy": "Filter by",
+        "allCategories": "All Categories",
+        "search": "Search courses..."
+    },
+    "featuredCourses": {
+        "title": "Featured Courses",
+        "subtitle": "Hand-picked courses for maximum learning impact"
+    },
+    "recommendedCourses": {
+        "title": "Recommended for You",
+        "subtitle": "Personalized course recommendations based on your interests"
+    },
+    "instructorHighlights": {
+        "title": "Meet Our Expert Instructors",
+        "subtitle": "Learn from industry professionals with real-world experience",
+        "viewProfile": "View Profile",
+        "yearsExperience": "{count} years experience",
+        "studentsTaught": "Over {count} students",
+        "courses": "{count} courses"
+    }
+}

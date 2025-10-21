@@ -2,12 +2,15 @@
 
 import React, { useMemo } from 'react'
 import { motion } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 import ScrollAnimationWrapper from '../animations/ScrollAnimationWrapper'
 import ParallaxSection from '../animations/ParallaxSection'
 import FeatureCard from './FeatureCard'
 import { features } from './featuresData'
 
 const WhyChooseUsSection = React.memo(function WhyChooseUsSection() {
+    const t = useTranslations('home.whyChooseUs');
+
     // Memoize containerVariants to prevent recreation
     const containerVariants = useMemo(() => ({
         hidden: { opacity: 0 },
@@ -28,9 +31,9 @@ const WhyChooseUsSection = React.memo(function WhyChooseUsSection() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">                    <ScrollAnimationWrapper>
                     <div className="text-center mb-16">
                         <h2 className="text-4xl font-bold text-white mb-4">
-                            Why Choose Our Platform
+                            {t('title')}
                         </h2>                        <p className="text-xl text-white/80 max-w-3xl mx-auto">
-                            We've designed our learning experience with your success in mind, offering diverse paths from AI to marketing
+                            {t('subtitle')}
                         </p>
                     </div>
                 </ScrollAnimationWrapper>
@@ -43,11 +46,9 @@ const WhyChooseUsSection = React.memo(function WhyChooseUsSection() {
                         viewport={{ once: true, margin: "-100px" }}
                     >
                         {features.map((feature, index) => (
-                            <ScrollAnimationWrapper key={feature.title} delay={index * 0.1} className="h-full">
+                            <ScrollAnimationWrapper key={feature.key} delay={index * 0.1} className="h-full">
                                 <FeatureCard
-                                    icon={feature.icon}
-                                    title={feature.title}
-                                    description={feature.description}
+                                    featureKey={feature.key}
                                     index={index}
                                 />
                             </ScrollAnimationWrapper>

@@ -1,0 +1,217 @@
+{
+  "metadata": {
+    "title": "Acasă",
+    "description": "Transformă-ți cariera cu cursuri online conduse de experți în AI, Machine Learning, Marketing Digital, Data Science, Securitate Cibernetică și multe altele. Învață în ritmul tău cu un curriculum bazat pe proiecte.",
+    "keywords": "cursuri online, cursuri AI, cursuri machine learning, marketing digital, data science, training securitate cibernetică, prompt engineering, AI generativ, cloud computing, abilități business, dezvoltare carieră, platformă de învățare online"
+  },
+  "hero": {
+    "title": {
+      "line1": "Transformă-ți Cariera cu",
+      "line2": "AI și Abilități Solicitate"
+    },
+    "subtitle": "Stăpânește AI, Machine Learning, Marketing Digital, Data Science și multe altele. Învață de la experți din industrie și construiește proiecte reale care îți accelerează cariera.",
+    "getStarted": "Începe Acum",
+    "exploreCourses": "Explorează Cursurile",
+    "learnersEnrolled": "cursanți deja înscriși",
+    "projectBased": "Învățare Bazată pe Proiecte",
+    "stats": {
+      "studentRating": "Evaluare Cursanți",
+      "reviews": "din {count} recenzii",
+      "courses": "Cursuri Disponibile",
+      "students": "Cursanți Activi",
+      "rating": "Rating Mediu"
+    },
+    "scrollToExplore": "Derulează pentru a explora"
+  },
+  "whyChooseUs": {
+    "title": "De ce să alegi platforma noastră",
+    "subtitle": "Descoperă ce face experiența noastră de învățare unică și eficientă",
+    "features": {
+      "projectBased": {
+        "icon": "🚀",
+        "title": "Învățare Bazată pe Proiecte",
+        "description": "Construiește proiecte reale în AI, marketing, data science și multe altele pe care le poți prezenta în portofoliul tău."
+      },
+      "experts": {
+        "icon": "👨‍💻",
+        "title": "Instructori Experți",
+        "description": "Învață de la profesioniști din industrie cu ani de experiență practică în tehnologie, business și domenii creative."
+      },
+      "updates": {
+        "icon": "🔄",
+        "title": "Actualizări Continue",
+        "description": "Toate cursurile sunt actualizate regulat cu cele mai recente tendințe, instrumente și practici din fiecare domeniu."
+      },
+      "aiPowered": {
+        "icon": "🤖",
+        "title": "Învățare Bazată pe AI",
+        "description": "Stăpânește instrumente și tehnici AI de ultimă generație pentru a rămâne în frunte în peisajul digital în evoluție rapidă."
+      },
+      "community": {
+        "icon": "🤝",
+        "title": "Comunitate de Suport",
+        "description": "Alătură-te unei comunități diverse de cursanți din diverse industrii și primește ajutor când ai nevoie."
+      },
+      "anywhere": {
+        "icon": "📱",
+        "title": "Învață Oriunde",
+        "description": "Accesează cursurile pe orice dispozitiv, oricând, cu platforma noastră responsive concepută pentru cursanții moderni."
+      }
+    },
+    "expertInstructors": "Instructori Experți",
+    "expertInstructorsDesc": "Învață de la profesioniști din industrie cu ani de experiență practică",
+    "projectBased": "Învățare Bazată pe Proiecte",
+    "projectBasedDesc": "Construiește proiecte reale și creează un portofoliu impresionant",
+    "lifetimeAccess": "Acces Pe Viață",
+    "lifetimeAccessDesc": "Accesează cursurile tale oricând, oriunde, pentru totdeauna",
+    "certificates": "Certificate",
+    "certificatesDesc": "Obține certificate pentru a-ți arăta realizările",
+    "community": "Comunitate Activă",
+    "communityDesc": "Alătură-te miilor de cursanți și primește suport când ai nevoie",
+    "upToDate": "Mereu Actualizat",
+    "upToDateDesc": "Conținut actualizat regulat cu cele mai noi tendințe din industrie"
+  },
+  "techStack": {
+    "title": "Abilități pe care le vei stăpâni",
+    "subtitle": "Explorează tehnologiile și abilitățile moderne din domeniul AI, dezvoltare, marketing și data science. Fiecare abilitate este predată prin proiecte practice, din viața reală.",
+    "technologies": {
+      "python": {
+        "name": "Python",
+        "description": "Stăpânește AI, data science și automatizarea cu programare Python"
+      },
+      "aiml": {
+        "name": "AI & ML",
+        "description": "Învață Machine Learning, Deep Learning și Generative AI"
+      },
+      "dataScience": {
+        "name": "Data Science",
+        "description": "Analizează date, creează vizualizări și extrage insight-uri"
+      },
+      "marketing": {
+        "name": "Marketing Digital",
+        "description": "Stăpânește SEO, social media, content marketing și analytics"
+      },
+      "react": {
+        "name": "React",
+        "description": "Construiește interfețe interactive cu cea mai populară bibliotecă frontend"
+      },
+      "cloud": {
+        "name": "Cloud Computing",
+        "description": "Implementează și scalează aplicații pe AWS, Azure și Google Cloud"
+      },
+      "security": {
+        "name": "Cybersecurity",
+        "description": "Învață ethical hacking, securitate rețea și management al riscurilor"
+      },
+      "business": {
+        "name": "Strategie de Business",
+        "description": "Dezvoltă leadership, management de proiect și gândire strategică"
+      }
+    }
+  },
+  "cta": {
+    "title": "Pregătit Să Începi Călătoria Ta de Învățare?",
+    "subtitle": "Alătură-te miilor de cursanți care învață deja pe platforma noastră",
+    "button": "Vezi Toate Cursurile"
+  },
+  "statistics": {
+    "courses": {
+      "value": "15+",
+      "label": "Cursuri",
+      "icon": "📚"
+    },
+    "students": {
+      "value": "2.500+",
+      "label": "Cursanți",
+      "icon": "👨\u200d🎓"
+    },
+    "hours": {
+      "value": "10.000+",
+      "label": "Ore de Conținut",
+      "icon": "⏱️"
+    },
+    "rating": {
+      "value": "4.8",
+      "label": "Rating Mediu",
+      "icon": "⭐"
+    }
+  },
+  "learningPath": {
+    "title": "Călătoria Ta de Învățare",
+    "subtitle": "Urmează calea noastră structurată de la începător la profesionist",
+    "steps": {
+      "fundamentals": {
+        "number": "01",
+        "title": "Fundamentele de Bază",
+        "description": "Stăpânește elementele esențiale ale dezvoltării web moderne cu HTML, CSS și JavaScript."
+      },
+      "frontend": {
+        "number": "02",
+        "title": "Dezvoltare Frontend",
+        "description": "Construiește interfețe de utilizator interactive cu React, TypeScript și framework-uri CSS moderne."
+      },
+      "backend": {
+        "number": "03",
+        "title": "Integrare Backend",
+        "description": "Creează aplicații server-side robuste cu Node.js și integrează cu baze de date."
+      },
+      "fullstack": {
+        "number": "04",
+        "title": "Proiecte Full Stack",
+        "description": "Combină abilitățile frontend și backend pentru a construi aplicații complete, gata de producție."
+      }
+    }
+  },
+  "reviews": {
+    "title": "Ce spun cursanții noștri",
+    "subtitle": "Ascultă de la comunitatea noastră de dezvoltatori care și-au transformat abilitățile prin cursurile noastre.",
+    "sectionTitle": "Vocile Comunității Noastre AI",
+    "sectionSubtitle": "Descoperă cum curriculum-ul nostru AI îi împuternicește pe profesioniști să facă progrese noi în machine learning și inteligență artificială.",
+    "badge": "Povești de Succes",
+    "viewAll": "Vezi Toate Poveștile de Succes",
+    "fallback": {
+      "review1": {
+        "content": "Modelele de predicție AI predate în acest curs mi-au transformat complet abordarea analizei datelor. Sistemul de feedback în timp real face învățarea intuitivă și eficientă.",
+        "author": "Alex Johnson",
+        "role": "Inginer Cercetare AI",
+        "courseType": "Analiză Predictivă"
+      },
+      "review2": {
+        "content": "Am urmat multe cursuri ML înainte, dar instrumentele de vizualizare ale rețelelor neuronale de aici au clarificat concepte complexe în mod cristallin. Proiectele practice cu tehnologie de ultimă oră au fost neprețuite.",
+        "author": "Maria Garcia",
+        "role": "Specialist Machine Learning",
+        "courseType": "Rețele Neuronale"
+      },
+      "review3": {
+        "content": "Abordarea acestei platforme în predarea modelelor transformer este revoluționară. Am trecut de la înțelegere de bază la implementarea sistemelor NLP avansate în doar câteva săptămâni.",
+        "author": "David Kim",
+        "role": "Dezvoltator NLP",
+        "courseType": "NLP & Transformers"
+      }
+    }
+  },
+  "availableCourses": {
+    "title": "Cursuri Disponibile",
+    "subtitle": "Explorează catalogul nostru complet de cursuri",
+    "viewAll": "Vezi Toate Cursurile",
+    "filterBy": "Filtrează după",
+    "allCategories": "Toate Categoriile",
+    "search": "Caută cursuri..."
+  },
+  "featuredCourses": {
+    "title": "Cursuri Recomandate",
+    "subtitle": "Cursuri selectate manual pentru impact maxim în învățare"
+  },
+  "recommendedCourses": {
+    "title": "Recomandate Pentru Tine",
+    "subtitle": "Recomandări personalizate de cursuri bazate pe interesele tale"
+  },
+  "instructorHighlights": {
+    "title": "Cunoaște Instructorii Noștri Experți",
+    "subtitle": "Învață de la profesioniști din industrie cu experiență reală",
+    "viewProfile": "Vezi Profilul",
+    "yearsExperience": "{count} ani experiență",
+    "studentsTaught": "Peste {count} cursanți",
+    "courses": "{count} cursuri"
+  }
+}

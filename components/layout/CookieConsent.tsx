@@ -5,8 +5,10 @@ import { AppContext } from '../AppContext';
 import { Button, Progress } from '@heroui/react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 const CookieConsent: React.FC = () => {
+    const t = useTranslations('common');
     const [accepted, setAccepted] = useState(false);
     const [visible, setVisible] = useState(false);
     const [progress, setProgress] = useState(0);
@@ -75,9 +77,9 @@ const CookieConsent: React.FC = () => {
                     <div className="bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-xl border border-[color:var(--ai-card-border)] p-4 backdrop-blur-md backdrop-saturate-150">
                         <div className="flex flex-col gap-3">
                             <div className="flex items-center justify-between">
-                                <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)]">Cookie Consent</h3>
+                                <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)]">{t('cookieConsent.title')}</h3>
                                 <div className="text-xs text-[color:var(--ai-muted)]">
-                                    Auto-accept in {Math.max(Math.ceil(timeoutDuration - (progress / 100 * timeoutDuration)), 0)}s
+                                    {t('cookieConsent.autoAcceptIn', { seconds: Math.max(Math.ceil(timeoutDuration - (progress / 100 * timeoutDuration)), 0) })}
                                 </div>
                             </div>
 
@@ -89,15 +91,15 @@ const CookieConsent: React.FC = () => {
                             />
 
                             <p className="text-sm text-[color:var(--ai-muted)]">
-                                We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies, our{' '}
+                                {t('cookieConsent.message')}{' '}
                                 <Link href="/privacy-policy" className="text-[color:var(--ai-primary)] hover:underline">
-                                    Privacy Policy
+                                    {t('cookieConsent.privacyPolicy')}
                                 </Link>,{' '}
                                 <Link href="/terms-conditions" className="text-[color:var(--ai-primary)] hover:underline">
-                                    Terms and Conditions
+                                    {t('cookieConsent.termsConditions')}
                                 </Link>, and our{' '}
                                 <Link href="/gdpr" className="text-[color:var(--ai-primary)] hover:underline">
-                                    GDPR Policy
+                                    {t('cookieConsent.gdprPolicy')}
                                 </Link>.
                             </p>
 
@@ -108,7 +110,7 @@ const CookieConsent: React.FC = () => {
                                     size="sm"
                                     onClick={handleDecline}
                                 >
-                                    Decline
+                                    {t('cookieConsent.decline')}
                                 </Button>
                                 <Button
                                     color="primary"
@@ -116,7 +118,7 @@ const CookieConsent: React.FC = () => {
                                     onClick={handleAccept}
                                     className="bg-[color:var(--ai-primary)] hover:bg-[color:var(--ai-primary)]/90"
                                 >
-                                    Accept All
+                                    {t('cookieConsent.acceptAll')}
                                 </Button>
                             </div>
                         </div>

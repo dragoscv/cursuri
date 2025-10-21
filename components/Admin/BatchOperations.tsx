@@ -36,11 +36,11 @@ const BatchOperations: React.FC = () => {
 
   // Options for batch actions dropdown
   const actionOptions = [
-    { value: 'status', label: 'Update Status' },
-    { value: 'category', label: 'Change Category' },
-    { value: 'visibility', label: 'Change Visibility' },
-    { value: 'price', label: 'Update Price' },
-    { value: 'delete', label: 'Delete' },
+    { value: 'status', label: t('batchOperations.actions.updateStatus') },
+    { value: 'category', label: t('batchOperations.actions.changeCategory') },
+    { value: 'visibility', label: t('batchOperations.actions.changeVisibility') },
+    { value: 'price', label: t('batchOperations.actions.updatePrice') },
+    { value: 'delete', label: t('batchOperations.actions.delete') },
   ];
 
   // Function to render the appropriate action input based on selected action

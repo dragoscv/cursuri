@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState, useContext, useCallback, useRef } from "react";
+import { useTranslations } from 'next-intl';
 import { AppContext } from "../AppContext";
 import { Button, Card, Progress } from "@heroui/react";
 import { useRouter } from "next/navigation";
@@ -25,6 +26,7 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
     const videoRef = useRef<HTMLVideoElement>(null);
     const router = useRouter();
     const toast = useToast();
+    const t = useTranslations('common.notifications');
 
     const context = useContext(AppContext) as AppContextProps;
     if (!context) {
@@ -141,19 +143,19 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
             markLessonComplete(courseId, lesson.id);
             toast.showToast({
                 type: 'success',
-                title: 'Lesson Completed',
-                message: 'You have completed this lesson!',
+                title: t('success.lessonCompleted'),
+                message: t('success.lessonCompletedMessage'),
                 duration: 4000
             });
         } catch (error) {
             toast.showToast({
                 type: 'error',
-                title: 'Error',
-                message: 'Could not mark lesson as complete. Please try again.',
+                title: t('error.markCompleteFailed'),
+                message: t('error.markCompleteFailedMessage'),
                 duration: 6000
             });
         }
-    }, [courseId, lesson.id, markLessonComplete, toast]);
+    }, [courseId, lesson.id, markLessonComplete, toast, t]);
 
     // Handle toggling auto-play preference
     const handleAutoPlayToggle = useCallback((value: boolean) => {

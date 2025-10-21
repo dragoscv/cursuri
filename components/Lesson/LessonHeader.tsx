@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { Chip } from '@heroui/react';
 import Button from '@/components/ui/Button';
 import { FiArrowLeft, FiClock, FiCheck, FiLock } from '@/components/icons/FeatherIcons';
@@ -19,6 +20,8 @@ const LessonHeader: React.FC<LessonHeaderProps> = ({
     isCompleted,
     hasAccess
 }) => {
+    const t = useTranslations('lessons.header');
+
     return (
         <div className="p-5 bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-[color:var(--ai-accent)]/5 backdrop-blur-sm rounded-xl border border-[color:var(--ai-card-border)]/50 shadow-sm mb-6">            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
             <Button
@@ -28,7 +31,7 @@ const LessonHeader: React.FC<LessonHeaderProps> = ({
                 className="p-0 min-w-0 text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] bg-transparent"
                 startContent={<FiArrowLeft />}
             >
-                <span className="text-sm">Back to course</span>
+                <span className="text-sm">{t('backToCourse')}</span>
             </Button>
 
             <div className="flex items-center gap-2">
@@ -47,7 +50,7 @@ const LessonHeader: React.FC<LessonHeaderProps> = ({
                         startContent={<FiCheck size={12} />}
                         className="text-[color:var(--ai-success, #10b981)]"
                     >
-                        Completed
+                        {t('completed')}
                     </Chip>
                 ) : !hasAccess ? (
                     <Chip
@@ -57,7 +60,7 @@ const LessonHeader: React.FC<LessonHeaderProps> = ({
                         startContent={<FiLock size={12} />}
                         className="text-[color:var(--ai-danger, #f43f5e)]"
                     >
-                        Locked
+                        {t('locked')}
                     </Chip>
                 ) : lesson.isFree ? (
                     <Chip
@@ -66,7 +69,7 @@ const LessonHeader: React.FC<LessonHeaderProps> = ({
                         variant="flat"
                         className="text-[color:var(--ai-primary)]"
                     >
-                        Free Preview
+                        {t('freePreview')}
                     </Chip>
                 ) : null}
             </div>

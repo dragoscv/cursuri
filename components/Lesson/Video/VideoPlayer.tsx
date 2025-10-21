@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { Lesson } from '@/types';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@heroui/react';
 import useVideoControls from '../hooks/useVideoControls';
@@ -39,6 +40,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   setIsCompleted,
   setProgressSaved
 }) => {
+  const t = useTranslations('common.videoPlayer');
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoContainerRef = useRef<HTMLDivElement>(null);
   const [isMuted, setIsMuted] = React.useState(false);
@@ -131,7 +133,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   if (!lesson.file) {
     return (
       <div className="relative rounded-3xl bg-[color:var(--ai-card-bg)]/80 aspect-video flex items-center justify-center">
-        <p className="text-[color:var(--ai-muted)]">No video available for this lesson</p>
+        <p className="text-[color:var(--ai-muted)]">{t('noVideoAvailable')}</p>
       </div>
     );
   }
@@ -219,7 +221,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
             <button
               className="p-1.5 rounded-xl hover:bg-white/20 transition duration-300"
               onClick={() => seek(-10)}
-              aria-label="Rewind 10 seconds"
+              aria-label={t('rewind')}
             >
               <RewindIcon />
             </button>
@@ -228,7 +230,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
             <button
               className="p-2 rounded-xl hover:bg-white/20 transition duration-300"
               onClick={togglePlayPause}
-              aria-label={isPlaying ? 'Pause video' : 'Play video'}
+              aria-label={isPlaying ? t('pauseVideo') : t('playVideo')}
             >
               {isPlaying ? <PauseIcon /> : <PlayIcon />}
             </button>
@@ -237,7 +239,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
             <button
               className="p-1.5 rounded-xl hover:bg-white/20 transition duration-300"
               onClick={() => seek(10)}
-              aria-label="Forward 10 seconds"
+              aria-label={t('forward')}
             >
               <ForwardIcon />
             </button>
@@ -253,7 +255,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
               variant="light"
               size="sm"
               onClick={toggleMute}
-              aria-label={isMuted ? 'Unmute' : 'Mute'}
+              aria-label={isMuted ? t('unmute') : t('mute')}
             >
               {isMuted ? <MuteIcon /> : <VolumeIcon />}
             </Button>
@@ -266,7 +268,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
                 variant={captionsEnabled ? "primary" : "light"}
                 size="sm"
                 onClick={toggleCaptions}
-                aria-label={captionsEnabled ? 'Disable captions' : 'Enable captions'}
+                aria-label={captionsEnabled ? t('disableCaptions') : t('enableCaptions')}
                 className={captionsEnabled ? 'bg-[color:var(--ai-primary)]/20' : ''}
               >
                 <CaptionsIcon />
@@ -285,7 +287,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
-                aria-label="Playback speed"
+                aria-label={t('playbackSpeed')}
                 className="bg-[color:var(--ai-background)]/90 backdrop-blur-md border border-[color:var(--ai-card-border)]/50 text-[color:var(--ai-foreground)]"
                 onAction={(key) => {
                   if (videoRef.current) {
@@ -295,7 +297,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
               >
                 <DropdownItem key="0.5">0.5x</DropdownItem>
                 <DropdownItem key="0.75">0.75x</DropdownItem>
-                <DropdownItem key="1">1x (Normal)</DropdownItem>
+                <DropdownItem key="1">{t('normalSpeed')}</DropdownItem>
                 <DropdownItem key="1.25">1.25x</DropdownItem>
                 <DropdownItem key="1.5">1.5x</DropdownItem>
                 <DropdownItem key="2">2x</DropdownItem>
@@ -307,7 +309,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
               size="sm"
               onClick={handleMarkComplete}
               isDisabled={isCompleted}
-              aria-label={isCompleted ? "Lesson completed" : "Mark lesson as complete"}
+              aria-label={isCompleted ? t('lessonCompleted') : t('markLessonComplete')}
             >              <CheckIcon />
             </Button>
 
@@ -317,7 +319,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
               variant="light"
               size="sm"
               onClick={toggleFullscreen}
-              aria-label="Toggle fullscreen"
+              aria-label={t('toggleFullscreen')}
             >
               {isFullscreen ? <ExitFullscreenIcon /> : <FullscreenIcon />}
             </Button>
@@ -327,16 +329,16 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
       {/* Keyboard Shortcuts Info - Show briefly on load */}
       <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-sm text-white text-xs rounded-lg p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-        <div className="font-semibold mb-1">Keyboard Shortcuts:</div>
+        <div className="font-semibold mb-1">{t('keyboardShortcuts')}</div>
         <div className="grid grid-cols-2 gap-x-3 gap-y-1">
-          <span>Space</span>
-          <span>Play/Pause</span>
-          <span>←/→</span>
-          <span>Seek ±10s</span>
-          <span>F</span>
-          <span>Fullscreen</span>
-          <span>M</span>
-          <span>Mute</span>
+          <span>{t('shortcuts.space')}</span>
+          <span>{t('shortcuts.playPause')}</span>
+          <span>{t('shortcuts.arrows')}</span>
+          <span>{t('shortcuts.seek')}</span>
+          <span>{t('shortcuts.f')}</span>
+          <span>{t('shortcuts.fullscreen')}</span>
+          <span>{t('shortcuts.m')}</span>
+          <span>{t('shortcuts.muteKey')}</span>
         </div>
       </div>
     </div>

@@ -9,6 +9,7 @@ import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { UserPaidProduct } from '@/types'
+import { useTranslations } from 'next-intl'
 import {
     TypeScriptIcon,
     ReactIcon,
@@ -27,6 +28,7 @@ import {
 } from './icons/tech'
 
 const HeroSection = memo(function HeroSection() {
+    const t = useTranslations('home.hero');
     // Use AppContext instead of modular hooks to avoid context issues
     const router = useRouter()
     const context = useContext(AppContext);
@@ -128,7 +130,7 @@ const HeroSection = memo(function HeroSection() {
                 size: 'md',
                 scrollBehavior: 'inside',
                 isDismissable: true,
-                modalHeader: 'Autentificare',
+                modalHeader: t('getStarted'),
                 modalBody: <Login onClose={() => closeModal('login')} />,
                 headerDisabled: true,
                 footerDisabled: true,
@@ -402,9 +404,9 @@ const HeroSection = memo(function HeroSection() {
                             className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight"
                             variants={itemVariants}
                         >
-                            <span className="block">Transform Your Career with</span>
+                            <span className="block">{t('title.line1')}</span>
                             <span className="bg-clip-text text-transparent bg-gradient-to-r from-[color:var(--ai-secondary)] to-[color:var(--ai-primary)] pb-2">
-                                AI & In-Demand Skills
+                                {t('title.line2')}
                             </span>
                         </motion.h1>
 
@@ -412,8 +414,7 @@ const HeroSection = memo(function HeroSection() {
                             className="mt-6 text-lg md:text-xl text-white/90"
                             variants={itemVariants}
                         >
-                            Master AI, Machine Learning, Digital Marketing, Data Science, and more.
-                            Learn from industry experts and build real-world projects that accelerate your career.
+                            {t('subtitle')}
                         </motion.p>
 
                         <motion.div
@@ -428,7 +429,7 @@ const HeroSection = memo(function HeroSection() {
                                 className="px-8 py-6 text-lg font-medium bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] hover:shadow-lg hover:shadow-[color:var(--ai-primary)]/30 transform hover:-translate-y-1 transition-all duration-300"
                                 onClick={handleGetStarted}
                             >
-                                Get Started
+                                {t('getStarted')}
                             </Button>
 
                             <Button
@@ -439,7 +440,7 @@ const HeroSection = memo(function HeroSection() {
                                 className="px-8 py-6 text-lg font-medium border-white/50 text-white backdrop-blur-sm hover:bg-white/10 transform hover:-translate-y-1 transition-all duration-300"
                                 onClick={() => router.push('/courses')}
                             >
-                                Explore Courses
+                                {t('exploreCourses')}
                             </Button>
                         </motion.div>
 
@@ -465,7 +466,7 @@ const HeroSection = memo(function HeroSection() {
                                 ))}
                                 </div>
                                 <div className="text-sm text-white/90 font-medium">
-                                    <span className="text-[color:var(--ai-accent)] font-semibold">{stats.totalStudents}+</span> learners already enrolled
+                                    <span className="text-[color:var(--ai-accent)] font-semibold">{stats.totalStudents}+</span> {t('learnersEnrolled')}
                                 </div>
                             </div>
                         </motion.div>
@@ -514,7 +515,7 @@ const HeroSection = memo(function HeroSection() {
 
                                 <div className="absolute top-4 right-4 flex items-center gap-2 bg-black/30 backdrop-blur-md px-3 py-1.5 rounded-full text-xs text-[color:var(--ai-accent)] border border-[color:var(--ai-accent)]/30">
                                     <span className="inline-block h-2 w-2 rounded-full bg-[color:var(--ai-accent)] animate-pulse"></span>
-                                    Project-Based Learning
+                                    {t('projectBased')}
                                 </div>
 
                                 {/* Tech stack floating animation */}
@@ -557,14 +558,14 @@ const HeroSection = memo(function HeroSection() {
 
                         <div className="absolute -top-6 -right-6 z-10 rounded-lg bg-white/10 backdrop-blur-md border border-[color:var(--ai-secondary)]/30 shadow-xl p-4 transform hover:scale-105 transition-transform duration-300">
                             <div className="text-center">
-                                <p className="text-sm font-medium text-white/90">Student Rating</p>
+                                <p className="text-sm font-medium text-white/90">{t('stats.studentRating')}</p>
                                 <div className="flex items-center justify-center mt-1">
                                     <svg className="h-5 w-5 text-[color:var(--ai-accent)]" viewBox="0 0 20 20" fill="currentColor">
                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                     </svg>
                                 </div>
                                 <p className="mt-1 text-xl font-bold text-white">{stats.avgRating}<span className="text-sm text-white/70">/5</span></p>
-                                <p className="text-xs text-white/70">from {stats.totalReviews || 42} reviews</p>
+                                <p className="text-xs text-white/70">{t('stats.reviews', { count: stats.totalReviews || 42 })}</p>
                             </div>
                         </div>
                     </motion.div>
@@ -573,7 +574,7 @@ const HeroSection = memo(function HeroSection() {
 
             {/* Scroll indicator */}
             <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
-                <p className="text-white/80 text-sm mb-2">Scroll to explore</p>
+                <p className="text-white/80 text-sm mb-2">{t('scrollToExplore')}</p>
                 <motion.div
                     className="w-8 h-12 rounded-full border-2 border-white/60 flex justify-center p-2"
                     initial={{ opacity: 0.6 }}

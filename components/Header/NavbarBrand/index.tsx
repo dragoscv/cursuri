@@ -4,11 +4,13 @@ import React from 'react';
 import { NavbarBrand as HeroNavbarBrand, Link } from "@heroui/react";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { usePathname, useRouter } from "next/navigation";
+import { useTranslations } from 'next-intl';
 
 /**
  * NavbarBrand component that handles the logo and breadcrumbs in the header
  */
 export default function NavbarBrand() {
+    const t = useTranslations('common');
     const pathname = usePathname();
     const router = useRouter();
 
@@ -40,7 +42,7 @@ export default function NavbarBrand() {
                 </div>
                 {!isCourseOrLessonPage && (
                     <p className="font-bold text-xl bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent drop-shadow-sm dark:drop-shadow-[0_1px_1px_rgba(255,255,255,0.3)]">
-                        Cursuri
+                        {t('nav.courses')}
                     </p>
                 )}
             </div>

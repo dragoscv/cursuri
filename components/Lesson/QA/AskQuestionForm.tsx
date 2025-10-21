@@ -2,6 +2,7 @@
 'use client'
 
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button, Input, Textarea } from '@/components/ui';
 
 interface AskQuestionFormProps {
@@ -10,6 +11,7 @@ interface AskQuestionFormProps {
 }
 
 const AskQuestionForm: React.FC<AskQuestionFormProps> = ({ onSubmit, onCancel }) => {
+    const t = useTranslations('lessons.qa');
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -19,19 +21,19 @@ const AskQuestionForm: React.FC<AskQuestionFormProps> = ({ onSubmit, onCancel })
         const newErrors: { title?: string, content?: string } = {};
 
         if (!title.trim()) {
-            newErrors.title = 'Question title is required';
+            newErrors.title = t('validationTitleRequired');
         } else if (title.trim().length < 5) {
-            newErrors.title = 'Title must be at least 5 characters';
+            newErrors.title = t('validationTitleMinLength');
         } else if (title.trim().length > 150) {
-            newErrors.title = 'Title must be less than 150 characters';
+            newErrors.title = t('validationTitleMaxLength');
         }
 
         if (!content.trim()) {
-            newErrors.content = 'Question details are required';
+            newErrors.content = t('validationDetailsRequired');
         } else if (content.trim().length < 10) {
-            newErrors.content = 'Details must be at least 10 characters';
+            newErrors.content = t('validationDetailsMinLength');
         } else if (content.trim().length > 2000) {
-            newErrors.content = 'Details must be less than 2000 characters';
+            newErrors.content = t('validationDetailsMaxLength');
         }
 
         setErrors(newErrors);
@@ -61,28 +63,28 @@ const AskQuestionForm: React.FC<AskQuestionFormProps> = ({ onSubmit, onCancel })
         <div>
             <Input
                 type="text"
-                label="Question Title"
-                placeholder="What's your question about this lesson?"
+                label={t('questionTitle')}
+                placeholder={t('questionTitlePlaceholder')}
                 value={title}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
                 className="w-full"
                 isInvalid={!!errors.title}
                 errorMessage={errors.title}
-                description="Be specific and imagine you're asking another student"
+                description={t('questionTitleHelp')}
             />
         </div>
 
         <div>
             <Textarea
-                label="Question Details"
-                placeholder="Provide as much detail as possible about your question... What have you tried? What exactly is confusing you?"
+                label={t('questionDetails')}
+                placeholder={t('questionDetailsPlaceholder')}
                 value={content}
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value)}
                 rows={5}
                 className="w-full"
                 isInvalid={!!errors.content}
                 errorMessage={errors.content}
-                description="Include all relevant information for others to understand your question"
+                description={t('questionDetailsHelp')}
             />
         </div>
 
@@ -94,7 +96,7 @@ const AskQuestionForm: React.FC<AskQuestionFormProps> = ({ onSubmit, onCancel })
                 type="button"
                 className="bg-[color:var(--ai-card-border)]/20 hover:bg-[color:var(--ai-card-border)]/30 rounded-lg border border-[color:var(--ai-card-border)]/50 shadow-sm transition-all duration-300 hover:shadow"
             >
-                Cancel
+                {t('cancel')}
             </Button>
             <Button
                 color="primary"
@@ -102,7 +104,7 @@ const AskQuestionForm: React.FC<AskQuestionFormProps> = ({ onSubmit, onCancel })
                 isLoading={isSubmitting}
                 className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white rounded-lg shadow-md transition-all duration-300 hover:shadow-lg hover:scale-[1.02]"
             >
-                {isSubmitting ? 'Submitting...' : 'Submit Question'}
+                {isSubmitting ? t('submitting') : t('submitQuestion')}
             </Button>
         </div>
     </form>

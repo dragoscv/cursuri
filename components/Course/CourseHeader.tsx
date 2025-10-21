@@ -2,7 +2,10 @@ import React from 'react';
 import { Course } from '../../types';
 import { Badge, Chip } from '@heroui/react';
 import { motion } from 'framer-motion';
-import { FiClock, FiUsers, FiBook, FiAward } from '../icons/FeatherIcons';
+'use client'
+import React from 'react';
+import { useTranslations } from 'next-intl';
+import { FiClock, FiUsers, FiBook, FiTag, FiStar } from '@/components/icons/FeatherIcons';
 
 interface CourseHeaderProps {
     course: Course;
@@ -55,7 +58,7 @@ export const CourseHeader: React.FC<CourseHeaderProps> = ({ course }) => {
                 {extendedCourse.rating && (
                     <div className="flex flex-col items-end">
                         <div className="flex items-center gap-2 mb-2">
-                            <span className="text-sm text-[color:var(--ai-muted)]">Course Rating</span>
+                            <span className="text-sm text-[color:var(--ai-muted)]">{useTranslations('common')('status.courseRating')}</span>
                             <span className="font-semibold text-[color:var(--ai-primary)]">
                                 {typeof extendedCourse.rating === 'number' ? extendedCourse.rating.toFixed(1) : extendedCourse.rating}
                             </span>

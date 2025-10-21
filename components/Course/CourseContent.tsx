@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { Chip, Card } from '@heroui/react';
 import { Course, Lesson } from "@/types";
 import {
@@ -28,13 +29,16 @@ const CourseContent: React.FC<CourseContentProps> = ({
     isAdmin,
     completedLessons = {},
     handleLessonClick
-}) => {    // Debug lessons input with more detailed information
+}) => {
+    const t = useTranslations('courses.content');
+
+    // Debug lessons input with more detailed information
     console.log('CourseContent received lessons:', {
         count: lessons?.length || 0,
         isArray: Array.isArray(lessons),
         isEmpty: !lessons || lessons.length === 0,
         firstLesson: lessons && lessons.length > 0 ? lessons[0] : null,
-        courseName: course?.name || 'Unknown Course'
+        courseName: course?.name || t('fallbacks.unknownCourse')
     });
 
     // Safely handle potentially invalid lessons input
@@ -128,9 +132,9 @@ const CourseContent: React.FC<CourseContentProps> = ({
                     className="bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-[color:var(--ai-accent)]/5 backdrop-blur-sm rounded-xl p-5 border border-[color:var(--ai-card-border)]/50 shadow-sm"
                 >
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                        <div>                        <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)]">Your Progress</h3>
+                        <div>                        <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)]">{t('yourProgress')}</h3>
                             <p className="text-sm text-[color:var(--ai-muted)]">
-                                {Object.values(completedLessons).filter(Boolean).length} of {sortedLessons.length} {sortedLessons.length === 1 ? 'lesson' : 'lessons'} completed
+                                {t('lessonsCompleted', { completed: Object.values(completedLessons).filter(Boolean).length, total: sortedLessons.length })} {sortedLessons.length === 1 ? t('lesson') : t('lessons')}
                             </p>
                         </div>
                         <div className="flex items-center">
@@ -159,9 +163,9 @@ const CourseContent: React.FC<CourseContentProps> = ({
                             <AlertIcon className="w-6 h-6" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)]">Some Content is Locked</h3>
+                            <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)]">{t('someContentLocked')}</h3>
                             <p className="text-sm text-[color:var(--ai-muted)] mt-1">
-                                Purchase this course to unlock all lessons. Free preview lessons are accessible to everyone.
+                                {t('purchaseToUnlock')}
                             </p>
                         </div>
                     </div>
@@ -189,7 +193,7 @@ const CourseContent: React.FC<CourseContentProps> = ({
                                         <span>{module.title}</span>
                                         {module.lessonCount && (
                                             <span className="ml-2 text-xs bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] px-2 py-0.5 rounded-full">
-                                                {module.lessonCount} lessons
+                                                {t('lessonsCount', { count: module.lessonCount })}
                                             </span>
                                         )}
                                     </h3>
@@ -223,7 +227,7 @@ const CourseContent: React.FC<CourseContentProps> = ({
                                 className="border border-[color:var(--ai-card-border)] rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)] shadow-sm"
                             >
                                 <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 border-b border-[color:var(--ai-card-border)]">
-                                    <h3 className="font-medium text-[color:var(--ai-foreground)]">Additional Lessons</h3>
+                                    <h3 className="font-medium text-[color:var(--ai-foreground)]">{t('additionalLessons')}</h3>
                                 </div>                                <div className="divide-y divide-[color:var(--ai-card-border)]/50">
                                     {lessonsByModule['default']
                                         .filter(lesson => lesson != null && lesson.id)
@@ -235,6 +239,7 @@ const CourseContent: React.FC<CourseContentProps> = ({
                                                 isCompleted={isLessonCompleted(lesson.id)}
                                                 isAccessible={isLessonAccessible(lesson)}
                                                 onClick={() => isLessonAccessible(lesson) && handleLessonClick(lesson)}
+                                                t={t}
                                             />
                                         ))}
                                 </div>
@@ -249,9 +254,9 @@ const CourseContent: React.FC<CourseContentProps> = ({
                     >
                         <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 border-b border-[color:var(--ai-card-border)]">
                             <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
-                                <span>Course Content</span>
+                                <span>{t('courseContent')}</span>
                                 <span className="ml-2 text-xs bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] px-2 py-0.5 rounded-full">
-                                    {sortedLessons.length} lessons
+                                    {t('lessonsCount', { count: sortedLessons.length })}
                                 </span>
                             </h3>
                         </div>                        {sortedLessons.length > 0 ? (
@@ -270,6 +275,7 @@ const CourseContent: React.FC<CourseContentProps> = ({
                                             isCompleted={isLessonCompleted(lesson.id)}
                                             isAccessible={isLessonAccessible(lesson)}
                                             onClick={() => isLessonAccessible(lesson) && handleLessonClick(lesson)}
+                                            t={t}
                                         />
                                     );
                                 })}
@@ -277,8 +283,8 @@ const CourseContent: React.FC<CourseContentProps> = ({
                         ) : (
                             <div className="flex flex-col items-center justify-center py-12 text-center">
                                 <FiBookOpen className="w-12 h-12 text-[color:var(--ai-muted)]/40 mb-4" />
-                                <h3 className="text-lg font-medium text-[color:var(--ai-foreground]">No lessons available</h3>                                <p className="mt-1 text-sm text-[color:var(--ai-muted)]">
-                                    This course doesn&apos;t have any lessons yet.
+                                <h3 className="text-lg font-medium text-[color:var(--ai-foreground]">{t('noLessonsAvailable')}</h3>                                <p className="mt-1 text-sm text-[color:var(--ai-muted)]">
+                                    {t('noLessonsYet')}
                                 </p>
                             </div>
                         )}
@@ -295,9 +301,10 @@ interface LessonItemProps {
     isCompleted: boolean;
     isAccessible: boolean;
     onClick: () => void;
+    t: (key: string) => string;
 }
 
-const LessonItem: React.FC<LessonItemProps> = ({ lesson, index, isCompleted, isAccessible, onClick }) => {
+const LessonItem: React.FC<LessonItemProps> = ({ lesson, index, isCompleted, isAccessible, onClick, t }) => {
     // Format duration in minutes to "HH:MM" format or "MM min" if less than an hour
     const formatDuration = (minutes?: number) => {
         if (!minutes) return "00:00";
@@ -367,7 +374,7 @@ const LessonItem: React.FC<LessonItemProps> = ({ lesson, index, isCompleted, isA
                     {isCompleted && (
                         <span className="ml-2 bg-[color:var(--ai-success, #10b981)] text-white px-2 py-0.5 rounded-md text-xs font-bold flex items-center gap-1">
                             <FiCheck className="w-3 h-3" />
-                            COMPLETED
+                            {t('completedBadge')}
                         </span>
                     )}
                 </div>
@@ -379,7 +386,7 @@ const LessonItem: React.FC<LessonItemProps> = ({ lesson, index, isCompleted, isA
                         color="success"
                         className="ml-2 text-xs"
                     >
-                        Free
+                        {t('free')}
                     </Chip>
                 )}
             </div>

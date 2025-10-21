@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useContext } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { AppContext } from '@/components/AppContext';
 import LessonContent from '@/components/Lesson/LessonContent';
 import { Spinner, Button } from '@heroui/react';
@@ -13,6 +14,7 @@ interface LessonViewerProps {
 }
 
 export default function LessonViewer({ courseId, lessonId }: LessonViewerProps) {
+    const t = useTranslations('lessons.viewer');
     const router = useRouter();
     const context = useContext(AppContext);
     const [isLoading, setIsLoading] = useState(true);
@@ -63,7 +65,7 @@ export default function LessonViewer({ courseId, lessonId }: LessonViewerProps) 
         return (
             <div className="flex justify-center items-center h-64">
                 <Spinner color="primary" size="lg" />
-                <span className="ml-2">Loading lesson...</span>
+                <span className="ml-2">{t('loadingLesson')}</span>
             </div>
         );
     }
@@ -71,11 +73,11 @@ export default function LessonViewer({ courseId, lessonId }: LessonViewerProps) 
     if (error) {
         return (
             <div className="p-6 text-center">
-                <h2 className="text-2xl font-bold text-[color:var(--ai-danger)] mb-4">Error: {error}</h2>
-                <p className="mb-6">There was a problem loading this lesson.</p>
+                <h2 className="text-2xl font-bold text-[color:var(--ai-danger)] mb-4">{t('error', { error })}</h2>
+                <p className="mb-6">{t('problemLoading')}</p>
                 <div className="flex flex-col md:flex-row gap-4 justify-center">
                     <Button color="primary" onClick={() => router.push(`/courses/${courseId}`)}>
-                        Return to Course
+                        {t('returnToCourse')}
                     </Button>
                     <Button
                         variant="flat"
@@ -86,12 +88,12 @@ export default function LessonViewer({ courseId, lessonId }: LessonViewerProps) 
                                     if (data.success) {
                                         window.location.reload();
                                     } else {
-                                        alert('Could not sync lesson data');
+                                        alert(t('couldNotSync'));
                                     }
                                 });
                         }}
                     >
-                        Sync & Retry
+                        {t('syncRetry')}
                     </Button>
                 </div>
             </div>
@@ -101,10 +103,10 @@ export default function LessonViewer({ courseId, lessonId }: LessonViewerProps) 
     if (!lessonData) {
         return (
             <div className="p-6 text-center">
-                <h2 className="text-2xl font-bold mb-4">Lesson Not Available</h2>
-                <p className="mb-6">This lesson does not exist or you may not have access to it.</p>
+                <h2 className="text-2xl font-bold mb-4">{t('lessonNotAvailable')}</h2>
+                <p className="mb-6">{t('lessonNotExist')}</p>
                 <Button color="primary" onClick={() => router.push(`/courses/${courseId}`)}>
-                    Return to Course
+                    {t('returnToCourse')}
                 </Button>
             </div>
         );

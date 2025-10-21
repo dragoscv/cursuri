@@ -7,8 +7,10 @@ import { Card, Button, Badge } from '@heroui/react';
 import { FiDownload, FiTrash2, FiWifi, FiWifiOff, FiHardDrive, FiClock } from '@/components/icons/FeatherIcons';
 import { useRouter } from 'next/navigation';
 import { AppContextProps } from '@/types';
+import { useTranslations } from 'next-intl';
 
 export default function OfflineContentSection() {
+    const t = useTranslations('profile.offline');
     const { courses } = useContext(AppContext) as AppContextProps;
     const {
         offlineContent,
@@ -65,7 +67,7 @@ export default function OfflineContentSection() {
                         <div className="flex justify-between items-center">
                             <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
                                 <FiHardDrive className="mr-2 text-[color:var(--ai-secondary)]" />
-                                <span>Offline Content</span>
+                                <span>{t('title')}</span>
                             </h3>
                             <Badge
                                 color={isOnline ? "success" : "danger"}
@@ -73,14 +75,14 @@ export default function OfflineContentSection() {
                                 className="flex items-center gap-1"
                             >
                                 {isOnline ? <FiWifi size={12} /> : <FiWifiOff size={12} />}
-                                {isOnline ? "Online" : "Offline"}
+                                {isOnline ? t('online') : t('offline')}
                             </Badge>
                         </div>
                     </div>
 
                     <div className="flex items-center justify-between mb-4">
                         <div>
-                            <span className="text-sm text-[color:var(--ai-muted)]">Storage used</span>
+                            <span className="text-sm text-[color:var(--ai-muted)]">{t('storageUsed')}</span>
                             <p className="font-medium text-[color:var(--ai-foreground)]">{offlineSize}</p>
                         </div>
 
@@ -91,16 +93,16 @@ export default function OfflineContentSection() {
                                 onClick={() => setShowConfirmClear(true)}
                             >
                                 <FiTrash2 className="w-4 h-4 mr-2" />
-                                Clear All
+                                {t('clearAll')}
                             </Button>
                         )}
 
                         {showConfirmClear && (
                             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
                                 <div className="bg-[color:var(--ai-card-bg)] p-6 rounded-lg shadow-xl max-w-md w-full">
-                                    <h3 className="text-lg font-medium mb-2">Clear offline content</h3>
+                                    <h3 className="text-lg font-medium mb-2">{t('clearContent')}</h3>
                                     <p className="text-[color:var(--ai-muted)] mb-4">
-                                        Are you sure you want to delete all offline content? This will remove all downloaded lessons and you'll need an internet connection to access them again.
+                                        {t('confirmClear')} {t('confirmClearDesc')}
                                     </p>
                                     <div className="flex justify-end gap-2">
                                         <Button
@@ -108,7 +110,7 @@ export default function OfflineContentSection() {
                                             variant="bordered"
                                             onClick={() => setShowConfirmClear(false)}
                                         >
-                                            Cancel
+                                            {t('cancel')}
                                         </Button>
                                         <Button
                                             color="danger"
@@ -118,7 +120,7 @@ export default function OfflineContentSection() {
                                                 setShowConfirmClear(false);
                                             }}
                                         >
-                                            Clear All Content
+                                            {t('confirm')}
                                         </Button>
                                     </div>
                                 </div>
@@ -136,9 +138,9 @@ export default function OfflineContentSection() {
                             <div className="w-16 h-16 rounded-full bg-[color:var(--ai-secondary)]/10 flex items-center justify-center mb-4">
                                 <FiDownload className="w-8 h-8 text-[color:var(--ai-secondary)]" />
                             </div>
-                            <h4 className="text-lg font-medium mb-2">No offline content yet</h4>
+                            <h4 className="text-lg font-medium mb-2">{t('noOfflineContent')}</h4>
                             <p className="text-[color:var(--ai-muted)] max-w-md">
-                                Download lessons to view them offline. Look for the download button when viewing a lesson.
+                                {t('noOfflineContentDesc')}
                             </p>
                         </div>
                     ) : (
@@ -171,7 +173,7 @@ export default function OfflineContentSection() {
                                                         variant="flat"
                                                         className="whitespace-nowrap"
                                                     >
-                                                        Expired
+                                                        {t('expired')}
                                                     </Badge>
                                                 )}
                                             </div>
@@ -185,7 +187,7 @@ export default function OfflineContentSection() {
                                                 {!contentExpired && (
                                                     <span className="flex items-center">
                                                         <FiClock size={12} className="mr-1" />
-                                                        Expires: {formatDate(content.expiryDate)}
+                                                        {t('expires')}: {formatDate(content.expiryDate)}
                                                     </span>
                                                 )}
                                             </div>
@@ -199,7 +201,7 @@ export default function OfflineContentSection() {
                                                     size="sm"
                                                     onClick={() => openLesson(content)}
                                                 >
-                                                    View
+                                                    {t('view')}
                                                 </Button>
                                             )}
 

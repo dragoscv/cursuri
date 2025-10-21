@@ -19,8 +19,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  // Get locale from cookie for lang attribute
+  const locale = 'en'; // Will be determined by middleware and cookie
+
   return (
-    <html lang="en" className="has-[section[role='dialog'][data-open='true']]:overflow-hidden transition-all ease-in-out duration-500">
+    <html lang={locale} className="has-[section[role='dialog'][data-open='true']]:overflow-hidden transition-all ease-in-out duration-500">
       <head>
         {/* React Scan removed - causes CSP issues in production */}
       </head>

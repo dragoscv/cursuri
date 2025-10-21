@@ -2,6 +2,7 @@
 
 import React, { useContext } from 'react';
 import { AppContext } from "@/components/AppContext";
+import { useTranslations } from 'next-intl';
 import Button from "@/components/ui/Button";
 import Login from "@/components/Login";
 
@@ -9,6 +10,7 @@ import Login from "@/components/Login";
  * AuthActions component that displays login/signup buttons when user is not authenticated
  */
 export default function AuthActions() {
+    const t = useTranslations('common.buttons');
     const context = useContext(AppContext);
 
     if (!context) {
@@ -29,7 +31,7 @@ export default function AuthActions() {
             size: 'md',
             scrollBehavior: 'inside',
             isDismissable: true,
-            modalHeader: 'Autentificare',
+            modalHeader: t('login'),
             modalBody: <Login onClose={() => closeModal('login')} />,
             headerDisabled: true,
             footerDisabled: true,
@@ -64,7 +66,7 @@ export default function AuthActions() {
                     text-sm
                 "
             >
-                Login
+                {t('login')}
             </Button>
             <Button
                 variant="primary"

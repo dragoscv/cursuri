@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useContext, useEffect, useState } from 'react';
+import { useLocale } from 'next-intl';
 import { AppContext } from '@/components/AppContext';
 import { Card, CardBody, Button, Chip, Input } from '@heroui/react';
 import { motion } from 'framer-motion';
@@ -8,6 +9,7 @@ import Link from 'next/link';
 import { FiDownload, FiFileText, FiCalendar, FiSearch, FiArrowDown, FiArrowUp } from '@/components/icons/FeatherIcons';
 
 export default function PaymentHistory() {
+    const locale = useLocale();
     const context = useContext(AppContext);
     if (!context) {
         throw new Error("AppContext not found");
@@ -83,7 +85,7 @@ export default function PaymentHistory() {
 
     // Format currency
     const formatCurrency = (amount: number, currency: string) => {
-        return new Intl.NumberFormat('ro-RO', {
+        return new Intl.NumberFormat(locale, {
             style: 'currency',
             currency: currency,
         }).format(amount);
@@ -91,7 +93,7 @@ export default function PaymentHistory() {
 
     // Format date
     const formatDate = (date: Date) => {
-        return date.toLocaleDateString('ro-RO', {
+        return date.toLocaleDateString(locale, {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
@@ -125,7 +127,7 @@ export default function PaymentHistory() {
             <div className="flex flex-col md:flex-row gap-4 mb-8">
                 <Input
                     className="md:max-w-xs shadow-sm border border-[color:var(--ai-card-border)]"
-                    placeholder="Search payments"
+                    placeholder={t('payment.search.placeholder')}
                     startContent={<FiSearch className="text-[color:var(--ai-muted)]" />}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -144,7 +146,7 @@ export default function PaymentHistory() {
                         }
                         onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
                     >
-                        {sortOrder === 'asc' ? 'Oldest First' : 'Newest First'}
+                        {sortOrder === 'asc' ? t('payment.sort.oldestFirst') : t('payment.sort.newestFirst')}
                     </Button>
                 </div>            </div>
 

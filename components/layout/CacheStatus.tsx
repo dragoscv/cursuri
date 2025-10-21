@@ -4,6 +4,7 @@ import { useContext } from 'react';
 import { AppContext } from '../AppContext';
 import { CacheStatus as CacheStatusType } from '@/types';
 import { Button, Badge, Card, CardBody, CardFooter, CardHeader, Divider } from '@heroui/react';
+import { useTranslations } from 'next-intl';
 
 /**
  * CacheStatusItem Component
@@ -21,6 +22,8 @@ const CacheStatusItem = ({
     refreshFn?: () => Promise<any>;
     clearFn?: () => void;
 }) => {
+    const t = useTranslations('common');
+
     const getStatusColor = () => {
         switch (status) {
             case 'success':
@@ -37,13 +40,13 @@ const CacheStatusItem = ({
     const getStatusText = () => {
         switch (status) {
             case 'success':
-                return 'Cached';
+                return t('cacheStatus.cached');
             case 'loading':
-                return 'Loading';
+                return t('cacheStatus.loading');
             case 'error':
-                return 'Error';
+                return t('cacheStatus.error');
             default:
-                return 'Not Loaded';
+                return t('cacheStatus.notLoaded');
         }
     };
 
@@ -62,7 +65,7 @@ const CacheStatusItem = ({
                         onClick={() => refreshFn()}
                         disabled={status === 'loading'}
                     >
-                        Refresh
+                        {t('cacheStatus.refresh')}
                     </Button>
                 )}
                 {clearFn && (
@@ -73,7 +76,7 @@ const CacheStatusItem = ({
                         onClick={() => clearFn()}
                         disabled={status === 'loading' || status === 'idle'}
                     >
-                        Clear
+                        {t('cacheStatus.clear')}
                     </Button>
                 )}
             </div>
@@ -88,6 +91,7 @@ const CacheStatusItem = ({
  * and provides buttons to refresh or clear the cache
  */
 export default function CacheStatus() {
+    const t = useTranslations('common');
     const context = useContext(AppContext);
 
     if (!context) {
@@ -128,21 +132,21 @@ export default function CacheStatus() {
     return (
         <Card className="max-w-lg mx-auto my-8">
             <CardHeader className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold">Cache Status</h3>
+                <h3 className="text-lg font-semibold">{t('cacheStatus.title')}</h3>
                 <Button
                     color="danger"
                     variant="flat"
                     size="sm"
                     onClick={() => clearAllCache()}
                 >
-                    Clear All Cache
+                    {t('cacheStatus.clearAllCache')}
                 </Button>
             </CardHeader>
             <Divider />
             <CardBody className="p-4">
                 <div className="space-y-1">
                     <CacheStatusItem
-                        label="Courses"
+                        label={t('cacheStatus.courses')}
                         status={courseLoadingStates?.['all'] || 'idle'}
                         clearFn={() => clearCache('courses')}
                     />
@@ -150,7 +154,7 @@ export default function CacheStatus() {
                     {courseId && (
                         <>
                             <CacheStatusItem
-                                label={`Lessons (${courseId})`}
+                                label={`${t('cacheStatus.lessons')} (${courseId})`}
                                 status={
                                     lessonLoadingStates?.[courseId]?.[courseId] ||
                                     (Object.keys(lessonLoadingStates || {}).length > 0 ? 'success' : 'idle')
@@ -160,7 +164,7 @@ export default function CacheStatus() {
                             />
 
                             <CacheStatusItem
-                                label={`Reviews (${courseId})`}
+                                label={`${t('cacheStatus.reviews')} (${courseId})`}
                                 status={reviewLoadingStates?.[courseId] || 'idle'}
                                 refreshFn={() => getCourseReviews(courseId, { persist: true })}
                                 clearFn={() => clearCache(`reviews_${courseId}`)}
@@ -169,14 +173,14 @@ export default function CacheStatus() {
                     )}
 
                     <CacheStatusItem
-                        label="Bookmarks"
+                        label={t('cacheStatus.bookmarks')}
                         status={bookmarksLoadingState}
                         refreshFn={() => getBookmarkedLessons({ persist: true })}
                         clearFn={() => clearCache('bookmarks')}
                     />
 
                     <CacheStatusItem
-                        label="Wishlist"
+                        label={t('cacheStatus.wishlist')}
                         status={wishlistLoadingState}
                         refreshFn={() => getWishlistCourses({ persist: true })}
                         clearFn={() => clearCache('wishlist')}
@@ -185,24 +189,24 @@ export default function CacheStatus() {
                     {context.isAdmin && (
                         <>
                             <Divider />
-                            <h4 className="text-md font-medium mt-4 mb-2">Admin Cache</h4>
+                            <h4 className="text-md font-medium mt-4 mb-2">{t('cacheStatus.title')} - {t('nav.admin')}</h4>
 
                             <CacheStatusItem
-                                label="Users"
+                                label={t('cacheStatus.users')}
                                 status={userLoadingState || 'idle'}
                                 refreshFn={() => getAllUsers?.({ persist: true }) || Promise.resolve(null)}
                                 clearFn={() => clearCache('users')}
                             />
 
                             <CacheStatusItem
-                                label="Analytics"
+                                label={t('cacheStatus.analytics')}
                                 status={adminAnalyticsLoadingState || 'idle'}
                                 refreshFn={() => getAdminAnalytics?.({ persist: true }) || Promise.resolve(null)}
                                 clearFn={() => clearCache('adminAnalytics')}
                             />
 
                             <CacheStatusItem
-                                label="Settings"
+                                label={t('cacheStatus.settings')}
                                 status={adminSettingsLoadingState || 'idle'}
                                 refreshFn={() => getAdminSettings?.({ persist: true }) || Promise.resolve(null)}
                                 clearFn={() => clearCache('adminSettings')}

@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useContext } from 'react';
+import { useTranslations } from 'next-intl';
 import { Avatar, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@heroui/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -12,6 +13,7 @@ interface AdminHeaderProps {
 }
 
 const AdminHeader: React.FC<AdminHeaderProps> = ({ onTabChange, activeTab = 'dashboard' }) => {
+    const t = useTranslations('admin.header');
     const context = useContext(AppContext);
     if (!context) {
         throw new Error("AdminHeader must be used within an AppProvider");
@@ -44,46 +46,46 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onTabChange, activeTab = 'das
                                     <path d="M3 16L12 20L21 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                     <path d="M3 12L12 16L21 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
-                                <span className="ml-2 text-xl font-bold text-[color:var(--ai-foreground)]">Admin</span>
+                                <span className="ml-2 text-xl font-bold text-[color:var(--ai-foreground)]">{t('admin')}</span>
                             </div>
                         </Link>                        <nav className="ml-8 hidden md:flex space-x-4">
                             <NavLink
-                                label="Dashboard"
+                                label={t('dashboard')}
                                 isActive={activeTab === 'dashboard'}
                                 onClick={() => handleNavigation('dashboard')}
                             />
                             <NavLink
-                                label="Courses"
+                                label={t('courses')}
                                 isActive={activeTab === 'courses'}
                                 onClick={() => handleNavigation('courses')}
                             />
                             <NavLink
-                                label="Batch Ops"
+                                label={t('batchOps')}
                                 isActive={activeTab === 'batchOperations'}
                                 onClick={() => handleNavigation('batchOperations')}
                             />
                             <NavLink
-                                label="Users"
+                                label={t('users')}
                                 isActive={activeTab === 'users'}
                                 onClick={() => handleNavigation('users')}
                             />
                             <NavLink
-                                label="Enhanced Users"
+                                label={t('enhancedUsers')}
                                 isActive={activeTab === 'enhancedUsers'}
                                 onClick={() => handleNavigation('enhancedUsers')}
                             />
                             <NavLink
-                                label="Analytics"
+                                label={t('analytics')}
                                 isActive={activeTab === 'analytics'}
                                 onClick={() => handleNavigation('analytics')}
                             />
                             <NavLink
-                                label="Engagement"
+                                label={t('engagement')}
                                 isActive={activeTab === 'courseEngagement'}
                                 onClick={() => handleNavigation('courseEngagement')}
                             />
                             <NavLink
-                                label="Settings"
+                                label={t('settings')}
                                 isActive={activeTab === 'settings'}
                                 onClick={() => handleNavigation('settings')}
                             />
@@ -97,7 +99,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onTabChange, activeTab = 'das
                         className="mr-4 font-medium text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-border)]/20"
                         onClick={navigateToSite}
                     >
-                        Back to Site
+                        {t('backToSite')}
                     </Button>
 
                         <Dropdown placement="bottom-end">
@@ -119,16 +121,16 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onTabChange, activeTab = 'das
                             </DropdownTrigger>
                             <DropdownMenu aria-label="Admin actions">
                                 <DropdownItem key="profile" onClick={() => router.push('/profile')}>
-                                    My Profile
+                                    {t('myProfile')}
                                 </DropdownItem>
                                 <DropdownItem key="settings" onClick={() => handleNavigation('settings')}>
-                                    Admin Settings
+                                    {t('adminSettings')}
                                 </DropdownItem>
                                 <DropdownItem key="help">
-                                    Help & Documentation
+                                    {t('helpDocumentation')}
                                 </DropdownItem>
                                 <DropdownItem key="logout" className="text-danger" color="danger">
-                                    Logout
+                                    {t('logout')}
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>

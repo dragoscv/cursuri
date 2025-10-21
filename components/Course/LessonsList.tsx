@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation';
 import { FiBookOpen, FiLock, FiCheckCircle, FiPlay, FiClock } from '@/components/icons/FeatherIcons';
 import { motion } from 'framer-motion';
 import { Course, Lesson } from '@/types';
+import { useTranslations } from 'next-intl';
 
 interface LessonsListProps {
     lessons: Lesson[];
@@ -22,6 +23,7 @@ export default function LessonsList({
 }: LessonsListProps) {
     const params = useParams();
     const courseId = propsCourseId || params.courseId;
+    const t = useTranslations('courses.lessonsList');
 
     // Format duration in minutes to "HH:MM" format or "MM min" if less than an hour
     const formatDuration = (minutes?: number) => {
@@ -41,10 +43,10 @@ export default function LessonsList({
                         <FiBookOpen className="text-[color:var(--ai-primary)] text-2xl" />
                     </div>
                     <h3 className="text-xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-2">
-                        No lessons available yet
+                        {t('noLessonsYet')}
                     </h3>
                     <p className="text-[color:var(--ai-muted)] max-w-md">
-                        This course is still being developed. Check back soon for new content!
+                        {t('noLessonsDescription')}
                     </p>
                 </div>
             </div>
@@ -128,17 +130,17 @@ export default function LessonsList({
             <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
                     <h2 className="text-xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-1">
-                        Course Content
+                        {t('courseContent')}
                     </h2>
                     <div className="flex items-center gap-3 text-[color:var(--ai-muted)] text-sm">
                         <div className="flex items-center gap-1">
                             <FiBookOpen className="w-3.5 h-3.5" />
-                            <span>{sortedLessons.length} lessons</span>
+                            <span>{t('lessons', { count: sortedLessons.length })}</span>
                         </div>
                         <span>•</span>
                         <div className="flex items-center gap-1">
                             <FiClock className="w-3.5 h-3.5" />
-                            <span>{durationText} total</span>
+                            <span>{t('totalDuration', { duration: durationText })}</span>
                         </div>
 
                         {userHasAccess && Object.keys(completedLessons).length > 0 && (
@@ -146,7 +148,7 @@ export default function LessonsList({
                                 <span>•</span>
                                 <div className="flex items-center gap-1 text-[color:var(--ai-primary)]">
                                     <FiClock className="w-3.5 h-3.5" />
-                                    <span>{remainingText} remaining</span>
+                                    <span>{t('remaining', { duration: remainingText })}</span>
                                 </div>
                             </>
                         )}
@@ -163,7 +165,7 @@ export default function LessonsList({
                                 className={`h-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-full w-[${Math.round((Object.values(completedLessons).filter(v => v).length / sortedLessons.length) * 100)}%]`}
                             ></div>
                             </div>
-                            <span className="text-[color:var(--ai-muted)]">completed</span>
+                            <span className="text-[color:var(--ai-muted)]">{t('completed')}</span>
                         </div>
                     </div>
                 )}
@@ -214,15 +216,15 @@ export default function LessonsList({
                                         <div>                                                <h3 className={`font-medium transition-colors duration-300 
                                                     ${isCompleted ? 'text-[color:var(--ai-primary)]' : 'group-hover:text-[color:var(--ai-primary)]'}
                                                 `}>
-                                            {lesson.title || lesson.name || 'Unnamed Lesson'}
+                                            {lesson.title || lesson.name || t('unnamedLesson')}
                                         </h3>
                                             <p className="text-sm text-[color:var(--ai-muted)] line-clamp-2 mt-1">
-                                                {lesson.description || 'No description available'}
+                                                {lesson.description || t('noDescription')}
                                             </p>
 
                                             {lesson.isFree && !userHasAccess && (
                                                 <span className="inline-block mt-2 text-xs font-medium bg-[color:var(--ai-accent)]/10 text-[color:var(--ai-accent)] px-2 py-0.5 rounded-full">
-                                                    Free Preview
+                                                    {t('freePreview')}
                                                 </span>
                                             )}
                                         </div>
@@ -236,8 +238,8 @@ export default function LessonsList({
                                     </span>
 
                                         {isCompleted && (
-                                            <span className="text-xs font-medium bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] px-2 py-0.5 rounded-full">
-                                                Completed
+                                            <span className="inline-block text-xs bg-[color:var(--ai-primary)]/20 text-[color:var(--ai-primary)] px-2 py-1 rounded font-medium">
+                                                {t('completedBadge')}
                                             </span>
                                         )}
                                     </div>

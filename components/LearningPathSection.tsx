@@ -2,32 +2,35 @@
 
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import ScrollAnimationWrapper from './animations/ScrollAnimationWrapper';
 
 const LearningPathSection = React.memo(function LearningPathSection() {
+    const t = useTranslations('home.learningPath');
+
     const pathSteps = [
         {
-            number: "01",
-            title: "Core Fundamentals",
-            description: "Master the essential building blocks of modern web development with HTML, CSS, and JavaScript.",
+            number: t('steps.fundamentals.number'),
+            title: t('steps.fundamentals.title'),
+            description: t('steps.fundamentals.description'),
             color: "from-[color:var(--ai-primary)] to-[color:var(--ai-primary)]/70"
         },
         {
-            number: "02",
-            title: "Frontend Development",
-            description: "Build interactive user interfaces with React, TypeScript, and modern CSS frameworks.",
+            number: t('steps.frontend.number'),
+            title: t('steps.frontend.title'),
+            description: t('steps.frontend.description'),
             color: "from-[color:var(--ai-secondary)] to-[color:var(--ai-secondary)]/70"
         },
         {
-            number: "03",
-            title: "Backend Integration",
-            description: "Create robust server-side applications with Node.js and integrate with databases.",
+            number: t('steps.backend.number'),
+            title: t('steps.backend.title'),
+            description: t('steps.backend.description'),
             color: "from-[color:var(--ai-accent)] to-[color:var(--ai-accent)]/70"
         },
         {
-            number: "04",
-            title: "Full Stack Projects",
-            description: "Combine frontend and backend skills to build complete, production-ready applications.",
+            number: t('steps.fullstack.number'),
+            title: t('steps.fullstack.title'),
+            description: t('steps.fullstack.description'),
             color: "from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
         }
     ];
@@ -42,16 +45,18 @@ const LearningPathSection = React.memo(function LearningPathSection() {
                 ease: [0.22, 1, 0.36, 1]
             }
         }
-    }; return (
+    };
+
+    return (
         <section className="relative w-full py-24 bg-[color:var(--ai-background)] dark:bg-[color:var(--ai-background)] overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <ScrollAnimationWrapper>
                     <div className="text-center mb-16">
                         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 text-[color:var(--ai-foreground)]">
-                            Your Learning Journey
+                            {t('title')}
                         </h2>
                         <p className="text-xl text-[color:var(--ai-muted)] max-w-3xl mx-auto">
-                            A structured path to take you from basics to professional developer
+                            {t('subtitle')}
                         </p>
                     </div>
                 </ScrollAnimationWrapper>

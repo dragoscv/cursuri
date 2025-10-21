@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { motion } from 'framer-motion';
 import { Course } from '@/types';
+import { useTranslations } from 'next-intl';
 import { FiCheckCircle, FiTarget, FiCalendar, FiBookOpen, FiFileText, FiAward, FiUser, FiLink } from '../icons/FeatherIcons';
 import { AppContext } from '../AppContext';
 
@@ -11,20 +12,21 @@ import { CourseOverviewProps } from "@/types";
 
 const CourseOverview: React.FC<CourseOverviewProps> = ({ course }) => {
     const context = useContext(AppContext);
+    const t = useTranslations('courses.overview');
 
     // Sample benefits if not provided
     const benefits = course.benefits || [
-        "Learn key concepts and best practices",
-        "Build real-world projects",
-        "Understand modern development techniques",
-        "Gain practical skills employers are looking for"
+        t('sampleBenefits.keyConceptsAndBestPractices'),
+        t('sampleBenefits.buildRealWorldProjects'),
+        t('sampleBenefits.modernDevelopmentTechniques'),
+        t('sampleBenefits.practicalSkills')
     ];
 
     // Sample requirements if not provided
     const requirements = course.requirements || [
-        "Basic understanding of programming concepts",
-        "Computer with internet connection",
-        "Willingness to learn and practice"
+        t('sampleRequirements.basicProgramming'),
+        t('sampleRequirements.computerAndInternet'),
+        t('sampleRequirements.willingnessToLearn')
     ];
 
     // Animation variants
@@ -63,7 +65,7 @@ const CourseOverview: React.FC<CourseOverviewProps> = ({ course }) => {
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-3">
                     <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] flex items-center gap-2">
                         <FiBookOpen className="text-[color:var(--ai-primary)]" />
-                        Course Description
+                        {t('courseDescription')}
                     </h3>
 
                     {course.level && (
@@ -92,7 +94,7 @@ const CourseOverview: React.FC<CourseOverviewProps> = ({ course }) => {
                     <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 border-b border-[color:var(--ai-card-border)]">
                         <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
                             <FiTarget className="mr-2 text-[color:var(--ai-primary)]" />
-                            <span>What You'll Learn</span>
+                            <span>{t('whatYouWillLearn')}</span>
                         </h3>
                     </div>
                     <div className="p-4">
@@ -125,7 +127,7 @@ const CourseOverview: React.FC<CourseOverviewProps> = ({ course }) => {
                     <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 border-b border-[color:var(--ai-card-border)]">
                         <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
                             <FiCalendar className="mr-2 text-[color:var(--ai-primary)]" />
-                            <span>Requirements</span>
+                            <span>{t('requirements')}</span>
                         </h3>
                     </div>
                     <div className="p-4">
@@ -159,7 +161,7 @@ const CourseOverview: React.FC<CourseOverviewProps> = ({ course }) => {
                         <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 border-b border-[color:var(--ai-card-border)]">
                             <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
                                 <FiLink className="mr-2 text-[color:var(--ai-primary)]" />
-                                <span>Prerequisites</span>
+                                <span>{t('prerequisites')}</span>
                             </h3>
                         </div>
                         <div className="p-4">
@@ -188,7 +190,7 @@ const CourseOverview: React.FC<CourseOverviewProps> = ({ course }) => {
                                             href={`/courses/${prerequisiteId}`}
                                             className="text-xs px-3 py-1 rounded-full bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] hover:bg-[color:var(--ai-primary)]/20 transition-colors"
                                         >
-                                            View Course
+                                            {t('viewCourse')}
                                         </a>
                                     </motion.div>
                                 );
@@ -213,7 +215,7 @@ const CourseOverview: React.FC<CourseOverviewProps> = ({ course }) => {
                         <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 border-b border-[color:var(--ai-card-border)]">
                             <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
                                 <FiFileText className="mr-2 text-[color:var(--ai-primary)]" />
-                                <span>Additional Information</span>
+                                <span>{t('additionalInformation')}</span>
                             </h3>
                         </div>
                         <div className="p-4">
@@ -239,7 +241,7 @@ const CourseOverview: React.FC<CourseOverviewProps> = ({ course }) => {
                         <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 border-b border-[color:var(--ai-card-border)]">
                             <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
                                 <FiUser className="w-5 h-5 mr-2 text-[color:var(--ai-primary)]" />
-                                <span>Instructor</span>
+                                <span>{t('instructor')}</span>
                             </h3>
                         </div>
 

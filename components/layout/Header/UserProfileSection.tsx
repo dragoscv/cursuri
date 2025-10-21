@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { DropdownItem, DropdownSection } from "@heroui/react";  // Updated to use HeroUI
 import Profile from "@/components/Profile";
 import { ModalProps } from '@/types';
@@ -10,6 +11,8 @@ interface UserProfileSectionProps {
 }
 
 const UserProfileSection: React.FC<UserProfileSectionProps> = ({ user, openModal, closeModal }) => {
+    const t = useTranslations('common');
+    
     if (!user) {
         return null;
     }
@@ -43,7 +46,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({ user, openModal
                         onClose: () => closeModal('profile'),
                     })}
                 >
-                    <p className="font-semibold">Signed in as</p>
+                    <p className="font-semibold">{t('userMenu.signedInAs')}</p>
                     <p className="font-semibold">{user?.displayName ? user?.displayName : user?.email ? user?.email : user?.phoneNumber ? user?.phoneNumber : user?.uid}</p>
                 </div>
             </DropdownItem>

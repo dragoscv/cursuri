@@ -1,0 +1,193 @@
+{
+    "title": "Admin Dashboard",
+    "overview": "Overview",
+    "header": {
+        "admin": "Admin",
+        "dashboard": "Dashboard",
+        "courses": "Courses",
+        "batchOps": "Batch Ops",
+        "users": "Users",
+        "enhancedUsers": "Enhanced Users",
+        "analytics": "Analytics",
+        "engagement": "Engagement",
+        "settings": "Settings",
+        "backToSite": "Back to Site",
+        "myProfile": "My Profile",
+        "adminSettings": "Admin Settings",
+        "helpDocumentation": "Help & Documentation",
+        "logout": "Logout"
+    },
+    "quickActions": {
+        "title": "Quick Actions",
+        "addCourse": "Add Course",
+        "manageUsers": "Manage Users",
+        "viewAnalytics": "View Analytics",
+        "settings": "Settings"
+    },
+    "courses": {
+        "title": "Course Management",
+        "courseDetails": "Course Details",
+        "editCourse": "Edit Course",
+        "pageDescription": "Create, edit, and manage your courses and their content.",
+        "addCourse": "Add Course",
+        "grid": "Grid",
+        "list": "List",
+        "status": "Status",
+        "active": "active",
+        "draft": "draft",
+        "price": "Price",
+        "priceNotAvailable": "Price not available",
+        "courseDescription": "Description",
+        "noDescription": "No description available",
+        "tags": "Tags",
+        "actions": "Actions",
+        "delete": "Delete",
+        "edit": "Edit",
+        "view": "View",
+        "confirmDelete": "Confirm Delete",
+        "confirmDeleteMessage": "Are you sure you want to delete the course \"{courseName}\"?",
+        "confirmDeleteWarning": "This action cannot be undone. All lessons and progress data will be permanently deleted.",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "noCourses": "No courses available",
+        "noCoursesDescription": "Start by creating your first course",
+        "courseDeleted": "Course Deleted",
+        "courseDeletedMessage": "Successfully deleted \"{courseName}\"",
+        "failedToDeleteCourse": "Failed to Delete Course",
+        "failedToDeleteMessage": "Failed to delete course. Please try again."
+    },
+    "lessons": {
+        "title": "Lessons",
+        "totalLessonsCreated": "Total lessons created"
+    },
+    "analytics": {
+        "title": "Analytics",
+        "pageDescription": "View detailed analytics and insights about your platform."
+    },
+    "batchOperations": {
+        "actions": {
+            "updateStatus": "Update Status",
+            "changeCategory": "Change Category",
+            "changeVisibility": "Change Visibility",
+            "updatePrice": "Update Price",
+            "delete": "Delete"
+        }
+    },
+    "roleManagement": {
+        "roles": {
+            "superAdmin": "Super Admin",
+            "admin": "Admin",
+            "user": "User"
+        },
+        "permissions": {
+            "noPermission": "You don't have permission to manage user roles."
+        }
+    },
+    "userManagement": {
+        "placeholders": {
+            "displayName": "Display Name",
+            "userBio": "User bio",
+            "notSet": "Not set",
+            "noName": "No Name"
+        },
+        "tabs": {
+            "adminNotes": "Admin Notes",
+            "activityLog": "Activity Log"
+        },
+        "enrollment": {
+            "via": "Via",
+            "adminAssignment": "Admin assignment",
+            "selfPurchase": "Self purchase"
+        },
+        "fallbacks": {
+            "unknownCourse": "Unknown Course",
+            "unknownDate": "Unknown date"
+        }
+    },
+    "pages": {
+        "userManagement": "User Management",
+        "platformSettings": "Platform Settings"
+    },
+    "users": {
+        "title": "Users Management",
+        "adminNotes": "Admin Notes",
+        "searchUsers": "Search users...",
+        "tableUser": "USER",
+        "tableEmail": "EMAIL",
+        "tableVerified": "VERIFIED",
+        "tableRole": "ROLE",
+        "tableActions": "ACTIONS",
+        "noName": "No Name",
+        "verified": "Verified",
+        "notVerified": "Not Verified",
+        "assignCourse": "Assign Course",
+        "noUsersFound": "No users found",
+        "failedToLoad": "Failed to load user data",
+        "userDetails": "User Details",
+        "accountDetails": "Account Details",
+        "userId": "User ID",
+        "createdOn": "Created On",
+        "enrolledCourses": "Enrolled Courses",
+        "addCourse": "Add Course",
+        "assigned": "Assigned",
+        "purchased": "Purchased",
+        "noEnrolledCourses": "No enrolled courses",
+        "assignFirstCourse": "Assign First Course",
+        "grantCourseAccess": "Grant course access to this user",
+        "courseAssignedSuccess": "Course Assigned Successfully",
+        "courseAssignedTo": "The course has been assigned to {name}",
+        "assigningCourseTo": "Assigning course to:",
+        "selectCourse": "Select Course",
+        "chooseACourse": "Choose a course",
+        "courseImmediatelyAvailable": "The selected course will be immediately available to this user."
+    },
+    "engagement": {
+        "totalCourses": "Total Courses",
+        "totalEnrollments": "Total Enrollments",
+        "title": "Course Engagement",
+        "exportReport": "Export Report",
+        "avgCompletionRate": "Avg. Completion Rate",
+        "avgCompletionTime": "Avg. Completion Time",
+        "courseEngagementMetrics": "Course Engagement Metrics",
+        "tableCourse": "COURSE",
+        "tableStudents": "STUDENTS",
+        "tableCompletionRate": "COMPLETION RATE",
+        "tableAvgTime": "AVG. TIME",
+        "tableViews": "VIEWS",
+        "tableEngagement": "ENGAGEMENT",
+        "completed": "Completed",
+        "inProgress": "In Progress",
+        "notStarted": "Not Started",
+        "noCoursesFound": "No courses found",
+        "engagementChartLegend": "Engagement Chart Legend",
+        "failedToLoad": "Failed to load engagement data"
+    },
+    "dashboard": {
+        "title": "Admin Dashboard",
+        "overview": "Overview of your platform analytics and performance",
+        "failedToLoad": "Failed to load analytics data"
+    },
+    "settings": {
+        "title": "Platform Settings",
+        "saveSettings": "Save Settings",
+        "savedSuccessfully": "Settings saved successfully",
+        "failedToLoad": "Failed to load settings data",
+        "generalSettings": "General Settings",
+        "siteName": "Site Name",
+        "enterSiteName": "Enter site name",
+        "siteDescription": "Site Description",
+        "enterSiteDescription": "Enter site description",
+        "contactEmail": "Contact Email",
+        "enterContactEmail": "Enter contact email",
+        "authSettings": "Authentication Settings",
+        "allowUserRegistration": "Allow User Registration",
+        "whenDisabledNoRegistration": "When disabled, new users cannot register",
+        "allowSocialLogin": "Allow Social Login",
+        "whenEnabledSocialLogin": "When enabled, users can sign in with Google and other providers",
+        "paymentSettings": "Payment Settings",
+        "paymentProcessing": "Payment Processing",
+        "whenDisabledNoPurchases": "When disabled, users cannot make purchases",
+        "currency": "Currency",
+        "taxRate": "Tax Rate (%)"
+    }
+}

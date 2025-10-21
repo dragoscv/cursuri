@@ -1,0 +1,67 @@
+{
+    "metadata": {
+        "title": "Contactează-ne | Cursuri",
+        "description": "Intră în legătură cu noi. Ne-ar plăcea să auzim de la tine despre parcursul tău de învățare sau să răspundem la orice întrebări ai putea avea."
+    },
+    "hero": {
+        "title": "Contactează-ne",
+        "subtitle": "Ai o întrebare despre cursurile noastre sau ai nevoie de suport? Suntem aici să te ajutăm! Scrie-ne și îți vom răspunde cât mai curând posibil."
+    },
+    "form": {
+        "title": "Trimite-ne un Mesaj",
+        "labels": {
+            "name": "Nume Complet",
+            "email": "Adresă Email",
+            "subject": "Subiect",
+            "message": "Mesaj"
+        },
+        "placeholders": {
+            "name": "Numele tău complet",
+            "email": "adresa@email.ro",
+            "message": "Spune-ne cum te putem ajuta..."
+        },
+        "subjects": {
+            "placeholder": "Selectează un subiect",
+            "courseInquiry": "Întrebare despre Curs",
+            "technicalSupport": "Suport Tehnic",
+            "billing": "Întrebare despre Facturare",
+            "partnership": "Oportunitate de Parteneriat",
+            "feedback": "Feedback",
+            "other": "Altele"
+        },
+        "submitButton": "Trimite Mesajul"
+    },
+    "info": {
+        "title": "Ia Legătura",
+        "email": {
+            "title": "Email",
+            "value": "contact@cursuri.dev"
+        },
+        "responseTime": {
+            "title": "Timp de Răspuns",
+            "description": "De obicei răspundem în 24 de ore în zilele lucrătoare."
+        },
+        "globalSupport": {
+            "title": "Suport Global",
+            "description": "Oferim suport studenților din întreaga lume în limbile engleză și română."
+        }
+    },
+    "faq": {
+        "title": "Întrebări Frecvente",
+        "refunds": {
+            "question": "Oferiți rambursări?",
+            "answer": "Da, oferim o garanție de returnare a banilor de 30 de zile pentru toate cursurile noastre. Dacă nu ești mulțumit de experiența ta de învățare, contactează-ne pentru o rambursare completă."
+        },
+        "mobile": {
+            "question": "Pot accesa cursurile pe mobil?",
+            "answer": "Absolut! Platforma noastră este complet responsive și funcționează perfect pe toate dispozitivele, inclusiv smartphone-uri și tablete."
+        },
+        "certificates": {
+            "question": "Oferiți certificate?",
+            "answer": "Da, vei primi un certificat de finalizare pentru fiecare curs pe care îl termini. Aceste certificate pot fi partajate pe LinkedIn și alte platforme profesionale."
+        }
+    },
+    "social": {
+        "title": "Urmărește-ne"
+    }
+}

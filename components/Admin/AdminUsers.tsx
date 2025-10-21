@@ -1,12 +1,15 @@
 'use client'
 
 import React, { useContext, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Avatar, Button, Card, CardBody, Chip, Divider, Input, Spinner, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Select } from '@heroui/react';
 import SelectItem from '@/components/ui/SelectItem';
 import { AppContext } from '@/components/AppContext';
 import { Course, UserProfile } from '@/types';
 
 const AdminUsers: React.FC = () => {
+    const t = useTranslations('admin.users');
+    const tCommon = useTranslations('common');
     const context = useContext(AppContext);
     if (!context) {
         throw new Error("AdminUsers must be used within an AppProvider");
@@ -33,7 +36,7 @@ const AdminUsers: React.FC = () => {
                 }
             } catch (error) {
                 console.error('Error fetching users:', error);
-                setError('Failed to load user data');
+                setError(t('failedToLoad'));
             } finally {
                 setLoading(false);
             }
@@ -108,7 +111,7 @@ const AdminUsers: React.FC = () => {
         return (
             <div className="text-center py-12">
                 <h2 className="text-2xl font-bold text-[color:var(--ai-danger)] mb-4">{error}</h2>
-                <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Please try again later</p>
+                <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">{tCommon('pleaseTryAgain')}</p>
             </div>
         );
     }
@@ -116,11 +119,11 @@ const AdminUsers: React.FC = () => {
     return (
         <div className="space-y-8">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <h1 className="text-3xl font-bold">Users Management</h1>
+                <h1 className="text-3xl font-bold">{t('title')}</h1>
 
                 <div className="w-full md:w-80">
                     <Input
-                        placeholder="Search users..."
+                        placeholder={t('searchUsers')}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full"
@@ -137,11 +140,11 @@ const AdminUsers: React.FC = () => {
                 <CardBody>
                     <Table aria-label="Users table">
                         <TableHeader>
-                            <TableColumn>USER</TableColumn>
-                            <TableColumn>EMAIL</TableColumn>
-                            <TableColumn>VERIFIED</TableColumn>
-                            <TableColumn>ROLE</TableColumn>
-                            <TableColumn>ACTIONS</TableColumn>
+                            <TableColumn>{t('tableUser')}</TableColumn>
+                            <TableColumn>{t('tableEmail')}</TableColumn>
+                            <TableColumn>{t('tableVerified')}</TableColumn>
+                            <TableColumn>{t('tableRole')}</TableColumn>
+                            <TableColumn>{t('tableActions')}</TableColumn>
                         </TableHeader>
                         <TableBody>
                             {paginatedUsers.length > 0 ? (
@@ -151,7 +154,7 @@ const AdminUsers: React.FC = () => {
                                             <div className="flex items-center">
                                                 <Avatar src={user.photoURL || ""} name={user.displayName || user.email} className="mr-3" />
                                                 <div>
-                                                    <p className="font-medium">{user.displayName || 'No Name'}</p>
+                                                    <p className="font-medium">{user.displayName || t('noName')}</p>
                                                     <p className="text-xs text-[color:var(--ai-muted-foreground)]">ID: {user.id.substring(0, 8)}...</p>
                                                 </div>
                                             </div>
@@ -159,9 +162,9 @@ const AdminUsers: React.FC = () => {
                                         <TableCell>{user.email}</TableCell>
                                         <TableCell>
                                             {user.emailVerified ? (
-                                                <Chip color="success" size="sm">Verified</Chip>
+                                                <Chip color="success" size="sm">{t('verified')}</Chip>
                                             ) : (
-                                                <Chip color="warning" size="sm">Not Verified</Chip>
+                                                <Chip color="warning" size="sm">{t('notVerified')}</Chip>
                                             )}
                                         </TableCell>
                                         <TableCell>
@@ -175,7 +178,7 @@ const AdminUsers: React.FC = () => {
                                                 setSelectedUser(user);
                                                 openAssignCourseModal();
                                             }}>
-                                                Assign Course
+                                                {t('assignCourse')}
                                             </Button>
                                         </TableCell>
                                     </TableRow>
@@ -183,7 +186,7 @@ const AdminUsers: React.FC = () => {
                             ) : (
                                 <TableRow>
                                     <TableCell colSpan={5} className="text-center py-8">
-                                        <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">No users found</p>
+                                        <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">{t('noUsersFound')}</p>
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -236,7 +239,7 @@ const AdminUsers: React.FC = () => {
                             <>
                                 <div className="relative">
                                     <div className="absolute inset-0 bg-gradient-to-r from-primary-500/10 to-secondary-500/10 blur-xl opacity-80 -z-10"></div>
-                                    <ModalHeader className="border-b border-primary-100 dark:border-[color:var(--ai-card-border)] text-primary-900 dark:text-primary-100">User Details</ModalHeader>
+                                    <ModalHeader className="border-b border-primary-100 dark:border-[color:var(--ai-card-border)] text-primary-900 dark:text-primary-100">{t('userDetails')}</ModalHeader>
                                     <ModalBody className="py-6">
                                         <div className="flex items-center mb-6">
                                             <Avatar
@@ -246,16 +249,16 @@ const AdminUsers: React.FC = () => {
                                                 size="lg"
                                             />
                                             <div>
-                                                <h2 className="text-2xl font-bold text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">{selectedUser.displayName || 'No Name'}</h2>
+                                                <h2 className="text-2xl font-bold text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">{selectedUser.displayName || t('noName')}</h2>
                                                 <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">{selectedUser.email}</p>
                                                 <div className="flex mt-2">
                                                     <Chip color={selectedUser.role === 'admin' ? 'primary' : 'default'} size="sm" className="mr-2">
                                                         {selectedUser.role || 'user'}
                                                     </Chip>
                                                     {selectedUser.emailVerified ? (
-                                                        <Chip color="success" size="sm">Verified</Chip>
+                                                        <Chip color="success" size="sm">{t('verified')}</Chip>
                                                     ) : (
-                                                        <Chip color="warning" size="sm">Not Verified</Chip>
+                                                        <Chip color="warning" size="sm">{t('notVerified')}</Chip>
                                                     )}
                                                 </div>
                                             </div>
@@ -264,14 +267,14 @@ const AdminUsers: React.FC = () => {
                                         <Divider className="my-4" />
 
                                         <div className="mb-4">
-                                            <h3 className="text-lg font-semibold mb-2 text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">Account Details</h3>
+                                            <h3 className="text-lg font-semibold mb-2 text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">{t('accountDetails')}</h3>
                                             <div className="grid grid-cols-2 gap-4 bg-[color:var(--ai-card-bg)]/80 dark:bg-[color:var(--ai-card-border)]/50 p-4 rounded-xl backdrop-blur-sm">
                                                 <div>
-                                                    <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">User ID</p>
+                                                    <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">{t('userId')}</p>
                                                     <p className="font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">{selectedUser.id}</p>
                                                 </div>
                                                 <div>
-                                                    <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Created On</p>
+                                                    <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">{t('createdOn')}</p>
                                                     <p className="font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">{selectedUser.createdAt ?
                                                         (typeof selectedUser.createdAt === 'object' && 'seconds' in selectedUser.createdAt
                                                             ? new Date(selectedUser.createdAt.seconds * 1000).toLocaleDateString()
@@ -283,7 +286,7 @@ const AdminUsers: React.FC = () => {
 
                                         <div className="mb-4">
                                             <div className="flex items-center justify-between mb-2">
-                                                <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">Enrolled Courses</h3>                                                <Button
+                                                <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">{t('enrolledCourses')}</h3>                                                <Button
                                                     size="sm"
                                                     color="primary"
                                                     variant="flat"
@@ -293,7 +296,7 @@ const AdminUsers: React.FC = () => {
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                                                         <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
                                                     </svg>
-                                                    Add Course
+                                                    {t('addCourse')}
                                                 </Button>
                                             </div>
                                             {selectedUser.enrollments && Object.keys(selectedUser.enrollments).length > 0 ? (
@@ -314,7 +317,7 @@ const AdminUsers: React.FC = () => {
                                                                 </div>
                                                                 <div>
                                                                     <Chip color={enrollment.source === 'admin' ? 'primary' : 'success'} size="sm" className="animate-fadeIn">
-                                                                        {enrollment.source === 'admin' ? 'Assigned' : 'Purchased'}
+                                                                        {enrollment.source === 'admin' ? t('assigned') : t('purchased')}
                                                                     </Chip>
                                                                 </div>
                                                             </div>
@@ -326,14 +329,14 @@ const AdminUsers: React.FC = () => {
                                                     <svg className="mx-auto h-12 w-12 text-[color:var(--ai-muted-foreground)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                                                     </svg>
-                                                    <p className="mt-2 text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">No enrolled courses</p>                                                    <Button
+                                                    <p className="mt-2 text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">{t('noEnrolledCourses')}</p>                                                    <Button
                                                         color="primary"
                                                         variant="flat"
                                                         size="sm"
                                                         className="mt-4 font-medium text-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10 hover:bg-[color:var(--ai-primary)]/20"
                                                         onPress={openAssignCourseModal}
                                                     >
-                                                        Assign First Course
+                                                        {t('assignFirstCourse')}
                                                     </Button>
                                                 </div>
                                             )}
@@ -344,7 +347,7 @@ const AdminUsers: React.FC = () => {
                                         onPress={closeModal}
                                         className="font-medium text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-border)]/20"
                                     >
-                                        Close
+                                        {tCommon('close')}
                                     </Button>
                                         <Button
                                             color="primary"
@@ -352,7 +355,7 @@ const AdminUsers: React.FC = () => {
                                             onPress={openAssignCourseModal}
                                             className="font-medium text-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10 hover:bg-[color:var(--ai-primary)]/20"
                                         >
-                                            Assign Course
+                                            {t('assignCourse')}
                                         </Button>
                                     </ModalFooter>
                                 </div>
@@ -402,11 +405,11 @@ const AdminUsers: React.FC = () => {
                                             </svg>
                                         </div>
                                         <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-500 to-secondary-500">
-                                            Assign Course
+                                            {t('assignCourse')}
                                         </span>
                                     </div>
                                     <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
-                                        Grant course access to this user
+                                        {t('grantCourseAccess')}
                                     </p>
                                 </ModalHeader>
                                 <ModalBody className="py-6">
@@ -417,16 +420,16 @@ const AdminUsers: React.FC = () => {
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                                 </svg>
                                             </div>
-                                            <h3 className="text-xl font-bold text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">Course Assigned Successfully</h3>
+                                            <h3 className="text-xl font-bold text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">{t('courseAssignedSuccess')}</h3>
                                             <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
-                                                The course has been assigned to {selectedUser?.displayName || selectedUser?.email}
+                                                {t('courseAssignedTo', { name: selectedUser?.displayName || selectedUser?.email })}
                                             </p>
                                             <div className="mt-6">                                                <Button
                                                 color="primary"
                                                 className="w-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium shadow-sm hover:shadow-md hover:shadow-[color:var(--ai-primary)]/20 transition-all"
                                                 onPress={closeAssignCourseModal}
                                             >
-                                                Close
+                                                {tCommon('close')}
                                             </Button>
                                             </div>
                                         </div>
@@ -434,11 +437,11 @@ const AdminUsers: React.FC = () => {
                                         <>
                                             {selectedUser && (
                                                 <div className="mb-6 bg-[color:var(--ai-card-bg)]/80 dark:bg-[color:var(--ai-card-border)]/50 p-4 rounded-xl backdrop-blur-sm">
-                                                    <p className="text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">Assigning course to:</p>
+                                                    <p className="text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">{t('assigningCourseTo')}</p>
                                                     <div className="flex items-center">
                                                         <Avatar src={selectedUser.photoURL || ""} name={selectedUser.displayName || selectedUser.email} className="mr-3" size="md" />
                                                         <div>
-                                                            <p className="font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">{selectedUser.displayName || 'No Name'}</p>
+                                                            <p className="font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">{selectedUser.displayName || t('noName')}</p>
                                                             <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">{selectedUser.email}</p>
                                                         </div>
                                                     </div>
@@ -447,11 +450,11 @@ const AdminUsers: React.FC = () => {
 
                                             <div className="mb-2">
                                                 <label className="block text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">
-                                                    Select Course
+                                                    {t('selectCourse')}
                                                 </label>
                                                 <div className="relative">
                                                     <Select
-                                                        placeholder="Choose a course"
+                                                        placeholder={t('chooseACourse')}
                                                         value={selectedCourseId}
                                                         onChange={(e) => setSelectedCourseId(e.target.value)}
                                                         className="w-full"
@@ -475,7 +478,7 @@ const AdminUsers: React.FC = () => {
                                                     </div>
                                                 </div>
                                                 <p className="mt-2 text-xs text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
-                                                    The selected course will be immediately available to this user.
+                                                    {t('courseImmediatelyAvailable')}
                                                 </p>
                                             </div>
                                         </>
@@ -488,7 +491,7 @@ const AdminUsers: React.FC = () => {
                                         onPress={closeAssignCourseModal}
                                         className="font-medium text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-border)]/20"
                                     >
-                                        Cancel
+                                        {tCommon('cancel')}
                                     </Button>
                                         <Button
                                             color="primary"
@@ -497,7 +500,7 @@ const AdminUsers: React.FC = () => {
                                             onPress={handleAssignCourse}
                                             className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium shadow-sm hover:shadow-md hover:shadow-[color:var(--ai-primary)]/20 transition-all"
                                         >
-                                            Assign Course
+                                            {t('assignCourse')}
                                         </Button>
                                     </ModalFooter>
                                 )}

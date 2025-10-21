@@ -1,4 +1,5 @@
 import React, { useState, useContext, useCallback, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { AppContext } from '@/components/AppContext';
 import { firestoreDB, firebaseStorage } from '@/utils/firebase/firebase.config';
 import { doc, addDoc, collection, updateDoc, getDoc, getDocs, query, where } from 'firebase/firestore';
@@ -21,6 +22,7 @@ import Checkbox from '@/components/ui/Checkbox';
 import RichTextEditor from '@/components/Lesson/QA/RichTextEditor';
 
 export default function LessonForm({ courseId, lessonId, onClose }: LessonFormProps) {
+    const t = useTranslations('lessons.form');
     const [lessonName, setLessonName] = useState("");
     const [lessonDescription, setLessonDescription] = useState("");
     const [repoUrl, setRepoUrl] = useState("");
@@ -604,12 +606,12 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                 <div className="relative flex justify-between items-center p-6 bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent backdrop-blur-sm rounded-xl border border-[color:var(--ai-card-border)]/50">
                     <div>
                         <h1 className="text-3xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">
-                            {editMode ? 'Edit Lesson' : 'Create New Lesson'}
+                            {editMode ? t('editLesson') : t('createNewLesson')}
                         </h1>
                         <p className="text-[color:var(--ai-muted)] mt-2">
                             {editMode
-                                ? 'Update your lesson information and materials'
-                                : 'Add a new lesson to your course with all necessary details'}
+                                ? t('updateLessonInfo')
+                                : t('addNewLessonDetails')}
                         </p>
                     </div>
                     <Button
@@ -619,7 +621,7 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                         size="sm"
                         className="hover:bg-[color:var(--ai-card-border)]/30 transition-all"
                     >
-                        Cancel
+                        {t('cancel')}
                     </Button>
                 </div>
             </div>
@@ -630,13 +632,13 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                 onSelectionChange={(key: React.Key) => setActiveTab(String(key))}
                 className="mb-8"
             >
-                <Tab key="basic" title="Basic Information">
+                <Tab key="basic" title={t('basicInfo')}>
                     <Card className="shadow-xl border border-[color:var(--ai-card-border)] overflow-hidden mb-8 hover:shadow-[color:var(--ai-primary)]/5 transition-all rounded-xl">
                         <CardHeader className="flex gap-3 px-6 py-4 border-b border-[color:var(--ai-card-border)]/60 bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-transparent">
                             <FiBook className="text-[color:var(--ai-primary)]" size={20} />
                             <div className="flex flex-col">
-                                <h2 className="text-lg font-semibold text-[color:var(--ai-foreground)]">Basic Information</h2>
-                                <p className="text-[color:var(--ai-muted)] text-sm">Main details about your lesson</p>
+                                <h2 className="text-lg font-semibold text-[color:var(--ai-foreground)]">{t('basicInfo')}</h2>
+                                <p className="text-[color:var(--ai-muted)] text-sm">{t('basicInfoDesc')}</p>
                             </div>
                         </CardHeader>
                         <CardBody className="p-6 overflow-visible">
@@ -644,9 +646,9 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                 <div>
                                     <div className="relative mb-6">
                                         <Input
-                                            label="Lesson Name"
+                                            label={t('lessonName')}
                                             variant="bordered"
-                                            placeholder="Enter lesson name"
+                                            placeholder={t('enterLessonName')}
                                             value={lessonName}
                                             onChange={(e: InputChangeEvent) => setLessonName(e.target.value)}
                                             isRequired
@@ -660,12 +662,12 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                     </div>
                                     <div className="mb-6">
                                         <label className="block text-[color:var(--ai-foreground)] font-medium mb-2">
-                                            Lesson Description
+                                            {t('lessonDescription')}
                                         </label>
                                         <RichTextEditor
                                             value={lessonDescription}
                                             onChange={(_text, html) => setLessonDescription(html)}
-                                            placeholder="Provide a detailed description of the lesson"
+                                            placeholder={t('provideLessonDesc')}
                                             minHeight={250}
                                         />
                                     </div>
@@ -673,15 +675,15 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                     <div className="grid grid-cols-2 gap-4 mb-6">
                                         <div>
                                             <Select
-                                                label="Module"
-                                                placeholder="Select module"
+                                                label={t('module')}
+                                                placeholder={t('selectModule')}
                                                 value={moduleId}
                                                 onChange={(e: SelectChangeEvent) => setModuleId(e.target.value)}
                                                 className="w-full"
                                                 classNames={{
                                                     label: "text-[color:var(--ai-foreground)] font-medium"
                                                 }}
-                                            >                                                <SelectItem key="" itemKey="" value="">None (Top Level)</SelectItem>
+                                            >                                                <SelectItem key="" itemKey="" value="">{t('noneTopLevel')}</SelectItem>
                                                 {modules.map((module) => (
                                                     <SelectItem key={module.id} itemKey={module.id} value={module.id}>
                                                         {module.title}
@@ -692,8 +694,8 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                         <div>
                                             <Input
                                                 type="number"
-                                                label="Lesson Order"
-                                                placeholder="Order in the course"
+                                                label={t('lessonOrder')}
+                                                placeholder={t('orderInCourse')}
                                                 value={lessonOrder.toString()}
                                                 onChange={(e: InputChangeEvent) => setLessonOrder(parseInt(e.target.value) || 0)}
                                                 className="w-full"
@@ -708,8 +710,8 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                         <div>
                                             <Input
                                                 type="number"
-                                                label="Duration (minutes)"
-                                                placeholder="Estimated duration"
+                                                label={t('duration')}
+                                                placeholder={t('estimatedDuration')}
                                                 value={durationMinutes.toString()}
                                                 onChange={(e: InputChangeEvent) => setDurationMinutes(parseInt(e.target.value) || "")}
                                                 className="w-full"
@@ -720,14 +722,14 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                         </div>
                                         <div>
                                             <Select
-                                                label="Lesson Type"
+                                                label={t('lessonType')}
                                                 value={lessonType}
                                                 onChange={(e: SelectChangeEvent) => setLessonType(e.target.value)}
                                                 className="w-full"
                                                 classNames={{
                                                     label: "text-[color:var(--ai-foreground)] font-medium"
                                                 }}
-                                            >                                                <SelectItem key="video" itemKey="video" value="video">Video</SelectItem>
+                                            >                                                <SelectItem key="video" itemKey="video" value="video">{t('video')}</SelectItem>
                                                 <SelectItem key="text" itemKey="text" value="text">Text</SelectItem>
                                                 <SelectItem key="quiz" itemKey="quiz" value="quiz">Quiz</SelectItem>
                                                 <SelectItem key="coding" itemKey="coding" value="coding">Coding Exercise</SelectItem>
@@ -746,15 +748,15 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                                 classNames={{
                                                     label: "text-[color:var(--ai-foreground)] font-medium"
                                                 }}
-                                            >                                                <SelectItem key="active" itemKey="active" value="active">Active</SelectItem>
-                                                <SelectItem key="draft" itemKey="draft" value="draft">Draft</SelectItem>
-                                                <SelectItem key="archived" itemKey="archived" value="archived">Archived</SelectItem>
+                                            >                                                <SelectItem key="active" itemKey="active" value="active">{t('statusActive')}</SelectItem>
+                                                <SelectItem key="draft" itemKey="draft" value="draft">{t('statusDraft')}</SelectItem>
+                                                <SelectItem key="archived" itemKey="archived" value="archived">{t('statusArchived')}</SelectItem>
                                             </Select>
                                         </div>
                                         <div>
                                             <Input
-                                                label="Repository URL"
-                                                placeholder="GitHub repository URL"
+                                                label={t('repositoryUrl')}
+                                                placeholder={t('githubRepoUrl')}
                                                 value={repoUrl}
                                                 onChange={(e: InputChangeEvent) => setRepoUrl(e.target.value)}
                                                 className="w-full"
@@ -772,7 +774,7 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                                 onValueChange={(val) => setIsRequired(!val)}
                                                 color="primary"
                                             >
-                                                Free Preview Lesson
+                                                {t('freePreviewLesson')}
                                             </Switch>
                                         </div>
                                         <div className="flex-1">
@@ -781,14 +783,14 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                                 onValueChange={setHasQuiz}
                                                 color="primary"
                                             >
-                                                Has Quiz
+                                                {t('hasQuiz')}
                                             </Switch>
                                         </div>
                                     </div>
                                 </div>
                                 <div>
                                     <label className="text-sm font-medium text-[color:var(--ai-foreground)] mb-2 flex items-center gap-2">
-                                        File
+                                        {t('file')}
                                     </label>
                                     <div className="border-2 border-dashed border-[color:var(--ai-card-border)] rounded-xl p-4 text-center cursor-pointer hover:bg-[color:var(--ai-card-bg)]/50 transition-all hover:border-[color:var(--ai-primary)]/30 hover:shadow-lg mb-6">
                                         {filePreview ? (
@@ -809,7 +811,7 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                                             setFilePreview(null);
                                                         }}
                                                     >
-                                                        Remove
+                                                        {t('remove')}
                                                     </Button>
                                                 </div>
                                             </div>
@@ -824,9 +826,9 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                                         <FiFilePlus size={28} className="text-[color:var(--ai-primary)]" />
                                                     )}
                                                 </div>
-                                                <p className="mt-3 text-sm font-medium text-[color:var(--ai-foreground)]">Click to upload lesson file</p>
+                                                <p className="mt-3 text-sm font-medium text-[color:var(--ai-foreground)]">{t('clickToUploadFile')}</p>
                                                 <p className="text-xs text-[color:var(--ai-muted)] mt-1">
-                                                    {lessonType === 'video' ? 'Video up to 100MB' : 'PDF, ZIP, etc. up to 50MB'}
+                                                    {lessonType === 'video' ? t('videoUpTo100MB') : t('filesUpTo50MB')}
                                                 </p>                                                <input
                                                     type="file"
                                                     className="hidden"
@@ -844,11 +846,11 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
 
                                     <div className="mb-6">
                                         <label className="block text-[color:var(--ai-foreground)] font-medium mb-2">
-                                            Learning Objectives
+                                            {t('learningObjectives')}
                                         </label>
                                         <div className="flex mb-2">
                                             <Input
-                                                placeholder="Add a learning objective"
+                                                placeholder={t('addLearningObjective')}
                                                 value={currentObjective}
                                                 onChange={(e: InputChangeEvent) => setCurrentObjective(e.target.value)}
                                                 onKeyDown={handleObjectiveKeyDown}
@@ -862,7 +864,7 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                                 className="ml-2"
                                                 isDisabled={!currentObjective}
                                             >
-                                                Add
+                                                {t('add')}
                                             </Button>
                                         </div>
                                         <div className="flex flex-wrap gap-2 mt-2">
@@ -883,11 +885,11 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
 
                                     <div className="mb-6">
                                         <label className="block text-[color:var(--ai-foreground)] font-medium mb-2">
-                                            Tags
+                                            {t('tags')}
                                         </label>
                                         <div className="flex mb-2">
                                             <Input
-                                                placeholder="Add a tag"
+                                                placeholder={t('addTag')}
                                                 value={currentTag}
                                                 onChange={(e: InputChangeEvent) => setCurrentTag(e.target.value)}
                                                 onKeyDown={handleTagKeyDown}
@@ -901,7 +903,7 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                                 className="ml-2"
                                                 isDisabled={!currentTag}
                                             >
-                                                Add
+                                                {t('add')}
                                             </Button>
                                         </div>
                                         <div className="flex flex-wrap gap-2 mt-2">
@@ -923,13 +925,13 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                     </Card>
                 </Tab>
 
-                <Tab key="content" title="Additional Content">
+                <Tab key="content" title={t('additionalContent')}>
                     <Card className="shadow-xl border border-[color:var(--ai-card-border)] overflow-hidden mb-8 hover:shadow-[color:var(--ai-primary)]/5 transition-all rounded-xl">
                         <CardHeader className="flex gap-3 px-6 py-4 border-b border-[color:var(--ai-card-border)]/60 bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-transparent">
                             <FiLayers className="text-[color:var(--ai-primary)]" size={20} />
                             <div className="flex flex-col">
-                                <h2 className="text-lg font-semibold text-[color:var(--ai-foreground)]">Additional Content</h2>
-                                <p className="text-[color:var(--ai-muted)] text-sm">Supplementary materials and embeds</p>
+                                <h2 className="text-lg font-semibold text-[color:var(--ai-foreground)]">{t('additionalContent')}</h2>
+                                <p className="text-[color:var(--ai-muted)] text-sm">{t('supplementaryMaterials')}</p>
                             </div>
                         </CardHeader>
                         <CardBody className="p-6 overflow-visible">
@@ -937,20 +939,20 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                 <div>
                                     <div className="mb-6">
                                         <label className="block text-[color:var(--ai-foreground)] font-medium mb-2">
-                                            Embed Content
+                                            {t('embedContent')}
                                         </label>                                            <Select
-                                            label="Embed Type"
+                                            label={t('embedType')}
                                             value={embedType}
                                             onChange={(e: SelectChangeEvent) => setEmbedType(e.target.value as any)}
                                             className="w-full mb-4"
                                         >
-                                            <SelectItem key="youtube" itemKey="youtube" value="youtube">YouTube Video</SelectItem>
-                                            <SelectItem key="codepen" itemKey="codepen" value="codepen">CodePen</SelectItem>
-                                            <SelectItem key="github" itemKey="github" value="github">GitHub Gist</SelectItem>
-                                            <SelectItem key="other" itemKey="other" value="other">Other (iframe)</SelectItem>
+                                            <SelectItem key="youtube" itemKey="youtube" value="youtube">{t('youtubeVideo')}</SelectItem>
+                                            <SelectItem key="codepen" itemKey="codepen" value="codepen">{t('codepen')}</SelectItem>
+                                            <SelectItem key="github" itemKey="github" value="github">{t('githubGist')}</SelectItem>
+                                            <SelectItem key="other" itemKey="other" value="other">{t('otherIframe')}</SelectItem>
                                         </Select>
                                         <Input
-                                            label="Embed URL"
+                                            label={t('embedUrl')}
                                             placeholder={
                                                 embedType === 'youtube' ? 'https://www.youtube.com/watch?v=...' :
                                                     embedType === 'codepen' ? 'https://codepen.io/username/pen/...' :
@@ -965,11 +967,11 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
 
                                     <div className="mb-6">
                                         <label className="block text-[color:var(--ai-foreground)] font-medium mb-2">
-                                            External Resources
+                                            {t('externalResources')}
                                         </label>
                                         <div className="flex mb-2">
                                             <Input
-                                                placeholder="Add a resource URL"
+                                                placeholder={t('addResourceUrl')}
                                                 value={currentResource}
                                                 onChange={(e: InputChangeEvent) => setCurrentResource(e.target.value)}
                                                 onKeyDown={handleResourceKeyDown}
@@ -983,7 +985,7 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                                 className="ml-2"
                                                 isDisabled={!currentResource}
                                             >
-                                                Add
+                                                {t('add')}
                                             </Button>
                                         </div>
                                         <div className="flex flex-col gap-2 mt-2">
@@ -1005,7 +1007,7 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                                         size="sm"
                                                         onPress={() => handleRemoveResource(resource)}
                                                     >
-                                                        Remove
+                                                        {t('remove')}
                                                     </Button>
                                                 </div>
                                             ))}
@@ -1014,11 +1016,11 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
 
                                     <div className="mb-6">
                                         <label className="block text-[color:var(--ai-foreground)] font-medium mb-2">
-                                            SEO Keywords
+                                            {t('seoKeywords')}
                                         </label>
                                         <div className="flex mb-2">
                                             <Input
-                                                placeholder="Add SEO keyword"
+                                                placeholder={t('addSeoKeyword')}
                                                 value={currentKeyword}
                                                 onChange={(e: InputChangeEvent) => setCurrentKeyword(e.target.value)}
                                                 onKeyDown={handleKeywordKeyDown}
@@ -1031,7 +1033,7 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                                 className="ml-2"
                                                 isDisabled={!currentKeyword}
                                             >
-                                                Add
+                                                {t('add')}
                                             </Button>
                                         </div>
                                         <div className="flex flex-wrap gap-2 mt-2">
@@ -1052,7 +1054,7 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                 <div>
                                     <div className="mb-6">
                                         <label className="block text-[color:var(--ai-foreground)] font-medium mb-2">
-                                            Additional Files
+                                            {t('additionalFiles')}
                                         </label>
                                         <div className="p-4 border border-dashed border-[color:var(--ai-card-border)] rounded-lg">
                                             <div className="mb-4">
@@ -1062,7 +1064,7 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                                         <p className="mt-2 text-sm text-[color:var(--ai-foreground)]">
                                                             {currentAdditionalFile
                                                                 ? currentAdditionalFile.name
-                                                                : "Click to select a file"
+                                                                : t('clickToSelectFile')
                                                             }
                                                         </p>
                                                     </div>                                                    <input
@@ -1078,8 +1080,8 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                             {currentAdditionalFile && (
                                                 <div className="mb-4">
                                                     <Input
-                                                        label="File Description"
-                                                        placeholder="Brief description of the file"
+                                                        label={t('fileDescription')}
+                                                        placeholder={t('briefFileDescription')}
                                                         value={currentFileDescription}
                                                         onChange={(e: InputChangeEvent) => setCurrentFileDescription(e.target.value)}
                                                         className="mb-2"
@@ -1089,7 +1091,7 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                                         onPress={handleAddAdditionalFile}
                                                         className="w-full"
                                                     >
-                                                        Add File
+                                                        {t('addFile')}
                                                     </Button>
                                                 </div>
                                             )}
@@ -1112,7 +1114,7 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                                             size="sm"
                                                             onPress={() => handleRemoveAdditionalFile(index)}
                                                         >
-                                                            Remove
+                                                            {t('remove')}
                                                         </Button>
                                                     </div>
                                                 ))}
@@ -1122,10 +1124,10 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
 
                                     <div className="mb-6">
                                         <label className="block text-[color:var(--ai-foreground)] font-medium mb-2">
-                                            Transcription
+                                            {t('transcription')}
                                         </label>
                                         <Textarea
-                                            placeholder="Add transcription for accessibility and SEO"
+                                            placeholder={t('addTranscriptionPlaceholder')}
                                             value={transcription}
                                             onChange={(e: TextareaChangeEvent) => setTranscription(e.target.value)}
                                             minRows={5}
@@ -1138,13 +1140,13 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                     </Card>
                 </Tab>
 
-                <Tab key="quiz" title="Quiz & Assessment">
+                <Tab key="quiz" title={t('quizAssessment')}>
                     <Card className="shadow-xl border border-[color:var(--ai-card-border)] overflow-hidden mb-8 hover:shadow-[color:var(--ai-primary)]/5 transition-all rounded-xl">
                         <CardHeader className="flex gap-3 px-6 py-4 border-b border-[color:var(--ai-card-border)]/60 bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-transparent">
                             <FiHelpCircle className="text-[color:var(--ai-primary)]" size={20} />
                             <div className="flex flex-col">
-                                <h2 className="text-lg font-semibold text-[color:var(--ai-foreground)]">Quiz & Assessment</h2>
-                                <p className="text-[color:var(--ai-muted)] text-sm">Test student knowledge</p>
+                                <h2 className="text-lg font-semibold text-[color:var(--ai-foreground)]">{t('quizAssessment')}</h2>
+                                <p className="text-[color:var(--ai-muted)] text-sm">{t('testStudentKnowledge')}</p>
                             </div>
                         </CardHeader>
                         <CardBody className="p-6 overflow-visible">
@@ -1152,10 +1154,10 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                 <div className="p-8 text-center">
                                     <FiHelpCircle size={48} className="text-[color:var(--ai-muted)] mx-auto mb-4" />
                                     <h3 className="text-xl font-semibold text-[color:var(--ai-foreground)] mb-2">
-                                        Quiz is disabled
+                                        {t('quizDisabled')}
                                     </h3>
                                     <p className="text-[color:var(--ai-muted)] mb-4">
-                                        Enable the quiz feature in the Basic Information tab to add questions.
+                                        {t('enableQuizMessage')}
                                     </p>
                                     <Button
                                         color="primary"
@@ -1165,21 +1167,21 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                             setActiveTab("basic");
                                         }}
                                     >
-                                        Enable Quiz
+                                        {t('enableQuiz')}
                                     </Button>
                                 </div>
                             ) : (
                                 <div>
                                     <div className="mb-8">
                                         <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-4">
-                                            Add Questions
+                                            {t('addQuestions')}
                                         </h3>
 
                                         <div className="bg-[color:var(--ai-card-bg)]/50 rounded-lg border border-[color:var(--ai-card-border)]/50 p-4 mb-6">
                                             <div className="mb-4">
                                                 <Input
-                                                    label="Question"
-                                                    placeholder="Enter your question"
+                                                    label={t('question')}
+                                                    placeholder={t('enterYourQuestion')}
                                                     value={currentQuestion.question}
                                                     onChange={(e: InputChangeEvent) => handleQuestionChange('question', e.target.value)}
                                                     className="mb-4"
@@ -1192,7 +1194,7 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                                                 {String.fromCharCode(65 + index)}
                                                             </div>
                                                             <Input
-                                                                placeholder={`Option ${String.fromCharCode(65 + index)}`}
+                                                                placeholder={t('optionLabel', { letter: String.fromCharCode(65 + index) })}
                                                                 value={option}
                                                                 onChange={(e: InputChangeEvent) => handleOptionChange(index, e.target.value)}
                                                                 className="flex-1"
@@ -1208,8 +1210,8 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                                 </div>
 
                                                 <Textarea
-                                                    label="Explanation"
-                                                    placeholder="Explain the correct answer (optional)"
+                                                    label={t('explanation')}
+                                                    placeholder={t('explainCorrectAnswer')}
                                                     value={currentQuestion.explanation}
                                                     onChange={(e: TextareaChangeEvent) => handleQuestionChange('explanation', e.target.value)}
                                                     className="mb-4"
@@ -1221,20 +1223,20 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                                     isDisabled={!currentQuestion.question || currentQuestion.options.filter(Boolean).length < 2}
                                                     className="w-full"
                                                 >
-                                                    {currentQuestion.id ? 'Update Question' : 'Add Question'}
+                                                    {currentQuestion.id ? t('updateQuestion') : t('addQuestion')}
                                                 </Button>
                                             </div>
                                         </div>
 
                                         <div className="space-y-4">
                                             <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-2">
-                                                Quiz Questions ({quizQuestions.length})
+                                                {t('quizQuestions', { count: quizQuestions.length })}
                                             </h3>
 
                                             {quizQuestions.length === 0 ? (
                                                 <div className="p-6 text-center bg-[color:var(--ai-card-bg)]/30 rounded-lg border border-dashed border-[color:var(--ai-card-border)]/50">
                                                     <p className="text-[color:var(--ai-muted)]">
-                                                        No questions added yet. Add your first question above.
+                                                        {t('noQuestionsYet')}
                                                     </p>
                                                 </div>
                                             ) : (
@@ -1243,7 +1245,7 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                                         <AccordionItem
                                                             key={question.id}
                                                             id={question.id}
-                                                            title={`Question ${qIndex + 1}: ${question.question}`}
+                                                            title={t('questionNumber', { number: qIndex + 1, question: question.question })}
                                                             endContent={
                                                                 <div className="flex gap-2">
                                                                     <Button
@@ -1252,7 +1254,7 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                                                         color="primary"
                                                                         onPress={() => handleEditQuestion(question)}
                                                                     >
-                                                                        Edit
+                                                                        {t('edit')}
                                                                     </Button>
                                                                     <Button
                                                                         size="sm"
@@ -1260,7 +1262,7 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                                                         color="danger"
                                                                         onPress={() => handleRemoveQuestion(question.id)}
                                                                     >
-                                                                        Delete
+                                                                        {t('delete')}
                                                                     </Button>
                                                                 </div>
                                                             }
@@ -1288,7 +1290,7 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                                                                         </span>
                                                                         {question.correctOption === oIndex && (
                                                                             <span className="ml-auto text-green-600 dark:text-green-400 text-sm font-medium">
-                                                                                Correct Answer
+                                                                                {t('correctAnswer')}
                                                                             </span>
                                                                         )}
                                                                     </div>

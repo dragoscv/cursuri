@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from '@heroui/react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 interface ErrorPageProps {
     title?: string;
@@ -15,14 +16,19 @@ interface ErrorPageProps {
 }
 
 const ErrorPage: React.FC<ErrorPageProps> = ({
-    title = 'Page Not Found',
-    message = 'The page you are looking for doesn\'t exist or has been moved.',
+    title,
+    message,
     status = 404,
     imageSrc,
     showHomeButton = true,
     showBackButton = true,
 }) => {
     const router = useRouter();
+    const t = useTranslations('common.errorPage');
+
+    // Use translations as defaults if props not provided
+    const displayTitle = title || t('pageNotFound');
+    const displayMessage = message || t('pageNotFoundMessage');
 
     return (
         <div className="flex flex-col items-center justify-center min-h-[70vh] px-4 py-12">
@@ -34,22 +40,22 @@ const ErrorPage: React.FC<ErrorPageProps> = ({
             {/* Custom image if provided */}
             {imageSrc && (
                 <div className="mb-6">
-                    <img src={imageSrc} alt="Error illustration" className="max-w-xs mx-auto" />
+                    <img src={imageSrc} alt={t('errorIllustration')} className="max-w-xs mx-auto" />
                 </div>
             )}
 
             {/* Error title */}
-            <h2 className="text-2xl font-bold mb-2 text-[color:var(--ai-foreground)]">{title}</h2>
+            <h2 className="text-2xl font-bold mb-2 text-[color:var(--ai-foreground)]">{displayTitle}</h2>
 
             {/* Error message */}
-            <p className="text-center max-w-md mb-8 text-[color:var(--ai-muted)]">{message}</p>
+            <p className="text-center max-w-md mb-8 text-[color:var(--ai-muted)]">{displayMessage}</p>
 
             {/* Action buttons */}
             <div className="flex flex-wrap gap-4 justify-center">
                 {showHomeButton && (
                     <Link href="/" passHref>
                         <Button color="primary" variant="solid">
-                            Go to Homepage
+                            {t('goToHomepage')}
                         </Button>
                     </Link>
                 )}
@@ -59,7 +65,7 @@ const ErrorPage: React.FC<ErrorPageProps> = ({
                         variant="light"
                         onPress={() => router.back()}
                     >
-                        Go Back
+                        {t('goBack')}
                     </Button>
                 )}
             </div>

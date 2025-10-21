@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Metadata } from 'next';
+import { useTranslations } from 'next-intl';
 import { constructMetadata } from '@/utils/metadata';
 import { generateLessonStructuredData, generateBreadcrumbStructuredData } from '@/utils/structuredData';
 import { getCourseById, getLessonById, getCourseLessons } from '@/utils/firebase/server';
@@ -194,14 +195,15 @@ export default async function Page({
       const courseFallback = await getCourseById(courseIdFallback);
 
       if (!courseFallback) {
+        const t = await getTranslations('lessons');
         return (
           <div className="flex flex-col items-center justify-center min-h-screen p-4">
-            <h1 className="text-2xl font-bold mb-4">Course Not Found</h1>
-            <p className="mb-6">The course you're looking for doesn't exist.</p>            <Link
+            <h1 className="text-2xl font-bold mb-4">{t('errors.courseNotFound')}</h1>
+            <p className="mb-6">{t('errors.courseNotFoundMessage')}</p>            <Link
               href="/courses"
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Browse Courses
+              {t('errors.browseCourses')}
             </Link>
           </div>
         );
@@ -212,16 +214,17 @@ export default async function Page({
 
       if (!lessonExists) {
         console.log("No such lesson exists in fallback path!");
+        const t = await getTranslations('lessons');
         // Return a consistent error message with debugging information
         return (
           <div className="flex flex-col items-center justify-center min-h-screen p-4">
-            <h1 className="text-2xl font-bold mb-4">Lesson Not Found</h1>
-            <p className="mb-6">The lesson you're looking for doesn't exist or you may not have access to it.</p>
+            <h1 className="text-2xl font-bold mb-4">{t('errors.lessonNotFound')}</h1>
+            <p className="mb-6">{t('errors.lessonNotFoundMessage')}</p>
             <a
               href={`/courses/${courseIdFallback}`}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Return to Course
+              {t('errors.returnToCourse')}
             </a>
             {/* Debugging information */}
             <div className="mt-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-left max-w-lg w-full">
@@ -260,7 +263,7 @@ export default async function Page({
       // Ultimate fallback - return an error page
       return (
         <div className="flex flex-col items-center justify-center min-h-screen p-4">
-          <h1 className="text-2xl font-bold mb-4">Error Loading Lesson</h1>
+          <h1 className="text-2xl font-bold mb-4">{useTranslations('lessons')('wrapper.errorLoadingLesson')}</h1>
           <p className="mb-6">There was a problem loading this lesson. Please try again later.</p>          <Link
             href="/courses"
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"

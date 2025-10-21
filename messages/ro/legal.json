@@ -1,0 +1,349 @@
+{
+    "terms": {
+        "title": "Termeni și Condiții",
+        "lastUpdated": "4 aprilie 2025",
+        "sections": {
+            "introduction": {
+                "title": "1. Introducere",
+                "content": {
+                    "welcome": "Bun venit la Cursuri. Acești Termeni și Condiții reglementează utilizarea site-ului nostru web, cursurilor și serviciilor. Prin accesarea sau utilizarea platformei noastre, sunteți de acord să respectați acești Termeni.",
+                    "readCarefully": "Vă rugăm să citiți cu atenție acești Termeni înainte de a utiliza serviciile noastre. Dacă nu sunteți de acord cu vreo parte a acestor Termeni, nu trebuie să utilizați platforma noastră."
+                }
+            },
+            "definitions": {
+                "title": "2. Definiții",
+                "items": {
+                    "platform": "\"Platforma\" se referă la site-ul web Cursuri și la tot conținutul, funcționalitățile și serviciile sale.",
+                    "user": "\"Utilizator\", \"Dumneavoastră\" și \"Al dumneavoastră\" se referă la persoana fizică sau entitatea care accesează sau utilizează Platforma.",
+                    "we": "\"Noi\", \"Al nostru\" și \"Cursuri\" se referă la Cursuri.",
+                    "content": "\"Conținut\" se referă la materialele cursurilor, videoclipuri, text, grafică, imagini și alte materiale disponibile pe Platformă.",
+                    "subscription": "\"Abonament\" se referă la accesul plătit la cursuri sau servicii oferite pe Platformă."
+                }
+            },
+            "accountRegistration": {
+                "title": "3. Înregistrarea Contului",
+                "content": {
+                    "registration": "Pentru a accesa anumite funcționalități ale Platformei, trebuie să vă înregistrați pentru un cont. Când vă înregistrați, sunteți de acord să furnizați informații exacte, actuale și complete și să actualizați aceste informații pentru a menține acuratețea lor.",
+                    "responsibility": "Sunteți responsabil pentru menținerea confidențialității acreditărilor contului dvs. și pentru toate activitățile care au loc în contul dvs. Trebuie să ne notificați imediat despre orice utilizare neautorizată a contului dvs."
+                }
+            },
+            "userConduct": {
+                "title": "4. Conduita Utilizatorului",
+                "intro": "Prin utilizarea Platformei noastre, sunteți de acord să nu:",
+                "prohibitedActions": [
+                    "Încălcați legile sau reglementările aplicabile",
+                    "Încălcați drepturile altora",
+                    "Partajați contul sau accesul la cursuri cu alții",
+                    "Încercați să accesați zone restricționate ale Platformei",
+                    "Utilizați Platforma în scopuri ilegale sau neautorizate",
+                    "Transmiteți viruși, malware sau alt cod dăunător",
+                    "Interferați cu funcționarea corectă a Platformei",
+                    "Colectați sau urmăriți informații personale ale altor utilizatori",
+                    "Vă angajați în orice activitate care ar putea deteriora, dezactiva sau afecta Platforma"
+                ]
+            },
+            "intellectualProperty": {
+                "title": "5. Proprietate Intelectuală",
+                "content": {
+                    "ownership": "Tot conținutul de pe Platformă, inclusiv cursuri, videoclipuri, text, grafică, logo-uri și software, este proprietatea Cursuri sau a furnizorilor săi de conținut și este protejat prin legi privind drepturile de autor, mărcile comerciale și alte legi ale proprietății intelectuale.",
+                    "license": "Vi se acordă o licență limitată, neexclusivă, netransferabilă pentru a accesa și utiliza conținutul în scopuri personale, necomerciale. Nu puteți reproduce, distribui, modifica, crea opere derivate, afișa public, executa public, republica, descărca, stoca sau transmite niciun conținut fără permisiunea noastră expresă în scris."
+                }
+            },
+            "coursesAndSubscriptions": {
+                "title": "6. Cursuri și Abonamente",
+                "courseAccess": {
+                    "title": "Accesul la Cursuri",
+                    "content": "La achiziționarea unui curs sau abonament, vi se va acorda acces la materialele cursului pentru perioada specificată. Accesul poate varia în funcție de tipul de curs sau abonament achiziționat."
+                },
+                "paymentsAndRefunds": {
+                    "title": "Plăți și Rambursări",
+                    "content": "Toate plățile sunt procesate în siguranță prin procesatorii noștri de plăți. Prețurile pentru cursuri și abonamente pot fi modificate fără notificare prealabilă. Putem oferi rambursări la discreția noastră conform politicii noastre de rambursare."
+                },
+                "courseUpdates": {
+                    "title": "Actualizări ale Cursurilor",
+                    "content": "Ne străduim să menținem conținutul cursurilor la zi. Ne rezervăm dreptul de a modifica, actualiza sau elimina conținutul cursurilor în orice moment, fără notificare prealabilă."
+                }
+            },
+            "userGeneratedContent": {
+                "title": "7. Conținut Generat de Utilizatori",
+                "content": {
+                    "grant": "Anumite părți ale Platformei noastre pot permite utilizatorilor să posteze conținut, cum ar fi recenzii, comentarii sau postări pe forum. Prin postarea conținutului, ne acordați un drept neexclusiv, fără redevențe, perpetuu, irevocabil și complet sublicențiabil de a utiliza, reproduce, modifica, adapta, publica, traduce, crea opere derivate, distribui și afișa astfel de conținut în întreaga lume.",
+                    "warranty": "Declarați și garantați că dețineți sau aveți drepturile necesare asupra conținutului pe care îl postați și că acest conținut nu încalcă drepturile niciunei terțe părți."
+                }
+            },
+            "thirdParty": {
+                "title": "8. Link-uri și Servicii ale Terților",
+                "content": "Platforma noastră poate conține link-uri către site-uri web sau servicii ale terților care nu sunt deținute sau controlate de noi. Nu avem control asupra și nu ne asumăm responsabilitatea pentru conținutul, politicile de confidențialitate sau practicile oricăror site-uri web sau servicii ale terților."
+            },
+            "disclaimerOfWarranties": {
+                "title": "9. Declinarea Garanțiilor",
+                "content": {
+                    "asIs": "Platforma și conținutul său sunt furnizate \"așa cum sunt\" și \"după disponibilitate\", fără garanții de niciun fel. Declinăm toate garanțiile, exprese sau implicite, inclusiv, dar fără a se limita la, garanțiile implicite de vandabilitate, adecvare pentru un anumit scop și neîncălcare.",
+                    "noGuarantee": "Nu garantăm că Platforma va fi lipsită de erori, neîntreruptă, sigură sau că defectele vor fi corectate."
+                }
+            },
+            "limitationOfLiability": {
+                "title": "10. Limitarea Răspunderii",
+                "content": "În niciun caz Cursuri nu va fi răspunzător pentru daune indirecte, accidentale, speciale, consecvente sau punitive, inclusiv, dar fără a se limita la, pierderea profiturilor, datelor, utilizării, fondului comercial sau alte pierderi intangibile, rezultate din accesul sau utilizarea dvs. sau incapacitatea de a accesa sau utiliza Platforma."
+            },
+            "indemnification": {
+                "title": "11. Despăgubire",
+                "content": "Sunteți de acord să despăgubiți, să apărați și să protejați Cursuri și funcționarii, directorii, angajații, agenții și afiliații săi de și împotriva oricăror revendicări, răspunderi, daune, pierderi, costuri, cheltuieli sau taxe (inclusiv onorariile avocaților rezonabile) rezultate din utilizarea dvs. a Platformei, încălcarea acestor Termeni sau încălcarea drepturilor altcuiva."
+            },
+            "termination": {
+                "title": "12. Încetarea",
+                "content": {
+                    "right": "Putem suspenda sau închide contul dvs. și accesul la Platformă imediat, fără notificare prealabilă sau răspundere, din orice motiv, inclusiv, dar fără a se limita la, o încălcare a acestor Termeni.",
+                    "effect": "La încetare, dreptul dvs. de a utiliza Platforma va înceta imediat. Toate prevederile acestor Termeni care, prin natura lor, ar trebui să supraviețuiască încetării, vor supraviețui încetării."
+                }
+            },
+            "changesToTerms": {
+                "title": "13. Modificări ale Termenilor",
+                "content": "Ne rezervăm dreptul de a modifica sau înlocui acești Termeni în orice moment. Vom furniza notificări despre orice modificări materiale prin postarea Termenilor actualizați pe Platformă și actualizarea datei \"Ultima actualizare\". Utilizarea continuă a Platformei după astfel de modificări constituie acceptarea dvs. a noilor Termeni."
+            },
+            "governingLaw": {
+                "title": "14. Legea Aplicabilă",
+                "content": "Acești Termeni vor fi guvernați și interpretați în conformitate cu legile României, fără a ține cont de dispozițiile sale privind conflictele de legi."
+            },
+            "contact": {
+                "title": "15. Contactați-ne",
+                "intro": "Dacă aveți întrebări despre acești Termeni, vă rugăm să ne contactați la:",
+                "email": "Email: contact@cursuri.dev"
+            }
+        }
+    },
+    "privacy": {
+        "title": "Politica de Confidențialitate",
+        "lastUpdated": "4 aprilie 2025",
+        "sections": {
+            "introduction": {
+                "title": "1. Introducere",
+                "content": {
+                    "welcome": "Bun venit la Cursuri (\"noi\", \"al nostru\" sau \"Cursuri\"). Ne angajăm să vă protejăm confidențialitatea și informațiile personale. Această Politică de Confidențialitate explică modul în care colectăm, utilizăm, dezvăluim și protejăm informațiile dvs. când vizitați site-ul nostru web și utilizați serviciile noastre.",
+                    "readCarefully": "Vă rugăm să citiți cu atenție această politică de confidențialitate. Dacă nu sunteți de acord cu termenii acestei politici de confidențialitate, vă rugăm să nu accesați site-ul."
+                }
+            },
+            "informationWeCollect": {
+                "title": "2. Informațiile pe Care le Colectăm",
+                "personalInformation": {
+                    "title": "Informații Personale",
+                    "intro": "Putem colecta informații personale pe care le furnizați în mod voluntar atunci când:",
+                    "situations": [
+                        "Vă înregistrați pentru un cont",
+                        "Achiziționați un curs",
+                        "Vă abonați la buletinul nostru informativ",
+                        "Ne contactați",
+                        "Participați la sondaje sau concursuri"
+                    ],
+                    "types": {
+                        "intro": "Aceste informații pot include:",
+                        "items": [
+                            "Nume",
+                            "Adresă de email",
+                            "Număr de telefon",
+                            "Informații de facturare",
+                            "Background educațional",
+                            "Informații de profil"
+                        ]
+                    }
+                },
+                "usageInformation": {
+                    "title": "Informații de Utilizare",
+                    "intro": "Colectăm automat anumite informații când vizitați, utilizați sau navigați pe platforma noastră. Aceste informații nu dezvăluie identitatea dvs. specifică, dar pot include:",
+                    "items": [
+                        "Informații despre dispozitiv și browser",
+                        "Adresă IP",
+                        "Sistem de operare",
+                        "URL-uri de referință",
+                        "Pagini vizualizate",
+                        "Timp petrecut pe pagini",
+                        "Progres și activitate în cursuri"
+                    ]
+                }
+            },
+            "howWeUseInformation": {
+                "title": "3. Cum Utilizăm Informațiile Dvs.",
+                "intro": "Utilizăm informațiile pe care le colectăm în diverse scopuri, inclusiv pentru a:",
+                "purposes": [
+                    "Furniza, opera și menține serviciile noastre",
+                    "Procesa și finaliza tranzacții",
+                    "Trimite informații administrative",
+                    "Răspunde la întrebări și oferi asistență",
+                    "Trimite comunicări de marketing și promoționale",
+                    "Îmbunătăți experiența utilizatorului",
+                    "Dezvolta noi produse și servicii",
+                    "Preveni tranzacții frauduloase",
+                    "Monitoriza tiparele de utilizare și analiza tendințe"
+                ]
+            },
+            "cookiesAndTracking": {
+                "title": "4. Cookie-uri și Tehnologii Similare",
+                "intro": "Utilizăm cookie-uri și tehnologii similare de urmărire pentru a urmări activitatea pe platforma noastră și pentru a stoca anumite informații. Cookie-urile sunt fișiere cu o cantitate mică de date care pot include un identificator unic anonim.",
+                "typesIntro": "Tipurile de cookie-uri pe care le folosim:",
+                "types": {
+                    "essential": "Cookie-uri esențiale: Necesare pentru ca platforma să funcționeze corect",
+                    "functionality": "Cookie-uri de funcționalitate: Ne permit să ne amintim preferințele și setările dvs.",
+                    "analytics": "Cookie-uri analitice: Ne ajută să înțelegem modul în care vizitatorii interacționează cu platforma noastră",
+                    "marketing": "Cookie-uri de marketing: Ne permit să livrăm reclame relevante"
+                },
+                "browserSettings": "Puteți instrui browserul să refuze toate cookie-urile sau să indice când se trimite un cookie. Cu toate acestea, dacă nu acceptați cookie-uri, este posibil să nu puteți utiliza unele părți ale platformei noastre."
+            },
+            "dataSharing": {
+                "title": "5. Partajarea și Dezvăluirea Datelor",
+                "intro": "Putem partaja informațiile dvs. cu terțe părți în următoarele situații:",
+                "situations": {
+                    "businessPartners": "Parteneri de afaceri: Pentru a oferi anumite produse, servicii sau promoții",
+                    "serviceProviders": "Furnizori de servicii: Pentru a ne ajuta să operăm afacerea și platforma",
+                    "affiliates": "Afiliați: Cu compania noastră mamă, filialele și afiliatele",
+                    "legalRequirements": "Cerințe legale: Pentru a ne conforma legilor, reglementărilor sau procesului legal",
+                    "protectionOfRights": "Protecția drepturilor: Pentru a proteja drepturile, proprietatea sau siguranța Cursuri, utilizatorilor noștri sau a altora",
+                    "businessTransfers": "Transferuri de afaceri: În legătură cu orice fuziune, vânzare de active ale companiei, finanțare sau achiziție"
+                }
+            },
+            "dataSecurity": {
+                "title": "6. Securitatea Datelor",
+                "content": "Am implementat măsuri de securitate tehnice și organizatorice adecvate pentru a vă proteja informațiile personale împotriva pierderii accidentale, accesului neautorizat, utilizării, modificării și dezvăluirii. Cu toate acestea, vă rugăm să rețineți că nicio metodă de transmitere prin Internet sau stocare electronică nu este 100% sigură."
+            },
+            "dataRetention": {
+                "title": "7. Retenția Datelor",
+                "content": "Vom păstra informațiile dvs. personale doar atât timp cât este necesar pentru scopurile stabilite în această politică de confidențialitate sau după cum este necesar pentru a ne conforma obligațiilor legale, a rezolva disputele și a aplica acordurile noastre."
+            },
+            "yourRights": {
+                "title": "8. Drepturile Dvs.",
+                "intro": "În funcție de locația dvs., puteți avea drepturi cu privire la informațiile dvs. personale, cum ar fi:",
+                "rights": [
+                    "Acces la informațiile dvs. personale",
+                    "Corectarea informațiilor incorecte sau incomplete",
+                    "Ștergerea informațiilor dvs. personale",
+                    "Restricționarea prelucrării informațiilor dvs. personale",
+                    "Portabilitatea datelor",
+                    "Obiecție la prelucrare",
+                    "Retragerea consimțământului"
+                ],
+                "exercise": "Pentru a exercita aceste drepturi, vă rugăm să ne contactați folosind detaliile furnizate mai jos."
+            },
+            "childrensPrivacy": {
+                "title": "9. Confidențialitatea Copiilor",
+                "content": "Platforma noastră nu este destinată persoanelor sub 16 ani. Nu colectăm în mod conștient informații personale de la copii sub 16 ani. Dacă aflăm că am colectat informații personale de la un copil sub 16 ani, vom șterge aceste informații."
+            },
+            "changesToPolicy": {
+                "title": "10. Modificări ale Acestei Politici de Confidențialitate",
+                "content": "Putem actualiza Politica noastră de Confidențialitate din când în când. Vă vom notifica despre orice modificări prin postarea noii Politici de Confidențialitate pe această pagină și actualizarea datei \"Ultima actualizare\". Vă sfătuim să revizuiți periodic această Politică de Confidențialitate pentru orice modificări."
+            },
+            "contact": {
+                "title": "11. Contactați-ne",
+                "intro": "Dacă aveți întrebări despre această Politică de Confidențialitate, vă rugăm să ne contactați la:",
+                "email": "Email: contact@cursuri.dev"
+            }
+        }
+    },
+    "gdpr": {
+        "title": "Politica GDPR",
+        "lastUpdated": "4 aprilie 2025",
+        "sections": {
+            "introduction": {
+                "title": "1. Introducere",
+                "paragraph1": "Această Politică GDPR explică modul în care Cursuri (\"noi\", \"al nostru\" sau \"ne\") procesează datele personale în conformitate cu Regulamentul General privind Protecția Datelor (GDPR) și descrie drepturile dumneavoastră ca subiect al datelor.",
+                "paragraph2": "Ne angajăm să vă protejăm confidențialitatea și să gestionăm datele dumneavoastră într-o manieră deschisă și transparentă. Această politică se aplică acolo unde acționăm ca operator de date în ceea ce privește datele dumneavoastră personale."
+            },
+            "dataController": {
+                "title": "2. Operator de Date",
+                "intro": "Cursuri este operatorul de date responsabil pentru datele dumneavoastră personale. Dacă aveți întrebări despre această Politică GDPR sau despre practicile noastre privind datele, vă rugăm să contactați Responsabilul nostru cu Protecția Datelor la:",
+                "email": "Email: dpo@cursuri.dev"
+            },
+            "categories": {
+                "title": "3. Categorii de Date Personale pe care le Procesăm",
+                "intro": "Este posibil să procesăm următoarele categorii de date personale despre dumneavoastră:",
+                "identityData": "Date de Identitate: Nume, nume de utilizator, dată de naștere",
+                "contactData": "Date de Contact: Adresă de email, număr de telefon, adresă",
+                "financialData": "Date Financiare: Informații de plată, istoric de achiziții",
+                "technicalData": "Date Tehnice: Adresă IP, tip și versiune de browser, setare fus orar, informații despre dispozitiv",
+                "profileData": "Date de Profil: Nume de utilizator, parolă, achiziții, interese, preferințe",
+                "usageData": "Date de Utilizare: Informații despre modul în care utilizați platforma noastră, cursuri vizualizate, rate de finalizare",
+                "marketingData": "Date de Marketing: Preferințe pentru primirea de marketing de la noi"
+            },
+            "collection": {
+                "title": "4. Cum Colectăm Datele Dumneavoastră Personale",
+                "intro": "Colectăm date personale prin diverse metode:",
+                "directInteractions": "Interacțiuni directe: Când vă creați un cont, achiziționați cursuri sau ne contactați",
+                "automatedTechnologies": "Tehnologii automate: Pe măsură ce interacționați cu platforma noastră, putem colecta automat Date Tehnice",
+                "thirdParties": "Terți: Putem primi date de la furnizori de analize, furnizori de plăți și platforme de social media"
+            },
+            "legalBasis": {
+                "title": "5. Baza Legală pentru Procesare",
+                "intro": "Vom procesa datele dumneavoastră personale numai atunci când avem o bază legală pentru a face acest lucru. Bazele legale pe care ne bazăm includ:",
+                "consent": "Consimțământ: Când ați acceptat în mod explicit procesarea datelor dumneavoastră personale",
+                "contract": "Contract: Când procesarea este necesară pentru executarea unui contract cu dumneavoastră",
+                "legalObligation": "Obligație legală: Când procesarea este necesară pentru conformitatea cu o obligație legală",
+                "legitimateInterests": "Interese legitime: Când procesarea este necesară pentru interesele noastre legitime, cu condiția ca acestea să nu fie înlocuite de drepturile dumneavoastră"
+            },
+            "purposes": {
+                "title": "6. Scopurile Procesării",
+                "intro": "Procesăm datele dumneavoastră personale în următoarele scopuri:",
+                "items": [
+                    "Pentru a crea și gestiona contul dumneavoastră",
+                    "Pentru a furniza și gestiona cursurile și serviciile noastre",
+                    "Pentru a procesa plăți și a menține înregistrări financiare",
+                    "Pentru a personaliza experiența dumneavoastră pe platforma noastră",
+                    "Pentru a comunica cu dumneavoastră în legătură cu contul, achizițiile sau întrebările dumneavoastră",
+                    "Pentru a vă trimite comunicări de marketing (unde ați optat)",
+                    "Pentru a îmbunătăți platforma, produsele și serviciile noastre",
+                    "Pentru a asigura securitatea platformei și a preveni frauda",
+                    "Pentru a respecta obligațiile legale"
+                ]
+            },
+            "retention": {
+                "title": "7. Păstrarea Datelor",
+                "paragraph1": "Vom păstra datele dumneavoastră personale numai atât timp cât este necesar pentru îndeplinirea scopurilor pentru care au fost colectate, inclusiv cerințe legale, contabile sau de raportare.",
+                "paragraph2": "Diferite perioade de păstrare se aplică diferitelor tipuri de date. Pentru a determina perioada de păstrare adecvată pentru datele personale, luăm în considerare cantitatea, natura și sensibilitatea datelor personale, riscul potențial de vătămare din utilizarea sau divulgarea neautorizată, scopurile pentru care le procesăm și dacă putem realiza acele scopuri prin alte mijloace."
+            },
+            "sharing": {
+                "title": "8. Partajarea Datelor",
+                "intro": "Putem partaja datele dumneavoastră personale cu:",
+                "serviceProviders": "Furnizori de servicii: Companii care ne furnizează servicii, cum ar fi procesarea plăților, analize, marketing",
+                "businessPartners": "Parteneri de afaceri: Terți de încredere care ne ajută să livrăm serviciile noastre",
+                "legalAuthorities": "Autorități legale: Când este cerut de lege sau pentru a ne proteja drepturile",
+                "requirements": "Cerem tuturor terților să respecte securitatea datelor dumneavoastră personale și să le trateze în conformitate cu legea. Permitem doar furnizorilor noștri de servicii terți să proceseze datele dumneavoastră personale pentru scopuri specificate și în conformitate cu instrucțiunile noastre."
+            },
+            "internationalTransfers": {
+                "title": "9. Transferuri Internaționale",
+                "intro": "Putem transfera datele dumneavoastră personale în țări din afara Spațiului Economic European (SEE). Ori de câte ori transferăm datele dumneavoastră personale în afara SEE, ne asigurăm că li se acordă un grad similar de protecție prin implementarea măsurilor de protecție adecvate:",
+                "items": [
+                    "Utilizarea Clauzelor Contractuale Standard aprobate de Comisia Europeană",
+                    "Transferul către țări care au fost considerate că oferă un nivel adecvat de protecție",
+                    "Implementarea regulilor corporative obligatorii, după caz"
+                ]
+            },
+            "rights": {
+                "title": "10. Drepturile Dumneavoastră ca Subiect al Datelor",
+                "intro": "În conformitate cu GDPR, aveți următoarele drepturi:",
+                "access": "Dreptul de acces: Puteți solicita o copie a datelor dumneavoastră personale",
+                "rectification": "Dreptul la rectificare: Puteți solicita corectarea datelor inexacte sau incomplete",
+                "erasure": "Dreptul la ștergere: Puteți solicita ștergerea datelor dumneavoastră personale în anumite circumstanțe",
+                "restrictProcessing": "Dreptul de a restricționa procesarea: Puteți solicita restricționarea procesării în anumite circumstanțe",
+                "dataPortability": "Dreptul la portabilitatea datelor: Puteți solicita transferul datelor dumneavoastră către o altă organizație",
+                "object": "Dreptul de a obiecta: Puteți obiecta la procesarea bazată pe interese legitime sau marketing direct",
+                "automatedDecisions": "Drepturi legate de luarea deciziilor automate: Puteți solicita intervenție umană pentru deciziile bazate exclusiv pe procesarea automată",
+                "withdrawConsent": "Dreptul de a retrage consimțământul: Puteți retrage consimțământul în orice moment, unde ne bazăm pe consimțământ pentru a vă procesa datele",
+                "exercise": "Pentru a exercita oricare dintre aceste drepturi, vă rugăm să ne contactați la dpo@cursuri.dev."
+            },
+            "security": {
+                "title": "11. Securitatea Datelor",
+                "paragraph1": "Am implementat măsuri tehnice și organizatorice adecvate pentru a proteja datele dumneavoastră personale împotriva accesului neautorizat, pierderii accidentale, modificării sau divulgării. Aceste măsuri includ criptarea, controalele de acces, evaluările regulate de securitate și formarea personalului.",
+                "paragraph2": "Revizuim periodic practicile noastre de securitate pentru a asigura protecția continuă a datelor dumneavoastră."
+            },
+            "cookies": {
+                "title": "12. Cookie-uri și Tehnologii Similare",
+                "content": "Utilizăm cookie-uri și tehnologii similare pentru a îmbunătăți experiența dumneavoastră pe platforma noastră. Pentru informații detaliate despre modul în care utilizăm cookie-urile, vă rugăm să consultați Politica noastră privind Cookie-urile disponibilă pe platforma noastră."
+            },
+            "changes": {
+                "title": "13. Modificări ale Acestei Politici GDPR",
+                "content": "Putem actualiza această Politică GDPR din când în când pentru a reflecta modificările practicilor noastre sau cerințelor legale. Vă vom notifica despre orice modificări materiale prin postarea politicii actualizate pe platforma noastră și actualizarea datei \"Ultima actualizare\"."
+            },
+            "complaints": {
+                "title": "14. Reclamații",
+                "content": "Dacă aveți preocupări cu privire la practicile noastre de procesare a datelor, vă rugăm să ne contactați mai întâi. Aveți, de asemenea, dreptul de a depune o plângere la autoritatea locală de protecție a datelor dacă considerați că nu am respectat legile aplicabile privind protecția datelor."
+            }
+        }
+    }
+}

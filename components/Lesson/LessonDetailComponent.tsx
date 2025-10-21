@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useContext, useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { AppContext } from '@/components/AppContext';
 import { Spinner, Card } from "@heroui/react";
 import LessonContent from '@/components/Lesson/LessonContent';
@@ -21,6 +22,9 @@ export default function LessonDetailComponent({
 }: {
     params: { courseId: string; lessonId: string }
 }) {
+    const t = useTranslations('lessons.detail');
+    const tCommon = useTranslations('common');
+
     // Validate params at component level
     if (!params || typeof params.courseId !== 'string' || typeof params.lessonId !== 'string') {
         console.error("Invalid params in LessonDetailComponent:", params);
@@ -159,15 +163,15 @@ export default function LessonDetailComponent({
             <div className="container mx-auto px-4 py-8">
                 <Card className="p-6 shadow-lg">
                     <div className="text-center py-10">
-                        <h2 className="text-xl font-semibold mb-4">Course not found</h2>
+                        <h2 className="text-xl font-semibold mb-4">{t('courseNotFound')}</h2>
                         <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mb-6">
-                            The course you&apos;re looking for doesn&apos;t exist or you may not have access to it.
+                            {t('courseNotFoundDesc')}
                         </p>
                         <button
                             onClick={() => router.push("/courses")}
                             className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
                         >
-                            Browse Courses
+                            {t('browseCourses')}
                         </button>
                     </div>
                 </Card>
@@ -181,7 +185,7 @@ export default function LessonDetailComponent({
             <div className="container mx-auto px-4 py-8">
                 <Card className="p-6 shadow-lg">
                     <div className="text-center py-10">
-                        <h2 className="text-xl font-semibold mb-4">Loading course content...</h2>
+                        <h2 className="text-xl font-semibold mb-4">{t('loadingCourseContent')}</h2>
                         <div className="animate-pulse flex flex-col items-center">
                             <div className="w-20 h-20 bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-border)] rounded-full mb-4"></div>
                             <div className="h-4 bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-border)] rounded w-1/2 mb-2"></div>
@@ -222,16 +226,16 @@ export default function LessonDetailComponent({
             <div className="container mx-auto px-4 py-8">
                 <Card className="p-6 shadow-lg">
                     <div className="text-center py-10">
-                        <h2 className="text-xl font-semibold mb-4">Lesson not found</h2>
+                        <h2 className="text-xl font-semibold mb-4">{t('lessonNotFound')}</h2>
                         <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mb-6">
-                            The lesson you&apos;re looking for doesn&apos;t exist or you may not have access to it.
+                            {t('lessonNotFoundDesc')}
                         </p>
                         <div className="space-y-4">
                             <button
                                 onClick={() => router.push(`/courses/${courseId}`)}
                                 className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
                             >
-                                Return to Course
+                                {t('returnToCourse')}
                             </button>
 
                             {/* Try the new viewer component button */}
@@ -239,26 +243,26 @@ export default function LessonDetailComponent({
                                 onClick={() => setUseNewViewer(true)}
                                 className="block w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
                             >
-                                Try Alternative Loader
+                                {t('tryAlternativeLoader')}
                             </button>
 
                             {/* Debugging information */}
                             <div className="mt-6 p-4 bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-border)] rounded-lg text-left">
-                                <h3 className="font-bold mb-2">Debugging Information:</h3>
+                                <h3 className="font-bold mb-2">{t('debuggingInfo')}</h3>
                                 <ul className="list-disc pl-5 space-y-1 text-sm">
-                                    <li>Course ID: {debug.courseId}</li>
-                                    <li>Lesson ID: {debug.lessonId}</li>
-                                    <li>Course Exists: {debug.courseExists ? 'Yes' : 'No'}</li>
-                                    <li>Course Lessons Loaded: {debug.courseLessonsExist ? 'Yes' : 'No'}</li>
-                                    <li>Lessons Available: {debug.lessonsAvailable ? 'Yes' : 'No'}</li>
-                                    <li>Lesson Exists: {debug.lessonExists ? 'Yes' : 'No'}</li>
+                                    <li>{t('courseId')} {debug.courseId}</li>
+                                    <li>{t('lessonId')} {debug.lessonId}</li>
+                                    <li>{t('courseExists')} {debug.courseExists ? t('yes') : t('no')}</li>
+                                    <li>{t('courseLessonsLoaded')} {debug.courseLessonsExist ? t('yes') : t('no')}</li>
+                                    <li>{t('lessonsAvailable')} {debug.lessonsAvailable ? t('yes') : t('no')}</li>
+                                    <li>{t('lessonExists')} {debug.lessonExists ? t('yes') : t('no')}</li>
                                 </ul>
                                 <div className="mt-2">
                                     <button
                                         onClick={() => getCourseLessons(courseId)}
                                         className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm"
                                     >
-                                        Retry Loading Lessons
+                                        {t('retryLoadingLessons')}
                                     </button>
                                 </div>
                             </div>
@@ -275,23 +279,23 @@ export default function LessonDetailComponent({
             <div className="container mx-auto px-4 py-8">
                 <Card className="p-6 shadow-lg">
                     <div className="text-center py-10">
-                        <h2 className="text-xl font-semibold mb-4">Access Denied</h2>
+                        <h2 className="text-xl font-semibold mb-4">{t('accessDenied')}</h2>
                         <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mb-6">
-                            You need to enroll in this course to access this lesson.
+                            {t('accessDeniedDesc')}
                         </p>
                         <div className="flex justify-center gap-4">
                             <button
                                 onClick={() => router.push(`/courses/${courseId}`)}
                                 className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
                             >
-                                Go to Course
+                                {t('goToCourse')}
                             </button>
                             {!user && (
                                 <button
                                     onClick={() => router.push("/login")}
                                     className="px-4 py-2 bg-[color:var(--ai-muted)] hover:bg-[color:var(--ai-muted-foreground)] text-white rounded-lg transition-colors"
                                 >
-                                    Log In
+                                    {t('logIn')}
                                 </button>
                             )}
                         </div>

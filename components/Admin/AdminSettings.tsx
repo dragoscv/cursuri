@@ -1,12 +1,14 @@
 'use client'
 
 import React, { useContext, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card, CardBody, CardHeader, Divider, SelectItem, Spinner } from '@heroui/react';
 import { Button, Input, Switch, Select, Textarea } from '@/components/ui';
 import { AppContext } from '@/components/AppContext';
 import { AdminSettings as AdminSettingsType } from '@/types';
 
 const AdminSettings: React.FC = () => {
+    const t = useTranslations('admin.settings');
     const context = useContext(AppContext);
     if (!context) {
         throw new Error("AdminSettings must be used within an AppProvider");
@@ -40,7 +42,7 @@ const AdminSettings: React.FC = () => {
                 }
             } catch (error) {
                 console.error('Error fetching settings:', error);
-                setError('Failed to load settings data');
+                setError(t('failedToLoad'));
             } finally {
                 setLoading(false);
             }
@@ -105,14 +107,14 @@ const AdminSettings: React.FC = () => {
     return (
         <div className="space-y-8">
             <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold">Platform Settings</h1>                <Button
+                <h1 className="text-3xl font-bold">{t('title')}</h1>                <Button
                     color="primary"
                     isLoading={saving}
                     isDisabled={saving}
                     onPress={handleSubmit}
                     className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium shadow-sm hover:shadow-md hover:shadow-[color:var(--ai-primary)]/20 transition-all"
                 >
-                    Save Settings
+                    {t('saveSettings')}
                 </Button>
             </div>
 
@@ -122,7 +124,7 @@ const AdminSettings: React.FC = () => {
                         <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <span>Settings saved successfully</span>
+                        <span>{t('savedSuccessfully')}</span>
                     </div>
                 </div>
             )}
@@ -142,45 +144,45 @@ const AdminSettings: React.FC = () => {
                 {/* General Settings */}
                 <Card className="shadow-md">
                     <CardHeader>
-                        <h2 className="text-xl font-semibold">General Settings</h2>
+                        <h2 className="text-xl font-semibold">{t('generalSettings')}</h2>
                     </CardHeader>
                     <CardBody>
                         <div className="space-y-6">
                             <div>
                                 <label className="block text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">
-                                    Site Name
+                                    {t('siteName')}
                                 </label>
                                 <Input
                                     name="siteName"
                                     value={formData.siteName}
                                     onChange={handleChange}
-                                    placeholder="Enter site name"
+                                    placeholder={t('enterSiteName')}
                                 />
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">
-                                    Site Description
+                                    {t('siteDescription')}
                                 </label>
                                 <Textarea
                                     name="siteDescription"
                                     value={formData.siteDescription}
                                     onChange={handleChange}
-                                    placeholder="Enter site description"
+                                    placeholder={t('enterSiteDescription')}
                                     rows={3}
                                 />
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">
-                                    Contact Email
+                                    {t('contactEmail')}
                                 </label>
                                 <Input
                                     name="contactEmail"
                                     type="email"
                                     value={formData.contactEmail}
                                     onChange={handleChange}
-                                    placeholder="Enter contact email"
+                                    placeholder={t('enterContactEmail')}
                                 />
                             </div>
                         </div>
@@ -190,15 +192,15 @@ const AdminSettings: React.FC = () => {
                 {/* User Registration Settings */}
                 <Card className="shadow-md">
                     <CardHeader>
-                        <h2 className="text-xl font-semibold">Authentication Settings</h2>
+                        <h2 className="text-xl font-semibold">{t('authSettings')}</h2>
                     </CardHeader>
                     <CardBody>
                         <div className="space-y-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <h3 className="text-base font-medium text-[color:var(--ai-foreground)]">Allow User Registration</h3>
+                                    <h3 className="text-base font-medium text-[color:var(--ai-foreground)]">{t('allowUserRegistration')}</h3>
                                     <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
-                                        When disabled, new users cannot register
+                                        {t('whenDisabledNoRegistration')}
                                     </p>
                                 </div>                                <Switch
                                     isSelected={formData.allowRegistration}
@@ -212,9 +214,9 @@ const AdminSettings: React.FC = () => {
 
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <h3 className="text-base font-medium text-[color:var(--ai-foreground)]">Allow Social Login</h3>
+                                    <h3 className="text-base font-medium text-[color:var(--ai-foreground)]">{t('allowSocialLogin')}</h3>
                                     <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
-                                        When enabled, users can sign in with Google and other providers
+                                        {t('whenEnabledSocialLogin')}
                                     </p>
                                 </div>
                                 <Switch
@@ -230,15 +232,15 @@ const AdminSettings: React.FC = () => {
                 {/* Payment Settings */}
                 <Card className="shadow-md">
                     <CardHeader>
-                        <h2 className="text-xl font-semibold">Payment Settings</h2>
+                        <h2 className="text-xl font-semibold">{t('paymentSettings')}</h2>
                     </CardHeader>
                     <CardBody>
                         <div className="space-y-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <h3 className="text-base font-medium text-[color:var(--ai-foreground)]">Payment Processing</h3>
+                                    <h3 className="text-base font-medium text-[color:var(--ai-foreground)]">{t('paymentProcessing')}</h3>
                                     <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
-                                        When disabled, users cannot make purchases
+                                        {t('whenDisabledNoPurchases')}
                                     </p>
                                 </div>
                                 <Switch
@@ -252,7 +254,7 @@ const AdminSettings: React.FC = () => {
 
                             <div>
                                 <label className="block text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">
-                                    Currency
+                                    {t('currency')}
                                 </label>                                <Select
                                     value={formData.currencyCode}
                                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleSelectChange('currencyCode', e.target.value)}
@@ -270,7 +272,7 @@ const AdminSettings: React.FC = () => {
 
                             <div>
                                 <label className="block text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">
-                                    Tax Rate (%)
+                                    {t('taxRate')}
                                 </label>
                                 <Input
                                     name="taxRate"

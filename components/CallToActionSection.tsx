@@ -6,8 +6,10 @@ import Button from '@/components/ui/Button';
 import ScrollAnimationWrapper from './animations/ScrollAnimationWrapper';
 import { useContext } from 'react';
 import { AppContext } from './AppContext';
+import { useTranslations } from 'next-intl';
 
 const CallToActionSection = memo(function CallToActionSection() {
+    const t = useTranslations('home.cta');
     const context = useContext(AppContext);
 
     if (!context) {
@@ -144,13 +146,13 @@ const CallToActionSection = memo(function CallToActionSection() {
                 <div className="max-w-3xl mx-auto text-center">
                     <ScrollAnimationWrapper>
                         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-6">
-                            Ready to Transform Your Career?
+                            {t('title')}
                         </h2>
                     </ScrollAnimationWrapper>
 
                     <ScrollAnimationWrapper delay={0.1}>
                         <p className="text-xl text-white/80 mb-8">
-                            Join thousands of learners already mastering AI, marketing, data science, and in-demand skills on our platform.
+                            {t('subtitle')}
                         </p>
                     </ScrollAnimationWrapper>
 
@@ -164,7 +166,7 @@ const CallToActionSection = memo(function CallToActionSection() {
                                     className="px-8 py-6 text-lg font-medium bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] hover:shadow-lg hover:shadow-[color:var(--ai-primary)]/30 transform transition-all duration-300"
                                     onClick={handleGetStarted}
                                 >
-                                    Get Started Now
+                                    {t('button')}
                                 </Button>
                             </motion.div>
 
@@ -181,7 +183,7 @@ const CallToActionSection = memo(function CallToActionSection() {
                                         coursesSection?.scrollIntoView({ behavior: 'smooth' });
                                     }}
                                 >
-                                    Browse Courses
+                                    {t('button')}
                                 </Button>
                             </motion.div>
                         </div>

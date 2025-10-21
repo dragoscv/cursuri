@@ -14,59 +14,50 @@ import {
 } from '../icons/tech';
 
 export interface TechItem {
-    name: string;
+    key: string;
     icon: React.ComponentType<{ size?: number; className?: string }>;
-    description: string;
     color: string;
 }
 
 export const technologies: TechItem[] = [
     {
-        name: 'Python',
+        key: 'python',
         icon: JavaScriptIcon, // Placeholder - can be updated with Python icon
-        description: 'Master AI, data science, and automation with Python programming',
         color: '#3776AB'
     },
     {
-        name: 'AI & ML',
+        key: 'aiml',
         icon: TypeScriptIcon, // Placeholder - can be updated with AI icon
-        description: 'Learn Machine Learning, Deep Learning, and Generative AI',
         color: '#FF6B6B'
     },
     {
-        name: 'Data Science',
+        key: 'dataScience',
         icon: MongoDBIcon, // Placeholder - can be updated with Data icon
-        description: 'Analyze data, build visualizations, and extract insights',
         color: '#4ECDC4'
     },
     {
-        name: 'Digital Marketing',
+        key: 'marketing',
         icon: FirebaseIcon, // Placeholder - can be updated with Marketing icon
-        description: 'Master SEO, social media, content marketing, and analytics',
         color: '#FF9F1C'
     },
     {
-        name: 'React',
+        key: 'react',
         icon: ReactIcon,
-        description: 'Build interactive UIs with the most popular frontend library',
         color: '#61DAFB'
     },
     {
-        name: 'Cloud Computing',
+        key: 'cloud',
         icon: NodeJsIcon, // Placeholder - can be updated with Cloud icon
-        description: 'Deploy and scale applications on AWS, Azure, and Google Cloud',
         color: '#00A8E8'
     },
     {
-        name: 'Cybersecurity',
+        key: 'security',
         icon: NoSQLIcon, // Placeholder - can be updated with Security icon
-        description: 'Learn ethical hacking, network security, and risk management',
         color: '#E63946'
     },
     {
-        name: 'Business Strategy',
+        key: 'business',
         icon: TailwindCssIcon, // Placeholder - can be updated with Business icon
-        description: 'Develop leadership, project management, and strategic thinking',
         color: '#9B51E0'
     }
 ];

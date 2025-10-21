@@ -1,7 +1,7 @@
 import React from 'react';
 import { Metadata } from 'next';
 import dynamic from 'next/dynamic';
-import { constructMetadata } from '@/utils/metadata';
+import { getTranslations } from 'next-intl/server';
 
 // Dynamically import client components
 const CoursesPage = dynamic(() => import('@/components/Courses/CoursesPage'), {
@@ -21,22 +21,14 @@ const CoursesPage = dynamic(() => import('@/components/Courses/CoursesPage'), {
   )
 });
 
-export const metadata: Metadata = constructMetadata({
-  title: 'Online Courses',
-  description: 'Browse our comprehensive catalog of online courses in programming, web development, AI, data science, and more. Learn at your own pace and advance your career.',
-  keywords: [
-    'online courses',
-    'programming courses',
-    'web development',
-    'AI courses',
-    'data science',
-    'technology learning',
-    'professional development',
-    'coding classes',
-    'learn to code',
-    'tech education'
-  ]
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('courses.metadata');
+  return {
+    title: t('title'),
+    description: t('description'),
+    keywords: t('keywords').split(', ')
+  };
+}
 
 export default function Page() {
   return <CoursesPage />;

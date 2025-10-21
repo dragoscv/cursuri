@@ -33,6 +33,7 @@
     "framer-motion": "^12.6.3",
     "microsoft-cognitiveservices-speech-sdk": "^1.43.1",
     "next": "15.2.4",
+    "next-intl": "^4.3.12",
     "node-fetch": "^3.3.2",
     "pdf-lib": "^1.17.1",
     "react": "^19",

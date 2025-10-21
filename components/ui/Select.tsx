@@ -654,7 +654,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
                         })
                     ) : (
                         <li role="presentation" className={`${sizeStyles.itemPadding} ${sizeStyles.text} text-[color:var(--ai-muted)] text-center`}>
-                            No options available
+                            {t('noOptionsAvailable')}
                         </li>
                     )}
                 </ul>

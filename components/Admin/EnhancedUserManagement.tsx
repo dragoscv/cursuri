@@ -460,8 +460,8 @@ const EnhancedUserManagement: React.FC = () => {
                     >
                       <Tab key="profile" title="Profile" />
                       <Tab key="enrollments" title="Enrollments" />
-                      <Tab key="notes" title="Admin Notes" />
-                      <Tab key="activity" title="Activity Log" />
+                      <Tab key="notes" title={t('userManagement.tabs.adminNotes')} />
+                      <Tab key="activity" title={t('userManagement.tabs.activityLog')} />
                       <Tab key="permissions" title="Permissions" />
                     </Tabs>
                   </div>
@@ -480,7 +480,7 @@ const EnhancedUserManagement: React.FC = () => {
                                 name="displayName"
                                 value={editedUserData.displayName || ''}
                                 onChange={handleInputChange}
-                                placeholder="Display Name"
+                                placeholder={t('userManagement.placeholders.displayName')}
                               />
                             </div>
 
@@ -492,7 +492,7 @@ const EnhancedUserManagement: React.FC = () => {
                                 name="bio"
                                 value={editedUserData.bio || ''}
                                 onChange={handleInputChange}
-                                placeholder="User bio"
+                                placeholder={t('userManagement.placeholders.userBio')}
                                 className="w-full px-3 py-2 border border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)] rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]"
                                 rows={4}
                               />
@@ -734,7 +734,7 @@ const EnhancedUserManagement: React.FC = () => {
                                     : 'Unknown date'}
                                 </p>
                                 <p className="text-xs text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mt-1">
-                                  Via: {enrollment.source === 'admin' ? 'Admin assignment' : 'Self purchase'}
+                                  {t('userManagement.enrollment.via')}: {enrollment.source === 'admin' ? t('userManagement.enrollment.adminAssignment') : t('userManagement.enrollment.selfPurchase')}
                                 </p>
                               </div>
                             </div>

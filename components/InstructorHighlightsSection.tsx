@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import Card from './ui/Card';
 import Avatar from './ui/Avatar';
 import Chip from './ui/Chip';
@@ -35,12 +36,19 @@ const instructors = [
 ];
 
 const InstructorHighlightsSection = React.memo(function InstructorHighlightsSection() {
+    const t = useTranslations('home.instructorHighlights');
+
     return (
         <section className="w-full py-16 bg-gradient-to-b from-[color:var(--ai-background)]/80 to-[color:var(--ai-card-bg)] dark:to-[color:var(--ai-background)]">
             <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 className="text-3xl font-bold text-[color:var(--ai-foreground)] mb-8 text-center">
-                    Meet Our Instructors
-                </h2>
+                <div className="text-center mb-12">
+                    <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--ai-foreground)] mb-4">
+                        {t('title')}
+                    </h2>
+                    <p className="text-xl text-[color:var(--ai-muted)] max-w-3xl mx-auto">
+                        {t('subtitle')}
+                    </p>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {instructors.map((instructor, idx) => (
                         <motion.div

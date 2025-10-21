@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useContext, useEffect, useCallback } from "react";
+import { useTranslations } from 'next-intl';
 import { AppContext } from "@/components/AppContext";
 import { useToast } from "@/components/Toast/ToastContext";
 import { firestoreDB, firebaseStorage } from "@/utils/firebase/firebase.config";
@@ -66,6 +67,8 @@ export default function AddCourse(props: AddCourseProps) {
     }
     const { products, courses, user, refreshProducts } = context;
     const { showToast } = useToast();
+    const t = useTranslations('common.notifications');
+    const tCourses = useTranslations('courses');
 
     useEffect(() => {
         // If courseId is provided, we're in edit mode
@@ -284,8 +287,8 @@ export default function AddCourse(props: AddCourseProps) {
         if (!customPriceAmount || !courseName) {
             showToast({
                 type: 'warning',
-                title: 'Missing Information',
-                message: 'Please enter a price amount and course name',
+                title: t('warning.missingInformation'),
+                message: t('warning.missingInformationMessage'),
                 duration: 4000
             });
             return;
@@ -337,16 +340,16 @@ export default function AddCourse(props: AddCourseProps) {
 
             showToast({
                 type: 'success',
-                title: 'Price Created!',
-                message: `Successfully created price: ${data.amount / 100} ${data.currency.toUpperCase()}`,
+                title: t('success.priceCreated'),
+                message: t('success.priceCreatedMessage', { amount: data.amount / 100, currency: data.currency.toUpperCase() }),
                 duration: 5000
             });
         } catch (error) {
             console.error('Error creating price:', error);
             showToast({
                 type: 'error',
-                title: 'Failed to Create Price',
-                message: error instanceof Error ? error.message : 'Failed to create price. Please try again.',
+                title: t('error.priceCreationFailed'),
+                message: error instanceof Error ? error.message : t('error.priceCreationFailedMessage'),
                 duration: 6000
             });
         } finally {
@@ -367,7 +370,7 @@ export default function AddCourse(props: AddCourseProps) {
                     <div className="relative flex justify-between items-center p-6 bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent backdrop-blur-sm rounded-xl border border-[color:var(--ai-card-border)]/50">
                         <div>
                             <h1 className="text-3xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">
-                                {editMode ? 'Edit Course' : 'Create New Course'}
+                                {editMode ? t('actions.editCourse') : t('actions.createNewCourse')}
                             </h1>
                             <p className="text-[color:var(--ai-muted)] mt-2">
                                 {editMode
@@ -402,7 +405,7 @@ export default function AddCourse(props: AddCourseProps) {
                                     <InstructorNameField value={instructorName} onChange={(e) => setInstructorName(e.target.value)} />
 
                                     <Input
-                                        label="Estimated Duration"
+                                        label={t('form.labels.estimatedDuration')}
                                         variant="bordered"
                                         placeholder="e.g., 10 hours, 4 weeks"
                                         value={estimatedDuration}
@@ -415,7 +418,7 @@ export default function AddCourse(props: AddCourseProps) {
                                     />
                                 </div>
 
-                                <Input label="Repository URL"
+                                <Input label={t('form.labels.repositoryUrl')}
                                     type="url"
                                     variant="bordered"
                                     placeholder="https://github.com/username/repo"
@@ -445,7 +448,7 @@ export default function AddCourse(props: AddCourseProps) {
                                 </div>
                                 <div className="mb-6">
                                     <Select
-                                        label="Difficulty Level"
+                                        label={t('form.labels.difficultyLevel')}
                                         variant="bordered"
                                         value={courseLevel}
                                         onChange={(e: SelectChangeEvent) => setCourseLevel(e.target.value)}
@@ -601,7 +604,7 @@ export default function AddCourse(props: AddCourseProps) {
                                 <span className="font-medium text-[color:var(--ai-foreground)]">Pricing Tip:</span> Choose a competitive price that reflects the value of your course content and target audience.
                             </p>
                         </div>                        <Select
-                            label="Course Price"
+                            label={t('form.labels.coursePrice')}
                             variant="bordered"
                             value={coursePrice}
                             onChange={(e: SelectChangeEvent) => setCoursePrice(e.target.value)}
@@ -613,7 +616,7 @@ export default function AddCourse(props: AddCourseProps) {
                                 trigger: "focus:ring-2 focus:ring-[color:var(--ai-primary)]/20"
                             }}
                         >
-                            <SelectItem itemKey="" value="">Select a price</SelectItem>                            {products && products.length > 0 &&
+                            <SelectItem itemKey="" value="">{tCourses('form.labels.selectPrice')}</SelectItem>                            {products && products.length > 0 &&
                                 products.map((product: StripeProduct) => (
                                     product.prices &&
                                     product.prices.map((price) => (
@@ -634,7 +637,7 @@ export default function AddCourse(props: AddCourseProps) {
                             </p>
                             <div className="grid grid-cols-2 gap-3 mb-3">
                                 <Input
-                                    label="Price Amount"
+                                    label={t('form.labels.priceAmount')}
                                     variant="bordered"
                                     placeholder="100.00"
                                     type="number"
@@ -673,7 +676,7 @@ export default function AddCourse(props: AddCourseProps) {
                                 className="w-full"
                                 size="sm"
                             >
-                                {creatingPrice ? 'Creating Price...' : 'Create Price in Stripe'}
+                                {creatingPrice ? t('actions.creatingPrice') : t('actions.createPrice')}
                             </Button>
                             {!courseName && (
                                 <p className="text-xs text-warning mt-2">Please enter a course name first</p>
@@ -703,8 +706,8 @@ export default function AddCourse(props: AddCourseProps) {
                     <CardHeader className="flex gap-3 px-6 py-4 border-b border-[color:var(--ai-card-border)]/60 bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-transparent">
                         <FiLayers className="text-[color:var(--ai-primary)]" size={20} />
                         <div className="flex flex-col">
-                            <h2 className="text-lg font-semibold text-[color:var(--ai-foreground)]">Course Content Details</h2>
-                            <p className="text-[color:var(--ai-muted)] text-sm">Enhance your course with additional information</p>
+                            <h2 className="text-lg font-semibold text-[color:var(--ai-foreground)]">{tCourses('form.sections.courseContentDetails')}</h2>
+                            <p className="text-[color:var(--ai-muted)] text-sm">{tCourses('form.sections.courseContentDetailsDesc')}</p>
                         </div>
                     </CardHeader>
                     <CardBody className="p-6">
@@ -889,7 +892,7 @@ export default function AddCourse(props: AddCourseProps) {
                                         onChange={(e) => setSelectedPrerequisiteId(e.target.value)}
                                         aria-label="Select prerequisite course"
                                     >
-                                        <option value="">Select a prerequisite course</option>
+                                        <option value="">{tCourses('form.labels.selectPrerequisite')}</option>
                                         {Object.values(courses)
                                             .filter(course =>
                                                 // Don't show the current course
@@ -930,8 +933,8 @@ export default function AddCourse(props: AddCourseProps) {
                             <span className="text-[color:var(--ai-primary)] font-bold text-sm">✓</span>
                         </div>
                         <div className="flex flex-col">
-                            <h2 className="text-lg font-semibold text-[color:var(--ai-foreground)]">Course Summary</h2>
-                            <p className="text-[color:var(--ai-muted)] text-sm">Review your course details before publishing</p>
+                            <h2 className="text-lg font-semibold text-[color:var(--ai-foreground)]">{tCourses('form.sections.courseSummary')}</h2>
+                            <p className="text-[color:var(--ai-muted)] text-sm">{tCourses('form.sections.courseSummaryDesc')}</p>
                         </div>
                     </CardHeader>
                     <CardBody className="p-6">
@@ -962,8 +965,8 @@ export default function AddCourse(props: AddCourseProps) {
                                     <FiLayers className="text-[color:var(--ai-primary)]" />
                                 </div>
                                 <div>
-                                    <p className="text-sm text-[color:var(--ai-muted)]">After creating your course</p>
-                                    <p className="font-medium text-[color:var(--ai-foreground)]">You'll be able to add lessons</p>
+                                    <p className="text-sm text-[color:var(--ai-muted)]">{tCourses('form.sections.afterCreating')}</p>
+                                    <p className="font-medium text-[color:var(--ai-foreground)]">{tCourses('admin.addLesson')}</p>
                                 </div>
                             </div>
                             <div className="flex gap-4">
@@ -990,7 +993,7 @@ export default function AddCourse(props: AddCourseProps) {
                                         onPress={editMode ? updateCourse : addCourse}
                                         className="min-w-[160px] bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] shadow-lg shadow-[color:var(--ai-primary)]/20 hover:shadow-[color:var(--ai-primary)]/30 transition-all"
                                     >
-                                        {editMode ? 'Update Course' : 'Create Course'}
+                                        {editMode ? t('actions.updateCourse') : t('actions.createCourse')}
                                     </Button>
                                 )}
                             </div>

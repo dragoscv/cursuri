@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { AppContext } from './AppContext';
 import { AppContextProps } from '@/types';
+import { useTranslations } from 'next-intl';
 import GithubIcon from './icons/GithubIcon';
 import TikTokIcon from './icons/TikTokIcon';
 import WebsiteIcon from './icons/WebsiteIcon';
@@ -11,6 +12,7 @@ import packageInfo from '../package.json';
 import Button from './ui/Button';
 
 const Footer = () => {
+    const t = useTranslations('common');
     const context = React.useContext(AppContext) as AppContextProps;
     if (!context) {
         throw new Error("You probably forgot to put <AppProvider>.");
@@ -28,38 +30,39 @@ const Footer = () => {
                     <div>
                         <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-4">Cursuri</h3>
                         <p className="text-[color:var(--ai-muted)] mb-4">
-                            Quality programming courses to help you master modern web and mobile development.
+                            {t('footer.about')}
                         </p>
                         <p className="text-sm text-[color:var(--ai-muted)]">
-                            Version {appVersion}
+                            {t('footer.version')} {appVersion}
                         </p>
                     </div>
 
                     {/* Middle column - Quick Links */}
                     <div>
-                        <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-4">Quick Links</h3>
+                        <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-4">{t('footer.quickLinks')}</h3>
                         <ul className="space-y-2">
                             <li>
                                 <Link href="/courses" className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition">
-                                    All Courses
+                                    {t('nav.allCourses')}
                                 </Link>
                             </li>
                             <li>
                                 <Link href="/#featured" className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition">
-                                    Featured Courses
+                                    {t('nav.featuredCourses')}
                                 </Link>
                             </li>
                             <li>
                                 <Link href="/#testimonials" className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition">
-                                    Testimonials
+                                    {t('nav.testimonials')}
                                 </Link>
-                            </li>                            <li>
+                            </li>
+                            <li>
                                 <Button
                                     onPress={toggleTheme}
                                     variant="light"
                                     className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] p-0 min-w-0"
                                 >
-                                    {isDark ? 'Dark Mode' : 'Light Mode'}
+                                    {isDark ? t('theme.dark') : t('theme.light')}
                                 </Button>
                             </li>
                         </ul>
@@ -67,7 +70,8 @@ const Footer = () => {
 
                     {/* Right column - Connect */}
                     <div>
-                        <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-4">Connect</h3>                        <div className="flex space-x-4 mb-4">
+                        <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-4">{t('footer.connect')}</h3>
+                        <div className="flex space-x-4 mb-4">
                             <a
                                 href="https://github.com/catalinpetrovici"
                                 target="_blank"
@@ -97,14 +101,14 @@ const Footer = () => {
                             </a>
                         </div>
                         <p className="text-[color:var(--ai-muted)]">
-                            Contact us at <a href="mailto:contact@cursuri.dev" className="text-[color:var(--ai-primary)] hover:underline">contact@cursuri.dev</a>
+                            {t('footer.contactEmail')} <a href="mailto:contact@cursuri.dev" className="text-[color:var(--ai-primary)] hover:underline">contact@cursuri.dev</a>
                         </p>
                     </div>
                 </div>
 
                 <div className="mt-12 pt-8 border-t border-[color:var(--ai-card-border)]">
                     <p className="text-center text-[color:var(--ai-muted)] text-sm">
-                        &copy; {year} Cursuri. All rights reserved.
+                        &copy; {year} Cursuri. {t('footer.copyright')}
                     </p>
                 </div>
             </div>

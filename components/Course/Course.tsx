@@ -2,6 +2,7 @@
 import React from 'react';
 import { useContext, useEffect, useState } from "react"
 import { AppContext } from "@/components/AppContext"
+import { useTranslations } from 'next-intl'
 import AddLesson from "./AddLesson"
 import Reviews from "./Reviews"
 import CourseContent from "./CourseContent"
@@ -28,6 +29,7 @@ export default function Course({ courseId }: CourseProps) {
     const [lessonCount, setLessonCount] = useState(0)
     const [loadingPayment, setLoadingPayment] = useState(false)
     const router = useRouter()
+    const t = useTranslations('courses');
 
     const context = useContext(AppContext) as AppContextProps
     if (!context) {
@@ -257,7 +259,7 @@ export default function Course({ courseId }: CourseProps) {
                     title={
                         <div className="flex items-center gap-2 relative">
                             <FiBookOpen size={18} className={selectedTab === "content" ? "text-[color:var(--ai-primary)]" : ""} />
-                            <span>Content</span>
+                            <span>{t('tabs.content')}</span>
                             {selectedTab === "content" && (
                                 <motion.span
                                     className="absolute -bottom-3 left-0 right-0 h-0.5 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
@@ -275,7 +277,7 @@ export default function Course({ courseId }: CourseProps) {
                     title={
                         <div className="flex items-center gap-2 relative">
                             <FiLayers size={18} className={selectedTab === "overview" ? "text-[color:var(--ai-primary)]" : ""} />
-                            <span>Overview</span>
+                            <span>{t('tabs.overview')}</span>
                             {selectedTab === "overview" && (
                                 <motion.span
                                     className="absolute -bottom-3 left-0 right-0 h-0.5 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
@@ -293,7 +295,7 @@ export default function Course({ courseId }: CourseProps) {
                     title={
                         <div className="flex items-center gap-2 relative">
                             <FiStar size={18} className={selectedTab === "reviews" ? "text-[color:var(--ai-primary)]" : ""} />
-                            <span>Reviews</span>
+                            <span>{t('tabs.reviews')}</span>
                             {selectedTab === "reviews" && (
                                 <motion.span
                                     className="absolute -bottom-3 left-0 right-0 h-0.5 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
@@ -328,7 +330,7 @@ export default function Course({ courseId }: CourseProps) {
                                     <line x1="16" y1="17" x2="8" y2="17"></line>
                                     <polyline points="10 9 9 9 8 9"></polyline>
                                 </svg>
-                                <span>Resources</span>
+                                <span>{t('tabs.resources')}</span>
                                 {selectedTab === "resources" && (
                                     <motion.span
                                         className="absolute -bottom-3 left-0 right-0 h-0.5 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
@@ -377,7 +379,7 @@ export default function Course({ courseId }: CourseProps) {
                 {/* Resources Tab */}
                 {selectedTab === "resources" && course?.resources && (
                     <div className="p-4">
-                        <h3 className="font-medium text-lg mb-4">Course Resources</h3>
+                        <h3 className="font-medium text-lg mb-4">{t('tabs.courseResources')}</h3>
                         <div className="space-y-3">
                             {course.resources.map((resource: Resource, index: number) => (
                                 <div key={index} className="flex items-center p-3 border rounded-lg">
@@ -421,7 +423,7 @@ export default function Course({ courseId }: CourseProps) {
                                 </div>
                                 <div>
                                     <h3 className="text-lg font-bold">Course Completed!</h3>
-                                    <p className="text-[color:var(--ai-muted)]">Congratulations on finishing this course</p>
+                                    <p className="text-[color:var(--ai-muted)]">{t('actions.congratulationsFinish')}</p>
                                 </div>
                             </div>
                             <Button

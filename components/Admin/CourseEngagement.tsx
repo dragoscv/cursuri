@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useContext, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card, CardBody, CardHeader, Spinner, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, Button } from '@heroui/react';
 import { AppContext } from '@/components/AppContext';
 import { collection, getFirestore, query } from 'firebase/firestore';
@@ -22,6 +23,8 @@ interface CourseEngagementData {
 }
 
 const CourseEngagement: React.FC = () => {
+    const t = useTranslations('admin.engagement');
+    const tCommon = useTranslations('common');
     const context = useContext(AppContext);
     if (!context) {
         throw new Error("CourseEngagement must be used within an AppProvider");
@@ -84,7 +87,7 @@ const CourseEngagement: React.FC = () => {
                 setEngagementData(courseEngagementData);
             } catch (error) {
                 console.error('Error fetching engagement data:', error);
-                setError('Failed to load engagement data');
+                setError(t('failedToLoad'));
             } finally {
                 setLoading(false);
             }
@@ -125,7 +128,7 @@ const CourseEngagement: React.FC = () => {
         return (
             <div className="text-center py-12">
                 <h2 className="text-2xl font-bold text-[color:var(--ai-danger)] mb-4">{error}</h2>
-                <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Please try again later</p>
+                <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">{tCommon('pleaseTryAgain')}</p>
             </div>
         );
     }
@@ -133,7 +136,7 @@ const CourseEngagement: React.FC = () => {
     return (
         <div className="space-y-8">
             <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold">Course Engagement</h1>
+                <h1 className="text-3xl font-bold">{t('title')}</h1>
 
                 <Button
                     color="primary"
@@ -143,7 +146,7 @@ const CourseEngagement: React.FC = () => {
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
-                    Export Report
+                    {t('exportReport')}
                 </Button>
             </div>
 
@@ -154,7 +157,7 @@ const CourseEngagement: React.FC = () => {
                         <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">
                             {Object.keys(courses).length}
                         </div>
-                        <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Total Courses</p>
+                        <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">{t('totalCourses')}</p>
                     </CardBody>
                 </Card>
 
@@ -163,7 +166,7 @@ const CourseEngagement: React.FC = () => {
                         <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[color:var(--ai-primary)] mb-2">
                             {engagementData.reduce((sum, course) => sum + course.totalStudents, 0).toLocaleString()}
                         </div>
-                        <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Total Enrollments</p>
+                        <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">{t('totalEnrollments')}</p>
                     </CardBody>
                 </Card>
 
@@ -172,7 +175,7 @@ const CourseEngagement: React.FC = () => {
                         <div className="text-4xl font-bold text-[color:var(--ai-success)] dark:text-[color:var(--ai-success)] mb-2">
                             {Math.round(engagementData.reduce((sum, course) => sum + course.completionRate, 0) / engagementData.length)}%
                         </div>
-                        <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Avg. Completion Rate</p>
+                        <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">{t('avgCompletionRate')}</p>
                     </CardBody>
                 </Card>
 
@@ -181,7 +184,7 @@ const CourseEngagement: React.FC = () => {
                         <div className="text-4xl font-bold text-purple-600 dark:text-purple-400 mb-2">
                             {formatTime(Math.round(engagementData.reduce((sum, course) => sum + course.averageTime, 0) / engagementData.length))}
                         </div>
-                        <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Avg. Completion Time</p>
+                        <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">{t('avgCompletionTime')}</p>
                     </CardBody>
                 </Card>
             </div>
@@ -189,17 +192,17 @@ const CourseEngagement: React.FC = () => {
             {/* Course engagement table */}
             <Card className="shadow-md">
                 <CardHeader>
-                    <h2 className="text-xl font-semibold">Course Engagement Metrics</h2>
+                    <h2 className="text-xl font-semibold">{t('courseEngagementMetrics')}</h2>
                 </CardHeader>
                 <CardBody>
                     <Table aria-label="Course engagement metrics table">
                         <TableHeader>
-                            <TableColumn>COURSE</TableColumn>
-                            <TableColumn>STUDENTS</TableColumn>
-                            <TableColumn>COMPLETION RATE</TableColumn>
-                            <TableColumn>AVG. TIME</TableColumn>
-                            <TableColumn>VIEWS</TableColumn>
-                            <TableColumn>ENGAGEMENT</TableColumn>
+                            <TableColumn>{t('tableCourse')}</TableColumn>
+                            <TableColumn>{t('tableStudents')}</TableColumn>
+                            <TableColumn>{t('tableCompletionRate')}</TableColumn>
+                            <TableColumn>{t('tableAvgTime')}</TableColumn>
+                            <TableColumn>{t('tableViews')}</TableColumn>
+                            <TableColumn>{t('tableEngagement')}</TableColumn>
                         </TableHeader>
                         <TableBody>
                             {paginatedData.length > 0 ? (
@@ -241,9 +244,9 @@ const CourseEngagement: React.FC = () => {
                                                 ></div>
                                             </div>
                                             <div className="flex justify-between text-xs text-[color:var(--ai-muted-foreground)] mt-1">
-                                                <span>Completed</span>
-                                                <span>In Progress</span>
-                                                <span>Not Started</span>
+                                                <span>{t('completed')}</span>
+                                                <span>{t('inProgress')}</span>
+                                                <span>{t('notStarted')}</span>
                                             </div>
                                         </TableCell>
                                     </TableRow>
@@ -251,7 +254,7 @@ const CourseEngagement: React.FC = () => {
                             ) : (
                                 <TableRow>
                                     <TableCell colSpan={6} className="text-center py-8">
-                                        <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">No courses found</p>
+                                        <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">{t('noCoursesFound')}</p>
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -273,19 +276,19 @@ const CourseEngagement: React.FC = () => {
 
             {/* Legend for the engagement chart */}
             <div className="bg-[color:var(--ai-card-bg)]/80 dark:bg-[color:var(--ai-card-border)]/50 rounded-lg p-4">
-                <h3 className="text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-3">Engagement Chart Legend</h3>
+                <h3 className="text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-3">{t('engagementChartLegend')}</h3>
                 <div className="flex flex-wrap gap-4">
                     <div className="flex items-center">
                         <div className="w-4 h-4 bg-[color:var(--ai-success)]/100 rounded-sm mr-2"></div>
-                        <span className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Completed</span>
+                        <span className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">{t('completed')}</span>
                     </div>
                     <div className="flex items-center">
                         <div className="w-4 h-4 bg-yellow-500 rounded-sm mr-2"></div>
-                        <span className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">In Progress</span>
+                        <span className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">{t('inProgress')}</span>
                     </div>
                     <div className="flex items-center">
                         <div className="w-4 h-4 bg-[color:var(--ai-muted-foreground)] rounded-sm mr-2"></div>
-                        <span className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">Not Started</span>
+                        <span className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">{t('notStarted')}</span>
                     </div>
                 </div>
             </div>

@@ -1,48 +1,54 @@
 import { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 
-export const metadata: Metadata = {
-    title: 'About Us | Cursuri',
-    description: 'Learn about our mission to provide high-quality courses in AI, Marketing, Data Science, and essential skills to help professionals advance their careers.',
+export async function generateMetadata(): Promise<Metadata> {
+    const t = await getTranslations('about.metadata');
+    return {
+        title: t('title'),
+        description: t('description'),
+    };
 }
 
-export default function AboutPage() {
+export default async function AboutPage() {
+    const t = await getTranslations('about');
+    
     return (
         <div className="min-h-screen bg-[color:var(--ai-background)] pt-20 pb-16">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Hero Section */}
                 <div className="text-center mb-16">
                     <h1 className="text-4xl md:text-5xl font-bold text-[color:var(--ai-foreground)] mb-6">
-                        About Cursuri
+                        {t('hero.title')}
                     </h1>
                     <p className="text-xl text-[color:var(--ai-muted)] max-w-2xl mx-auto">
-                        We're passionate about empowering learners with the skills and knowledge needed to thrive in the AI era and beyond.
+                        {t('hero.subtitle')}
                     </p>
                 </div>
 
                 {/* Mission Section */}
                 <div className="mb-16">
-                    <h2 className="text-3xl font-bold text-[color:var(--ai-foreground)] mb-6">Our Mission</h2>
+                    <h2 className="text-3xl font-bold text-[color:var(--ai-foreground)] mb-6">{t('mission.title')}</h2>
                     <div className="bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-xl p-8">
                         <p className="text-lg text-[color:var(--ai-foreground)] leading-relaxed mb-4">
-                            At Cursuri, we believe that high-quality education should be accessible to everyone. Our mission is to bridge the gap between traditional education and industry demands by providing practical, project-based learning experiences across diverse fields.
+                            {t('mission.paragraph1')}
                         </p>
                         <p className="text-lg text-[color:var(--ai-foreground)] leading-relaxed">
-                            From Artificial Intelligence and Data Science to Digital Marketing and Business Strategy, we focus on real-world applications that prepare our students for success in the rapidly evolving professional landscape.
+                            {t('mission.paragraph2')}
                         </p>
                     </div>
                 </div>
 
                 {/* What We Offer */}
                 <div className="mb-16">
-                    <h2 className="text-3xl font-bold text-[color:var(--ai-foreground)] mb-8">What We Offer</h2>
+                    <h2 className="text-3xl font-bold text-[color:var(--ai-foreground)] mb-8">{t('whatWeOffer.title')}</h2>
                     <div className="grid md:grid-cols-2 gap-8">
                         <div className="bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-xl p-6">
                             <div className="w-12 h-12 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-lg flex items-center justify-center mb-4">
                                 <span className="text-white text-xl">🎯</span>
                             </div>
-                            <h3 className="text-xl font-semibold text-[color:var(--ai-foreground)] mb-3">Project-Based Learning</h3>
+                            <h3 className="text-xl font-semibold text-[color:var(--ai-foreground)] mb-3">{t('whatWeOffer.projectBased.title')}</h3>
                             <p className="text-[color:var(--ai-muted)]">
-                                Learn by building real-world projects across various domains - from AI models and data visualizations to marketing campaigns and business solutions that you can showcase in your portfolio.
+                                {t('whatWeOffer.projectBased.description')}
                             </p>
                         </div>
 
@@ -50,9 +56,9 @@ export default function AboutPage() {
                             <div className="w-12 h-12 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-lg flex items-center justify-center mb-4">
                                 <span className="text-white text-xl">👨‍💻</span>
                             </div>
-                            <h3 className="text-xl font-semibold text-[color:var(--ai-foreground)] mb-3">Expert Instructors</h3>
+                            <h3 className="text-xl font-semibold text-[color:var(--ai-foreground)] mb-3">{t('whatWeOffer.expertInstructors.title')}</h3>
                             <p className="text-[color:var(--ai-muted)]">
-                                Our instructors are experienced professionals working in the industry. They bring real-world insights and best practices to every lesson.
+                                {t('whatWeOffer.expertInstructors.description')}
                             </p>
                         </div>
 
@@ -60,9 +66,9 @@ export default function AboutPage() {
                             <div className="w-12 h-12 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-lg flex items-center justify-center mb-4">
                                 <span className="text-white text-xl">🔄</span>
                             </div>
-                            <h3 className="text-xl font-semibold text-[color:var(--ai-foreground)] mb-3">Up-to-Date Content</h3>
+                            <h3 className="text-xl font-semibold text-[color:var(--ai-foreground)] mb-3">{t('whatWeOffer.upToDate.title')}</h3>
                             <p className="text-[color:var(--ai-muted)]">
-                                Technology evolves rapidly, and so do our courses. We regularly update content to ensure you're learning the latest tools and techniques.
+                                {t('whatWeOffer.upToDate.description')}
                             </p>
                         </div>
 
@@ -70,9 +76,9 @@ export default function AboutPage() {
                             <div className="w-12 h-12 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-lg flex items-center justify-center mb-4">
                                 <span className="text-white text-xl">🤝</span>
                             </div>
-                            <h3 className="text-xl font-semibold text-[color:var(--ai-foreground)] mb-3">Community Support</h3>
+                            <h3 className="text-xl font-semibold text-[color:var(--ai-foreground)] mb-3">{t('whatWeOffer.community.title')}</h3>
                             <p className="text-[color:var(--ai-muted)]">
-                                Join a diverse community of learners and professionals from various industries. Get help when you need it and share your knowledge with others.
+                                {t('whatWeOffer.community.description')}
                             </p>
                         </div>
                     </div>
@@ -80,15 +86,15 @@ export default function AboutPage() {
 
                 {/* Values */}
                 <div className="mb-16">
-                    <h2 className="text-3xl font-bold text-[color:var(--ai-foreground)] mb-8">Our Values</h2>
+                    <h2 className="text-3xl font-bold text-[color:var(--ai-foreground)] mb-8">{t('values.title')}</h2>
                     <div className="space-y-6">
                         <div className="flex gap-4">
                             <div className="w-8 h-8 bg-[color:var(--ai-primary)] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                                 <span className="text-white text-sm">✓</span>
                             </div>
                             <div>
-                                <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-2">Quality First</h3>
-                                <p className="text-[color:var(--ai-muted)]">We never compromise on quality. Every course is carefully crafted and thoroughly tested.</p>
+                                <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-2">{t('values.quality.title')}</h3>
+                                <p className="text-[color:var(--ai-muted)]">{t('values.quality.description')}</p>
                             </div>
                         </div>
 
@@ -97,8 +103,8 @@ export default function AboutPage() {
                                 <span className="text-white text-sm">✓</span>
                             </div>
                             <div>
-                                <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-2">Accessibility</h3>
-                                <p className="text-[color:var(--ai-muted)]">Learning should be accessible to everyone, regardless of background or experience level.</p>
+                                <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-2">{t('values.accessibility.title')}</h3>
+                                <p className="text-[color:var(--ai-muted)]">{t('values.accessibility.description')}</p>
                             </div>
                         </div>
 
@@ -107,8 +113,8 @@ export default function AboutPage() {
                                 <span className="text-white text-sm">✓</span>
                             </div>
                             <div>
-                                <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-2">Continuous Improvement</h3>
-                                <p className="text-[color:var(--ai-muted)]">We're always learning and improving, just like our students.</p>
+                                <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-2">{t('values.improvement.title')}</h3>
+                                <p className="text-[color:var(--ai-muted)]">{t('values.improvement.description')}</p>
                             </div>
                         </div>
                     </div>
@@ -116,22 +122,22 @@ export default function AboutPage() {
 
                 {/* CTA Section */}
                 <div className="text-center bg-gradient-to-r from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 rounded-xl p-8">
-                    <h2 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-4">Ready to Start Learning?</h2>
+                    <h2 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-4">{t('cta.title')}</h2>
                     <p className="text-[color:var(--ai-muted)] mb-6">
-                        Join thousands of learners who have advanced their careers with our courses in AI, Marketing, Data Science, and more.
+                        {t('cta.description')}
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <a
                             href="/courses"
                             className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white px-8 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity"
                         >
-                            Browse Courses
+                            {t('cta.browseCourses')}
                         </a>
                         <a
                             href="/contact"
                             className="border border-[color:var(--ai-primary)] text-[color:var(--ai-primary)] px-8 py-3 rounded-lg font-medium hover:bg-[color:var(--ai-primary)]/10 transition-colors"
                         >
-                            Contact Us
+                            {t('cta.contactUs')}
                         </a>
                     </div>
                 </div>

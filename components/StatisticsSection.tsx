@@ -2,9 +2,11 @@
 
 import React, { useMemo } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import ScrollAnimationWrapper from './animations/ScrollAnimationWrapper';
 
 const StatisticsSection = React.memo(function StatisticsSection() {
+    const t = useTranslations('home.statistics');
     const ref = React.useRef(null);
     const { scrollYProgress } = useScroll({
         target: ref,
@@ -33,10 +35,10 @@ const StatisticsSection = React.memo(function StatisticsSection() {
     }), []);
 
     const stats = [
-        { value: "15+", label: "Courses", icon: "📚", color: "from-[color:var(--ai-primary)] to-[color:var(--ai-primary)]/80" },
-        { value: "2,500+", label: "Students", icon: "👨‍🎓", color: "from-[color:var(--ai-secondary)] to-[color:var(--ai-secondary)]/80" },
-        { value: "10,000+", label: "Hours of Content", icon: "⏱️", color: "from-[color:var(--ai-accent)] to-[color:var(--ai-accent)]/80" },
-        { value: "4.8", label: "Average Rating", icon: "⭐", color: "from-amber-500 to-amber-400" }
+        { value: t('courses.value'), label: t('courses.label'), icon: t('courses.icon'), color: "from-[color:var(--ai-primary)] to-[color:var(--ai-primary)]/80" },
+        { value: t('students.value'), label: t('students.label'), icon: t('students.icon'), color: "from-[color:var(--ai-secondary)] to-[color:var(--ai-secondary)]/80" },
+        { value: t('hours.value'), label: t('hours.label'), icon: t('hours.icon'), color: "from-[color:var(--ai-accent)] to-[color:var(--ai-accent)]/80" },
+        { value: t('rating.value'), label: t('rating.label'), icon: t('rating.icon'), color: "from-amber-500 to-amber-400" }
     ];
 
     const counterVariants = {

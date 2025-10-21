@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useContext, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Spinner } from '@heroui/react';
 import { AppContext } from '@/components/AppContext';
 import AdminAnalyticsSection from './AdminAnalyticsSection';
@@ -8,6 +9,8 @@ import AdminLessonsSection from './AdminLessonsSection';
 import AdminRevenueSection from './AdminRevenueSection';
 
 const AdminDashboard: React.FC = () => {
+    const t = useTranslations('admin.dashboard');
+    const tCommon = useTranslations('common');
     const context = useContext(AppContext);
     if (!context) {
         throw new Error("AdminDashboard must be used within an AppProvider");
@@ -30,7 +33,7 @@ const AdminDashboard: React.FC = () => {
             } catch (error) {
                 console.error('Error fetching analytics:', error);
                 if (mounted) {
-                    setError('Failed to load analytics data');
+                    setError(t('failedToLoad'));
                 }
             } finally {
                 if (mounted) {
@@ -61,7 +64,7 @@ const AdminDashboard: React.FC = () => {
         return (
             <div className="text-center py-12">
                 <h2 className="text-2xl font-bold text-[color:var(--ai-danger)] mb-4">{error}</h2>
-                <p className="text-[color:var(--ai-muted-foreground)]">Please try again later</p>
+                <p className="text-[color:var(--ai-muted-foreground)]">{tCommon('pleaseTryAgain')}</p>
             </div>
         );
     }
@@ -70,10 +73,10 @@ const AdminDashboard: React.FC = () => {
         <div className="space-y-8">
             <div>
                 <h1 className="text-3xl font-bold text-[color:var(--ai-foreground)]">
-                    Admin Dashboard
+                    {t('title')}
                 </h1>
                 <p className="text-[color:var(--ai-muted)] mt-2">
-                    Overview of your platform analytics and performance
+                    {t('overview')}
                 </p>
             </div>
 

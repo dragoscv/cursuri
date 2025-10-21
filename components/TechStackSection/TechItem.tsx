@@ -2,16 +2,18 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 
 type TechItemProps = {
-    name: string;
+    techKey: string;
     Icon: React.ComponentType<{ size?: number; className?: string }>;
-    description: string;
     color: string;
     index: number;
 }
 
-export default function TechItem({ name, Icon, description, color, index }: TechItemProps) {
+export default function TechItem({ techKey, Icon, color, index }: TechItemProps) {
+    const t = useTranslations('home.techStack.technologies');
+
     const itemVariants = {
         hidden: { opacity: 0, y: 20 },
         visible: {
@@ -35,9 +37,9 @@ export default function TechItem({ name, Icon, description, color, index }: Tech
                 >
                     <Icon size={28} className="text-[color:var(--ai-primary)]" />
                 </div>
-                <h3 className="text-xl font-bold text-[color:var(--ai-foreground)]">{name}</h3>
+                <h3 className="text-xl font-bold text-[color:var(--ai-foreground)]">{t(`${techKey}.name`)}</h3>
             </div>
-            <p className="text-[color:var(--ai-muted)]">{description}</p>
+            <p className="text-[color:var(--ai-muted)]">{t(`${techKey}.description`)}</p>
         </motion.div>
     )
 }

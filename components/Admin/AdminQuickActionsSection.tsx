@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { Card, CardBody } from '@heroui/react';
 
 interface ActionButtonProps {
@@ -26,13 +27,15 @@ interface AdminQuickActionsSectionProps {
 }
 
 export default function AdminQuickActionsSection({ onTabChange }: AdminQuickActionsSectionProps) {
+    const t = useTranslations('admin.quickActions');
+
     return (
         <Card className="shadow-md mb-8">
             <CardBody>
-                <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
+                <h2 className="text-xl font-semibold mb-4">{t('title')}</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <ActionButton
-                        title="Add Course"
+                        title={t('addCourse')}
                         href="/admin/courses/add"
                         icon={
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -41,7 +44,7 @@ export default function AdminQuickActionsSection({ onTabChange }: AdminQuickActi
                         }
                     />
                     <ActionButton
-                        title="Manage Users"
+                        title={t('manageUsers')}
                         onClick={() => onTabChange('users')}
                         icon={
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -50,7 +53,7 @@ export default function AdminQuickActionsSection({ onTabChange }: AdminQuickActi
                         }
                     />
                     <ActionButton
-                        title="View Analytics"
+                        title={t('viewAnalytics')}
                         onClick={() => onTabChange('analytics')}
                         icon={
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -59,7 +62,7 @@ export default function AdminQuickActionsSection({ onTabChange }: AdminQuickActi
                         }
                     />
                     <ActionButton
-                        title="Settings"
+                        title={t('settings')}
                         onClick={() => onTabChange('settings')}
                         icon={
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

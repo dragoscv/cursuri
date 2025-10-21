@@ -127,7 +127,7 @@ const CaptionsSection: React.FC<CaptionsSectionProps> = ({
 
                             {/* Caption Preview */}
                             <div className="max-h-[100px] overflow-y-auto p-3 bg-[color:var(--ai-card-bg)]/80 rounded border border-[color:var(--ai-card-border)]/30 text-sm text-[color:var(--ai-foreground)]">
-                                {captionsData[selectedCaptionLanguage]?.content || "No content available"}
+                                {captionsData[selectedCaptionLanguage]?.content || t('captions.noContentAvailable')}
                             </div>
                         </div>
 
@@ -155,7 +155,7 @@ const CaptionsSection: React.FC<CaptionsSectionProps> = ({
                                 isDisabled={!hasFileUploaded || generatingCaptions}
                                 startContent={!generatingCaptions && <FiFileText size={14} />}
                             >
-                                {generatingCaptions ? "Processing..." : "Regenerate Captions"}
+                                {generatingCaptions ? t('captions.processing') : t('captions.regenerateCaptions')}
                             </Button>
                         </div>
                     </>

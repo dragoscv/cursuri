@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import {
     OptimizedImageProps,
     getOptimizedImageProps,
@@ -44,6 +45,7 @@ export default function OptimizedImage({
     const [isLoading, setIsLoading] = useState(true);
     const [hasError, setHasError] = useState(false);
     const imageRef = useRef<HTMLImageElement>(null);
+    const t = useTranslations('common.emptyStates');
 
     // Get optimized props
     const optimizedProps = getOptimizedImageProps(currentSrc, alt, {
@@ -147,7 +149,7 @@ export default function OptimizedImage({
                                 d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                             />
                         </svg>
-                        <p className="text-sm">Image not available</p>
+                        <p className="text-sm">{t('imageNotAvailable')}</p>
                     </div>
                 </div>
             )}

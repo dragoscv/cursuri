@@ -1,0 +1,67 @@
+{
+    "metadata": {
+        "title": "Contact Us | Cursuri",
+        "description": "Get in touch with us. We'd love to hear from you about your learning journey or answer any questions you might have."
+    },
+    "hero": {
+        "title": "Contact Us",
+        "subtitle": "Have a question about our courses or need support? We're here to help! Reach out to us and we'll get back to you as soon as possible."
+    },
+    "form": {
+        "title": "Send us a Message",
+        "labels": {
+            "name": "Full Name",
+            "email": "Email Address",
+            "subject": "Subject",
+            "message": "Message"
+        },
+        "placeholders": {
+            "name": "Your full name",
+            "email": "your@email.com",
+            "message": "Tell us how we can help you..."
+        },
+        "subjects": {
+            "placeholder": "Select a subject",
+            "courseInquiry": "Course Inquiry",
+            "technicalSupport": "Technical Support",
+            "billing": "Billing Question",
+            "partnership": "Partnership Opportunity",
+            "feedback": "Feedback",
+            "other": "Other"
+        },
+        "submitButton": "Send Message"
+    },
+    "info": {
+        "title": "Get in Touch",
+        "email": {
+            "title": "Email",
+            "value": "contact@cursuri.dev"
+        },
+        "responseTime": {
+            "title": "Response Time",
+            "description": "We typically respond within 24 hours during business days."
+        },
+        "globalSupport": {
+            "title": "Global Support",
+            "description": "We provide support to students worldwide in English and Romanian."
+        }
+    },
+    "faq": {
+        "title": "Frequently Asked Questions",
+        "refunds": {
+            "question": "Do you offer refunds?",
+            "answer": "Yes, we offer a 30-day money-back guarantee on all our courses. If you're not satisfied with your learning experience, contact us for a full refund."
+        },
+        "mobile": {
+            "question": "Can I access courses on mobile?",
+            "answer": "Absolutely! Our platform is fully responsive and works seamlessly on all devices, including smartphones and tablets."
+        },
+        "certificates": {
+            "question": "Do you provide certificates?",
+            "answer": "Yes, you'll receive a certificate of completion for each course you finish. These certificates can be shared on LinkedIn and other professional platforms."
+        }
+    },
+    "social": {
+        "title": "Follow Us"
+    }
+}

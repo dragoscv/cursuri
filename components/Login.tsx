@@ -7,45 +7,47 @@ import { motion } from "framer-motion";
 import { useToast } from "@/components/Toast";
 import { validatePassword } from "@/utils/security/passwordValidation";
 import PasswordStrengthMeter from "@/components/ui/PasswordStrengthMeter";
+import { useTranslations } from 'next-intl';
 
 // Helper function to get user-friendly error messages
-const getFirebaseErrorMessage = (error: any): string => {
+const getFirebaseErrorMessage = (error: any, t: any): string => {
     const errorCode = error?.code || '';
 
     switch (errorCode) {
         case 'auth/user-not-found':
         case 'auth/wrong-password':
         case 'auth/invalid-credential':
-            return 'Invalid email or password. Please check your credentials and try again.';
+            return t('errors.userNotFound');
         case 'auth/email-already-in-use':
-            return 'An account with this email already exists. Try signing in instead.';
+            return t('errors.emailAlreadyInUse');
         case 'auth/weak-password':
-            return 'Password is too weak. Please choose a stronger password.';
+            return t('errors.weakPassword');
         case 'auth/invalid-email':
-            return 'Invalid email address. Please enter a valid email.';
+            return t('errors.invalidEmailFormat');
         case 'auth/operation-not-allowed':
-            return 'This sign-in method is not enabled. Please contact support.';
+            return t('errors.operationNotAllowed');
         case 'auth/user-disabled':
-            return 'This account has been disabled. Please contact support.';
+            return t('errors.userDisabled');
         case 'auth/too-many-requests':
-            return 'Too many failed attempts. Please try again later.';
+            return t('errors.tooManyRequests');
         case 'auth/network-request-failed':
-            return 'Network error. Please check your connection and try again.';
+            return t('errors.networkRequestFailed');
         case 'auth/popup-closed-by-user':
-            return 'Sign-in was cancelled. Please try again.';
+            return t('errors.popupClosedByUser');
         case 'auth/popup-blocked':
-            return 'Pop-up blocked by browser. Please allow pop-ups and try again.';
+            return t('errors.popupBlocked');
         case 'auth/cancelled-popup-request':
-            return 'Sign-in was cancelled. Please try again.';
+            return t('errors.cancelledPopupRequest');
         default:
             if (errorCode.includes('cors') || error.message?.includes('Cross-Origin')) {
-                return 'Authentication service temporarily unavailable. Please try again later or contact support.';
+                return t('errors.corsError');
             }
-            return error?.message || 'An unexpected error occurred. Please try again.';
+            return error?.message || t('errors.unexpectedError');
     }
 };
 
 export default function Login(props: { onClose: () => void }) {
+    const t = useTranslations('auth');
     // State variables for the enhanced login component
     const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
     const [email, setEmail] = useState("");
@@ -82,20 +84,20 @@ export default function Login(props: { onClose: () => void }) {
                 if (toast) {
                     toast.showToast({
                         type: 'success',
-                        title: 'Login Successful',
-                        message: 'You are now signed in with Google.',
+                        title: t('modal.loginSuccessTitle'),
+                        message: t('modal.loginSuccessMessage'),
                         duration: 4000
                     });
                 }
             }
         } catch (error: unknown) {
             console.error("Google login error:", error);
-            const errorMsg = getFirebaseErrorMessage(error);
+            const errorMsg = getFirebaseErrorMessage(error, t);
             setErrorMessage(errorMsg);
             if (toast) {
                 toast.showToast({
                     type: 'error',
-                    title: 'Google Sign-in Failed',
+                    title: t('modal.googleSignInFailed'),
                     message: errorMsg,
                     duration: 8000
                 });
@@ -107,20 +109,20 @@ export default function Login(props: { onClose: () => void }) {
     const handleEmailLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!email || !password) {
-            setErrorMessage("Please enter both email and password");
+            setErrorMessage(t('errors.allFieldsRequired'));
             return;
         }
 
         setLoadingEmailLogin(true);
-        setErrorMessage(""); try {
+        try {
             const result = await signInWithEmailAndPassword(firebaseAuth, email, password);
             if (result) {
                 props.onClose();
                 if (toast) {
                     toast.showToast({
                         type: 'success',
-                        title: 'Login Successful',
-                        message: 'You are now signed in.',
+                        title: t('modal.loginSuccessTitle'),
+                        message: t('modal.loginSuccessMessage'),
                         duration: 4000
                     });
                 }
@@ -139,61 +141,61 @@ export default function Login(props: { onClose: () => void }) {
                     if (signInMethods.includes('google.com')) {
                         setErrorMessage(
                             <span>
-                                This email is registered with Google. Please{" "}
+                                {t('errors.registeredWithMethod', { method: 'Google' })} {" "}
                                 <button
                                     type="button"
                                     onClick={signInWithGoogleRedirect}
                                     className="text-[color:var(--ai-primary)] underline hover:text-[color:var(--ai-secondary)]"
                                 >
-                                    sign in with Google
+                                    {t('modal.signInWithGoogle').toLowerCase()}
                                 </button>{" "}
                                 instead.
                             </span>
                         );
                     } else if (signInMethods.length > 0) {
-                        setErrorMessage(`This email is registered with ${signInMethods.join(', ')}. Please use that method to sign in.`);
+                        setErrorMessage(t('errors.registeredWithMethod', { method: signInMethods.join(', ') }));
                     } else if (error.code === 'auth/invalid-credential') {
                         // This likely means the account exists but with a different authentication method
                         // or the password is incorrect
                         setErrorMessage(
                             <span>
-                                Invalid credentials. If you registered with Google, please{" "}
+                                {t('errors.userNotFound')} {" "}
                                 <button
                                     type="button"
                                     onClick={signInWithGoogleRedirect}
                                     className="text-[color:var(--ai-primary)] underline hover:text-[color:var(--ai-secondary)]"
                                 >
-                                    sign in with Google
+                                    {t('modal.signInWithGoogle').toLowerCase()}
                                 </button>{" "}
                                 instead.
                             </span>
                         );
                     } else {
                         // Generic error for other cases
-                        setErrorMessage("Unable to sign in with these credentials. Please check your email and password.");
+                        setErrorMessage(t('errors.unableToSignIn'));
                     }
                 } catch (methodError) {
                     console.error("Error checking sign-in methods:", methodError);
-                    setErrorMessage("Authentication error. Please verify your credentials or try signing in with Google instead.");
+                    setErrorMessage(getFirebaseErrorMessage(methodError, t));
                 }
             } else if (error.code === 'auth/user-not-found') {
                 // User doesn't exist, suggest registration
                 setErrorMessage(
                     <span>
-                        This email is not registered. Would you like to{" "}
+                        {t('errors.userNotFound')} {" "}
                         <button
                             type="button"
                             onClick={() => setActiveTab('register')}
                             className="text-[color:var(--ai-primary)] underline hover:text-[color:var(--ai-secondary)]"
                         >
-                            create an account
+                            {t('modal.createAccount').toLowerCase()}
                         </button>?
                     </span>
                 );
             } else if (error.code === 'auth/wrong-password') {
-                setErrorMessage("Invalid password. Please try again.");
+                setErrorMessage(t('errors.userNotFound'));
             } else {
-                setErrorMessage(error.message || "Failed to sign in");
+                setErrorMessage(getFirebaseErrorMessage(error, t));
             }
         } finally {
             setLoadingEmailLogin(false);
@@ -205,12 +207,12 @@ export default function Login(props: { onClose: () => void }) {
         e.preventDefault();
         // Basic input validation
         if (!email || !password || !confirmPassword) {
-            setErrorMessage("All fields are required");
+            setErrorMessage(t('errors.allFieldsRequired'));
             return;
         }
 
         if (password !== confirmPassword) {
-            setErrorMessage("Passwords do not match");
+            setErrorMessage(t('errors.passwordMismatch'));
             return;
         }
 
@@ -219,7 +221,7 @@ export default function Login(props: { onClose: () => void }) {
         if (!validation.isValid) {
             setErrorMessage(
                 <div className="space-y-2">
-                    <p className="font-medium">Password does not meet security requirements:</p>
+                    <p className="font-medium">{t('errors.passwordRequirements')}</p>
                     <ul className="list-disc pl-4 text-sm">
                         {validation.errors.map((error, index) => (
                             <li key={index}>{error}</li>
@@ -240,21 +242,21 @@ export default function Login(props: { onClose: () => void }) {
                 if (toast) {
                     toast.showToast({
                         type: 'success',
-                        title: 'Registration Successful',
-                        message: 'Your account has been created. You are now signed in.',
+                        title: t('modal.registrationSuccessTitle'),
+                        message: t('modal.registrationSuccessMessage'),
                         duration: 4000
                     });
                 }
             }
         } catch (error: unknown) {
             console.error("Registration error:", error);
-            const errorMsg = getFirebaseErrorMessage(error);
+            const errorMsg = getFirebaseErrorMessage(error, t);
             setErrorMessage(errorMsg);
 
             if (toast) {
                 toast.showToast({
                     type: 'error',
-                    title: 'Registration Failed',
+                    title: t('modal.registrationFailed'),
                     message: errorMsg,
                     duration: 8000
                 });
@@ -308,13 +310,13 @@ export default function Login(props: { onClose: () => void }) {
             <motion.div variants={itemVariants} className="text-center mb-6">
                 <h1 className="text-2xl md:text-3xl font-bold mb-2 text-[color:var(--ai-foreground)]">
                     <span className="bg-clip-text text-transparent bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]">
-                        {activeTab === 'login' ? 'Welcome Back' : 'Create Account'}
+                        {activeTab === 'login' ? t('modal.welcomeBack') : t('modal.createAccount')}
                     </span>
                 </h1>
                 <p className="text-[color:var(--ai-muted)] text-sm max-w-xs mx-auto">
                     {activeTab === 'login'
-                        ? 'Sign in to access your courses and continue your learning journey.'
-                        : 'Join our community of learners and unlock your potential.'}
+                        ? t('modal.loginSubtitle')
+                        : t('modal.registerSubtitle')}
                 </p>
             </motion.div>
 
@@ -326,7 +328,7 @@ export default function Login(props: { onClose: () => void }) {
                     variants={tabVariants}
                     onClick={() => setActiveTab('login')}
                 >
-                    Login
+                    {t('modal.tabLogin')}
                 </motion.button>
                 <motion.button
                     className={`flex-1 py-2 font-medium text-center transition-all ${activeTab === 'register' ? 'text-[color:var(--ai-primary)]' : 'text-[color:var(--ai-muted)]'}`}
@@ -334,7 +336,7 @@ export default function Login(props: { onClose: () => void }) {
                     variants={tabVariants}
                     onClick={() => setActiveTab('register')}
                 >
-                    Register
+                    {t('modal.tabRegister')}
                 </motion.button>
             </motion.div>
 
@@ -359,22 +361,22 @@ export default function Login(props: { onClose: () => void }) {
                     onSubmit={handleEmailLogin}
                 >
                     <div className="space-y-2">
-                        <label htmlFor="email" className="block text-sm font-medium text-[color:var(--ai-foreground)]">Email</label>
+                        <label htmlFor="email" className="block text-sm font-medium text-[color:var(--ai-foreground)]">{t('modal.emailLabel')}</label>
                         <input
                             id="email"
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             className="w-full p-2.5 bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] rounded-lg focus:ring-2 focus:ring-[color:var(--ai-primary)]/50 focus:border-[color:var(--ai-primary)] text-[color:var(--ai-foreground)]"
-                            placeholder="your@email.com"
+                            placeholder={t('modal.emailPlaceholder')}
                             required
                         />
                     </div>
 
                     <div className="space-y-2">
                         <div className="flex justify-between">
-                            <label htmlFor="password" className="block text-sm font-medium text-[color:var(--ai-foreground)]">Password</label>
-                            <a href="#" className="text-xs text-[color:var(--ai-primary)] hover:underline">Forgot password?</a>
+                            <label htmlFor="password" className="block text-sm font-medium text-[color:var(--ai-foreground)]">{t('modal.passwordLabel')}</label>
+                            <a href="#" className="text-xs text-[color:var(--ai-primary)] hover:underline">{t('modal.forgotPasswordLink')}</a>
                         </div>
                         <input
                             id="password"
@@ -382,13 +384,13 @@ export default function Login(props: { onClose: () => void }) {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             className="w-full p-2.5 bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] rounded-lg focus:ring-2 focus:ring-[color:var(--ai-primary)]/50 focus:border-[color:var(--ai-primary)] text-[color:var(--ai-foreground]"
-                            placeholder="••••••••"
+                            placeholder={t('modal.passwordPlaceholder')}
                             required
                         />
                     </div>                    {loadingEmailLogin ? (
                         <LoadingButton
                             className="w-full py-2.5"
-                            loadingText="Signing In..."
+                            loadingText={t('modal.signingIn')}
                         />
                     ) : (
                         <button
@@ -396,7 +398,7 @@ export default function Login(props: { onClose: () => void }) {
                             disabled={loadingEmailLogin}
                             className="w-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white py-2.5 rounded-lg font-medium hover:opacity-90 transition-all duration-300 transform hover:-translate-y-1 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed"
                         >
-                            Sign In
+                            {t('modal.signInButton')}
                         </button>
                     )}
                 </motion.form>
@@ -410,47 +412,47 @@ export default function Login(props: { onClose: () => void }) {
                     onSubmit={handleEmailRegister}
                 >
                     <div className="space-y-2">
-                        <label htmlFor="register-email" className="block text-sm font-medium text-[color:var(--ai-foreground)]">Email</label>
+                        <label htmlFor="register-email" className="block text-sm font-medium text-[color:var(--ai-foreground)]">{t('modal.emailLabel')}</label>
                         <input
                             id="register-email"
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             className="w-full p-2.5 bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] rounded-lg focus:ring-2 focus:ring-[color:var(--ai-primary)]/50 focus:border-[color:var(--ai-primary)] text-[color:var(--ai-foreground)]"
-                            placeholder="your@email.com"
+                            placeholder={t('modal.emailPlaceholder')}
                             required
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <label htmlFor="register-password" className="block text-sm font-medium text-[color:var(--ai-foreground)]">Password</label>
+                        <label htmlFor="register-password" className="block text-sm font-medium text-[color:var(--ai-foreground)]">{t('modal.passwordLabel')}</label>
                         <input
                             id="register-password"
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             className="w-full p-2.5 bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] rounded-lg focus:ring-2 focus:ring-[color:var(--ai-primary)]/50 focus:border-[color:var(--ai-primary)] text-[color:var(--ai-foreground)]"
-                            placeholder="••••••••"
+                            placeholder={t('modal.passwordPlaceholder')}
                             required
                             autoComplete="new-password"
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <label htmlFor="confirm-password" className="block text-sm font-medium text-[color:var(--ai-foreground)]">Confirm Password</label>
+                        <label htmlFor="confirm-password" className="block text-sm font-medium text-[color:var(--ai-foreground)]">{t('modal.confirmPasswordLabel')}</label>
                         <input
                             id="confirm-password"
                             type="password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             className="w-full p-2.5 bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] rounded-lg focus:ring-2 focus:ring-[color:var(--ai-primary)]/50 focus:border-[color:var(--ai-primary)] text-[color:var(--ai-foreground)]"
-                            placeholder="••••••••"
+                            placeholder={t('modal.passwordPlaceholder')}
                             required
                         />
                     </div>                    {loadingEmailRegister ? (
                         <LoadingButton
                             className="w-full py-2.5"
-                            loadingText="Creating Account..."
+                            loadingText={t('modal.creatingAccount')}
                         />
                     ) : (
                         <button
@@ -458,7 +460,7 @@ export default function Login(props: { onClose: () => void }) {
                             disabled={loadingEmailRegister}
                             className="w-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white py-2.5 rounded-lg font-medium hover:opacity-90 transition-all duration-300 transform hover:-translate-y-1 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed"
                         >
-                            Create Account
+                            {t('modal.createAccountButton')}
                         </button>
                     )}                                {/* Password strength meter */}
                     {activeTab === 'register' && password && (
@@ -475,7 +477,7 @@ export default function Login(props: { onClose: () => void }) {
             {/* Divider */}
             <motion.div variants={itemVariants} className="flex items-center my-6 w-full max-w-xs">
                 <div className="flex-1 h-px bg-[color:var(--ai-card-border)]"></div>
-                <span className="px-4 text-sm text-[color:var(--ai-muted)]">or continue with</span>
+                <span className="px-4 text-sm text-[color:var(--ai-muted)]">{t('modal.orContinueWith')}</span>
                 <div className="flex-1 h-px bg-[color:var(--ai-card-border)]"></div>
             </motion.div>
 
@@ -488,14 +490,14 @@ export default function Login(props: { onClose: () => void }) {
                         onClick={signInWithGoogleRedirect}
                     >
                         <GoogleIcon />
-                        <span>Sign in with Google</span>
+                        <span>{t('modal.signInWithGoogle')}</span>
                     </button>
                 )}
             </motion.div>
 
             {/* Terms */}
             <motion.div variants={itemVariants} className="mt-6 text-[color:var(--ai-muted)] text-xs text-center max-w-xs">
-                By signing in, you agree to our <a href="/terms-conditions" className="text-[color:var(--ai-primary)] hover:underline">Terms & Conditions</a> and <a href="/privacy-policy" className="text-[color:var(--ai-primary)] hover:underline">Privacy Policy</a>.
+                {t('modal.termsPrefix')} <a href="/terms-conditions" className="text-[color:var(--ai-primary)] hover:underline">{t('modal.termsLink')}</a> {t('modal.termsAnd')} <a href="/privacy-policy" className="text-[color:var(--ai-primary)] hover:underline">{t('modal.privacyLink')}</a>.
             </motion.div>
         </motion.div>
     );

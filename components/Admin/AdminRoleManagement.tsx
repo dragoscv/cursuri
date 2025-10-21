@@ -95,11 +95,11 @@ export default function AdminRoleManagement({ className }: AdminRoleManagementPr
     const getRoleText = (role: UserRole) => {
         switch (role) {
             case UserRole.SUPER_ADMIN:
-                return 'Super Admin';
+                return t('roleManagement.roles.superAdmin');
             case UserRole.ADMIN:
-                return 'Admin';
+                return t('roleManagement.roles.admin');
             default:
-                return 'User';
+                return t('roleManagement.roles.user');
         }
     };
 
@@ -108,7 +108,7 @@ export default function AdminRoleManagement({ className }: AdminRoleManagementPr
             <Card className={className}>
                 <CardBody>
                     <p className="text-center text-[color:var(--ai-muted-foreground)]">
-                        You don't have permission to manage user roles.
+                        {t('roleManagement.permissions.noPermission')}
                     </p>
                 </CardBody>
             </Card>

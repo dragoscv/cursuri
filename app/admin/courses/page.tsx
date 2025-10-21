@@ -3,6 +3,7 @@
 import React, { useContext, useState } from 'react';
 import { Card, CardBody, Chip } from '@heroui/react';
 import Button from '@/components/ui/Button';
+import { useLocale, useTranslations } from 'next-intl';
 import { AppContext } from '@/components/AppContext';
 import AdminGuard from '@/components/Admin/AdminGuard';
 import AdminPageHeader from '@/components/Admin/AdminPageHeader';
@@ -14,6 +15,9 @@ import { firestoreDB } from '@/utils/firebase/firebase.config';
 import { useToast } from '@/components/Toast/ToastContext';
 
 export default function CoursesPage() {
+    const locale = useLocale();
+    const t = useTranslations('admin.courses');
+    const tCommon = useTranslations('common.notifications');
     const [selectedView, setSelectedView] = useState<"grid" | "list">("grid");
     const [deletingCourse, setDeletingCourse] = useState<string | null>(null);
 
@@ -30,7 +34,7 @@ export default function CoursesPage() {
         if (course.priceProduct?.prices?.[0]?.unit_amount !== undefined) {
             const amount = course.priceProduct.prices[0].unit_amount / 100;
             const currency = course.priceProduct.prices[0].currency || 'RON';
-            return amount.toLocaleString('ro-RO', {
+            return amount.toLocaleString(locale, {
                 style: 'currency',
                 currency: currency,
             });
@@ -45,8 +49,8 @@ export default function CoursesPage() {
 
             showToast({
                 type: 'success',
-                title: 'Course Deleted',
-                message: `Successfully deleted "${courseName}"`,
+                title: t('courseDeleted'),
+                message: t('courseDeletedMessage', { courseName }),
                 duration: 5000
             });
 
@@ -55,8 +59,8 @@ export default function CoursesPage() {
             console.error('Error deleting course:', error);
             showToast({
                 type: 'error',
-                title: 'Failed to Delete Course',
-                message: error instanceof Error ? error.message : 'Failed to delete course. Please try again.',
+                title: t('failedToDeleteCourse'),
+                message: error instanceof Error ? error.message : t('failedToDeleteMessage'),
                 duration: 6000
             });
         } finally {
@@ -69,10 +73,10 @@ export default function CoursesPage() {
         openModal({
             id: 'delete-course',
             isOpen: true,
-            modalHeader: 'Confirm Delete',
+            modalHeader: t('confirmDelete'),
             modalBody: (<div className="p-4">
-                <p className="mb-4">Are you sure you want to delete the course &quot;{course.name}&quot;?</p>
-                <p className="text-sm text-[color:var(--ai-muted)] mb-4">This action cannot be undone. All lessons and progress data will be permanently deleted.</p>
+                <p className="mb-4">{t('confirmDeleteMessage', { courseName: course.name })}</p>
+                <p className="text-sm text-[color:var(--ai-muted)] mb-4">{t('confirmDeleteWarning')}</p>
                 <div className="flex justify-end gap-2">
                     <Button
                         variant="bordered"
@@ -80,7 +84,7 @@ export default function CoursesPage() {
                         isDisabled={deletingCourse === course.id}
                         className="bg-[color:var(--ai-card-bg)]/80 border border-[color:var(--ai-card-border)]/50 text-[color:var(--ai-foreground)] rounded-full hover:bg-[color:var(--ai-card-border)]/20 transition-colors"
                     >
-                        Cancel
+                        {t('cancel')}
                     </Button>
                     <Button
                         variant="primary"
@@ -88,7 +92,7 @@ export default function CoursesPage() {
                         isDisabled={deletingCourse === course.id}
                         className="bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-full shadow-sm hover:shadow-md hover:shadow-red-500/20 transition-all"
                     >
-                        {deletingCourse === course.id ? 'Deleting...' : 'Delete'}
+                        {deletingCourse === course.id ? t('deleting') : t('delete')}
                     </Button>
                 </div>
             </div>
@@ -122,8 +126,8 @@ export default function CoursesPage() {
         <AdminGuard>
             <>
                 <AdminPageHeader
-                    title="Course Management"
-                    description="Create, edit, and manage your courses and their content."
+                    title={t('title')}
+                    description={t('pageDescription')}
                     actions={
                         <Link href="/admin/courses/add">
                             <Button
@@ -135,7 +139,7 @@ export default function CoursesPage() {
                                     </svg>
                                 )}
                             >
-                                Add Course
+                                {t('addCourse')}
                             </Button>
                         </Link>
                     }
@@ -153,7 +157,7 @@ export default function CoursesPage() {
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                         </svg>
-                        <span className="ml-2">Grid</span>
+                        <span className="ml-2">{t('grid')}</span>
                     </Button>
                         <Button
                             variant={selectedView === "list" ? "primary" : "bordered"}
@@ -166,7 +170,7 @@ export default function CoursesPage() {
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                 <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
                             </svg>
-                            <span className="ml-2">List</span>
+                            <span className="ml-2">{t('list')}</span>
                         </Button>
                     </div>
                 </div>
@@ -198,7 +202,7 @@ export default function CoursesPage() {
                                                 </Chip>
                                             </div>
                                             <p className="text-[color:var(--ai-muted)] mb-4 line-clamp-2 min-h-[3rem]">
-                                                {course.description || 'No description available'}
+                                                {course.description || t('noDescription')}
                                             </p>
 
                                             <div className="flex flex-wrap gap-2 mb-4">
@@ -223,7 +227,7 @@ export default function CoursesPage() {
                                                             handleConfirmDelete(course);
                                                         }}
                                                     >
-                                                        Delete
+                                                        {t('delete')}
                                                     </Button>
                                                     <Link href={`/admin/courses/${course.id}/edit`}>
                                                         <Button
@@ -231,7 +235,7 @@ export default function CoursesPage() {
                                                             color="primary"
                                                             variant="flat"
                                                         >
-                                                            Edit
+                                                            {t('edit')}
                                                         </Button>
                                                     </Link>
                                                     <Link href={`/admin/courses/${course.id}`}>
@@ -240,7 +244,7 @@ export default function CoursesPage() {
                                                             color="primary"
                                                             className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white"
                                                         >
-                                                            View
+                                                            {t('view')}
                                                         </Button>
                                                     </Link>
                                                 </div>
@@ -258,15 +262,15 @@ export default function CoursesPage() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                             </svg>
                         </div>
-                        <p className="text-[color:var(--ai-foreground)] font-medium mb-1">No courses available</p>
-                        <p className="text-[color:var(--ai-muted)] text-sm mb-4">Start by creating your first course</p>
+                        <p className="text-[color:var(--ai-foreground)] font-medium mb-1">{t('noCourses')}</p>
+                        <p className="text-[color:var(--ai-muted)] text-sm mb-4">{t('noCoursesDescription')}</p>
                         <Link href="/admin/courses/add">
                             <Button
                                 size="md"
                                 color="primary"
                                 className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white shadow-sm"
                             >
-                                Add Course
+                                {t('addCourse')}
                             </Button>
                         </Link>
                     </div>
