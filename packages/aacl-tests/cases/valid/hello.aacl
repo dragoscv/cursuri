@@ -1,0 +1,13 @@
+// Valid test case - Hello World
+// This file should parse successfully
+
+agent "hello-assistant" {
+  intent "A simple greeting agent that demonstrates basic AACL syntax";
+
+  capability greet ["user", "world"];
+  capability log;
+  
+  check path "output" expect "posix-safe";
+  
+  emit "results/greeting.txt";
+}
