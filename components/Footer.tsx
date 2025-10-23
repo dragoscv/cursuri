@@ -23,7 +23,11 @@ const Footer = React.memo(function Footer() {
   const appVersion = packageInfo.version;
 
   return (
-    <footer className="bg-[color:var(--ai-background)] dark:bg-[color:var(--ai-background)] border-t border-[color:var(--ai-card-border)]">
+    <footer
+      className="bg-[color:var(--ai-background)] dark:bg-[color:var(--ai-background)] border-t border-[color:var(--ai-card-border)]"
+      role="contentinfo"
+      aria-label={t('accessibility.footerNavigation')}
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Left column - About */}
@@ -42,41 +46,44 @@ const Footer = React.memo(function Footer() {
             <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-4">
               {t('footer.quickLinks')}
             </h3>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/courses"
-                  className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
-                >
-                  {t('nav.allCourses')}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/#featured"
-                  className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
-                >
-                  {t('nav.featuredCourses')}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/#testimonials"
-                  className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
-                >
-                  {t('nav.testimonials')}
-                </Link>
-              </li>
-              <li>
-                <Button
-                  onPress={toggleTheme}
-                  variant="light"
-                  className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] p-0 min-w-0"
-                >
-                  {isDark ? t('theme.dark') : t('theme.light')}
-                </Button>
-              </li>
-            </ul>
+            <nav aria-label={t('footer.quickLinks')}>
+              <ul className="space-y-2">
+                <li>
+                  <Link
+                    href="/courses"
+                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
+                  >
+                    {t('nav.allCourses')}
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/#featured"
+                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
+                  >
+                    {t('nav.featuredCourses')}
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/#testimonials"
+                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
+                  >
+                    {t('nav.testimonials')}
+                  </Link>
+                </li>
+                <li>
+                  <Button
+                    onPress={toggleTheme}
+                    variant="light"
+                    aria-label={t('accessibility.toggleTheme')}
+                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] p-0 min-w-0"
+                  >
+                    {isDark ? t('theme.dark') : t('theme.light')}
+                  </Button>
+                </li>
+              </ul>
+            </nav>
           </div>
 
           {/* Right column - Connect */}

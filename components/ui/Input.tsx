@@ -211,6 +211,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           aria-invalid={isInvalid ? 'true' : 'false'}
+          aria-describedby={
+            isInvalid && errorMessage
+              ? 'input-error'
+              : description
+                ? 'input-description'
+                : undefined
+          }
           required={isRequired}
           {...rest}
         />
@@ -220,6 +227,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 
       {errorMessage && isInvalid && (
         <p
+          id="input-error"
+          role="alert"
+          aria-live="polite"
           className={`mt-1 text-xs text-[color:var(--ai-danger)] ${classNames.errorMessage || ''}`}
         >
           {errorMessage}
@@ -227,7 +237,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
       )}
 
       {description && !isInvalid && (
-        <p className={`mt-1 text-xs text-[color:var(--ai-muted)] ${classNames.description || ''}`}>
+        <p
+          id="input-description"
+          className={`mt-1 text-xs text-[color:var(--ai-muted)] ${classNames.description || ''}`}
+        >
           {description}
         </p>
       )}

@@ -54,7 +54,10 @@
     "courseDeleted": "Curs Șters",
     "courseDeletedMessage": "Șters cu succes \"{courseName}\"",
     "failedToDeleteCourse": "Eșec la Ștergerea Cursului",
-    "failedToDeleteMessage": "Eșec la ștergerea cursului. Vă rugăm încercați din nou."
+    "failedToDeleteMessage": "Eșec la ștergerea cursului. Vă rugăm încercați din nou.",
+    "addNew": "Adaugă curs nou",
+    "loadingLessons": "Se încarcă lecțiile...",
+    "noLessonsFound": "Nu s-au găsit lecții pentru acest curs"
   },
   "lessons": {
     "title": "Lecții",
@@ -141,15 +144,17 @@
       "adminNotes": "Note Administrator",
       "activityLog": "Istoric Activitate"
     },
-    "enrollment": {
-      "via": "prin",
-      "adminAssignment": "Atribuire administrator",
-      "selfPurchase": "Achiziție proprie"
-    },
     "fallbacks": {
       "unknownCourse": "Curs Necunoscut",
       "unknownDate": "Dată Necunoscută"
-    }
+    },
+    "title": "Gestionare utilizatori avansată",
+    "email": "EMAIL",
+    "verification": "VERIFICARE",
+    "enrollment": "ÎNSCRIERE",
+    "registration": "ÎNREGISTRARE",
+    "actions": "ACȚIUNI",
+    "verified": "Verificat"
   },
   "pages": {
     "userManagement": "Gestionare Utilizatori",
@@ -204,5 +209,33 @@
     "whenDisabledNoPurchases": "Când este dezactivată, utilizatorii nu pot face achiziții",
     "currency": "Monedă",
     "taxRate": "Cotă TVA (%)"
+  },
+  "auditLogs": {
+    "warnings": "Avertismente",
+    "totalLogs": "Total jurnale",
+    "role": "Rol:",
+    "noLogsFound": "Nu s-au găsit jurnale de audit",
+    "user": "Utilizator:",
+    "loading": "Se încarcă jurnalele de audit...",
+    "failedActions": "Acțiuni eșuate",
+    "recentActivity": "Activitate recentă",
+    "title": "Jurnale de audit",
+    "criticalEvents": "Evenimente critice",
+    "resource": "Resursă:"
+  },
+  "lessonForm": {
+    "practiceExercise": "Exercițiu de practică",
+    "codingExercise": "Exercițiu de codare"
+  },
+  "lessonsTable": {
+    "actions": "Acțiuni",
+    "status": "Status",
+    "duration": "Durată",
+    "order": "Ordine"
+  },
+  "courseDetails": {
+    "lessons": "Lecții",
+    "statistics": "Statistici curs",
+    "title": "Detalii curs"
   }
 }

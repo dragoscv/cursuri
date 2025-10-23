@@ -20,9 +20,17 @@ export const ModalRenderer: React.FC = () => {
           // Dynamically import Login component
           const Login = React.lazy(() => import('@/components/Login'));
           return (
-            <React.Suspense fallback={<div>Loading...</div>}>
-              <Login onClose={() => closeModal(modalId)} />
-            </React.Suspense>
+            <div>
+              <React.Suspense
+                fallback={
+                  <div className="flex items-center justify-center p-4 text-[color:var(--ai-muted)]">
+                    {/* Loading handled by parent */}
+                  </div>
+                }
+              >
+                <Login onClose={() => closeModal(modalId)} />
+              </React.Suspense>
+            </div>
           );
         }
         case 'checkout':

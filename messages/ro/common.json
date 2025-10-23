@@ -164,7 +164,8 @@
     "analytics": "Analize",
     "settings": "Setări",
     "bookmarks": "Marcaje",
-    "wishlist": "Listă dorințe"
+    "wishlist": "Listă dorințe",
+    "adminCache": "Cache admin"
   },
   "errorPage": {
     "pageNotFound": "Pagină Negăsită",
@@ -305,5 +306,42 @@
     "confirmDeleteMessage": "Ești sigur că vrei să ștergi acest element?",
     "confirmAction": "Confirmă Acțiunea",
     "cannotBeUndone": "Această acțiune nu poate fi anulată."
-  }
+  },
+  "accessibility": {
+    "skipToMainContent": "Sari la conținutul principal",
+    "openSearch": "Deschide căutarea",
+    "clearSearch": "Șterge căutarea",
+    "closeDialog": "Închide dialogul",
+    "closeModal": "Închide fereastra",
+    "searchResults": "{count, plural, =0 {Niciun rezultat găsit} one {Un rezultat găsit} other {{count} rezultate găsite}}",
+    "loading": "Se încarcă, vă rugăm așteptați",
+    "loadingContent": "Se încarcă conținutul",
+    "showPassword": "Arată parola",
+    "hidePassword": "Ascunde parola",
+    "toggleMenu": "Comută meniul",
+    "toggleTheme": "Comută tema",
+    "toggleLanguage": "Comută limba",
+    "previousPage": "Pagina anterioară",
+    "nextPage": "Pagina următoare",
+    "page": "Pagina {page}",
+    "sortBy": "Sortează după {field}",
+    "filterBy": "Filtrează după {field}",
+    "selectOption": "Selectează o opțiune",
+    "currentLanguage": "Limba curentă: {language}",
+    "currentTheme": "Tema curentă: {theme}",
+    "userMenu": "Meniu utilizator",
+    "mainNavigation": "Navigare principală",
+    "footerNavigation": "Navigare subsol",
+    "backToTop": "Înapoi sus"
+  },
+  "loadingWithEllipsis": "Se încarcă...",
+  "debuggingInformation": "Informații de depanare:",
+  "overview": "Prezentare generală",
+  "content": "Conținut",
+  "reviews": "Recenzii",
+  "medium": "Mediu",
+  "draft": "Ciornă",
+  "archive": "Arhivă",
+  "noItemSelected": "Nicio categorie selectată",
+  "placeholder": "Placeholder componentă checkout"
 }

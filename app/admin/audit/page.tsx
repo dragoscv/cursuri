@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/components/contexts/modules/authContext';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import {
   Card,
   CardBody,
@@ -44,6 +45,7 @@ interface AuditStatistics {
 export default function AuditLogsPage() {
   const { user, isAdmin } = useAuth();
   const router = useRouter();
+  const t = useTranslations('admin.auditLogs');
   const [logs, setLogs] = useState<AuditLog[]>([]);
   const [statistics, setStatistics] = useState<AuditStatistics | null>(null);
   const [loading, setLoading] = useState(true);
@@ -151,7 +153,7 @@ export default function AuditLogsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Audit Logs</h1>
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">{t('title')}</h1>
           <p className="text-gray-600 dark:text-gray-400">
             Monitor and review system activity, security events, and admin actions
           </p>
@@ -166,7 +168,7 @@ export default function AuditLogsPage() {
           >
             <Card>
               <CardBody className="text-center">
-                <p className="text-sm text-gray-600 dark:text-gray-400">Total Logs</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{t('totalLogs')}</p>
                 <p className="text-3xl font-bold text-gray-900 dark:text-white">
                   {statistics.totalLogs}
                 </p>
@@ -175,7 +177,7 @@ export default function AuditLogsPage() {
 
             <Card>
               <CardBody className="text-center">
-                <p className="text-sm text-gray-600 dark:text-gray-400">Failed Actions</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{t('failedActions')}</p>
                 <p className="text-3xl font-bold text-red-600 dark:text-red-400">
                   {statistics.failedActions}
                 </p>
@@ -184,7 +186,7 @@ export default function AuditLogsPage() {
 
             <Card>
               <CardBody className="text-center">
-                <p className="text-sm text-gray-600 dark:text-gray-400">Critical Events</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{t('criticalEvents')}</p>
                 <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">
                   {statistics.bySeverity.critical || 0}
                 </p>
@@ -193,7 +195,7 @@ export default function AuditLogsPage() {
 
             <Card>
               <CardBody className="text-center">
-                <p className="text-sm text-gray-600 dark:text-gray-400">Warnings</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{t('warnings')}</p>
                 <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
                   {statistics.bySeverity.warning || 0}
                 </p>
@@ -258,17 +260,17 @@ export default function AuditLogsPage() {
         {/* Audit Logs List */}
         <Card>
           <CardHeader>
-            <h2 className="text-2xl font-bold">Recent Activity</h2>
+            <h2 className="text-2xl font-bold">{t('recentActivity')}</h2>
           </CardHeader>
           <Divider />
           <CardBody>
             {loading ? (
               <div className="text-center py-8">
-                <p className="text-gray-600 dark:text-gray-400">Loading audit logs...</p>
+                <p className="text-gray-600 dark:text-gray-400">{t('loading')}</p>
               </div>
             ) : logs.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-gray-600 dark:text-gray-400">No audit logs found</p>
+                <p className="text-gray-600 dark:text-gray-400">{t('noLogsFound')}</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -306,7 +308,7 @@ export default function AuditLogsPage() {
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       {log.userEmail && (
                         <div>
-                          <span className="text-gray-600 dark:text-gray-400">User: </span>
+                          <span className="text-gray-600 dark:text-gray-400">{t('user')} </span>
                           <span className="text-gray-900 dark:text-white">{log.userEmail}</span>
                         </div>
                       )}
@@ -318,7 +320,7 @@ export default function AuditLogsPage() {
                       )}
                       {log.resourceType && (
                         <div>
-                          <span className="text-gray-600 dark:text-gray-400">Resource: </span>
+                          <span className="text-gray-600 dark:text-gray-400">{t('resource')} </span>
                           <span className="text-gray-900 dark:text-white">
                             {log.resourceType}
                             {log.resourceId && `: ${log.resourceId.substring(0, 8)}`}
@@ -327,7 +329,7 @@ export default function AuditLogsPage() {
                       )}
                       {log.userRole && (
                         <div>
-                          <span className="text-gray-600 dark:text-gray-400">Role: </span>
+                          <span className="text-gray-600 dark:text-gray-400">{t('role')} </span>
                           <span className="text-gray-900 dark:text-white">{log.userRole}</span>
                         </div>
                       )}

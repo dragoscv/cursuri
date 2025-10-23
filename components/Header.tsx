@@ -47,6 +47,9 @@ const Header = React.memo(function Header() {
     <Navbar
       maxWidth="xl"
       isBordered
+      as="nav"
+      role="navigation"
+      aria-label={t('accessibility.mainNavigation')}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
           ? 'bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-[color:var(--ai-accent)]/10 backdrop-blur-md shadow-sm'

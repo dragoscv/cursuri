@@ -1,10 +1,7 @@
 {
   "title": "Profile",
-  "dashboard": "Dashboard",
-  "settings": "Settings",
   "purchases": "Purchases",
   "certificates": "Certificates",
-  "learningPath": "Learning Path",
   "myProgress": "My Progress",
   "completedCourses": "Completed Courses",
   "inProgressCourses": "In Progress",
@@ -70,7 +67,8 @@
       "amount": "Amount",
       "date": "Date",
       "status": "Status",
-      "invoice": "Invoice"
+      "invoice": "Invoice",
+      "noRecordsFound": "No Payment Records Found"
     },
     "status": {
       "succeeded": "Paid",
@@ -224,5 +222,52 @@
       "noEnrolledCoursesDesc": "You haven't purchased any courses yet.",
       "browseCourses": "Browse Courses"
     }
-  }
+  },
+  "settings": {
+    "dataManagement": {
+      "dataHandlingNote": "We handle your data in accordance with our",
+      "title": "Data Management",
+      "aboutYourData": "About Your Data"
+    },
+    "emailNotifications": "Email Notifications",
+    "notifications": {
+      "email": "Email Notifications",
+      "commentReplies": "Comment Replies",
+      "paymentReceipts": "Payment Receipts",
+      "certificateNotifications": "Certificate Notifications",
+      "marketingEmails": "Marketing Emails",
+      "courseUpdates": "Course Updates",
+      "title": "Notification Settings",
+      "newLessonAlerts": "New Lesson Alerts",
+      "weeklyDigest": "Weekly Learning Digest"
+    },
+    "privacy": {
+      "publicProfile": "Public Profile",
+      "publicProgress": "Public Progress",
+      "showAchievements": "Show Achievements",
+      "title": "Privacy Settings",
+      "activityFeed": "Activity Feed"
+    },
+    "courseUpdates": "Course Updates",
+    "darkMode": "Dark Mode"
+  },
+  "learningPath": {
+    "currentCourse": "Current Course",
+    "nextUp": "Next Up",
+    "noCourseInProgress": "No course in progress"
+  },
+  "offlineContent": {
+    "noContentYet": "No offline content yet",
+    "clearContent": "Clear offline content"
+  },
+  "dashboard": {
+    "pieChart": "Pie Chart",
+    "courseCompletion": "Course Completion",
+    "lessonsCompleted": "Lessons Completed Per Course",
+    "barChart": "Bar Chart"
+  },
+  "payments": {
+    "title": "Payments"
+  },
+  "settingsSaved": "Settings saved successfully"
 }

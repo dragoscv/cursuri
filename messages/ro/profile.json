@@ -1,10 +1,7 @@
 {
   "title": "Profil",
-  "dashboard": "Tablou de Bord",
-  "settings": "Setări",
   "purchases": "Achiziții",
   "certificates": "Certificate",
-  "learningPath": "Cale de Învățare",
   "myProgress": "Progresul Meu",
   "completedCourses": "Cursuri Finalizate",
   "inProgressCourses": "În Desfășurare",
@@ -62,7 +59,8 @@
       "amount": "Sumă",
       "date": "Dată",
       "status": "Status",
-      "invoice": "Factură"
+      "invoice": "Factură",
+      "noRecordsFound": "Nu s-au găsit înregistrări de plată"
     },
     "status": {
       "succeeded": "Plătit",
@@ -224,5 +222,52 @@
       "noEnrolledCoursesDesc": "Nu ai achiziționat încă niciun curs.",
       "browseCourses": "Explorează Cursurile"
     }
-  }
+  },
+  "settings": {
+    "dataManagement": {
+      "dataHandlingNote": "Gestionăm datele tale conform",
+      "title": "Gestionare date",
+      "aboutYourData": "Despre datele tale"
+    },
+    "emailNotifications": "Notificări email",
+    "notifications": {
+      "email": "Notificări email",
+      "commentReplies": "Răspunsuri la comentarii",
+      "paymentReceipts": "Chitanțe plăți",
+      "certificateNotifications": "Notificări certificate",
+      "marketingEmails": "Emailuri marketing",
+      "courseUpdates": "Actualizări cursuri",
+      "title": "Setări notificări",
+      "newLessonAlerts": "Alerte lecții noi",
+      "weeklyDigest": "Rezumat săptămânal"
+    },
+    "privacy": {
+      "publicProfile": "Profil public",
+      "publicProgress": "Progres public",
+      "showAchievements": "Arată realizări",
+      "title": "Setări confidențialitate",
+      "activityFeed": "Feed activitate"
+    },
+    "courseUpdates": "Actualizări cursuri",
+    "darkMode": "Mod întunecat"
+  },
+  "learningPath": {
+    "currentCourse": "Curs curent",
+    "nextUp": "Următorul",
+    "noCourseInProgress": "Niciun curs în progres"
+  },
+  "offlineContent": {
+    "noContentYet": "Niciun conținut offline încă",
+    "clearContent": "Șterge conținut offline"
+  },
+  "dashboard": {
+    "pieChart": "Diagramă circulară",
+    "courseCompletion": "Finalizare curs",
+    "lessonsCompleted": "Lecții finalizate pe curs",
+    "barChart": "Diagramă cu bare"
+  },
+  "payments": {
+    "title": "Plăți"
+  },
+  "settingsSaved": "Setări salvate cu succes"
 }

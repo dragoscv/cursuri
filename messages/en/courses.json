@@ -66,7 +66,9 @@
   "header": {
     "badge": "AI Curriculum",
     "title": "Cutting-Edge AI Courses",
-    "subtitle": "Master the technologies shaping our future with courses designed by AI experts for tomorrow's innovators."
+    "subtitle": "Master the technologies shaping our future with courses designed by AI experts for tomorrow's innovators.",
+    "exploreTitle": "Explore Our Courses",
+    "exploreSubtitle": "Discover a wide range of courses to help you learn and grow"
   },
   "loading": {
     "loadingCourses": "Loading courses...",
@@ -239,5 +241,40 @@
   "messages": {
     "certificateAvailable": "Course completion certificate will be available",
     "promotionCodesEnabled": "Students can use promotion codes at checkout"
+  },
+  "details": {
+    "overview": "Overview",
+    "reviews": "Reviews",
+    "content": "Content"
+  },
+  "addCourse": {
+    "noObjectives": "Add learning objectives for your course",
+    "noPrerequisites": "Add prerequisites or requirements for your course",
+    "category": "Category",
+    "certificate": "Certificate",
+    "noPrerequisiteCourses": "Add prerequisite courses that students should complete first",
+    "pricing": {
+      "subtitle": "Set your course price and payment options",
+      "title": "Pricing"
+    },
+    "courseName": "Course Name",
+    "enterNameFirst": "Please enter a course name first",
+    "status": "Status",
+    "noTagsAdded": "No tags added yet"
+  },
+  "lessonResources": {
+    "title": "Lesson Resources",
+    "additionalResources": "Additional Resources"
+  },
+  "lessonNotes": {
+    "title": "Lesson Notes",
+    "yourNotes": "Your Notes"
+  },
+  "lessonNavigation": {
+    "title": "Lesson Navigation",
+    "lessonsInCourse": "Lessons in this course"
+  },
+  "courseAccessRequired": {
+    "title": "Course Access Required"
   }
 }

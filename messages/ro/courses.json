@@ -49,7 +49,9 @@
   "header": {
     "badge": "Curriculum AI",
     "title": "Cursuri AI de Ultimă Generație",
-    "subtitle": "Stăpânește tehnologiile care modelează viitorul nostru cu cursuri concepute de experți AI pentru inovatorii de mâine."
+    "subtitle": "Stăpânește tehnologiile care modelează viitorul nostru cu cursuri concepute de experți AI pentru inovatorii de mâine.",
+    "exploreTitle": "Explorează cursurile noastre",
+    "exploreSubtitle": "Descoperă o gamă largă de cursuri pentru a-ți dezvolta cunoștințele"
   },
   "loading": {
     "loadingCourses": "Se încarcă cursurile...",
@@ -240,5 +242,40 @@
     "reviews": "recenzii",
     "review": "recenzie",
     "reviewsCount": "{count} {count, plural, one {recenzie} other {recenzii}}"
+  },
+  "details": {
+    "overview": "Prezentare generală",
+    "reviews": "Recenzii",
+    "content": "Conținut"
+  },
+  "addCourse": {
+    "noObjectives": "Adaugă obiective de învățare pentru cursul tău",
+    "noPrerequisites": "Adaugă cerințe prealabile pentru cursul tău",
+    "category": "Categorie",
+    "certificate": "Certificat",
+    "noPrerequisiteCourses": "Adaugă cursuri prealabile pe care studenții trebuie să le finalizeze mai întâi",
+    "pricing": {
+      "subtitle": "Setează prețul cursului și opțiunile de plată",
+      "title": "Prețuri"
+    },
+    "courseName": "Nume curs",
+    "enterNameFirst": "Te rugăm să introduci mai întâi numele cursului",
+    "status": "Status",
+    "noTagsAdded": "Nicio etichetă adăugată încă"
+  },
+  "lessonResources": {
+    "title": "Resurse lecție",
+    "additionalResources": "Resurse suplimentare"
+  },
+  "lessonNotes": {
+    "title": "Notițe lecție",
+    "yourNotes": "Notițele tale"
+  },
+  "lessonNavigation": {
+    "title": "Navigare lecție",
+    "lessonsInCourse": "Lecții în acest curs"
+  },
+  "courseAccessRequired": {
+    "title": "Acces la curs necesar"
   }
 }

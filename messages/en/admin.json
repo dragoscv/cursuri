@@ -54,7 +54,10 @@
     "courseDeleted": "Course Deleted",
     "courseDeletedMessage": "Successfully deleted \"{courseName}\"",
     "failedToDeleteCourse": "Failed to Delete Course",
-    "failedToDeleteMessage": "Failed to delete course. Please try again."
+    "failedToDeleteMessage": "Failed to delete course. Please try again.",
+    "addNew": "Add New Course",
+    "loadingLessons": "Loading lessons...",
+    "noLessonsFound": "No lessons found for this course"
   },
   "lessons": {
     "title": "Lessons",
@@ -94,15 +97,17 @@
       "adminNotes": "Admin Notes",
       "activityLog": "Activity Log"
     },
-    "enrollment": {
-      "via": "Via",
-      "adminAssignment": "Admin assignment",
-      "selfPurchase": "Self purchase"
-    },
     "fallbacks": {
       "unknownCourse": "Unknown Course",
       "unknownDate": "Unknown date"
-    }
+    },
+    "title": "Enhanced User Management",
+    "email": "EMAIL",
+    "verification": "VERIFICATION",
+    "enrollment": "ENROLLMENT",
+    "registration": "REGISTRATION",
+    "actions": "ACTIONS",
+    "verified": "Verified"
   },
   "pages": {
     "userManagement": "User Management",
@@ -190,5 +195,33 @@
     "whenDisabledNoPurchases": "When disabled, users cannot make purchases",
     "currency": "Currency",
     "taxRate": "Tax Rate (%)"
+  },
+  "auditLogs": {
+    "warnings": "Warnings",
+    "totalLogs": "Total Logs",
+    "role": "Role:",
+    "noLogsFound": "No audit logs found",
+    "user": "User:",
+    "loading": "Loading audit logs...",
+    "failedActions": "Failed Actions",
+    "recentActivity": "Recent Activity",
+    "title": "Audit Logs",
+    "criticalEvents": "Critical Events",
+    "resource": "Resource:"
+  },
+  "lessonForm": {
+    "practiceExercise": "Practice Exercise",
+    "codingExercise": "Coding Exercise"
+  },
+  "lessonsTable": {
+    "actions": "Actions",
+    "status": "Status",
+    "duration": "Duration",
+    "order": "Order"
+  },
+  "courseDetails": {
+    "lessons": "Lessons",
+    "statistics": "Course Statistics",
+    "title": "Course Details"
   }
 }

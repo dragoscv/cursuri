@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Button } from '@heroui/react';
 
 /**
@@ -10,6 +10,7 @@ import { Button } from '@heroui/react';
  */
 const LanguageSwitcher = React.memo(function LanguageSwitcher() {
   const currentLocale = useLocale();
+  const t = useTranslations('common.accessibility');
 
   const switchLanguage = async (newLocale: 'en' | 'ro') => {
     // Set cookie for locale preference
@@ -33,7 +34,8 @@ const LanguageSwitcher = React.memo(function LanguageSwitcher() {
               : 'text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]'
           }
         `}
-        aria-label="Switch to English"
+        aria-label={t('toggleLanguage').replace('{language}', 'English')}
+        aria-current={currentLocale === 'en' ? 'true' : undefined}
       >
         EN
       </Button>
@@ -49,7 +51,8 @@ const LanguageSwitcher = React.memo(function LanguageSwitcher() {
               : 'text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]'
           }
         `}
-        aria-label="Switch to Romanian"
+        aria-label={t('toggleLanguage').replace('{language}', 'Romanian')}
+        aria-current={currentLocale === 'ro' ? 'true' : undefined}
       >
         RO
       </Button>
