@@ -88,7 +88,8 @@
     "sort": {
       "oldestFirst": "Oldest First",
       "newestFirst": "Newest First"
-    }
+    },
+    "error": "Failed to load payment history. Please try again later."
   },
   "progress": {
     "title": "Your Learning Progress",
@@ -249,7 +250,8 @@
       "activityFeed": "Activity Feed"
     },
     "courseUpdates": "Course Updates",
-    "darkMode": "Dark Mode"
+    "darkMode": "Dark Mode",
+    "title": "Profile Settings"
   },
   "learningPath": {
     "currentCourse": "Current Course",

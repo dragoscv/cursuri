@@ -88,7 +88,8 @@
       "noPaymentHistory": "Niciun istoric de plăți",
       "noPaymentHistoryDesc": "Nu ai făcut încă nicio achiziție. Explorează cursurile noastre pentru a găsi oportunitatea perfectă de învățare!",
       "browseCourses": "Explorează Cursurile"
-    }
+    },
+    "error": "Nu s-a putut încărca istoricul plăților. Vă rugăm să încercați din nou mai târziu."
   },
   "progress": {
     "title": "Progresul Tău de Învățare",
@@ -249,7 +250,8 @@
       "activityFeed": "Feed activitate"
     },
     "courseUpdates": "Actualizări cursuri",
-    "darkMode": "Mod întunecat"
+    "darkMode": "Mod întunecat",
+    "title": "Setări Profil"
   },
   "learningPath": {
     "currentCourse": "Curs curent",
