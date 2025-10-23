@@ -4,11 +4,36 @@ import '@testing-library/jest-dom';
 import Footer from '../../components/Footer';
 import { AppContext } from '../../components/AppContext';
 
+// Mock framer-motion to avoid dynamic import issues
+jest.mock('framer-motion', () => {
+  const actual = {
+    motion: {
+      div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+      span: ({ children, ...props }: any) => <span {...props}>{children}</span>,
+      button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+      a: ({ children, ...props }: any) => <a {...props}>{children}</a>,
+      p: ({ children, ...props }: any) => <p {...props}>{children}</p>,
+      h1: ({ children, ...props }: any) => <h1 {...props}>{children}</h1>,
+      h2: ({ children, ...props }: any) => <h2 {...props}>{children}</h2>,
+      h3: ({ children, ...props }: any) => <h3 {...props}>{children}</h3>,
+      section: ({ children, ...props }: any) => <section {...props}>{children}</section>,
+    },
+    AnimatePresence: ({ children }: any) => <>{children}</>,
+    useAnimation: () => ({
+      start: jest.fn(),
+      set: jest.fn(),
+    }),
+    LazyMotion: ({ children }: any) => <>{children}</>,
+    domAnimation: jest.fn(),
+  };
+  return actual;
+});
+
 // Create a mock context provider for Footer testing
 const MockAppContextProvider = ({
   children,
   isDark = false,
-  toggleTheme = jest.fn()
+  toggleTheme = jest.fn(),
 }: {
   children: React.ReactNode;
   isDark?: boolean;
@@ -58,11 +83,7 @@ const MockAppContextProvider = ({
     },
   } as any; // Use 'as any' to bypass complete type checking for test
 
-  return (
-    <AppContext.Provider value={mockContext}>
-      {children}
-    </AppContext.Provider>
-  );
+  return <AppContext.Provider value={mockContext}>{children}</AppContext.Provider>;
 };
 
 describe('Footer Component', () => {

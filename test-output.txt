@@ -1,0 +1,766 @@
+npm info using npm@11.4.2
+npm info using node@v24.1.0
+npm warn Unknown cli config "--testPathPattern". This will stop working in the next major version of npm.
+npm warn Unknown cli config "--coverage". This will stop working in the next major version of npm.
+
+> cursuri@0.1.0 test
+> jest
+
+PASS __tests__/components/Course/CourseAccess.test.tsx
+  Course Content Display Tests
+    ΓêÜ should test lesson access control logic (4 ms)
+    ΓêÜ should allow access to free lessons (1 ms)
+    ΓêÜ should allow access when user has course access
+    ΓêÜ should handle lesson duration formatting (1 ms)
+
+PASS __tests__/api/ApiRoutes.test.tsx
+  API Routes
+    /api/sync-lesson
+      ΓêÜ should handle missing lessonId parameter (5 ms)
+      ΓêÜ should validate request method (1 ms)
+      ΓêÜ should handle valid sync request parameters (2 ms)
+    /api/invoice/generate
+      ΓêÜ should validate invoice generation parameters (1 ms)
+      ΓêÜ should handle missing required parameters
+      ΓêÜ should validate currency parameter
+    /api/certificate
+      ΓêÜ should validate certificate generation parameters (1 ms)
+      ΓêÜ should handle certificate template parameters (2 ms)
+      ΓêÜ should validate user name format (1 ms)
+    /api/captions
+      ΓêÜ should validate video URL parameter (1 ms)
+      ΓêÜ should handle supported languages
+      ΓêÜ should validate video file extensions (1 ms)
+      ΓêÜ should handle caption format options
+    API Error Handling
+      ΓêÜ should handle malformed JSON requests (1 ms)
+      ΓêÜ should handle missing Content-Type header
+      ΓêÜ should handle empty request body
+    API Security
+      ΓêÜ should validate authentication headers
+      ΓêÜ should handle missing authentication (1 ms)
+      ΓêÜ should validate user permissions (5 ms)
+    API Response Formats
+      ΓêÜ should return consistent success response format (1 ms)
+      ΓêÜ should return consistent error response format
+      ΓêÜ should handle different HTTP status codes (1 ms)
+
+PASS __tests__/components/Course/CourseContentExtraction.test.tsx
+  Course Content Extraction Tests
+    ΓêÜ should extract lessons from nested Firebase data structure (4 ms)
+    ΓêÜ should handle direct lesson data format (1 ms)
+    ΓêÜ should handle empty or invalid lesson data
+    ΓêÜ should verify hasAccess prop logic
+
+  console.log
+    getCoursePrice: No priceProduct found for course test-course
+
+      at log (utils/pricing.ts:32:17)
+
+  console.log
+    getCoursePrice: No priceProduct found for course test-course
+
+      at log (utils/pricing.ts:32:17)
+
+  console.log
+    getCoursePrice: No priceProduct found for course test-course
+
+      at log (utils/pricing.ts:32:17)
+
+  console.log
+    getCoursePrice: No priceProduct found for course test
+
+      at log (utils/pricing.ts:32:17)
+
+  console.log
+    getCoursePrice: No priceProduct found for course test
+
+      at log (utils/pricing.ts:32:17)
+
+  console.log
+    getCoursePrice: No priceProduct found for course test
+
+      at log (utils/pricing.ts:32:17)
+
+  console.error
+    Error converting date to ISO string: RangeError: Invalid time value
+        at Date.toISOString (<anonymous>)
+        at toISOString (E:\GitHub\cursuri\utils\timeHelpers.ts:27:35)
+        at Object.<anonymous> (E:\GitHub\cursuri\__tests__\utils\TimeHelpers.test.tsx:39:29)
+        at Promise.finally.completed (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+        at _callCircusTest (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+        at processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at _runTest (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+        at E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+        at _runTestsForDescribeBlock (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+        at _runTestsForDescribeBlock (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at _runTestsForDescribeBlock (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at run (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+        at runAndTransformResultsToJestFormat (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+        at jestAdapter (E:\GitHub\cursuri\node_modules\jest-circus\build\runner.js:101:19)
+        at runTestInternal (E:\GitHub\cursuri\node_modules\jest-runner\build\testWorker.js:275:16)
+        at runTest (E:\GitHub\cursuri\node_modules\jest-runner\build\testWorker.js:343:7)
+        at Object.worker (E:\GitHub\cursuri\node_modules\jest-runner\build\testWorker.js:497:12)
+
+    [0m [90m 30 |[39m         [36mreturn[39m undefined[33m;[39m
+     [90m 31 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 32 |[39m         console[33m.[39merror([32m'Error converting date to ISO string:'[39m[33m,[39m error)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 33 |[39m         [36mreturn[39m undefined[33m;[39m
+     [90m 34 |[39m     }
+     [90m 35 |[39m }[0m
+
+      at error (utils/timeHelpers.ts:32:17)
+      at Object.<anonymous> (__tests__/utils/TimeHelpers.test.tsx:39:29)
+
+PASS __tests__/utils/PricingHelpers.test.tsx
+  Pricing Utility Functions
+    getCoursePrice
+      ΓêÜ returns free pricing for free courses (4 ms)
+      ΓêÜ handles courses with priceProduct and specific price ID (11 ms)
+      ΓêÜ falls back to first available price when specific price not found (1 ms)
+      ΓêÜ handles legacy numeric price property
+      ΓêÜ handles legacy string price property (1 ms)
+      ΓêÜ returns default pricing for courses without valid price info (39 ms)
+      ΓêÜ handles different currencies correctly
+      ΓêÜ ignores invalid string prices (1 ms)
+      ΓêÜ ignores Stripe price IDs as legacy prices (1 ms)
+    formatPrice
+      ΓêÜ formats RON currency correctly
+      ΓêÜ formats USD currency correctly (1 ms)
+      ΓêÜ defaults to RON when currency not specified
+      ΓêÜ handles zero amounts
+      ΓêÜ handles large amounts
+      ΓêÜ handles decimal amounts correctly (1 ms)
+      ΓêÜ handles case insensitive currency codes
+    hasValidPrice
+      ΓêÜ returns true for free courses
+      ΓêÜ returns true for courses with valid pricing (1 ms)
+      ΓêÜ returns true for legacy courses with numeric price
+      ΓêÜ returns false for courses without valid pricing (1 ms)
+      ΓêÜ returns false for courses with zero price (not explicitly free) (1 ms)
+      ΓêÜ returns false for courses with invalid string prices (1 ms)
+
+  console.error
+    Error converting date to ISO string: RangeError: Invalid time value
+        at Date.toISOString (<anonymous>)
+        at toISOString (E:\GitHub\cursuri\utils\timeHelpers.ts:22:25)
+        at Object.<anonymous> (E:\GitHub\cursuri\__tests__\utils\TimeHelpers.test.tsx:46:29)
+        at Promise.finally.completed (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+        at _callCircusTest (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+        at processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at _runTest (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+        at E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+        at _runTestsForDescribeBlock (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+        at _runTestsForDescribeBlock (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at _runTestsForDescribeBlock (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at run (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+        at runAndTransformResultsToJestFormat (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+        at jestAdapter (E:\GitHub\cursuri\node_modules\jest-circus\build\runner.js:101:19)
+        at runTestInternal (E:\GitHub\cursuri\node_modules\jest-runner\build\testWorker.js:275:16)
+        at runTest (E:\GitHub\cursuri\node_modules\jest-runner\build\testWorker.js:343:7)
+        at Object.worker (E:\GitHub\cursuri\node_modules\jest-runner\build\testWorker.js:497:12)
+
+    [0m [90m 30 |[39m         [36mreturn[39m undefined[33m;[39m
+     [90m 31 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 32 |[39m         console[33m.[39merror([32m'Error converting date to ISO string:'[39m[33m,[39m error)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 33 |[39m         [36mreturn[39m undefined[33m;[39m
+     [90m 34 |[39m     }
+     [90m 35 |[39m }[0m
+
+      at error (utils/timeHelpers.ts:32:17)
+      at Object.<anonymous> (__tests__/utils/TimeHelpers.test.tsx:46:29)
+
+  console.error
+    Error formatting date: RangeError: Invalid time value
+        at format (E:\GitHub\cursuri\utils\timeHelpers.ts:73:58)
+        at Object.<anonymous> (E:\GitHub\cursuri\__tests__\utils\TimeHelpers.test.tsx:106:24)
+        at Promise.finally.completed (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+        at _callCircusTest (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+        at processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at _runTest (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+        at E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+        at _runTestsForDescribeBlock (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+        at _runTestsForDescribeBlock (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at _runTestsForDescribeBlock (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at run (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+        at runAndTransformResultsToJestFormat (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+        at jestAdapter (E:\GitHub\cursuri\node_modules\jest-circus\build\runner.js:101:19)
+        at runTestInternal (E:\GitHub\cursuri\node_modules\jest-runner\build\testWorker.js:275:16)
+        at runTest (E:\GitHub\cursuri\node_modules\jest-runner\build\testWorker.js:343:7)
+        at Object.worker (E:\GitHub\cursuri\node_modules\jest-runner\build\testWorker.js:497:12)
+
+    [0m [90m 73 |[39m         [36mreturn[39m [36mnew[39m [33mIntl[39m[33m.[39m[33mDateTimeFormat[39m([32m'en-US'[39m[33m,[39m options)[33m.[39mformat(dateObj)[33m;[39m
+     [90m 74 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 75 |[39m         console[33m.[39merror([32m'Error formatting date:'[39m[33m,[39m error)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 76 |[39m         [36mreturn[39m [32m''[39m[33m;[39m
+     [90m 77 |[39m     }
+     [90m 78 |[39m }[0m
+
+      at error (utils/timeHelpers.ts:75:17)
+      at Object.<anonymous> (__tests__/utils/TimeHelpers.test.tsx:106:24)
+
+  console.error
+    Error formatting date: RangeError: Invalid time value
+        at format (E:\GitHub\cursuri\utils\timeHelpers.ts:73:58)
+        at Object.<anonymous> (E:\GitHub\cursuri\__tests__\utils\TimeHelpers.test.tsx:108:24)
+        at Promise.finally.completed (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+        at _callCircusTest (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+        at processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at _runTest (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+        at E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+        at _runTestsForDescribeBlock (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+        at _runTestsForDescribeBlock (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at _runTestsForDescribeBlock (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at run (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+        at runAndTransformResultsToJestFormat (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+        at jestAdapter (E:\GitHub\cursuri\node_modules\jest-circus\build\runner.js:101:19)
+        at runTestInternal (E:\GitHub\cursuri\node_modules\jest-runner\build\testWorker.js:275:16)
+        at runTest (E:\GitHub\cursuri\node_modules\jest-runner\build\testWorker.js:343:7)
+        at Object.worker (E:\GitHub\cursuri\node_modules\jest-runner\build\testWorker.js:497:12)
+
+    [0m [90m 73 |[39m         [36mreturn[39m [36mnew[39m [33mIntl[39m[33m.[39m[33mDateTimeFormat[39m([32m'en-US'[39m[33m,[39m options)[33m.[39mformat(dateObj)[33m;[39m
+     [90m 74 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 75 |[39m         console[33m.[39merror([32m'Error formatting date:'[39m[33m,[39m error)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 76 |[39m         [36mreturn[39m [32m''[39m[33m;[39m
+     [90m 77 |[39m     }
+     [90m 78 |[39m }[0m
+
+      at error (utils/timeHelpers.ts:75:17)
+      at Object.<anonymous> (__tests__/utils/TimeHelpers.test.tsx:108:24)
+
+PASS __tests__/utils/TimeHelpers.test.tsx
+  Time Helper Functions
+    safeToISOString
+      ΓêÜ converts Date objects to ISO string (4 ms)
+      ΓêÜ converts string dates to ISO string (1 ms)
+      ΓêÜ converts number timestamps to ISO string
+      ΓêÜ handles Firebase Timestamp objects
+      ΓêÜ handles null and undefined
+      ΓêÜ handles invalid dates gracefully (45 ms)
+      ΓêÜ handles edge cases (3 ms)
+    formatDate
+      ΓêÜ formats Date objects with default options (11 ms)
+      ΓêÜ formats string dates
+      ΓêÜ formats number timestamps
+      ΓêÜ handles Firebase Timestamp objects
+      ΓêÜ handles custom formatting options (1 ms)
+      ΓêÜ formats with time included
+      ΓêÜ handles null and undefined gracefully
+      ΓêÜ handles invalid dates gracefully (3 ms)
+      ΓêÜ handles different locales (1 ms)
+      ΓêÜ formats edge case dates
+
+PASS __tests__/setup.test.tsx
+  Jest Setup Test
+    ΓêÜ should render and find text (18 ms)
+    ΓêÜ should pass basic test
+
+PASS __tests__/components/ui/SectionHeader.test.tsx
+  SectionHeader Component
+    ΓêÜ renders with required title prop (24 ms)
+    ΓêÜ renders with title and subtitle (2 ms)
+    ΓêÜ renders with icon, title, and subtitle (3 ms)
+    ΓêÜ applies custom className (1 ms)
+    ΓêÜ has correct default styling classes (2 ms)
+    ΓêÜ does not render subtitle when not provided (2 ms)
+    ΓêÜ does not render icon when not provided (2 ms)
+    ΓêÜ handles empty className gracefully (1 ms)
+    ΓêÜ preserves proper DOM structure (3 ms)
+    ΓêÜ handles long titles and subtitles (2 ms)
+    ΓêÜ maintains accessibility with semantic heading (25 ms)
+    ΓêÜ combines custom className with default classes
+    ΓêÜ renders with complex React node as icon (1 ms)
+
+FAIL __tests__/components/Course/LessonsList.test.tsx
+  ΓùÅ Test suite failed to run
+
+    Configuration error:
+
+    Could not locate module next-intl mapped as:
+    E:\GitHub\cursuri\node_modules\next-intl\dist\cjs\index.js.
+
+    Please check your configuration for these entries:
+    {
+      "moduleNameMapper": {
+        "/^next-intl$/": "E:\GitHub\cursuri\node_modules\next-intl\dist\cjs\index.js"
+      },
+      "resolver": undefined
+    }
+
+      15 | }
+      16 |
+    > 17 | export default function LessonsList({
+         |                   ^
+      18 |     lessons,
+      19 |     course,
+      20 |     courseId: propsCourseId,
+
+      at createNoMappedModuleFoundError (node_modules/jest-resolve/build/index.js:1117:17)
+      at Object.<anonymous> (components/Course/LessonsList.tsx:17:19)
+      at Object.<anonymous> (__tests__/components/Course/LessonsList.test.tsx:15:61)
+
+PASS __tests__/components/icons/CloseIcon.test.tsx
+  CloseIcon Component
+    ΓêÜ renders with default props (18 ms)
+    ΓêÜ applies custom className (3 ms)
+    ΓêÜ has correct SVG attributes (3 ms)
+    ΓêÜ contains correct path with close icon shape (3 ms)
+    ΓêÜ works without className prop (2 ms)
+    ΓêÜ works as child component (3 ms)
+    ΓêÜ handles complex className strings (2 ms)
+    ΓêÜ maintains accessibility with proper SVG element (2 ms)
+    ΓêÜ uses currentColor for stroke (1 ms)
+    ΓêÜ has correct stroke properties for clean rendering (2 ms)
+
+PASS __tests__/components/icons/SearchIcon.test.tsx
+  SearchIcon Component
+    ΓêÜ renders with default props (22 ms)
+    ΓêÜ applies custom className (3 ms)
+    ΓêÜ has correct SVG attributes (4 ms)
+    ΓêÜ contains correct path with search icon shape (3 ms)
+    ΓêÜ works without className prop (2 ms)
+    ΓêÜ works as child component (2 ms)
+    ΓêÜ handles complex className strings (2 ms)
+    ΓêÜ maintains accessibility with proper role (1 ms)
+    ΓêÜ uses currentColor for stroke (2 ms)
+    ΓêÜ has correct stroke properties for clean rendering (1 ms)
+    ΓêÜ renders correctly in different contexts (2 ms)
+    ΓêÜ preserves search magnifying glass visual pattern (1 ms)
+
+PASS __tests__/components/LoadingIcon.test.tsx
+  LoadingIcon Component
+    ΓêÜ should render with default props (22 ms)
+    ΓêÜ should apply default className (4 ms)
+    ΓêÜ should apply custom className (3 ms)
+    ΓêÜ should apply size prop as width and height attributes (3 ms)
+    ΓêÜ should use default size when size prop is not provided (2 ms)
+    SVG Structure
+      ΓêÜ should have correct SVG attributes (2 ms)
+      ΓêÜ should contain two path elements (2 ms)
+      ΓêÜ should have correct path fill attributes (3 ms)
+    Accessibility
+      ΓêÜ should have proper ARIA attributes (2 ms)
+      ΓêÜ should indicate loading state semantically (2 ms)
+    Animation
+      ΓêÜ should have spin animation class
+      ΓêÜ should preserve animation class when custom className is provided
+    Props Handling
+      ΓêÜ should handle all props together (1 ms)
+      ΓêÜ should handle empty className (1 ms)
+      ΓêÜ should handle undefined size gracefully (1 ms)
+    CSS Variables Integration
+      ΓêÜ should use CSS custom properties for accent color (1 ms)
+    Component Integration
+      ΓêÜ should work as a child component (2 ms)
+      ΓêÜ should render with only supported props (1 ms)
+    Edge Cases
+      ΓêÜ should handle very large size values (1 ms)
+      ΓêÜ should handle zero size value with fallback (1 ms)
+      ΓêÜ should maintain functionality with complex className strings (1 ms)
+
+PASS __tests__/components/LoadingButton.test.tsx
+  LoadingButton Component
+    ΓêÜ should render with default props (55 ms)
+    ΓêÜ should render with custom loading text (6 ms)
+    ΓêÜ should apply custom className (5 ms)
+    Size Variants
+      ΓêÜ should apply small size classes (5 ms)
+      ΓêÜ should apply medium size classes by default (4 ms)
+      ΓêÜ should apply medium size classes when explicitly set (3 ms)
+      ΓêÜ should apply large size classes (2 ms)
+    Button Styling
+      ΓêÜ should have disabled attribute (7 ms)
+      ΓêÜ should have button type attribute (2 ms)
+      ΓêÜ should have gradient background classes (2 ms)
+      ΓêÜ should have rounded and styled classes (2 ms)
+    Loading Icon
+      ΓêÜ should render loading icon with correct classes
+      ΓêÜ should position icon before text (2 ms)
+    Accessibility
+      ΓêÜ should be keyboard accessible (1 ms)
+      ΓêÜ should have proper button role (2 ms)
+    Prop Combinations
+      ΓêÜ should handle all props together (1 ms)
+      ΓêÜ should work with empty className (2 ms)
+      ΓêÜ should work with undefined loadingText fallback (1 ms)
+    Component Structure
+      ΓêÜ should maintain consistent DOM structure (2 ms)
+      ΓêÜ should preserve button semantics (1 ms)
+
+PASS __tests__/components/Breadcrumbs.test.tsx
+  Breadcrumbs Component
+    Homepage Navigation
+      ΓêÜ should not render breadcrumbs on the home page (11 ms)
+    Courses Page Navigation
+      ΓêÜ should not render breadcrumbs on main courses page (1 ms)
+    Individual Course Navigation
+      ΓêÜ should render breadcrumbs for a specific course page (29 ms)
+      ΓêÜ should render breadcrumbs for unknown course with fallback name (4 ms)
+    Lesson Page Navigation
+      ΓêÜ should render complete breadcrumb trail for lesson pages (8 ms)
+      ΓêÜ should handle unknown lesson with fallback name (3 ms)
+      ΓêÜ should handle unknown course and lesson with fallback names (5 ms)
+    Path Separators
+      ΓêÜ should include path separators between breadcrumb items (2 ms)
+    Accessibility
+      ΓêÜ should have proper ARIA labels (2 ms)
+      ΓêÜ should mark the current page with aria-current (1 ms)
+    Edge Cases
+      ΓêÜ should handle empty courses and lessons data (2 ms)
+      ΓêÜ should not render for single breadcrumb item (1 ms)
+      ΓêÜ should handle malformed URLs gracefully (2 ms)
+    Course and Lesson Name Display
+      ΓêÜ should display correct course names for different courses (1 ms)
+      ΓêÜ should display correct lesson names for different lessons (1 ms)
+
+FAIL __tests__/components/ErrorPage.test.tsx
+  ΓùÅ Test suite failed to run
+
+    Configuration error:
+
+    Could not locate module next-intl mapped as:
+    E:\GitHub\cursuri\node_modules\next-intl\dist\cjs\index.js.
+
+    Please check your configuration for these entries:
+    {
+      "moduleNameMapper": {
+        "/^next-intl$/": "E:\GitHub\cursuri\node_modules\next-intl\dist\cjs\index.js"
+      },
+      "resolver": undefined
+    }
+
+      15 |     showBackButton?: boolean;
+      16 | }
+    > 17 |
+         | ^
+      18 | const ErrorPage: React.FC<ErrorPageProps> = ({
+      19 |     title,
+      20 |     message,
+
+      at createNoMappedModuleFoundError (node_modules/jest-resolve/build/index.js:1117:17)
+      at Object.<anonymous> (components/ErrorPage.tsx:17:19)
+      at Object.<anonymous> (__tests__/components/ErrorPage.test.tsx:11:59)
+
+FAIL __tests__/components/Footer.test.tsx
+  ΓùÅ Test suite failed to run
+
+    Configuration error:
+
+    Could not locate module next-intl mapped as:
+    E:\GitHub\cursuri\node_modules\next-intl\dist\cjs\index.js.
+
+    Please check your configuration for these entries:
+    {
+      "moduleNameMapper": {
+        "/^next-intl$/": "E:\GitHub\cursuri\node_modules\next-intl\dist\cjs\index.js"
+      },
+      "resolver": undefined
+    }
+
+      14 | const Footer = () => {
+      15 |     const t = useTranslations('common');
+    > 16 |     const context = React.useContext(AppContext) as AppContextProps;
+         |                   ^
+      17 |     if (!context) {
+      18 |         throw new Error("You probably forgot to put <AppProvider>.");
+      19 |     }
+
+      at createNoMappedModuleFoundError (node_modules/jest-resolve/build/index.js:1117:17)
+      at Object.<anonymous> (components/Footer.tsx:16:19)
+      at Object.<anonymous> (__tests__/components/Footer.test.tsx:9:56)
+
+FAIL __tests__/components/SearchBar.test.tsx
+  ΓùÅ Test suite failed to run
+
+    Configuration error:
+
+    Could not locate module next-intl mapped as:
+    E:\GitHub\cursuri\node_modules\next-intl\dist\cjs\index.js.
+
+    Please check your configuration for these entries:
+    {
+      "moduleNameMapper": {
+        "/^next-intl$/": "E:\GitHub\cursuri\node_modules\next-intl\dist\cjs\index.js"
+      },
+      "resolver": undefined
+    }
+
+      18 |     const searchContainerRef = useRef<HTMLDivElement>(null)
+      19 |     const router = useRouter()
+    > 20 |     const pathname = usePathname()
+         |                   ^
+      21 |
+      22 |     // Only show search on homepage
+      23 |     const isHomePage = pathname === '/'
+
+      at createNoMappedModuleFoundError (node_modules/jest-resolve/build/index.js:1117:17)
+      at Object.<anonymous> (components/SearchBar.tsx:20:19)
+      at Object.<anonymous> (__tests__/components/SearchBar.test.tsx:12:59)
+
+FAIL __tests__/components/Authentication.test.tsx
+  Authentication System
+    User Authentication State
+      ├ù should start with no authenticated user (2 ms)
+      ├ù should handle user authentication
+      ├ù should handle user logout
+    Admin Role Detection
+      ├ù should detect admin users by email
+      ├ù should detect alternative admin email patterns
+      ├ù should not grant admin to regular users
+    Email Verification
+      ├ù should handle verified users
+      ├ù should handle unverified users
+    Authentication Loading State
+      ├ù should show loading initially
+      ├ù should stop loading after auth state resolves (1 ms)
+    Authentication Error Handling
+      ├ù should handle authentication errors gracefully
+      ├ù should handle malformed user objects
+    Authentication State Persistence
+      ├ù should maintain authentication state across re-renders
+    Multiple Admin Email Patterns
+      ├ù should recognize admin@cursuri.ro as admin (1 ms)
+      ├ù should recognize administrator@cursuri.ro as admin
+      ├ù should recognize owner@cursuri.ro as admin
+
+  ΓùÅ Authentication System ΓÇ║ User Authentication State ΓÇ║ should start with no authenticated user
+
+    TypeError: _auth.onAuthStateChanged.mockImplementation is not a function
+
+      43 |
+      44 |     // Default mock for onAuthStateChanged
+    > 45 |     (onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
+         |                                       ^
+      46 |       return () => { }; // Return unsubscribe function
+      47 |     });
+      48 |
+
+      at Object.mockImplementation (__tests__/components/Authentication.test.tsx:45:39)
+
+  ΓùÅ Authentication System ΓÇ║ User Authentication State ΓÇ║ should handle user authentication
+
+    TypeError: _auth.onAuthStateChanged.mockImplementation is not a function
+
+      43 |
+      44 |     // Default mock for onAuthStateChanged
+    > 45 |     (onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
+         |                                       ^
+      46 |       return () => { }; // Return unsubscribe function
+      47 |     });
+      48 |
+
+      at Object.mockImplementation (__tests__/components/Authentication.test.tsx:45:39)
+
+  ΓùÅ Authentication System ΓÇ║ User Authentication State ΓÇ║ should handle user logout
+
+    TypeError: _auth.onAuthStateChanged.mockImplementation is not a function
+
+      43 |
+      44 |     // Default mock for onAuthStateChanged
+    > 45 |     (onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
+         |                                       ^
+      46 |       return () => { }; // Return unsubscribe function
+      47 |     });
+      48 |
+
+      at Object.mockImplementation (__tests__/components/Authentication.test.tsx:45:39)
+
+  ΓùÅ Authentication System ΓÇ║ Admin Role Detection ΓÇ║ should detect admin users by email
+
+    TypeError: _auth.onAuthStateChanged.mockImplementation is not a function
+
+      43 |
+      44 |     // Default mock for onAuthStateChanged
+    > 45 |     (onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
+         |                                       ^
+      46 |       return () => { }; // Return unsubscribe function
+      47 |     });
+      48 |
+
+      at Object.mockImplementation (__tests__/components/Authentication.test.tsx:45:39)
+
+  ΓùÅ Authentication System ΓÇ║ Admin Role Detection ΓÇ║ should detect alternative admin email patterns
+
+    TypeError: _auth.onAuthStateChanged.mockImplementation is not a function
+
+      43 |
+      44 |     // Default mock for onAuthStateChanged
+    > 45 |     (onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
+         |                                       ^
+      46 |       return () => { }; // Return unsubscribe function
+      47 |     });
+      48 |
+
+      at Object.mockImplementation (__tests__/components/Authentication.test.tsx:45:39)
+
+  ΓùÅ Authentication System ΓÇ║ Admin Role Detection ΓÇ║ should not grant admin to regular users
+
+    TypeError: _auth.onAuthStateChanged.mockImplementation is not a function
+
+      43 |
+      44 |     // Default mock for onAuthStateChanged
+    > 45 |     (onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
+         |                                       ^
+      46 |       return () => { }; // Return unsubscribe function
+      47 |     });
+      48 |
+
+      at Object.mockImplementation (__tests__/components/Authentication.test.tsx:45:39)
+
+  ΓùÅ Authentication System ΓÇ║ Email Verification ΓÇ║ should handle verified users
+
+    TypeError: _auth.onAuthStateChanged.mockImplementation is not a function
+
+      43 |
+      44 |     // Default mock for onAuthStateChanged
+    > 45 |     (onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
+         |                                       ^
+      46 |       return () => { }; // Return unsubscribe function
+      47 |     });
+      48 |
+
+      at Object.mockImplementation (__tests__/components/Authentication.test.tsx:45:39)
+
+  ΓùÅ Authentication System ΓÇ║ Email Verification ΓÇ║ should handle unverified users
+
+    TypeError: _auth.onAuthStateChanged.mockImplementation is not a function
+
+      43 |
+      44 |     // Default mock for onAuthStateChanged
+    > 45 |     (onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
+         |                                       ^
+      46 |       return () => { }; // Return unsubscribe function
+      47 |     });
+      48 |
+
+      at Object.mockImplementation (__tests__/components/Authentication.test.tsx:45:39)
+
+  ΓùÅ Authentication System ΓÇ║ Authentication Loading State ΓÇ║ should show loading initially
+
+    TypeError: _auth.onAuthStateChanged.mockImplementation is not a function
+
+      43 |
+      44 |     // Default mock for onAuthStateChanged
+    > 45 |     (onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
+         |                                       ^
+      46 |       return () => { }; // Return unsubscribe function
+      47 |     });
+      48 |
+
+      at Object.mockImplementation (__tests__/components/Authentication.test.tsx:45:39)
+
+  ΓùÅ Authentication System ΓÇ║ Authentication Loading State ΓÇ║ should stop loading after auth state resolves
+
+    TypeError: _auth.onAuthStateChanged.mockImplementation is not a function
+
+      43 |
+      44 |     // Default mock for onAuthStateChanged
+    > 45 |     (onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
+         |                                       ^
+      46 |       return () => { }; // Return unsubscribe function
+      47 |     });
+      48 |
+
+      at Object.mockImplementation (__tests__/components/Authentication.test.tsx:45:39)
+
+  ΓùÅ Authentication System ΓÇ║ Authentication Error Handling ΓÇ║ should handle authentication errors gracefully
+
+    TypeError: _auth.onAuthStateChanged.mockImplementation is not a function
+
+      43 |
+      44 |     // Default mock for onAuthStateChanged
+    > 45 |     (onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
+         |                                       ^
+      46 |       return () => { }; // Return unsubscribe function
+      47 |     });
+      48 |
+
+      at Object.mockImplementation (__tests__/components/Authentication.test.tsx:45:39)
+
+  ΓùÅ Authentication System ΓÇ║ Authentication Error Handling ΓÇ║ should handle malformed user objects
+
+    TypeError: _auth.onAuthStateChanged.mockImplementation is not a function
+
+      43 |
+      44 |     // Default mock for onAuthStateChanged
+    > 45 |     (onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
+         |                                       ^
+      46 |       return () => { }; // Return unsubscribe function
+      47 |     });
+      48 |
+
+      at Object.mockImplementation (__tests__/components/Authentication.test.tsx:45:39)
+
+  ΓùÅ Authentication System ΓÇ║ Authentication State Persistence ΓÇ║ should maintain authentication state across re-renders
+
+    TypeError: _auth.onAuthStateChanged.mockImplementation is not a function
+
+      43 |
+      44 |     // Default mock for onAuthStateChanged
+    > 45 |     (onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
+         |                                       ^
+      46 |       return () => { }; // Return unsubscribe function
+      47 |     });
+      48 |
+
+      at Object.mockImplementation (__tests__/components/Authentication.test.tsx:45:39)
+
+  ΓùÅ Authentication System ΓÇ║ Multiple Admin Email Patterns ΓÇ║ should recognize admin@cursuri.ro as admin
+
+    TypeError: _auth.onAuthStateChanged.mockImplementation is not a function
+
+      43 |
+      44 |     // Default mock for onAuthStateChanged
+    > 45 |     (onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
+         |                                       ^
+      46 |       return () => { }; // Return unsubscribe function
+      47 |     });
+      48 |
+
+      at Object.mockImplementation (__tests__/components/Authentication.test.tsx:45:39)
+
+  ΓùÅ Authentication System ΓÇ║ Multiple Admin Email Patterns ΓÇ║ should recognize administrator@cursuri.ro as admin
+
+    TypeError: _auth.onAuthStateChanged.mockImplementation is not a function
+
+      43 |
+      44 |     // Default mock for onAuthStateChanged
+    > 45 |     (onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
+         |                                       ^
+      46 |       return () => { }; // Return unsubscribe function
+      47 |     });
+      48 |
+
+      at Object.mockImplementation (__tests__/components/Authentication.test.tsx:45:39)
+
+  ΓùÅ Authentication System ΓÇ║ Multiple Admin Email Patterns ΓÇ║ should recognize owner@cursuri.ro as admin
+
+    TypeError: _auth.onAuthStateChanged.mockImplementation is not a function
+
+      43 |
+      44 |     // Default mock for onAuthStateChanged
+    > 45 |     (onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
+         |                                       ^
+      46 |       return () => { }; // Return unsubscribe function
+      47 |     });
+      48 |
+
+      at Object.mockImplementation (__tests__/components/Authentication.test.tsx:45:39)
+
+Test Suites: 5 failed, 12 passed, 17 of 18 total
+Tests:       16 failed, 162 passed, 178 total
+Snapshots:   0 total
+Time:        2.834 s
+Ran all test suites.

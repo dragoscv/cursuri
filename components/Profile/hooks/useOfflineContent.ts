@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useState, useEffect, useCallback, useContext } from 'react';
 import { useTranslations } from 'next-intl';
@@ -12,7 +12,7 @@ import {
   OfflineContent,
   OfflineLessonContent,
   isOnline,
-  formatSize
+  formatSize,
 } from '@/utils/offline/offlineStorage';
 import { toast } from '@heroui/react';
 import { useToast } from '@/components/Toast';
@@ -58,7 +58,7 @@ export function useOfflineContent(): UseOfflineContentReturn {
         console.error('Error loading offline content:', error);
         showToast({
           type: 'error',
-          message: 'Error loading offline content'
+          message: 'Error loading offline content',
         });
       } finally {
         setIsLoading(false);
@@ -87,119 +87,133 @@ export function useOfflineContent(): UseOfflineContentReturn {
   /**
    * Download a lesson for offline viewing
    */
-  const downloadLesson = useCallback(async (lesson: Lesson, course: Course) => {
-    // Don't allow downloads if already downloading this lesson
-    if (isDownloading[lesson.id]) return;
+  const downloadLesson = useCallback(
+    async (lesson: Lesson, course: Course) => {
+      // Don't allow downloads if already downloading this lesson
+      if (isDownloading[lesson.id]) return;
 
-    // Set download status for this lesson
-    setIsDownloading(prev => ({ ...prev, [lesson.id]: true }));
-    setDownloadProgress(prev => ({ ...prev, [lesson.id]: 0 }));
-    try {      // Show toast notification
-      showToast({
-        type: 'info',
-        message: `Starting download for "${lesson.name || lesson.title}"`
-      });
-
-      // Simulate progress updates (actual progress tracking would be more complex)
-      const progressInterval = setInterval(() => {
-        setDownloadProgress(prev => {
-          const currentProgress = prev[lesson.id] || 0;
-          // Cap at 90% - the last 10% will be set after content is stored
-          return { ...prev, [lesson.id]: Math.min(currentProgress + 10, 90) };
+      // Set download status for this lesson
+      setIsDownloading((prev) => ({ ...prev, [lesson.id]: true }));
+      setDownloadProgress((prev) => ({ ...prev, [lesson.id]: 0 }));
+      try {
+        // Show toast notification
+        showToast({
+          type: 'info',
+          message: `Starting download for "${lesson.name || lesson.title}"`,
         });
-      }, 500);
 
-      // Download the lesson
-      const offlineLesson = await downloadLessonForOffline(lesson, course);
+        // Simulate progress updates (actual progress tracking would be more complex)
+        const progressInterval = setInterval(() => {
+          setDownloadProgress((prev) => {
+            const currentProgress = prev[lesson.id] || 0;
+            // Cap at 90% - the last 10% will be set after content is stored
+            return { ...prev, [lesson.id]: Math.min(currentProgress + 10, 90) };
+          });
+        }, 500);
 
-      // Clear the progress interval
-      clearInterval(progressInterval);
+        // Download the lesson
+        const offlineLesson = await downloadLessonForOffline(lesson, course);
 
-      // Set progress to 100%
-      setDownloadProgress(prev => ({ ...prev, [lesson.id]: 100 }));
+        // Clear the progress interval
+        clearInterval(progressInterval);
 
-      // Update offline content list
-      setOfflineContent(prev => {
-        const existingIndex = prev.findIndex(
-          content => content.id === lesson.id && content.type === 'lesson'
-        );
+        // Set progress to 100%
+        setDownloadProgress((prev) => ({ ...prev, [lesson.id]: 100 }));
 
-        if (existingIndex >= 0) {
-          // Replace existing content
-          const updated = [...prev];
-          updated[existingIndex] = offlineLesson;
-          return updated;
-        } else {
-          // Add new content
-          return [...prev, offlineLesson];
-        }
-      });      // Show success notification
-      showToast({
-        type: 'success',
-        message: `Lesson "${lesson.name || lesson.title}" is now available offline`
-      });
-    } catch (error) {
-      console.error('Error downloading lesson:', error);
-      showToast({
-        type: 'error',
-        message: `Failed to download lesson "${lesson.name || lesson.title}"`
-      });
-    } finally {
-      // Reset download status
-      setIsDownloading(prev => ({ ...prev, [lesson.id]: false }));
+        // Update offline content list
+        setOfflineContent((prev) => {
+          const existingIndex = prev.findIndex(
+            (content) => content.id === lesson.id && content.type === 'lesson'
+          );
 
-      // Reset progress after a short delay (to show 100%)
-      setTimeout(() => {
-        setDownloadProgress(prev => ({ ...prev, [lesson.id]: 0 }));
-      }, 2000);
-    }
-  }, [isDownloading, showToast]);
+          if (existingIndex >= 0) {
+            // Replace existing content
+            const updated = [...prev];
+            updated[existingIndex] = offlineLesson;
+            return updated;
+          } else {
+            // Add new content
+            return [...prev, offlineLesson];
+          }
+        }); // Show success notification
+        showToast({
+          type: 'success',
+          message: `Lesson "${lesson.name || lesson.title}" is now available offline`,
+        });
+      } catch (error) {
+        console.error('Error downloading lesson:', error);
+        showToast({
+          type: 'error',
+          message: `Failed to download lesson "${lesson.name || lesson.title}"`,
+        });
+      } finally {
+        // Reset download status
+        setIsDownloading((prev) => ({ ...prev, [lesson.id]: false }));
+
+        // Reset progress after a short delay (to show 100%)
+        setTimeout(() => {
+          setDownloadProgress((prev) => ({ ...prev, [lesson.id]: 0 }));
+        }, 2000);
+      }
+    },
+    [isDownloading, showToast]
+  );
 
   /**
    * Remove offline content by ID and type
    */
-  const removeOfflineContent = useCallback(async (id: string, type: 'lesson' | 'course') => {
-    try {
-      await deleteOfflineContent(id, type);
-      // Update local state
-      setOfflineContent(prev =>
-        prev.filter(content => !(content.id === id && content.type === type))
-      });
+  const removeOfflineContent = useCallback(
+    async (id: string, type: 'lesson' | 'course') => {
+      try {
+        await deleteOfflineContent(id, type);
+        // Update local state
+        setOfflineContent((prev) =>
+          prev.filter((content) => !(content.id === id && content.type === type))
+        );
 
-      showToast({
-        type: 'success',
-        message: t('success.offlineContentRemoved'),
-      });
-    } catch (error) {
-      console.error('Error removing offline content:', error);
-      showToast({
-        type: 'error',
-        message: t('error.offlineRemoveFailed'),
-      });
-    }
-  }, [toast]);
+        showToast({
+          type: 'success',
+          message: t('success.offlineContentRemoved'),
+        });
+      } catch (error) {
+        console.error('Error removing offline content:', error);
+        showToast({
+          type: 'error',
+          message: t('error.offlineRemoveFailed'),
+        });
+      }
+    },
+    [toast]
+  );
 
   /**
    * Get an offline lesson by ID
    */
-  const getOfflineLesson = useCallback(async (lessonId: string): Promise<OfflineLessonContent | null> => {
-    try {
-      const content = await getOfflineContent(lessonId, 'lesson') as OfflineLessonContent | null;
-      return content;
-    } catch (error) {
-      console.error('Error getting offline lesson:', error);
-      return null;
-    }
-  }, []);
+  const getOfflineLesson = useCallback(
+    async (lessonId: string): Promise<OfflineLessonContent | null> => {
+      try {
+        const content = (await getOfflineContent(
+          lessonId,
+          'lesson'
+        )) as OfflineLessonContent | null;
+        return content;
+      } catch (error) {
+        console.error('Error getting offline lesson:', error);
+        return null;
+      }
+    },
+    []
+  );
 
   /**
    * Check if a lesson is available offline
    */
-  const isLessonAvailableOffline = useCallback((lessonId: string): boolean => {
-    return offlineContent.some(
-      content => content.id === lessonId && content.type === 'lesson'
-    );
-  }, [offlineContent]);
+  const isLessonAvailableOffline = useCallback(
+    (lessonId: string): boolean => {
+      return offlineContent.some((content) => content.id === lessonId && content.type === 'lesson');
+    },
+    [offlineContent]
+  );
 
   /**
    * Clear all offline content
@@ -215,7 +229,7 @@ export function useOfflineContent(): UseOfflineContentReturn {
 
       showToast({
         type: 'success',
-        message: t('success.allOfflineContentRemoved')
+        message: t('success.allOfflineContentRemoved'),
       });
     } catch (error) {
       console.error('Error clearing offline content:', error);
@@ -236,7 +250,7 @@ export function useOfflineContent(): UseOfflineContentReturn {
     removeOfflineContent,
     getOfflineLesson,
     isLessonAvailableOffline,
-    clearAllOfflineContent
+    clearAllOfflineContent,
   };
 }
 

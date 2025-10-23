@@ -1,55 +1,55 @@
 {
-    "metadata": {
-        "title": "Despre Noi | Cursuri",
-        "description": "Află despre misiunea noastră de a furniza cursuri de înaltă calitate în AI, Marketing, Data Science și competențe esențiale pentru a ajuta profesioniștii să-și avanseze carierele."
+  "metadata": {
+    "title": "Despre Noi | Cursuri",
+    "description": "Află despre misiunea noastră de a furniza cursuri de înaltă calitate în AI, Marketing, Data Science și competențe esențiale pentru a ajuta profesioniștii să-și avanseze carierele."
+  },
+  "hero": {
+    "title": "Despre Cursuri",
+    "subtitle": "Suntem pasionați de a împuternici cursanții cu abilitățile și cunoștințele necesare pentru a prospera în era AI și dincolo de aceasta."
+  },
+  "mission": {
+    "title": "Misiunea Noastră",
+    "paragraph1": "La Cursuri, credem că educația de înaltă calitate ar trebui să fie accesibilă tuturor. Misiunea noastră este să facem legătura între educația tradițională și cerințele industriei, oferind experiențe de învățare practică, bazată pe proiecte, în diverse domenii.",
+    "paragraph2": "De la Inteligența Artificială și Data Science la Marketing Digital și Strategie de Afaceri, ne concentrăm pe aplicații din lumea reală care pregătesc studenții noștri pentru succes în peisajul profesional în rapidă evoluție."
+  },
+  "whatWeOffer": {
+    "title": "Ce Oferim",
+    "projectBased": {
+      "title": "Învățare Bazată pe Proiecte",
+      "description": "Învață prin construirea de proiecte reale în diverse domenii - de la modele AI și vizualizări de date la campanii de marketing și soluții de afaceri pe care le poți prezenta în portofoliul tău."
     },
-    "hero": {
-        "title": "Despre Cursuri",
-        "subtitle": "Suntem pasionați de a împuternici cursanții cu abilitățile și cunoștințele necesare pentru a prospera în era AI și dincolo de aceasta."
+    "expertInstructors": {
+      "title": "Instructori Experți",
+      "description": "Instructorii noștri sunt profesioniști experimentați care lucrează în industrie. Ei aduc perspective din lumea reală și cele mai bune practici la fiecare lecție."
     },
-    "mission": {
-        "title": "Misiunea Noastră",
-        "paragraph1": "La Cursuri, credem că educația de înaltă calitate ar trebui să fie accesibilă tuturor. Misiunea noastră este să facem legătura între educația tradițională și cerințele industriei, oferind experiențe de învățare practică, bazată pe proiecte, în diverse domenii.",
-        "paragraph2": "De la Inteligența Artificială și Data Science la Marketing Digital și Strategie de Afaceri, ne concentrăm pe aplicații din lumea reală care pregătesc studenții noștri pentru succes în peisajul profesional în rapidă evoluție."
+    "upToDate": {
+      "title": "Conținut Actualizat",
+      "description": "Tehnologia evoluează rapid, la fel și cursurile noastre. Actualizăm regulat conținutul pentru a te asigura că înveți cele mai noi instrumente și tehnici."
     },
-    "whatWeOffer": {
-        "title": "Ce Oferim",
-        "projectBased": {
-            "title": "Învățare Bazată pe Proiecte",
-            "description": "Învață prin construirea de proiecte reale în diverse domenii - de la modele AI și vizualizări de date la campanii de marketing și soluții de afaceri pe care le poți prezenta în portofoliul tău."
-        },
-        "expertInstructors": {
-            "title": "Instructori Experți",
-            "description": "Instructorii noștri sunt profesioniști experimentați care lucrează în industrie. Ei aduc perspective din lumea reală și cele mai bune practici la fiecare lecție."
-        },
-        "upToDate": {
-            "title": "Conținut Actualizat",
-            "description": "Tehnologia evoluează rapid, la fel și cursurile noastre. Actualizăm regulat conținutul pentru a te asigura că înveți cele mai noi instrumente și tehnici."
-        },
-        "community": {
-            "title": "Suport Comunitar",
-            "description": "Alătură-te unei comunități diverse de cursanți și profesioniști din diverse industrii. Primește ajutor când ai nevoie și împărtășește-ți cunoștințele cu alții."
-        }
-    },
-    "values": {
-        "title": "Valorile Noastre",
-        "quality": {
-            "title": "Calitate Pe Primul Loc",
-            "description": "Nu facem niciodată compromisuri asupra calității. Fiecare curs este creat cu atenție și testat temeinic."
-        },
-        "accessibility": {
-            "title": "Accesibilitate",
-            "description": "Învățarea ar trebui să fie accesibilă tuturor, indiferent de background sau nivel de experiență."
-        },
-        "improvement": {
-            "title": "Îmbunătățire Continuă",
-            "description": "Suntem mereu în proces de învățare și îmbunătățire, la fel ca studenții noștri."
-        }
-    },
-    "cta": {
-        "title": "Gata să Începi să Înveți?",
-        "description": "Alătură-te miilor de cursanți care și-au avansat carierele cu cursurile noastre în AI, Marketing, Data Science și multe altele.",
-        "browseCourses": "Explorează Cursurile",
-        "contactUs": "Contactează-ne"
+    "community": {
+      "title": "Suport Comunitar",
+      "description": "Alătură-te unei comunități diverse de cursanți și profesioniști din diverse industrii. Primește ajutor când ai nevoie și împărtășește-ți cunoștințele cu alții."
     }
+  },
+  "values": {
+    "title": "Valorile Noastre",
+    "quality": {
+      "title": "Calitate Pe Primul Loc",
+      "description": "Nu facem niciodată compromisuri asupra calității. Fiecare curs este creat cu atenție și testat temeinic."
+    },
+    "accessibility": {
+      "title": "Accesibilitate",
+      "description": "Învățarea ar trebui să fie accesibilă tuturor, indiferent de background sau nivel de experiență."
+    },
+    "improvement": {
+      "title": "Îmbunătățire Continuă",
+      "description": "Suntem mereu în proces de învățare și îmbunătățire, la fel ca studenții noștri."
+    }
+  },
+  "cta": {
+    "title": "Gata să Începi să Înveți?",
+    "description": "Alătură-te miilor de cursanți care și-au avansat carierele cu cursurile noastre în AI, Marketing, Data Science și multe altele.",
+    "browseCourses": "Explorează Cursurile",
+    "contactUs": "Contactează-ne"
+  }
 }

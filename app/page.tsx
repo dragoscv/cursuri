@@ -1,24 +1,24 @@
-import type { Metadata } from 'next'
-import AvailableCoursesSection from '@/components/AvailableCoursesSection'
-import HeroSection from '@/components/HeroSection'
-import FeaturedReviewsSection from '@/components/FeaturedReviewsSection'
-import TechStackSection from '@/components/TechStackSection'
-import WhyChooseUsSection from '@/components/WhyChooseUsSection'
-import LearningPathSection from '@/components/LearningPathSection'
-import StatisticsSection from '@/components/StatisticsSection'
-import CallToActionSection from '@/components/CallToActionSection'
-import FeaturedCoursesSection from '@/components/FeaturedCoursesSection'
-import RecommendedCoursesSection from '@/components/RecommendedCoursesSection'
-import { constructMetadata } from '@/utils/metadata'
-import { getTranslations } from 'next-intl/server'
+import type { Metadata } from 'next';
+import AvailableCoursesSection from '@/components/AvailableCoursesSection';
+import HeroSection from '@/components/HeroSection';
+import FeaturedReviewsSection from '@/components/FeaturedReviewsSection';
+import TechStackSection from '@/components/TechStackSection';
+import WhyChooseUsSection from '@/components/WhyChooseUsSection';
+import LearningPathSection from '@/components/LearningPathSection';
+import StatisticsSection from '@/components/StatisticsSection';
+import CallToActionSection from '@/components/CallToActionSection';
+import FeaturedCoursesSection from '@/components/FeaturedCoursesSection';
+import RecommendedCoursesSection from '@/components/RecommendedCoursesSection';
+import { constructMetadata } from '@/utils/metadata';
+import { getTranslations } from 'next-intl/server';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('home.metadata');
-  
+
   return constructMetadata({
     title: t('title'),
     description: t('description'),
-    keywords: t('keywords').split(', ')
+    keywords: t('keywords').split(', '),
   });
 }
 
@@ -58,5 +58,5 @@ export default function Home() {
       {/* Call to action section */}
       <CallToActionSection />
     </main>
-  )
+  );
 }

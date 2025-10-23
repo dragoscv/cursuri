@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getFirestore } from 'firebase-admin/firestore';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { requireAuth, checkRateLimit } from '@/utils/api/auth';
+import { logAdminAction } from '@/utils/auditLog';
 
 /**
  * Generate Course Completion Certificate
- * 
+ *
  * Security:
  * - Requires user authentication
  * - Verifies course completion before generating certificate
@@ -21,8 +22,8 @@ export async function POST(req: NextRequest) {
     if (isBuild) {
       return NextResponse.json({
         success: true,
-        message: "This is a mock certificate response for build time",
-        certificateUrl: "https://example.com/mock-certificate.pdf"
+        message: 'This is a mock certificate response for build time',
+        certificateUrl: 'https://example.com/mock-certificate.pdf',
       });
     }
 
@@ -34,7 +35,8 @@ export async function POST(req: NextRequest) {
     const userId = user.uid;
 
     // Rate limiting: 5 certificates per minute per user
-    if (!checkRateLimit(`certificate:${userId}`, 5, 60000)) {
+    const rateLimitAllowed = await checkRateLimit(`certificate:${userId}`, 5, 60000);
+    if (!rateLimitAllowed) {
       return NextResponse.json(
         { error: 'Rate limit exceeded. Please try again later.' },
         { status: 429 }
@@ -44,10 +46,7 @@ export async function POST(req: NextRequest) {
     const { courseId } = await req.json();
 
     if (!courseId) {
-      return NextResponse.json(
-        { error: 'Course ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Course ID is required' }, { status: 400 });
     }
 
     // Fetch user and course info
@@ -68,10 +67,7 @@ export async function POST(req: NextRequest) {
       .get();
 
     if (!progressDoc.exists) {
-      return NextResponse.json(
-        { error: 'Course not enrolled or completed' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Course not enrolled or completed' }, { status: 403 });
     }
 
     const progressData = progressDoc.data();
@@ -82,13 +78,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           error: 'Course not completed. Minimum 90% completion required for certificate.',
-          currentProgress: completionPercentage
+          currentProgress: completionPercentage,
         },
         { status: 403 }
       );
     }
 
-    const userData = userDoc.data();
     const course = courseDoc.data();
 
     // Generate a more professional certificate
@@ -103,8 +98,8 @@ export async function POST(req: NextRequest) {
 
     // Define colors
     const primaryColor = rgb(0.2, 0.2, 0.6); // Deep blue
-    const accentColor = rgb(0.7, 0.5, 0.1);  // Gold
-    const textColor = rgb(0.1, 0.1, 0.1);    // Near black
+    const accentColor = rgb(0.7, 0.5, 0.1); // Gold
+    const textColor = rgb(0.1, 0.1, 0.1); // Near black
 
     // Draw border
     page.drawRectangle({
@@ -137,7 +132,7 @@ export async function POST(req: NextRequest) {
       color: primaryColor,
     });
 
-    // Cursuri logo position 
+    // Cursuri logo position
     page.drawText('CURSURI', {
       x: 375,
       y: 460,
@@ -194,7 +189,7 @@ export async function POST(req: NextRequest) {
     const completionDate = new Date().toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     });
 
     page.drawText(`Awarded on ${completionDate}`, {
@@ -238,8 +233,19 @@ export async function POST(req: NextRequest) {
       courseName,
       completionDate: new Date().toISOString(),
       certificateId,
-      downloadedAt: new Date().toISOString()
+      downloadedAt: new Date().toISOString(),
     });
+
+    // Log certificate generation
+    await logAdminAction(
+      'certificate_generated',
+      req,
+      user,
+      'certificate',
+      certificateId,
+      { courseId, courseName, completionPercentage },
+      true
+    );
 
     // Convert to PDF and return
     const pdfBytes = await pdfDoc.save();
@@ -252,6 +258,25 @@ export async function POST(req: NextRequest) {
     });
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+
+    // Log certificate generation error
+    try {
+      const authResult = await requireAuth(req);
+      if (!(authResult instanceof NextResponse)) {
+        await logAdminAction(
+          'certificate_generation_failed',
+          req,
+          authResult.user!,
+          'certificate',
+          undefined,
+          { errorMessage },
+          false
+        );
+      }
+    } catch {
+      // Ignore logging errors in error handler
+    }
+
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

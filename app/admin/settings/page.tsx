@@ -1,17 +1,17 @@
-'use client'
+'use client';
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import AdminSettings from '@/components/Admin/AdminSettings';
 import AdminPageHeader from '@/components/Admin/AdminPageHeader';
 
 export default function SettingsPage() {
-    return (
-        <>
-            <AdminPageHeader
-                title="Platform Settings"
-                description="Configure platform-wide settings, payment options, and notification preferences."
-            />
-            <AdminSettings />
-        </>
-    );
+  const t = useTranslations('admin.settings');
+
+  return (
+    <>
+      <AdminPageHeader title={t('title')} description={t('pageDescription')} />
+      <AdminSettings />
+    </>
+  );
 }

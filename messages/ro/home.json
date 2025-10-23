@@ -112,7 +112,12 @@
   "cta": {
     "title": "Pregătit Să Începi Călătoria Ta de Învățare?",
     "subtitle": "Alătură-te miilor de cursanți care învață deja pe platforma noastră",
-    "button": "Vezi Toate Cursurile"
+    "button": "Vezi Toate Cursurile",
+    "benefits": {
+      "moneyBack": "Garanție de Returnare a Banilor de 30 de Zile",
+      "lifetimeAccess": "Acces pe Viață",
+      "certificate": "Certificat de Absolvire"
+    }
   },
   "statistics": {
     "courses": {

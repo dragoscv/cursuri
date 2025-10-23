@@ -1,207 +1,208 @@
 {
-    "title": "Panou de Administrare",
-    "overview": "Prezentare Generală",
-    "header": {
-        "admin": "Administrare",
-        "dashboard": "Tablou de Bord",
-        "courses": "Cursuri",
-        "batchOps": "Operațiuni",
-        "users": "Utilizatori",
-        "enhancedUsers": "Utilizatori Avansat",
-        "analytics": "Analize",
-        "engagement": "Implicare",
-        "settings": "Setări",
-        "backToSite": "Înapoi la Site",
-        "myProfile": "Profilul Meu",
-        "adminSettings": "Setări Administrator",
-        "helpDocumentation": "Ajutor & Documentație",
-        "logout": "Deconectare"
+  "title": "Panou de Administrare",
+  "overview": "Prezentare Generală",
+  "header": {
+    "admin": "Administrare",
+    "dashboard": "Tablou de Bord",
+    "courses": "Cursuri",
+    "batchOps": "Operațiuni",
+    "users": "Utilizatori",
+    "enhancedUsers": "Utilizatori Avansat",
+    "analytics": "Analize",
+    "engagement": "Implicare",
+    "settings": "Setări",
+    "backToSite": "Înapoi la Site",
+    "myProfile": "Profilul Meu",
+    "adminSettings": "Setări Administrator",
+    "helpDocumentation": "Ajutor & Documentație",
+    "logout": "Deconectare"
+  },
+  "quickActions": {
+    "title": "Acțiuni Rapide",
+    "addCourse": "Adaugă Curs",
+    "manageUsers": "Gestionează Utilizatori",
+    "viewAnalytics": "Vizualizează Analize",
+    "settings": "Setări"
+  },
+  "courses": {
+    "title": "Gestionare Cursuri",
+    "courseDetails": "Detalii Curs",
+    "editCourse": "Editează Cursul",
+    "pageDescription": "Creează, editează și gestionează cursurile și conținutul acestora.",
+    "addCourse": "Adaugă Curs",
+    "grid": "Grilă",
+    "list": "Listă",
+    "status": "Status",
+    "active": "activ",
+    "draft": "ciornă",
+    "price": "Preț",
+    "priceNotAvailable": "Preț indisponibil",
+    "courseDescription": "Descriere",
+    "noDescription": "Fără descriere disponibilă",
+    "tags": "Etichete",
+    "actions": "Acțiuni",
+    "delete": "Șterge",
+    "edit": "Editează",
+    "view": "Vizualizează",
+    "confirmDelete": "Confirmă Ștergerea",
+    "confirmDeleteMessage": "Sigur doriți să ștergeți cursul \"{courseName}\"?",
+    "confirmDeleteWarning": "Această acțiune nu poate fi anulată. Toate lecțiile și datele de progres vor fi șterse permanent.",
+    "cancel": "Anulează",
+    "deleting": "Se șterge...",
+    "noCourses": "Nu există cursuri disponibile",
+    "noCoursesDescription": "Începe prin a crea primul tău curs",
+    "courseDeleted": "Curs Șters",
+    "courseDeletedMessage": "Șters cu succes \"{courseName}\"",
+    "failedToDeleteCourse": "Eșec la Ștergerea Cursului",
+    "failedToDeleteMessage": "Eșec la ștergerea cursului. Vă rugăm încercați din nou."
+  },
+  "lessons": {
+    "title": "Lecții",
+    "totalLessonsCreated": "Total lecții create"
+  },
+  "analytics": {
+    "title": "Analize",
+    "revenueOverTime": "Venituri În Timp",
+    "noRevenueData": "Nu există date despre venituri",
+    "totalRevenue": "Venituri Totale",
+    "averagePerSale": "Medie Pe Vânzare",
+    "salesThisMonth": "Vânzări Luna Aceasta",
+    "revenueGrowth": "Creștere Venituri",
+    "userGrowth": "Creștere Utilizatori",
+    "totalUsers": "Total Utilizatori",
+    "courseStatistics": "Statistici Cursuri",
+    "activeCourses": "Cursuri Active",
+    "totalLessons": "Total Lecții",
+    "popularCourses": "Cursuri Populare",
+    "failedToLoad": "Eșec la încărcarea datelor de analiză",
+    "pleaseTryAgain": "Vă rugăm să încercați din nou mai târziu"
+  },
+  "users": {
+    "title": "Gestionare Utilizatori",
+    "adminNotes": "Note Administrator",
+    "searchUsers": "Căutare utilizatori...",
+    "tableUser": "UTILIZATOR",
+    "tableEmail": "EMAIL",
+    "tableVerified": "VERIFICAT",
+    "tableRole": "ROL",
+    "tableActions": "ACȚIUNI",
+    "noName": "Fără Nume",
+    "verified": "Verificat",
+    "notVerified": "Neverificat",
+    "assignCourse": "Atribuie Curs",
+    "noUsersFound": "Nu s-au găsit utilizatori",
+    "failedToLoad": "Eroare la încărcarea datelor utilizatorilor",
+    "userDetails": "Detalii Utilizator",
+    "accountDetails": "Detalii Cont",
+    "userId": "ID Utilizator",
+    "createdOn": "Creat La",
+    "enrolledCourses": "Cursuri Înscrise",
+    "addCourse": "Adaugă Curs",
+    "assigned": "Atribuit",
+    "purchased": "Achiziționat",
+    "noEnrolledCourses": "Niciun curs înscris",
+    "assignFirstCourse": "Atribuie Primul Curs",
+    "grantCourseAccess": "Acordă acces la curs acestui utilizator",
+    "courseAssignedSuccess": "Curs Atribuit Cu Succes",
+    "courseAssignedTo": "Cursul a fost atribuit către {name}",
+    "assigningCourseTo": "Se atribuie curs către:",
+    "selectCourse": "Selectează Curs",
+    "chooseACourse": "Alege un curs",
+    "courseImmediatelyAvailable": "Cursul selectat va fi disponibil imediat pentru acest utilizator."
+  },
+  "roleManagement": {
+    "title": "Gestionare Roluri Administrator",
+    "roles": {
+      "superAdmin": "Super Administrator",
+      "admin": "Administrator",
+      "user": "Utilizator"
     },
-    "quickActions": {
-        "title": "Acțiuni Rapide",
-        "addCourse": "Adaugă Curs",
-        "manageUsers": "Gestionează Utilizatori",
-        "viewAnalytics": "Vizualizează Analize",
-        "settings": "Setări"
-    },
-    "courses": {
-        "title": "Gestionare Cursuri",
-        "courseDetails": "Detalii Curs",
-        "editCourse": "Editează Cursul",
-        "pageDescription": "Creează, editează și gestionează cursurile și conținutul acestora.",
-        "addCourse": "Adaugă Curs",
-        "grid": "Grilă",
-        "list": "Listă",
-        "status": "Status",
-        "active": "activ",
-        "draft": "ciornă",
-        "price": "Preț",
-        "priceNotAvailable": "Preț indisponibil",
-        "courseDescription": "Descriere",
-        "noDescription": "Fără descriere disponibilă",
-        "tags": "Etichete",
-        "actions": "Acțiuni",
-        "delete": "Șterge",
-        "edit": "Editează",
-        "view": "Vizualizează",
-        "confirmDelete": "Confirmă Ștergerea",
-        "confirmDeleteMessage": "Sigur doriți să ștergeți cursul \"{courseName}\"?",
-        "confirmDeleteWarning": "Această acțiune nu poate fi anulată. Toate lecțiile și datele de progres vor fi șterse permanent.",
-        "cancel": "Anulează",
-        "deleting": "Se șterge...",
-        "noCourses": "Nu există cursuri disponibile",
-        "noCoursesDescription": "Începe prin a crea primul tău curs",
-        "courseDeleted": "Curs Șters",
-        "courseDeletedMessage": "Șters cu succes \"{courseName}\"",
-        "failedToDeleteCourse": "Eșec la Ștergerea Cursului",
-        "failedToDeleteMessage": "Eșec la ștergerea cursului. Vă rugăm încercați din nou."
-    },
-    "lessons": {
-        "title": "Lecții",
-        "totalLessonsCreated": "Total lecții create"
-    },
-    "analytics": {
-        "title": "Analize",
-        "revenueOverTime": "Venituri În Timp",
-        "noRevenueData": "Nu există date despre venituri",
-        "totalRevenue": "Venituri Totale",
-        "averagePerSale": "Medie Pe Vânzare",
-        "salesThisMonth": "Vânzări Luna Aceasta",
-        "revenueGrowth": "Creștere Venituri",
-        "userGrowth": "Creștere Utilizatori",
-        "totalUsers": "Total Utilizatori",
-        "courseStatistics": "Statistici Cursuri",
-        "activeCourses": "Cursuri Active",
-        "totalLessons": "Total Lecții",
-        "popularCourses": "Cursuri Populare",
-        "failedToLoad": "Eșec la încărcarea datelor de analiză",
-        "pleaseTryAgain": "Vă rugăm să încercați din nou mai târziu"
-    },
-    "users": {
-        "title": "Gestionare Utilizatori",
-        "adminNotes": "Note Administrator",
-        "searchUsers": "Căutare utilizatori...",
-        "tableUser": "UTILIZATOR",
-        "tableEmail": "EMAIL",
-        "tableVerified": "VERIFICAT",
-        "tableRole": "ROL",
-        "tableActions": "ACȚIUNI",
-        "noName": "Fără Nume",
-        "verified": "Verificat",
-        "notVerified": "Neverificat",
-        "assignCourse": "Atribuie Curs",
-        "noUsersFound": "Nu s-au găsit utilizatori",
-        "failedToLoad": "Eroare la încărcarea datelor utilizatorilor",
-        "userDetails": "Detalii Utilizator",
-        "accountDetails": "Detalii Cont",
-        "userId": "ID Utilizator",
-        "createdOn": "Creat La",
-        "enrolledCourses": "Cursuri Înscrise",
-        "addCourse": "Adaugă Curs",
-        "assigned": "Atribuit",
-        "purchased": "Achiziționat",
-        "noEnrolledCourses": "Niciun curs înscris",
-        "assignFirstCourse": "Atribuie Primul Curs",
-        "grantCourseAccess": "Acordă acces la curs acestui utilizator",
-        "courseAssignedSuccess": "Curs Atribuit Cu Succes",
-        "courseAssignedTo": "Cursul a fost atribuit către {name}",
-        "assigningCourseTo": "Se atribuie curs către:",
-        "selectCourse": "Selectează Curs",
-        "chooseACourse": "Alege un curs",
-        "courseImmediatelyAvailable": "Cursul selectat va fi disponibil imediat pentru acest utilizator."
-    },
-    "roleManagement": {
-        "title": "Gestionare Roluri Administrator",
-        "roles": {
-            "superAdmin": "Super Administrator",
-            "admin": "Administrator",
-            "user": "Utilizator"
-        },
-        "permissions": {
-            "noPermission": "Fără permisiune"
-        }
-    },
-    "batchOperations": {
-        "actions": {
-            "updateStatus": "Actualizează Status",
-            "changeCategory": "Schimbă Categoria",
-            "changeVisibility": "Schimbă Vizibilitatea",
-            "updatePrice": "Actualizează Prețul",
-            "delete": "Șterge"
-        }
-    },
-    "userManagement": {
-        "placeholders": {
-            "displayName": "Nume Afișat",
-            "userBio": "Biografie utilizator",
-            "notSet": "Nesetat",
-            "noName": "Fără Nume"
-        },
-        "tabs": {
-            "adminNotes": "Note Administrator",
-            "activityLog": "Istoric Activitate"
-        },
-        "enrollment": {
-            "via": "prin",
-            "adminAssignment": "Atribuire administrator",
-            "selfPurchase": "Achiziție proprie"
-        },
-        "fallbacks": {
-            "unknownCourse": "Curs Necunoscut",
-            "unknownDate": "Dată Necunoscută"
-        }
-    },
-    "pages": {
-        "userManagement": "Gestionare Utilizatori",
-        "platformSettings": "Setări Platformă"
-    },
-    "engagement": {
-        "totalCourses": "Total Cursuri",
-        "totalEnrollments": "Total Înscrieri",
-        "title": "Implicare Cursuri",
-        "exportReport": "Exportă Raport",
-        "avgCompletionRate": "Rată Medie Finalizare",
-        "avgCompletionTime": "Timp Mediu Finalizare",
-        "courseEngagementMetrics": "Metrici Implicare Cursuri",
-        "tableCourse": "CURS",
-        "tableStudents": "STUDENȚI",
-        "tableCompletionRate": "RATĂ FINALIZARE",
-        "tableAvgTime": "TIMP MEDIU",
-        "tableViews": "VIZUALIZĂRI",
-        "tableEngagement": "IMPLICARE",
-        "completed": "Finalizat",
-        "inProgress": "În Progres",
-        "notStarted": "Neînceput",
-        "noCoursesFound": "Nu s-au găsit cursuri",
-        "engagementChartLegend": "Legendă Diagramă Implicare",
-        "failedToLoad": "Eroare la încărcarea datelor de implicare"
-    },
-    "dashboard": {
-        "title": "Panou de Administrare",
-        "overview": "Prezentare generală a analizelor și performanței platformei",
-        "failedToLoad": "Eroare la încărcarea datelor de analiză"
-    },
-    "settings": {
-        "title": "Setări Platformă",
-        "saveSettings": "Salvează Setări",
-        "savedSuccessfully": "Setări salvate cu succes",
-        "failedToLoad": "Eroare la încărcarea setărilor",
-        "generalSettings": "Setări Generale",
-        "siteName": "Nume Site",
-        "enterSiteName": "Introduceți numele site-ului",
-        "siteDescription": "Descriere Site",
-        "enterSiteDescription": "Introduceți descrierea site-ului",
-        "contactEmail": "Email Contact",
-        "enterContactEmail": "Introduceți email-ul de contact",
-        "authSettings": "Setări Autentificare",
-        "allowUserRegistration": "Permite Înregistrarea Utilizatorilor",
-        "whenDisabledNoRegistration": "Când este dezactivată, utilizatorii noi nu se pot înregistra",
-        "allowSocialLogin": "Permite Autentificare Socială",
-        "whenEnabledSocialLogin": "Când este activată, utilizatorii se pot autentifica cu Google și alți furnizori",
-        "paymentSettings": "Setări Plată",
-        "paymentProcessing": "Procesare Plăți",
-        "whenDisabledNoPurchases": "Când este dezactivată, utilizatorii nu pot face achiziții",
-        "currency": "Monedă",
-        "taxRate": "Cotă TVA (%)"
+    "permissions": {
+      "noPermission": "Fără permisiune"
     }
+  },
+  "batchOperations": {
+    "actions": {
+      "updateStatus": "Actualizează Status",
+      "changeCategory": "Schimbă Categoria",
+      "changeVisibility": "Schimbă Vizibilitatea",
+      "updatePrice": "Actualizează Prețul",
+      "delete": "Șterge"
+    }
+  },
+  "userManagement": {
+    "placeholders": {
+      "displayName": "Nume Afișat",
+      "userBio": "Biografie utilizator",
+      "notSet": "Nesetat",
+      "noName": "Fără Nume"
+    },
+    "tabs": {
+      "adminNotes": "Note Administrator",
+      "activityLog": "Istoric Activitate"
+    },
+    "enrollment": {
+      "via": "prin",
+      "adminAssignment": "Atribuire administrator",
+      "selfPurchase": "Achiziție proprie"
+    },
+    "fallbacks": {
+      "unknownCourse": "Curs Necunoscut",
+      "unknownDate": "Dată Necunoscută"
+    }
+  },
+  "pages": {
+    "userManagement": "Gestionare Utilizatori",
+    "platformSettings": "Setări Platformă"
+  },
+  "engagement": {
+    "totalCourses": "Total Cursuri",
+    "totalEnrollments": "Total Înscrieri",
+    "title": "Implicare Cursuri",
+    "exportReport": "Exportă Raport",
+    "avgCompletionRate": "Rată Medie Finalizare",
+    "avgCompletionTime": "Timp Mediu Finalizare",
+    "courseEngagementMetrics": "Metrici Implicare Cursuri",
+    "tableCourse": "CURS",
+    "tableStudents": "STUDENȚI",
+    "tableCompletionRate": "RATĂ FINALIZARE",
+    "tableAvgTime": "TIMP MEDIU",
+    "tableViews": "VIZUALIZĂRI",
+    "tableEngagement": "IMPLICARE",
+    "completed": "Finalizat",
+    "inProgress": "În Progres",
+    "notStarted": "Neînceput",
+    "noCoursesFound": "Nu s-au găsit cursuri",
+    "engagementChartLegend": "Legendă Diagramă Implicare",
+    "failedToLoad": "Eroare la încărcarea datelor de implicare"
+  },
+  "dashboard": {
+    "title": "Panou de Administrare",
+    "overview": "Prezentare generală a analizelor și performanței platformei",
+    "failedToLoad": "Eroare la încărcarea datelor de analiză"
+  },
+  "settings": {
+    "title": "Setări Platformă",
+    "pageDescription": "Configurează setările la nivel de platformă, opțiunile de plată și preferințele de notificare.",
+    "saveSettings": "Salvează Setările",
+    "savedSuccessfully": "Setări salvate cu succes",
+    "failedToLoad": "Eroare la încărcarea setărilor",
+    "generalSettings": "Setări Generale",
+    "siteName": "Nume Site",
+    "enterSiteName": "Introduceți numele site-ului",
+    "siteDescription": "Descriere Site",
+    "enterSiteDescription": "Introduceți descrierea site-ului",
+    "contactEmail": "Email Contact",
+    "enterContactEmail": "Introduceți email-ul de contact",
+    "authSettings": "Setări Autentificare",
+    "allowUserRegistration": "Permite Înregistrarea Utilizatorilor",
+    "whenDisabledNoRegistration": "Când este dezactivată, utilizatorii noi nu se pot înregistra",
+    "allowSocialLogin": "Permite Autentificare Socială",
+    "whenEnabledSocialLogin": "Când este activată, utilizatorii se pot autentifica cu Google și alți furnizori",
+    "paymentSettings": "Setări Plată",
+    "paymentProcessing": "Procesare Plăți",
+    "whenDisabledNoPurchases": "Când este dezactivată, utilizatorii nu pot face achiziții",
+    "currency": "Monedă",
+    "taxRate": "Cotă TVA (%)"
+  }
 }

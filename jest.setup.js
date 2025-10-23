@@ -1,5 +1,19 @@
 import '@testing-library/jest-dom';
 
+// Load environment variables from .env.local for testing
+// This ensures Firebase credentials and other env vars are available
+require('dotenv').config({ path: require('path').resolve(process.cwd(), '.env.local') });
+
+// Add Node.js polyfills required by Firebase Admin SDK and gRPC
+if (typeof global.setImmediate === 'undefined') {
+  global.setImmediate = (callback, ...args) => {
+    return setTimeout(callback, 0, ...args);
+  };
+  global.clearImmediate = (id) => {
+    return clearTimeout(id);
+  };
+}
+
 // Add fetch polyfill for Node.js environment (required for Firebase/Firewand)
 global.fetch = global.fetch || async function (url, options = {}) {
   return new Promise((resolve) => {

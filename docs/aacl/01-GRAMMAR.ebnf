@@ -1,0 +1,61 @@
+(* AACL Grammar - EBNF Specification *)
+
+(* Entry Point *)
+program = { agent_definition } ;
+
+(* Agent Definition *)
+agent_definition = "agent" string_literal "{" { statement } "}" ;
+
+statement = intent_statement
+          | capability_statement
+          | check_statement
+          | emit_statement
+          ;
+
+(* Statements *)
+intent_statement = "intent" string_literal ";" ;
+
+capability_statement = "capability" identifier [ array_literal ] ";" ;
+
+check_statement = "check" identifier identifier "expect" string_literal ";" ;
+
+emit_statement = "emit" string_literal ";" ;
+
+(* Literals *)
+string_literal = '"' { string_char } '"' ;
+string_char = escape_sequence | ( ? any character except '"' and '\\' ? ) ;
+escape_sequence = "\\n" | "\\t" | "\\\"" | "\\\\" ;
+
+array_literal = "[" [ string_literal { "," string_literal } ] "]" ;
+
+integer_literal = [ "-" ] digit { digit } ;
+
+boolean_literal = "true" | "false" ;
+
+(* Identifiers and Keywords *)
+identifier = letter { letter | digit | "_" | "-" } ;
+
+letter = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" 
+       | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" 
+       | "u" | "v" | "w" | "x" | "y" | "z"
+       | "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" 
+       | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" 
+       | "U" | "V" | "W" | "X" | "Y" | "Z" ;
+
+digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+
+(* Whitespace and Comments *)
+whitespace = " " | "\t" | "\n" | "\r" ;
+
+comment = line_comment | block_comment ;
+
+line_comment = "//" { ? any character except newline ? } ( "\n" | ? end of file ? ) ;
+
+block_comment = "/*" { ? any character ? } "*/" ;
+
+(* Lexical Notes *)
+(* - Whitespace and comments are ignored between tokens *)
+(* - Keywords: agent, intent, capability, check, emit, expect, true, false *)
+(* - Identifiers cannot be keywords *)
+(* - String literals support escape sequences: \n \t \" \\ *)
+(* - Arrays can only contain string literals in this version *)

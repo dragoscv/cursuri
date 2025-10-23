@@ -1,10 +1,10 @@
 {
-    "metadata": {
-        "title": "Cursuri Online | Cursuri",
-        "description": "Explorează catalogul nostru cuprinzător de cursuri online în programare, dezvoltare web, AI, data science și multe altele. Învață în ritmul tău și avansează-ți cariera.",
-        "keywords": "cursuri online, cursuri programare, dezvoltare web, cursuri AI, data science, învățare tehnologie, dezvoltare profesională, cursuri coding, învață să programezi, educație tech"
-    },
-    "title": "Cursuri",
+  "metadata": {
+    "title": "Cursuri Online | Cursuri",
+    "description": "Explorează catalogul nostru cuprinzător de cursuri online în programare, dezvoltare web, AI, data science și multe altele. Învață în ritmul tău și avansează-ți cariera.",
+    "keywords": "cursuri online, cursuri programare, dezvoltare web, cursuri AI, data science, învățare tehnologie, dezvoltare profesională, cursuri coding, învață să programezi, educație tech"
+  },
+  "title": "Cursuri",
   "allCourses": "Toate Cursurile",
   "myCourses": "Cursurile Mele",
   "buyCourse": "Cumpără Cursul",
@@ -170,7 +170,7 @@
     "locked": "Blocat",
     "completed": "Finalizat",
     "completedBadge": "FINALIZAT",
-        "inProgress": "În Curs"
+    "inProgress": "În Curs"
   },
   "form": {
     "labels": {

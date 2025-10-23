@@ -63,6 +63,10 @@ NEXT_PUBLIC_AZURE_SPEECH_API_REGION=your_azure_region
 
 # Stripe Configuration (on Firebase Extension)
 # No environment variables needed as they're managed through the Firebase Stripe Extension
+
+# Rate Limiting (Upstash Redis)
+UPSTASH_REDIS_REST_URL=your_upstash_redis_rest_url_here
+UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_rest_token_here
 ```
 
 ### Firebase Configuration
@@ -78,6 +82,23 @@ NEXT_PUBLIC_AZURE_SPEECH_API_REGION=your_azure_region
 1. Create a Stripe account
 2. Configure the Firebase Stripe Extension with your Stripe API keys
 3. Create products and prices in Stripe (these will sync to Firebase)
+
+### Rate Limiting Configuration
+
+1. Create an [Upstash Redis](https://upstash.com/) account
+2. Create a new Redis database (free tier available)
+3. Copy REST API credentials to `.env.local`:
+   - `UPSTASH_REDIS_REST_URL`
+   - `UPSTASH_REDIS_REST_TOKEN`
+4. See `docs/RATE_LIMITING_IMPLEMENTATION.md` for detailed setup
+
+**Rate Limits**:
+
+- **Authentication**: 10 requests per 10 seconds (login, register)
+- **Payment**: 5 requests per minute (Stripe operations)
+- **Enrollment**: 20 requests per hour (course enrollment)
+- **API**: 100 requests per hour (general endpoints)
+- **Admin**: 200 requests per hour (admin operations)
 
 ### Installation
 
@@ -102,7 +123,6 @@ yarn dev
 The application uses the following Firestore collections:
 
 - **courses**: Course information
-
   - Fields: name, description, status, price, priceProduct
   - Sub-collection: **lessons**
     - Fields: name, content, status, order
@@ -110,7 +130,6 @@ The application uses the following Firestore collections:
     - Fields: rating, comment, userId, userName
 
 - **customers**: User specific data
-
   - Sub-collection: **payments**
     - Payment records from Stripe
 
@@ -143,8 +162,8 @@ For other deployment options, please refer to the [Next.js deployment documentat
 Admin functionality is currently tied to specific email addresses. Update the AppContext.tsx file to include your admin email:
 
 ```typescript
-if (user.email === "youradmin@email.com") {
-  dispatch({ type: "SET_IS_ADMIN", payload: true });
+if (user.email === 'youradmin@email.com') {
+  dispatch({ type: 'SET_IS_ADMIN', payload: true });
 }
 ```
 

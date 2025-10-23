@@ -1,0 +1,893 @@
+npm info using npm@11.4.2
+npm info using node@v24.1.0
+npm warn Unknown cli config "--testPathPattern". This will stop working in the next major version of npm.
+
+> cursuri@0.1.0 test
+> jest
+
+PASS __tests__/components/Course/CourseAccess.test.tsx
+  Course Content Display Tests
+    ΓêÜ should test lesson access control logic (3 ms)
+    ΓêÜ should allow access to free lessons
+    ΓêÜ should allow access when user has course access
+    ΓêÜ should handle lesson duration formatting (1 ms)
+
+  console.error
+    Error converting date to ISO string: RangeError: Invalid time value
+        at Date.toISOString (<anonymous>)
+        at toISOString (E:\GitHub\cursuri\utils\timeHelpers.ts:27:35)
+        at Object.<anonymous> (E:\GitHub\cursuri\__tests__\utils\TimeHelpers.test.tsx:39:29)
+        at Promise.finally.completed (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+        at _callCircusTest (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+        at processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at _runTest (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+        at E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+        at _runTestsForDescribeBlock (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+        at _runTestsForDescribeBlock (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at _runTestsForDescribeBlock (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at run (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+        at runAndTransformResultsToJestFormat (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+        at jestAdapter (E:\GitHub\cursuri\node_modules\jest-circus\build\runner.js:101:19)
+        at runTestInternal (E:\GitHub\cursuri\node_modules\jest-runner\build\testWorker.js:275:16)
+        at runTest (E:\GitHub\cursuri\node_modules\jest-runner\build\testWorker.js:343:7)
+        at Object.worker (E:\GitHub\cursuri\node_modules\jest-runner\build\testWorker.js:497:12)
+
+    [0m [90m 30 |[39m         [36mreturn[39m undefined[33m;[39m
+     [90m 31 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 32 |[39m         console[33m.[39merror([32m'Error converting date to ISO string:'[39m[33m,[39m error)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 33 |[39m         [36mreturn[39m undefined[33m;[39m
+     [90m 34 |[39m     }
+     [90m 35 |[39m }[0m
+
+      at error (utils/timeHelpers.ts:32:17)
+      at Object.<anonymous> (__tests__/utils/TimeHelpers.test.tsx:39:29)
+
+  console.error
+    Error converting date to ISO string: RangeError: Invalid time value
+        at Date.toISOString (<anonymous>)
+        at toISOString (E:\GitHub\cursuri\utils\timeHelpers.ts:22:25)
+        at Object.<anonymous> (E:\GitHub\cursuri\__tests__\utils\TimeHelpers.test.tsx:46:29)
+        at Promise.finally.completed (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+        at _callCircusTest (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+        at processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at _runTest (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+        at E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+        at _runTestsForDescribeBlock (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+        at _runTestsForDescribeBlock (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at _runTestsForDescribeBlock (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at run (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+        at runAndTransformResultsToJestFormat (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+        at jestAdapter (E:\GitHub\cursuri\node_modules\jest-circus\build\runner.js:101:19)
+        at runTestInternal (E:\GitHub\cursuri\node_modules\jest-runner\build\testWorker.js:275:16)
+        at runTest (E:\GitHub\cursuri\node_modules\jest-runner\build\testWorker.js:343:7)
+        at Object.worker (E:\GitHub\cursuri\node_modules\jest-runner\build\testWorker.js:497:12)
+
+    [0m [90m 30 |[39m         [36mreturn[39m undefined[33m;[39m
+     [90m 31 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 32 |[39m         console[33m.[39merror([32m'Error converting date to ISO string:'[39m[33m,[39m error)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 33 |[39m         [36mreturn[39m undefined[33m;[39m
+     [90m 34 |[39m     }
+     [90m 35 |[39m }[0m
+
+      at error (utils/timeHelpers.ts:32:17)
+      at Object.<anonymous> (__tests__/utils/TimeHelpers.test.tsx:46:29)
+
+PASS __tests__/api/ApiRoutes.test.tsx
+  API Routes
+    /api/sync-lesson
+      ΓêÜ should handle missing lessonId parameter (4 ms)
+      ΓêÜ should validate request method (1 ms)
+      ΓêÜ should handle valid sync request parameters
+    /api/invoice/generate
+      ΓêÜ should validate invoice generation parameters
+      ΓêÜ should handle missing required parameters
+      ΓêÜ should validate currency parameter (1 ms)
+    /api/certificate
+      ΓêÜ should validate certificate generation parameters
+      ΓêÜ should handle certificate template parameters (1 ms)
+      ΓêÜ should validate user name format (1 ms)
+    /api/captions
+      ΓêÜ should validate video URL parameter
+      ΓêÜ should handle supported languages
+      ΓêÜ should validate video file extensions (1 ms)
+      ΓêÜ should handle caption format options
+    API Error Handling
+      ΓêÜ should handle malformed JSON requests (1 ms)
+      ΓêÜ should handle missing Content-Type header
+      ΓêÜ should handle empty request body
+    API Security
+      ΓêÜ should validate authentication headers
+      ΓêÜ should handle missing authentication
+      ΓêÜ should validate user permissions (1 ms)
+    API Response Formats
+      ΓêÜ should return consistent success response format
+      ΓêÜ should return consistent error response format (1 ms)
+      ΓêÜ should handle different HTTP status codes (1 ms)
+
+PASS __tests__/components/Course/CourseContentExtraction.test.tsx
+  Course Content Extraction Tests
+    ΓêÜ should extract lessons from nested Firebase data structure (3 ms)
+    ΓêÜ should handle direct lesson data format
+    ΓêÜ should handle empty or invalid lesson data (1 ms)
+    ΓêÜ should verify hasAccess prop logic
+
+  console.error
+    Error formatting date: RangeError: Invalid time value
+        at format (E:\GitHub\cursuri\utils\timeHelpers.ts:73:58)
+        at Object.<anonymous> (E:\GitHub\cursuri\__tests__\utils\TimeHelpers.test.tsx:106:24)
+        at Promise.finally.completed (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+        at _callCircusTest (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+        at processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at _runTest (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+        at E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+        at _runTestsForDescribeBlock (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+        at _runTestsForDescribeBlock (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at _runTestsForDescribeBlock (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at run (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+        at runAndTransformResultsToJestFormat (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+        at jestAdapter (E:\GitHub\cursuri\node_modules\jest-circus\build\runner.js:101:19)
+        at runTestInternal (E:\GitHub\cursuri\node_modules\jest-runner\build\testWorker.js:275:16)
+        at runTest (E:\GitHub\cursuri\node_modules\jest-runner\build\testWorker.js:343:7)
+        at Object.worker (E:\GitHub\cursuri\node_modules\jest-runner\build\testWorker.js:497:12)
+
+    [0m [90m 73 |[39m         [36mreturn[39m [36mnew[39m [33mIntl[39m[33m.[39m[33mDateTimeFormat[39m([32m'en-US'[39m[33m,[39m options)[33m.[39mformat(dateObj)[33m;[39m
+     [90m 74 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 75 |[39m         console[33m.[39merror([32m'Error formatting date:'[39m[33m,[39m error)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 76 |[39m         [36mreturn[39m [32m''[39m[33m;[39m
+     [90m 77 |[39m     }
+     [90m 78 |[39m }[0m
+
+      at error (utils/timeHelpers.ts:75:17)
+      at Object.<anonymous> (__tests__/utils/TimeHelpers.test.tsx:106:24)
+
+  console.error
+    Error formatting date: RangeError: Invalid time value
+        at format (E:\GitHub\cursuri\utils\timeHelpers.ts:73:58)
+        at Object.<anonymous> (E:\GitHub\cursuri\__tests__\utils\TimeHelpers.test.tsx:108:24)
+        at Promise.finally.completed (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+        at new Promise (<anonymous>)
+        at callAsyncCircusFn (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+        at _callCircusTest (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+        at processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at _runTest (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+        at E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+        at _runTestsForDescribeBlock (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+        at _runTestsForDescribeBlock (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at _runTestsForDescribeBlock (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+        at run (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+        at runAndTransformResultsToJestFormat (E:\GitHub\cursuri\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+        at jestAdapter (E:\GitHub\cursuri\node_modules\jest-circus\build\runner.js:101:19)
+        at runTestInternal (E:\GitHub\cursuri\node_modules\jest-runner\build\testWorker.js:275:16)
+        at runTest (E:\GitHub\cursuri\node_modules\jest-runner\build\testWorker.js:343:7)
+        at Object.worker (E:\GitHub\cursuri\node_modules\jest-runner\build\testWorker.js:497:12)
+
+    [0m [90m 73 |[39m         [36mreturn[39m [36mnew[39m [33mIntl[39m[33m.[39m[33mDateTimeFormat[39m([32m'en-US'[39m[33m,[39m options)[33m.[39mformat(dateObj)[33m;[39m
+     [90m 74 |[39m     } [36mcatch[39m (error) {
+    [31m[1m>[22m[39m[90m 75 |[39m         console[33m.[39merror([32m'Error formatting date:'[39m[33m,[39m error)[33m;[39m
+     [90m    |[39m                 [31m[1m^[22m[39m
+     [90m 76 |[39m         [36mreturn[39m [32m''[39m[33m;[39m
+     [90m 77 |[39m     }
+     [90m 78 |[39m }[0m
+
+      at error (utils/timeHelpers.ts:75:17)
+      at Object.<anonymous> (__tests__/utils/TimeHelpers.test.tsx:108:24)
+
+PASS __tests__/utils/TimeHelpers.test.tsx
+  Time Helper Functions
+    safeToISOString
+      ΓêÜ converts Date objects to ISO string (3 ms)
+      ΓêÜ converts string dates to ISO string
+      ΓêÜ converts number timestamps to ISO string
+      ΓêÜ handles Firebase Timestamp objects (1 ms)
+      ΓêÜ handles null and undefined
+      ΓêÜ handles invalid dates gracefully (35 ms)
+      ΓêÜ handles edge cases (2 ms)
+    formatDate
+      ΓêÜ formats Date objects with default options (10 ms)
+      ΓêÜ formats string dates
+      ΓêÜ formats number timestamps
+      ΓêÜ handles Firebase Timestamp objects
+      ΓêÜ handles custom formatting options
+      ΓêÜ formats with time included (1 ms)
+      ΓêÜ handles null and undefined gracefully
+      ΓêÜ handles invalid dates gracefully (4 ms)
+      ΓêÜ handles different locales (1 ms)
+      ΓêÜ formats edge case dates (1 ms)
+
+  console.log
+    getCoursePrice: No priceProduct found for course test-course
+
+      at log (utils/pricing.ts:32:17)
+
+  console.log
+    getCoursePrice: No priceProduct found for course test-course
+
+      at log (utils/pricing.ts:32:17)
+
+  console.log
+    getCoursePrice: No priceProduct found for course test-course
+
+      at log (utils/pricing.ts:32:17)
+
+  console.log
+    getCoursePrice: No priceProduct found for course test
+
+      at log (utils/pricing.ts:32:17)
+
+  console.log
+    getCoursePrice: No priceProduct found for course test
+
+      at log (utils/pricing.ts:32:17)
+
+  console.log
+    getCoursePrice: No priceProduct found for course test
+
+      at log (utils/pricing.ts:32:17)
+
+PASS __tests__/utils/PricingHelpers.test.tsx
+  Pricing Utility Functions
+    getCoursePrice
+      ΓêÜ returns free pricing for free courses (3 ms)
+      ΓêÜ handles courses with priceProduct and specific price ID (11 ms)
+      ΓêÜ falls back to first available price when specific price not found (1 ms)
+      ΓêÜ handles legacy numeric price property (1 ms)
+      ΓêÜ handles legacy string price property
+      ΓêÜ returns default pricing for courses without valid price info (41 ms)
+      ΓêÜ handles different currencies correctly (1 ms)
+      ΓêÜ ignores invalid string prices (1 ms)
+      ΓêÜ ignores Stripe price IDs as legacy prices (1 ms)
+    formatPrice
+      ΓêÜ formats RON currency correctly
+      ΓêÜ formats USD currency correctly
+      ΓêÜ defaults to RON when currency not specified
+      ΓêÜ handles zero amounts
+      ΓêÜ handles large amounts
+      ΓêÜ handles decimal amounts correctly
+      ΓêÜ handles case insensitive currency codes (1 ms)
+    hasValidPrice
+      ΓêÜ returns true for free courses
+      ΓêÜ returns true for courses with valid pricing
+      ΓêÜ returns true for legacy courses with numeric price
+      ΓêÜ returns false for courses without valid pricing (1 ms)
+      ΓêÜ returns false for courses with zero price (not explicitly free) (1 ms)
+      ΓêÜ returns false for courses with invalid string prices (1 ms)
+
+PASS __tests__/components/icons/SearchIcon.test.tsx
+  SearchIcon Component
+    ΓêÜ renders with default props (21 ms)
+    ΓêÜ applies custom className (3 ms)
+    ΓêÜ has correct SVG attributes (3 ms)
+    ΓêÜ contains correct path with search icon shape (3 ms)
+    ΓêÜ works without className prop (3 ms)
+    ΓêÜ works as child component (4 ms)
+    ΓêÜ handles complex className strings (2 ms)
+    ΓêÜ maintains accessibility with proper role (2 ms)
+    ΓêÜ uses currentColor for stroke (1 ms)
+    ΓêÜ has correct stroke properties for clean rendering (1 ms)
+    ΓêÜ renders correctly in different contexts (2 ms)
+    ΓêÜ preserves search magnifying glass visual pattern (2 ms)
+
+PASS __tests__/components/LoadingButton.test.tsx
+  LoadingButton Component
+    ΓêÜ should render with default props (54 ms)
+    ΓêÜ should render with custom loading text (3 ms)
+    ΓêÜ should apply custom className (4 ms)
+    Size Variants
+      ΓêÜ should apply small size classes (2 ms)
+      ΓêÜ should apply medium size classes by default (5 ms)
+      ΓêÜ should apply medium size classes when explicitly set (2 ms)
+      ΓêÜ should apply large size classes (2 ms)
+    Button Styling
+      ΓêÜ should have disabled attribute (8 ms)
+      ΓêÜ should have button type attribute (2 ms)
+      ΓêÜ should have gradient background classes (1 ms)
+      ΓêÜ should have rounded and styled classes (2 ms)
+    Loading Icon
+      ΓêÜ should render loading icon with correct classes (1 ms)
+      ΓêÜ should position icon before text (2 ms)
+    Accessibility
+      ΓêÜ should be keyboard accessible (1 ms)
+      ΓêÜ should have proper button role (3 ms)
+    Prop Combinations
+      ΓêÜ should handle all props together (2 ms)
+      ΓêÜ should work with empty className (3 ms)
+      ΓêÜ should work with undefined loadingText fallback (2 ms)
+    Component Structure
+      ΓêÜ should maintain consistent DOM structure (3 ms)
+      ΓêÜ should preserve button semantics (2 ms)
+
+PASS __tests__/components/icons/CloseIcon.test.tsx
+  CloseIcon Component
+    ΓêÜ renders with default props (23 ms)
+    ΓêÜ applies custom className (3 ms)
+    ΓêÜ has correct SVG attributes (3 ms)
+    ΓêÜ contains correct path with close icon shape (2 ms)
+    ΓêÜ works without className prop (3 ms)
+    ΓêÜ works as child component (3 ms)
+    ΓêÜ handles complex className strings (2 ms)
+    ΓêÜ maintains accessibility with proper SVG element (2 ms)
+    ΓêÜ uses currentColor for stroke (1 ms)
+    ΓêÜ has correct stroke properties for clean rendering (2 ms)
+
+PASS __tests__/setup.test.tsx
+  Jest Setup Test
+    ΓêÜ should render and find text (16 ms)
+    ΓêÜ should pass basic test (1 ms)
+
+PASS __tests__/components/ui/SectionHeader.test.tsx
+  SectionHeader Component
+    ΓêÜ renders with required title prop (23 ms)
+    ΓêÜ renders with title and subtitle (5 ms)
+    ΓêÜ renders with icon, title, and subtitle (5 ms)
+    ΓêÜ applies custom className (2 ms)
+    ΓêÜ has correct default styling classes (2 ms)
+    ΓêÜ does not render subtitle when not provided (2 ms)
+    ΓêÜ does not render icon when not provided (1 ms)
+    ΓêÜ handles empty className gracefully (1 ms)
+    ΓêÜ preserves proper DOM structure (2 ms)
+    ΓêÜ handles long titles and subtitles (1 ms)
+    ΓêÜ maintains accessibility with semantic heading (21 ms)
+    ΓêÜ combines custom className with default classes (1 ms)
+    ΓêÜ renders with complex React node as icon (7 ms)
+
+PASS __tests__/components/LoadingIcon.test.tsx
+  LoadingIcon Component
+    ΓêÜ should render with default props (14 ms)
+    ΓêÜ should apply default className (2 ms)
+    ΓêÜ should apply custom className (2 ms)
+    ΓêÜ should apply size prop as width and height attributes (1 ms)
+    ΓêÜ should use default size when size prop is not provided (2 ms)
+    SVG Structure
+      ΓêÜ should have correct SVG attributes (1 ms)
+      ΓêÜ should contain two path elements (1 ms)
+      ΓêÜ should have correct path fill attributes (1 ms)
+    Accessibility
+      ΓêÜ should have proper ARIA attributes (1 ms)
+      ΓêÜ should indicate loading state semantically (1 ms)
+    Animation
+      ΓêÜ should have spin animation class (1 ms)
+      ΓêÜ should preserve animation class when custom className is provided
+    Props Handling
+      ΓêÜ should handle all props together (2 ms)
+      ΓêÜ should handle empty className (2 ms)
+      ΓêÜ should handle undefined size gracefully (2 ms)
+    CSS Variables Integration
+      ΓêÜ should use CSS custom properties for accent color (2 ms)
+    Component Integration
+      ΓêÜ should work as a child component (2 ms)
+      ΓêÜ should render with only supported props (2 ms)
+    Edge Cases
+      ΓêÜ should handle very large size values (2 ms)
+      ΓêÜ should handle zero size value with fallback (2 ms)
+      ΓêÜ should maintain functionality with complex className strings (2 ms)
+
+PASS __tests__/components/Breadcrumbs.test.tsx
+  Breadcrumbs Component
+    Homepage Navigation
+      ΓêÜ should not render breadcrumbs on the home page (13 ms)
+    Courses Page Navigation
+      ΓêÜ should not render breadcrumbs on main courses page (2 ms)
+    Individual Course Navigation
+      ΓêÜ should render breadcrumbs for a specific course page (34 ms)
+      ΓêÜ should render breadcrumbs for unknown course with fallback name (3 ms)
+    Lesson Page Navigation
+      ΓêÜ should render complete breadcrumb trail for lesson pages (8 ms)
+      ΓêÜ should handle unknown lesson with fallback name (3 ms)
+      ΓêÜ should handle unknown course and lesson with fallback names (5 ms)
+    Path Separators
+      ΓêÜ should include path separators between breadcrumb items (2 ms)
+    Accessibility
+      ΓêÜ should have proper ARIA labels (3 ms)
+      ΓêÜ should mark the current page with aria-current (1 ms)
+    Edge Cases
+      ΓêÜ should handle empty courses and lessons data (3 ms)
+      ΓêÜ should not render for single breadcrumb item
+      ΓêÜ should handle malformed URLs gracefully (2 ms)
+    Course and Lesson Name Display
+      ΓêÜ should display correct course names for different courses (1 ms)
+      ΓêÜ should display correct lesson names for different lessons (2 ms)
+
+FAIL __tests__/components/ErrorPage.test.tsx
+  ErrorPage Component
+    ├ù renders with default props (27 ms)
+    ΓêÜ renders with custom title and message (4 ms)
+    ├ù renders home button by default (4 ms)
+    ├ù renders back button by default (8 ms)
+    ΓêÜ hides home button when showHomeButton is false (1 ms)
+    ΓêÜ hides back button when showBackButton is false (2 ms)
+    ├ù calls router.back when back button is clicked (3 ms)
+    ├ù renders custom image when imageSrc provided (3 ms)
+    ΓêÜ does not render image when imageSrc not provided (2 ms)
+    ΓêÜ displays different status codes correctly (5 ms)
+    ΓêÜ applies correct CSS classes for styling (2 ms)
+    ΓêÜ maintains accessibility with proper heading structure (23 ms)
+    ├ù handles all props together (4 ms)
+    ├ù renders both buttons with correct types (7 ms)
+
+  ΓùÅ ErrorPage Component ΓÇ║ renders with default props
+
+    TestingLibraryElementError: Unable to find an element with the text: Page Not Found. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+    Ignored nodes: comments, script, style
+    <body>
+      <div>
+        <div
+          class="flex flex-col items-center justify-center min-h-[70vh] px-4 py-12"
+        >
+          <h1
+            class="text-7xl font-bold mb-2 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-transparent bg-clip-text"
+          >
+            404
+          </h1>
+          <h2
+            class="text-2xl font-bold mb-2 text-[color:var(--ai-foreground)]"
+          >
+            common.errorPage.pageNotFound
+          </h2>
+          <p
+            class="text-center max-w-md mb-8 text-[color:var(--ai-muted)]"
+          >
+            common.errorPage.pageNotFoundMessage
+          </p>
+          <div
+            class="flex flex-wrap gap-4 justify-center"
+          >
+            <a
+              href="/"
+            >
+              <button
+                class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-primary text-primary-foreground data-[hover=true]:opacity-hover"
+                tabindex="0"
+                type="button"
+              >
+                common.errorPage.goToHomepage
+              </button>
+            </a>
+            <button
+              class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-transparent text-default-foreground data-[hover=true]:bg-default/40"
+              tabindex="0"
+              type="button"
+            >
+              common.errorPage.goBack
+            </button>
+          </div>
+        </div>
+      </div>
+    </body>
+
+      23 |
+      24 |     expect(screen.getByText('404')).toBeInTheDocument();
+    > 25 |     expect(screen.getByText('Page Not Found')).toBeInTheDocument();
+         |                   ^
+      26 |     expect(screen.getByText(/page you are looking for/i)).toBeInTheDocument();
+      27 |   });
+      28 |
+
+      at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)
+      at node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+      at node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+      at node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+      at Object.getByText (__tests__/components/ErrorPage.test.tsx:25:19)
+
+  ΓùÅ ErrorPage Component ΓÇ║ renders home button by default
+
+    TestingLibraryElementError: Unable to find an element with the text: Go to Homepage. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+    Ignored nodes: comments, script, style
+    <body>
+      <div>
+        <div
+          class="flex flex-col items-center justify-center min-h-[70vh] px-4 py-12"
+        >
+          <h1
+            class="text-7xl font-bold mb-2 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-transparent bg-clip-text"
+          >
+            404
+          </h1>
+          <h2
+            class="text-2xl font-bold mb-2 text-[color:var(--ai-foreground)]"
+          >
+            common.errorPage.pageNotFound
+          </h2>
+          <p
+            class="text-center max-w-md mb-8 text-[color:var(--ai-muted)]"
+          >
+            common.errorPage.pageNotFoundMessage
+          </p>
+          <div
+            class="flex flex-wrap gap-4 justify-center"
+          >
+            <a
+              href="/"
+            >
+              <button
+                class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-primary text-primary-foreground data-[hover=true]:opacity-hover"
+                tabindex="0"
+                type="button"
+              >
+                common.errorPage.goToHomepage
+              </button>
+            </a>
+            <button
+              class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-transparent text-default-foreground data-[hover=true]:bg-default/40"
+              tabindex="0"
+              type="button"
+            >
+              common.errorPage.goBack
+            </button>
+          </div>
+        </div>
+      </div>
+    </body>
+
+      44 |     render(<ErrorPage />);
+      45 |
+    > 46 |     expect(screen.getByText('Go to Homepage')).toBeInTheDocument();
+         |                   ^
+      47 |   });
+      48 |
+      49 |   it('renders back button by default', () => {
+
+      at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)
+      at node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+      at node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+      at node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+      at Object.getByText (__tests__/components/ErrorPage.test.tsx:46:19)
+
+  ΓùÅ ErrorPage Component ΓÇ║ renders back button by default
+
+    TestingLibraryElementError: Unable to find an element with the text: Go Back. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+    Ignored nodes: comments, script, style
+    <body>
+      <div>
+        <div
+          class="flex flex-col items-center justify-center min-h-[70vh] px-4 py-12"
+        >
+          <h1
+            class="text-7xl font-bold mb-2 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-transparent bg-clip-text"
+          >
+            404
+          </h1>
+          <h2
+            class="text-2xl font-bold mb-2 text-[color:var(--ai-foreground)]"
+          >
+            common.errorPage.pageNotFound
+          </h2>
+          <p
+            class="text-center max-w-md mb-8 text-[color:var(--ai-muted)]"
+          >
+            common.errorPage.pageNotFoundMessage
+          </p>
+          <div
+            class="flex flex-wrap gap-4 justify-center"
+          >
+            <a
+              href="/"
+            >
+              <button
+                class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-primary text-primary-foreground data-[hover=true]:opacity-hover"
+                tabindex="0"
+                type="button"
+              >
+                common.errorPage.goToHomepage
+              </button>
+            </a>
+            <button
+              class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-transparent text-default-foreground data-[hover=true]:bg-default/40"
+              tabindex="0"
+              type="button"
+            >
+              common.errorPage.goBack
+            </button>
+          </div>
+        </div>
+      </div>
+    </body>
+
+      50 |     render(<ErrorPage />);
+      51 |
+    > 52 |     expect(screen.getByText('Go Back')).toBeInTheDocument();
+         |                   ^
+      53 |   });
+      54 |
+      55 |   it('hides home button when showHomeButton is false', () => {
+
+      at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)
+      at node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+      at node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+      at node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+      at Object.getByText (__tests__/components/ErrorPage.test.tsx:52:19)
+
+  ΓùÅ ErrorPage Component ΓÇ║ calls router.back when back button is clicked
+
+    TestingLibraryElementError: Unable to find an element with the text: Go Back. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+    Ignored nodes: comments, script, style
+    <body>
+      <div>
+        <div
+          class="flex flex-col items-center justify-center min-h-[70vh] px-4 py-12"
+        >
+          <h1
+            class="text-7xl font-bold mb-2 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-transparent bg-clip-text"
+          >
+            404
+          </h1>
+          <h2
+            class="text-2xl font-bold mb-2 text-[color:var(--ai-foreground)]"
+          >
+            common.errorPage.pageNotFound
+          </h2>
+          <p
+            class="text-center max-w-md mb-8 text-[color:var(--ai-muted)]"
+          >
+            common.errorPage.pageNotFoundMessage
+          </p>
+          <div
+            class="flex flex-wrap gap-4 justify-center"
+          >
+            <a
+              href="/"
+            >
+              <button
+                class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-primary text-primary-foreground data-[hover=true]:opacity-hover"
+                tabindex="0"
+                type="button"
+              >
+                common.errorPage.goToHomepage
+              </button>
+            </a>
+            <button
+              class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-transparent text-default-foreground data-[hover=true]:bg-default/40"
+              tabindex="0"
+              type="button"
+            >
+              common.errorPage.goBack
+            </button>
+          </div>
+        </div>
+      </div>
+    </body>
+
+      68 |     render(<ErrorPage />);
+      69 |
+    > 70 |     const backButton = screen.getByText('Go Back');
+         |                               ^
+      71 |     // Mock the click event to avoid HeroUI ripple issues
+      72 |     const mockClick = jest.fn();
+      73 |     backButton.onclick = mockClick;
+
+      at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)
+      at node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+      at node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+      at node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+      at Object.getByText (__tests__/components/ErrorPage.test.tsx:70:31)
+
+  ΓùÅ ErrorPage Component ΓÇ║ renders custom image when imageSrc provided
+
+    TestingLibraryElementError: Unable to find an element with the alt text: Error illustration
+
+    Ignored nodes: comments, script, style
+    <body>
+      <div>
+        <div
+          class="flex flex-col items-center justify-center min-h-[70vh] px-4 py-12"
+        >
+          <h1
+            class="text-7xl font-bold mb-2 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-transparent bg-clip-text"
+          >
+            404
+          </h1>
+          <div
+            class="mb-6"
+          >
+            <img
+              alt="common.errorPage.errorIllustration"
+              class="max-w-xs mx-auto"
+              src="/test-image.jpg"
+            />
+          </div>
+          <h2
+            class="text-2xl font-bold mb-2 text-[color:var(--ai-foreground)]"
+          >
+            common.errorPage.pageNotFound
+          </h2>
+          <p
+            class="text-center max-w-md mb-8 text-[color:var(--ai-muted)]"
+          >
+            common.errorPage.pageNotFoundMessage
+          </p>
+          <div
+            class="flex flex-wrap gap-4 justify-center"
+          >
+            <a
+              href="/"
+            >
+              <button
+                class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-primary text-primary-foreground data-[hover=true]:opacity-hover"
+                tabindex="0"
+                type="button"
+              >
+                common.errorPage.goToHomepage
+              </button>
+            </a>
+            <button
+              class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-transparent text-default-foreground data-[hover=true]:bg-default/40"
+              tabindex="0"
+              type="button"
+            >
+              common.errorPage.goBack
+            </button>
+          </div>
+        </div>
+      </div>
+    </body>
+
+      84 |     render(<ErrorPage imageSrc={imageSrc} />);
+      85 |
+    > 86 |     const image = screen.getByAltText('Error illustration');
+         |                          ^
+      87 |     expect(image).toBeInTheDocument();
+      88 |     expect(image).toHaveAttribute('src', imageSrc);
+      89 |   });
+
+      at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)
+      at node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+      at node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+      at node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+      at Object.getByAltText (__tests__/components/ErrorPage.test.tsx:86:26)
+
+  ΓùÅ ErrorPage Component ΓÇ║ handles all props together
+
+    TestingLibraryElementError: Unable to find an element with the alt text: Error illustration
+
+    Ignored nodes: comments, script, style
+    <body>
+      <div>
+        <div
+          class="flex flex-col items-center justify-center min-h-[70vh] px-4 py-12"
+        >
+          <h1
+            class="text-7xl font-bold mb-2 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-transparent bg-clip-text"
+          >
+            418
+          </h1>
+          <div
+            class="mb-6"
+          >
+            <img
+              alt="common.errorPage.errorIllustration"
+              class="max-w-xs mx-auto"
+              src="/teapot.jpg"
+            />
+          </div>
+          <h2
+            class="text-2xl font-bold mb-2 text-[color:var(--ai-foreground)]"
+          >
+            Complete Test
+          </h2>
+          <p
+            class="text-center max-w-md mb-8 text-[color:var(--ai-muted)]"
+          >
+            All props provided
+          </p>
+          <div
+            class="flex flex-wrap gap-4 justify-center"
+          >
+            <a
+              href="/"
+            >
+              <button
+                class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-primary text-primary-foreground data-[hover=true]:opacity-hover"
+                tabindex="0"
+                type="button"
+              >
+                common.errorPage.goToHomepage
+              </button>
+            </a>
+            <button
+              class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-transparent text-default-foreground data-[hover=true]:bg-default/40"
+              tabindex="0"
+              type="button"
+            >
+              common.errorPage.goBack
+            </button>
+          </div>
+        </div>
+      </div>
+    </body>
+
+      139 |     expect(screen.getByText('Complete Test')).toBeInTheDocument();
+      140 |     expect(screen.getByText('All props provided')).toBeInTheDocument();
+    > 141 |     expect(screen.getByAltText('Error illustration')).toBeInTheDocument();
+          |                   ^
+      142 |     expect(screen.getByText('Go to Homepage')).toBeInTheDocument();
+      143 |     expect(screen.getByText('Go Back')).toBeInTheDocument();
+      144 |   });
+
+      at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)
+      at node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+      at node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+      at node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+      at Object.getByAltText (__tests__/components/ErrorPage.test.tsx:141:19)
+
+  ΓùÅ ErrorPage Component ΓÇ║ renders both buttons with correct types
+
+    TestingLibraryElementError: Unable to find an element with the text: Go to Homepage. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+    Ignored nodes: comments, script, style
+    <body>
+      <div>
+        <div
+          class="flex flex-col items-center justify-center min-h-[70vh] px-4 py-12"
+        >
+          <h1
+            class="text-7xl font-bold mb-2 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-transparent bg-clip-text"
+          >
+            404
+          </h1>
+          <h2
+            class="text-2xl font-bold mb-2 text-[color:var(--ai-foreground)]"
+          >
+            common.errorPage.pageNotFound
+          </h2>
+          <p
+            class="text-center max-w-md mb-8 text-[color:var(--ai-muted)]"
+          >
+            common.errorPage.pageNotFoundMessage
+          </p>
+          <div
+            class="flex flex-wrap gap-4 justify-center"
+          >
+            <a
+              href="/"
+            >
+              <button
+                class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-primary text-primary-foreground data-[hover=true]:opacity-hover"
+                tabindex="0"
+                type="button"
+              >
+                common.errorPage.goToHomepage
+              </button>
+            </a>
+            <button
+              class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-transparent text-default-foreground data-[hover=true]:bg-default/40"
+              tabindex="0"
+              type="button"
+            >
+              common.errorPage.goBack
+            </button>
+          </div>
+        </div>
+      </div>
+    </body>
+
+      151 |
+      152 |     // Check for the home button text
+    > 153 |     expect(screen.getByText('Go to Homepage')).toBeInTheDocument();
+          |                   ^
+      154 |     expect(screen.getByText('Go Back')).toBeInTheDocument();
+      155 |   });
+      156 | });
+
+      at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)
+      at node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+      at node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+      at node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+      at Object.getByText (__tests__/components/ErrorPage.test.tsx:153:19)
+
+Test Suites: 1 failed, 12 passed, 13 of 18 total
+Tests:       7 failed, 169 passed, 176 total
+Snapshots:   0 total
+Time:        2.681 s
+Ran all test suites.

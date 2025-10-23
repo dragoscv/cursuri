@@ -1,7 +1,23 @@
-'use client'
+'use client';
 
 import React, { useContext, useEffect, useState } from 'react';
-import { Card, CardBody, CardHeader, Divider, Checkbox, Pagination, Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Chip, Select } from '@heroui/react';
+import { useTranslations } from 'next-intl';
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Divider,
+  Checkbox,
+  Pagination,
+  Button,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Chip,
+  Select,
+} from '@heroui/react';
 import SelectItem from '@/components/ui/SelectItem';
 import { AppContext } from '@/components/AppContext';
 import { getFirestore, doc, writeBatch } from 'firebase/firestore';
@@ -12,6 +28,7 @@ type ContentType = 'course' | 'lesson';
 type BatchAction = 'status' | 'delete' | 'category' | 'visibility' | 'price';
 
 const BatchOperations: React.FC = () => {
+  const t = useTranslations('admin');
   const context = useContext(AppContext);
   // Safely access context properties with optional chaining
   const { courses, lessons, isAdmin } = context || {};
@@ -53,9 +70,15 @@ const BatchOperations: React.FC = () => {
             onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setStatusValue(e.target.value)}
             className="w-full mb-4"
           >
-            <SelectItem key="active" value="active" textValue="active">Active</SelectItem>
-            <SelectItem key="draft" value="draft" textValue="draft">Draft</SelectItem>
-            <SelectItem key="archived" value="archived" textValue="archived">Archived</SelectItem>
+            <SelectItem key="active" value="active" textValue="active">
+              Active
+            </SelectItem>
+            <SelectItem key="draft" value="draft" textValue="draft">
+              Draft
+            </SelectItem>
+            <SelectItem key="archived" value="archived" textValue="archived">
+              Archived
+            </SelectItem>
           </Select>
         );
       case 'delete':
@@ -71,22 +94,38 @@ const BatchOperations: React.FC = () => {
             onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setCategoryValue(e.target.value)}
             className="w-full mb-4"
           >
-            <SelectItem key="programming" value="programming" textValue="programming">Programming</SelectItem>
-            <SelectItem key="design" value="design" textValue="design">Design</SelectItem>
-            <SelectItem key="business" value="business" textValue="business">Business</SelectItem>
-            <SelectItem key="marketing" value="marketing" textValue="marketing">Marketing</SelectItem>
-            <SelectItem key="productivity" value="productivity" textValue="productivity">Productivity</SelectItem>
+            <SelectItem key="programming" value="programming" textValue="programming">
+              Programming
+            </SelectItem>
+            <SelectItem key="design" value="design" textValue="design">
+              Design
+            </SelectItem>
+            <SelectItem key="business" value="business" textValue="business">
+              Business
+            </SelectItem>
+            <SelectItem key="marketing" value="marketing" textValue="marketing">
+              Marketing
+            </SelectItem>
+            <SelectItem key="productivity" value="productivity" textValue="productivity">
+              Productivity
+            </SelectItem>
           </Select>
         );
       case 'visibility':
         return (
           <Select
             value={visibilityValue}
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setVisibilityValue(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+              setVisibilityValue(e.target.value)
+            }
             className="w-full mb-4"
           >
-            <SelectItem key="public" value="public" textValue="public">Public</SelectItem>
-            <SelectItem key="private" value="private" textValue="private">Private</SelectItem>
+            <SelectItem key="public" value="public" textValue="public">
+              Public
+            </SelectItem>
+            <SelectItem key="private" value="private" textValue="private">
+              Private
+            </SelectItem>
           </Select>
         );
       case 'price':
@@ -106,20 +145,22 @@ const BatchOperations: React.FC = () => {
   // Transform object data into flat arrays
   const courseItems = Object.values(courses || {});
 
-  const lessonItems = contentType === 'lesson' && lessons
-    ? Object.values(lessons).flatMap(courseLessons =>
-      Object.values(courseLessons).map(lesson => {
-        // Ensure lesson is typed correctly
-        const typedLesson = lesson as Lesson;
-        return {
-          ...typedLesson,
-          courseName: typedLesson.courseId && courses && courses[typedLesson.courseId]
-            ? courses[typedLesson.courseId].name
-            : 'Unknown Course'
-        };
-      })
-    )
-    : [];
+  const lessonItems =
+    contentType === 'lesson' && lessons
+      ? Object.values(lessons).flatMap((courseLessons) =>
+          Object.values(courseLessons).map((lesson) => {
+            // Ensure lesson is typed correctly
+            const typedLesson = lesson as Lesson;
+            return {
+              ...typedLesson,
+              courseName:
+                typedLesson.courseId && courses && courses[typedLesson.courseId]
+                  ? courses[typedLesson.courseId].name
+                  : 'Unknown Course',
+            };
+          })
+        )
+      : [];
 
   const items = contentType === 'course' ? courseItems : lessonItems;
 
@@ -131,7 +172,7 @@ const BatchOperations: React.FC = () => {
   const handleSelectAll = (checked: boolean) => {
     setSelectAll(checked);
     if (checked) {
-      setSelectedItems(paginatedItems.map(item => item.id));
+      setSelectedItems(paginatedItems.map((item) => item.id));
     } else {
       setSelectedItems([]);
     }
@@ -142,7 +183,7 @@ const BatchOperations: React.FC = () => {
     if (checked) {
       setSelectedItems([...selectedItems, id]);
     } else {
-      setSelectedItems(selectedItems.filter(itemId => itemId !== id));
+      setSelectedItems(selectedItems.filter((itemId) => itemId !== id));
     }
   };
 
@@ -217,7 +258,7 @@ const BatchOperations: React.FC = () => {
       setSuccess(`Successfully applied ${selectedAction} to ${selectedItems.length} items`);
 
       // Close confirmation modal if open
-      setConfirmationOpen(false);    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setConfirmationOpen(false); // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error performing batch operation:', error);
       setError(`Error: ${error.message || 'Unknown error occurred'}`);
@@ -267,7 +308,7 @@ const BatchOperations: React.FC = () => {
                   Action for {selectedItems.length} selected {contentType}(s)
                 </label>
                 <div className="flex gap-3">
-                  {actionOptions.map(action => (
+                  {actionOptions.map((action) => (
                     <Button
                       key={action.value}
                       color={selectedAction === action.value ? 'primary' : 'default'}
@@ -312,17 +353,20 @@ const BatchOperations: React.FC = () => {
                     </div>
 
                     {error && <div className="mt-2 text-[color:var(--ai-danger)]">{error}</div>}
-                    {success && <div className="mt-2 text-[color:var(--ai-success)]">{success}</div>}
+                    {success && (
+                      <div className="mt-2 text-[color:var(--ai-success)]">{success}</div>
+                    )}
                   </div>
                 )}
               </div>
             )}
           </div>
-
-          <Divider className="my-4" />          {/* Content table */}
+          <Divider className="my-4" /> {/* Content table */}
           <Card>
             <CardHeader>
-              <h2 className="text-xl font-semibold">{contentType === 'course' ? 'Courses' : 'Lessons'}</h2>
+              <h2 className="text-xl font-semibold">
+                {contentType === 'course' ? 'Courses' : 'Lessons'}
+              </h2>
             </CardHeader>
             <CardBody>
               {/* Use standard HTML table instead of HeroUI Table components */}
@@ -348,7 +392,10 @@ const BatchOperations: React.FC = () => {
                     paginatedItems.map((item) => {
                       // Pre-compute all cells for this row
                       return (
-                        <tr key={item.id} className="border-b border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)]">
+                        <tr
+                          key={item.id}
+                          className="border-b border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)]"
+                        >
                           <td className="px-3 py-2">
                             <Checkbox
                               isSelected={selectedItems.includes(item.id)}
@@ -358,7 +405,8 @@ const BatchOperations: React.FC = () => {
                           </td>
                           <td className="px-3 py-2">
                             <div className="font-medium">{item.name}</div>
-                          </td>                          {contentType === 'lesson' && (
+                          </td>{' '}
+                          {contentType === 'lesson' && (
                             <td className="px-3 py-2">
                               {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                               <div className="text-sm">{(item as any).courseName}</div>
@@ -366,7 +414,13 @@ const BatchOperations: React.FC = () => {
                           )}
                           <td className="px-3 py-2">
                             <Chip
-                              color={item.status === 'active' ? 'success' : item.status === 'draft' ? 'warning' : 'default'}
+                              color={
+                                item.status === 'active'
+                                  ? 'success'
+                                  : item.status === 'draft'
+                                    ? 'warning'
+                                    : 'default'
+                              }
                               size="sm"
                             >
                               {item.status || 'Unknown'}
@@ -379,7 +433,9 @@ const BatchOperations: React.FC = () => {
                           )}
                           <td className="px-3 py-2">
                             <div className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
-                              {'createdAt' in item && item.createdAt ? new Date(item.createdAt.toString()).toLocaleDateString() : 'Unknown'}
+                              {'createdAt' in item && item.createdAt
+                                ? new Date(item.createdAt.toString()).toLocaleDateString()
+                                : 'Unknown'}
                             </div>
                           </td>
                         </tr>
@@ -387,7 +443,10 @@ const BatchOperations: React.FC = () => {
                     })
                   ) : (
                     <tr>
-                      <td colSpan={contentType === 'course' ? 5 : 6} className="px-3 py-4 text-center">
+                      <td
+                        colSpan={contentType === 'course' ? 5 : 6}
+                        className="px-3 py-4 text-center"
+                      >
                         No items found
                       </td>
                     </tr>
@@ -416,7 +475,8 @@ const BatchOperations: React.FC = () => {
         <ModalContent>
           <ModalHeader>Confirm Deletion</ModalHeader>
           <ModalBody>
-            Are you sure you want to delete {selectedItems.length} {contentType}(s)? This action cannot be undone.
+            Are you sure you want to delete {selectedItems.length} {contentType}(s)? This action
+            cannot be undone.
           </ModalBody>
           <ModalFooter>
             <Button color="danger" onPress={handleBatchOperation} isLoading={loading}>
@@ -433,4 +493,3 @@ const BatchOperations: React.FC = () => {
 };
 
 export default BatchOperations;
-

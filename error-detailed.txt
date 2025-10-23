@@ -1,0 +1,501 @@
+npm info using npm@11.4.2
+npm info using node@v24.1.0
+
+> cursuri@0.1.0 test
+> jest __tests__/components/ErrorPage.test.tsx
+
+FAIL __tests__/components/ErrorPage.test.tsx
+  ErrorPage Component
+    ├ù renders with default props (25 ms)
+    ΓêÜ renders with custom title and message (4 ms)
+    ├ù renders home button by default (3 ms)
+    ├ù renders back button by default (3 ms)
+    ΓêÜ hides home button when showHomeButton is false (2 ms)
+    ΓêÜ hides back button when showBackButton is false (1 ms)
+    ├ù calls router.back when back button is clicked (2 ms)
+    ├ù renders custom image when imageSrc provided (3 ms)
+    ΓêÜ does not render image when imageSrc not provided (1 ms)
+    ΓêÜ displays different status codes correctly (4 ms)
+    ΓêÜ applies correct CSS classes for styling (2 ms)
+    ΓêÜ maintains accessibility with proper heading structure (22 ms)
+    ├ù handles all props together (3 ms)
+    ├ù renders both buttons with correct types (7 ms)
+
+  ΓùÅ ErrorPage Component ΓÇ║ renders with default props
+
+    TestingLibraryElementError: Unable to find an element with the text: Page Not Found. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+    Ignored nodes: comments, script, style
+    <body>
+      <div>
+        <div
+          class="flex flex-col items-center justify-center min-h-[70vh] px-4 py-12"
+        >
+          <h1
+            class="text-7xl font-bold mb-2 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-transparent bg-clip-text"
+          >
+            404
+          </h1>
+          <h2
+            class="text-2xl font-bold mb-2 text-[color:var(--ai-foreground)]"
+          >
+            common.errorPage.pageNotFound
+          </h2>
+          <p
+            class="text-center max-w-md mb-8 text-[color:var(--ai-muted)]"
+          >
+            common.errorPage.pageNotFoundMessage
+          </p>
+          <div
+            class="flex flex-wrap gap-4 justify-center"
+          >
+            <a
+              href="/"
+            >
+              <button
+                class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-primary text-primary-foreground data-[hover=true]:opacity-hover"
+                tabindex="0"
+                type="button"
+              >
+                common.errorPage.goToHomepage
+              </button>
+            </a>
+            <button
+              class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-transparent text-default-foreground data-[hover=true]:bg-default/40"
+              tabindex="0"
+              type="button"
+            >
+              common.errorPage.goBack
+            </button>
+          </div>
+        </div>
+      </div>
+    </body>
+
+      23 |
+      24 |     expect(screen.getByText('404')).toBeInTheDocument();
+    > 25 |     expect(screen.getByText('Page Not Found')).toBeInTheDocument();
+         |                   ^
+      26 |     expect(screen.getByText(/page you are looking for/i)).toBeInTheDocument();
+      27 |   });
+      28 |
+
+      at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)
+      at node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+      at node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+      at node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+      at Object.getByText (__tests__/components/ErrorPage.test.tsx:25:19)
+
+  ΓùÅ ErrorPage Component ΓÇ║ renders home button by default
+
+    TestingLibraryElementError: Unable to find an element with the text: Go to Homepage. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+    Ignored nodes: comments, script, style
+    <body>
+      <div>
+        <div
+          class="flex flex-col items-center justify-center min-h-[70vh] px-4 py-12"
+        >
+          <h1
+            class="text-7xl font-bold mb-2 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-transparent bg-clip-text"
+          >
+            404
+          </h1>
+          <h2
+            class="text-2xl font-bold mb-2 text-[color:var(--ai-foreground)]"
+          >
+            common.errorPage.pageNotFound
+          </h2>
+          <p
+            class="text-center max-w-md mb-8 text-[color:var(--ai-muted)]"
+          >
+            common.errorPage.pageNotFoundMessage
+          </p>
+          <div
+            class="flex flex-wrap gap-4 justify-center"
+          >
+            <a
+              href="/"
+            >
+              <button
+                class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-primary text-primary-foreground data-[hover=true]:opacity-hover"
+                tabindex="0"
+                type="button"
+              >
+                common.errorPage.goToHomepage
+              </button>
+            </a>
+            <button
+              class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-transparent text-default-foreground data-[hover=true]:bg-default/40"
+              tabindex="0"
+              type="button"
+            >
+              common.errorPage.goBack
+            </button>
+          </div>
+        </div>
+      </div>
+    </body>
+
+      44 |     render(<ErrorPage />);
+      45 |
+    > 46 |     expect(screen.getByText('Go to Homepage')).toBeInTheDocument();
+         |                   ^
+      47 |   });
+      48 |
+      49 |   it('renders back button by default', () => {
+
+      at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)
+      at node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+      at node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+      at node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+      at Object.getByText (__tests__/components/ErrorPage.test.tsx:46:19)
+
+  ΓùÅ ErrorPage Component ΓÇ║ renders back button by default
+
+    TestingLibraryElementError: Unable to find an element with the text: Go Back. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+    Ignored nodes: comments, script, style
+    <body>
+      <div>
+        <div
+          class="flex flex-col items-center justify-center min-h-[70vh] px-4 py-12"
+        >
+          <h1
+            class="text-7xl font-bold mb-2 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-transparent bg-clip-text"
+          >
+            404
+          </h1>
+          <h2
+            class="text-2xl font-bold mb-2 text-[color:var(--ai-foreground)]"
+          >
+            common.errorPage.pageNotFound
+          </h2>
+          <p
+            class="text-center max-w-md mb-8 text-[color:var(--ai-muted)]"
+          >
+            common.errorPage.pageNotFoundMessage
+          </p>
+          <div
+            class="flex flex-wrap gap-4 justify-center"
+          >
+            <a
+              href="/"
+            >
+              <button
+                class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-primary text-primary-foreground data-[hover=true]:opacity-hover"
+                tabindex="0"
+                type="button"
+              >
+                common.errorPage.goToHomepage
+              </button>
+            </a>
+            <button
+              class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-transparent text-default-foreground data-[hover=true]:bg-default/40"
+              tabindex="0"
+              type="button"
+            >
+              common.errorPage.goBack
+            </button>
+          </div>
+        </div>
+      </div>
+    </body>
+
+      50 |     render(<ErrorPage />);
+      51 |
+    > 52 |     expect(screen.getByText('Go Back')).toBeInTheDocument();
+         |                   ^
+      53 |   });
+      54 |
+      55 |   it('hides home button when showHomeButton is false', () => {
+
+      at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)
+      at node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+      at node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+      at node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+      at Object.getByText (__tests__/components/ErrorPage.test.tsx:52:19)
+
+  ΓùÅ ErrorPage Component ΓÇ║ calls router.back when back button is clicked
+
+    TestingLibraryElementError: Unable to find an element with the text: Go Back. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+    Ignored nodes: comments, script, style
+    <body>
+      <div>
+        <div
+          class="flex flex-col items-center justify-center min-h-[70vh] px-4 py-12"
+        >
+          <h1
+            class="text-7xl font-bold mb-2 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-transparent bg-clip-text"
+          >
+            404
+          </h1>
+          <h2
+            class="text-2xl font-bold mb-2 text-[color:var(--ai-foreground)]"
+          >
+            common.errorPage.pageNotFound
+          </h2>
+          <p
+            class="text-center max-w-md mb-8 text-[color:var(--ai-muted)]"
+          >
+            common.errorPage.pageNotFoundMessage
+          </p>
+          <div
+            class="flex flex-wrap gap-4 justify-center"
+          >
+            <a
+              href="/"
+            >
+              <button
+                class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-primary text-primary-foreground data-[hover=true]:opacity-hover"
+                tabindex="0"
+                type="button"
+              >
+                common.errorPage.goToHomepage
+              </button>
+            </a>
+            <button
+              class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-transparent text-default-foreground data-[hover=true]:bg-default/40"
+              tabindex="0"
+              type="button"
+            >
+              common.errorPage.goBack
+            </button>
+          </div>
+        </div>
+      </div>
+    </body>
+
+      68 |     render(<ErrorPage />);
+      69 |
+    > 70 |     const backButton = screen.getByText('Go Back');
+         |                               ^
+      71 |     // Mock the click event to avoid HeroUI ripple issues
+      72 |     const mockClick = jest.fn();
+      73 |     backButton.onclick = mockClick;
+
+      at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)
+      at node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+      at node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+      at node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+      at Object.getByText (__tests__/components/ErrorPage.test.tsx:70:31)
+
+  ΓùÅ ErrorPage Component ΓÇ║ renders custom image when imageSrc provided
+
+    TestingLibraryElementError: Unable to find an element with the alt text: Error illustration
+
+    Ignored nodes: comments, script, style
+    <body>
+      <div>
+        <div
+          class="flex flex-col items-center justify-center min-h-[70vh] px-4 py-12"
+        >
+          <h1
+            class="text-7xl font-bold mb-2 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-transparent bg-clip-text"
+          >
+            404
+          </h1>
+          <div
+            class="mb-6"
+          >
+            <img
+              alt="common.errorPage.errorIllustration"
+              class="max-w-xs mx-auto"
+              src="/test-image.jpg"
+            />
+          </div>
+          <h2
+            class="text-2xl font-bold mb-2 text-[color:var(--ai-foreground)]"
+          >
+            common.errorPage.pageNotFound
+          </h2>
+          <p
+            class="text-center max-w-md mb-8 text-[color:var(--ai-muted)]"
+          >
+            common.errorPage.pageNotFoundMessage
+          </p>
+          <div
+            class="flex flex-wrap gap-4 justify-center"
+          >
+            <a
+              href="/"
+            >
+              <button
+                class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-primary text-primary-foreground data-[hover=true]:opacity-hover"
+                tabindex="0"
+                type="button"
+              >
+                common.errorPage.goToHomepage
+              </button>
+            </a>
+            <button
+              class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-transparent text-default-foreground data-[hover=true]:bg-default/40"
+              tabindex="0"
+              type="button"
+            >
+              common.errorPage.goBack
+            </button>
+          </div>
+        </div>
+      </div>
+    </body>
+
+      84 |     render(<ErrorPage imageSrc={imageSrc} />);
+      85 |
+    > 86 |     const image = screen.getByAltText('Error illustration');
+         |                          ^
+      87 |     expect(image).toBeInTheDocument();
+      88 |     expect(image).toHaveAttribute('src', imageSrc);
+      89 |   });
+
+      at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)
+      at node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+      at node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+      at node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+      at Object.getByAltText (__tests__/components/ErrorPage.test.tsx:86:26)
+
+  ΓùÅ ErrorPage Component ΓÇ║ handles all props together
+
+    TestingLibraryElementError: Unable to find an element with the alt text: Error illustration
+
+    Ignored nodes: comments, script, style
+    <body>
+      <div>
+        <div
+          class="flex flex-col items-center justify-center min-h-[70vh] px-4 py-12"
+        >
+          <h1
+            class="text-7xl font-bold mb-2 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-transparent bg-clip-text"
+          >
+            418
+          </h1>
+          <div
+            class="mb-6"
+          >
+            <img
+              alt="common.errorPage.errorIllustration"
+              class="max-w-xs mx-auto"
+              src="/teapot.jpg"
+            />
+          </div>
+          <h2
+            class="text-2xl font-bold mb-2 text-[color:var(--ai-foreground)]"
+          >
+            Complete Test
+          </h2>
+          <p
+            class="text-center max-w-md mb-8 text-[color:var(--ai-muted)]"
+          >
+            All props provided
+          </p>
+          <div
+            class="flex flex-wrap gap-4 justify-center"
+          >
+            <a
+              href="/"
+            >
+              <button
+                class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-primary text-primary-foreground data-[hover=true]:opacity-hover"
+                tabindex="0"
+                type="button"
+              >
+                common.errorPage.goToHomepage
+              </button>
+            </a>
+            <button
+              class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-transparent text-default-foreground data-[hover=true]:bg-default/40"
+              tabindex="0"
+              type="button"
+            >
+              common.errorPage.goBack
+            </button>
+          </div>
+        </div>
+      </div>
+    </body>
+
+      139 |     expect(screen.getByText('Complete Test')).toBeInTheDocument();
+      140 |     expect(screen.getByText('All props provided')).toBeInTheDocument();
+    > 141 |     expect(screen.getByAltText('Error illustration')).toBeInTheDocument();
+          |                   ^
+      142 |     expect(screen.getByText('Go to Homepage')).toBeInTheDocument();
+      143 |     expect(screen.getByText('Go Back')).toBeInTheDocument();
+      144 |   });
+
+      at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)
+      at node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+      at node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+      at node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+      at Object.getByAltText (__tests__/components/ErrorPage.test.tsx:141:19)
+
+  ΓùÅ ErrorPage Component ΓÇ║ renders both buttons with correct types
+
+    TestingLibraryElementError: Unable to find an element with the text: Go to Homepage. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+    Ignored nodes: comments, script, style
+    <body>
+      <div>
+        <div
+          class="flex flex-col items-center justify-center min-h-[70vh] px-4 py-12"
+        >
+          <h1
+            class="text-7xl font-bold mb-2 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-transparent bg-clip-text"
+          >
+            404
+          </h1>
+          <h2
+            class="text-2xl font-bold mb-2 text-[color:var(--ai-foreground)]"
+          >
+            common.errorPage.pageNotFound
+          </h2>
+          <p
+            class="text-center max-w-md mb-8 text-[color:var(--ai-muted)]"
+          >
+            common.errorPage.pageNotFoundMessage
+          </p>
+          <div
+            class="flex flex-wrap gap-4 justify-center"
+          >
+            <a
+              href="/"
+            >
+              <button
+                class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-primary text-primary-foreground data-[hover=true]:opacity-hover"
+                tabindex="0"
+                type="button"
+              >
+                common.errorPage.goToHomepage
+              </button>
+            </a>
+            <button
+              class="z-0 group relative inline-flex items-center justify-center box-border appearance-none select-none whitespace-nowrap font-normal subpixel-antialiased overflow-hidden tap-highlight-transparent data-[pressed=true]:scale-[0.97] outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 px-4 min-w-20 h-10 text-small gap-2 rounded-medium [&>svg]:max-w-[theme(spacing.8)] transition-transform-colors-opacity motion-reduce:transition-none bg-transparent text-default-foreground data-[hover=true]:bg-default/40"
+              tabindex="0"
+              type="button"
+            >
+              common.errorPage.goBack
+            </button>
+          </div>
+        </div>
+      </div>
+    </body>
+
+      151 |
+      152 |     // Check for the home button text
+    > 153 |     expect(screen.getByText('Go to Homepage')).toBeInTheDocument();
+          |                   ^
+      154 |     expect(screen.getByText('Go Back')).toBeInTheDocument();
+      155 |   });
+      156 | });
+
+      at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)
+      at node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+      at node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+      at node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+      at Object.getByText (__tests__/components/ErrorPage.test.tsx:153:19)
+
+Test Suites: 1 failed, 1 total
+Tests:       7 failed, 7 passed, 14 total
+Snapshots:   0 total
+Time:        1.28 s
+Ran all test suites matching __tests__/components/ErrorPage.test.tsx.

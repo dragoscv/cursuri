@@ -15,7 +15,7 @@ const customJestConfig = {
 
     // Test paths
     testMatch: [
-        '**/__tests__/**/*.(js|jsx|ts|tsx)',
+        '**/__tests__/**/*.(test|spec).(js|jsx|ts|tsx)',
         '**/?(*.)+(spec|test).(js|jsx|ts|tsx)'
     ],
 
@@ -26,11 +26,10 @@ const customJestConfig = {
         '^@/types/(.*)$': '<rootDir>/types/$1',
         '^@/config/(.*)$': '<rootDir>/config/$1',
         '^@/app/(.*)$': '<rootDir>/app/$1',
-        // Mock Firebase modules to avoid ESM issues
-        '^firebase/(.*)$': '<rootDir>/__mocks__/firebase.js',
-        '^firewand$': '<rootDir>/__mocks__/firewand.js',
-        // Mock Framer Motion to avoid ESM issues
-        '^framer-motion$': '<rootDir>/__mocks__/framer-motion.js',
+        // Map next-intl to test mock for Jest compatibility
+        '^next-intl$': '<rootDir>/__mocks__/next-intl.js',
+        // Use real Firebase connections - no mocks
+        // Use real Framer Motion - no mocks
     },
 
     // Files to ignore
@@ -38,7 +37,9 @@ const customJestConfig = {
         '<rootDir>/.next/',
         '<rootDir>/node_modules/',
         '<rootDir>/cypress/',
-        '<rootDir>/playwright-report/'
+        '<rootDir>/playwright-report/',
+        '<rootDir>/__tests__/helpers/',
+        '<rootDir>/__tests__/api/helpers/'
     ],
 
     // Transform configuration
@@ -46,9 +47,9 @@ const customJestConfig = {
         '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }]
     },
 
-    // Ignore node_modules except for specific packages that need transformation
+    // Transform ESM modules including Firebase, Firewand, Framer Motion, HeroUI, and next-intl
     transformIgnorePatterns: [
-        '/node_modules/(?!(firebase|@firebase|firewand)/)'
+        'node_modules/(?!(firebase|@firebase|firewand|framer-motion|@heroui|next-intl|use-intl)/).*'
     ],
 
     // Module file extensions

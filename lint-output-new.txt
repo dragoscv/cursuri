@@ -1,0 +1,789 @@
+npm info using npm@11.4.2
+npm info using node@v24.1.0
+
+> cursuri@0.1.0 lint
+> next lint
+
+
+ ΓÜá The Next.js plugin was not detected in your ESLint configuration. See https://nextjs.org/docs/app/api-reference/config/eslint#migrating-existing-config
+
+./app/about/page.tsx
+130:25  Warning: Do not use an `<a>` element to navigate to `/courses/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
+130:25  Warning: Do not use an `<a>` element to navigate to `/courses/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
+
+./app/admin/courses/page.tsx
+20:11  Warning: 'tCommon' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./app/admin/courses/[courseId]/lessons/page.tsx
+15:11  Warning: 'context' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+18:44  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./app/api/certificate/route.ts
+91:11  Warning: 'userData' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./app/api/stripe/create-price/route.ts
+61:17  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+110:21  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./app/courses/[courseId]/lessons/page.tsx
+33:11  Warning: The 'courseLessons' conditional could make the dependencies of useEffect Hook (at line 54) change on every render. To fix this, wrap the initialization of 'courseLessons' in its own useMemo() Hook.  react-hooks/exhaustive-deps
+
+./app/courses/[courseId]/lessons/[lessonId]/page.tsx
+266:52  Error: React Hook "useTranslations" cannot be called in an async function.  react-hooks/rules-of-hooks
+266:52  Error: React Hook "useTranslations" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+
+./app/gdpr/page.tsx
+124:16  Error: Parsing error: JSX expressions must have one parent element.
+
+./components/Admin/AdminAnalyticsSection.tsx
+2:10  Warning: 'useTranslations' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/Admin/AdminLessonsSection.tsx
+2:10  Warning: 'useTranslations' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/Admin/AdminSettings.tsx
+52:8  Warning: React Hook useEffect has a missing dependency: 't'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/Admin/AdminUsers.tsx
+46:8  Warning: React Hook useEffect has a missing dependency: 't'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/Admin/BatchOperations.tsx
+163:6  Warning: React Hook useEffect has a missing dependency: 'selectAll'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/Admin/CourseEngagement.tsx
+101:8  Warning: React Hook useEffect has a missing dependency: 't'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/animations/ScrollAnimationWrapper.tsx
+5:10  Warning: 'MarginType' is defined but never used.  @typescript-eslint/no-unused-vars
+22:11  Warning: 'UseInViewCustomOptions' is defined but never used.  @typescript-eslint/no-unused-vars
+33:5  Warning: 'once' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+40:49  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/AppContext.tsx
+126:8  Warning: React Hook useCallback has a missing dependency: 'saveUserPreferences'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+154:8  Warning: React Hook useCallback has a missing dependency: 'saveUserPreferences'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+407:8  Warning: React Hook useCallback has a missing dependency: 'state.lessons'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+1172:8  Warning: React Hook useCallback has missing dependencies: 'state.bookmarkedLessons' and 'state.bookmarksLoadingState'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+1269:8  Warning: React Hook useCallback has missing dependencies: 'state.wishlistCourses' and 'state.wishlistLoadingState'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+1599:8  Warning: React Hook useEffect has missing dependencies: 'getBookmarkedLessons' and 'getWishlistCourses'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/CacheStatus.tsx
+21:31  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/contexts/appReducer.ts
+38:15  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+45:23  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+57:22  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+99:15  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/contexts/hooks/index.tsx
+59:22  Warning: Unexpected empty arrow function.  @typescript-eslint/no-empty-function
+
+./components/contexts/modules/adminContext.tsx
+1:17  Warning: 'createContext' is defined but never used.  @typescript-eslint/no-unused-vars
+13:5  Warning: 'addDoc' is defined but never used.  @typescript-eslint/no-unused-vars
+18:5  Warning: 'serverTimestamp' is defined but never used.  @typescript-eslint/no-unused-vars
+21:5  Warning: 'Timestamp' is defined but never used.  @typescript-eslint/no-unused-vars
+36:20  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+50:14  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+61:69  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+69:30  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+148:74  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+172:60  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+498:28  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/contexts/modules/lessonsContext.tsx
+501:8  Warning: React Hook useCallback has a missing dependency: 'updateUserCourseProgress'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/contexts/modules/modalContext.tsx
+152:8  Warning: React Hook useCallback has a missing dependency: 'closeModal'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/contexts/modules/productsContext.tsx
+4:45  Warning: 'getDoc' is defined but never used.  @typescript-eslint/no-unused-vars
+4:53  Warning: 'doc' is defined but never used.  @typescript-eslint/no-unused-vars
+14:15  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+23:48  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+98:38  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+180:8  Warning: React Hook useCallback has a missing dependency: 'USER_PAID_PRODUCTS_CACHE_KEY'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/contexts/modules/toastContext.tsx
+130:8  Warning: React Hook useCallback has a missing dependency: 'removeToast'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/contexts/modules/userDataContext.tsx
+158:8  Warning: React Hook useCallback has a missing dependency: 'BOOKMARKS_CACHE_KEY'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+201:8  Warning: React Hook useCallback has a missing dependency: 'BOOKMARKS_CACHE_KEY'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+240:8  Warning: React Hook useCallback has a missing dependency: 'WISHLIST_CACHE_KEY'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+267:8  Warning: React Hook useCallback has a missing dependency: 'WISHLIST_CACHE_KEY'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+294:8  Warning: React Hook useCallback has a missing dependency: 'WISHLIST_CACHE_KEY'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+309:8  Warning: React Hook useEffect has missing dependencies: 'BOOKMARKS_CACHE_KEY' and 'WISHLIST_CACHE_KEY'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/contexts/useModal.ts
+3:51  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+4:43  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+12:45  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/Course/AddCourse.tsx
+169:8  Warning: React Hook useCallback has missing dependencies: 'allowPromoCodes' and 'certificateEnabled'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+220:8  Warning: React Hook useCallback has missing dependencies: 'allowPromoCodes', 'certificateEnabled', and 'coursePrerequisites'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/Course/CaptionsSection.tsx
+33:5  Warning: 'courseId' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/Course/Course.tsx
+15:37  Warning: 'CourseType' is defined but never used.  @typescript-eslint/no-unused-vars
+17:10  Warning: 'createCheckoutSession' is defined but never used.  @typescript-eslint/no-unused-vars
+18:10  Warning: 'stripePayments' is defined but never used.  @typescript-eslint/no-unused-vars
+19:10  Warning: 'firebaseApp' is defined but never used.  @typescript-eslint/no-unused-vars
+20:8  Warning: 'Login' is defined but never used.  @typescript-eslint/no-unused-vars
+21:8  Warning: 'LoadingButton' is defined but never used.  @typescript-eslint/no-unused-vars
+30:12  Warning: 'loadingPayment' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+30:28  Warning: 'setLoadingPayment' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+38:133  Warning: 'products' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+453:46  Warning: 'err' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/Course/CourseContent.tsx
+2:10  Warning: 'useRouter' is defined but never used.  @typescript-eslint/no-unused-vars
+5:16  Warning: 'Card' is defined but never used.  @typescript-eslint/no-unused-vars
+75:11  Warning: 'defaultModule' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+309:11  Warning: 'formatDuration' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/Course/CourseDetail.tsx
+46:9  Warning: The 'courseLessons' conditional could make the dependencies of useEffect Hook (at line 133) change on every render. To fix this, wrap the initialization of 'courseLessons' in its own useMemo() Hook.  react-hooks/exhaustive-deps
+53:42  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+67:42  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/Course/CourseDetails.tsx
+3:27  Warning: 'Divider' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/Course/CourseDetailView.tsx
+9:13  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+11:20  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+22:5  Warning: 'isAdmin' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/Course/CourseEnrollment.tsx
+2:18  Warning: 'ModalProps' is defined but never used.  @typescript-eslint/no-unused-vars
+6:43  Warning: 'Card' is defined but never used.  @typescript-eslint/no-unused-vars
+117:83  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+144:32  Warning: Unexpected empty method 'onClose'.  @typescript-eslint/no-empty-function
+
+./components/Course/CourseHeader.tsx
+3:10  Warning: 'Badge' is defined but never used.  @typescript-eslint/no-unused-vars
+4:10  Warning: 'motion' is defined but never used.  @typescript-eslint/no-unused-vars
+5:1  Error: Expected an assignment or function call and instead saw an expression.  @typescript-eslint/no-unused-expressions
+8:36  Warning: 'FiTag' is defined but never used.  @typescript-eslint/no-unused-vars
+8:43  Warning: 'FiStar' is defined but never used.  @typescript-eslint/no-unused-vars
+61:85  Error: React Hook "useTranslations" is called conditionally. React Hooks must be called in the exact same order in every component render.  react-hooks/rules-of-hooks
+
+./components/Course/CourseOverview.tsx
+3:10  Warning: 'Course' is defined but never used.  @typescript-eslint/no-unused-vars
+168:131  Warning: 'index' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/Course/fields/PrerequisitesField.tsx
+5:18  Warning: 'Input' is defined but never used.  @typescript-eslint/no-unused-vars
+5:25  Warning: 'Chip' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/Course/Lesson.tsx
+6:10  Warning: 'Button' is defined but never used.  @typescript-eslint/no-unused-vars
+8:8  Warning: 'LessonContent' is defined but never used.  @typescript-eslint/no-unused-vars
+128:8  Warning: React Hook useCallback has missing dependencies: 'handleMarkComplete', 'navigateToLesson', and 'saveCurrentProgress'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+137:8  Warning: React Hook useCallback has an unnecessary dependency: 'noteContent'. Either exclude it or remove the dependency array.  react-hooks/exhaustive-deps
+150:18  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/Course/LessonsList.tsx
+19:5  Warning: 'course' is defined but never used.  @typescript-eslint/no-unused-vars
+29:11  Warning: 'formatDuration' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/Course/Reviews.tsx
+6:5  Warning: 'where' is defined but never used.  @typescript-eslint/no-unused-vars
+26:44  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+41:11  Warning: The 'getReviews' function makes the dependencies of useEffect Hook (at line 62) change on every render. To fix this, wrap the definition of 'getReviews' in its own useCallback() Hook.  react-hooks/exhaustive-deps
+47:32  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+48:41  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+55:25  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+64:36  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+89:25  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/Courses/CoursesFilter.tsx
+3:17  Warning: 'Dropdown' is defined but never used.  @typescript-eslint/no-unused-vars
+3:27  Warning: 'DropdownTrigger' is defined but never used.  @typescript-eslint/no-unused-vars
+3:44  Warning: 'DropdownMenu' is defined but never used.  @typescript-eslint/no-unused-vars
+3:58  Warning: 'DropdownItem' is defined but never used.  @typescript-eslint/no-unused-vars
+3:72  Warning: 'Button' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/Courses/CoursesList.tsx
+3:24  Warning: 'Progress' is defined but never used.  @typescript-eslint/no-unused-vars
+11:10  Warning: 'Course' is defined but never used.  @typescript-eslint/no-unused-vars
+45:26  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+53:26  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+102:52  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+107:49  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+115:57  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+121:11  Warning: 'getCourseCompletion' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+130:24  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+157:34  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+188:43  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+255:67  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/Courses.tsx
+2:10  Warning: 'useContext' is defined but never used.  @typescript-eslint/no-unused-vars
+3:31  Warning: 'useTheme' is defined but never used.  @typescript-eslint/no-unused-vars
+3:51  Warning: 'useAdmin' is defined but never used.  @typescript-eslint/no-unused-vars
+3:61  Warning: 'useLessons' is defined but never used.  @typescript-eslint/no-unused-vars
+3:73  Warning: 'useReviews' is defined but never used.  @typescript-eslint/no-unused-vars
+3:85  Warning: 'useUserData' is defined but never used.  @typescript-eslint/no-unused-vars
+43:13  Warning: Unused eslint-disable directive (no problems were reported from 'no-unused-vars').
+44:21  Warning: 'useProducts' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+44:37  Error: A `require()` style import is forbidden.  @typescript-eslint/no-require-imports
+46:18  Warning: 'e' is defined but never used.  @typescript-eslint/no-unused-vars
+52:9  Warning: The 'products' array makes the dependencies of useCallback Hook (at line 143) change on every render. To fix this, wrap the initialization of 'products' in its own useMemo() Hook.  react-hooks/exhaustive-deps
+53:9  Warning: The 'userPaidProducts' array makes the dependencies of useCallback Hook (at line 145) change on every render. To fix this, wrap the initialization of 'userPaidProducts' in its own useMemo() Hook.  react-hooks/exhaustive-deps
+58:31  Warning: 'setProductsState' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+60:39  Warning: 'setUserPaidProductsState' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+65:13  Warning: Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-var-requires').
+66:37  Error: A `require()` style import is forbidden.  @typescript-eslint/no-require-imports
+132:8  Warning: React Hook useCallback has a missing dependency: 'tNotif'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/FeaturedCoursesSection.tsx
+19:9  Warning: The 'courses' logical expression could make the dependencies of useMemo Hook (at line 46) change on every render. Move it inside the useMemo callback. Alternatively, wrap the initialization of 'courses' in its own useMemo() Hook.  react-hooks/exhaustive-deps
+20:9  Warning: The 'products' logical expression could make the dependencies of useCallback Hook (at line 30) change on every render. Move it inside the useCallback callback. Alternatively, wrap the initialization of 'products' in its own useMemo() Hook.  react-hooks/exhaustive-deps
+23:47  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/FeaturedReviews.tsx
+53:79  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/FeaturedReviewsSection/fallbackReviewData.ts
+5:39  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/Header/BottomNavigation.tsx
+14:11  Warning: 'isAdmin' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+17:11  Warning: 'isHomepage' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/Header/MigratedHeader.tsx
+23:13  Warning: 'isAdmin' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/Header/NavbarBrand/index.tsx
+4:42  Warning: 'Link' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/Header/UserDropdown/index.tsx
+14:44  Warning: 'PlusIcon' is defined but never used.  @typescript-eslint/no-unused-vars
+15:10  Warning: 'firebaseApp' is defined but never used.  @typescript-eslint/no-unused-vars
+18:8  Warning: 'AddCourse' is defined but never used.  @typescript-eslint/no-unused-vars
+53:28  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+73:74  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+111:80  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+132:74  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+199:67  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/Header/UserProfileSection.tsx
+8:11  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+24:24  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/Header.tsx
+23:11  Warning: 't' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/HeroSection/hooks/useHeroStats.tsx
+3:31  Warning: 'useRef' is defined but never used.  @typescript-eslint/no-unused-vars
+64:71  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+121:8  Warning: React Hook useEffect has a missing dependency: 'calculateSignature'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/HeroSection/index.tsx
+16:11  Warning: 'router' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+36:11  Warning: 'statsAnimateProps' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/HeroSection.tsx
+3:45  Warning: 'useState' is defined but never used.  @typescript-eslint/no-unused-vars
+11:10  Warning: 'UserPaidProduct' is defined but never used.  @typescript-eslint/no-unused-vars
+45:21  Error: React Hook "useMemo" is called conditionally. React Hooks must be called in the exact same order in every component render.  react-hooks/rules-of-hooks
+46:21  Error: React Hook "useMemo" is called conditionally. React Hooks must be called in the exact same order in every component render.  react-hooks/rules-of-hooks
+47:30  Error: React Hook "useMemo" is called conditionally. React Hooks must be called in the exact same order in every component render.  react-hooks/rules-of-hooks
+52:26  Error: React Hook "useRef" is called conditionally. React Hooks must be called in the exact same order in every component render.  react-hooks/rules-of-hooks
+55:19  Error: React Hook "useMemo" is called conditionally. React Hooks must be called in the exact same order in every component render.  react-hooks/rules-of-hooks
+150:5  Error: React Hook "useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render.  react-hooks/rules-of-hooks
+225:27  Error: React Hook "useMemo" is called conditionally. React Hooks must be called in the exact same order in every component render.  react-hooks/rules-of-hooks
+237:31  Error: React Hook "useMemo" is called conditionally. React Hooks must be called in the exact same order in every component render.  react-hooks/rules-of-hooks
+248:26  Error: React Hook "useMemo" is called conditionally. React Hooks must be called in the exact same order in every component render.  react-hooks/rules-of-hooks
+261:24  Error: React Hook "useMemo" is called conditionally. React Hooks must be called in the exact same order in every component render.  react-hooks/rules-of-hooks
+275:29  Error: React Hook "useMemo" is called conditionally. React Hooks must be called in the exact same order in every component render.  react-hooks/rules-of-hooks
+
+./components/icons/tech/CSSIcon.tsx
+9:68  Warning: 'color' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/icons/tech/ExpoIcon.tsx
+9:69  Warning: 'color' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/icons/tech/FirebaseIcon.tsx
+9:73  Warning: 'color' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/icons/tech/HTMLIcon.tsx
+9:69  Warning: 'color' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/icons/tech/JavaScriptIcon.tsx
+9:75  Warning: 'color' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/icons/tech/MongoDBIcon.tsx
+9:72  Warning: 'color' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/icons/tech/NextJsIcon.tsx
+9:71  Warning: 'color' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/icons/tech/NodeJsIcon.tsx
+9:71  Warning: 'color' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/icons/tech/NoSQLIcon.tsx
+9:70  Warning: 'color' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/icons/tech/ReactIcon.tsx
+9:70  Warning: 'color' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/icons/tech/ReactNativeIcon.tsx
+9:76  Warning: 'color' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/icons/tech/StripeIcon.tsx
+9:71  Warning: 'color' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/icons/tech/TailwindCssIcon.tsx
+9:76  Warning: 'color' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/icons/tech/TypeScriptIcon.tsx
+9:75  Warning: 'color' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/InstructorHighlightsSection.tsx
+1:17  Warning: 'useMemo' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/layout/CacheStatus.tsx
+22:31  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/layout/Header/BottomNavigation.tsx
+14:11  Warning: 'isAdmin' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+17:11  Warning: 'isHomepage' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/layout/Header/MigratedHeader.tsx
+23:13  Warning: 'isAdmin' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/layout/Header/NavbarBrand/index.tsx
+4:42  Warning: 'Link' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/layout/Header/UserDropdown/index.tsx
+14:44  Warning: 'PlusIcon' is defined but never used.  @typescript-eslint/no-unused-vars
+15:10  Warning: 'firebaseApp' is defined but never used.  @typescript-eslint/no-unused-vars
+18:8  Warning: 'AddCourse' is defined but never used.  @typescript-eslint/no-unused-vars
+51:28  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+71:74  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+109:80  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+130:74  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+197:67  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/layout/Header/UserProfileSection.tsx
+8:11  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+24:24  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/layout/Login.tsx
+12:41  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+62:17  Error: React Hook "useToast" is called conditionally. React Hooks must be called in the exact same order in every component render.  react-hooks/rules-of-hooks
+63:14  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+70:8  Warning: React Hook useEffect has a missing dependency: 'errorMessage'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+128:25  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/layout/Modal.tsx
+54:100  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+92:19  Warning: 'closeModal' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/layout/OnboardingModal/MigratedOnboardingModal.tsx
+77:32  Warning: 'userPreferences' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/layout/Profile/AchievementsSection.tsx
+16:8  Warning: React Hook useEffect has missing dependencies: 'error' and 'syncAchievements'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+110:68  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/layout/Profile/AppSettings.tsx
+4:47  Warning: 'Chip' is defined but never used.  @typescript-eslint/no-unused-vars
+30:52  Warning: 'userId' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/layout/Profile/DashboardProgress.tsx
+13:23  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+14:29  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+15:51  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+30:12  Warning: 'chartType' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/layout/Profile/hooks/useAchievements.ts
+4:44  Warning: 'query' is defined but never used.  @typescript-eslint/no-unused-vars
+4:51  Warning: 'where' is defined but never used.  @typescript-eslint/no-unused-vars
+4:66  Warning: 'updateDoc' is defined but never used.  @typescript-eslint/no-unused-vars
+161:63  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+162:63  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+189:81  Warning: 'course' is defined but never used.  @typescript-eslint/no-unused-vars
+271:8  Warning: React Hook useEffect has a missing dependency: 'fetchUserAchievements'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/layout/Profile/hooks/useLearningPath.ts
+3:10  Warning: 'Course' is defined but never used.  @typescript-eslint/no-unused-vars
+4:10  Warning: 'collection' is defined but never used.  @typescript-eslint/no-unused-vars
+4:22  Warning: 'doc' is defined but never used.  @typescript-eslint/no-unused-vars
+4:27  Warning: 'getDoc' is defined but never used.  @typescript-eslint/no-unused-vars
+4:35  Warning: 'getDocs' is defined but never used.  @typescript-eslint/no-unused-vars
+4:44  Warning: 'query' is defined but never used.  @typescript-eslint/no-unused-vars
+4:51  Warning: 'where' is defined but never used.  @typescript-eslint/no-unused-vars
+4:58  Warning: 'orderBy' is defined but never used.  @typescript-eslint/no-unused-vars
+5:10  Warning: 'firestoreDB' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/layout/Profile/hooks/useOfflineContent.ts
+37:11  Warning: 'courses' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+85:6  Warning: React Hook useEffect has a missing dependency: 'showToast'. Either include it or remove the dependency array. Outer scope values like 'toast' aren't valid dependencies because mutating them doesn't re-render the component.  react-hooks/exhaustive-deps
+180:6  Warning: React Hook useCallback has missing dependencies: 'showToast' and 't'. Either include them or remove the dependency array. Outer scope values like 'toast' aren't valid dependencies because mutating them doesn't re-render the component.  react-hooks/exhaustive-deps
+227:4  Warning: React Hook useCallback has a missing dependency: 't'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/layout/Profile/hooks/usePaymentHistory.ts
+4:29  Warning: 'where' is defined but never used.  @typescript-eslint/no-unused-vars
+21:31  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+32:19  Warning: 'userPaidProducts' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/layout/Profile/hooks/useProfileStats.tsx
+1:8  Warning: 'React' is defined but never used.  @typescript-eslint/no-unused-vars
+114:8  Warning: React Hook useEffect has a missing dependency: 'stats'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/layout/Profile/LearningPathSection.tsx
+4:27  Warning: 'CourseNode' is defined but never used.  @typescript-eslint/no-unused-vars
+13:13  Warning: 'openModal' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+151:44  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/layout/Profile/OfflineContentSection.tsx
+14:13  Warning: 'courses' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+148:59  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/layout/Profile/ProfileSidebar.tsx
+5:30  Warning: 'Button' is defined but never used.  @typescript-eslint/no-unused-vars
+6:56  Warning: 'FiUser' is defined but never used.  @typescript-eslint/no-unused-vars
+6:64  Warning: 'FiLogOut' is defined but never used.  @typescript-eslint/no-unused-vars
+13:53  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+13:76  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+23:34  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+42:19  Warning: 'isDark' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+42:61  Warning: 'toggleTheme' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+60:11  Warning: 'handleSignOut' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/layout/Profile.tsx
+5:33  Warning: 'props' is defined but never used.  @typescript-eslint/no-unused-vars
+5:40  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+18:62  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+39:72  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+47:72  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/layout/SearchBar.tsx
+16:56  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+23:11  Warning: 'isHomePage' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+89:72  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+102:54  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+103:48  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+104:53  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+123:8  Warning: React Hook useEffect has a missing dependency: 'handleSearch'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/LearningPathSection.tsx
+3:17  Warning: 'useMemo' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/Lesson/hooks/useVideoControls.tsx
+4:10  Warning: 'Lesson' is defined but never used.  @typescript-eslint/no-unused-vars
+74:8  Warning: React Hook useCallback has a missing dependency: 'videoRef'. Either include it or remove the dependency array. If 'setIsPlaying' needs the current value of 'videoRef', you can also switch to useReducer instead of useState and read 'videoRef' in the reducer.  react-hooks/exhaustive-deps
+
+./components/Lesson/LessonContent.tsx
+3:50  Warning: 'useCallback' is defined but never used.  @typescript-eslint/no-unused-vars
+4:10  Warning: 'useTranslations' is defined but never used.  @typescript-eslint/no-unused-vars
+6:43  Warning: 'Resource' is defined but never used.  @typescript-eslint/no-unused-vars
+6:53  Warning: 'LessonSettingsProps' is defined but never used.  @typescript-eslint/no-unused-vars
+6:74  Warning: 'QAProps' is defined but never used.  @typescript-eslint/no-unused-vars
+7:30  Warning: 'Divider' is defined but never used.  @typescript-eslint/no-unused-vars
+17:10  Warning: 'FiWifi' is defined but never used.  @typescript-eslint/no-unused-vars
+33:27  Warning: 'setVideoPosition' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+38:70  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+46:78  Warning: 'courses' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+416:78  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/Lesson/LessonDetailComponent.tsx
+6:10  Warning: 'Spinner' is defined but never used.  @typescript-eslint/no-unused-vars
+26:11  Warning: 'tCommon' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+38:21  Error: React Hook "useContext" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+39:20  Error: React Hook "useRouter" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+40:39  Error: React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+41:45  Error: React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+42:31  Error: React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+56:5  Error: React Hook "useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+78:5  Error: React Hook "useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+93:8  Warning: React Hook useEffect has a missing dependency: 'lessons'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+100:5  Error: React Hook "useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+
+./components/Lesson/LessonForm.tsx
+5:46  Warning: 'getDoc' is defined but never used.  @typescript-eslint/no-unused-vars
+5:63  Warning: 'query' is defined but never used.  @typescript-eslint/no-unused-vars
+5:70  Warning: 'where' is defined but never used.  @typescript-eslint/no-unused-vars
+9:31  Warning: 'FiCode' is defined but never used.  @typescript-eslint/no-unused-vars
+10:41  Warning: 'LessonType' is defined but never used.  @typescript-eslint/no-unused-vars
+18:8  Warning: 'Tooltip' is defined but never used.  @typescript-eslint/no-unused-vars
+125:42  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+159:32  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+160:54  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+164:32  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+165:44  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+166:45  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+170:32  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+171:47  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+175:32  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+176:54  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+217:27  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+308:32  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+946:112  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/Lesson/Navigation/LessonNavigation.tsx
+30:5  Warning: 'isCompleted' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/Lesson/OfflineButton.tsx
+3:27  Warning: 'useContext' is defined but never used.  @typescript-eslint/no-unused-vars
+5:31  Warning: 'FiWifiOff' is defined but never used.  @typescript-eslint/no-unused-vars
+8:10  Warning: 'AppContext' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/Lesson/QA/AnswerForm.tsx
+7:10  Warning: 'getStorage' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/Lesson/QA/AnswersList.tsx
+7:26  Warning: 'arrayUnion' is defined but never used.  @typescript-eslint/no-unused-vars
+7:38  Warning: 'arrayRemove' is defined but never used.  @typescript-eslint/no-unused-vars
+7:51  Warning: 'increment' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/Lesson/QA/QuestionsList.tsx
+6:19  Warning: 'Divider' is defined but never used.  @typescript-eslint/no-unused-vars
+17:67  Warning: 'lessonId' is defined but never used.  @typescript-eslint/no-unused-vars
+17:77  Warning: 'courseId' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/Lesson/Settings/LessonSettings.tsx
+5:19  Warning: 'Card' is defined but never used.  @typescript-eslint/no-unused-vars
+7:27  Warning: 'FiPlayCircle' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/Lesson/Video/VideoPlayer.tsx
+48:35  Warning: 'setSelectedCaptionLanguage' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/Lessons/CourseProgressHeader.tsx
+4:10  Warning: 'motion' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/Login.tsx
+13:41  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+13:49  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+64:17  Error: React Hook "useToast" is called conditionally. React Hooks must be called in the exact same order in every component render.  react-hooks/rules-of-hooks
+65:14  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+72:8  Warning: React Hook useEffect has a missing dependency: 'errorMessage'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+130:25  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/Modal.tsx
+54:100  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+92:19  Warning: 'closeModal' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/OnboardingModal/MigratedOnboardingModal.tsx
+77:32  Warning: 'userPreferences' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/Profile/AchievementsSection.tsx
+16:8  Warning: React Hook useEffect has missing dependencies: 'error' and 'syncAchievements'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+110:68  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/Profile/AppSettings.tsx
+4:47  Warning: 'Chip' is defined but never used.  @typescript-eslint/no-unused-vars
+31:52  Warning: 'userId' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/Profile/DashboardProgress.tsx
+14:23  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+15:29  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+16:51  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+32:12  Warning: 'chartType' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/Profile/hooks/useAchievements.ts
+4:44  Warning: 'query' is defined but never used.  @typescript-eslint/no-unused-vars
+4:51  Warning: 'where' is defined but never used.  @typescript-eslint/no-unused-vars
+4:66  Warning: 'updateDoc' is defined but never used.  @typescript-eslint/no-unused-vars
+161:63  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+162:63  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+189:81  Warning: 'course' is defined but never used.  @typescript-eslint/no-unused-vars
+271:8  Warning: React Hook useEffect has a missing dependency: 'fetchUserAchievements'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/Profile/hooks/useLearningPath.ts
+3:10  Warning: 'Course' is defined but never used.  @typescript-eslint/no-unused-vars
+4:10  Warning: 'collection' is defined but never used.  @typescript-eslint/no-unused-vars
+4:22  Warning: 'doc' is defined but never used.  @typescript-eslint/no-unused-vars
+4:27  Warning: 'getDoc' is defined but never used.  @typescript-eslint/no-unused-vars
+4:35  Warning: 'getDocs' is defined but never used.  @typescript-eslint/no-unused-vars
+4:44  Warning: 'query' is defined but never used.  @typescript-eslint/no-unused-vars
+4:51  Warning: 'where' is defined but never used.  @typescript-eslint/no-unused-vars
+4:58  Warning: 'orderBy' is defined but never used.  @typescript-eslint/no-unused-vars
+5:10  Warning: 'firestoreDB' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/Profile/hooks/useOfflineContent.ts
+37:11  Warning: 'courses' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+85:6  Warning: React Hook useEffect has a missing dependency: 'showToast'. Either include it or remove the dependency array. Outer scope values like 'toast' aren't valid dependencies because mutating them doesn't re-render the component.  react-hooks/exhaustive-deps
+180:6  Warning: React Hook useCallback has missing dependencies: 'showToast' and 't'. Either include them or remove the dependency array. Outer scope values like 'toast' aren't valid dependencies because mutating them doesn't re-render the component.  react-hooks/exhaustive-deps
+227:4  Warning: React Hook useCallback has a missing dependency: 't'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/Profile/hooks/usePaymentHistory.ts
+4:29  Warning: 'where' is defined but never used.  @typescript-eslint/no-unused-vars
+21:31  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+32:19  Warning: 'userPaidProducts' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/Profile/hooks/useProfileStats.tsx
+1:8  Warning: 'React' is defined but never used.  @typescript-eslint/no-unused-vars
+114:8  Warning: React Hook useEffect has a missing dependency: 'stats'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/Profile/LearningPathSection.tsx
+4:27  Warning: 'CourseNode' is defined but never used.  @typescript-eslint/no-unused-vars
+15:13  Warning: 'openModal' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+153:44  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/Profile/OfflineContentSection.tsx
+14:13  Warning: 'courses' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+148:59  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/Profile/ProfileSidebar.tsx
+5:30  Warning: 'Button' is defined but never used.  @typescript-eslint/no-unused-vars
+6:56  Warning: 'FiUser' is defined but never used.  @typescript-eslint/no-unused-vars
+6:64  Warning: 'FiLogOut' is defined but never used.  @typescript-eslint/no-unused-vars
+13:53  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+13:76  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+23:34  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+42:19  Warning: 'isDark' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+42:61  Warning: 'toggleTheme' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+60:11  Warning: 'handleSignOut' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/Profile.tsx
+5:33  Warning: 'props' is defined but never used.  @typescript-eslint/no-unused-vars
+5:40  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+18:62  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+39:72  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+47:72  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/RecommendedCoursesSection.tsx
+6:10  Warning: 'Button' is defined but never used.  @typescript-eslint/no-unused-vars
+16:11  Warning: 'user' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+17:11  Warning: The 'courses' logical expression could make the dependencies of useMemo Hook (at line 46) change on every render. To fix this, wrap the initialization of 'courses' in its own useMemo() Hook.  react-hooks/exhaustive-deps
+17:11  Warning: The 'courses' logical expression could make the dependencies of useMemo Hook (at line 68) change on every render. To fix this, wrap the initialization of 'courses' in its own useMemo() Hook.  react-hooks/exhaustive-deps
+18:11  Warning: The 'products' logical expression could make the dependencies of useCallback Hook (at line 29) change on every render. Move it inside the useCallback callback. Alternatively, wrap the initialization of 'products' in its own useMemo() Hook.  react-hooks/exhaustive-deps
+19:11  Warning: The 'userPaidProducts' logical expression could make the dependencies of useMemo Hook (at line 34) change on every render. Move it inside the useMemo callback. Alternatively, wrap the initialization of 'userPaidProducts' in its own useMemo() Hook.  react-hooks/exhaustive-deps
+22:49  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/SearchBar.tsx
+16:56  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+23:11  Warning: 'isHomePage' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+94:72  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+107:54  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+108:48  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+109:53  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+128:8  Warning: React Hook useEffect has a missing dependency: 'handleSearch'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/TechStackSection/techData.ts
+8:5  Warning: 'NextJsIcon' is defined but never used.  @typescript-eslint/no-unused-vars
+10:5  Warning: 'CSSIcon' is defined but never used.  @typescript-eslint/no-unused-vars
+11:5  Warning: 'HTMLIcon' is defined but never used.  @typescript-eslint/no-unused-vars
+13:5  Warning: 'ExpoIcon' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/TechStackSection/TechItem.tsx
+14:51  Warning: 'color' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/Toast/Toast.tsx
+195:6  Warning: React Hook useCallback has a missing dependency: 'hideToast'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/Toast/ToastContext.tsx
+4:29  Warning: 'ToastType' is defined but never used.  @typescript-eslint/no-unused-vars
+45:6  Warning: React Hook useCallback has a missing dependency: 'hideToast'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/ui/Avatar.tsx
+60:20  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/ui/Button.tsx
+65:20  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+110:11  Warning: 'getButtonClasses' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/ui/Card.tsx
+54:20  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/ui/Chip.tsx
+65:20  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/ui/Divider.tsx
+30:20  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+52:11  Warning: 'sizeClass' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/ui/Dropdown.tsx
+99:89  Warning: 'ref' is defined but never used.  @typescript-eslint/no-unused-vars
+151:85  Warning: 'ref' is defined but never used.  @typescript-eslint/no-unused-vars
+178:26  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+230:82  Warning: 'ref' is defined but never used.  @typescript-eslint/no-unused-vars
+234:9  Warning: 'isSelected' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+268:10  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+309:89  Warning: 'ref' is defined but never used.  @typescript-eslint/no-unused-vars
+327:26  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/ui/Modal.tsx
+59:56  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+59:69  Warning: 'ref' is defined but never used.  @typescript-eslint/no-unused-vars
+67:55  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+67:68  Warning: 'ref' is defined but never used.  @typescript-eslint/no-unused-vars
+73:53  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+73:66  Warning: 'ref' is defined but never used.  @typescript-eslint/no-unused-vars
+79:55  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+79:68  Warning: 'ref' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/ui/Navbar.tsx
+64:20  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+70:61  Warning: 'ref' is defined but never used.  @typescript-eslint/no-unused-vars
+105:94  Warning: 'ref' is defined but never used.  @typescript-eslint/no-unused-vars
+114:139  Warning: 'ref' is defined but never used.  @typescript-eslint/no-unused-vars
+123:118  Warning: 'ref' is defined but never used.  @typescript-eslint/no-unused-vars
+136:111  Warning: 'ref' is defined but never used.  @typescript-eslint/no-unused-vars
+145:93  Warning: 'ref' is defined but never used.  @typescript-eslint/no-unused-vars
+158:97  Warning: 'ref' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/ui/OptimizedImage.tsx
+9:5  Warning: 'generateSrcSet' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/ui/PasswordStrengthMeter.tsx
+4:10  Warning: 'validatePassword' is defined but never used.  @typescript-eslint/no-unused-vars
+4:33  Warning: 'PasswordValidationResult' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/ui/Progress.tsx
+77:20  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+83:68  Warning: 'ref' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/ui/Radio.tsx
+65:20  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+78:9  Warning: 'size' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/ui/RatingStars.tsx
+32:5  Warning: 'classNames' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/ui/Select.tsx
+48:28  Warning: '_props' is defined but never used.  @typescript-eslint/no-unused-vars
+182:11  Warning: 'containerRef' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+371:39  Warning: Unexpected empty method 'preventDefault'.  @typescript-eslint/no-empty-function
+372:40  Warning: Unexpected empty method 'stopPropagation'.  @typescript-eslint/no-empty-function
+377:32  Warning: Unexpected empty method 'persist'.  @typescript-eslint/no-empty-function
+401:11  Warning: The 'selectItems' array makes the dependencies of useEffect Hook (at line 548) change on every render. To fix this, wrap the initialization of 'selectItems' in its own useMemo() Hook.  react-hooks/exhaustive-deps
+535:8  Warning: React Hook useEffect has a missing dependency: 'handleSelect'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+551:11  Warning: 'prevFocusedIndexRef' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+557:11  Warning: 'handleKeyboardNavigation' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+557:39  Warning: 'key' is defined but never used.  @typescript-eslint/no-unused-vars
+707:18  Warning: Unused eslint-disable directive (no problems were reported from 'jsx-a11y/aria-proptypes').
+
+./components/ui/SelectItem.tsx
+19:13  Warning: 'value' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/ui/Table.tsx
+40:34  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+47:40  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+54:40  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+61:38  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+68:37  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+75:38  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./components/ui/Tabs.tsx
+31:20  Warning: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+90:65  Warning: 'ref' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/ui/Textarea.tsx
+108:18  Warning: '_minRows' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+109:18  Warning: '_maxRows' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/ui/Tooltip.tsx
+118:8  Warning: React Hook useEffect has a missing dependency: 'updatePosition'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
