@@ -57,6 +57,14 @@
     "privacyPolicyNote": "We handle your data in accordance with our"
   },
   "payment": {
+    "emptyStates": {
+      "noMatchingPayments": "No matching payments found",
+      "noMatchingPaymentsDesc": "We couldn't find any payments that match your search. Try adjusting your search criteria.",
+      "clearSearch": "Clear Search",
+      "noPaymentHistory": "No payment history yet",
+      "noPaymentHistoryDesc": "You haven't made any purchases yet. Start exploring our courses to find the perfect learning opportunity!",
+      "browseCourses": "Browse Courses"
+    },
     "tableHeaders": {
       "course": "Course",
       "amount": "Amount",
@@ -204,6 +212,16 @@
     "actions": {
       "download": "Download Certificate",
       "view": "View Certificate",
+      "browseCourses": "Browse Courses"
+    }
+  },
+  "courses": {
+    "emptyStates": {
+      "noMatchingCourses": "No matching courses found",
+      "noMatchingCoursesDesc": "Try adjusting your search or filter criteria.",
+      "clearFilters": "Clear Filters",
+      "noEnrolledCourses": "No enrolled courses yet",
+      "noEnrolledCoursesDesc": "You haven't purchased any courses yet.",
       "browseCourses": "Browse Courses"
     }
   }

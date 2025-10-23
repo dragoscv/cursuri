@@ -43,7 +43,8 @@
     "advanced": "Avansat",
     "intermediate": "Intermediar",
     "beginner": "Începător",
-    "weeks": "{count} săptămâni"
+    "weeks": "{count} săptămâni",
+    "badges": null
   },
   "header": {
     "badge": "Curriculum AI",
@@ -221,5 +222,23 @@
   "messages": {
     "certificateAvailable": "Certificat disponibil la finalizare",
     "promotionCodesEnabled": "Coduri promoționale activate"
+  },
+  "badges": {
+    "featured": "Recomandat",
+    "new": "Nou",
+    "certificate": "Certificat"
+  },
+  "stats": {
+    "students": "studenți",
+    "student": "student",
+    "studentsCount": "{count} studenți",
+    "newCourse": "Curs nou",
+    "lesson": "lecție",
+    "lessons": "lecții",
+    "lessonsCount": "{count} {count, plural, one {lecție} other {lecții}}",
+    "lessonsComingSoon": "Lecții în curând",
+    "reviews": "recenzii",
+    "review": "recenzie",
+    "reviewsCount": "{count} {count, plural, one {recenzie} other {recenzii}}"
   }
 }

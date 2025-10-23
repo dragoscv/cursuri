@@ -283,18 +283,17 @@ export default function PaymentHistory() {
                 <FiSearch className="w-10 h-10 text-[color:var(--ai-primary)]" />
               </div>
               <h3 className="text-xl font-bold text-[color:var(--ai-foreground)] mb-3">
-                No matching payments found
+                {t('payment.emptyStates.noMatchingPayments')}
               </h3>
               <p className="text-[color:var(--ai-muted)] mb-6 max-w-md mx-auto">
-                We couldn't find any payments that match your search. Try adjusting your search
-                criteria.
+                {t('payment.emptyStates.noMatchingPaymentsDesc')}
               </p>
               <Button
                 className="bg-[color:var(--ai-primary)] hover:bg-[color:var(--ai-primary)]/90 text-white transition-colors duration-300"
                 variant="solid"
                 onClick={() => setSearchTerm('')}
               >
-                Clear Search
+                {t('payment.emptyStates.clearSearch')}
               </Button>
             </>
           ) : (
@@ -303,15 +302,14 @@ export default function PaymentHistory() {
                 <FiFileText className="w-10 h-10 text-[color:var(--ai-primary)]" />
               </div>
               <h3 className="text-xl font-bold text-[color:var(--ai-foreground)] mb-3">
-                No payment history yet
+                {t('payment.emptyStates.noPaymentHistory')}
               </h3>
               <p className="text-[color:var(--ai-muted)] mb-6 max-w-md mx-auto">
-                You haven&apos;t made any purchases yet. Start exploring our courses to find the
-                perfect learning opportunity!
+                {t('payment.emptyStates.noPaymentHistoryDesc')}
               </p>
               <Link href="/courses">
                 <Button className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white hover:opacity-90 transition-opacity duration-300">
-                  Browse Courses
+                  {t('payment.emptyStates.browseCourses')}
                 </Button>
               </Link>
             </>

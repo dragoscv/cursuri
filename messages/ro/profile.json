@@ -82,6 +82,14 @@
     "sort": {
       "oldestFirst": "Cele Mai Vechi Primele",
       "newestFirst": "Cele Mai Noi Primele"
+    },
+    "emptyStates": {
+      "noMatchingPayments": "Nu s-au găsit plăți",
+      "noMatchingPaymentsDesc": "Nu am găsit plăți care să corespundă căutării. Încearcă să ajustezi criteriile de căutare.",
+      "clearSearch": "Șterge Căutarea",
+      "noPaymentHistory": "Niciun istoric de plăți",
+      "noPaymentHistoryDesc": "Nu ai făcut încă nicio achiziție. Explorează cursurile noastre pentru a găsi oportunitatea perfectă de învățare!",
+      "browseCourses": "Explorează Cursurile"
     }
   },
   "progress": {
@@ -205,6 +213,16 @@
       "download": "Descarcă Certificat",
       "view": "Vizualizează Certificat",
       "browseCourses": "Răsfoiește Cursuri"
+    }
+  },
+  "courses": {
+    "emptyStates": {
+      "noMatchingCourses": "Nu s-au găsit cursuri",
+      "noMatchingCoursesDesc": "Încearcă să ajustezi criteriile de căutare sau filtrare.",
+      "clearFilters": "Șterge Filtrele",
+      "noEnrolledCourses": "Niciun curs înscris încă",
+      "noEnrolledCoursesDesc": "Nu ai achiziționat încă niciun curs.",
+      "browseCourses": "Explorează Cursurile"
     }
   }
 }

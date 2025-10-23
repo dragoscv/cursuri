@@ -27,6 +27,7 @@ export const CourseHeader: React.FC<CourseHeaderProps> = ({ course }) => {
   // Cast to extended type to avoid errors
   const extendedCourse = course as ExtendedCourse;
   const t = useTranslations('common');
+  const tCourses = useTranslations('courses');
 
   return (
     <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-[color:var(--ai-accent)]/10 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-[color:var(--ai-card-border)]/50 shadow-xl">
@@ -35,12 +36,12 @@ export const CourseHeader: React.FC<CourseHeaderProps> = ({ course }) => {
           <div className="flex flex-wrap gap-2 mb-3">
             {extendedCourse.isFeatured && (
               <Chip color="warning" variant="flat" className="text-xs">
-                Featured
+                {tCourses('badges.featured')}
               </Chip>
             )}
             {extendedCourse.isNew && (
               <Chip color="success" variant="flat" className="text-xs">
-                New
+                {tCourses('badges.new')}
               </Chip>
             )}
             {extendedCourse.level && (
@@ -70,7 +71,7 @@ export const CourseHeader: React.FC<CourseHeaderProps> = ({ course }) => {
               </span>
             </div>
             <div className="text-sm text-[color:var(--ai-muted)]">
-              {extendedCourse.reviewsCount || 0} reviews
+              {extendedCourse.reviewsCount || 0} {tCourses('stats.reviews')}
             </div>
           </div>
         )}
@@ -86,22 +87,22 @@ export const CourseHeader: React.FC<CourseHeaderProps> = ({ course }) => {
           <FiUsers className="text-[color:var(--ai-primary)]" />
           <span>
             {extendedCourse.students && extendedCourse.students > 0
-              ? `${extendedCourse.students} students`
-              : 'New course'}
+              ? `${extendedCourse.students} ${tCourses('stats.students')}`
+              : tCourses('stats.newCourse')}
           </span>
         </div>
         <div className="flex items-center gap-1">
           <FiBook className="text-[color:var(--ai-primary)]" />
           <span>
             {typeof extendedCourse.lessonsCount !== 'undefined' && extendedCourse.lessonsCount > 0
-              ? `${extendedCourse.lessonsCount} ${extendedCourse.lessonsCount === 1 ? 'lesson' : 'lessons'}`
-              : 'Lessons coming soon'}
+              ? `${extendedCourse.lessonsCount} ${extendedCourse.lessonsCount === 1 ? tCourses('stats.lesson') : tCourses('stats.lessons')}`
+              : tCourses('stats.lessonsComingSoon')}
           </span>
         </div>
         {extendedCourse.certificate && (
           <div className="flex items-center gap-1">
             <FiAward className="text-[color:var(--ai-primary)]" />
-            <span>Certificate</span>
+            <span>{tCourses('badges.certificate')}</span>
           </div>
         )}
       </div>

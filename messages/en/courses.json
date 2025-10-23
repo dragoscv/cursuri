@@ -1,225 +1,243 @@
 {
-    "metadata": {
-        "title": "Online Courses | Cursuri",
-        "description": "Browse our comprehensive catalog of online courses in programming, web development, AI, data science, and more. Learn at your own pace and advance your career.",
-        "keywords": "online courses, programming courses, web development, AI courses, data science, technology learning, professional development, coding classes, learn to code, tech education"
-    },
-    "title": "Courses",
-    "allCourses": "All Courses",
-    "myCourses": "My Courses",
-    "buyCourse": "Buy Course",
-    "enrollNow": "Enroll Now",
-    "startLearning": "Start Learning",
-    "continueLearning": "Continue Learning",
-    "courseDetails": "Course Details",
-    "lessons": "Lessons",
-    "duration": "Duration",
-    "level": "Level",
-    "price": "Price",
-    "free": "Free",
-    "instructor": "Instructor",
-    "students": "Students",
-    "rating": "Rating",
+  "metadata": {
+    "title": "Online Courses | Cursuri",
+    "description": "Browse our comprehensive catalog of online courses in programming, web development, AI, data science, and more. Learn at your own pace and advance your career.",
+    "keywords": "online courses, programming courses, web development, AI courses, data science, technology learning, professional development, coding classes, learn to code, tech education"
+  },
+  "title": "Courses",
+  "allCourses": "All Courses",
+  "myCourses": "My Courses",
+  "buyCourse": "Buy Course",
+  "enrollNow": "Enroll Now",
+  "startLearning": "Start Learning",
+  "continueLearning": "Continue Learning",
+  "courseDetails": "Course Details",
+  "lessons": "Lessons",
+  "duration": "Duration",
+  "level": "Level",
+  "price": "Price",
+  "free": "Free",
+  "instructor": "Instructor",
+  "students": "Students",
+  "rating": "Rating",
+  "reviews": "Reviews",
+  "description": "Description",
+  "whatYouWillLearn": "What You'll Learn",
+  "requirements": "Requirements",
+  "includes": "This course includes",
+  "certificate": "Certificate",
+  "lifetime": "Lifetime access",
+  "featured": "Featured Courses",
+  "filter": {
+    "searchPlaceholder": "Search courses...",
+    "allCategories": "All Categories",
+    "activeFilters": "Active filters:",
+    "clearAll": "Clear all",
+    "clearSearchFilter": "Clear search filter",
+    "clearCategoryFilter": "Clear category filter"
+  },
+  "card": {
+    "enrolled": "Enrolled",
+    "enrolledCount": "{count} enrolled",
+    "mostPopular": "Most Popular",
+    "advanced": "Advanced",
+    "intermediate": "Intermediate",
+    "beginner": "Beginner",
+    "weeks": "{count} weeks"
+  },
+  "badges": {
+    "featured": "Featured",
+    "new": "New",
+    "certificate": "Certificate"
+  },
+  "stats": {
+    "students": "students",
+    "student": "student",
+    "studentsCount": "{count} students",
+    "newCourse": "New course",
+    "lesson": "lesson",
+    "lessons": "lessons",
+    "lessonsCount": "{count} {count, plural, one {lesson} other {lessons}}",
+    "lessonsComingSoon": "Lessons coming soon",
+    "reviews": "reviews",
+    "review": "review",
+    "reviewsCount": "{count} {count, plural, one {review} other {reviews}}"
+  },
+  "header": {
+    "badge": "AI Curriculum",
+    "title": "Cutting-Edge AI Courses",
+    "subtitle": "Master the technologies shaping our future with courses designed by AI experts for tomorrow's innovators."
+  },
+  "loading": {
+    "loadingCourses": "Loading courses...",
+    "failedToLoad": "Failed to load courses",
+    "errorMessage": "There was a problem loading the courses. Please try refreshing the page.",
+    "refreshPage": "Refresh Page",
+    "noCourses": "No courses available at the moment."
+  },
+  "tabs": {
+    "content": "Content",
+    "overview": "Overview",
     "reviews": "Reviews",
-    "description": "Description",
+    "resources": "Resources",
+    "courseResources": "Course Resources"
+  },
+  "enrollment": {
+    "youreEnrolled": "You're Enrolled",
+    "active": "Active",
+    "yourProgress": "Your Progress",
+    "percentComplete": "{percent}% complete",
+    "lessonsProgress": "{completed}/{total} lessons",
+    "inProgress": "In progress",
+    "continueButton": "Continue Learning",
+    "whatYouHaveAccess": "What you have access to:",
+    "lessonsAvailable": "{count} lessons available",
+    "lifetimeAccess": "Lifetime access",
+    "limitedTimeOffer": "Limited time offer",
+    "certificateUponCompletion": "Certificate upon completion",
+    "premiumSupport": "Premium support",
+    "enrollButton": "Enroll Now",
+    "buyNow": "Buy Now",
+    "startLearning": "Start Learning",
+    "free": "Free",
+    "loginRequired": "Login Required",
+    "prerequisitesRequired": "Prerequisites Required",
+    "prerequisitesDescription": "Before enrolling in this course, you need to complete the following prerequisite courses:",
+    "completePrerequisites": "Complete these prerequisites to unlock this course.",
+    "viewCourse": "View Course",
+    "enrollFirst": "Enroll First",
+    "thisCourseCosts": "This course costs",
+    "getInstantAccess": "Get instant access to:",
+    "onDemandVideo": "On-demand video content",
+    "downloadableResources": "Downloadable resources",
+    "fullLifetimeAccess": "Full lifetime access",
+    "accessOnMobileDesktop": "Access on mobile and desktop",
+    "completionCertificate": "Certificate of completion",
+    "moneyBackGuarantee": "30-day money-back guarantee",
+    "alreadyHaveAccount": "Already have an account? Sign in to purchase this course",
+    "signInToPurchase": "Sign in to purchase"
+  },
+  "prerequisites": {
+    "title": "Prerequisites",
+    "required": "This course requires the completion of prerequisite course(s) before enrollment."
+  },
+  "lessonsList": {
+    "courseContent": "Course Content",
+    "lessons": "{count} lessons",
+    "totalDuration": "{duration} total",
+    "remaining": "{duration} remaining",
+    "completed": "completed",
+    "completedBadge": "Completed",
+    "freePreview": "Free Preview",
+    "locked": "Locked",
+    "noLessonsYet": "No lessons available yet",
+    "noLessonsDescription": "This course is still being developed. Check back soon for new content!",
+    "unnamedLesson": "Unnamed Lesson",
+    "noDescription": "No description available"
+  },
+  "admin": {
+    "addLesson": "Add Lesson"
+  },
+  "overview": {
+    "courseDescription": "Course Description",
     "whatYouWillLearn": "What You'll Learn",
     "requirements": "Requirements",
-    "includes": "This course includes",
-    "certificate": "Certificate",
-    "lifetime": "Lifetime access",
-    "featured": "Featured Courses",
-    "filter": {
-        "searchPlaceholder": "Search courses...",
-        "allCategories": "All Categories",
-        "activeFilters": "Active filters:",
-        "clearAll": "Clear all",
-        "clearSearchFilter": "Clear search filter",
-        "clearCategoryFilter": "Clear category filter"
+    "prerequisites": "Prerequisites",
+    "viewCourse": "View Course",
+    "additionalInformation": "Additional Information",
+    "instructor": "Instructor",
+    "sampleBenefits": {
+      "keyConceptsAndBestPractices": "Learn key concepts and best practices",
+      "buildRealWorldProjects": "Build real-world projects",
+      "modernDevelopmentTechniques": "Understand modern development techniques",
+      "practicalSkills": "Gain practical skills employers are looking for"
     },
-    "card": {
-        "enrolled": "Enrolled",
-        "enrolledCount": "{count} enrolled",
-        "mostPopular": "Most Popular",
-        "advanced": "Advanced",
-        "intermediate": "Intermediate",
-        "beginner": "Beginner",
-        "weeks": "{count} weeks"
-    },
-    "header": {
-        "badge": "AI Curriculum",
-        "title": "Cutting-Edge AI Courses",
-        "subtitle": "Master the technologies shaping our future with courses designed by AI experts for tomorrow's innovators."
-    },
-    "loading": {
-        "loadingCourses": "Loading courses...",
-        "failedToLoad": "Failed to load courses",
-        "errorMessage": "There was a problem loading the courses. Please try refreshing the page.",
-        "refreshPage": "Refresh Page",
-        "noCourses": "No courses available at the moment."
-    },
-    "tabs": {
-        "content": "Content",
-        "overview": "Overview",
-        "reviews": "Reviews",
-        "resources": "Resources",
-        "courseResources": "Course Resources"
-    },
-    "enrollment": {
-        "youreEnrolled": "You're Enrolled",
-        "active": "Active",
-        "yourProgress": "Your Progress",
-        "percentComplete": "{percent}% complete",
-        "lessonsProgress": "{completed}/{total} lessons",
-        "inProgress": "In progress",
-        "continueButton": "Continue Learning",
-        "whatYouHaveAccess": "What you have access to:",
-        "lessonsAvailable": "{count} lessons available",
-        "lifetimeAccess": "Lifetime access",
-        "limitedTimeOffer": "Limited time offer",
-        "certificateUponCompletion": "Certificate upon completion",
-        "premiumSupport": "Premium support",
-        "enrollButton": "Enroll Now",
-        "buyNow": "Buy Now",
-        "startLearning": "Start Learning",
-        "free": "Free",
-        "loginRequired": "Login Required",
-        "prerequisitesRequired": "Prerequisites Required",
-        "prerequisitesDescription": "Before enrolling in this course, you need to complete the following prerequisite courses:",
-        "completePrerequisites": "Complete these prerequisites to unlock this course.",
-        "viewCourse": "View Course",
-        "enrollFirst": "Enroll First",
-        "thisCourseCosts": "This course costs",
-        "getInstantAccess": "Get instant access to:",
-        "onDemandVideo": "On-demand video content",
-        "downloadableResources": "Downloadable resources",
-        "fullLifetimeAccess": "Full lifetime access",
-        "accessOnMobileDesktop": "Access on mobile and desktop",
-        "completionCertificate": "Certificate of completion",
-        "moneyBackGuarantee": "30-day money-back guarantee",
-        "alreadyHaveAccount": "Already have an account? Sign in to purchase this course",
-        "signInToPurchase": "Sign in to purchase"
-    },
-    "prerequisites": {
-        "title": "Prerequisites",
-        "required": "This course requires the completion of prerequisite course(s) before enrollment."
-    },
-    "lessonsList": {
-        "courseContent": "Course Content",
-        "lessons": "{count} lessons",
-        "totalDuration": "{duration} total",
-        "remaining": "{duration} remaining",
-        "completed": "completed",
-        "completedBadge": "Completed",
-        "freePreview": "Free Preview",
-        "locked": "Locked",
-        "noLessonsYet": "No lessons available yet",
-        "noLessonsDescription": "This course is still being developed. Check back soon for new content!",
-        "unnamedLesson": "Unnamed Lesson",
-        "noDescription": "No description available"
-    },
-    "admin": {
-        "addLesson": "Add Lesson"
-    },
-    "overview": {
-        "courseDescription": "Course Description",
-        "whatYouWillLearn": "What You'll Learn",
-        "requirements": "Requirements",
-        "prerequisites": "Prerequisites",
-        "viewCourse": "View Course",
-        "additionalInformation": "Additional Information",
-        "instructor": "Instructor",
-        "sampleBenefits": {
-            "keyConceptsAndBestPractices": "Learn key concepts and best practices",
-            "buildRealWorldProjects": "Build real-world projects",
-            "modernDevelopmentTechniques": "Understand modern development techniques",
-            "practicalSkills": "Gain practical skills employers are looking for"
-        },
-        "sampleRequirements": {
-            "basicProgramming": "Basic understanding of programming concepts",
-            "computerAndInternet": "Computer with internet connection",
-            "willingnessToLearn": "Willingness to learn and practice"
-        }
-    },
-    "reviewsSection": {
-        "writeReview": "Write a Review",
-        "yourThoughts": "Your thoughts on this course",
-        "shareExperience": "Share your experience with this course...",
-        "yourRating": "Your rating:",
-        "mustBeLoggedIn": "You must be logged in to write a review",
-        "reviewPosted": "Review posted successfully!",
-        "submitReview": "Submit Review",
-        "loginToReview": "Login to Review",
-        "studentReviews": "Student Reviews",
-        "noReviewsYet": "No reviews yet",
-        "beTheFirst": "Be the first to share your experience with this course!",
-        "recently": "Recently"
-    },
-    "content": {
-        "yourProgress": "Your Progress",
-        "lessonsCompleted": "{completed} of {total} lessons completed",
-        "lesson": "lesson",
-        "lessons": "lessons",
-        "someContentLocked": "Some Content is Locked",
-        "purchaseToUnlock": "Purchase this course to unlock all lessons. Free preview lessons are accessible to everyone.",
-        "courseContent": "Course Content",
-        "lessonsCount": "{count} lessons",
-        "additionalLessons": "Additional Lessons",
-        "noLessonsAvailable": "No lessons available",
-        "noLessonsYet": "This course doesn't have any lessons yet.",
-        "free": "Free",
-        "locked": "Locked",
-        "completed": "Completed",
-        "completedBadge": "COMPLETED",
-        "inProgress": "In Progress"
-    },
-    "form": {
-        "labels": {
-            "estimatedDuration": "Estimated Duration",
-            "repositoryUrl": "Repository URL",
-            "difficultyLevel": "Difficulty Level",
-            "coursePrice": "Course Price",
-            "priceAmount": "Price Amount",
-            "courseName": "Course Name",
-            "selectPrice": "Select a price",
-            "selectPrerequisite": "Select a prerequisite course"
-        },
-        "sections": {
-            "courseContentDetails": "Course Content Details",
-            "courseContentDetailsDesc": "Enhance your course with additional information",
-            "courseSummary": "Course Summary",
-            "courseSummaryDesc": "Review your course details before publishing",
-            "afterCreating": "After creating your course"
-        }
-    },
-    "actions": {
-        "editCourse": "Edit Course",
-        "createNewCourse": "Create New Course",
-        "updateCourse": "Update Course",
-        "createCourse": "Create Course",
-        "createPrice": "Create Price in Stripe",
-        "creatingPrice": "Creating Price...",
-        "congratulationsFinish": "Congratulations on finishing this course"
-    },
-    "fallbacks": {
-        "unknownCourse": "Unknown Course",
-        "unknownInstructor": "Unknown Instructor",
-        "cursuriInstructor": "Cursuri Instructor",
-        "unnamedLesson": "Unnamed Lesson",
-        "noDescription": "No description available",
-        "notSpecified": "Not specified",
-        "allLevels": "All levels"
-    },
-    "captions": {
-        "noContentAvailable": "No content available",
-        "processing": "Processing...",
-        "regenerateCaptions": "Regenerate Captions"
-    },
-    "courseMetadata": {
-        "courseNotFound": "Course Not Found",
-        "viewDetails": "View course details and curriculum"
-    },
-    "messages": {
-        "certificateAvailable": "Course completion certificate will be available",
-        "promotionCodesEnabled": "Students can use promotion codes at checkout"
+    "sampleRequirements": {
+      "basicProgramming": "Basic understanding of programming concepts",
+      "computerAndInternet": "Computer with internet connection",
+      "willingnessToLearn": "Willingness to learn and practice"
     }
+  },
+  "reviewsSection": {
+    "writeReview": "Write a Review",
+    "yourThoughts": "Your thoughts on this course",
+    "shareExperience": "Share your experience with this course...",
+    "yourRating": "Your rating:",
+    "mustBeLoggedIn": "You must be logged in to write a review",
+    "reviewPosted": "Review posted successfully!",
+    "submitReview": "Submit Review",
+    "loginToReview": "Login to Review",
+    "studentReviews": "Student Reviews",
+    "noReviewsYet": "No reviews yet",
+    "beTheFirst": "Be the first to share your experience with this course!",
+    "recently": "Recently"
+  },
+  "content": {
+    "yourProgress": "Your Progress",
+    "lessonsCompleted": "{completed} of {total} lessons completed",
+    "lesson": "lesson",
+    "lessons": "lessons",
+    "someContentLocked": "Some Content is Locked",
+    "purchaseToUnlock": "Purchase this course to unlock all lessons. Free preview lessons are accessible to everyone.",
+    "courseContent": "Course Content",
+    "lessonsCount": "{count} lessons",
+    "additionalLessons": "Additional Lessons",
+    "noLessonsAvailable": "No lessons available",
+    "noLessonsYet": "This course doesn't have any lessons yet.",
+    "free": "Free",
+    "locked": "Locked",
+    "completed": "Completed",
+    "completedBadge": "COMPLETED",
+    "inProgress": "In Progress"
+  },
+  "form": {
+    "labels": {
+      "estimatedDuration": "Estimated Duration",
+      "repositoryUrl": "Repository URL",
+      "difficultyLevel": "Difficulty Level",
+      "coursePrice": "Course Price",
+      "priceAmount": "Price Amount",
+      "courseName": "Course Name",
+      "selectPrice": "Select a price",
+      "selectPrerequisite": "Select a prerequisite course"
+    },
+    "sections": {
+      "courseContentDetails": "Course Content Details",
+      "courseContentDetailsDesc": "Enhance your course with additional information",
+      "courseSummary": "Course Summary",
+      "courseSummaryDesc": "Review your course details before publishing",
+      "afterCreating": "After creating your course"
+    }
+  },
+  "actions": {
+    "editCourse": "Edit Course",
+    "createNewCourse": "Create New Course",
+    "updateCourse": "Update Course",
+    "createCourse": "Create Course",
+    "createPrice": "Create Price in Stripe",
+    "creatingPrice": "Creating Price...",
+    "congratulationsFinish": "Congratulations on finishing this course"
+  },
+  "fallbacks": {
+    "unknownCourse": "Unknown Course",
+    "unknownInstructor": "Unknown Instructor",
+    "cursuriInstructor": "Cursuri Instructor",
+    "unnamedLesson": "Unnamed Lesson",
+    "noDescription": "No description available",
+    "notSpecified": "Not specified",
+    "allLevels": "All levels"
+  },
+  "captions": {
+    "noContentAvailable": "No content available",
+    "processing": "Processing...",
+    "regenerateCaptions": "Regenerate Captions"
+  },
+  "courseMetadata": {
+    "courseNotFound": "Course Not Found",
+    "viewDetails": "View course details and curriculum"
+  },
+  "messages": {
+    "certificateAvailable": "Course completion certificate will be available",
+    "promotionCodesEnabled": "Students can use promotion codes at checkout"
+  }
 }
