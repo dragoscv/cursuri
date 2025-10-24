@@ -5,7 +5,7 @@ import LessonsTable from '@/components/Admin/LessonsTable';
 import { useParams, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Button from '@/components/ui/Button';
-import { collection, getDocs, getFirestore, doc, writeBatch } from 'firebase/firestore';
+import { collection, getDocs, getFirestore, doc, updateDoc, getDoc } from 'firebase/firestore';
 import { firebaseApp } from '@/utils/firebase/firebase.config';
 import { useToast } from '@/components/Toast/ToastContext';
 
@@ -59,18 +59,44 @@ export default function AdminLessonsListPage() {
   const handleReorder = useCallback(
     async (reorderedLessons: any[]) => {
       try {
+        // Optimistically update UI
         setLessons(reorderedLessons);
 
-        // Update order in Firestore
-        const db = getFirestore(firebaseApp);
-        const batch = writeBatch(db);
+        // Check authentication status
+        const { getAuth } = await import('firebase/auth');
+        const auth = getAuth(firebaseApp);
+        const currentUser = auth.currentUser;
 
-        reorderedLessons.forEach((lesson, index) => {
-          const lessonRef = doc(db, `courses/${courseId}/lessons`, lesson.id);
-          batch.update(lessonRef, { order: index });
+        if (!currentUser) {
+          throw new Error('No authenticated user');
+        }
+
+        console.log('[AdminLessonsListPage] Current user:', {
+          uid: currentUser.uid,
+          email: currentUser.email,
         });
 
-        await batch.commit();
+        // Check user role from Firestore
+        const db = getFirestore(firebaseApp);
+        const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+        const userData = userDoc.data();
+
+        console.log('[AdminLessonsListPage] User data:', {
+          role: userData?.role,
+          isActive: userData?.isActive,
+        });
+
+        if (!userData?.role || !['admin', 'super_admin'].includes(userData.role)) {
+          throw new Error(`Insufficient permissions. Current role: ${userData?.role || 'none'}`);
+        }
+
+        // Update order in Firestore using individual updates instead of batch
+        const updatePromises = reorderedLessons.map(async (lesson, index) => {
+          const lessonRef = doc(db, `courses/${courseId}/lessons`, lesson.id);
+          return updateDoc(lessonRef, { order: index });
+        });
+
+        await Promise.all(updatePromises);
 
         showToast({
           type: 'success',
@@ -78,14 +104,30 @@ export default function AdminLessonsListPage() {
           message: 'Lesson order has been updated successfully',
           duration: 3000,
         });
-      } catch (error) {
-        console.error('[AdminLessonsListPage] Error reordering lessons:', error);
+      } catch (error: any) {
+        console.error('[AdminLessonsListPage] Error reordering lessons:', {
+          error,
+          message: error?.message,
+          code: error?.code,
+        });
+
         showToast({
           type: 'error',
-          title: 'Error',
-          message: 'Failed to update lesson order. Please try again.',
+          title: 'Permission Error',
+          message:
+            error?.message || 'Failed to update lesson order. Please check your admin permissions.',
           duration: 5000,
         });
+
+        // Revert optimistic update on error
+        const db = getFirestore(firebaseApp);
+        const lessonsCollection = collection(db, `courses/${courseId}/lessons`);
+        const querySnapshot = await getDocs(lessonsCollection);
+        const originalLessons = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setLessons(originalLessons);
       }
     },
     [courseId, showToast]

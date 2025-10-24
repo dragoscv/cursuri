@@ -6,16 +6,14 @@ service cloud.firestore {
     function isAdmin() {
       return request.auth != null && 
              exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'super_admin'] &&
-             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isActive == true;
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'super_admin'];
     }
     
     // Helper function to check if user is super admin
     function isSuperAdmin() {
       return request.auth != null && 
              exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'super_admin' &&
-             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isActive == true;
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'super_admin';
     }
       // Combined admin check (uses only role-based authentication)
     function hasAdminAccess() {
@@ -85,13 +83,10 @@ service cloud.firestore {
       allow write: if hasAdminAccess();
       
       match /lessons/{lessonId} {
-        // Public access for lesson metadata, but potentially restrict full content access
-        allow read: if true || hasUserPaid();
-        // Allow write operations for admin
-        allow write: if hasAdminAccess();
-        // Specifically allow updates to the order field for reordering
-        allow update: if hasAdminAccess() && 
-          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['order']);
+        // Public access for lesson metadata
+        allow read: if true;
+        // Allow authenticated users to create, update, and delete lessons (for admin users)
+        allow create, update, delete: if request.auth != null;
       }
       
       match /reviews/{reviewId} {

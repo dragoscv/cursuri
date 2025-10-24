@@ -1,22 +1,25 @@
 'use client';
 
-import AddLesson from "@/components/Course/AddLesson";
-import { Card, CardBody } from "@heroui/react";
-import { useParams } from "next/navigation";
+import AddLesson from '@/components/Course/AddLesson';
+import { Card, CardBody } from '@heroui/react';
+import { useParams, useRouter } from 'next/navigation';
 
 export default function AddLessonPage() {
-    const params = useParams();
-    const courseId = params.courseId as string;
+  const params = useParams();
+  const router = useRouter();
+  const courseId = params.courseId as string;
 
-    return (
-        <div className="max-w-7xl mx-auto px-4">
+  const handleClose = () => {
+    router.push(`/admin/courses/${courseId}/lessons`);
+  };
 
-            <Card className="shadow-md">                <CardBody>
-                <AddLesson courseId={courseId} onClose={() => {
-                    // Navigation handled by AddLesson component
-                }} />
-            </CardBody>
-            </Card>
-        </div>
-    );
+  return (
+    <div className="max-w-7xl mx-auto px-4">
+      <Card className="shadow-md">
+        <CardBody>
+          <AddLesson courseId={courseId} onClose={handleClose} />
+        </CardBody>
+      </Card>
+    </div>
+  );
 }
