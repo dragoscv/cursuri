@@ -283,13 +283,13 @@ export default function CoursesPage() {
                               {t('edit')}
                             </Button>
                           </Link>
-                          <Link href={`/admin/courses/${course.id}`}>
+                          <Link href={`/admin/courses/${course.id}/lessons`}>
                             <Button
                               size="sm"
                               color="primary"
                               className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white"
                             >
-                              {t('view')}
+                              {t('manageLessons')}
                             </Button>
                           </Link>
                         </div>

@@ -44,6 +44,7 @@
     "delete": "Șterge",
     "edit": "Editează",
     "view": "Vizualizează",
+    "manageLessons": "Gestionează Lecțiile",
     "confirmDelete": "Confirmă Ștergerea",
     "confirmDeleteMessage": "Sigur doriți să ștergeți cursul \"{courseName}\"?",
     "confirmDeleteWarning": "Această acțiune nu poate fi anulată. Toate lecțiile și datele de progres vor fi șterse permanent.",

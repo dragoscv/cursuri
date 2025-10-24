@@ -44,6 +44,7 @@
     "delete": "Delete",
     "edit": "Edit",
     "view": "View",
+    "manageLessons": "Manage Lessons",
     "confirmDelete": "Confirm Delete",
     "confirmDeleteMessage": "Are you sure you want to delete the course \"{courseName}\"?",
     "confirmDeleteWarning": "This action cannot be undone. All lessons and progress data will be permanently deleted.",
