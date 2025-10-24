@@ -31,7 +31,7 @@ const StatisticsSection = React.memo(function StatisticsSection() {
         duration: 15,
         repeat: Infinity,
         repeatType: "reverse" as const,
-        ease: "linear"
+        ease: "linear" as const
     }), []);
 
     const stats = [
@@ -47,7 +47,7 @@ const StatisticsSection = React.memo(function StatisticsSection() {
             opacity: 1,
             scale: 1,
             transition: {
-                type: "spring",
+                type: "spring" as const,
                 stiffness: 100,
                 damping: 10
             }

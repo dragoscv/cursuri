@@ -157,14 +157,12 @@ export default function Courses() {
             y: 0,
             opacity: 1,
             transition: {
-                type: 'spring',
+                type: 'spring' as const,
                 damping: 12,
                 stiffness: 100,
             },
         },
-    };
-
-    // AI course topics for badges
+    };    // AI course topics for badges
     const aiTopics = [
         'Neural Networks',
         'Transformers',

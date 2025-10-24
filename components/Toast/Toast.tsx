@@ -73,7 +73,7 @@ const ToastItem: React.FC<{ toast: Toast; onClose: (id: string) => void }> = ({ 
       layout
       className={`rounded-lg shadow-lg backdrop-blur-sm border ${getToastBgClass(toast.type)} p-4 flex gap-3 items-start`}
       initial={{ opacity: 0, y: 20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 400, damping: 30 } }}
+      animate={{ opacity: 1, y: 0, scale: 1, transition: { type: 'spring' as const, stiffness: 400, damping: 30 } }}
       exit={{ opacity: 0, x: 100, transition: { duration: 0.2 } }}
     >
       <div className="flex-shrink-0 mt-0.5">

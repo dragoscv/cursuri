@@ -125,12 +125,12 @@ export default async function Page({ params }: PageParams<{ courseId: string; le
     //
     // Free lessons can be fully rendered for SEO benefits
     const isRestrictedLesson = !lesson.isFree;
-    
+
     if (isRestrictedLesson) {
       // For restricted lessons, render minimal server-side content
       // ClientLessonWrapper will check authentication and show content to authorized users
       console.log(`Lesson ${lessonId} is restricted, using client-side access control`);
-      
+
       // Return minimal server component that delegates to client
       // No structured data for paid content to prevent indexing
       return (

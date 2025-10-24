@@ -84,7 +84,7 @@ const TechIcons = React.memo(function TechIcons({ technologies }: TechIconsProps
                         }}
                         variants={itemVariants}
                         transition={{
-                            type: "spring",
+                            type: "spring" as const,
                             damping: 10,
                             stiffness: 100
                         }}

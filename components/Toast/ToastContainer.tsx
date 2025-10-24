@@ -77,7 +77,7 @@ const ToastContainer: React.FC<ToastContainerProps> = ({ toasts, onClose }) => {
 
     return {
       initial: { opacity: 0, y: isTop ? -20 : 20 },
-      animate: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 400, damping: 30 } },
+      animate: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 400, damping: 30 } },
       exit: { opacity: 0, x: 100, transition: { duration: 0.2 } }
     };
   };

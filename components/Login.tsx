@@ -53,7 +53,7 @@ const getFirebaseErrorMessage = (error: any, t: any): string => {
 export default function Login(props: { onClose: () => void }) {
     const t = useTranslations('auth');
     const toast = useToast();
-    
+
     // State variables for the enhanced login component
     const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
     const [email, setEmail] = useState("");

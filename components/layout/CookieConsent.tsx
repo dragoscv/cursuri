@@ -71,7 +71,7 @@ const CookieConsent: React.FC = () => {
                     initial={{ y: 100, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     exit={{ y: 100, opacity: 0 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    transition={{ type: "spring" as const, stiffness: 300, damping: 30 }}
                     className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:bottom-4 md:max-w-md z-50"
                 >
                     <div className="bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-xl border border-[color:var(--ai-card-border)] p-4 backdrop-blur-md backdrop-saturate-150">

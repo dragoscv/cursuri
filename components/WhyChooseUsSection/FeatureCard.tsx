@@ -18,7 +18,7 @@ export default function FeatureCard({ featureKey, index }: FeatureCardProps) {
             y: 0,
             opacity: 1,
             transition: {
-                type: "spring",
+                type: "spring" as const,
                 stiffness: 100,
                 delay: index * 0.1
             }

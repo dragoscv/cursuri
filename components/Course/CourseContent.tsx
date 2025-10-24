@@ -87,8 +87,8 @@ const CourseContent: React.FC<CourseContentProps> = ({
       y: 0,
       opacity: 1,
       transition: {
-        type: 'spring',
-        damping: 15,
+        type: 'spring' as const,
+        damping: 12,
       },
     },
   };

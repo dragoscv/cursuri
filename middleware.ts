@@ -18,7 +18,7 @@ export async function middleware(request: NextRequest) {
   // Dynamically construct Firebase Storage URL from environment variables
   const firebaseStorageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'cursuri-411b4.appspot.com';
   const firebaseStorageUrl = `https://firebasestorage.googleapis.com/v0/b/${firebaseStorageBucket}`;
-  
+
   const cspHeader = [
     "default-src 'self'",
     "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://js.stripe.com https://unpkg.com https://apis.google.com https://accounts.google.com https://securetoken.googleapis.com https://identitytoolkit.googleapis.com https://*.googleapis.com",

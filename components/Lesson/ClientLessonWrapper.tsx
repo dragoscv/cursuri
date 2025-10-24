@@ -104,7 +104,7 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
                     if (currentLesson) {
                         setLesson(currentLesson);
                         setError(null);
-                        
+
                         // CHECK ACCESS CONTROL
                         // User has access if:
                         // 1. Lesson is marked as free
@@ -113,7 +113,7 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
                         const user = context.user;
                         const isAdmin = context.isAdmin;
                         const userCourseAccess = context.userCourseAccess;
-                        
+
                         console.log('[ClientLessonWrapper] Access check:', {
                             lessonId,
                             isFree: currentLesson.isFree,
@@ -121,7 +121,7 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
                             isAuthenticated: !!user,
                             hasCoursePurchase: userCourseAccess?.[courseId]
                         });
-                        
+
                         if (currentLesson.isFree) {
                             setHasAccess(true);
                         } else if (isAdmin) {
@@ -131,7 +131,7 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
                         } else {
                             setHasAccess(false);
                         }
-                        
+
                         setAccessCheckComplete(true);
                     } else {
                         console.warn('[ClientLessonWrapper] Lesson not found:', { courseId, lessonId });
@@ -274,7 +274,7 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
                 </div>
             );
         }
-        
+
         return <LessonContent
             lesson={lesson}
             course={course}

@@ -147,7 +147,7 @@ const FeaturedReviews = memo(function FeaturedReviews() {
             y: 0,
             opacity: 1,
             transition: {
-                type: "spring",
+                type: "spring" as const,
                 damping: 15,
                 stiffness: 100
             }

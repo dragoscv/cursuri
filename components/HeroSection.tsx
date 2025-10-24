@@ -186,44 +186,7 @@ const HeroSection = memo(function HeroSection() {
         }
     }, []);
 
-    // Early return check must come after all hooks
-    if (!context) {
-        console.error('HeroSection: AppContext not available');
-        return <div className="flex items-center justify-center min-h-[400px] text-[color:var(--ai-muted)]">{t('loading')}</div>;
-    }
-
-    // Extract only needed values to reduce dependency on full context
-    const { user, openModal, closeModal } = context;
-
-    const handleGetStarted = () => {
-        if (!user) {
-            openModal({
-                id: 'login',
-                isOpen: true,
-                hideCloseButton: false,
-                backdrop: 'opaque',
-                size: 'md',
-                scrollBehavior: 'inside',
-                isDismissable: true,
-                modalHeader: t('getStarted'),
-                modalBody: <Login onClose={() => closeModal('login')} />,
-                headerDisabled: true,
-                footerDisabled: true,
-                noReplaceURL: true,
-                onClose: () => closeModal('login'),
-                classNames: {
-                    backdrop: "z-50 backdrop-blur-md backdrop-saturate-150 bg-black/50 dark:bg-black/50 w-screen min-h-[100dvh] fixed inset-0",
-                    base: "z-50 mx-auto my-auto w-full max-w-md rounded-2xl outline-none bg-transparent shadow-2xl",
-                },
-            })
-        } else {
-            // Smooth scroll to courses section
-            const coursesSection = document.getElementById('courses-section')
-            coursesSection?.scrollIntoView({ behavior: 'smooth' })
-        }
-    }
-
-    // Generate deterministic opacity values
+    // Generate deterministic opacity values - must be before early return
     const gridOpacities = useMemo(() => {
         // Create a deterministic function to generate opacity values
         const generateOpacity = (index: number): string => {
@@ -253,7 +216,7 @@ const HeroSection = memo(function HeroSection() {
             y: 0,
             opacity: 1,
             transition: {
-                type: "spring",
+                type: "spring" as const,
                 stiffness: 100
             }
         }
@@ -291,6 +254,43 @@ const HeroSection = memo(function HeroSection() {
             };
         });
     }, []);
+
+    // Early return check must come after all hooks
+    if (!context) {
+        console.error('HeroSection: AppContext not available');
+        return <div className="flex items-center justify-center min-h-[400px] text-[color:var(--ai-muted)]">{t('loading')}</div>;
+    }
+
+    // Extract only needed values to reduce dependency on full context
+    const { user, openModal, closeModal } = context;
+
+    const handleGetStarted = () => {
+        if (!user) {
+            openModal({
+                id: 'login',
+                isOpen: true,
+                hideCloseButton: false,
+                backdrop: 'opaque',
+                size: 'md',
+                scrollBehavior: 'inside',
+                isDismissable: true,
+                modalHeader: t('getStarted'),
+                modalBody: <Login onClose={() => closeModal('login')} />,
+                headerDisabled: true,
+                footerDisabled: true,
+                noReplaceURL: true,
+                onClose: () => closeModal('login'),
+                classNames: {
+                    backdrop: "z-50 backdrop-blur-md backdrop-saturate-150 bg-black/50 dark:bg-black/50 w-screen min-h-[100dvh] fixed inset-0",
+                    base: "z-50 mx-auto my-auto w-full max-w-md rounded-2xl outline-none bg-transparent shadow-2xl",
+                },
+            })
+        } else {
+            // Smooth scroll to courses section
+            const coursesSection = document.getElementById('courses-section')
+            coursesSection?.scrollIntoView({ behavior: 'smooth' })
+        }
+    }
 
     // Skills and technologies for the floating nodes
     const techNodes = [

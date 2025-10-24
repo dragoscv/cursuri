@@ -46,7 +46,7 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
   const cardHoverProps = useMemo(
     () => ({
       y: -5,
-      transition: { duration: 0.3, ease: 'easeOut' },
+      transition: { duration: 0.3, ease: 'easeOut' as const },
     }),
     []
   );
@@ -177,7 +177,7 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
       y: 0,
       opacity: 1,
       transition: {
-        type: 'spring',
+        type: 'spring' as const,
         damping: 12,
         stiffness: 100,
       },

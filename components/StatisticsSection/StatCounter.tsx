@@ -19,7 +19,7 @@ export default function StatCounter({ value, label, icon, color, index }: StatCo
             opacity: 1,
             scale: 1,
             transition: {
-                type: "spring",
+                type: "spring" as const,
                 stiffness: 100,
                 damping: 10,
                 delay: index * 0.1
