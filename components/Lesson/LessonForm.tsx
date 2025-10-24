@@ -156,81 +156,103 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
       }
     };
 
-    // If lessonId is provided, we're in edit mode
+    // If lessonId is provided, we're in edit mode - fetch directly from Firestore
     const loadLessonData = async () => {
-      if (lessonId && courseId && lessons[courseId] && lessons[courseId][lessonId]) {
-        const lesson = lessons[courseId][lessonId];
-        setLessonName(lesson.name || '');
-        setLessonDescription(lesson.description || '');
-        setRepoUrl(lesson.repoUrl || '');
-        setEditMode(true);
-        setLessonOrder(lesson.order || 0);
-        setDurationMinutes(lesson.duration ? parseInt(lesson.duration, 10) || '' : '');
-        setIsRequired(lesson.isFree !== true);
-        setLessonType(lesson.type?.toString() || 'video');
-        setLessonStatus(lesson.status || 'active');
-        setLessonResources(lesson.resources?.map((r) => (typeof r === 'string' ? r : r.url)) || []);
-        setLessonTags((lesson as any).tags || []);
-        setPreviewEnabled(lesson.isFree === true);
-        if (lesson.file) {
-          setFilePreview(lesson.file);
-        }
+      if (lessonId && courseId) {
+        try {
+          setEditMode(true);
 
-        // Load extended properties
-        setModuleId(lesson.moduleId || '');
-        setHasQuiz(lesson.hasQuiz || false);
-        setTranscription(lesson.transcription || '');
+          // Fetch lesson data directly from Firestore
+          const lessonRef = doc(firestoreDB, `courses/${courseId}/lessons/${lessonId}`);
+          const lessonDoc = await getDoc(lessonRef);
 
-        // Fetch quiz questions if the lesson has a quiz
-        if (lesson.hasQuiz) {
-          try {
-            const questionsRef = collection(
-              firestoreDB,
-              `courses/${courseId}/lessons/${lessonId}/quizQuestions`
-            );
-            const questionsSnapshot = await getDocs(questionsRef);
-            const questions: QuizQuestion[] = [];
-
-            questionsSnapshot.forEach((doc) => {
-              questions.push({
-                id: doc.id,
-                ...doc.data(),
-              } as QuizQuestion);
-            });
-
-            if (questions.length > 0) {
-              setQuizQuestions(questions);
-            }
-          } catch (error) {
-            console.error('Error fetching quiz questions:', error);
+          if (!lessonDoc.exists()) {
+            console.error('Lesson not found:', lessonId);
+            return;
           }
-        }
 
-        // Load learning objectives
-        if ((lesson as any).learningObjectives) {
-          setLearningObjectives((lesson as any).learningObjectives || []);
-        }
+          const lesson = lessonDoc.data();
 
-        // Load embed information
-        if ((lesson as any).embedUrl) {
-          setEmbedUrl((lesson as any).embedUrl || '');
-          setEmbedType((lesson as any).embedType || 'youtube');
-        }
-
-        // Load SEO keywords
-        if ((lesson as any).seoKeywords) {
-          setSeoKeywords((lesson as any).seoKeywords || []);
-        }
-
-        // Load completion criteria
-        if ((lesson as any).completionCriteria) {
-          setCompletionCriteria(
-            (lesson as any).completionCriteria || {
-              watchPercentage: 80,
-              requireQuiz: false,
-              requireExercise: false,
-            }
+          setLessonName(lesson.name || '');
+          setLessonDescription(lesson.description || '');
+          setRepoUrl(lesson.repoUrl || '');
+          setLessonOrder(lesson.order || 0);
+          setDurationMinutes(lesson.duration ? parseInt(lesson.duration, 10) || '' : '');
+          setIsRequired(lesson.isFree !== true);
+          setLessonType(lesson.type?.toString() || 'video');
+          setLessonStatus(lesson.status || 'active');
+          setLessonResources(
+            lesson.resources?.map((r: any) => (typeof r === 'string' ? r : r.url)) || []
           );
+          setLessonTags(lesson.tags || []);
+          setPreviewEnabled(lesson.isFree === true);
+          if (lesson.file) {
+            setFilePreview(lesson.file);
+          }
+
+          // Load extended properties
+          setModuleId(lesson.moduleId || '');
+          setHasQuiz(lesson.hasQuiz || false);
+          setTranscription(lesson.transcription || '');
+
+          // Fetch quiz questions if the lesson has a quiz
+          if (lesson.hasQuiz) {
+            try {
+              const questionsRef = collection(
+                firestoreDB,
+                `courses/${courseId}/lessons/${lessonId}/quizQuestions`
+              );
+              const questionsSnapshot = await getDocs(questionsRef);
+              const questions: QuizQuestion[] = [];
+
+              questionsSnapshot.forEach((doc) => {
+                questions.push({
+                  id: doc.id,
+                  ...doc.data(),
+                } as QuizQuestion);
+              });
+
+              if (questions.length > 0) {
+                setQuizQuestions(questions);
+              }
+            } catch (error) {
+              console.error('Error fetching quiz questions:', error);
+            }
+          }
+
+          // Load learning objectives
+          if (lesson.learningObjectives) {
+            setLearningObjectives(lesson.learningObjectives || []);
+          }
+
+          // Load embed information
+          if (lesson.embedUrl) {
+            setEmbedUrl(lesson.embedUrl || '');
+            setEmbedType(lesson.embedType || 'youtube');
+          }
+
+          // Load SEO keywords
+          if (lesson.seoKeywords) {
+            setSeoKeywords(lesson.seoKeywords || []);
+          }
+
+          // Load completion criteria
+          if (lesson.completionCriteria) {
+            setCompletionCriteria(
+              lesson.completionCriteria || {
+                watchPercentage: 80,
+                requireQuiz: false,
+                requireExercise: false,
+              }
+            );
+          }
+
+          // Load additional files if any
+          if (lesson.additionalFiles) {
+            setAdditionalFiles(lesson.additionalFiles || []);
+          }
+        } catch (error) {
+          console.error('Error loading lesson data:', error);
         }
       }
     };
@@ -238,7 +260,7 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
     fetchModules();
     fetchNextLessonOrder();
     loadLessonData();
-  }, [lessonId, courseId, lessons]);
+  }, [lessonId, courseId]);
   const addLesson = useCallback(async () => {
     setLoading(true);
     if (!file && lessonType === 'video') {
