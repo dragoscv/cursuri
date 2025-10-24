@@ -230,12 +230,10 @@ export default function CoursesPage() {
                           {course.name}
                         </h3>
                         <Chip
-                          color={course.status === 'active' ? 'success' : 'warning'}
-                          size="sm"
                           className={
                             course.status === 'active'
-                              ? 'bg-[color:var(--ai-success)]/10 text-[color:var(--ai-success)]'
-                              : 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400'
+                              ? 'bg-[color:var(--ai-success)]/10 text-[color:var(--ai-success)] text-xs px-2 py-0.5'
+                              : 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400 text-xs px-2 py-0.5'
                           }
                         >
                           {course.status}
@@ -251,10 +249,7 @@ export default function CoursesPage() {
                           course.tags.map((tag, index) => (
                             <Chip
                               key={index}
-                              size="sm"
-                              variant="flat"
-                              color="default"
-                              className="bg-[color:var(--ai-card-bg)]/80"
+                              className="bg-[color:var(--ai-card-bg)]/80 text-xs px-2 py-0.5"
                             >
                               {tag}
                             </Chip>

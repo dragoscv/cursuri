@@ -134,7 +134,7 @@ const Footer = React.memo(function Footer() {
 
         <div className="mt-12 pt-8 border-t border-[color:var(--ai-card-border)]">
           <p className="text-center text-[color:var(--ai-muted)] text-sm">
-            &copy; {year} Cursuri. {t('footer.copyright')}
+            &copy; {year} Cursuri StudiAI. {t('footer.copyright')}
           </p>
         </div>
       </div>
