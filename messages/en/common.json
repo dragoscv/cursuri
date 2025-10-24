@@ -329,6 +329,7 @@
     "footerNavigation": "Footer navigation",
     "changeLanguage": "Change language",
     "currentLanguage": "Current language: {language}",
+    "userMenu": "User menu",
     "loading": "Loading content, please wait",
     "screenReaderOnly": "This content is for screen readers only",
     "newWindow": "Opens in a new window",

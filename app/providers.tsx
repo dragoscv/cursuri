@@ -79,18 +79,29 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   }, []);
 
   if (!messages) {
-    return <div>Loading...</div>;
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '100vh',
+        }}
+      >
+        Loading...
+      </div>
+    );
   }
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <SimpleProviders>
-        <SecurityInitializer>
-          <HeroUIProvider>
-            <ToastProvider>{children}</ToastProvider>
-          </HeroUIProvider>
-        </SecurityInitializer>
-      </SimpleProviders>
+      <HeroUIProvider>
+        <ToastProvider>
+          <SimpleProviders>
+            <SecurityInitializer>{children}</SecurityInitializer>
+          </SimpleProviders>
+        </ToastProvider>
+      </HeroUIProvider>
     </NextIntlClientProvider>
   );
 }
