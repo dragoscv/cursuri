@@ -5,8 +5,9 @@ import LessonsTable from '@/components/Admin/LessonsTable';
 import { useParams, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Button from '@/components/ui/Button';
-import { collection, getDocs, getFirestore } from 'firebase/firestore';
+import { collection, getDocs, getFirestore, doc, writeBatch } from 'firebase/firestore';
 import { firebaseApp } from '@/utils/firebase/firebase.config';
+import { useToast } from '@/components/Toast/ToastContext';
 
 export default function AdminLessonsListPage() {
   const params = useParams();
@@ -53,6 +54,43 @@ export default function AdminLessonsListPage() {
     [router, courseId]
   );
 
+  const { showToast } = useToast();
+
+  const handleReorder = useCallback(
+    async (reorderedLessons: any[]) => {
+      try {
+        setLessons(reorderedLessons);
+
+        // Update order in Firestore
+        const db = getFirestore(firebaseApp);
+        const batch = writeBatch(db);
+
+        reorderedLessons.forEach((lesson, index) => {
+          const lessonRef = doc(db, `courses/${courseId}/lessons`, lesson.id);
+          batch.update(lessonRef, { order: index });
+        });
+
+        await batch.commit();
+
+        showToast({
+          type: 'success',
+          title: 'Lessons Reordered',
+          message: 'Lesson order has been updated successfully',
+          duration: 3000,
+        });
+      } catch (error) {
+        console.error('[AdminLessonsListPage] Error reordering lessons:', error);
+        showToast({
+          type: 'error',
+          title: 'Error',
+          message: 'Failed to update lesson order. Please try again.',
+          duration: 5000,
+        });
+      }
+    },
+    [courseId, showToast]
+  );
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
@@ -80,7 +118,12 @@ export default function AdminLessonsListPage() {
           </Button>
         </div>
       ) : (
-        <LessonsTable lessons={lessons} courseId={courseId} onEdit={handleEdit} />
+        <LessonsTable
+          lessons={lessons}
+          courseId={courseId}
+          onEdit={handleEdit}
+          onReorder={handleReorder}
+        />
       )}
     </div>
   );

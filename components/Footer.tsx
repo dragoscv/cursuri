@@ -93,7 +93,7 @@ const Footer = React.memo(function Footer() {
             </h3>
             <div className="flex space-x-4 mb-4">
               <a
-                href="https://github.com/catalinpetrovici"
+                href="https://github.com/dragoscv"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-lg hover:bg-[color:var(--ai-card-border)]/30 dark:hover:bg-[color:var(--ai-card-border)]/20 transition-colors"
@@ -102,7 +102,7 @@ const Footer = React.memo(function Footer() {
                 <GithubIcon className="text-[color:var(--ai-primary)]" size={24} />
               </a>
               <a
-                href="https://www.tiktok.com/@catalinpetrovici"
+                href="https://www.tiktok.com/@mantreb"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-lg hover:bg-[color:var(--ai-card-border)]/30 dark:hover:bg-[color:var(--ai-card-border)]/20 transition-colors"
@@ -111,7 +111,7 @@ const Footer = React.memo(function Footer() {
                 <TikTokIcon className="text-[color:var(--ai-primary)]" size={24} />
               </a>
               <a
-                href="https://catalinpetrovici.com"
+                href="https://dragoscatalin.ro"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-lg hover:bg-[color:var(--ai-card-border)]/30 dark:hover:bg-[color:var(--ai-card-border)]/20 transition-colors"
@@ -123,10 +123,10 @@ const Footer = React.memo(function Footer() {
             <p className="text-[color:var(--ai-muted)]">
               {t('footer.contactEmail')}{' '}
               <a
-                href="mailto:contact@cursuri.dev"
+                href="mailto:contact@studiai.ro"
                 className="text-[color:var(--ai-primary)] hover:underline"
               >
-                contact@cursuri.dev
+                contact@studiai.ro
               </a>
             </p>
           </div>
