@@ -131,7 +131,7 @@ export default function OfflineContentSection() {
                     {isLoading ? (
                         <div className="flex flex-col items-center justify-center py-8">
                             <div className="w-12 h-12 border-4 border-[color:var(--ai-primary)]/30 border-t-[color:var(--ai-primary)] rounded-full animate-spin mb-4"></div>
-                            <p className="text-[color:var(--ai-muted)]">Loading offline content...</p>
+                            <p className="text-[color:var(--ai-muted)]">{t('loadingOfflineContent')}</p>
                         </div>
                     ) : offlineLessons.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-8 text-center">

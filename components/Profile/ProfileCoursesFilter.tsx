@@ -2,6 +2,7 @@ import React from 'react';
 import Button from '@/components/ui/Button';
 import { Input } from '@heroui/react';
 import { FiSearch, FiLayers, FiPlay, FiBarChart2 } from '@/components/icons/FeatherIcons';
+import { useTranslations } from 'next-intl';
 
 interface ProfileCoursesFilterProps {
     searchTerm: string;
@@ -16,13 +17,14 @@ export default function ProfileCoursesFilter({
     filterStatus,
     setFilterStatus
 }: ProfileCoursesFilterProps) {
+    const t = useTranslations('profile.dashboard');
     return (
         <div className="bg-[color:var(--ai-card-bg)]/50 border border-[color:var(--ai-card-border)]/20 rounded-xl p-4 mb-7 shadow-sm">
             <div className="flex flex-col md:flex-row gap-4 items-center">
                 <div className="relative w-full md:max-w-xs">
                     <Input
                         className="bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] border-[color:var(--ai-card-border)]/30 rounded-lg"
-                        placeholder="Search your courses"
+                        placeholder={t('searchCourses')}
                         startContent={
                             <div className="bg-[color:var(--ai-primary)]/10 p-1 rounded-full">
                                 <FiSearch className="text-[color:var(--ai-primary)]" />

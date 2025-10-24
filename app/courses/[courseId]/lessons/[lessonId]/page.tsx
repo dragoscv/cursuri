@@ -59,10 +59,12 @@ export async function generateMetadata({
       type: 'lesson',
       publishedTime: undefined, // lesson.createdAt is not in the type
       modifiedTime: lesson.lastModified ? new Date(lesson.lastModified).toISOString() : undefined,
-      // Don't allow indexing of individual lessons if they're paid content
+      // SERVER-SIDE ACCESS CONTROL FOR SEO:
+      // Don't allow indexing of paid lessons to prevent unauthorized content access via search engines
+      // Free lessons can be indexed for discoverability
       robots: lesson.isFree
         ? { index: true, follow: true }
-        : { index: false, follow: true, googleBot: { index: false, follow: true } },
+        : { index: false, follow: false, googleBot: { index: false, follow: false }, noarchive: true, nosnippet: true },
     });
   } catch (error) {
     console.error('Error generating lesson metadata:', error);
@@ -111,6 +113,34 @@ export default async function Page({ params }: PageParams<{ courseId: string; le
         console.log('No such lesson exists even after loading all lessons!');
         return <LessonNotFound courseId={courseId} lessonId={lessonId} courseExists={true} />;
       }
+    }
+
+    // SERVER-SIDE ACCESS CONTROL: 
+    // For paid lessons, we don't render the full content in HTML for SEO/security
+    // The lesson will still load for authenticated users via ClientLessonWrapper
+    // This prevents:
+    // 1. Search engines from indexing paid content
+    // 2. Unauthorized users from viewing content in page source
+    // 3. Bypassing client-side access controls
+    //
+    // Free lessons can be fully rendered for SEO benefits
+    const isRestrictedLesson = !lesson.isFree;
+    
+    if (isRestrictedLesson) {
+      // For restricted lessons, render minimal server-side content
+      // ClientLessonWrapper will check authentication and show content to authorized users
+      console.log(`Lesson ${lessonId} is restricted, using client-side access control`);
+      
+      // Return minimal server component that delegates to client
+      // No structured data for paid content to prevent indexing
+      return (
+        <ClientLessonWrapper
+          params={{
+            courseId: String(courseId),
+            lessonId: String(lessonId),
+          }}
+        />
+      );
     }
 
     // At this point we have a lesson

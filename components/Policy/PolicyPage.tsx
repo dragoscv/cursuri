@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { Card, CardBody } from '@heroui/react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 interface PolicyPageProps {
     title: string;
@@ -9,6 +10,7 @@ interface PolicyPageProps {
 }
 
 export default function PolicyPage({ title, lastUpdated, children }: PolicyPageProps) {
+    const t = useTranslations('common');
     return (
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <Card className="p-6 border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] shadow-xl">
@@ -17,7 +19,7 @@ export default function PolicyPage({ title, lastUpdated, children }: PolicyPageP
 
                     <div className="prose dark:prose-invert max-w-none">
                         {lastUpdated && (
-                            <p className="text-sm text-[color:var(--ai-muted)] mb-6">Last updated: {lastUpdated}</p>
+                            <p className="text-sm text-[color:var(--ai-muted)] mb-6">{t('lastUpdated', { date: lastUpdated })}</p>
                         )}
 
                         {children}

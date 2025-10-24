@@ -145,6 +145,7 @@ const SearchBar = React.memo(function SearchBar() {
         onClick={() => setIsSearchOpen(true)}
         className="hidden md:flex items-center gap-2 text-sm text-[color:var(--ai-muted)]"
         startContent={searchIconSmall}
+        aria-label={t('accessibility.openSearch', { default: t('search.buttonText') })}
       >
         {t('search.buttonText')}
         <kbd className="px-2 py-1 ml-2 text-xs font-semibold text-[color:var(--ai-foreground)] bg-[color:var(--ai-card-bg)]/80 border border-[color:var(--ai-card-border)] rounded-md">
@@ -165,8 +166,14 @@ const SearchBar = React.memo(function SearchBar() {
 
       {/* Search modal */}
       {isSearchOpen && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 px-4 bg-black/30 backdrop-blur-sm">
+        <div
+          className="fixed inset-0 z-50 flex items-start justify-center pt-16 px-4 bg-black/30 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="search-dialog-title"
+        >
           <div className="w-full max-w-2xl bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-2xl overflow-hidden">
+            <h2 id="search-dialog-title" className="sr-only">{t('search.placeholder')}</h2>
             <div className="p-4">
               <Input
                 ref={searchInputRef}
@@ -183,7 +190,13 @@ const SearchBar = React.memo(function SearchBar() {
                 startContent={searchIconMuted}
                 endContent={
                   searchQuery && (
-                    <Button isIconOnly variant="light" size="sm" onClick={() => setSearchQuery('')}>
+                    <Button
+                      isIconOnly
+                      variant="light"
+                      size="sm"
+                      onClick={() => setSearchQuery('')}
+                      aria-label={t('accessibility.clearSearch', { default: 'Clear search' })}
+                    >
                       <CloseIcon className="w-4 h-4" />
                     </Button>
                   )
@@ -196,40 +209,58 @@ const SearchBar = React.memo(function SearchBar() {
             </div>
 
             {/* Search results */}
-            <div className="max-h-[70vh] overflow-y-auto">
+            <div className="max-h-[70vh] overflow-y-auto" role="region" aria-label={t('accessibility.searchResults', { default: 'Search results' })}>
               {searchResults.length > 0 ? (
-                <div className="p-2">
-                  {searchResults.map((course) => (
-                    <div
-                      key={course.id}
-                      className="p-3 hover:bg-[color:var(--ai-primary)]/10 rounded-lg cursor-pointer transition-colors"
-                      onClick={() => handleSelectCourse(course.id)}
-                    >
-                      <div className="flex items-center gap-3">
-                        {course.image && (
-                          <img
-                            src={course.image}
-                            alt={course.name}
-                            className="w-12 h-12 object-cover rounded-md"
-                          />
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-sm font-medium text-[color:var(--ai-foreground)] truncate">
-                            {course.name}
-                          </h3>
-                          {course.description && (
-                            <p className="text-xs text-[color:var(--ai-muted)] line-clamp-1">
-                              {course.description}
-                            </p>
+                <>
+                  <div
+                    role="status"
+                    aria-live="polite"
+                    aria-atomic="true"
+                    className="sr-only"
+                  >
+                    {t('accessibility.searchResults', { count: searchResults.length })}
+                  </div>
+                  <div className="p-2" role="list">
+                    {searchResults.map((course) => (
+                      <div
+                        key={course.id}
+                        role="listitem"
+                        className="p-3 hover:bg-[color:var(--ai-primary)]/10 rounded-lg cursor-pointer transition-colors focus-within:ring-2 focus-within:ring-ai-primary"
+                        onClick={() => handleSelectCourse(course.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            handleSelectCourse(course.id);
+                          }
+                        }}
+                        tabIndex={0}
+                      >
+                        <div className="flex items-center gap-3">
+                          {course.image && (
+                            <img
+                              src={course.image}
+                              alt={course.name}
+                              className="w-12 h-12 object-cover rounded-md"
+                            />
                           )}
-                        </div>
-                        <div className="text-xs font-medium text-[color:var(--ai-foreground)]">
-                          {course.formattedPrice}
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-sm font-medium text-[color:var(--ai-foreground)] truncate">
+                              {course.name}
+                            </h3>
+                            {course.description && (
+                              <p className="text-xs text-[color:var(--ai-muted)] line-clamp-1">
+                                {course.description}
+                              </p>
+                            )}
+                          </div>
+                          <div className="text-xs font-medium text-[color:var(--ai-foreground)]">
+                            {course.formattedPrice}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                </>
               ) : searchQuery ? (
                 <div className="p-8 text-center text-[color:var(--ai-muted)]">
                   <p>{t('search.noResults', { query: searchQuery })}</p>

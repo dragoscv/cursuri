@@ -24,6 +24,8 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
     const [lesson, setLesson] = useState<LessonType | null>(null);
     const [course, setCourse] = useState<Course | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [hasAccess, setHasAccess] = useState(false);
+    const [accessCheckComplete, setAccessCheckComplete] = useState(false);
 
     useEffect(() => {
         let mounted = true;
@@ -102,9 +104,39 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
                     if (currentLesson) {
                         setLesson(currentLesson);
                         setError(null);
+                        
+                        // CHECK ACCESS CONTROL
+                        // User has access if:
+                        // 1. Lesson is marked as free
+                        // 2. User is admin
+                        // 3. User is authenticated AND has purchased the course
+                        const user = context.user;
+                        const isAdmin = context.isAdmin;
+                        const userCourseAccess = context.userCourseAccess;
+                        
+                        console.log('[ClientLessonWrapper] Access check:', {
+                            lessonId,
+                            isFree: currentLesson.isFree,
+                            isAdmin,
+                            isAuthenticated: !!user,
+                            hasCoursePurchase: userCourseAccess?.[courseId]
+                        });
+                        
+                        if (currentLesson.isFree) {
+                            setHasAccess(true);
+                        } else if (isAdmin) {
+                            setHasAccess(true);
+                        } else if (user && userCourseAccess && userCourseAccess[courseId]) {
+                            setHasAccess(true);
+                        } else {
+                            setHasAccess(false);
+                        }
+                        
+                        setAccessCheckComplete(true);
                     } else {
                         console.warn('[ClientLessonWrapper] Lesson not found:', { courseId, lessonId });
                         setError('Lesson not found or you may not have access to it');
+                        setAccessCheckComplete(true);
                     }
                     setIsLoading(false);
                 }
@@ -113,6 +145,7 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
                 if (mounted) {
                     setError('Error loading lesson');
                     setIsLoading(false);
+                    setAccessCheckComplete(true);
                 }
             }
         };
@@ -199,7 +232,49 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
     }
 
     // If we have a lesson, render it
-    if (lesson && course) {
+    if (lesson && course && accessCheckComplete) {
+        // Check access before rendering content
+        if (!hasAccess && !lesson.isFree) {
+            return (
+                <div className="container mx-auto px-4 py-8">
+                    <div className="max-w-4xl mx-auto bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-lg shadow-lg p-8">
+                        <div className="text-center">
+                            <div className="mb-6">
+                                <svg className="mx-auto h-16 w-16 text-[color:var(--ai-danger)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                            </div>
+                            <h2 className="text-2xl font-bold mb-4 text-[color:var(--ai-foreground)]">
+                                {t('accessDenied')}
+                            </h2>
+                            <p className="text-[color:var(--ai-muted)] mb-6 max-w-md mx-auto">
+                                {t('accessDeniedDesc')}
+                            </p>
+                            <div className="flex justify-center gap-4 flex-wrap">
+                                <button
+                                    onClick={() => router.push(`/courses/${courseId}`)}
+                                    className="px-6 py-3 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white rounded-lg font-medium hover:opacity-90 transition-all duration-300 transform hover:-translate-y-1 active:translate-y-0"
+                                >
+                                    {t('viewCourse')}
+                                </button>
+                                {!context?.user && (
+                                    <button
+                                        onClick={() => router.push('/')}
+                                        className="px-6 py-3 bg-[color:var(--ai-card-bg)] text-[color:var(--ai-foreground)] border border-[color:var(--ai-card-border)] rounded-lg font-medium hover:bg-[color:var(--ai-card-bg)]/80 transition-all duration-300"
+                                    >
+                                        {t('signIn')}
+                                    </button>
+                                )}
+                            </div>
+                            <div className="mt-6 text-sm text-[color:var(--ai-muted)]">
+                                <p>{t('needHelp')} <a href="/contact" className="text-[color:var(--ai-primary)] hover:underline">{t('contactUs')}</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        
         return <LessonContent
             lesson={lesson}
             course={course}

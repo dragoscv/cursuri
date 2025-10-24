@@ -6,8 +6,8 @@ const path = require('path');
 // Load environment variables
 require('dotenv').config({ path: '.env.local' });
 
-// Read admin credentials
-const adminCredentialsPath = path.join(__dirname, '.credentials/admin.json');
+// Read admin credentials (from project root, not scripts directory)
+const adminCredentialsPath = path.join(__dirname, '../.credentials/admin.json');
 const adminCredentials = JSON.parse(fs.readFileSync(adminCredentialsPath, 'utf8'));
 
 // Initialize Firebase Admin SDK

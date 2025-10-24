@@ -182,6 +182,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => 
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           aria-invalid={isInvalid ? 'true' : 'false'}
+          aria-describedby={isInvalid && errorMessage ? 'textarea-error' : description ? 'textarea-description' : undefined}
           required={isRequired}
           {...rest}
         />
@@ -189,6 +190,9 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => 
 
       {errorMessage && isInvalid && (
         <p
+          id="textarea-error"
+          role="alert"
+          aria-live="polite"
           className={`mt-1 text-xs text-[color:var(--ai-danger)] ${classNames.errorMessage || ''}`}
         >
           {errorMessage}
@@ -196,7 +200,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => 
       )}
 
       {description && !isInvalid && (
-        <p className={`mt-1 text-xs text-[color:var(--ai-muted)] ${classNames.description || ''}`}>
+        <p id="textarea-description" className={`mt-1 text-xs text-[color:var(--ai-muted)] ${classNames.description || ''}`}>
           {description}
         </p>
       )}

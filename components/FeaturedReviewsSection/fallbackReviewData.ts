@@ -2,6 +2,7 @@ import { Review } from "@/types";
 
 // These fallback reviews use translation keys - actual content comes from home.json
 // This approach allows dynamic language switching without hardcoding content
+// Avatar URLs are undefined to trigger DefaultAvatar component fallback
 export function getFallbackReviews(t: any): Review[] {
     return [
         {
@@ -10,7 +11,7 @@ export function getFallbackReviews(t: any): Review[] {
             author: {
                 name: t('fallback.review1.author'),
                 role: t('fallback.review1.role'),
-                avatar: "https://i.pravatar.cc/150?img=11"
+                avatar: undefined // Will use DefaultAvatar
             },
             rating: 5,
             courseType: t('fallback.review1.courseType')
@@ -21,7 +22,7 @@ export function getFallbackReviews(t: any): Review[] {
             author: {
                 name: t('fallback.review2.author'),
                 role: t('fallback.review2.role'),
-                avatar: "https://i.pravatar.cc/150?img=5"
+                avatar: undefined // Will use DefaultAvatar
             },
             rating: 5,
             courseType: t('fallback.review2.courseType')
@@ -32,7 +33,7 @@ export function getFallbackReviews(t: any): Review[] {
             author: {
                 name: t('fallback.review3.author'),
                 role: t('fallback.review3.role'),
-                avatar: "https://i.pravatar.cc/150?img=8"
+                avatar: undefined // Will use DefaultAvatar
             },
             rating: 4,
             courseType: t('fallback.review3.courseType')

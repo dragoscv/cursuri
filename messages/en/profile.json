@@ -13,6 +13,23 @@
   "changePassword": "Change Password",
   "notifications": "Notifications",
   "preferences": "Preferences",
+  "dashboard": {
+    "title": "Your Learning Dashboard",
+    "description": "Track your progress, view statistics, and continue learning.",
+    "enrolledCourses": "Enrolled Courses",
+    "completedCoursesCount": "{count} completed",
+    "lessonsCompleted": "Lessons Completed",
+    "totalLessons": "{count} total",
+    "learningHours": "Learning Hours",
+    "totalHoursContent": "Total hours of content",
+    "achievements": "Achievements",
+    "coursesMastered": "Courses mastered",
+    "searchCourses": "Search your courses"
+  },
+  "achievements": {
+    "noAchievements": "You haven't earned any achievements yet.",
+    "unlockMessage": "Complete courses and lessons to unlock achievements!"
+  },
   "appSettings": {
     "title": "Application Settings",
     "saveSettings": "Save Settings",
@@ -120,6 +137,7 @@
   },
   "offline": {
     "title": "Offline Content",
+    "loadingOfflineContent": "Loading offline content...",
     "storageUsed": "Storage used",
     "clearAll": "Clear All",
     "clearContent": "Clear offline content",
@@ -260,9 +278,7 @@
   },
   "offlineContent": {
     "noContentYet": "No offline content yet",
-    "clearContent": "Clear offline content"
-  },
-  "dashboard": {
+    "clearContent": "Clear offline content",
     "pieChart": "Pie Chart",
     "courseCompletion": "Course Completion",
     "lessonsCompleted": "Lessons Completed Per Course",

@@ -16,6 +16,7 @@
   "quality": "Quality",
   "fullscreen": "Fullscreen",
   "progress": "Progress",
+  "courseProgress": "Course Progress",
   "viewer": {
     "loadingLesson": "Loading lesson...",
     "lessonNotAvailable": "Lesson Not Available",
@@ -46,10 +47,13 @@
     "availableLessonCount": "Available Lesson Count:",
     "availableLessonIds": "Available Lesson IDs:",
     "yes": "Yes",
-    "no": "No"
-  },
-  "content": {
-    "courseProgress": "Course Progress"
+    "no": "No",
+    "accessDenied": "Access Denied",
+    "accessDeniedDesc": "This lesson requires course purchase or enrollment. Please purchase the course to access this content.",
+    "viewCourse": "View Course & Purchase",
+    "signIn": "Sign In",
+    "needHelp": "Need help?",
+    "contactUs": "Contact us"
   },
   "form": {
     "basicInfo": "Basic Information",

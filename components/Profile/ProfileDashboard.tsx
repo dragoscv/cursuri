@@ -13,8 +13,11 @@ import PaymentHistorySection from './PaymentHistorySection';
 import LearningPathSection from './LearningPathSection';
 import ProfileSettingsSection from './ProfileSettingsSection';
 import OfflineContentSection from './OfflineContentSection';
+import { useTranslations } from 'next-intl';
 
 export default function ProfileDashboard() {
+    const t = useTranslations('profile.dashboard');
+    const tStats = useTranslations('profile');
     const {
         totalCoursesEnrolled,
         completedCourses,
@@ -40,38 +43,38 @@ export default function ProfileDashboard() {
     return (
         <>
             <ProfileHeader
-                title="Your Learning Dashboard"
-                description="Track your progress, view statistics, and continue learning."
+                title={t('title')}
+                description={t('description')}
             />
 
             {/* Stats Overview Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                 <StatsCard
                     icon={<FiBook className="text-[color:var(--ai-primary)]" />}
-                    title="Enrolled Courses"
+                    title={t('enrolledCourses')}
                     value={totalCoursesEnrolled}
-                    footer={`${completedCourses} completed`}
+                    footer={t('completedCoursesCount', { count: completedCourses })}
                     colorClass="from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
                 />
                 <StatsCard
                     icon={<FiBarChart2 className="text-[color:var(--ai-success)]" />}
-                    title="Lessons Completed"
+                    title={t('lessonsCompleted')}
+                    footer={t('totalLessons', { count: totalLessons })}
                     value={completedLessons}
-                    footer={`${totalLessons} total`}
                     colorClass="from-[color:var(--ai-success)] to-[color:var(--ai-secondary)]"
                 />
                 <StatsCard
                     icon={<FiClock className="text-[color:var(--ai-secondary)]" />}
-                    title="Learning Hours"
+                    title={t('learningHours')}
                     value={totalHours}
-                    footer="Total hours of content"
+                    footer={t('totalHoursContent')}
                     colorClass="from-[color:var(--ai-secondary)] to-[color:var(--ai-accent)]"
                 />
                 <StatsCard
                     icon={<FiAward className="text-[color:var(--ai-accent)]" />}
-                    title="Achievements"
+                    title={t('achievements')}
                     value={completedCourses}
-                    footer="Courses mastered"
+                    footer={t('coursesMastered')}
                     colorClass="from-[color:var(--ai-accent)] to-[color:var(--ai-primary)]"
                 />
             </div>

@@ -87,6 +87,32 @@
     }
   },
   "userManagement": {
+    "title": "Enhanced User Management",
+    "searchPlaceholder": "Search users...",
+    "filterByRole": "Filter by Role",
+    "allRoles": "All Roles",
+    "filterByVerification": "Filter by Verification",
+    "allStatuses": "All Statuses",
+    "verified": "Verified",
+    "unverified": "Unverified",
+    "filterByEnrollment": "Filter by Enrollment",
+    "allEnrollments": "All Enrollments",
+    "enrolled": "Enrolled",
+    "notEnrolled": "Not Enrolled",
+    "sortBy": "Sort By",
+    "email": "Email",
+    "emailHeader": "EMAIL",
+    "registrationDate": "Registration Date",
+    "displayName": "Display Name",
+    "loadingUsers": "Loading users...",
+    "errorLoadingUsers": "Error loading users",
+    "tryAgainLater": "Please try again later",
+    "failedToLoadUserData": "Failed to load user data",
+    "failedToUpdateUser": "Failed to update user",
+    "verification": "VERIFICATION",
+    "enrollment": "ENROLLMENT",
+    "registration": "REGISTRATION",
+    "actions": "ACTIONS",
     "placeholders": {
       "displayName": "Display Name",
       "userBio": "User bio",
@@ -100,14 +126,7 @@
     "fallbacks": {
       "unknownCourse": "Unknown Course",
       "unknownDate": "Unknown date"
-    },
-    "title": "Enhanced User Management",
-    "email": "EMAIL",
-    "verification": "VERIFICATION",
-    "enrollment": "ENROLLMENT",
-    "registration": "REGISTRATION",
-    "actions": "ACTIONS",
-    "verified": "Verified"
+    }
   },
   "pages": {
     "userManagement": "User Management",

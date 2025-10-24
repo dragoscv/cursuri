@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from '@heroui/react'; // Updated to use HeroUI instead of NextUI
+import { useTranslations } from 'next-intl';
 
 import { ModalProps } from '@/types';
 
@@ -39,6 +40,8 @@ export default function ModalComponent({
   modalBottomComponent,
   classNames = {},
 }: ModalProps) {
+  const t = useTranslations('common');
+
   //prevent back button press and replace with modal close
   useEffect(() => {
     if (isOpen) {
@@ -110,9 +113,11 @@ export default function ModalComponent({
             <ModalHeader>
               {modalHeader}
               {!hideCloseIcon && (
-                <div
-                  className="cursor-pointer p-2 rounded-full hover:bg-[color:var(--ai-card-border)]/40 dark:hover:bg-[color:var(--ai-card-border)]/20"
+                <button
+                  type="button"
+                  className="cursor-pointer p-2 rounded-full hover:bg-[color:var(--ai-card-border)]/40 dark:hover:bg-[color:var(--ai-card-border)]/20 transition-colors focus:outline-none focus:ring-2 focus:ring-ai-primary focus:ring-offset-2"
                   onClick={handleClose}
+                  aria-label={t('buttons.close')}
                 >
                   <svg
                     className="w-5 h-5"
@@ -120,6 +125,7 @@ export default function ModalComponent({
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
                   >
                     <path
                       strokeLinecap="round"
@@ -128,7 +134,7 @@ export default function ModalComponent({
                       d="M6 18L18 6M6 6l12 12"
                     />
                   </svg>
-                </div>
+                </button>
               )}
             </ModalHeader>
             <ModalBody className="flex flex-col gap-2 w-full h-full p-0">{modalBody}</ModalBody>
@@ -151,8 +157,9 @@ export default function ModalComponent({
                     variant="light"
                     className="text-[color:var(--ai-error)] bg-[color:var(--ai-error)]/10 hover:bg-[color:var(--ai-error)]/20"
                     onClick={handleClose}
+                    aria-label={t('buttons.close')}
                   >
-                    Close
+                    {t('buttons.close')}
                   </Button>
                 )}
               </ModalFooter>

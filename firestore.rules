@@ -122,6 +122,12 @@ service cloud.firestore {
       allow update, delete: if hasAdminAccess();
     }
     
+    // Audit logs collection - server-side only (Firebase Admin SDK bypasses these rules)
+    match /audit_logs/{logId} {
+      allow read: if hasAdminAccess(); // Only admins can read audit logs
+      allow write: if false; // Client writes not allowed, only server-side via Admin SDK
+    }
+    
     match /customers/{uid} {
       // Allow admins to read/write any customer data for course assignments
       allow read: if request.auth != null && (request.auth.uid == uid || hasAdminAccess());

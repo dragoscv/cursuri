@@ -14,16 +14,22 @@ export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
 
   // Apply comprehensive Content Security Policy
+  // This is the SINGLE source of truth for CSP headers
+  // Dynamically construct Firebase Storage URL from environment variables
+  const firebaseStorageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'cursuri-411b4.appspot.com';
+  const firebaseStorageUrl = `https://firebasestorage.googleapis.com/v0/b/${firebaseStorageBucket}`;
+  
   const cspHeader = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://unpkg.com",
-    "script-src-elem 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://unpkg.com",
+    "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://js.stripe.com https://unpkg.com https://apis.google.com https://accounts.google.com https://securetoken.googleapis.com https://identitytoolkit.googleapis.com https://*.googleapis.com",
+    "script-src-elem 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://js.stripe.com https://unpkg.com https://apis.google.com https://accounts.google.com https://securetoken.googleapis.com https://identitytoolkit.googleapis.com https://*.googleapis.com",
     "worker-src 'self' blob:",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' data: https: blob:",
     "font-src 'self' data: https://fonts.gstatic.com",
-    "connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebase.com https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://*.google-analytics.com wss://*.firebaseio.com",
-    "frame-src 'self' https://www.youtube.com https://player.vimeo.com",
+    `media-src 'self' blob: data: https://firebasestorage.googleapis.com ${firebaseStorageUrl}`,
+    "connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebase.com https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://*.google-analytics.com https://api.stripe.com wss://*.firebaseio.com https://accounts.google.com https://securetoken.googleapis.com https://identitytoolkit.googleapis.com",
+    "frame-src 'self' https://www.youtube.com https://player.vimeo.com https://js.stripe.com https://hooks.stripe.com https://accounts.google.com https://*.firebaseapp.com",
   ].join('; ');
 
   response.headers.set('Content-Security-Policy', cspHeader);

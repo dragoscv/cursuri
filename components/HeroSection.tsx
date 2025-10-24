@@ -26,30 +26,30 @@ import {
     StripeIcon,
     ReactNativeIcon
 } from './icons/tech'
+import DefaultAvatar from './shared/DefaultAvatar'
 
 const HeroSection = memo(function HeroSection() {
     const t = useTranslations('home.hero');
     // Use AppContext instead of modular hooks to avoid context issues
     const router = useRouter()
     const context = useContext(AppContext);
+    const particlesRef = useRef<HTMLDivElement>(null)
+
+    // Use useMemo for expensive context values to prevent unnecessary recalculations
+    const courses = useMemo(() => context?.courses || {}, [context?.courses]);
+    const reviews = useMemo(() => context?.reviews || {}, [context?.reviews]);
+    const userPaidProducts = useMemo(() => context?.userPaidProducts || [], [context?.userPaidProducts]);
 
     if (!context) {
         console.error('HeroSection: AppContext not available');
-        return <div>Loading...</div>;
+        return <div className="flex items-center justify-center min-h-[400px] text-[color:var(--ai-muted)]">{t('loading')}</div>;
     }
 
     // Extract only needed values to reduce dependency on full context
     const { user, openModal, closeModal } = context;
 
-    // Use useMemo for expensive context values to prevent unnecessary recalculations
-    const courses = useMemo(() => context.courses, [context.courses]);
-    const reviews = useMemo(() => context.reviews, [context.reviews]);
-    const userPaidProducts = useMemo(() => context.userPaidProducts, [context.userPaidProducts]);
-
     // Note: userPaidProducts now comes directly from AppContext
     // No longer need to simulate products since AppContext provides real data
-
-    const particlesRef = useRef<HTMLDivElement>(null)
 
     // Calculate real statistics from the database using useMemo instead of useEffect
     const stats = useMemo(() => {
@@ -449,21 +449,19 @@ const HeroSection = memo(function HeroSection() {
                             variants={itemVariants}
                         >
                             <div className="flex items-center gap-3">
-                                <div className="flex -space-x-2">                                    {[1, 2, 3, 4, 5].map((i) => (
-                                    <div
-                                        key={i}
-                                        className="inline-block h-8 w-8 rounded-full ring-2 ring-[color:var(--ai-primary)]/30 overflow-hidden transform hover:scale-110 hover:z-10 transition-all duration-300"
-                                    >
-                                        <Image
-                                            src={`https://i.pravatar.cc/100?img=${i + 10}`}
-                                            alt="Student avatar"
-                                            className="h-full w-full object-cover"
-                                            width={32}
-                                            height={32}
-                                            priority={i <= 2}
-                                        />
-                                    </div>
-                                ))}
+                                <div className="flex -space-x-2">
+                                    {['Alex M.', 'Sarah K.', 'John D.', 'Maria P.', 'Chris L.'].map((name, i) => (
+                                        <div
+                                            key={i}
+                                            className="inline-block h-8 w-8 rounded-full ring-2 ring-[color:var(--ai-primary)]/30 overflow-hidden transform hover:scale-110 hover:z-10 transition-all duration-300"
+                                        >
+                                            <DefaultAvatar
+                                                name={name}
+                                                size={32}
+                                                className=""
+                                            />
+                                        </div>
+                                    ))}
                                 </div>
                                 <div className="text-sm text-white/90 font-medium">
                                     <span className="text-[color:var(--ai-accent)] font-semibold">{stats.totalStudents}+</span> {t('learnersEnrolled')}

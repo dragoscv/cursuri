@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card, CardBody, Chip, Button, Tooltip, Spinner } from '@heroui/react';
 import { FiAward, FiLock } from '@/components/icons/FeatherIcons';
 import useAchievements from './hooks/useAchievements';
@@ -6,6 +7,7 @@ import AchievementBadge from './AchievementBadge';
 import { motion } from 'framer-motion';
 
 export default function AchievementsSection() {
+    const t = useTranslations('profile.achievements');
     const { achievements, loading, error, syncAchievements } = useAchievements();
 
     // Sync achievements on first load
@@ -127,8 +129,8 @@ export default function AchievementsSection() {
                         <div className="w-16 h-16 rounded-full bg-[color:var(--ai-primary)]/10 flex items-center justify-center mb-3 mx-auto">
                             <FiAward className="w-8 h-8 text-[color:var(--ai-accent)]" />
                         </div>
-                        <p className="text-[color:var(--ai-muted)] mb-3">You haven't earned any achievements yet.</p>
-                        <p className="text-sm text-[color:var(--ai-muted)]">Complete courses and lessons to unlock achievements!</p>
+                        <p className="text-[color:var(--ai-muted)] mb-3">{t('noAchievements')}</p>
+                        <p className="text-sm text-[color:var(--ai-muted)]">{t('unlockMessage')}</p>
                     </div>
                 )}
 

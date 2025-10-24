@@ -16,8 +16,41 @@
  */
 
 import { getFirestore } from 'firebase-admin/firestore';
+import { getApps, initializeApp, cert } from 'firebase-admin/app';
 import { NextRequest } from 'next/server';
 import { AuthenticatedUser } from './api/auth';
+
+/**
+ * Initialize Firebase Admin SDK if not already initialized
+ */
+function initializeFirebaseAdmin(): void {
+  const hasCredentials = !!(
+    process.env.FIREBASE_PROJECT_ID &&
+    process.env.FIREBASE_CLIENT_EMAIL &&
+    process.env.FIREBASE_PRIVATE_KEY
+  );
+
+  if (!getApps().length) {
+    try {
+      if (hasCredentials) {
+        initializeApp({
+          credential: cert({
+            projectId: process.env.FIREBASE_PROJECT_ID || '',
+            clientEmail: process.env.FIREBASE_CLIENT_EMAIL || '',
+            privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n') || '',
+          }),
+        });
+      } else {
+        console.warn('Firebase Admin SDK credentials not found. Audit logging will not work.');
+        initializeApp({
+          projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'mock-project-id',
+        });
+      }
+    } catch (error) {
+      console.error('Failed to initialize Firebase Admin:', error);
+    }
+  }
+}
 
 /**
  * Audit log severity levels
@@ -101,10 +134,22 @@ function extractClientInfo(request: NextRequest): {
  */
 async function createAuditLog(entry: AuditLogEntry): Promise<string> {
   try {
+    // Ensure Firebase Admin is initialized
+    initializeFirebaseAdmin();
+
     const db = getFirestore();
+
+    // Remove undefined values to comply with Firestore validation
+    const cleanedEntry = Object.entries(entry).reduce((acc, [key, value]) => {
+      if (value !== undefined) {
+        acc[key] = value;
+      }
+      return acc;
+    }, {} as Record<string, any>);
+
     const auditRef = await db.collection('audit_logs').add({
-      ...entry,
-      timestamp: entry.timestamp || new Date().toISOString(),
+      ...cleanedEntry,
+      timestamp: cleanedEntry.timestamp || new Date().toISOString(),
       createdAt: new Date().toISOString(),
     });
 
@@ -535,6 +580,9 @@ export async function queryAuditLogs(
   limit: number = 100
 ): Promise<AuditLogEntry[]> {
   try {
+    // Ensure Firebase Admin is initialized
+    initializeFirebaseAdmin();
+
     const db = getFirestore();
     let query = db.collection('audit_logs').orderBy('timestamp', 'desc').limit(limit);
 

@@ -5,6 +5,7 @@ import { motion, useInView, useAnimation } from 'framer-motion'
 import { AppContext } from './AppContext'
 import { Review } from '@/types'
 import { Button } from './ui'
+import DefaultAvatar from './shared/DefaultAvatar'
 
 const FeaturedReviews = memo(function FeaturedReviews() {
     const controls = useAnimation()
@@ -97,7 +98,7 @@ const FeaturedReviews = memo(function FeaturedReviews() {
                     author: {
                         name: "Alex Johnson",
                         role: "AI Research Engineer",
-                        avatar: "https://i.pravatar.cc/150?img=11"
+                        avatar: undefined // Will use DefaultAvatar
                     },
                     rating: 5,
                     courseType: "Predictive Analysis"
@@ -108,7 +109,7 @@ const FeaturedReviews = memo(function FeaturedReviews() {
                     author: {
                         name: "Maria Garcia",
                         role: "Machine Learning Specialist",
-                        avatar: "https://i.pravatar.cc/150?img=5"
+                        avatar: undefined // Will use DefaultAvatar
                     },
                     rating: 5,
                     courseType: "Neural Networks"
@@ -119,7 +120,7 @@ const FeaturedReviews = memo(function FeaturedReviews() {
                     author: {
                         name: "David Kim",
                         role: "NLP Developer",
-                        avatar: "https://i.pravatar.cc/150?img=8"
+                        avatar: undefined // Will use DefaultAvatar
                     },
                     rating: 4,
                     courseType: "NLP & Transformers"
@@ -244,11 +245,20 @@ const FeaturedReviews = memo(function FeaturedReviews() {
                                     <div className="flex-shrink-0 relative">
                                         {/* Glowing avatar effect */}
                                         <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] opacity-0 group-hover:opacity-70 blur-md transition-opacity duration-300" />
-                                        <img
-                                            className="relative h-12 w-12 rounded-full object-cover border-2 border-[color:var(--ai-primary)]/30"
-                                            src={review.author?.avatar || `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70)}`}
-                                            alt={(review.author?.name || review.userName || "User") as string}
-                                        />
+                                        {review.author?.avatar ? (
+                                            <img
+                                                className="relative h-12 w-12 rounded-full object-cover border-2 border-[color:var(--ai-primary)]/30"
+                                                src={review.author.avatar}
+                                                alt={(review.author?.name || review.userName || "User") as string}
+                                            />
+                                        ) : (
+                                            <div className="relative border-2 border-[color:var(--ai-primary)]/30 rounded-full">
+                                                <DefaultAvatar
+                                                    name={review.author?.name || review.userName || "User"}
+                                                    size={48}
+                                                />
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="ml-4">
                                         <div className="text-base font-medium text-[color:var(--ai-foreground)]">

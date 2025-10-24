@@ -63,22 +63,13 @@ function maskSensitiveValue(value: any): string {
 /**
  * Add security headers to API responses
  * @param headers - Response headers object
+ * 
+ * Note: CSP is now managed centrally in middleware.ts to avoid conflicts.
+ * This function only adds non-CSP security headers.
  */
 export function addSecurityHeaders(headers: Headers): void {
-  // Security headers according to OWASP recommendations with Next.js compatibility
-  // Note: Using blob: for worker-src to support Next.js web workers
-  // Note: 'unsafe-inline' is required for Next.js inline scripts in production
-  headers.set('Content-Security-Policy',
-    "default-src 'self'; " +
-    "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://unpkg.com https://www.googletagmanager.com https://www.google-analytics.com blob:; " +
-    "script-src-elem 'self' 'unsafe-inline' https://unpkg.com https://www.googletagmanager.com https://www.google-analytics.com; " +
-    "worker-src 'self' blob:; " +
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-    "img-src 'self' data: https: blob:; " +
-    "font-src 'self' data: https://fonts.gstatic.com; " +
-    "connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebase.com https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://*.google-analytics.com wss://*.firebaseio.com; " +
-    "frame-src 'self' https://www.youtube.com https://player.vimeo.com;"
-  );
+  // Security headers according to OWASP recommendations
+  // Note: CSP is handled by middleware.ts - do not set it here to avoid conflicts
   headers.set('X-Content-Type-Options', 'nosniff');
   headers.set('X-Frame-Options', 'SAMEORIGIN');
   headers.set('X-XSS-Protection', '1; mode=block');

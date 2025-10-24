@@ -103,7 +103,17 @@ const CourseContent: React.FC<CourseContentProps> = ({
 
   // Function to determine if a lesson is accessible
   const isLessonAccessible = (lesson: Lesson): boolean => {
-    return Boolean(hasAccess || isAdmin || lesson.isFree === true);
+    // Admins always have access
+    if (isAdmin) return true;
+
+    // If user has purchased the course, they have access to all lessons
+    if (hasAccess) return true;
+
+    // Individual free lessons are accessible
+    if (lesson.isFree === true) return true;
+
+    // Otherwise, no access
+    return false;
   };
 
   // Function to check if lesson is completed
@@ -365,13 +375,12 @@ const LessonItem: React.FC<LessonItemProps> = ({
       <div
         className={`
                 flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full mr-4 transition-all duration-300 relative 
-                ${
-                  isCompleted
-                    ? 'bg-[color:var(--ai-success, #10b981)] text-white border-4 border-[color:var(--ai-success, #10b981)]/60 ring-4 ring-[color:var(--ai-success, #10b981)]/20 shadow-lg'
-                    : !isAccessible
-                      ? 'bg-[color:var(--ai-card-border)]/20 text-[color:var(--ai-muted)] border border-[color:var(--ai-card-border)]/30'
-                      : 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] border border-[color:var(--ai-primary)]/30'
-                }
+                ${isCompleted
+            ? 'bg-[color:var(--ai-success, #10b981)] text-white border-4 border-[color:var(--ai-success, #10b981)]/60 ring-4 ring-[color:var(--ai-success, #10b981)]/20 shadow-lg'
+            : !isAccessible
+              ? 'bg-[color:var(--ai-card-border)]/20 text-[color:var(--ai-muted)] border border-[color:var(--ai-card-border)]/30'
+              : 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] border border-[color:var(--ai-primary)]/30'
+          }
             `}
       >
         {isCompleted ? <FiCheck size={24} className="text-white" /> : getIcon()}
@@ -389,13 +398,12 @@ const LessonItem: React.FC<LessonItemProps> = ({
           <div className="flex items-center">
             <h4
               className={`font-medium truncate
-                        ${
-                          isCompleted
-                            ? 'text-[color:var(--ai-success, #10b981)]'
-                            : !isAccessible
-                              ? 'text-[color:var(--ai-muted)]'
-                              : 'text-[color:var(--ai-foreground)]'
-                        }
+                        ${isCompleted
+                  ? 'text-[color:var(--ai-success, #10b981)]'
+                  : !isAccessible
+                    ? 'text-[color:var(--ai-muted)]'
+                    : 'text-[color:var(--ai-foreground)]'
+                }
                     `}
             >
               {lesson.name}

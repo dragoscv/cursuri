@@ -18,6 +18,7 @@ import Login from "@/components/Login";
 import AddCourse from "@/components/Course/AddCourse";
 import SocialIcons from "@/components/Header/SocialIcons";
 import { useTranslations } from 'next-intl';
+import DefaultAvatar from '@/components/shared/DefaultAvatar';
 
 /**
  * UserDropdown component that handles the user menu functionality
@@ -231,12 +232,22 @@ export default function UserDropdown() {
                     isIconOnly
                     variant="flat"
                     className="rounded-full"
+                    aria-label={t('accessibility.userMenu')}
+                    aria-haspopup="menu"
+                    aria-expanded={undefined}
                 >
-                    <img
-                        src={user?.photoURL || "https://i.pravatar.cc/150?u=a042581f4e29026704d"}
-                        alt="User avatar"
-                        className="w-8 h-8 rounded-full object-cover border-2 border-[color:var(--ai-primary)]/40"
-                    />
+                    {user?.photoURL ? (
+                        <img
+                            src={user.photoURL}
+                            alt={user?.displayName || user?.email || t('userMenu.profileDashboard')}
+                            className="w-8 h-8 rounded-full object-cover border-2 border-[color:var(--ai-primary)]/40"
+                        />
+                    ) : (
+                        <DefaultAvatar 
+                            name={user?.displayName || user?.email || 'User'} 
+                            size={32}
+                        />
+                    )}
                 </Button>
             </DropdownTrigger>
             <DropdownMenu

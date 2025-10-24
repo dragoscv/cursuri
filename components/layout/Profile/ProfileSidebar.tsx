@@ -8,6 +8,7 @@ import { signOut } from 'firebase/auth';
 import { firebaseAuth } from '@/utils/firebase/firebase.config';
 import { AppContext } from '@/components/AppContext';
 import { useRouter } from 'next/navigation';
+import DefaultAvatar from '@/components/shared/DefaultAvatar';
 
 // Calculate overall progress across all courses
 const calculateOverallProgress = (userPaidProducts: any[], lessonProgress: any) => {
@@ -81,11 +82,20 @@ const ProfileSidebar: React.FC = () => {
 
             <div className="relative px-6 pt-0 pb-6">
                 <div className="-mt-12 flex justify-center">
-                    <Avatar
-                        src={user?.photoURL || `https://i.pravatar.cc/150?u=${user?.uid}`}
-                        className="border-4 border-white dark:border-[color:var(--ai-background)] w-24 h-24 shadow-lg"
-                        size="lg"
-                    />
+                    {user?.photoURL ? (
+                        <Avatar
+                            src={user.photoURL}
+                            className="border-4 border-white dark:border-[color:var(--ai-background)] w-24 h-24 shadow-lg"
+                            size="lg"
+                        />
+                    ) : (
+                        <div className="border-4 border-white dark:border-[color:var(--ai-background)] rounded-full shadow-lg">
+                            <DefaultAvatar
+                                name={user?.displayName || user?.email || 'User'}
+                                size={96}
+                            />
+                        </div>
+                    )}
                 </div>
 
                 <div className="mt-3 text-center">

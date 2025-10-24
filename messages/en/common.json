@@ -174,6 +174,7 @@
     "goBack": "Go Back",
     "errorIllustration": "Error illustration"
   },
+  "lastUpdated": "Last updated: {date}",
   "videoPlayer": {
     "noVideoAvailable": "No video available for this lesson",
     "playVideo": "Play video",
@@ -299,6 +300,14 @@
     "info": {
       "processing": "Processing",
       "pleaseWait": "Please wait..."
+    },
+    "actions": {
+      "createNewCourse": "Create New Course",
+      "editCourse": "Edit Course",
+      "createCourse": "Create Course",
+      "updateCourse": "Update Course",
+      "createPrice": "Create Price in Stripe",
+      "creatingPrice": "Creating Price..."
     }
   },
   "confirmDialogs": {
@@ -314,6 +323,10 @@
     "closeMainMenu": "Close main menu",
     "toggleDarkMode": "Toggle dark mode",
     "toggleLightMode": "Toggle light mode",
+    "toggleLanguage": "Toggle language selector",
+    "toggleTheme": "Toggle theme",
+    "mainNavigation": "Main navigation",
+    "footerNavigation": "Footer navigation",
     "changeLanguage": "Change language",
     "currentLanguage": "Current language: {language}",
     "loading": "Loading content, please wait",

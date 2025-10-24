@@ -298,7 +298,15 @@
     },
     "info": {
       "processing": "Se procesează",
-      "pleaseWait": "Te rugăm să aștepți..."
+      "pleaseWait": "Vă rugăm așteptați..."
+    },
+    "actions": {
+      "createNewCourse": "Creează Curs Nou",
+      "editCourse": "Editează Curs",
+      "createCourse": "Creează Curs",
+      "updateCourse": "Actualizează Curs",
+      "createPrice": "Creează Preț în Stripe",
+      "creatingPrice": "Se Creează Preț..."
     }
   },
   "confirmDialogs": {

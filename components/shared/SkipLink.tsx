@@ -4,11 +4,13 @@
  * WCAG 2.1 Level A requirement for accessibility
  */
 
+'use client';
+
 import React from 'react';
 import { useTranslations } from 'next-intl';
 
 const SkipLink: React.FC = () => {
-  const t = useTranslations('accessibility');
+  const t = useTranslations('common');
 
   const handleSkip = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -28,7 +30,7 @@ const SkipLink: React.FC = () => {
         transition: 'all 0.2s ease',
       }}
     >
-      {t('skipToMainContent')}
+      {t('accessibility.skipToMainContent')}
     </a>
   );
 };

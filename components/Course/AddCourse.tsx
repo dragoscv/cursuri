@@ -170,7 +170,7 @@ export default function AddCourse(props: AddCourseProps) {
         products, courseName, courseDescription, coursePrice, repoUrl,
         courseImage, courseLevel, courseCategory, courseTags,
         courseRequirements, courseObjectives, coursePrerequisites, courseStatus, instructorName,
-        estimatedDuration, onClose
+        estimatedDuration, certificateEnabled, allowPromoCodes, onClose
     ]);
 
     const updateCourse = useCallback(async () => {
@@ -220,8 +220,8 @@ export default function AddCourse(props: AddCourseProps) {
     }, [
         courseId, courseName, courseDescription, coursePrice, repoUrl, products,
         courseImage, courseLevel, courseCategory, courseTags,
-        courseRequirements, courseObjectives, courseStatus, instructorName,
-        estimatedDuration, onClose
+        courseRequirements, courseObjectives, coursePrerequisites, courseStatus, instructorName,
+        estimatedDuration, certificateEnabled, allowPromoCodes, onClose
     ]);
 
     // Type definitions for input event handlers    // Define event types for form handling
@@ -405,7 +405,7 @@ export default function AddCourse(props: AddCourseProps) {
                                     <InstructorNameField value={instructorName} onChange={(e) => setInstructorName(e.target.value)} />
 
                                     <Input
-                                        label={t('form.labels.estimatedDuration')}
+                                        label={tCourses('form.labels.estimatedDuration')}
                                         variant="bordered"
                                         placeholder="e.g., 10 hours, 4 weeks"
                                         value={estimatedDuration}
@@ -418,7 +418,7 @@ export default function AddCourse(props: AddCourseProps) {
                                     />
                                 </div>
 
-                                <Input label={t('form.labels.repositoryUrl')}
+                                <Input label={tCourses('form.labels.repositoryUrl')}
                                     type="url"
                                     variant="bordered"
                                     placeholder="https://github.com/username/repo"
@@ -448,7 +448,7 @@ export default function AddCourse(props: AddCourseProps) {
                                 </div>
                                 <div className="mb-6">
                                     <Select
-                                        label={t('form.labels.difficultyLevel')}
+                                        label={tCourses('form.labels.difficultyLevel')}
                                         variant="bordered"
                                         value={courseLevel}
                                         onChange={(e: SelectChangeEvent) => setCourseLevel(e.target.value)}
@@ -604,7 +604,7 @@ export default function AddCourse(props: AddCourseProps) {
                                 <span className="font-medium text-[color:var(--ai-foreground)]">Pricing Tip:</span> Choose a competitive price that reflects the value of your course content and target audience.
                             </p>
                         </div>                        <Select
-                            label={t('form.labels.coursePrice')}
+                            label={tCourses('form.labels.coursePrice')}
                             variant="bordered"
                             value={coursePrice}
                             onChange={(e: SelectChangeEvent) => setCoursePrice(e.target.value)}
@@ -637,7 +637,7 @@ export default function AddCourse(props: AddCourseProps) {
                             </p>
                             <div className="grid grid-cols-2 gap-3 mb-3">
                                 <Input
-                                    label={t('form.labels.priceAmount')}
+                                    label={tCourses('form.labels.priceAmount')}
                                     variant="bordered"
                                     placeholder="100.00"
                                     type="number"

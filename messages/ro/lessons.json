@@ -16,6 +16,7 @@
   "quality": "Calitate",
   "fullscreen": "Ecran Complet",
   "progress": "Progres",
+  "courseProgress": "Progres Curs",
   "viewer": {
     "loadingLesson": "Se încarcă lecția...",
     "lessonNotAvailable": "Lecție Indisponibilă",
@@ -46,10 +47,13 @@
     "availableLessonCount": "Număr de Lecții Disponibile:",
     "availableLessonIds": "ID-uri Lecții Disponibile:",
     "yes": "Da",
-    "no": "Nu"
-  },
-  "content": {
-    "courseProgress": "Progres Curs"
+    "no": "Nu",
+    "accessDenied": "Acces Refuzat",
+    "accessDeniedDesc": "Această lecție necesită achiziționarea cursului sau înscrierea. Te rugăm să achiziționezi cursul pentru a accesa acest conținut.",
+    "viewCourse": "Vezi Cursul & Achiziționează",
+    "signIn": "Autentifică-te",
+    "needHelp": "Ai nevoie de ajutor?",
+    "contactUs": "Contactează-ne"
   },
   "form": {
     "basicInfo": "Informații de Bază",

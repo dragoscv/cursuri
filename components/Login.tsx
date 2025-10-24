@@ -38,6 +38,10 @@ const getFirebaseErrorMessage = (error: any, t: any): string => {
             return t('errors.popupBlocked');
         case 'auth/cancelled-popup-request':
             return t('errors.cancelledPopupRequest');
+        case 'auth/internal-error':
+            return t('errors.internalError');
+        case 'auth/unauthorized-domain':
+            return t('errors.unauthorizedDomain');
         default:
             if (errorCode.includes('cors') || error.message?.includes('Cross-Origin')) {
                 return t('errors.corsError');
@@ -48,6 +52,8 @@ const getFirebaseErrorMessage = (error: any, t: any): string => {
 
 export default function Login(props: { onClose: () => void }) {
     const t = useTranslations('auth');
+    const toast = useToast();
+    
     // State variables for the enhanced login component
     const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
     const [email, setEmail] = useState("");
@@ -58,18 +64,10 @@ export default function Login(props: { onClose: () => void }) {
     const [loadingEmailLogin, setLoadingEmailLogin] = useState(false);
     const [loadingEmailRegister, setLoadingEmailRegister] = useState(false);
 
-    // Safe toast hook usage with error handling
-    let toast = null;
-    try {
-        toast = useToast();
-    } catch (error) {
-        // Toast provider not available, will use fallback UI feedback methods
-        // This is expected behavior in modal contexts and doesn't affect functionality
-        toast = null;
-    }    // Clear error message when inputs change
+    // Clear error message when inputs change
     useEffect(() => {
         if (errorMessage) setErrorMessage("");
-    }, [email, password, confirmPassword, activeTab]);
+    }, [email, password, confirmPassword, activeTab, errorMessage]);
 
     // Sign in with Google
     const signInWithGoogleRedirect = async () => {

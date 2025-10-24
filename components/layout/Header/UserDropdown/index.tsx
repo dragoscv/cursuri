@@ -12,6 +12,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { AppContext } from '@/components/AppContext';
+import DefaultAvatar from '@/components/shared/DefaultAvatar';
 import {
   UserIcon,
   LogOutIcon,
@@ -225,11 +226,20 @@ export default function UserDropdown() {
     >
       <DropdownTrigger>
         <Button isIconOnly variant="flat" className="rounded-full">
-          <img
-            src={user?.photoURL || 'https://i.pravatar.cc/150?u=a042581f4e29026704d'}
-            alt="User avatar"
-            className="w-8 h-8 rounded-full object-cover border-2 border-[color:var(--ai-primary)]/40"
-          />
+          {user?.photoURL ? (
+            <img
+              src={user.photoURL}
+              alt="User avatar"
+              className="w-8 h-8 rounded-full object-cover border-2 border-[color:var(--ai-primary)]/40"
+            />
+          ) : (
+            <div className="rounded-full overflow-hidden">
+              <DefaultAvatar
+                name={user?.displayName || user?.email || 'User'}
+                size={32}
+              />
+            </div>
+          )}
         </Button>
       </DropdownTrigger>
       <DropdownMenu
