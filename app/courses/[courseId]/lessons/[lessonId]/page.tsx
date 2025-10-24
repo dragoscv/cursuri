@@ -64,7 +64,7 @@ export async function generateMetadata({
       // Free lessons can be indexed for discoverability
       robots: lesson.isFree
         ? { index: true, follow: true }
-        : { index: false, follow: false, googleBot: { index: false, follow: false }, noarchive: true, nosnippet: true },
+        : { index: false, follow: false, googleBot: { index: false, follow: false } },
     });
   } catch (error) {
     console.error('Error generating lesson metadata:', error);

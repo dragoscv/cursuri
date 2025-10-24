@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useMemo, useState, useContext, memo } from 'react'
+import React, { useEffect, useRef, useMemo, useContext, memo } from 'react'
 import Button from '@/components/ui/Button'
 // import { useAuth, useCourses, useReviews, useModal, useProducts } from '@/components/contexts/modules'
 import { AppContext } from '@/components/AppContext'
@@ -8,7 +8,6 @@ import Login from './Login'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { UserPaidProduct } from '@/types'
 import { useTranslations } from 'next-intl'
 import {
     TypeScriptIcon,
@@ -40,18 +39,8 @@ const HeroSection = memo(function HeroSection() {
     const reviews = useMemo(() => context?.reviews || {}, [context?.reviews]);
     const userPaidProducts = useMemo(() => context?.userPaidProducts || [], [context?.userPaidProducts]);
 
-    if (!context) {
-        console.error('HeroSection: AppContext not available');
-        return <div className="flex items-center justify-center min-h-[400px] text-[color:var(--ai-muted)]">{t('loading')}</div>;
-    }
-
-    // Extract only needed values to reduce dependency on full context
-    const { user, openModal, closeModal } = context;
-
-    // Note: userPaidProducts now comes directly from AppContext
-    // No longer need to simulate products since AppContext provides real data
-
     // Calculate real statistics from the database using useMemo instead of useEffect
+    // Must be called before any conditional returns (React Hooks rules)
     const stats = useMemo(() => {
         if (Object.keys(courses).length === 0) {
             return {
@@ -120,33 +109,7 @@ const HeroSection = memo(function HeroSection() {
         };
     }, [courses, userPaidProducts, reviews]);
 
-    const handleGetStarted = () => {
-        if (!user) {
-            openModal({
-                id: 'login',
-                isOpen: true,
-                hideCloseButton: false,
-                backdrop: 'opaque',
-                size: 'md',
-                scrollBehavior: 'inside',
-                isDismissable: true,
-                modalHeader: t('getStarted'),
-                modalBody: <Login onClose={() => closeModal('login')} />,
-                headerDisabled: true,
-                footerDisabled: true,
-                noReplaceURL: true,
-                onClose: () => closeModal('login'),
-                classNames: {
-                    backdrop: "z-50 backdrop-blur-md backdrop-saturate-150 bg-black/50 dark:bg-black/50 w-screen min-h-[100dvh] fixed inset-0",
-                    base: "z-50 mx-auto my-auto w-full max-w-md rounded-2xl outline-none bg-transparent shadow-2xl",
-                },
-            })
-        } else {
-            // Smooth scroll to courses section
-            const coursesSection = document.getElementById('courses-section')
-            coursesSection?.scrollIntoView({ behavior: 'smooth' })
-        }
-    }    // Create floating particles animation
+    // Create floating particles animation (must be before early return - React Hooks rules)
     useEffect(() => {
         if (!particlesRef.current) return
 
@@ -202,7 +165,9 @@ const HeroSection = memo(function HeroSection() {
             setTimeout(() => {
                 particle.remove()
             }, 20000)
-        }        // Create particles periodically, but limit to fewer particles (every 800ms instead of 300ms)
+        }
+
+        // Create particles periodically, but limit to fewer particles (every 800ms instead of 300ms)
         const interval = setInterval(() => {
             // Limit the total number of particles to avoid performance issues
             const maxParticles = 30;
@@ -219,7 +184,44 @@ const HeroSection = memo(function HeroSection() {
         return () => {
             clearInterval(interval)
         }
-    }, [])
+    }, []);
+
+    // Early return check must come after all hooks
+    if (!context) {
+        console.error('HeroSection: AppContext not available');
+        return <div className="flex items-center justify-center min-h-[400px] text-[color:var(--ai-muted)]">{t('loading')}</div>;
+    }
+
+    // Extract only needed values to reduce dependency on full context
+    const { user, openModal, closeModal } = context;
+
+    const handleGetStarted = () => {
+        if (!user) {
+            openModal({
+                id: 'login',
+                isOpen: true,
+                hideCloseButton: false,
+                backdrop: 'opaque',
+                size: 'md',
+                scrollBehavior: 'inside',
+                isDismissable: true,
+                modalHeader: t('getStarted'),
+                modalBody: <Login onClose={() => closeModal('login')} />,
+                headerDisabled: true,
+                footerDisabled: true,
+                noReplaceURL: true,
+                onClose: () => closeModal('login'),
+                classNames: {
+                    backdrop: "z-50 backdrop-blur-md backdrop-saturate-150 bg-black/50 dark:bg-black/50 w-screen min-h-[100dvh] fixed inset-0",
+                    base: "z-50 mx-auto my-auto w-full max-w-md rounded-2xl outline-none bg-transparent shadow-2xl",
+                },
+            })
+        } else {
+            // Smooth scroll to courses section
+            const coursesSection = document.getElementById('courses-section')
+            coursesSection?.scrollIntoView({ behavior: 'smooth' })
+        }
+    }
 
     // Generate deterministic opacity values
     const gridOpacities = useMemo(() => {

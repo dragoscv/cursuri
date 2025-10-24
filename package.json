@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "next dev -p 33990",
     "build": "next build",
+    "build:win": "powershell -Command \"$tempDir = Join-Path $PWD '.build-temp'; New-Item -ItemType Directory -Force -Path $tempDir | Out-Null; $env:TEMP = $tempDir; $env:TMP = $tempDir; npm run build\"",
     "start": "next start",
     "lint": "next lint",
     "lint-staged": "lint-staged",

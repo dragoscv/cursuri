@@ -27,6 +27,33 @@ const nextConfig = {
     },
     // CSP is now managed centrally in middleware.ts
     // This avoids duplication and makes it easier to maintain
+    
+    // Webpack configuration to fix Windows temp directory permission issues
+    webpack: (config, { isServer }) => {
+        // Exclude Windows temp directories from file watching
+        if (!isServer) {
+            config.watchOptions = {
+                ...config.watchOptions,
+                ignored: [
+                    '**/node_modules/**',
+                    '**/.git/**',
+                    '**/.next/**',
+                    '**/C:/Users/**/AppData/Local/Temp/**',
+                    '**/AppData/Local/Temp/**',
+                ],
+            };
+        }
+        
+        // Add fallback for node modules that might not be available in browser
+        config.resolve.fallback = {
+            ...config.resolve.fallback,
+            fs: false,
+            net: false,
+            tls: false,
+        };
+        
+        return config;
+    },
 }
 
 export default withNextIntl(nextConfig);

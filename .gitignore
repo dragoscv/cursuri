@@ -44,3 +44,8 @@ next-env.d.ts
 .husky
 dist
 .env.test
+
+# build temp directory
+.build-temp
+.npm-cache
+.npm-tmp

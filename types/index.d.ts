@@ -103,6 +103,7 @@ export interface AppContextProps {
     fetchLessonsForCourse: (courseId: string, options?: CacheOptions) => Promise<void>;
     userPaidProducts: UserPaidProduct[];
     userPurchases?: Record<string, UserPaidProduct>; // Added missing property
+    userCourseAccess?: Record<string, boolean>; // Track which courses user has access to
     reviews: Record<string, Record<string, Review>>;
     reviewLoadingStates: Record<string, CacheStatus>;
     getCourseReviews: (courseId: string, options?: CacheOptions) => Promise<Unsubscribe | void>;
