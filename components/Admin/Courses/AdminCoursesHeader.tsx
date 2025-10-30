@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 
-interface AdminCoursesHeaderProps { 
+interface AdminCoursesHeaderProps {
   onAddCourse?: (e?: React.MouseEvent) => void;
 }
 
