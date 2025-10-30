@@ -4,19 +4,20 @@ import { validateEnvironmentVariables } from '@/utils/security/envValidation';
 
 /**
  * Security middleware only - NO URL-based i18n routing
- * 
+ *
  * Locale is determined purely from cookies in i18n/request.ts
  * - Protects API routes with security validation
  * - Applies comprehensive security headers to all requests
  */
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // Initialize response
   const response = NextResponse.next();
 
   // Apply comprehensive Content Security Policy
   // This is the SINGLE source of truth for CSP headers
   // Dynamically construct Firebase Storage URL from environment variables
-  const firebaseStorageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'cursuri-411b4.appspot.com';
+  const firebaseStorageBucket =
+    process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'cursuri-411b4.appspot.com';
   const firebaseStorageUrl = `https://firebasestorage.googleapis.com/v0/b/${firebaseStorageBucket}`;
 
   const cspHeader = [
@@ -44,8 +45,10 @@ export async function middleware(request: NextRequest) {
       const envValidation = validateEnvironmentVariables();
 
       if (!envValidation.isValid) {
-        console.error('⚠️ API accessed with invalid environment configuration:',
-          envValidation.errors.join(', '));
+        console.error(
+          '⚠️ API accessed with invalid environment configuration:',
+          envValidation.errors.join(', ')
+        );
       }
     }
 
@@ -56,7 +59,7 @@ export async function middleware(request: NextRequest) {
       return new NextResponse(
         JSON.stringify({
           error: 'Bad Request',
-          message: validation.error || 'Invalid request format'
+          message: validation.error || 'Invalid request format',
         }),
         {
           status: 400,
