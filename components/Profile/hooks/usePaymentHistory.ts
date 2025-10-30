@@ -176,8 +176,8 @@ export default function usePaymentHistory(): PaymentHistoryData {
 
                 // Sort by date in descending order
                 paymentsList.sort((a, b) => {
-                    const dateA = a.date instanceof Date ? a.date : new Date(a.date!);
-                    const dateB = b.date instanceof Date ? b.date : new Date(b.date!);
+                    const dateA = a.date instanceof Date ? a.date : (a.date && typeof a.date === 'object' && 'toDate' in a.date ? a.date.toDate() : new Date(a.date!));
+                    const dateB = b.date instanceof Date ? b.date : (b.date && typeof b.date === 'object' && 'toDate' in b.date ? b.date.toDate() : new Date(b.date!));
                     return dateB.getTime() - dateA.getTime();
                 });
 

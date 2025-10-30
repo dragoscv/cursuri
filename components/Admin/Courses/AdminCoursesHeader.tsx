@@ -2,9 +2,11 @@ import React from 'react';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 
-interface AdminCoursesHeaderProps { }
+interface AdminCoursesHeaderProps { 
+  onAddCourse?: (e?: React.MouseEvent) => void;
+}
 
-export default function AdminCoursesHeader({ }: AdminCoursesHeaderProps) {
+export default function AdminCoursesHeader({ onAddCourse }: AdminCoursesHeaderProps) {
   return (
     <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-[color:var(--ai-accent)]/5 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-[color:var(--ai-card-border)]/50 shadow-xl">
       <div className="flex justify-between items-center">

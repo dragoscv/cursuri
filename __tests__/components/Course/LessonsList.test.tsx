@@ -107,6 +107,10 @@ const createMockContext = (overrides: Partial<AppContextProps> = {}): AppContext
     clearCache: jest.fn(),
     clearAllCache: jest.fn(),
     getCacheStatus: jest.fn(),
+    subscriptions: [],
+    subscriptionsLoading: false,
+    subscriptionsError: null,
+    refreshSubscriptions: jest.fn(),
     ...overrides,
 });
 

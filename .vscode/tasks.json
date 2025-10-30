@@ -100,46 +100,6 @@
       }
     },
     {
-      "label": "Lint Project",
-      "type": "shell",
-      "command": "npm",
-      "args": ["run", "lint"],
-      "group": "test",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared",
-        "showReuseMessage": true,
-        "clear": true,
-        "group": "lint"
-      },
-      "problemMatcher": ["$eslint-stylish"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      }
-    },
-    {
-      "label": "Type Check",
-      "type": "shell",
-      "command": "npx",
-      "args": ["tsc", "--noEmit"],
-      "group": "test",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared",
-        "showReuseMessage": true,
-        "clear": true,
-        "group": "typecheck"
-      },
-      "problemMatcher": ["$tsc"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      }
-    },
-    {
       "label": "Install Dependencies",
       "type": "shell",
       "command": "npm",
