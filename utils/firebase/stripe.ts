@@ -14,26 +14,3 @@ export const stripePayments = (firebaseApp: FirebaseApp): StripePayments => getS
     productsCollection: "products",
     customersCollection: "/customers",
 });
-
-export const newCheckoutSession = async (priceId: string, promoCode?: string) => {
-    const payments = stripePayments(firebaseApp);
-    const paymentConfig: any = {
-        mode: "payment", // One-time payment mode
-        price: priceId,
-        allow_promotion_codes: true,
-        success_url: `${window.location.href}?paymentStatus=success`,
-        cancel_url: `${window.location.href}?paymentStatus=cancel`,
-    }
-    if (promoCode) {
-        paymentConfig["promotion_code"] = promoCode;
-    }
-
-    try {
-        const session = await createCheckoutSession(payments, paymentConfig);
-        window.location.assign(session.url);
-        return session;
-    } catch (error) {
-        console.error("Error creating checkout session:", error);
-        throw error;
-    }
-}

@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { AppContext } from '@/components/AppContext';
 import LessonContent from '@/components/Lesson/LessonContent';
-import { Spinner, Button } from '@heroui/react';
+import { Spinner } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { Lesson as LessonType } from '@/types';
 
 interface LessonViewerProps {

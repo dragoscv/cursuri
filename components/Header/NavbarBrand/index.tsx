@@ -42,7 +42,7 @@ export default function NavbarBrand() {
                 </div>
                 {!isCourseOrLessonPage && (
                     <p className="font-bold text-xl bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent drop-shadow-sm dark:drop-shadow-[0_1px_1px_rgba(255,255,255,0.3)]">
-                        {t('nav.courses')}
+                        {t('nav.brandName')}
                     </p>
                 )}
             </div>

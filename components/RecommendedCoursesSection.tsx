@@ -3,7 +3,7 @@ import React, { useContext, useMemo, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { AppContext } from './AppContext';
 import { Course } from '@/types';
-import { Button } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { useRouter } from 'next/navigation';
 import { FiLink } from './icons/FeatherIcons/FiLink';
 import { getCoursePrice as getUnifiedCoursePrice } from '@/utils/pricing';

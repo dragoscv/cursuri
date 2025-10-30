@@ -11,10 +11,10 @@ import { useRouter } from 'next/navigation';
 
 interface AdminCoursesViewProps {
     courses: Record<string, CourseWithPriceProduct>;
-    onAddCourse: () => void;
-    onViewCourse: (course: CourseWithPriceProduct) => void;
-    onEditCourse: (course: CourseWithPriceProduct) => void;
-    onManageLessons?: (courseId: string) => void;
+    onAddCourse: (e?: React.MouseEvent) => void;
+    onViewCourse: (course: CourseWithPriceProduct, e?: React.MouseEvent) => void;
+    onEditCourse: (course: CourseWithPriceProduct, e?: React.MouseEvent) => void;
+    onManageLessons?: (courseId: string, e?: React.MouseEvent) => void;
 }
 
 export default function AdminCoursesView({
@@ -32,9 +32,13 @@ export default function AdminCoursesView({
         setIsMounted(true);
     }, []);
 
-    const handleManageLessons = (courseId: string) => {
+    const handleManageLessons = (courseId: string, e?: React.MouseEvent) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
         if (onManageLessons) {
-            onManageLessons(courseId);
+            onManageLessons(courseId, e);
         } else if (isMounted) {
             router.push(`/admin/courses/${courseId}/lessons`);
         }

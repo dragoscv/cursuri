@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useContext } from 'react';
-import { Button } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { AppContext } from '@/components/AppContext';
 
 /**

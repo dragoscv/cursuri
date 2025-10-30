@@ -3,7 +3,8 @@
 import { useContext } from 'react';
 import { AppContext } from './AppContext';
 import { CacheStatus as CacheStatusType } from '@/types';
-import { Button, Badge, Card, CardBody, CardFooter, CardHeader, Divider } from '@heroui/react';
+import { Badge, Card, CardBody, CardFooter, CardHeader, Divider } from '@heroui/react';
+import Button from '@/components/ui/Button';
 
 /**
  * CacheStatusItem Component

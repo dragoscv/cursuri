@@ -2,13 +2,15 @@
   "nav": {
     "home": "Acasă",
     "courses": "Cursuri",
+    "subscriptions": "Abonamente",
     "about": "Despre",
     "contact": "Contact",
     "admin": "Admin",
     "profile": "Profil",
     "allCourses": "Toate Cursurile",
     "featuredCourses": "Cursuri Recomandate",
-    "testimonials": "Testimoniale"
+    "testimonials": "Testimoniale",
+    "brandName": "StudiAI"
   },
   "buttons": {
     "login": "Autentificare",
@@ -40,10 +42,14 @@
   "footer": {
     "about": "Cursuri de programare de calitate pentru a te ajuta să stăpânești dezvoltarea web și mobilă modernă.",
     "quickLinks": "Link-uri Rapide",
-    "connect": "Conectează-te",
-    "contactEmail": "Contactează-ne la",
+    "legal": "Legal",
+    "connect": "Conectare",
+    "contactEmail": "Contactați-ne la",
     "copyright": "Toate drepturile rezervate.",
-    "version": "Versiunea"
+    "version": "Versiune",
+    "privacyPolicy": "Politica de Confidențialitate",
+    "termsConditions": "Termeni și Condiții",
+    "gdpr": "Politica GDPR"
   },
   "loading": "Se încarcă...",
   "saving": "Se salvează...",
@@ -173,6 +179,13 @@
     "goToHomepage": "Mergi la Pagina Principală",
     "goBack": "Înapoi",
     "errorIllustration": "Ilustrație eroare"
+  },
+  "lastUpdated": "Ultima actualizare: {date}",
+  "policyLinks": {
+    "privacyPolicy": "Politica de Confidențialitate",
+    "termsConditions": "Termeni și Condiții",
+    "gdprPolicy": "Politica GDPR",
+    "backToHome": "Înapoi la Pagina Principală"
   },
   "videoPlayer": {
     "noVideoAvailable": "Niciun videoclip disponibil pentru această lecție",

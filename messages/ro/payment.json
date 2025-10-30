@@ -1,0 +1,19 @@
+{
+    "payment": {
+        "search": {
+            "placeholder": "Caută facturi sau cursuri..."
+        },
+        "sort": {
+            "oldestFirst": "Cele mai vechi",
+            "newestFirst": "Cele mai noi"
+        },
+        "emptyStates": {
+            "noMatchingPayments": "Nu s-au găsit plăți",
+            "noMatchingPaymentsDesc": "Nu am găsit plăți care să corespundă căutării tale. Încearcă să ajustezi termenii de căutare.",
+            "clearSearch": "Șterge căutarea",
+            "noPaymentHistory": "Fără istoric de plăți",
+            "noPaymentHistoryDesc": "Nu ai făcut încă nicio achiziție de curs. Începe să înveți înscriindu-te la un curs!",
+            "browseCourses": "Explorează cursurile"
+        }
+    }
+}

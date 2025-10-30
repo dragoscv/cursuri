@@ -138,6 +138,13 @@ export default function MobileMenu() {
                 </div>
               </Link>
             </DropdownItem>
+            <DropdownItem key="subscriptions" textValue="Subscriptions" className="p-0">
+              <Link href="/subscriptions" className="block w-full">
+                <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors">
+                  {t('nav.subscriptions')}
+                </div>
+              </Link>
+            </DropdownItem>
             <DropdownItem key="about" textValue="About" className="p-0">
               <Link href="/about" className="block w-full">
                 <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors">

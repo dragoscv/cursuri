@@ -4,7 +4,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useTranslations } from 'next-intl';
 import { AppContext } from '@/components/AppContext';
 import { useOfflineContent } from './hooks/useOfflineContent';
-import { Card, Button, Badge } from '@heroui/react';
+import { Card, Badge } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import {
   FiDownload,
   FiTrash2,
@@ -153,10 +154,9 @@ export default function OfflineContentSection() {
                     key={`${content.type}-${content.id}`}
                     className={`
                       flex flex-col sm:flex-row items-stretch sm:items-center gap-4 p-4 rounded-lg border 
-                      ${
-                        contentExpired
-                          ? 'border-[color:var(--ai-destructive)]/30 bg-[color:var(--ai-destructive)]/5'
-                          : 'border-[color:var(--ai-card-border)]/50 bg-[color:var(--ai-card-bg)]/60'
+                      ${contentExpired
+                        ? 'border-[color:var(--ai-destructive)]/30 bg-[color:var(--ai-destructive)]/5'
+                        : 'border-[color:var(--ai-card-border)]/50 bg-[color:var(--ai-card-bg)]/60'
                       }
                     `}
                   >

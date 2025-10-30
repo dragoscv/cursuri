@@ -62,7 +62,11 @@
   },
   "lessons": {
     "title": "Lessons",
-    "totalLessonsCreated": "Total lessons created"
+    "totalLessonsCreated": "Total lessons created",
+    "addLesson": "Add Lesson",
+    "loadingLessons": "Loading lessons...",
+    "noLessonsFound": "No lessons found for this course",
+    "addFirstLesson": "Add First Lesson"
   },
   "analytics": {
     "title": "Analytics & Insights",

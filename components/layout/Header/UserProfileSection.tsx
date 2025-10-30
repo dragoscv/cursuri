@@ -21,7 +21,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({ user, openModal
     <DropdownSection aria-label="Profile & Actions" showDivider {...({} as any)}>
       <DropdownItem
         key="profile"
-        className="h-14 gap-2 border-0 text-black/80"
+        className="h-14 gap-2 border-0 text-[color:var(--ai-foreground)]"
         textValue="Profile Details"
       >
         <div

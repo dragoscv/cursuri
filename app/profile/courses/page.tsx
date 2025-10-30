@@ -48,41 +48,40 @@ export default function ProfileCourses() {
                     });
                 }
             } else {
-                // Calculate progress
-                const courseLessonsCount = Object.keys(lessonProgress[courseId] || {}).length;
+                // Calculate progress - use lessons for total count, lessonProgress for completed
+                const courseLessons = context.lessons?.[courseId] || {};
+                const totalCourseLessons = Object.keys(courseLessons).length;
                 const completedLessonsCount = Object.values(lessonProgress[courseId] || {}).filter(
                     (progress) => progress.isCompleted
                 ).length;
 
                 const progress =
-                    courseLessonsCount > 0
-                        ? Math.round((completedLessonsCount / courseLessonsCount) * 100)
+                    totalCourseLessons > 0
+                        ? Math.round((completedLessonsCount / totalCourseLessons) * 100)
                         : 0;
 
-                // Get the most recent lesson with progress
-                let recentLessonId = '';
-                let recentTimestamp = 0;
+                // Get the first incomplete lesson, or fall back to most recent if all completed
+                let nextLessonId = '';
 
-                if (lessonProgress[courseId]) {
-                    Object.entries(lessonProgress[courseId]).forEach(([lessonId, lessonData]) => {
-                        // Convert the lastUpdated field to a timestamp for comparison
-                        let timestamp = 0;
-                        if (typeof lessonData.lastUpdated === 'string') {
-                            timestamp = new Date(lessonData.lastUpdated).getTime();
-                        } else if (lessonData.lastUpdated && typeof lessonData.lastUpdated === 'object') {
-                            if ('seconds' in lessonData.lastUpdated) {
-                                // Handle Firestore Timestamp
-                                timestamp = lessonData.lastUpdated.seconds * 1000;
-                            } else if (lessonData.lastUpdated instanceof Date) {
-                                timestamp = lessonData.lastUpdated.getTime();
-                            }
-                        }
+                // Sort lessons by order property to get the correct sequence
+                const lessonEntries = Object.entries(courseLessons).sort((a, b) => {
+                    const orderA = a[1]?.order ?? 999999;
+                    const orderB = b[1]?.order ?? 999999;
+                    return orderA - orderB;
+                });
 
-                        if (timestamp > recentTimestamp) {
-                            recentLessonId = lessonId;
-                            recentTimestamp = timestamp;
-                        }
-                    });
+                // Find the first incomplete lesson in the correct order
+                for (const [lessonId, lesson] of lessonEntries) {
+                    const lessonProgressData = lessonProgress[courseId]?.[lessonId];
+                    if (!lessonProgressData || !lessonProgressData.isCompleted) {
+                        nextLessonId = lessonId;
+                        break;
+                    }
+                }
+
+                // If all lessons are completed or no progress exists, use the first lesson (by order)
+                if (!nextLessonId && lessonEntries.length > 0) {
+                    nextLessonId = lessonEntries[0][0];
                 }
 
                 courseMap.set(courseId, {
@@ -91,8 +90,8 @@ export default function ProfileCourses() {
                     purchaseDate: new Date(product.purchaseDate || Date.now()),
                     progress,
                     completedLessons: completedLessonsCount,
-                    totalLessons: courseLessonsCount,
-                    recentLessonId,
+                    totalLessons: totalCourseLessons,
+                    recentLessonId: nextLessonId,
                     status: progress === 100 ? 'completed' : progress > 0 ? 'in-progress' : 'not-started',
                 });
             }
@@ -135,13 +134,15 @@ export default function ProfileCourses() {
 
     return (
         <div>
-            <div className="bg-gradient-to-r from-indigo-600/10 via-purple-600/10 to-pink-600/10 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-white/10 dark:border-gray-800/50 shadow-xl">
-                <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
-                    My Courses
-                </h1>
-                <p className="text-gray-600 dark:text-gray-300">
-                    Access your enrolled courses and track your learning progress.
-                </p>
+            <div className="mb-6 animate-in fade-in-50 slide-in-from-bottom-5 duration-500">
+                <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/5 to-transparent py-6 px-6 rounded-xl border border-[color:var(--ai-card-border)] backdrop-blur-sm shadow-md">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-[color:var(--ai-foreground)] mb-2">
+                        {t('nav.myCourses')}
+                    </h1>
+                    <p className="text-[color:var(--ai-muted)]">
+                        {t('courses.description')}
+                    </p>
+                </div>
             </div>
 
             {/* Filters and search */}
@@ -160,19 +161,22 @@ export default function ProfileCourses() {
                     ))}
                 </div>
             ) : (
-                <div className="text-center py-12 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700">
+                <div className="text-center py-12 bg-[color:var(--ai-card-bg)]/80 backdrop-blur-sm rounded-xl border border-[color:var(--ai-card-border)] shadow-md">
                     {searchTerm || filterStatus !== 'all' ? (
                         <>
-                            <FiSearch className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-                            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                            <div className="w-16 h-16 mx-auto bg-[color:var(--ai-primary)]/10 rounded-full flex items-center justify-center mb-4">
+                                <FiSearch className="w-8 h-8 text-[color:var(--ai-primary)]" />
+                            </div>
+                            <h3 className="text-lg font-medium text-[color:var(--ai-foreground)] mb-2">
                                 {t('courses.emptyStates.noMatchingCourses')}
                             </h3>
-                            <p className="text-gray-600 dark:text-gray-400 mb-4">
+                            <p className="text-[color:var(--ai-muted)] mb-4">
                                 {t('courses.emptyStates.noMatchingCoursesDesc')}
                             </p>
                             <Button
                                 color="primary"
                                 variant="light"
+                                radius="lg"
                                 onClick={() => {
                                     setSearchTerm('');
                                     setFilterStatus('all');
@@ -183,17 +187,18 @@ export default function ProfileCourses() {
                         </>
                     ) : (
                         <>
-                            {' '}
-                            <FiBook className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-                            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                            <div className="w-16 h-16 mx-auto bg-[color:var(--ai-primary)]/10 rounded-full flex items-center justify-center mb-4">
+                                <FiBook className="w-8 h-8 text-[color:var(--ai-primary)]" />
+                            </div>
+                            <h3 className="text-lg font-medium text-[color:var(--ai-foreground)] mb-2">
                                 {t('courses.emptyStates.noEnrolledCourses')}
                             </h3>
-                            <p className="text-gray-600 dark:text-gray-400 mb-4">
+                            <p className="text-[color:var(--ai-muted)] mb-4">
                                 {t('courses.emptyStates.noEnrolledCoursesDesc')}
                             </p>
-                            <Link href="/courses">
-                                <Button color="primary">{t('courses.emptyStates.browseCourses')}</Button>
-                            </Link>
+                            <Button as={Link} href="/courses" color="primary" radius="lg">
+                                {t('courses.emptyStates.browseCourses')}
+                            </Button>
                         </>
                     )}
                 </div>

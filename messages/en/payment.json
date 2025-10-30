@@ -1,0 +1,19 @@
+{
+    "payment": {
+        "search": {
+            "placeholder": "Search invoices or courses..."
+        },
+        "sort": {
+            "oldestFirst": "Oldest First",
+            "newestFirst": "Newest First"
+        },
+        "emptyStates": {
+            "noMatchingPayments": "No matching payments found",
+            "noMatchingPaymentsDesc": "We couldn't find any payments matching your search. Try adjusting your search terms.",
+            "clearSearch": "Clear Search",
+            "noPaymentHistory": "No Payment History",
+            "noPaymentHistoryDesc": "You haven't made any course purchases yet. Start learning by enrolling in a course!",
+            "browseCourses": "Browse Courses"
+        }
+    }
+}

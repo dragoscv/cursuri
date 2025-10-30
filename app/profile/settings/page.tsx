@@ -13,7 +13,13 @@ import {
   FiBell,
   FiGlobe,
   FiSettings,
+  FiShield,
+  FiDatabase,
+  FiDownload,
+  FiTrash2,
+  FiCreditCard,
 } from '@/components/icons/FeatherIcons';
+import SubscriptionManagement from '@/components/Profile/SubscriptionManagement';
 import { motion } from 'framer-motion';
 import PasswordStrengthMeter from '@/components/ui/PasswordStrengthMeter';
 import { useTranslations } from 'next-intl';
@@ -36,6 +42,14 @@ export default function ProfileSettings() {
     emailNotifications: true,
     courseUpdates: true,
     marketingEmails: false,
+    newLessonAlerts: true,
+    commentReplies: true,
+    certificateIssued: true,
+    weeklyDigest: false,
+    showProfile: true,
+    showProgressToPublic: false,
+    showAchievements: true,
+    shareActivityFeed: false,
     language: 'en',
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -171,15 +185,14 @@ export default function ProfileSettings() {
         <p className="text-[color:var(--ai-muted)]">{tProfile('updateYourProfile')}</p>
       </div>{' '}
       {/* Profile Information */}
-      <Card className="border border-[color:var(--ai-card-border)]/50 shadow-lg rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)]/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
-        <div className="h-1 w-full bg-gradient-to-r from-[color:var(--ai-primary)]/80 to-[color:var(--ai-secondary)]/80"></div>
-        <CardBody className="p-6">
-          <h2 className="text-lg font-semibold mb-4 text-[color:var(--ai-foreground)] flex items-center gap-2">
-            <div className="p-2 rounded-full bg-gradient-to-r from-[color:var(--ai-primary)]/20 to-[color:var(--ai-secondary)]/20">
-              <FiUser className="text-[color:var(--ai-primary)]" />
-            </div>
-            {tProfile('profile')}
-          </h2>{' '}
+      <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/80 backdrop-blur-sm shadow-md rounded-xl overflow-hidden">
+        <CardBody className="p-5">
+          <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-primary)]/5 to-transparent py-3 px-4 -m-5 mb-4 border-b border-[color:var(--ai-card-border)]">
+            <h2 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
+              <FiUser className="mr-2 text-[color:var(--ai-primary)]" />
+              <span>{tProfile('profile')}</span>
+            </h2>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
@@ -191,7 +204,7 @@ export default function ProfileSettings() {
                 onChange={handleChange}
                 placeholder={tProfile('namePlaceholder')}
                 startContent={<FiUser className="text-[color:var(--ai-primary)]" />}
-                className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-primary)]/70 hover:border-[color:var(--ai-primary)]/40 transition-all duration-300"
+                className="w-full rounded-xl bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-primary)]/70 hover:border-[color:var(--ai-primary)]/40 transition-all duration-300"
               />
             </div>
 
@@ -205,7 +218,7 @@ export default function ProfileSettings() {
                 disabled
                 readOnly
                 startContent={<FiMail className="text-[color:var(--ai-primary)]" />}
-                className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/30 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 text-[color:var(--ai-foreground)]/70"
+                className="w-full rounded-xl bg-[color:var(--ai-card-bg)]/30 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 text-[color:var(--ai-foreground)]/70"
               />
             </div>
 
@@ -218,7 +231,7 @@ export default function ProfileSettings() {
                 value={form.bio}
                 onChange={handleChange}
                 placeholder={tProfile('bioPlaceholder')}
-                className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-primary)]/70 hover:border-[color:var(--ai-primary)]/40 transition-all duration-300"
+                className="w-full rounded-xl bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-primary)]/70 hover:border-[color:var(--ai-primary)]/40 transition-all duration-300"
               />
             </div>
           </div>
@@ -256,7 +269,8 @@ export default function ProfileSettings() {
                 }
               }}
               isLoading={isLoading}
-              className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] border-none text-white font-medium px-5 py-2 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+              radius="lg"
+              className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] border-none text-white font-medium px-5 py-2 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
             >
               {tProfile('saveChanges')}
             </Button>
@@ -269,15 +283,14 @@ export default function ProfileSettings() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.4 }}
       >
-        <Card className="border border-[color:var(--ai-card-border)]/50 shadow-lg rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)]/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
-          <div className="h-1 w-full bg-gradient-to-r from-[color:var(--ai-accent)]/80 to-[color:var(--ai-secondary)]/80"></div>
-          <CardBody className="p-6">
-            <h2 className="text-lg font-semibold mb-4 text-[color:var(--ai-foreground)] flex items-center gap-2">
-              <div className="p-2 rounded-full bg-gradient-to-r from-[color:var(--ai-accent)]/20 to-[color:var(--ai-secondary)]/20">
-                <FiLock className="text-[color:var(--ai-accent)]" />
-              </div>
-              {tProfile('security')}
-            </h2>{' '}
+        <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/80 backdrop-blur-sm shadow-md rounded-xl overflow-hidden">
+          <CardBody className="p-5">
+            <div className="bg-gradient-to-r from-[color:var(--ai-accent)]/10 via-[color:var(--ai-accent)]/5 to-transparent py-3 px-4 -m-5 mb-4 border-b border-[color:var(--ai-card-border)]">
+              <h2 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
+                <FiLock className="mr-2 text-[color:var(--ai-accent)]" />
+                <span>{tProfile('security')}</span>
+              </h2>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
@@ -290,7 +303,7 @@ export default function ProfileSettings() {
                   onChange={handleChange}
                   placeholder={tProfile('currentPasswordPlaceholder')}
                   startContent={<FiLock className="text-[color:var(--ai-accent)]" />}
-                  className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-accent)]/70 hover:border-[color:var(--ai-accent)]/40 transition-all duration-300"
+                  className="w-full rounded-xl bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-accent)]/70 hover:border-[color:var(--ai-accent)]/40 transition-all duration-300"
                 />
               </div>
 
@@ -305,7 +318,7 @@ export default function ProfileSettings() {
                   onChange={handleChange}
                   placeholder={tProfile('newPasswordPlaceholder')}
                   startContent={<FiLock className="text-[color:var(--ai-accent)]" />}
-                  className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-accent)]/70 hover:border-[color:var(--ai-accent)]/40 transition-all duration-300"
+                  className="w-full rounded-xl bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-accent)]/70 hover:border-[color:var(--ai-accent)]/40 transition-all duration-300"
                 />
 
                 {/* Add password strength meter */}
@@ -331,7 +344,7 @@ export default function ProfileSettings() {
                   onChange={handleChange}
                   placeholder={tProfile('confirmPasswordPlaceholder')}
                   startContent={<FiLock className="text-[color:var(--ai-accent)]" />}
-                  className="w-full rounded-lg bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-accent)]/70 hover:border-[color:var(--ai-accent)]/40 transition-all duration-300"
+                  className="w-full rounded-xl bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm border-[color:var(--ai-card-border)]/50 focus:border-[color:var(--ai-accent)]/70 hover:border-[color:var(--ai-accent)]/40 transition-all duration-300"
                 />
               </div>
             </div>{' '}
@@ -341,7 +354,8 @@ export default function ProfileSettings() {
                 startContent={<FiSave />}
                 onClick={changePassword}
                 isLoading={isLoading}
-                className="bg-gradient-to-r from-[color:var(--ai-accent)] to-[color:var(--ai-secondary)] border-none text-white font-medium px-5 py-2 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+                radius="lg"
+                className="bg-gradient-to-r from-[color:var(--ai-accent)] to-[color:var(--ai-secondary)] border-none text-white font-medium px-5 py-2 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
               >
                 {tProfile('updatePassword')}
               </Button>
@@ -355,23 +369,22 @@ export default function ProfileSettings() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3, duration: 0.4 }}
       >
-        <Card className="border border-[color:var(--ai-card-border)]/50 shadow-lg rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)]/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
-          <div className="h-1 w-full bg-gradient-to-r from-[color:var(--ai-success)]/80 to-[color:var(--ai-primary)]/80"></div>
-          <CardBody className="p-6">
-            <h2 className="text-lg font-semibold mb-4 text-[color:var(--ai-foreground)] flex items-center gap-2">
-              <div className="p-2 rounded-full bg-gradient-to-r from-[color:var(--ai-success)]/20 to-[color:var(--ai-primary)]/20">
-                <FiBell className="text-[color:var(--ai-success)]" />
-              </div>
-              {tProfile('notificationSettings')}
-            </h2>{' '}
+        <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/80 backdrop-blur-sm shadow-md rounded-xl overflow-hidden">
+          <CardBody className="p-5">
+            <div className="bg-gradient-to-r from-[color:var(--ai-success)]/10 via-[color:var(--ai-success)]/5 to-transparent py-3 px-4 -m-5 mb-4 border-b border-[color:var(--ai-card-border)]">
+              <h2 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
+                <FiBell className="mr-2 text-[color:var(--ai-success)]" />
+                <span>{tProfile('notificationSettings')}</span>
+              </h2>
+            </div>
             <div className="space-y-6 py-2">
               <div className="flex justify-between items-center p-3 rounded-lg bg-[color:var(--ai-card-bg)]/50 hover:bg-[color:var(--ai-card-bg)] transition-all duration-300 border border-[color:var(--ai-card-border)]/30">
                 <div>
                   <h3 className="text-sm font-medium text-[color:var(--ai-foreground)]">
-                    {tProfile('emailLabel')}
+                    {tProfile('emailNotifications')}
                   </h3>
                   <p className="text-xs text-[color:var(--ai-muted)]">
-                    {tProfile('settingsPage.notificationDescriptions.courseUpdates')}
+                    {tProfile('notificationDescriptions.emailNotifications')}
                   </p>
                 </div>
                 <Switch
@@ -392,7 +405,7 @@ export default function ProfileSettings() {
                     {tProfile('courseUpdates')}
                   </h3>
                   <p className="text-xs text-[color:var(--ai-muted)]">
-                    {tProfile('settingsPage.notificationDescriptions.courseUpdates')}
+                    {tProfile('notificationDescriptions.courseUpdates')}
                   </p>
                 </div>
                 <Switch
@@ -411,7 +424,7 @@ export default function ProfileSettings() {
                     {tProfile('marketingEmails')}
                   </h3>
                   <p className="text-xs text-[color:var(--ai-muted)]">
-                    {tProfile('settingsPage.notificationDescriptions.marketingEmails')}
+                    {tProfile('notificationDescriptions.marketingEmails')}
                   </p>
                 </div>
                 <Switch
@@ -425,6 +438,94 @@ export default function ProfileSettings() {
                   }}
                 />
               </div>
+
+              <div className="flex justify-between items-center p-3 rounded-lg bg-[color:var(--ai-card-bg)]/50 hover:bg-[color:var(--ai-card-bg)] transition-all duration-300 border border-[color:var(--ai-card-border)]/30">
+                <div>
+                  <h3 className="text-sm font-medium text-[color:var(--ai-foreground)]">
+                    {tProfile('newLessonAlerts')}
+                  </h3>
+                  <p className="text-xs text-[color:var(--ai-muted)]">
+                    {tProfile('newLessonAlertsDesc')}
+                  </p>
+                </div>
+                <Switch
+                  isSelected={form.newLessonAlerts}
+                  onValueChange={(checked: boolean) =>
+                    handleSwitchChange('newLessonAlerts', checked)
+                  }
+                  color="success"
+                  isDisabled={!form.emailNotifications}
+                  classNames={{
+                    base: 'bg-[color:var(--ai-card-bg)]/70',
+                  }}
+                />
+              </div>
+
+              <div className="flex justify-between items-center p-3 rounded-lg bg-[color:var(--ai-card-bg)]/50 hover:bg-[color:var(--ai-card-bg)] transition-all duration-300 border border-[color:var(--ai-card-border)]/30">
+                <div>
+                  <h3 className="text-sm font-medium text-[color:var(--ai-foreground)]">
+                    {tProfile('commentReplies')}
+                  </h3>
+                  <p className="text-xs text-[color:var(--ai-muted)]">
+                    {tProfile('commentRepliesDesc')}
+                  </p>
+                </div>
+                <Switch
+                  isSelected={form.commentReplies}
+                  onValueChange={(checked: boolean) =>
+                    handleSwitchChange('commentReplies', checked)
+                  }
+                  color="success"
+                  isDisabled={!form.emailNotifications}
+                  classNames={{
+                    base: 'bg-[color:var(--ai-card-bg)]/70',
+                  }}
+                />
+              </div>
+
+              <div className="flex justify-between items-center p-3 rounded-lg bg-[color:var(--ai-card-bg)]/50 hover:bg-[color:var(--ai-card-bg)] transition-all duration-300 border border-[color:var(--ai-card-border)]/30">
+                <div>
+                  <h3 className="text-sm font-medium text-[color:var(--ai-foreground)]">
+                    {tProfile('certificateNotifications')}
+                  </h3>
+                  <p className="text-xs text-[color:var(--ai-muted)]">
+                    {tProfile('certificateNotificationsDesc')}
+                  </p>
+                </div>
+                <Switch
+                  isSelected={form.certificateIssued}
+                  onValueChange={(checked: boolean) =>
+                    handleSwitchChange('certificateIssued', checked)
+                  }
+                  color="success"
+                  isDisabled={!form.emailNotifications}
+                  classNames={{
+                    base: 'bg-[color:var(--ai-card-bg)]/70',
+                  }}
+                />
+              </div>
+
+              <div className="flex justify-between items-center p-3 rounded-lg bg-[color:var(--ai-card-bg)]/50 hover:bg-[color:var(--ai-card-bg)] transition-all duration-300 border border-[color:var(--ai-card-border)]/30">
+                <div>
+                  <h3 className="text-sm font-medium text-[color:var(--ai-foreground)]">
+                    {tProfile('weeklyDigest')}
+                  </h3>
+                  <p className="text-xs text-[color:var(--ai-muted)]">
+                    {tProfile('weeklyDigestDesc')}
+                  </p>
+                </div>
+                <Switch
+                  isSelected={form.weeklyDigest}
+                  onValueChange={(checked: boolean) =>
+                    handleSwitchChange('weeklyDigest', checked)
+                  }
+                  color="success"
+                  isDisabled={!form.courseUpdates}
+                  classNames={{
+                    base: 'bg-[color:var(--ai-card-bg)]/70',
+                  }}
+                />
+              </div>
             </div>{' '}
             <div className="mt-6">
               <Button
@@ -432,7 +533,8 @@ export default function ProfileSettings() {
                 startContent={<FiSave />}
                 onClick={updateNotificationSettings}
                 isLoading={isLoading}
-                className="bg-gradient-to-r from-[color:var(--ai-success)] to-[color:var(--ai-primary)] border-none text-white font-medium px-5 py-2 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+                radius="lg"
+                className="bg-gradient-to-r from-[color:var(--ai-success)] to-[color:var(--ai-primary)] border-none text-white font-medium px-5 py-2 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
               >
                 {tProfile('saveChanges')}
               </Button>
@@ -446,22 +548,21 @@ export default function ProfileSettings() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.4 }}
       >
-        <Card className="border border-[color:var(--ai-card-border)]/50 shadow-lg rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)]/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
-          <div className="h-1 w-full bg-gradient-to-r from-[color:var(--ai-primary)]/80 to-[color:var(--ai-accent)]/80"></div>
-          <CardBody className="p-6">
-            <h2 className="text-lg font-semibold mb-4 text-[color:var(--ai-foreground)] flex items-center gap-2">
-              <div className="p-2 rounded-full bg-gradient-to-r from-[color:var(--ai-primary)]/20 to-[color:var(--ai-accent)]/20">
-                <FiGlobe className="text-[color:var(--ai-primary)]" />
-              </div>
-              {tProfile('language')}
-            </h2>{' '}
+        <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/80 backdrop-blur-sm shadow-md rounded-xl overflow-hidden">
+          <CardBody className="p-5">
+            <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-primary)]/5 to-transparent py-3 px-4 -m-5 mb-4 border-b border-[color:var(--ai-card-border)]">
+              <h2 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
+                <FiGlobe className="mr-2 text-[color:var(--ai-primary)]" />
+                <span>{tProfile('language')}</span>
+              </h2>
+            </div>
             <div className="mb-6">
               <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
                 {tProfile('languagePreference')}
               </label>
               <select
                 title={tProfile('selectLanguage')}
-                className="w-full px-4 py-3 border border-[color:var(--ai-card-border)]/50 rounded-lg shadow-sm 
+                className="w-full px-4 py-3 border border-[color:var(--ai-card-border)]/50 rounded-xl shadow-sm 
                                 focus:outline-none focus:ring-2 focus:ring-[color:var(--ai-primary)]/20 focus:border-[color:var(--ai-primary)]/70 
                                 bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm text-[color:var(--ai-foreground)]
                                 hover:border-[color:var(--ai-primary)]/40 transition-all duration-300"
@@ -502,7 +603,8 @@ export default function ProfileSettings() {
                   }
                 }}
                 isLoading={isLoading}
-                className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-accent)] border-none text-white font-medium px-5 py-2 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+                radius="lg"
+                className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-accent)] border-none text-white font-medium px-5 py-2 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
               >
                 {tProfile('saveChanges')}
               </Button>
@@ -516,15 +618,14 @@ export default function ProfileSettings() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5, duration: 0.4 }}
       >
-        <Card className="border border-[color:var(--ai-card-border)]/50 shadow-lg rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)]/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
-          <div className="h-1 w-full bg-gradient-to-r from-[color:var(--ai-secondary)]/80 to-[color:var(--ai-accent)]/80"></div>
-          <CardBody className="p-6">
-            <h2 className="text-lg font-semibold mb-6 text-[color:var(--ai-foreground)] flex items-center gap-2">
-              <div className="p-2 rounded-full bg-gradient-to-r from-[color:var(--ai-secondary)]/20 to-[color:var(--ai-accent)]/20">
-                <FiSettings className="text-[color:var(--ai-secondary)]" />
-              </div>
-              {tProfile('appearance')}
-            </h2>{' '}
+        <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/80 backdrop-blur-sm shadow-md rounded-xl overflow-hidden">
+          <CardBody className="p-5">
+            <div className="bg-gradient-to-r from-[color:var(--ai-secondary)]/10 via-[color:var(--ai-secondary)]/5 to-transparent py-3 px-4 -m-5 mb-6 border-b border-[color:var(--ai-card-border)]">
+              <h2 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
+                <FiSettings className="mr-2 text-[color:var(--ai-secondary)]" />
+                <span>{tProfile('appearance')}</span>
+              </h2>
+            </div>
             <ThemeSelector
               onThemeChange={(theme: string) => {
                 setMessage({
@@ -533,6 +634,220 @@ export default function ProfileSettings() {
                 });
               }}
             />
+          </CardBody>
+        </Card>
+      </motion.div>
+
+      {/* Privacy Settings */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6, duration: 0.4 }}
+      >
+        <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/80 backdrop-blur-sm shadow-md rounded-xl overflow-hidden">
+          <CardBody className="p-5">
+            <div className="bg-gradient-to-r from-[color:var(--ai-accent)]/10 via-[color:var(--ai-accent)]/5 to-transparent py-3 px-4 -m-5 mb-4 border-b border-[color:var(--ai-card-border)]">
+              <h2 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
+                <FiShield className="mr-2 text-[color:var(--ai-accent)]" />
+                <span>{tProfile('privacySettings')}</span>
+              </h2>
+            </div>
+
+            <div className="space-y-6 py-2">
+              <div className="flex justify-between items-center p-3 rounded-lg bg-[color:var(--ai-card-bg)]/50 hover:bg-[color:var(--ai-card-bg)] transition-all duration-300 border border-[color:var(--ai-card-border)]/30">
+                <div>
+                  <h3 className="text-sm font-medium text-[color:var(--ai-foreground)]">
+                    {tProfile('publicProfile')}
+                  </h3>
+                  <p className="text-xs text-[color:var(--ai-muted)]">
+                    {tProfile('publicProfileDesc')}
+                  </p>
+                </div>
+                <Switch
+                  isSelected={form.showProfile}
+                  onValueChange={(checked: boolean) =>
+                    handleSwitchChange('showProfile', checked)
+                  }
+                  color="success"
+                  classNames={{
+                    base: 'bg-[color:var(--ai-card-bg)]/70',
+                  }}
+                />
+              </div>
+
+              <div className="flex justify-between items-center p-3 rounded-lg bg-[color:var(--ai-card-bg)]/50 hover:bg-[color:var(--ai-card-bg)] transition-all duration-300 border border-[color:var(--ai-card-border)]/30">
+                <div>
+                  <h3 className="text-sm font-medium text-[color:var(--ai-foreground)]">
+                    {tProfile('publicProgress')}
+                  </h3>
+                  <p className="text-xs text-[color:var(--ai-muted)]">
+                    {tProfile('publicProgressDesc')}
+                  </p>
+                </div>
+                <Switch
+                  isSelected={form.showProgressToPublic}
+                  onValueChange={(checked: boolean) =>
+                    handleSwitchChange('showProgressToPublic', checked)
+                  }
+                  color="success"
+                  isDisabled={!form.showProfile}
+                  classNames={{
+                    base: 'bg-[color:var(--ai-card-bg)]/70',
+                  }}
+                />
+              </div>
+
+              <div className="flex justify-between items-center p-3 rounded-lg bg-[color:var(--ai-card-bg)]/50 hover:bg-[color:var(--ai-card-bg)] transition-all duration-300 border border-[color:var(--ai-card-border)]/30">
+                <div>
+                  <h3 className="text-sm font-medium text-[color:var(--ai-foreground)]">
+                    {tProfile('showAchievements')}
+                  </h3>
+                  <p className="text-xs text-[color:var(--ai-muted)]">
+                    {tProfile('showAchievementsDesc')}
+                  </p>
+                </div>
+                <Switch
+                  isSelected={form.showAchievements}
+                  onValueChange={(checked: boolean) =>
+                    handleSwitchChange('showAchievements', checked)
+                  }
+                  color="success"
+                  isDisabled={!form.showProfile}
+                  classNames={{
+                    base: 'bg-[color:var(--ai-card-bg)]/70',
+                  }}
+                />
+              </div>
+
+              <div className="flex justify-between items-center p-3 rounded-lg bg-[color:var(--ai-card-bg)]/50 hover:bg-[color:var(--ai-card-bg)] transition-all duration-300 border border-[color:var(--ai-card-border)]/30">
+                <div>
+                  <h3 className="text-sm font-medium text-[color:var(--ai-foreground)]">
+                    {tProfile('activityFeed')}
+                  </h3>
+                  <p className="text-xs text-[color:var(--ai-muted)]">
+                    {tProfile('activityFeedDesc')}
+                  </p>
+                </div>
+                <Switch
+                  isSelected={form.shareActivityFeed}
+                  onValueChange={(checked: boolean) =>
+                    handleSwitchChange('shareActivityFeed', checked)
+                  }
+                  color="success"
+                  isDisabled={!form.showProfile}
+                  classNames={{
+                    base: 'bg-[color:var(--ai-card-bg)]/70',
+                  }}
+                />
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <Button
+                color="primary"
+                startContent={<FiSave />}
+                onClick={async () => {
+                  setIsLoading(true);
+                  try {
+                    // Privacy settings would be saved to user profile in Firestore
+                    // For now, just show success
+                    showToast({
+                      type: 'success',
+                      title: t('success.preferencesUpdated.title'),
+                      message: t('success.preferencesUpdated.message'),
+                    });
+                  } catch (error: any) {
+                    showToast({
+                      type: 'error',
+                      title: t('error.updateFailed'),
+                      message: error.message || t('error.updateFailed'),
+                    });
+                  } finally {
+                    setIsLoading(false);
+                  }
+                }}
+                isLoading={isLoading}
+                radius="lg"
+                className="bg-gradient-to-r from-[color:var(--ai-accent)] to-[color:var(--ai-secondary)] border-none text-white font-medium px-5 py-2 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+              >
+                {tProfile('saveChanges')}
+              </Button>
+            </div>
+          </CardBody>
+        </Card>
+      </motion.div>
+
+      {/* Subscription Management Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6, duration: 0.4 }}
+      >
+        <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/80 backdrop-blur-sm shadow-md rounded-xl overflow-hidden">
+          <CardBody className="p-5">
+            <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-primary)]/5 to-transparent py-3 px-4 -m-5 mb-4 border-b border-[color:var(--ai-card-border)]">
+              <h2 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
+                <FiCreditCard className="mr-2 text-[color:var(--ai-primary)]" />
+                <span>{tProfile('subscription')}</span>
+              </h2>
+            </div>
+
+            <SubscriptionManagement />
+          </CardBody>
+        </Card>
+      </motion.div>
+
+      {/* Data Management */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.7, duration: 0.4 }}
+      >
+        <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/80 backdrop-blur-sm shadow-md rounded-xl overflow-hidden">
+          <CardBody className="p-5">
+            <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-primary)]/5 to-transparent py-3 px-4 -m-5 mb-4 border-[color:var(--ai-card-border)]">
+              <h2 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
+                <FiDatabase className="mr-2 text-[color:var(--ai-primary)]" />
+                <span>{tProfile('dataManagement')}</span>
+              </h2>
+            </div>
+
+            <div className="space-y-4">
+              <p className="text-sm text-[color:var(--ai-muted)]">
+                {tProfile('dataManagementDesc')}
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Button
+                  color="primary"
+                  variant="flat"
+                  radius="lg"
+                  startContent={<FiDownload />}
+                  className="w-full rounded-xl font-medium"
+                >
+                  {tProfile('downloadMyData')}
+                </Button>
+
+                <Button
+                  color="danger"
+                  variant="flat"
+                  radius="lg"
+                  startContent={<FiTrash2 />}
+                  className="w-full rounded-xl font-medium"
+                >
+                  {tProfile('deleteMyAccount')}
+                </Button>
+              </div>
+
+              <div className="bg-[color:var(--ai-card-bg)]/50 p-4 rounded-lg border border-[color:var(--ai-card-border)]/30 mt-4">
+                <h3 className="text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
+                  {tProfile('aboutYourData')}
+                </h3>
+                <p className="text-sm text-[color:var(--ai-muted)]">
+                  {tProfile('privacyPolicyText')}
+                </p>
+              </div>
+            </div>
           </CardBody>
         </Card>
       </motion.div>

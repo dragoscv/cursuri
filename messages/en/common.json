@@ -2,13 +2,15 @@
   "nav": {
     "home": "Home",
     "courses": "Courses",
+    "subscriptions": "Subscriptions",
     "about": "About",
     "contact": "Contact",
     "admin": "Admin",
     "profile": "Profile",
     "allCourses": "All Courses",
     "featuredCourses": "Featured Courses",
-    "testimonials": "Testimonials"
+    "testimonials": "Testimonials",
+    "brandName": "StudiAI"
   },
   "buttons": {
     "login": "Login",
@@ -40,10 +42,14 @@
   "footer": {
     "about": "Quality programming courses to help you master modern web and mobile development.",
     "quickLinks": "Quick Links",
+    "legal": "Legal",
     "connect": "Connect",
     "contactEmail": "Contact us at",
     "copyright": "All rights reserved.",
-    "version": "Version"
+    "version": "Version",
+    "privacyPolicy": "Privacy Policy",
+    "termsConditions": "Terms & Conditions",
+    "gdpr": "GDPR Policy"
   },
   "loading": "Loading...",
   "saving": "Saving...",
@@ -175,6 +181,12 @@
     "errorIllustration": "Error illustration"
   },
   "lastUpdated": "Last updated: {date}",
+  "policyLinks": {
+    "privacyPolicy": "Privacy Policy",
+    "termsConditions": "Terms & Conditions",
+    "gdprPolicy": "GDPR Policy",
+    "backToHome": "Back to Home"
+  },
   "videoPlayer": {
     "noVideoAvailable": "No video available for this lesson",
     "playVideo": "Play video",

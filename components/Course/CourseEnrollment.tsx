@@ -4,7 +4,9 @@ import { Course, ModalProps } from '../../types';
 import { getCoursePrice as getUnifiedCoursePrice } from '@/utils/pricing';
 import { useTranslations } from 'next-intl';
 import { AppContext } from '@/components/AppContext';
-import { Button, Progress, Chip, Divider, Card } from '@heroui/react';
+import { Chip, Divider, Card } from '@heroui/react';
+import Button from '@/components/ui/Button';
+import Progress from '@/components/ui/Progress';
 import { motion } from 'framer-motion';
 import {
   FiShoppingCart,
@@ -174,7 +176,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
             <p className="text-sm text-[color:var(--ai-muted)]">{t('completePrerequisites')}</p>
           </div>
         ),
-        onClose: () => {},
+        onClose: () => { },
       });
       return;
     }
@@ -259,7 +261,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
             </Chip>
           </div>{' '}
           {/* Progress card */}
-          <div className="bg-gradient-to-br from-[color:var(--ai-success)]/10 via-[color:var(--ai-primary)]/5 to-[color:var(--ai-success)]/10 backdrop-blur-sm rounded-xl p-5 border border-[color:var(--ai-success)]/20 shadow-sm hover:shadow-md transition-all duration-300 mb-6">
+          <div className="bg-gradient-to-br from-[color:var(--ai-success)]/10 via-[color:var(--ai-primary)]/5 to-[color:var(--ai-success)]/10 backdrop-blur-sm rounded-xl p-5 border border-[color:var(--ai-card-border)] shadow-sm hover:shadow-md transition-all duration-300 mb-6">
             <div className="flex items-center justify-between mb-3">
               <span className="text-sm font-medium text-[color:var(--ai-foreground)]">
                 {t('yourProgress')}
@@ -270,8 +272,10 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
             </div>{' '}
             <Progress
               value={progressPercentage}
+              minValue={0}
+              maxValue={100}
               color="success"
-              className="mb-2 h-2 rounded-full overflow-hidden"
+              className="mb-2"
               size="sm"
               aria-label="Course progress"
             />
@@ -282,9 +286,9 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
               <span>
                 {totalLessons > 0
                   ? t('lessonsProgress', {
-                      completed: Object.values(completedLessons).filter((c) => c === true).length,
-                      total: totalLessons,
-                    })
+                    completed: Object.values(completedLessons).filter((c) => c === true).length,
+                    total: totalLessons,
+                  })
                   : t('inProgress')}
               </span>
             </div>
@@ -557,11 +561,10 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
                 return (
                   <div
                     key={prerequisiteId}
-                    className={`flex items-center justify-between p-2 rounded-md mb-2 ${
-                      hasPurchased
-                        ? 'bg-[color:var(--ai-success)]/10 border border-[color:var(--ai-success)]/20'
-                        : 'bg-[color:var(--ai-accent)]/10 border border-[color:var(--ai-accent)]/20'
-                    }`}
+                    className={`flex items-center justify-between p-2 rounded-md mb-2 ${hasPurchased
+                      ? 'bg-[color:var(--ai-success)]/10 border border-[color:var(--ai-success)]/20'
+                      : 'bg-[color:var(--ai-accent)]/10 border border-[color:var(--ai-accent)]/20'
+                      }`}
                   >
                     <div className="flex items-center gap-2">
                       {hasPurchased ? (

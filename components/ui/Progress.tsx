@@ -1,7 +1,6 @@
 'use client';
 
 import React, { forwardRef } from 'react';
-import { Progress as HeroProgress, type ProgressProps as HeroProgressProps } from '@heroui/react';
 
 export interface ProgressProps {
   /**
@@ -32,12 +31,16 @@ export interface ProgressProps {
   /**
    * The radius of the progress bar
    */
-  radius?: 'none' | 'sm' | 'md' | 'lg' | 'full' /**
+  radius?: 'none' | 'sm' | 'md' | 'lg' | 'full';
+
+  /**
    * Whether to show the progress value label
-   */;
-  showValueLabel?: boolean /**
+   */
+  showValueLabel?: boolean;
+
+  /**
    * Custom formatting for the value label
-   */;
+   */
   formatOptions?: Intl.NumberFormatOptions;
 
   /**
@@ -78,72 +81,75 @@ export interface ProgressProps {
 }
 
 /**
- * Progress bar component for displaying completion or loading status
+ * Custom Progress bar component for displaying completion or loading status
  */
 const Progress = forwardRef<HTMLDivElement, ProgressProps>((props, ref) => {
   const {
-    value,
+    value = 0,
     minValue = 0,
     maxValue = 100,
     size = 'md',
     color = 'primary',
     radius = 'full',
     showValueLabel = false,
-    formatOptions,
-    isIndeterminate = false,
-    isStriped = false,
-    isAnimated = false,
     className = '',
     classNames = {},
     ...rest
   } = props;
 
-  // Default classnames with custom theming
-  const defaultClassNames = {
-    base: 'w-full',
-    track: 'bg-[color:var(--ai-card-border)]',
-    indicator: `${
-      color === 'primary'
-        ? 'bg-[color:var(--ai-primary)]'
-        : color === 'secondary'
-          ? 'bg-[color:var(--ai-secondary)]'
-          : color === 'success'
-            ? 'bg-[color:var(--ai-success)]'
-            : color === 'warning'
-              ? 'bg-[color:var(--ai-warning)]'
-              : color === 'danger'
-                ? 'bg-[color:var(--ai-danger)]'
-                : 'bg-[color:var(--ai-primary)]'
-    }`,
-    label: 'text-[color:var(--ai-foreground)]',
-    value: 'text-[color:var(--ai-foreground-inverse)]',
+  // Calculate percentage
+  const percentage = Math.min(Math.max(((value - minValue) / (maxValue - minValue)) * 100, 0), 100);
+
+  // Size classes
+  const sizeClasses: Record<string, string> = {
+    sm: 'h-2',
+    md: 'h-3',
+    lg: 'h-4',
   };
 
-  // Merge default classnames with user-provided ones
-  const mergedClassNames = {
-    base: `${defaultClassNames.base} ${classNames.base || ''}`,
-    track: `${defaultClassNames.track} ${classNames.track || ''}`,
-    indicator: `${defaultClassNames.indicator} ${classNames.indicator || ''}`,
-    label: `${defaultClassNames.label} ${classNames.label || ''}`,
-    value: `${defaultClassNames.value} ${classNames.value || ''}`,
+  // Radius classes
+  const radiusClasses: Record<string, string> = {
+    none: 'rounded-none',
+    sm: 'rounded-sm',
+    md: 'rounded-md',
+    lg: 'rounded-lg',
+    full: 'rounded-full',
+  };
+
+  // Color classes for indicator
+  const colorClasses: Record<string, string> = {
+    default: 'bg-gray-500',
+    primary: 'bg-blue-500',
+    secondary: 'bg-purple-500',
+    success: 'bg-green-500',
+    warning: 'bg-yellow-500',
+    danger: 'bg-red-500',
   };
 
   return (
-    <HeroProgress
-      value={value}
-      minValue={minValue}
-      maxValue={maxValue}
-      size={size as HeroProgressProps['size']}
-      color={color as HeroProgressProps['color']}
-      radius={radius as HeroProgressProps['radius']}
-      showValueLabel={showValueLabel}
-      formatOptions={formatOptions}
-      isIndeterminate={isIndeterminate}
-      isStriped={isStriped && !isAnimated ? true : isStriped}
-      className={`${className} ${isAnimated ? 'animate-progress-stripe' : ''}`}
-      classNames={mergedClassNames}
+    <div
+      ref={ref}
+      className={`w-full ${classNames.base || ''} ${className}`}
       {...rest}
-    />
+    >
+      <div
+        className={`w-full ${sizeClasses[size]} ${radiusClasses[radius]} bg-gray-200 dark:bg-gray-700 border border-[color:var(--ai-card-border)] overflow-hidden ${classNames.track || ''}`}
+      >
+        <div
+          className={`h-full ${radiusClasses[radius]} ${colorClasses[color]} transition-all duration-300 ease-in-out ${classNames.indicator || ''}`}
+          style={{ width: `${percentage}%`, minWidth: percentage > 0 ? '2px' : '0' }}
+          role="progressbar"
+          aria-valuenow={value}
+          aria-valuemin={minValue}
+          aria-valuemax={maxValue}
+        />
+      </div>
+      {showValueLabel && (
+        <div className={`mt-1 text-xs text-[color:var(--ai-foreground)] ${classNames.value || ''}`}>
+          {Math.round(percentage)}%
+        </div>
+      )}
+    </div>
   );
 });
 

@@ -665,12 +665,26 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
       const isCurrentlyCompleted = currentProgress?.isCompleted || false;
 
       // Toggle the completion status
-      return saveLessonProgress(
+      const result = await saveLessonProgress(
         courseId,
         lessonId,
         currentProgress?.lastPosition || 0,
         !isCurrentlyCompleted
       );
+
+      // Trigger achievement sync if lesson was marked as complete (not uncomplete)
+      if (result && !isCurrentlyCompleted) {
+        // Import and call syncAchievements to check if user unlocked any achievements
+        // This is done asynchronously to not block the UI
+        try {
+          // Note: syncAchievements will be called by useAchievements hook which monitors lessonProgress changes
+          // We don't need to manually call it here as the context update will trigger the hook
+        } catch (error) {
+          console.error('Achievement sync failed (non-critical):', error);
+        }
+      }
+
+      return result;
     },
     [saveLessonProgress, state.lessonProgress]
   );
@@ -1531,6 +1545,65 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
   // Track previous user for logout logging
   const prevUserRef = React.useRef<User | null>(null);
 
+  // Helper function to update login streak
+  const updateLoginStreak = async (userId: string) => {
+    try {
+      const statsRef = doc(firestoreDB, `users/${userId}/profile/stats`);
+      const statsSnap = await getDoc(statsRef);
+
+      // Get today's date in YYYY-MM-DD format (UTC for consistency)
+      const today = new Date().toISOString().split('T')[0];
+
+      let loginStreak = 1;
+      let lastLoginDate = today;
+
+      if (statsSnap.exists()) {
+        const statsData = statsSnap.data();
+        const previousLoginDate = statsData.lastLoginDate;
+        const previousStreak = statsData.loginStreak || 0;
+
+        if (previousLoginDate === today) {
+          // Already logged in today, don't increment
+          loginStreak = previousStreak;
+        } else if (previousLoginDate) {
+          // Calculate days difference
+          const lastDate = new Date(previousLoginDate);
+          const currentDate = new Date(today);
+          const diffTime = currentDate.getTime() - lastDate.getTime();
+          const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+          if (diffDays === 1) {
+            // Consecutive day, increment streak
+            loginStreak = previousStreak + 1;
+          } else {
+            // Streak broken, reset to 1
+            loginStreak = 1;
+          }
+        }
+
+        // Update existing stats document
+        await updateDoc(statsRef, {
+          loginStreak,
+          lastLoginDate: today,
+          updatedAt: Timestamp.now()
+        });
+      } else {
+        // Create new stats document
+        await setDoc(statsRef, {
+          loginStreak: 1,
+          lastLoginDate: today,
+          createdAt: Timestamp.now(),
+          updatedAt: Timestamp.now()
+        });
+      }
+
+      console.log(`Login streak updated: ${loginStreak} days`);
+    } catch (error) {
+      // Fail-open: Don't break auth flow if streak tracking fails
+      console.error('Login streak tracking failed (non-critical):', error);
+    }
+  };
+
   useEffect(() => {
     // Store the auth unsubscribe function in a variable so we can clean up
     const unsubscribe = onAuthStateChanged(firebaseAuth, async (currentUser) => {
@@ -1553,6 +1626,9 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
           // Fail-open: Don't break auth flow if logging fails
           console.error('Auth event logging failed (non-critical):', logError);
         }
+
+        // Update login streak
+        await updateLoginStreak(currentUser.uid);
 
         // Use new RBAC system
         try {

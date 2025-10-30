@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Button } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { useAuth } from '../contexts/modules';
 import { useTranslations } from 'next-intl';
 

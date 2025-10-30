@@ -46,32 +46,60 @@ export default function usePaymentHistory(): PaymentHistoryData {
             try {
                 // Get payments from Firestore
                 const paymentsRef = collection(firestoreDB, `customers/${user.uid}/payments`);
-                const q = query(paymentsRef, orderBy('created', 'desc'));
-                const paymentsSnap = await getDocs(q);
+                // Note: We'll sort in memory since different sources use different field names
+                const paymentsSnap = await getDocs(paymentsRef);
 
                 const paymentsList: Payment[] = [];
 
                 paymentsSnap.forEach(doc => {
                     const paymentData = doc.data();
-                    const courseId = paymentData.metadata?.courseId;
+
+                    // Support both Stripe extension format and custom format
+                    const courseId = paymentData.metadata?.courseId || paymentData.courseId;
                     const course = courseId ? courses[courseId] : null;
+
+                    // Handle amount - Stripe extension uses amount_total (in cents), custom format uses amount (already in dollars)
+                    const rawAmount = paymentData.amount_total ?? paymentData.amount ?? 0;
+                    const amount = paymentData.amount_total ? rawAmount / 100 : rawAmount;
+
+                    // Handle currency
+                    const currency = (paymentData.currency || 'USD').toUpperCase();
+
+                    // Handle date - Stripe extension uses created (timestamp), custom format uses createdAt (ISO string)
+                    let date: Date;
+                    if (paymentData.created) {
+                        date = new Date(paymentData.created * 1000);
+                    } else if (paymentData.createdAt) {
+                        date = typeof paymentData.createdAt === 'string'
+                            ? new Date(paymentData.createdAt)
+                            : paymentData.createdAt.toDate();
+                    } else {
+                        date = new Date();
+                    }
 
                     const payment: Payment = {
                         id: doc.id,
                         courseId: courseId,
                         courseName: course?.name || 'Unknown Course',
                         productId: paymentData.items?.[0]?.price?.product || '',
-                        amount: paymentData.amount_total / 100, // Convert cents to dollars/etc
-                        currency: paymentData.currency?.toUpperCase() || 'USD',
-                        formattedAmount: `${(paymentData.amount_total / 100).toFixed(2)} ${paymentData.currency?.toUpperCase() || 'USD'}`,
+                        amount: amount,
+                        currency: currency,
+                        formattedAmount: `${amount.toFixed(2)} ${currency}`,
                         status: paymentData.status,
-                        date: paymentData.created ? new Date(paymentData.created * 1000) : new Date(),
+                        date: date,
                         customerId: paymentData.customer,
                         paymentMethod: paymentData.payment_method_types?.[0] || 'card',
                         metadata: paymentData.metadata || {},
                     };
 
                     paymentsList.push(payment);
+                });
+
+                // Sort by date in descending order
+                paymentsList.sort((a, b) => {
+                    const dateA = a.date instanceof Date ? a.date : new Date(a.date!);
+                    const dateB = b.date instanceof Date ? b.date : new Date(b.date!);
+                    return dateB.getTime() - dateA.getTime();
                 });
 
                 setPayments(paymentsList);

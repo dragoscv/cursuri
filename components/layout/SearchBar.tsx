@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
-import { Input, Button } from '@heroui/react'  // Updated to use HeroUI
+import { Input } from '@heroui/react';  // Updated to use HeroUI
+import Button from '@/components/ui/Button';
 import { useRouter, usePathname } from 'next/navigation'
 import { useContext } from 'react'
 import { AppContext } from '../AppContext'

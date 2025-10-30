@@ -374,8 +374,8 @@ export default function AddCourse(props: AddCourseProps) {
                             </h1>
                             <p className="text-[color:var(--ai-muted)] mt-2">
                                 {editMode
-                                    ? 'Update your course information and materials'
-                                    : 'Add a new course to your platform with all necessary details'}
+                                    ? tCourses('addCourse.updateCourseInfo')
+                                    : tCourses('addCourse.addNewCourse')}
                             </p>
                         </div>
                         <Button
@@ -385,7 +385,7 @@ export default function AddCourse(props: AddCourseProps) {
                             size="sm"
                             className="hover:bg-[color:var(--ai-card-border)]/30 transition-all"
                         >
-                            Cancel
+                            {tCourses('addCourse.cancel')}
                         </Button>
                     </div>
                 </div>
@@ -435,7 +435,7 @@ export default function AddCourse(props: AddCourseProps) {
                             <div>
                                 <div className="mb-6">
                                     <label className="text-sm font-medium text-[color:var(--ai-foreground)] mb-2 flex items-center gap-2">
-                                        <FiImage className="text-[color:var(--ai-primary)]" /> Course Image
+                                        <FiImage className="text-[color:var(--ai-primary)]" /> {tCourses('addCourse.courseImage')}
                                     </label>
                                     <CourseImageField
                                         imagePreview={imagePreview}
@@ -463,24 +463,24 @@ export default function AddCourse(props: AddCourseProps) {
                                         <SelectItem itemKey="beginner" value="beginner"
                                             startContent={<Chip color="success" size="sm" variant="flat">Easy</Chip>}
                                         >
-                                            Beginner
+                                            {tCourses('addCourse.beginner')}
                                         </SelectItem>
                                         <SelectItem itemKey="intermediate" value="intermediate"
                                             startContent={<Chip color="warning" size="sm" variant="flat">Medium</Chip>}
                                         >
-                                            Intermediate
+                                            {tCourses('addCourse.intermediate')}
                                         </SelectItem>
                                         <SelectItem itemKey="advanced" value="advanced"
                                             startContent={<Chip color="danger" size="sm" variant="flat">Hard</Chip>}
                                         >
-                                            Advanced
+                                            {tCourses('addCourse.advanced')}
                                         </SelectItem>
                                     </Select>
                                 </div>
 
                                 <div className="mb-6">
                                     <label className="flex items-center gap-2 text-sm font-medium text-[color:var(--ai-foreground)] mb-3">
-                                        <FiFileText className="text-[color:var(--ai-primary)]" /> Category
+                                        <FiFileText className="text-[color:var(--ai-primary)]" /> {tCourses('addCourse.category')}
                                     </label>
                                     <div className="flex flex-wrap gap-2 mb-3 min-h-[40px] p-2 rounded-lg border border-[color:var(--ai-card-border)]/50">
                                         {courseCategory ? (
@@ -496,11 +496,11 @@ export default function AddCourse(props: AddCourseProps) {
                                                 {courseCategory}
                                             </Chip>
                                         ) : (
-                                            <p className="text-sm text-[color:var(--ai-muted)] italic">No category selected</p>
+                                            <p className="text-sm text-[color:var(--ai-muted)] italic">{tCourses('addCourse.noCategorySelected')}</p>
                                         )}
                                     </div>
                                     <div className="flex gap-2">                                        <Input
-                                        placeholder="Add a category"
+                                        placeholder={tCourses('addCourse.addCategory')}
                                         variant="bordered"
                                         value={currentCategory}
                                         onChange={(e: InputChangeEvent) => setCurrentCategory(e.target.value)}
@@ -530,7 +530,7 @@ export default function AddCourse(props: AddCourseProps) {
                                             }}
                                             className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var,--ai-secondary)]"
                                         >
-                                            Add
+                                            {tCourses('addCourse.add')}
                                         </Button>
                                     </div>
                                 </div>
@@ -539,7 +539,7 @@ export default function AddCourse(props: AddCourseProps) {
                             <div className="grid grid-cols-2 gap-6">
                                 <div>
                                     <Select
-                                        label="Status"
+                                        label={tCourses('addCourse.status')}
                                         variant="bordered"
                                         value={courseStatus}
                                         onChange={(e: SelectChangeEvent) => setCourseStatus(e.target.value)}
@@ -553,24 +553,24 @@ export default function AddCourse(props: AddCourseProps) {
                                         <SelectItem itemKey="active" value="active"
                                             startContent={<Chip color="success" size="sm" variant="flat">Live</Chip>}
                                         >
-                                            Active
+                                            {tCourses('addCourse.active')}
                                         </SelectItem>
                                         <SelectItem itemKey="draft" value="draft"
                                             startContent={<Chip color="warning" size="sm" variant="flat">Draft</Chip>}
                                         >
-                                            Draft
+                                            {tCourses('addCourse.draft')}
                                         </SelectItem>
                                         <SelectItem itemKey="archived" value="archived"
                                             startContent={<Chip color="default" size="sm" variant="flat">Archive</Chip>}
                                         >
-                                            Archived
+                                            {tCourses('addCourse.archived')}
                                         </SelectItem>
                                     </Select>
                                 </div>
                                 <div>
-                                    <label className="text-sm font-medium text-[color:var(--ai-foreground)] mb-2 block">Certificate</label>
+                                    <label className="text-sm font-medium text-[color:var(--ai-foreground)] mb-2 block">{tCourses('addCourse.certificate')}</label>
                                     <Tooltip
-                                        content="Course completion certificate will be available"
+                                        content={tCourses('addCourse.certificateAvailable')}
                                         placement="top"
                                     >
                                         <div className="flex items-center h-[40px] mt-1 border border-[color:var(--ai-card-border)]/50 rounded-lg px-3">
@@ -580,7 +580,7 @@ export default function AddCourse(props: AddCourseProps) {
                                                 isSelected={certificateEnabled}
                                                 onValueChange={setCertificateEnabled}
                                             >
-                                                Certificate upon completion
+                                                {tCourses('addCourse.certificateUponCompletion')}
                                             </Switch>
                                         </div>
                                     </Tooltip>
@@ -594,14 +594,14 @@ export default function AddCourse(props: AddCourseProps) {
                     <CardHeader className="flex gap-3 px-6 py-4 border-b border-[color:var(--ai-card-border)]/60 bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-transparent z-10">
                         <FiDollarSign className="text-[color:var(--ai-primary)]" size={20} />
                         <div className="flex flex-col">
-                            <h2 className="text-lg font-semibold text-[color:var(--ai-foreground)]">Pricing</h2>
-                            <p className="text-[color:var(--ai-muted)] text-sm">Set your course price and payment options</p>
+                            <h2 className="text-lg font-semibold text-[color:var(--ai-foreground)]">{tCourses('addCourse.pricing.title')}</h2>
+                            <p className="text-[color:var(--ai-muted)] text-sm">{tCourses('addCourse.pricing.subtitle')}</p>
                         </div>
                     </CardHeader>
                     <CardBody className="p-6">
                         <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/5 to-[color:var(--ai-secondary)]/5 rounded-xl p-4 mb-6">
                             <p className="text-sm text-[color:var(--ai-muted)]">
-                                <span className="font-medium text-[color:var(--ai-foreground)]">Pricing Tip:</span> Choose a competitive price that reflects the value of your course content and target audience.
+                                <span className="font-medium text-[color:var(--ai-foreground)]">{tCourses('addCourse.pricingTip')}</span> {tCourses('addCourse.pricingTipMessage')}
                             </p>
                         </div>                        <Select
                             label={tCourses('form.labels.coursePrice')}
@@ -630,10 +630,10 @@ export default function AddCourse(props: AddCourseProps) {
                         <div className="border border-[color:var(--ai-card-border)]/50 rounded-xl p-4 mt-4 bg-[color:var(--ai-card-bg)]/20">
                             <h3 className="text-sm font-medium text-[color:var(--ai-foreground)] mb-3 flex items-center gap-2">
                                 <FiDollarSign className="text-[color:var(--ai-primary)]" />
-                                Create New Price
+                                {tCourses('addCourse.createNewPrice')}
                             </h3>
                             <p className="text-xs text-[color:var(--ai-muted)] mb-4">
-                                Don't see the price you want? Create a new one for this course.
+                                {tCourses('addCourse.dontSeePrice')}
                             </p>
                             <div className="grid grid-cols-2 gap-3 mb-3">
                                 <Input
@@ -652,7 +652,7 @@ export default function AddCourse(props: AddCourseProps) {
                                     startContent={<FiDollarSign className="text-[color:var(--ai-muted)]" />}
                                 />
                                 <Select
-                                    label="Currency"
+                                    label={tCourses('addCourse.currency')}
                                     variant="bordered"
                                     value={customPriceCurrency}
                                     onChange={(e: SelectChangeEvent) => setCustomPriceCurrency(e.target.value)}
@@ -662,9 +662,9 @@ export default function AddCourse(props: AddCourseProps) {
                                         listboxWrapper: "z-[9999]"
                                     }}
                                 >
-                                    <SelectItem itemKey="ron" value="ron">RON (Romanian Leu)</SelectItem>
-                                    <SelectItem itemKey="usd" value="usd">USD (US Dollar)</SelectItem>
-                                    <SelectItem itemKey="eur" value="eur">EUR (Euro)</SelectItem>
+                                    <SelectItem itemKey="ron" value="ron">{tCourses('addCourse.ronCurrency')}</SelectItem>
+                                    <SelectItem itemKey="usd" value="usd">{tCourses('addCourse.usdCurrency')}</SelectItem>
+                                    <SelectItem itemKey="eur" value="eur">{tCourses('addCourse.eurCurrency')}</SelectItem>
                                 </Select>
                             </div>
                             <Button
@@ -679,7 +679,7 @@ export default function AddCourse(props: AddCourseProps) {
                                 {creatingPrice ? t('actions.creatingPrice') : t('actions.createPrice')}
                             </Button>
                             {!courseName && (
-                                <p className="text-xs text-warning mt-2">Please enter a course name first</p>
+                                <p className="text-xs text-warning mt-2">{tCourses('addCourse.enterNameFirst')}</p>
                             )}
                         </div>
 
@@ -690,10 +690,10 @@ export default function AddCourse(props: AddCourseProps) {
                                 isSelected={allowPromoCodes}
                                 onValueChange={setAllowPromoCodes}
                             >
-                                Allow promotion codes
+                                {tCourses('addCourse.allowPromoCodes')}
                             </Switch>
                             <Tooltip
-                                content="Students can use promotion codes at checkout"
+                                content={tCourses('addCourse.promoCodesCheckout')}
                                 placement="right"
                             >
                                 <div className="ml-1 text-[color:var(--ai-muted)] cursor-help">ⓘ</div>
@@ -715,7 +715,7 @@ export default function AddCourse(props: AddCourseProps) {
                             <div>
                                 <div className="mb-6">
                                     <label className="flex items-center gap-2 text-sm font-medium text-[color:var(--ai-foreground)] mb-3">
-                                        <FiTag className="text-[color:var(--ai-primary)]" /> Tags
+                                        <FiTag className="text-[color:var(--ai-primary)]" /> {tCourses('addCourse.tags')}
                                     </label>
                                     <div className="flex flex-wrap gap-2 mb-3 min-h-[40px] p-2 rounded-lg border border-[color:var(--ai-card-border)]/50">
                                         {courseTags.length > 0 ? courseTags.map((tag) => (
@@ -732,11 +732,11 @@ export default function AddCourse(props: AddCourseProps) {
                                                 {tag}
                                             </Chip>
                                         )) : (
-                                            <p className="text-sm text-[color:var(--ai-muted)] italic">No tags added yet</p>
+                                            <p className="text-sm text-[color:var(--ai-muted)] italic">{tCourses('addCourse.noTagsAdded')}</p>
                                         )}
                                     </div>
                                     <div className="flex gap-2">                                        <Input
-                                        placeholder="Add a tag"
+                                        placeholder={tCourses('addCourse.addTag')}
                                         variant="bordered"
                                         value={currentTag}
                                         onChange={(e: InputChangeEvent) => setCurrentTag(e.target.value)}
@@ -750,14 +750,14 @@ export default function AddCourse(props: AddCourseProps) {
                                             onPress={handleAddTag}
                                             className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var,--ai-secondary)]"
                                         >
-                                            Add
+                                            {tCourses('addCourse.add')}
                                         </Button>
                                     </div>
                                 </div>
 
                                 <div className="mb-6">
                                     <label className="flex items-center gap-2 text-sm font-medium text-[color:var(--ai-foreground)] mb-3">
-                                        <FiTarget className="text-[color:var(--ai-primary]" /> What You'll Learn
+                                        <FiTarget className="text-[color:var(--ai-primary]" /> {tCourses('addCourse.whatYouWillLearn')}
                                     </label>
                                     <div className="space-y-2 mb-3 min-h-[100px]">
                                         {courseObjectives.length > 0 ? courseObjectives.map((objective, index) => (
@@ -776,12 +776,12 @@ export default function AddCourse(props: AddCourseProps) {
                                             </div>
                                         )) : (
                                             <div className="flex items-center justify-center h-[100px] border border-dashed border-[color:var(--ai-card-border)] rounded-lg">
-                                                <p className="text-sm text-[color:var(--ai-muted)] italic">Add learning objectives for your course</p>
+                                                <p className="text-sm text-[color:var(--ai-muted)] italic">{tCourses('addCourse.noObjectives')}</p>
                                             </div>
                                         )}
                                     </div>
                                     <div className="flex gap-2">                                        <Input
-                                        placeholder="Add a learning objective"
+                                        placeholder={tCourses('addCourse.addObjective')}
                                         variant="bordered"
                                         value={currentObjective}
                                         onChange={(e: InputChangeEvent) => setCurrentObjective(e.target.value)}
@@ -795,7 +795,7 @@ export default function AddCourse(props: AddCourseProps) {
                                             onPress={handleAddObjective}
                                             className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var,--ai-secondary)]"
                                         >
-                                            Add
+                                            {tCourses('addCourse.add')}
                                         </Button>
                                     </div>
                                 </div>
@@ -804,7 +804,7 @@ export default function AddCourse(props: AddCourseProps) {
                             <div>
                                 <div>
                                     <label className="flex items-center gap-2 text-sm font-medium text-[color:var(--ai-foreground)] mb-3">
-                                        <FiList className="text-[color:var(--ai-primary)]" /> Course Requirements
+                                        <FiList className="text-[color:var(--ai-primary)]" /> {tCourses('addCourse.courseRequirements')}
                                     </label>
                                     <div className="space-y-2 mb-3 min-h-[100px]">
                                         {courseRequirements.length > 0 ? courseRequirements.map((requirement, index) => (
@@ -823,12 +823,12 @@ export default function AddCourse(props: AddCourseProps) {
                                             </div>
                                         )) : (
                                             <div className="flex items-center justify-center h-[100px] border border-dashed border-[color:var(--ai-card-border)] rounded-lg">
-                                                <p className="text-sm text-[color:var(--ai-muted)] italic">Add prerequisites or requirements for your course</p>
+                                                <p className="text-sm text-[color:var(--ai-muted)] italic">{tCourses('addCourse.noPrerequisites')}</p>
                                             </div>
                                         )}
                                     </div>
                                     <div className="flex gap-2">                                        <Input
-                                        placeholder="Add a requirement"
+                                        placeholder={tCourses('addCourse.addRequirement')}
                                         variant="bordered"
                                         value={currentRequirement}
                                         onChange={(e: InputChangeEvent) => setCurrentRequirement(e.target.value)}
@@ -842,7 +842,7 @@ export default function AddCourse(props: AddCourseProps) {
                                             onPress={handleAddRequirement}
                                             className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var,--ai-secondary)]"
                                         >
-                                            Add
+                                            {tCourses('addCourse.add')}
                                         </Button>
                                     </div>
                                 </div>
@@ -850,7 +850,7 @@ export default function AddCourse(props: AddCourseProps) {
                                 {/* Course Prerequisites */}
                                 <div>
                                     <label className="flex items-center gap-2 text-sm font-medium text-[color:var(--ai-foreground)] mb-3">
-                                        <FiLink className="text-[color:var(--ai-primary)]" /> Course Prerequisites
+                                        <FiLink className="text-[color:var(--ai-primary)]" /> {tCourses('addCourse.coursePrerequisites')}
                                     </label>
                                     <div className="space-y-2 mb-3 min-h-[100px]">
                                         {coursePrerequisites.length > 0 ? coursePrerequisites.map((prerequisiteId) => {
@@ -940,21 +940,21 @@ export default function AddCourse(props: AddCourseProps) {
                     <CardBody className="p-6">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                             <div className="bg-[color:var(--ai-card-bg)]/50 p-4 rounded-xl border border-[color:var(--ai-card-border)]/50">
-                                <h3 className="text-sm font-medium text-[color:var(--ai-muted)] mb-1">Course Name</h3>
-                                <p className="font-medium text-[color:var(--ai-foreground)]">{courseName || 'Not specified'}</p>
+                                <h3 className="text-sm font-medium text-[color:var(--ai-muted)] mb-1">{tCourses('addCourse.courseName')}</h3>
+                                <p className="font-medium text-[color:var(--ai-foreground)]">{courseName || tCourses('addCourse.notSpecified')}</p>
                             </div>
                             <div className="bg-[color:var(--ai-card-bg)]/50 p-4 rounded-xl border border-[color:var(--ai-card-border)]/50">
-                                <h3 className="text-sm font-medium text-[color:var(--ai-muted)] mb-1">Category</h3>
-                                <p className="font-medium text-[color:var(--ai-foreground)]">{courseCategory || 'Not specified'}</p>
+                                <h3 className="text-sm font-medium text-[color:var(--ai-muted)] mb-1">{tCourses('addCourse.category')}</h3>
+                                <p className="font-medium text-[color:var(--ai-foreground)]">{courseCategory || tCourses('addCourse.notSpecified')}</p>
                             </div>
                             <div className="bg-[color:var(--ai-card-bg)]/50 p-4 rounded-xl border border-[color:var,--ai-card-border)]/50">
-                                <h3 className="text-sm font-medium text-[color:var(--ai-muted)] mb-1">Status</h3>
+                                <h3 className="text-sm font-medium text-[color:var(--ai-muted)] mb-1">{tCourses('addCourse.status')}</h3>
                                 <Chip
                                     color={courseStatus === "active" ? "success" : courseStatus === "draft" ? "warning" : "default"}
                                     variant="flat"
                                     size="sm"
                                 >
-                                    {courseStatus === "active" ? "Active" : courseStatus === "draft" ? "Draft" : "Archived"}
+                                    {courseStatus === "active" ? tCourses('addCourse.active') : courseStatus === "draft" ? tCourses('addCourse.draft') : tCourses('addCourse.archived')}
                                 </Chip>
                             </div>
                         </div>
@@ -976,7 +976,7 @@ export default function AddCourse(props: AddCourseProps) {
                                     onPress={onClose}
                                     className="min-w-[100px]"
                                 >
-                                    Cancel
+                                    {tCourses('addCourse.cancel')}
                                 </Button>
 
                                 {loading ? (
@@ -985,7 +985,7 @@ export default function AddCourse(props: AddCourseProps) {
                                         isLoading
                                         className="min-w-[160px] bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
                                     >
-                                        {editMode ? 'Updating...' : 'Creating...'}
+                                        {editMode ? tCourses('addCourse.updating') : tCourses('addCourse.creating')}
                                     </Button>
                                 ) : (
                                     <Button

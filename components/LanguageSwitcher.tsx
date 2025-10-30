@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { Button } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { useRouter } from 'next/navigation';
 
 /**
@@ -31,10 +31,9 @@ const LanguageSwitcher = React.memo(function LanguageSwitcher() {
         onClick={() => switchLanguage('en')}
         className={`
           font-medium text-xs px-3 py-1 min-w-[45px] rounded-full
-          ${
-            currentLocale === 'en'
-              ? 'bg-[color:var(--ai-primary)] text-white'
-              : 'text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]'
+          ${currentLocale === 'en'
+            ? 'bg-[color:var(--ai-primary)] text-white'
+            : 'text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]'
           }
         `}
         aria-label={t('toggleLanguage').replace('{language}', 'English')}
@@ -48,10 +47,9 @@ const LanguageSwitcher = React.memo(function LanguageSwitcher() {
         onClick={() => switchLanguage('ro')}
         className={`
           font-medium text-xs px-3 py-1 min-w-[45px] rounded-full
-          ${
-            currentLocale === 'ro'
-              ? 'bg-[color:var(--ai-primary)] text-white'
-              : 'text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]'
+          ${currentLocale === 'ro'
+            ? 'bg-[color:var(--ai-primary)] text-white'
+            : 'text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]'
           }
         `}
         aria-label={t('toggleLanguage').replace('{language}', 'Romanian')}

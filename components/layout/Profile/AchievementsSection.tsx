@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { Card, CardBody, Chip, Button, Tooltip, Spinner } from '@heroui/react';
+import { Card, CardBody, Chip, Tooltip, Spinner } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { FiAward, FiLock } from '@/components/icons/FeatherIcons';
 import useAchievements from './hooks/useAchievements';
 import AchievementBadge from './AchievementBadge';

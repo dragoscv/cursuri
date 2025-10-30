@@ -7,7 +7,7 @@ export default function useProfileStats() {
         throw new Error("AppContext not found");
     }
 
-    const { user, courses, userPaidProducts, lessonProgress, reviews } = context;
+    const { user, courses, userPaidProducts, lessonProgress, reviews, lessons } = context;
     const [stats, setStats] = useState({
         totalCoursesEnrolled: 0,
         completedCourses: 0,
@@ -48,16 +48,19 @@ export default function useProfileStats() {
             const course = courses[courseId];
 
             if (course) {
-                // Calculate number of lessons
-                const courseLessonsCount = Object.keys(lessonProgress[courseId] || {}).length;
+                // Calculate number of lessons - use lessons collection if available for accurate count
+                const courseLessons = lessons[courseId] || {};
+                const courseLessonsCount = Object.keys(courseLessons).length > 0
+                    ? Object.keys(courseLessons).length
+                    : Object.keys(lessonProgress[courseId] || {}).length; // Fallback to progress count
                 totalLessons += courseLessonsCount;
 
-                // Calculate completed lessons
+                // Calculate completed lessons from progress
                 const courseCompletedLessons = Object.values(lessonProgress[courseId] || {})
                     .filter(progress => progress.isCompleted).length;
                 completedLessons += courseCompletedLessons;
 
-                // Check if course is completed
+                // Check if course is completed (all lessons in course are completed)
                 if (courseLessonsCount > 0 && courseCompletedLessons === courseLessonsCount) {
                     completedCourses++;
                 }
@@ -85,12 +88,16 @@ export default function useProfileStats() {
                                 timestamp = progress.lastUpdated;
                             }
 
+                            // Get real lesson name from lessons data
+                            const lesson = lessons[courseId]?.[lessonId];
+                            const lessonName = lesson?.name || lesson?.title || `Lesson ${lessonId}`;
+
                             recentActivity.push({
                                 type: 'lesson_progress',
                                 courseId,
                                 lessonId,
                                 courseName: course.name,
-                                lessonName: `Lesson ${lessonId}`,
+                                lessonName: lessonName,
                                 date: new Date(timestamp)
                             });
                         }
@@ -111,7 +118,7 @@ export default function useProfileStats() {
             totalHours,
             recentActivity: recentActivity.slice(0, 5) // Only keep the 5 most recent activities
         });
-    }, [user, courses, userPaidProducts, lessonProgress, reviews]);
+    }, [user, courses, userPaidProducts, lessonProgress, reviews, lessons]);
 
     // Calculate progress percentages
     const lessonCompletionPercentage = stats.totalLessons > 0

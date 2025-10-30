@@ -2,7 +2,8 @@
 
 import React, { useContext } from 'react';
 import { useTranslations } from 'next-intl';
-import { Avatar, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@heroui/react';
+import { Avatar, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { AppContext } from '@/components/AppContext';

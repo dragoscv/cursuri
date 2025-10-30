@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Card, CardBody, Progress, Button, Tabs, Tab } from '@heroui/react';
+import { Card, CardBody, Progress, Tabs, Tab } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { FiTrendingUp, FiBarChart2, FiPieChart, FiList } from '@/components/icons/FeatherIcons';
 import ProgressChart from './charts/ProgressChart';
 

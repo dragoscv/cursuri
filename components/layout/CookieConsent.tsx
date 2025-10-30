@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useContext } from 'react';
 import { AppContext } from '../AppContext';
-import { Button, Progress } from '@heroui/react';
+import { Progress } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';

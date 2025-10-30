@@ -3,7 +3,8 @@
 import React, { useEffect, useState, useContext, useCallback, useRef } from "react";
 import { useTranslations } from 'next-intl';
 import { AppContext } from "../AppContext";
-import { Button, Card, Progress } from "@heroui/react";
+import { Card, Progress } from "@heroui/react";
+import Button from '@/components/ui/Button';
 import { useRouter } from "next/navigation";
 import LessonContent from "@/components/Lesson/LessonContent";
 import LessonNavigation from "@/components/Lesson/Navigation/LessonNavigation";

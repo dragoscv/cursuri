@@ -1,5 +1,6 @@
 import React from 'react';
-import { Card, Button } from '@heroui/react';
+import { Card } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { FiDownload } from '@/components/icons/FeatherIcons';
 import { FiFileText } from '@/components/icons/FeatherIcons/FiFileText';
 import { FiLink } from '@/components/icons/FeatherIcons/FiLink';

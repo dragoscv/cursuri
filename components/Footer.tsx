@@ -29,7 +29,7 @@ const Footer = React.memo(function Footer() {
       aria-label={t('accessibility.footerNavigation')}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Left column - About */}
           <div>
             <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-4">
@@ -41,7 +41,7 @@ const Footer = React.memo(function Footer() {
             </p>
           </div>
 
-          {/* Middle column - Quick Links */}
+          {/* Quick Links */}
           <div>
             <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-4">
               {t('footer.quickLinks')}
@@ -86,7 +86,42 @@ const Footer = React.memo(function Footer() {
             </nav>
           </div>
 
-          {/* Right column - Connect */}
+          {/* Legal */}
+          <div>
+            <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-4">
+              {t('footer.legal')}
+            </h3>
+            <nav aria-label={t('footer.legal')}>
+              <ul className="space-y-2">
+                <li>
+                  <Link
+                    href="/privacy-policy"
+                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
+                  >
+                    {t('footer.privacyPolicy')}
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/terms-conditions"
+                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
+                  >
+                    {t('footer.termsConditions')}
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/gdpr"
+                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
+                  >
+                    {t('footer.gdpr')}
+                  </Link>
+                </li>
+              </ul>
+            </nav>
+          </div>
+
+          {/* Connect */}
           <div>
             <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-4">
               {t('footer.connect')}

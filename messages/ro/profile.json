@@ -20,7 +20,11 @@
     "brownSunset": "Apus Maro",
     "yellowMorning": "Dimineață Galbenă",
     "redBlood": "Roșu Sânge",
-    "pinkCandy": "Bomboane Roz"
+    "pinkCandy": "Bomboane Roz",
+    "lightDarkMode": "Mod Luminos/Întunecat",
+    "lightMode": "Mod Luminos",
+    "darkMode": "Mod Întunecat",
+    "colorScheme": "Schemă de Culori"
   },
   "purchases": "Achiziții",
   "certificates": "Certificate",
@@ -73,9 +77,12 @@
     "downloadMyData": "Descarcă Datele Mele",
     "deleteMyAccount": "Șterge Contul Meu",
     "aboutYourData": "Despre Datele Tale",
-    "privacyPolicyNote": "Gestionăm datele tale în conformitate cu"
+    "privacyPolicyNote": "Gestionăm datele tale în conformitate cu",
+    "privacyPolicyLink": "Politica de Confidențialitate",
+    "dataRequestNote": "Poți solicita o copie a datelor tale sau să ștergi contul în orice moment."
   },
   "payment": {
+    "title": "Istoric Plăți",
     "tableHeaders": {
       "course": "Curs",
       "amount": "Sumă",
@@ -138,10 +145,18 @@
     "loadingError": "Nu s-au putut încărca datele căii de învățare. Te rugăm să încerci din nou mai târziu.",
     "progress": "Progres",
     "locked": "Blocat",
-    "completed": "Finalizat"
+    "completed": "Finalizat",
+    "inProgress": "În Desfășurare",
+    "upcoming": "Viitor",
+    "completedPercentage": "finalizat",
+    "prerequisites": "Cerințe Preliminare",
+    "prerequisitesRequired": "Cerințe Preliminare Necesare",
+    "reviewCourse": "Revizuiește Cursul",
+    "continueLearning": "Continuă Învățarea"
   },
   "offline": {
     "title": "Conținut Offline",
+    "loadingOfflineContent": "Se încarcă conținutul offline...",
     "storageUsed": "Spațiu folosit",
     "clearAll": "Șterge Tot",
     "clearContent": "Șterge conținutul offline",
@@ -201,13 +216,41 @@
     "selectLanguage": "Selectează limba preferată",
     "english": "Engleză",
     "romanian": "Română",
+    "emailNotifications": "Notificări Email",
+    "courseUpdates": "Actualizări Cursuri",
+    "marketingEmails": "Email-uri Marketing",
+    "newLessonAlerts": "Alerte Lecții Noi",
+    "newLessonAlertsDesc": "Fii primul care află când sunt publicate lecții noi",
+    "commentReplies": "Răspunsuri la Comentarii",
+    "commentRepliesDesc": "Primește notificări când cineva răspunde la comentariile tale",
+    "certificateNotifications": "Notificări Certificate",
+    "certificateNotificationsDesc": "Primește notificări când câștigi certificate noi",
+    "weeklyDigest": "Rezumat Săptămânal",
+    "weeklyDigestDesc": "Primește un rezumat săptămânal al activităților tale de învățare",
+    "privacySettings": "Setări Confidențialitate",
+    "publicProfile": "Profil Public",
+    "publicProfileDesc": "Fă profilul tău vizibil pentru alți utilizatori",
+    "publicProgress": "Progres Public",
+    "publicProgressDesc": "Permite altora să vadă progresul tău la cursuri",
+    "showAchievements": "Arată Realizări",
+    "showAchievementsDesc": "Afișează certificatele și realizările tale public",
+    "activityFeed": "Flux de Activitate",
+    "activityFeedDesc": "Împărtășește activitatea ta de învățare cu comunitatea",
+    "dataManagement": "Gestionare Date",
+    "dataManagementDesc": "Gestionează datele tale personale și informațiile contului",
+    "downloadMyData": "Descarcă Datele Mele",
+    "deleteMyAccount": "Șterge Contul Meu",
+    "aboutYourData": "Despre Datele Tale",
+    "privacyPolicyText": "Luăm în serios confidențialitatea ta. Citește Politica noastră de Confidențialitate pentru a afla mai multe despre cum gestionăm datele tale.",
     "validation": {
       "passwordTooWeak": "Parolă Prea Slabă",
       "passwordDoesNotMeetRequirements": "Parola nu îndeplinește cerințele de securitate.",
       "passwordsDoNotMatch": "Parolele nu se potrivesc."
     },
     "notificationDescriptions": {
+      "emailNotifications": "Primește actualizări și notificări importante prin email",
       "courseUpdates": "Primește notificări când cursurile la care ești înscris sunt actualizate",
+      "marketingEmails": "Primește actualizări despre cursuri noi și promoții speciale",
       "newLessons": "Fii primul care află când sunt publicate lecții noi",
       "commentReplies": "Primește notificări când cineva răspunde la comentariile tale",
       "certificates": "Primește notificări când obții certificate noi",
@@ -248,6 +291,29 @@
     }
   },
   "courses": {
+    "description": "Accesează cursurile tale și urmărește progresul în învățare.",
+    "status": {
+      "completed": "Finalizat",
+      "inProgress": "În Progres",
+      "notStarted": "Neînceput"
+    },
+    "details": {
+      "defaultDuration": "10 ore",
+      "lessons": "lecții",
+      "complete": "finalizat",
+      "noDescription": "Nu există descriere disponibilă."
+    },
+    "actions": {
+      "viewCourse": "Vizualizează Cursul",
+      "continueLearning": "Continuă Învățarea"
+    },
+    "filter": {
+      "searchPlaceholder": "Caută în cursurile tale",
+      "filtering": "Se filtrează",
+      "all": "Toate",
+      "inProgress": "În Progres",
+      "completed": "Finalizate"
+    },
     "emptyStates": {
       "noMatchingCourses": "Nu s-au găsit cursuri",
       "noMatchingCoursesDesc": "Încearcă să ajustezi criteriile de căutare sau filtrare.",
@@ -263,26 +329,68 @@
       "title": "Gestionare date",
       "aboutYourData": "Despre datele tale"
     },
-    "emailNotifications": "Notificări email",
+    "emailNotifications": "Notificări prin E-mail",
+    "courseUpdates": "Actualizări cursuri",
+    "marketingEmails": "E-mailuri de Marketing",
+    "newLessonAlerts": "Alerte Lecții Noi",
+    "newLessonAlertsDesc": "Fii primul care află când sunt publicate lecții noi",
+    "commentReplies": "Răspunsuri la Comentarii",
+    "commentRepliesDesc": "Primește notificări când cineva răspunde la comentariile tale",
+    "certificateNotifications": "Notificări Certificate",
+    "certificateNotificationsDesc": "Primește notificări când câștigi certificate noi",
+    "weeklyDigest": "Rezumat Săptămânal",
+    "weeklyDigestDesc": "Primește un rezumat săptămânal al activităților tale de învățare",
+    "privacySettings": "Setări Confidențialitate",
+    "publicProfile": "Profil Public",
+    "publicProfileDesc": "Fă profilul tău vizibil pentru alți utilizatori",
+    "publicProgress": "Progres Public",
+    "publicProgressDesc": "Permite altora să vadă progresul tău la cursuri",
+    "showAchievements": "Arată Realizări",
+    "showAchievementsDesc": "Afișează certificatele și realizările tale public",
+    "activityFeed": "Flux de Activitate",
+    "activityFeedDesc": "Împărtășește activitatea ta de învățare cu comunitatea",
+    "dataManagement": "Gestionare Date",
+    "dataManagementDesc": "Gestionează datele tale personale și informațiile contului",
+    "downloadMyData": "Descarcă Datele Mele",
+    "deleteMyAccount": "Șterge Contul Meu",
+    "aboutYourData": "Despre Datele Tale",
+    "privacyPolicyText": "Luăm în serios confidențialitatea ta. Citește Politica noastră de Confidențialitate pentru a afla mai multe despre cum gestionăm datele tale.",
     "notifications": {
       "email": "Notificări email",
       "commentReplies": "Răspunsuri la comentarii",
+      "commentRepliesDesc": "Primește notificări când cineva răspunde la comentariile tale",
       "paymentReceipts": "Chitanțe plăți",
       "certificateNotifications": "Notificări certificate",
+      "certificateNotificationsDesc": "Primește notificări când câștigi certificate noi",
       "marketingEmails": "Emailuri marketing",
+      "marketingEmailsDesc": "Primește oferte promoționale și noutăți despre platforma noastră",
       "courseUpdates": "Actualizări cursuri",
+      "courseUpdatesDesc": "Primește notificări despre conținut nou și actualizări la cursurile tale",
       "title": "Setări notificări",
       "newLessonAlerts": "Alerte lecții noi",
-      "weeklyDigest": "Rezumat săptămânal"
+      "newLessonAlertsDesc": "Fii primul care află când sunt publicate lecții noi",
+      "weeklyDigest": "Rezumat săptămânal",
+      "weeklyDigestDesc": "Primește un rezumat săptămânal al activităților tale de învățare"
     },
     "privacy": {
       "publicProfile": "Profil public",
+      "publicProfileDesc": "Fă profilul tău vizibil pentru alți utilizatori",
       "publicProgress": "Progres public",
+      "publicProgressDesc": "Permite altora să vadă progresul tău la cursuri",
       "showAchievements": "Arată realizări",
+      "showAchievementsDesc": "Afișează certificatele și realizările tale public",
       "title": "Setări confidențialitate",
-      "activityFeed": "Feed activitate"
+      "activityFeed": "Feed activitate",
+      "activityFeedDesc": "Împărtășește activitatea ta de învățare cu comunitatea"
     },
     "courseUpdates": "Actualizări cursuri",
+    "privacySettings": "Setări Confidențialitate",
+    "dataManagement": "Gestionare Date",
+    "subscription": "Abonament",
+    "downloadMyData": "Descarcă Datele Mele",
+    "deleteMyAccount": "Șterge Contul Meu",
+    "aboutYourData": "Despre Datele Tale",
+    "privacyPolicyText": "Luăm în serios confidențialitatea ta. Citește Politica noastră de Confidențialitate pentru a afla mai multe despre cum gestionăm datele tale.",
     "darkMode": "Mod întunecat",
     "title": "Setări Profil"
   },
@@ -296,10 +404,68 @@
     "clearContent": "Șterge conținut offline"
   },
   "dashboard": {
+    "title": "Tabloul Tău de Bord de Învățare",
+    "description": "Urmărește-ți progresul, vezi statistici și continuă învățarea.",
+    "enrolledCourses": "Cursuri Înscrise",
+    "completedCoursesCount": "{count} finalizate",
+    "lessonsCompleted": "Lecții Finalizate",
+    "totalLessons": "{count} în total",
+    "learningHours": "Ore de Învățare",
+    "totalHoursContent": "Ore totale de conținut",
+    "achievements": "Realizări",
+    "achievementsUnlocked": "deblocate",
+    "coursesMastered": "Cursuri stăpânite",
+    "searchCourses": "Caută cursurile tale",
     "pieChart": "Diagramă circulară",
     "courseCompletion": "Finalizare curs",
     "lessonsCompleted": "Lecții finalizate pe curs",
     "barChart": "Diagramă cu bare"
+  },
+  "achievements": {
+    "title": "Realizări și Insigne",
+    "noAchievements": "Nu ai obținut încă nicio realizare.",
+    "unlockMessage": "Finalizează cursuri și lecții pentru a debloca realizări!",
+    "checkForNew": "Verifică Noi Realizări",
+    "yourAchievements": "Realizările Tale",
+    "achievementsToUnlock": "Realizări de Deblocat",
+    "achievementLocked": "Realizare blocată - continuă să înveți pentru a o debloca!",
+    "loading": "Se încarcă realizările...",
+    "loadError": "Nu s-au putut încărca realizările. Te rugăm să încerci din nou mai târziu.",
+    "retry": "Reîncearcă",
+    "badges": {
+      "first_course": {
+        "title": "Primul Curs Finalizat",
+        "description": "Ai finalizat primul tău curs pe Cursuri!"
+      },
+      "five_lessons": {
+        "title": "Pasionat de Învățare",
+        "description": "Ai finalizat 5 lecții pe Cursuri"
+      },
+      "ten_lessons": {
+        "title": "Căutător de Cunoștințe",
+        "description": "Ai finalizat 10 lecții pe Cursuri"
+      },
+      "three_courses": {
+        "title": "Maestru al Învățării",
+        "description": "Ai finalizat 3 cursuri pe Cursuri"
+      },
+      "five_courses": {
+        "title": "Expert în Educație",
+        "description": "Ai finalizat 5 cursuri pe Cursuri"
+      },
+      "first_review": {
+        "title": "Recenzor Gânditor",
+        "description": "Ai lăsat prima ta recenzie la un curs"
+      },
+      "login_streak_7": {
+        "title": "Savant Săptămânal",
+        "description": "Te-ai conectat și ai învățat 7 zile la rând"
+      },
+      "login_streak_30": {
+        "title": "Cursant Dedicat",
+        "description": "Te-ai conectat și ai învățat 30 de zile la rând"
+      }
+    }
   },
   "payments": {
     "title": "Plăți"

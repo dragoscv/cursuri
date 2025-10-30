@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Button } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { FiBook, FiArrowLeft, FiAlertTriangle } from '@/components/icons/FeatherIcons';
 
 interface LessonNotFoundProps {

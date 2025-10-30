@@ -23,7 +23,7 @@ export interface LearningPathData {
 }
 
 export default function useLearningPath(): LearningPathData {
-    const { user, userPaidProducts = [], courses = {}, lessonProgress = {} } = useContext(AppContext) as AppContextProps;
+    const { user, userPaidProducts = [], courses = {}, lessonProgress = {}, lessons = {} } = useContext(AppContext) as AppContextProps;
 
     const [pathData, setPathData] = useState<LearningPathData>({
         currentCourse: '',
@@ -42,10 +42,12 @@ export default function useLearningPath(): LearningPathData {
             }
 
             try {
-                // 1. Get all courses the user has purchased
-                const purchasedCourseIds = userPaidProducts
-                    .filter(product => product.metadata?.courseId)
-                    .map(product => product.metadata.courseId);
+                // 1. Get all courses the user has purchased (remove duplicates)
+                const purchasedCourseIds = Array.from(new Set(
+                    userPaidProducts
+                        .filter(product => product.metadata?.courseId)
+                        .map(product => product.metadata.courseId)
+                ));
 
                 if (purchasedCourseIds.length === 0) {
                     setPathData({
@@ -84,14 +86,17 @@ export default function useLearningPath(): LearningPathData {
                     const course = courses[courseId];
                     if (!course) continue;
 
-                    // Calculate course progress
+                    // Get all lessons for this course from the lessons collection
+                    const courseLessons = lessons[courseId] || {};
+                    const totalCourseLessons = Object.keys(courseLessons).length;
+
+                    // Calculate course progress from lessonProgress
                     const courseLessonsProgress = lessonProgress[courseId] || {};
-                    const totalLessons = Object.keys(courseLessonsProgress).length;
                     const completedLessons = Object.values(courseLessonsProgress)
                         .filter(progress => progress.isCompleted).length;
 
-                    const progress = totalLessons > 0
-                        ? Math.round((completedLessons / totalLessons) * 100)
+                    const progress = totalCourseLessons > 0
+                        ? Math.round((completedLessons / totalCourseLessons) * 100)
                         : 0;
 
                     // Determine course status
@@ -114,11 +119,6 @@ export default function useLearningPath(): LearningPathData {
                         });
 
                         status = allPrereqsMet ? 'upcoming' : 'locked';
-
-                        // If this is the first upcoming course and we don't have a next course yet
-                        if (status === 'upcoming' && !nextCourseId && currentCourseId) {
-                            nextCourseId = courseId;
-                        }
                     }
 
                     courseNodes.push({
@@ -143,12 +143,22 @@ export default function useLearningPath(): LearningPathData {
                     statusPriority[a.status] - statusPriority[b.status]
                 );
 
-                // If we found a current course but no next course, find one
-                if (currentCourseId && !nextCourseId) {
-                    // Find an upcoming course
+                // Determine next course
+                if (currentCourseId) {
+                    // If we have a current course, find the next upcoming course
                     const upcomingCourse = courseNodes.find(node => node.status === 'upcoming');
                     if (upcomingCourse) {
                         nextCourseId = upcomingCourse.id;
+                    }
+                } else {
+                    // If no course is in progress, find the first available course to start
+                    const firstAvailableCourse = courseNodes.find(node =>
+                        node.status === 'upcoming' || node.status === 'locked'
+                    );
+                    if (firstAvailableCourse) {
+                        // Set this as both current and next (since nothing is in progress)
+                        currentCourseId = firstAvailableCourse.id;
+                        currentCourseProgress = 0;
                     }
                 }
 
@@ -172,7 +182,7 @@ export default function useLearningPath(): LearningPathData {
         }
 
         fetchLearningPath();
-    }, [user, userPaidProducts, courses, lessonProgress]);
+    }, [user, userPaidProducts, courses, lessonProgress, lessons]);
 
     return pathData;
 }

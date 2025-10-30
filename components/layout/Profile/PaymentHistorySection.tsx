@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Card, CardBody, Button, Spinner, Tooltip } from '@heroui/react';
+import { Card, CardBody, Spinner, Tooltip } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { FiCreditCard, FiDownload, FiAlertCircle, FiSearch } from '@/components/icons/FeatherIcons';
 import usePaymentHistory from './hooks/usePaymentHistory';
 import { motion } from 'framer-motion';

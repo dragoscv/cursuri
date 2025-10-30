@@ -422,8 +422,8 @@ const AppSettings: React.FC<AppSettingsProps> = ({ userId }) => {
             <div className="bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] p-4 rounded-lg border border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)]">
                 <h3 className="text-sm font-medium text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mb-2">{t('aboutYourData')}</h3>
                 <p className="text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
-                    {t('privacyPolicyNote')} <a href="/privacy-policy" className="text-primary-600 dark:text-primary-400 hover:underline">Privacy Policy</a>.
-                    You can request a copy of your data or delete your account at any time.
+                    {t('privacyPolicyNote')} <a href="/privacy-policy" className="text-primary-600 dark:text-primary-400 hover:underline">{t('privacyPolicyLink')}</a>.
+                    {' '}{t('dataRequestNote')}
                 </p>
             </div>
         </div>

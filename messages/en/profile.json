@@ -20,7 +20,11 @@
     "brownSunset": "Brown Sunset",
     "yellowMorning": "Yellow Morning",
     "redBlood": "Red Blood",
-    "pinkCandy": "Pink Candy"
+    "pinkCandy": "Pink Candy",
+    "lightDarkMode": "Light/Dark Mode",
+    "lightMode": "Light Mode",
+    "darkMode": "Dark Mode",
+    "colorScheme": "Color Scheme"
   },
   "purchases": "Purchases",
   "certificates": "Certificates",
@@ -45,12 +49,55 @@
     "learningHours": "Learning Hours",
     "totalHoursContent": "Total hours of content",
     "achievements": "Achievements",
+    "achievementsUnlocked": "unlocked",
     "coursesMastered": "Courses mastered",
     "searchCourses": "Search your courses"
   },
   "achievements": {
+    "title": "Achievements & Badges",
     "noAchievements": "You haven't earned any achievements yet.",
-    "unlockMessage": "Complete courses and lessons to unlock achievements!"
+    "unlockMessage": "Complete courses and lessons to unlock achievements!",
+    "checkForNew": "Check for New",
+    "yourAchievements": "Your Achievements",
+    "achievementsToUnlock": "Achievements to Unlock",
+    "achievementLocked": "Achievement locked - keep learning to unlock!",
+    "loading": "Loading achievements...",
+    "loadError": "Failed to load achievements. Please try again later.",
+    "retry": "Retry",
+    "badges": {
+      "first_course": {
+        "title": "First Course Completed",
+        "description": "Completed your first course on Cursuri!"
+      },
+      "five_lessons": {
+        "title": "Learning Enthusiast",
+        "description": "Completed 5 lessons on Cursuri"
+      },
+      "ten_lessons": {
+        "title": "Knowledge Seeker",
+        "description": "Completed 10 lessons on Cursuri"
+      },
+      "three_courses": {
+        "title": "Learning Maestro",
+        "description": "Completed 3 courses on Cursuri"
+      },
+      "five_courses": {
+        "title": "Education Expert",
+        "description": "Completed 5 courses on Cursuri"
+      },
+      "first_review": {
+        "title": "Thoughtful Reviewer",
+        "description": "Left your first course review"
+      },
+      "login_streak_7": {
+        "title": "Weekly Scholar",
+        "description": "Logged in and learned for 7 days in a row"
+      },
+      "login_streak_30": {
+        "title": "Dedicated Learner",
+        "description": "Logged in and learned for 30 days in a row"
+      }
+    }
   },
   "appSettings": {
     "title": "Application Settings",
@@ -90,9 +137,12 @@
     "downloadMyData": "Download My Data",
     "deleteMyAccount": "Delete My Account",
     "aboutYourData": "About Your Data",
-    "privacyPolicyNote": "We handle your data in accordance with our"
+    "privacyPolicyNote": "We handle your data in accordance with our",
+    "privacyPolicyLink": "Privacy Policy",
+    "dataRequestNote": "You can request a copy of your data or delete your account at any time."
   },
   "payment": {
+    "title": "Payment History",
     "emptyStates": {
       "noMatchingPayments": "No matching payments found",
       "noMatchingPaymentsDesc": "We couldn't find any payments that match your search. Try adjusting your search criteria.",
@@ -155,7 +205,14 @@
     "loadingError": "Failed to load learning path data. Please try again later.",
     "progress": "Progress",
     "locked": "Locked",
-    "completed": "Completed"
+    "completed": "Completed",
+    "inProgress": "In Progress",
+    "upcoming": "Upcoming",
+    "completedPercentage": "completed",
+    "prerequisites": "Prerequisites",
+    "prerequisitesRequired": "Prerequisites Required",
+    "reviewCourse": "Review Course",
+    "continueLearning": "Continue Learning"
   },
   "offline": {
     "title": "Offline Content",
@@ -219,13 +276,42 @@
     "selectLanguage": "Select your preferred language",
     "english": "English",
     "romanian": "Romanian",
+    "emailNotifications": "Email Notifications",
+    "courseUpdates": "Course Updates",
+    "marketingEmails": "Marketing Emails",
+    "newLessonAlerts": "New Lesson Alerts",
+    "newLessonAlertsDesc": "Be the first to know when new lessons are published",
+    "commentReplies": "Comment Replies",
+    "commentRepliesDesc": "Get notified when someone replies to your comments",
+    "certificateNotifications": "Certificate Notifications",
+    "certificateNotificationsDesc": "Receive notifications when you earn new certificates",
+    "weeklyDigest": "Weekly Digest",
+    "weeklyDigestDesc": "Receive a weekly summary of your learning activities",
+    "privacySettings": "Privacy Settings",
+    "publicProfile": "Public Profile",
+    "publicProfileDesc": "Make your profile visible to other users",
+    "publicProgress": "Public Progress",
+    "publicProgressDesc": "Allow others to see your course progress",
+    "showAchievements": "Show Achievements",
+    "showAchievementsDesc": "Display your certificates and achievements publicly",
+    "activityFeed": "Activity Feed",
+    "activityFeedDesc": "Share your learning activity with the community",
+    "dataManagement": "Data Management",
+    "subscription": "Subscription",
+    "dataManagementDesc": "Manage your personal data and account information",
+    "downloadMyData": "Download My Data",
+    "deleteMyAccount": "Delete My Account",
+    "aboutYourData": "About Your Data",
+    "privacyPolicyText": "We take your privacy seriously. Read our Privacy Policy to learn more about how we handle your data.",
     "validation": {
       "passwordTooWeak": "Password Too Weak",
       "passwordDoesNotMeetRequirements": "Password does not meet security requirements.",
       "passwordsDoNotMatch": "Passwords do not match."
     },
     "notificationDescriptions": {
+      "emailNotifications": "Receive important updates and notifications via email",
       "courseUpdates": "Get notified when courses you're enrolled in are updated",
+      "marketingEmails": "Get updates about new courses and special promotions",
       "newLessons": "Be the first to know when new lessons are published",
       "commentReplies": "Get notified when someone replies to your comments",
       "certificates": "Receive notifications when you earn new certificates",
@@ -266,6 +352,29 @@
     }
   },
   "courses": {
+    "description": "Access your enrolled courses and track your learning progress.",
+    "status": {
+      "completed": "Completed",
+      "inProgress": "In Progress",
+      "notStarted": "Not Started"
+    },
+    "details": {
+      "defaultDuration": "10 hours",
+      "lessons": "lessons",
+      "complete": "complete",
+      "noDescription": "No description available."
+    },
+    "actions": {
+      "viewCourse": "View Course",
+      "continueLearning": "Continue Learning"
+    },
+    "filter": {
+      "searchPlaceholder": "Search your courses",
+      "filtering": "Filtering",
+      "all": "All",
+      "inProgress": "In Progress",
+      "completed": "Completed"
+    },
     "emptyStates": {
       "noMatchingCourses": "No matching courses found",
       "noMatchingCoursesDesc": "Try adjusting your search or filter criteria.",

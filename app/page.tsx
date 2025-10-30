@@ -9,6 +9,7 @@ import StatisticsSection from '@/components/StatisticsSection';
 import CallToActionSection from '@/components/CallToActionSection';
 import FeaturedCoursesSection from '@/components/FeaturedCoursesSection';
 import RecommendedCoursesSection from '@/components/RecommendedCoursesSection';
+import SubscriptionSection from '@/components/Home/SubscriptionSection';
 import { constructMetadata } from '@/utils/metadata';
 import { getTranslations } from 'next-intl/server';
 
@@ -42,6 +43,9 @@ export default function Home() {
 
       {/* Featured Courses section */}
       <FeaturedCoursesSection />
+
+      {/* Subscription plans section */}
+      <SubscriptionSection />
 
       {/* Courses section with ID for scroll targeting */}
       <AvailableCoursesSection />

@@ -1,8 +1,10 @@
 import React from 'react';
-import { Card, CardBody, Button, Chip } from '@heroui/react';
+import { Card, CardBody, Chip } from '@heroui/react';
 import { motion } from 'framer-motion';
 import { FiClock, FiLayers, FiBarChart2 } from '@/components/icons/FeatherIcons';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import Button from '@/components/ui/Button';
 
 interface CourseCardProps {
     course: {
@@ -18,6 +20,8 @@ interface CourseCardProps {
 }
 
 export default function CourseCard({ course }: CourseCardProps) {
+    const t = useTranslations('profile.courses');
+
     return (
         <motion.article
             whileHover={{ y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)' }}
@@ -25,7 +29,7 @@ export default function CourseCard({ course }: CourseCardProps) {
             className="h-full"
             aria-label={`Course: ${course.name}`}
         >
-            <Card className="border border-[color:var(--ai-card-border)] overflow-hidden h-full rounded-xl shadow-sm"
+            <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/80 backdrop-blur-sm overflow-hidden h-full rounded-xl shadow-md"
                 role="region"
                 aria-labelledby={`course-title-${course.courseId}`}>
                 <CardBody className="p-0">
@@ -66,67 +70,69 @@ export default function CourseCard({ course }: CourseCardProps) {
                         {/* Status badge */}
                         <div className="absolute top-4 left-4">
                             {course.status === 'completed' && (
-                                <Chip color="success" variant="flat" size="sm" className="backdrop-blur-sm bg-black/20 border border-green-500/30 text-white shadow-sm">
-                                    Completed
+                                <Chip color="success" variant="flat" size="sm" radius="lg" className="backdrop-blur-md bg-[color:var(--ai-success)]/20 border border-[color:var(--ai-success)]/30 text-white font-medium shadow-lg">
+                                    {t('status.completed')}
                                 </Chip>
                             )}
                             {course.status === 'in-progress' && (
-                                <Chip color="primary" variant="flat" size="sm" className="backdrop-blur-sm bg-black/20 border border-blue-500/30 text-white shadow-sm">
-                                    In Progress
+                                <Chip color="primary" variant="flat" size="sm" radius="lg" className="backdrop-blur-md bg-[color:var(--ai-primary)]/20 border border-[color:var(--ai-primary)]/30 text-white font-medium shadow-lg">
+                                    {t('status.inProgress')}
                                 </Chip>
                             )}
                             {course.status === 'not-started' && (
-                                <Chip color="default" variant="flat" size="sm" className="backdrop-blur-sm bg-black/20 border border-white/20 text-white shadow-sm">
-                                    Not Started
+                                <Chip color="default" variant="flat" size="sm" radius="lg" className="backdrop-blur-md bg-white/20 border border-white/30 text-white font-medium shadow-lg">
+                                    {t('status.notStarted')}
                                 </Chip>
                             )}
                         </div>
                     </div>
 
                     {/* Course details */}
-                    <div className="p-5">
+                    <div className="p-5 bg-[color:var(--ai-card-bg)]">
                         <div className="flex flex-wrap gap-3 mb-4">
                             <div className="inline-flex items-center text-xs text-[color:var(--ai-foreground)]/70 bg-[color:var(--ai-card-bg)]/80 px-2 py-1 rounded-full border border-[color:var(--ai-card-border)]/20">
-                                <FiClock className="mr-1.5 text-[color:var(--ai-primary)]" /> {course.duration || '10 hours'}
+                                <FiClock className="mr-1.5 text-[color:var(--ai-primary)]" /> {course.duration || t('details.defaultDuration')}
                             </div>
                             <div className="inline-flex items-center text-xs text-[color:var(--ai-foreground)]/70 bg-[color:var(--ai-card-bg)]/80 px-2 py-1 rounded-full border border-[color:var(--ai-card-border)]/20">
-                                <FiLayers className="mr-1.5 text-[color:var(--ai-secondary)]" /> {course.totalLessons} lessons
+                                <FiLayers className="mr-1.5 text-[color:var(--ai-secondary)]" /> {course.totalLessons} {t('details.lessons')}
                             </div>
                             <div className="inline-flex items-center text-xs text-[color:var(--ai-foreground)]/70 bg-[color:var(--ai-card-bg)]/80 px-2 py-1 rounded-full border border-[color:var(--ai-card-border)]/20"
                                 role="status"
                                 aria-label={`Course progress: ${course.progress} percent complete`}>
-                                <FiBarChart2 className="mr-1.5 text-[color:var(--ai-accent)]" aria-hidden="true" /> {course.progress}% complete
+                                <FiBarChart2 className="mr-1.5 text-[color:var(--ai-accent)]" aria-hidden="true" /> {course.progress}% {t('details.complete')}
                             </div>
                         </div>
 
-                        <div className="text-sm text-[color:var(--ai-foreground)] line-clamp-2 mb-5 h-10 leading-tight">
-                            {course.description || 'No description available.'}
+                        <div className="text-sm text-[color:var(--ai-foreground)]/80 line-clamp-2 mb-5 h-10 leading-tight">
+                            {course.description || t('details.noDescription')}
                         </div>
 
                         <div className="flex flex-wrap gap-3 mt-4">
-                            <Link href={`/courses/${course.courseId}`}>
-                                <Button
-                                    color="primary"
-                                    size="sm"
-                                    className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] border-none shadow-sm hover:shadow-md transition-shadow"
-                                    aria-label={`View ${course.name} course details`}
-                                >
-                                    View Course
-                                </Button>
-                            </Link>
+                            <Button
+                                as={Link}
+                                href={`/courses/${course.courseId}`}
+                                color="primary"
+                                size="sm"
+                                radius="lg"
+                                className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white border-none shadow-md hover:shadow-lg transition-all duration-200 rounded-xl"
+                                aria-label={`View ${course.name} course details`}
+                            >
+                                {t('actions.viewCourse')}
+                            </Button>
 
                             {course.recentLessonId && (
-                                <Link href={`/courses/${course.courseId}/lessons/${course.recentLessonId}`}>
-                                    <Button
-                                        color="default"
-                                        variant="flat"
-                                        size="sm"
-                                        className="border border-[color:var(--ai-card-border)] hover:bg-[color:var(--ai-primary)]/5 transition-colors"
-                                        aria-label={`Continue learning ${course.name}`}
-                                    >
-                                        Continue Learning
-                                    </Button>
-                                </Link>
+                                <Button
+                                    as={Link}
+                                    href={`/courses/${course.courseId}/lessons/${course.recentLessonId}`}
+                                    color="default"
+                                    variant="bordered"
+                                    size="sm"
+                                    radius="lg"
+                                    className="border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] hover:bg-[color:var(--ai-primary)]/10 hover:border-[color:var(--ai-primary)] transition-all duration-200 rounded-xl"
+                                    aria-label={`Continue learning ${course.name}`}
+                                >
+                                    {t('actions.continueLearning')}
+                                </Button>
                             )}
                         </div>
                     </div>

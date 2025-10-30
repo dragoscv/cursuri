@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { Course } from '@/types';
-import { Button, Input, Chip } from '@heroui/react';
+import { Input, Chip } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { FiLink } from '../../icons/FeatherIcons';
 
 interface PrerequisitesFieldProps {

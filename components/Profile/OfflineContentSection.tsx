@@ -3,7 +3,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AppContext } from '@/components/AppContext';
 import { useOfflineContent } from './hooks/useOfflineContent';
-import { Card, Button, Badge } from '@heroui/react';
+import { Card, Badge } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { FiDownload, FiTrash2, FiWifi, FiWifiOff, FiHardDrive, FiClock } from '@/components/icons/FeatherIcons';
 import { useRouter } from 'next/navigation';
 import { AppContextProps } from '@/types';

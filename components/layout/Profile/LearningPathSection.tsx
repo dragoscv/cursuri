@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Card, CardBody, Progress, Tooltip, Chip, Button } from '@heroui/react';
+import { Card, CardBody, Progress, Tooltip, Chip } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { FiTrendingUp, FiLock, FiCheck, FiPlay, FiChevronRight, FiInfo } from '@/components/icons/FeatherIcons';
 import useLearningPath, { CourseNode } from './hooks/useLearningPath';
 import { AppContext } from '@/components/AppContext';

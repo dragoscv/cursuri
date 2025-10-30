@@ -2,7 +2,8 @@
 
 import React, { useContext } from 'react';
 import Link from 'next/link';
-import { Card, Chip, Avatar, Button } from '@heroui/react';
+import { Card, Chip, Avatar } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { FiHome, FiSettings, FiCreditCard, FiBookOpen, FiUser, FiLogOut, FiAward } from '@/components/icons/FeatherIcons';
 import { signOut } from 'firebase/auth';
 import { firebaseAuth } from '@/utils/firebase/firebase.config';

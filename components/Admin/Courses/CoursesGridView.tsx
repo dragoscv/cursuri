@@ -1,13 +1,15 @@
 import React from 'react';
-import { Card, CardBody, Chip, Button } from '@heroui/react';
+import Link from 'next/link';
+import { Card, CardBody, Chip } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { CourseWithPriceProduct } from '@/types';
 
 interface CoursesGridViewProps {
   courses: Record<string, CourseWithPriceProduct>;
   formatPrice: (course: CourseWithPriceProduct) => string;
-  onViewCourse: (course: CourseWithPriceProduct) => void;
-  onEditCourse: (course: CourseWithPriceProduct) => void;
-  onManageLessons?: (courseId: string) => void;
+  onViewCourse: (course: CourseWithPriceProduct, e?: React.MouseEvent) => void;
+  onEditCourse: (course: CourseWithPriceProduct, e?: React.MouseEvent) => void;
+  onManageLessons?: (courseId: string, e?: React.MouseEvent) => void;
 }
 
 export default function CoursesGridView({
@@ -60,33 +62,29 @@ export default function CoursesGridView({
                     Repo
                   </a>
                 )}
-                <Button
-                  size="sm"
-                  color="primary"
-                  variant="flat"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEditCourse(course);
-                  }}
-                  className="font-medium text-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10 hover:bg-[color:var(--ai-primary)]/20"
-                  aria-label={`Edit ${course.title}`}
-                >
-                  Edit
-                </Button>
-                {onManageLessons && (
+                <Link href={`/admin/courses/${course.id}/edit`}>
                   <Button
                     size="sm"
-                    color="default"
+                    color="primary"
                     variant="flat"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onManageLessons(course.id);
-                    }}
-                    className="font-medium text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-border)]/20"
-                    aria-label={`Manage lessons for ${course.title}`}
+                    className="font-medium text-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10 hover:bg-[color:var(--ai-primary)]/20"
+                    aria-label={`Edit ${course.title}`}
                   >
-                    Manage Lessons
+                    Edit
                   </Button>
+                </Link>
+                {onManageLessons && (
+                  <Link href={`/admin/courses/${course.id}/lessons`}>
+                    <Button
+                      size="sm"
+                      color="default"
+                      variant="flat"
+                      className="font-medium text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-border)]/20"
+                      aria-label={`Manage lessons for ${course.title}`}
+                    >
+                      Manage Lessons
+                    </Button>
+                  </Link>
                 )}
               </div>
             </div>

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Card, CardBody, Button, Chip } from '@heroui/react';
+import { Card, CardBody, Chip } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { motion } from 'framer-motion';
 import { FiClock, FiLayers, FiBarChart2 } from '@/components/icons/FeatherIcons';
 import Link from 'next/link';

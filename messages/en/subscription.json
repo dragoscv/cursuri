@@ -1,0 +1,136 @@
+{
+  "title": "Choose Your Plan",
+  "subtitle": "Get unlimited access to all courses and premium features",
+  "plans": {
+    "free": {
+      "name": "Free",
+      "price": "$0",
+      "period": "forever",
+      "description": "Perfect for getting started",
+      "features": [
+        "Access to free courses",
+        "Basic course materials",
+        "Community support",
+        "Progress tracking",
+        "Certificate of completion"
+      ],
+      "cta": "Current Plan"
+    },
+    "proMonthly": {
+      "name": "Pro Monthly",
+      "price": "$19.99",
+      "period": "per month",
+      "description": "Best for continuous learning",
+      "features": [
+        "Unlimited access to all courses",
+        "Priority support",
+        "Downloadable resources",
+        "Advanced analytics",
+        "Exclusive webinars",
+        "Ad-free experience",
+        "Early access to new content"
+      ],
+      "cta": "Subscribe Monthly",
+      "popular": "Most Popular"
+    },
+    "proYearly": {
+      "name": "Pro Yearly",
+      "price": "$199.99",
+      "period": "per year",
+      "description": "Best value - Save 17%",
+      "features": [
+        "Everything in Pro Monthly",
+        "2 months free",
+        "Priority email support",
+        "Annual progress report",
+        "Exclusive yearly bonus content",
+        "Special community badges"
+      ],
+      "cta": "Subscribe Yearly",
+      "savings": "Save $40/year"
+    }
+  },
+  "benefits": {
+    "title": "Why Go Pro?",
+    "subtitle": "Unlock your full potential with premium features",
+    "list": [
+      {
+        "title": "Unlimited Access",
+        "description": "Learn at your own pace with full access to our entire course library"
+      },
+      {
+        "title": "Priority Support",
+        "description": "Get help when you need it with dedicated priority support"
+      },
+      {
+        "title": "Advanced Features",
+        "description": "Access exclusive tools and analytics to track your progress"
+      },
+      {
+        "title": "Community Access",
+        "description": "Join our exclusive community of Pro learners"
+      }
+    ]
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "questions": [
+      {
+        "question": "Can I cancel anytime?",
+        "answer": "Yes, you can cancel your subscription at any time. You'll continue to have access until the end of your billing period."
+      },
+      {
+        "question": "Do you offer refunds?",
+        "answer": "Yes, we offer a 30-day money-back guarantee. If you're not satisfied, contact us for a full refund."
+      },
+      {
+        "question": "Can I switch between plans?",
+        "answer": "Absolutely! You can upgrade or downgrade your plan at any time from your account settings."
+      },
+      {
+        "question": "What payment methods do you accept?",
+        "answer": "We accept all major credit cards, debit cards, and various other payment methods through Stripe."
+      }
+    ]
+  },
+  "manage": {
+    "title": "Subscription Management",
+    "currentPlan": "Current Plan",
+    "status": {
+      "active": "Active",
+      "trial": "Trial",
+      "pastDue": "Past Due",
+      "canceled": "Canceled"
+    },
+    "currentPeriod": "Current Period",
+    "nextBilling": "Next Billing Date",
+    "cancelAtPeriodEnd": "Cancels at period end",
+    "subscriptionEnding": "Subscription Ending",
+    "accessUntil": "You'll have access until {date}",
+    "cancel": "Cancel Subscription",
+    "upgrade": "Upgrade Plan",
+    "upgradePlan": "Upgrade Plan",
+    "manageSubscription": "Manage Subscription",
+    "billingHistory": "Billing History",
+    "noActiveSubscription": "No Active Subscription",
+    "subscribeToUnlock": "Subscribe to unlock unlimited access to all courses and premium features.",
+    "viewPlans": "View Plans",
+    "notLoggedIn": "Not Logged In",
+    "loginRequired": "Please log in to manage your subscription.",
+    "benefits": {
+      "title": "Your Subscription Benefits",
+      "allCourses": "Unlimited access to all courses",
+      "prioritySupport": "Priority support and assistance",
+      "exclusiveContent": "Exclusive content and resources",
+      "cancelAnytime": "Cancel anytime, no questions asked"
+    }
+  },
+  "toast": {
+    "subscribeSuccess": "Successfully subscribed to {plan}!",
+    "cancelSuccess": "Subscription cancelled successfully",
+    "updateSuccess": "Subscription updated successfully",
+    "error": "Something went wrong. Please try again.",
+    "loginRequired": "Please log in to subscribe",
+    "processing": "Processing..."
+  }
+}

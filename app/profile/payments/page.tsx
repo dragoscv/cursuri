@@ -3,7 +3,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { AppContext } from '@/components/AppContext';
-import { Card, CardBody, Button, Chip, Input } from '@heroui/react';
+import { Card, CardBody, Chip, Input } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import {
@@ -137,17 +138,19 @@ export default function PaymentHistory() {
       {/* Filters and search */}
       <div className="flex flex-col md:flex-row gap-4 mb-8">
         <Input
-          className="md:max-w-xs shadow-sm border border-[color:var(--ai-card-border)]"
+          className="md:max-w-xs shadow-sm border border-[color:var(--ai-card-border)] rounded-xl"
           placeholder={t('payment.search.placeholder')}
           startContent={<FiSearch className="text-[color:var(--ai-muted)]" />}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          radius="lg"
         />
         <div className="inline-flex gap-2 ml-auto">
           <Button
-            className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-primary)]/10 transition-all duration-300"
+            className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-primary)]/10 transition-all duration-300 rounded-xl"
             variant="flat"
             size="sm"
+            radius="lg"
             endContent={
               <div className="bg-[color:var(--ai-primary)]/10 p-1 rounded-full">
                 {sortOrder === 'asc' ? (
@@ -246,15 +249,17 @@ export default function PaymentHistory() {
                             }
                             variant="flat"
                             size="sm"
+                            radius="lg"
                           >
                             {payment.status === 'succeeded' ? tp('status.paid') : payment.status}
                           </Chip>
                         </td>
                         <td className="px-6 py-5 whitespace-nowrap text-right">
                           <Button
-                            className="bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] hover:bg-[color:var(--ai-primary)]/20 border border-[color:var(--ai-primary)]/20 transition-all duration-300"
+                            className="bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] hover:bg-[color:var(--ai-primary)]/20 border border-[color:var(--ai-primary)]/20 transition-all duration-300 rounded-xl"
                             variant="flat"
                             size="sm"
+                            radius="lg"
                             startContent={<FiDownload className="w-4 h-4" />}
                             onClick={() => downloadInvoice(payment)}
                           >
@@ -288,8 +293,9 @@ export default function PaymentHistory() {
                 {t('payment.emptyStates.noMatchingPaymentsDesc')}
               </p>
               <Button
-                className="bg-[color:var(--ai-primary)] hover:bg-[color:var(--ai-primary)]/90 text-white transition-colors duration-300"
+                className="bg-[color:var(--ai-primary)] hover:bg-[color:var(--ai-primary)]/90 text-white transition-colors duration-300 rounded-xl"
                 variant="solid"
+                radius="lg"
                 onClick={() => setSearchTerm('')}
               >
                 {t('payment.emptyStates.clearSearch')}
@@ -307,7 +313,7 @@ export default function PaymentHistory() {
                 {t('payment.emptyStates.noPaymentHistoryDesc')}
               </p>
               <Link href="/courses">
-                <Button className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white hover:opacity-90 transition-opacity duration-300">
+                <Button className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white hover:opacity-90 transition-opacity duration-300 rounded-xl" radius="lg">
                   {t('payment.emptyStates.browseCourses')}
                 </Button>
               </Link>

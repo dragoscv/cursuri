@@ -129,30 +129,26 @@ export default function CoursesPage() {
           title={t('title')}
           description={t('pageDescription')}
           actions={
-            <Link href="/admin/courses/add">
-              <Button
-                color="primary"
-                className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] border-none shadow-sm hover:shadow-md transition-shadow px-4 py-2"
-                startContent={
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M12 4V20M4 12H20"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                }
+            <Link
+              href="/admin/courses/add"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white rounded-lg shadow-sm hover:shadow-md transition-all font-medium"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                {t('addCourse')}
-              </Button>
+                <path
+                  d="M12 4V20M4 12H20"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              {t('addCourse')}
             </Link>
           }
         />
@@ -269,19 +265,17 @@ export default function CoursesPage() {
                           >
                             {t('delete')}
                           </Button>
-                          <Link href={`/admin/courses/${course.id}/edit`}>
-                            <Button size="sm" color="primary" variant="flat">
-                              {t('edit')}
-                            </Button>
+                          <Link
+                            href={`/admin/courses/${course.id}/edit`}
+                            className="inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium text-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10 hover:bg-[color:var(--ai-primary)]/20 rounded-lg transition-colors"
+                          >
+                            {t('edit')}
                           </Link>
-                          <Link href={`/admin/courses/${course.id}/lessons`}>
-                            <Button
-                              size="sm"
-                              color="primary"
-                              className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white"
-                            >
-                              {t('manageLessons')}
-                            </Button>
+                          <Link
+                            href={`/admin/courses/${course.id}/lessons`}
+                            className="inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white rounded-lg shadow-sm hover:shadow-md transition-all"
+                          >
+                            {t('manageLessons')}
                           </Link>
                         </div>
                       </div>
@@ -310,14 +304,11 @@ export default function CoursesPage() {
             </div>
             <p className="text-[color:var(--ai-foreground)] font-medium mb-1">{t('noCourses')}</p>
             <p className="text-[color:var(--ai-muted)] text-sm mb-4">{t('noCoursesDescription')}</p>
-            <Link href="/admin/courses/add">
-              <Button
-                size="md"
-                color="primary"
-                className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white shadow-sm"
-              >
-                {t('addCourse')}
-              </Button>
+            <Link
+              href="/admin/courses/add"
+              className="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white rounded-lg shadow-sm hover:shadow-md transition-all font-medium"
+            >
+              {t('addCourse')}
             </Link>
           </div>
         )}

@@ -41,25 +41,41 @@ export default function AdminTabs({ activeTab, onTabChange, analytics }: AdminTa
     );
 
     // Handlers for navigation
-    const handleAddCourse = () => {
+    const handleAddCourse = (e?: React.MouseEvent) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
         if (isMounted) {
             router.push('/admin/courses/add');
         }
     };
 
-    const handleEditCourse = (course: CourseWithPriceProduct) => {
+    const handleEditCourse = (course: CourseWithPriceProduct, e?: React.MouseEvent) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
         if (isMounted) {
             router.push(`/admin/courses/${course.id}/edit`);
         }
     };
 
-    const handleViewCourse = (course: CourseWithPriceProduct) => {
+    const handleViewCourse = (course: CourseWithPriceProduct, e?: React.MouseEvent) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
         if (isMounted) {
             router.push(`/admin/courses/${course.id}`);
         }
     };
 
-    const handleManageLessons = (courseId: string) => {
+    const handleManageLessons = (courseId: string, e?: React.MouseEvent) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
         if (isMounted) {
             router.push(`/admin/courses/${courseId}/lessons`);
         }

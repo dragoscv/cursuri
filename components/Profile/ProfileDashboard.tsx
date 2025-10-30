@@ -13,6 +13,7 @@ import PaymentHistorySection from './PaymentHistorySection';
 import LearningPathSection from './LearningPathSection';
 import ProfileSettingsSection from './ProfileSettingsSection';
 import OfflineContentSection from './OfflineContentSection';
+import useAchievements from './hooks/useAchievements';
 import { useTranslations } from 'next-intl';
 
 export default function ProfileDashboard() {
@@ -27,14 +28,28 @@ export default function ProfileDashboard() {
         recentActivity,
         lessonCompletionPercentage,
         courseCompletionPercentage
-    } = useProfileStats();    // Get the context to pass to subcomponents
+    } = useProfileStats();
 
+    // Get achievements for real achievement count
+    const { achievements } = useAchievements();
+    const unlockedAchievements = achievements.filter(a => a.isUnlocked).length;
+    const totalAchievements = achievements.length;
+
+    // Get the context to pass to subcomponents
     const context = React.useContext(AppContext) as AppContextProps;
     if (!context) {
         throw new Error("AppContext not found");
     }
 
-    const { user, userPaidProducts = [], courses = {}, lessonProgress = {} } = context;
+    const {
+        user,
+        userPaidProducts = [],
+        courses = {},
+        lessonProgress = {},
+        userPreferences,
+        toggleTheme,
+        saveUserPreferences
+    } = context;
 
     if (!user) {
         return null;
@@ -73,34 +88,52 @@ export default function ProfileDashboard() {
                 <StatsCard
                     icon={<FiAward className="text-[color:var(--ai-accent)]" />}
                     title={t('achievements')}
-                    value={completedCourses}
-                    footer={t('coursesMastered')}
+                    value={unlockedAchievements}
+                    footer={`${unlockedAchievements}/${totalAchievements} ${t('achievementsUnlocked')}`}
                     colorClass="from-[color:var(--ai-accent)] to-[color:var(--ai-primary)]"
                 />
             </div>
 
             {/* Progress Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <DashboardProgress
-                    courseCompletionPercentage={courseCompletionPercentage}
-                    lessonCompletionPercentage={lessonCompletionPercentage}
-                    completedCourses={completedCourses}
-                    totalCoursesEnrolled={totalCoursesEnrolled}
-                    completedLessons={completedLessons}
-                    totalLessons={totalLessons}
-                    userPaidProducts={userPaidProducts}
-                    courses={courses}
-                    lessonProgress={lessonProgress}
-                />
+            <DashboardProgress
+                courseCompletionPercentage={courseCompletionPercentage}
+                lessonCompletionPercentage={lessonCompletionPercentage}
+                completedCourses={completedCourses}
+                totalCoursesEnrolled={totalCoursesEnrolled}
+                completedLessons={completedLessons}
+                totalLessons={totalLessons}
+                userPaidProducts={userPaidProducts}
+                courses={courses}
+                lessonProgress={lessonProgress}
+            />
 
-                {/* Recent Activity */}
-                <RecentActivity activities={recentActivity} />
-            </div>
+            {/* Recent Activity */}
+            <RecentActivity activities={recentActivity} />
 
             {/* New Sections */}
             <AchievementsSection />
             <LearningPathSection />
-            <PaymentHistorySection />            <ProfileSettingsSection />
+            <PaymentHistorySection />
+
+            
+            {/* <ProfileSettingsSection
+                isDark={userPreferences?.isDark ?? false}
+                emailNotifications={userPreferences?.emailNotifications ?? true}
+                courseUpdates={userPreferences?.courseUpdates ?? true}
+                onToggleDark={(value) => {
+                    toggleTheme();
+                }}
+                onToggleEmailNotifications={(value) => {
+                    if (userPreferences && saveUserPreferences) {
+                        saveUserPreferences({ ...userPreferences, emailNotifications: value });
+                    }
+                }}
+                onToggleCourseUpdates={(value) => {
+                    if (userPreferences && saveUserPreferences) {
+                        saveUserPreferences({ ...userPreferences, courseUpdates: value });
+                    }
+                }}
+            /> */}
 
             {/* Offline Content Section */}
             <OfflineContentSection />

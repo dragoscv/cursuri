@@ -25,6 +25,14 @@ export default function NavbarLinks() {
       </NavbarItem>
       <NavbarItem>
         <Link
+          href="/subscriptions"
+          className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition-colors"
+        >
+          {t('nav.subscriptions')}
+        </Link>
+      </NavbarItem>
+      <NavbarItem>
+        <Link
           href="/about"
           className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition-colors"
         >

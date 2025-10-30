@@ -3,7 +3,7 @@
 import React from 'react';
 import { useTranslations } from 'next-intl';
 import { Divider, Card } from '@heroui/react';
-import { Button } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { FiCheck, FiSave, FiPlayCircle, FiClock } from '@/components/icons/FeatherIcons';
 
 interface LessonSettingsProps {
@@ -41,11 +41,10 @@ const LessonSettings: React.FC<LessonSettingsProps> = ({
         <Button
           size="lg"
           color={isCompleted ? 'success' : 'primary'}
-          className={`w-full ${
-            isCompleted
+          className={`w-full ${isCompleted
               ? 'bg-gradient-to-r from-[color:var(--ai-success)] to-[color:var(--ai-primary)]'
               : 'bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]'
-          } text-white border-none shadow-md transition-all duration-300 hover:shadow-lg hover:scale-[1.02] rounded-lg h-12 sm:h-14 font-semibold`}
+            } text-white border-none shadow-md transition-all duration-300 hover:shadow-lg hover:scale-[1.02] rounded-lg h-12 sm:h-14 font-semibold`}
           onClick={onMarkComplete}
           startContent={<FiCheck size={18} />}
         >

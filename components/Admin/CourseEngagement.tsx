@@ -2,7 +2,8 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Card, CardBody, CardHeader, Spinner, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, Button } from '@heroui/react';
+import { Card, CardBody, CardHeader, Spinner, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { AppContext } from '@/components/AppContext';
 import { collection, getFirestore, query } from 'firebase/firestore';
 import { firebaseApp } from '@/utils/firebase/firebase.config';

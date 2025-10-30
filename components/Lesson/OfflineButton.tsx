@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useState, useContext, useEffect } from 'react';
-import { Button, Tooltip, Progress } from '@heroui/react';
+import { Tooltip, Progress } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { FiDownload, FiCheck, FiWifiOff } from '../icons/FeatherIcons';
 import { useOfflineContent } from '@/components/Profile/hooks/useOfflineContent';
 import { Lesson, Course } from '@/types';

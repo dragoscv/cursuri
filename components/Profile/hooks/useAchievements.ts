@@ -3,6 +3,7 @@ import { AppContext } from '@/components/AppContext';
 import { AppContextProps } from '@/types';
 import { collection, doc, getDoc, getDocs, query, where, setDoc, updateDoc, Timestamp } from 'firebase/firestore';
 import { firestoreDB } from '@/utils/firebase/firebase.config';
+import { useTranslations } from 'next-intl';
 
 export interface Achievement {
     id: string;
@@ -26,102 +27,103 @@ export interface AchievementsData {
     syncAchievements: () => Promise<void>;
 }
 
-// Define all possible achievements
-const achievementDefinitions: Omit<Achievement, 'date' | 'isUnlocked'>[] = [
-    {
-        id: 'first_course',
-        title: 'First Course Completed',
-        description: 'Completed your first course on Cursuri!',
-        badgeColor: 'success',
-        imageUrl: '/badges/first-course.svg',
-        criteria: {
-            type: 'first_course'
-        }
-    },
-    {
-        id: 'five_lessons',
-        title: 'Learning Enthusiast',
-        description: 'Completed 5 lessons on Cursuri',
-        badgeColor: 'primary',
-        imageUrl: '/badges/five-lessons.svg',
-        criteria: {
-            type: 'lessons_complete',
-            count: 5
-        }
-    },
-    {
-        id: 'ten_lessons',
-        title: 'Knowledge Seeker',
-        description: 'Completed 10 lessons on Cursuri',
-        badgeColor: 'secondary',
-        imageUrl: '/badges/ten-lessons.svg',
-        criteria: {
-            type: 'lessons_complete',
-            count: 10
-        }
-    },
-    {
-        id: 'three_courses',
-        title: 'Learning Maestro',
-        description: 'Completed 3 courses on Cursuri',
-        badgeColor: 'success',
-        imageUrl: '/badges/three-courses.svg',
-        criteria: {
-            type: 'multiple_courses',
-            count: 3
-        }
-    },
-    {
-        id: 'five_courses',
-        title: 'Education Expert',
-        description: 'Completed 5 courses on Cursuri',
-        badgeColor: 'warning',
-        imageUrl: '/badges/five-courses.svg',
-        criteria: {
-            type: 'multiple_courses',
-            count: 5
-        }
-    },
-    {
-        id: 'first_review',
-        title: 'Thoughtful Reviewer',
-        description: 'Left your first course review',
-        badgeColor: 'accent',
-        imageUrl: '/badges/first-review.svg',
-        criteria: {
-            type: 'first_review'
-        }
-    },
-    {
-        id: 'login_streak_7',
-        title: 'Weekly Scholar',
-        description: 'Logged in and learned for 7 days in a row',
-        badgeColor: 'info',
-        imageUrl: '/badges/login-streak-7.svg',
-        criteria: {
-            type: 'login_streak',
-            count: 7
-        }
-    },
-    {
-        id: 'login_streak_30',
-        title: 'Dedicated Learner',
-        description: 'Logged in and learned for 30 days in a row',
-        badgeColor: 'warning',
-        imageUrl: '/badges/login-streak-30.svg',
-        criteria: {
-            type: 'login_streak',
-            count: 30
-        }
-    }
-];
-
 export default function useAchievements(): AchievementsData {
     const { user, courses = {}, lessonProgress = {}, reviews = {} } = useContext(AppContext) as AppContextProps;
+    const t = useTranslations('profile.achievements.badges');
 
     const [achievements, setAchievements] = useState<Achievement[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    // Define all possible achievements using translations
+    const getAchievementDefinitions = (): Omit<Achievement, 'date' | 'isUnlocked'>[] => [
+        {
+            id: 'first_course',
+            title: t('first_course.title'),
+            description: t('first_course.description'),
+            badgeColor: 'success',
+            imageUrl: '/badges/first-course.svg',
+            criteria: {
+                type: 'first_course'
+            }
+        },
+        {
+            id: 'five_lessons',
+            title: t('five_lessons.title'),
+            description: t('five_lessons.description'),
+            badgeColor: 'primary',
+            imageUrl: '/badges/five-lessons.svg',
+            criteria: {
+                type: 'lessons_complete',
+                count: 5
+            }
+        },
+        {
+            id: 'ten_lessons',
+            title: t('ten_lessons.title'),
+            description: t('ten_lessons.description'),
+            badgeColor: 'secondary',
+            imageUrl: '/badges/ten-lessons.svg',
+            criteria: {
+                type: 'lessons_complete',
+                count: 10
+            }
+        },
+        {
+            id: 'three_courses',
+            title: t('three_courses.title'),
+            description: t('three_courses.description'),
+            badgeColor: 'success',
+            imageUrl: '/badges/three-courses.svg',
+            criteria: {
+                type: 'multiple_courses',
+                count: 3
+            }
+        },
+        {
+            id: 'five_courses',
+            title: t('five_courses.title'),
+            description: t('five_courses.description'),
+            badgeColor: 'warning',
+            imageUrl: '/badges/five-courses.svg',
+            criteria: {
+                type: 'multiple_courses',
+                count: 5
+            }
+        },
+        {
+            id: 'first_review',
+            title: t('first_review.title'),
+            description: t('first_review.description'),
+            badgeColor: 'accent',
+            imageUrl: '/badges/first-review.svg',
+            criteria: {
+                type: 'first_review'
+            }
+        },
+        {
+            id: 'login_streak_7',
+            title: t('login_streak_7.title'),
+            description: t('login_streak_7.description'),
+            badgeColor: 'info',
+            imageUrl: '/badges/login-streak-7.svg',
+            criteria: {
+                type: 'login_streak',
+                count: 7
+            }
+        },
+        {
+            id: 'login_streak_30',
+            title: t('login_streak_30.title'),
+            description: t('login_streak_30.description'),
+            badgeColor: 'warning',
+            imageUrl: '/badges/login-streak-30.svg',
+            criteria: {
+                type: 'login_streak',
+                count: 30
+            }
+        }
+    ];
 
     const fetchUserAchievements = async () => {
         if (!user) {
@@ -131,6 +133,8 @@ export default function useAchievements(): AchievementsData {
         }
 
         try {
+            const achievementDefinitions = getAchievementDefinitions();
+
             // Get user's achievements from Firestore
             const achievementsRef = collection(firestoreDB, `users/${user.uid}/achievements`);
             const achievementsSnap = await getDocs(achievementsRef);
@@ -142,7 +146,7 @@ export default function useAchievements(): AchievementsData {
             });
 
             // Combine all achievements (both unlocked and locked)
-            const allAchievements = achievementDefinitions.map(definition => {
+            const allAchievements = achievementDefinitions.map((definition: Omit<Achievement, 'date' | 'isUnlocked'>) => {
                 const existing = existingAchievements.get(definition.id);
 
                 return {
@@ -153,7 +157,7 @@ export default function useAchievements(): AchievementsData {
             });
 
             // Sort achievements: unlocked first (by date), then locked
-            allAchievements.sort((a, b) => {
+            allAchievements.sort((a: Achievement, b: Achievement) => {
                 if (a.isUnlocked && !b.isUnlocked) return -1;
                 if (!a.isUnlocked && b.isUnlocked) return 1;
                 if (a.isUnlocked && b.isUnlocked) {
@@ -179,6 +183,8 @@ export default function useAchievements(): AchievementsData {
         if (!user) return;
 
         try {
+            const achievementDefinitions = getAchievementDefinitions();
+
             // Get user's current stats
             const completedLessonsCount = Object.values(lessonProgress)
                 .flatMap(courseLessons => Object.values(courseLessons))

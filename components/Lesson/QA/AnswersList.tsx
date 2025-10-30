@@ -2,7 +2,8 @@
 
 import React, { useContext } from 'react';
 import { Answer } from '@/types';
-import { Avatar, Button } from '@heroui/react';
+import { Avatar } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { LikeIcon } from '@/components/icons/svg';
 import { updateDoc, doc, arrayUnion, arrayRemove, increment, Timestamp } from 'firebase/firestore';
 import { firestoreDB } from '@/utils/firebase/firebase.config';

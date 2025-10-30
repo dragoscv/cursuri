@@ -143,20 +143,20 @@ export default function AdminLessonsListPage() {
           color="primary"
           onPress={() => router.push(`/admin/courses/${courseId}/lessons/add`)}
         >
-          Add Lesson
+          {t('lessons.addLesson')}
         </Button>
       </div>
 
       {isLoading ? (
-        <div className="text-center py-8 text-[color:var(--ai-muted)]">Loading lessons...</div>
+        <div className="text-center py-8 text-[color:var(--ai-muted)]">{t('lessons.loadingLessons')}</div>
       ) : lessons.length === 0 ? (
         <div className="text-center py-12 bg-[color:var(--ai-card-bg)]/60 rounded-xl border border-[color:var(--ai-card-border)]">
-          <p className="text-[color:var(--ai-muted)] mb-4">No lessons found for this course</p>
+          <p className="text-[color:var(--ai-muted)] mb-4">{t('lessons.noLessonsFound')}</p>
           <Button
             color="primary"
             onPress={() => router.push(`/admin/courses/${courseId}/lessons/add`)}
           >
-            Add First Lesson
+            {t('lessons.addFirstLesson')}
           </Button>
         </div>
       ) : (

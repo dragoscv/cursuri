@@ -1,6 +1,7 @@
 import React, { useContext, useCallback, memo, useMemo } from 'react';
 import { AppContext } from '../AppContext';
-import { Button, Chip, Progress } from '@heroui/react';
+import { Chip, Progress } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import LoadingButton from '../Buttons/LoadingButton';

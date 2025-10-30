@@ -62,7 +62,11 @@
   },
   "lessons": {
     "title": "Lecții",
-    "totalLessonsCreated": "Total lecții create"
+    "totalLessonsCreated": "Total lecții create",
+    "addLesson": "Adaugă Lecție",
+    "loadingLessons": "Se încarcă lecțiile...",
+    "noLessonsFound": "Nu s-au găsit lecții pentru acest curs",
+    "addFirstLesson": "Adaugă Prima Lecție"
   },
   "analytics": {
     "title": "Analiză și Perspective",

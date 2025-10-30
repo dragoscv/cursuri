@@ -1,0 +1,136 @@
+{
+  "title": "Alege-ți Planul",
+  "subtitle": "Obține acces nelimitat la toate cursurile și funcționalitățile premium",
+  "plans": {
+    "free": {
+      "name": "Gratuit",
+      "price": "$0",
+      "period": "pentru totdeauna",
+      "description": "Perfect pentru început",
+      "features": [
+        "Acces la cursuri gratuite",
+        "Materiale de curs de bază",
+        "Suport comunitate",
+        "Urmărire progres",
+        "Certificat de finalizare"
+      ],
+      "cta": "Plan Curent"
+    },
+    "proMonthly": {
+      "name": "Pro Lunar",
+      "price": "$19.99",
+      "period": "pe lună",
+      "description": "Cel mai bun pentru învățare continuă",
+      "features": [
+        "Acces nelimitat la toate cursurile",
+        "Suport prioritar",
+        "Resurse descărcabile",
+        "Analiză avansată",
+        "Webinarii exclusive",
+        "Experiență fără reclame",
+        "Acces anticipat la conținut nou"
+      ],
+      "cta": "Abonează-te Lunar",
+      "popular": "Cel Mai Popular"
+    },
+    "proYearly": {
+      "name": "Pro Anual",
+      "price": "$199.99",
+      "period": "pe an",
+      "description": "Cea mai bună valoare - Economisești 17%",
+      "features": [
+        "Tot din Pro Lunar",
+        "2 luni gratuite",
+        "Suport email prioritar",
+        "Raport anual de progres",
+        "Conținut bonus anual exclusiv",
+        "Insigne speciale comunitate"
+      ],
+      "cta": "Abonează-te Anual",
+      "savings": "Economisești $40/an"
+    }
+  },
+  "benefits": {
+    "title": "De Ce Pro?",
+    "subtitle": "Deblochează-ți întregul potențial cu funcționalități premium",
+    "list": [
+      {
+        "title": "Acces Nelimitat",
+        "description": "Învață în ritmul tău cu acces complet la întreaga noastră bibliotecă de cursuri"
+      },
+      {
+        "title": "Suport Prioritar",
+        "description": "Primește ajutor când ai nevoie cu suport prioritar dedicat"
+      },
+      {
+        "title": "Funcționalități Avansate",
+        "description": "Acces la instrumente și analiză exclusive pentru a-ți urmări progresul"
+      },
+      {
+        "title": "Acces Comunitate",
+        "description": "Alătură-te comunității noastre exclusive de cursanți Pro"
+      }
+    ]
+  },
+  "faq": {
+    "title": "Întrebări Frecvente",
+    "questions": [
+      {
+        "question": "Pot anula oricând?",
+        "answer": "Da, poți anula abonamentul oricând. Vei continua să ai acces până la sfârșitul perioadei de facturare."
+      },
+      {
+        "question": "Oferiți rambursări?",
+        "answer": "Da, oferim o garanție de returnare a banilor de 30 de zile. Dacă nu ești mulțumit, contactează-ne pentru o rambursare completă."
+      },
+      {
+        "question": "Pot schimba între planuri?",
+        "answer": "Absolut! Poți face upgrade sau downgrade la planul tău oricând din setările contului."
+      },
+      {
+        "question": "Ce metode de plată acceptați?",
+        "answer": "Acceptăm toate cardurile majore de credit, carduri de debit și alte metode de plată prin Stripe."
+      }
+    ]
+  },
+  "manage": {
+    "title": "Gestionarea Abonamentului",
+    "currentPlan": "Plan Curent",
+    "status": {
+      "active": "Activ",
+      "trial": "Perioadă de probă",
+      "pastDue": "Întârziat",
+      "canceled": "Anulat"
+    },
+    "currentPeriod": "Perioada Curentă",
+    "nextBilling": "Data Următoarei Facturi",
+    "cancelAtPeriodEnd": "Se anulează la sfârșitul perioadei",
+    "subscriptionEnding": "Abonament se Încheie",
+    "accessUntil": "Vei avea acces până la {date}",
+    "cancel": "Anulează Abonamentul",
+    "upgrade": "Îmbunătățește Planul",
+    "upgradePlan": "Îmbunătățește Planul",
+    "manageSubscription": "Gestionează Abonamentul",
+    "billingHistory": "Istoric Facturare",
+    "noActiveSubscription": "Niciun Abonament Activ",
+    "subscribeToUnlock": "Abonează-te pentru a debloca acces nelimitat la toate cursurile și funcții premium.",
+    "viewPlans": "Vezi Planurile",
+    "notLoggedIn": "Nu Ești Autentificat",
+    "loginRequired": "Te rugăm să te autentifici pentru a-ți gestiona abonamentul.",
+    "benefits": {
+      "title": "Beneficiile Abonamentului Tău",
+      "allCourses": "Acces nelimitat la toate cursurile",
+      "prioritySupport": "Suport și asistență prioritară",
+      "exclusiveContent": "Conținut și resurse exclusive",
+      "cancelAnytime": "Anulează oricând, fără întrebări"
+    }
+  },
+  "toast": {
+    "subscribeSuccess": "Abonat cu succes la {plan}!",
+    "cancelSuccess": "Abonament anulat cu succes",
+    "updateSuccess": "Abonament actualizat cu succes",
+    "error": "Ceva nu a mers bine. Te rugăm să încerci din nou.",
+    "loginRequired": "Te rugăm să te autentifici pentru a te abona",
+    "processing": "Se procesează..."
+  }
+}

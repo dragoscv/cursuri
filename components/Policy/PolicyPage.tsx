@@ -31,25 +31,25 @@ export default function PolicyPage({ title, lastUpdated, children }: PolicyPageP
                                 href="/privacy-policy"
                                 className="text-[color:var(--ai-primary)] hover:underline"
                             >
-                                Privacy Policy
+                                {t('policyLinks.privacyPolicy')}
                             </Link>
                             <Link
                                 href="/terms-conditions"
                                 className="text-[color:var(--ai-primary)] hover:underline"
                             >
-                                Terms & Conditions
+                                {t('policyLinks.termsConditions')}
                             </Link>
                             <Link
                                 href="/gdpr"
                                 className="text-[color:var(--ai-primary)] hover:underline"
                             >
-                                GDPR Policy
+                                {t('policyLinks.gdprPolicy')}
                             </Link>
                             <Link
                                 href="/"
                                 className="text-[color:var(--ai-primary)] hover:underline"
                             >
-                                Back to Home
+                                {t('policyLinks.backToHome')}
                             </Link>
                         </div>
                     </div>

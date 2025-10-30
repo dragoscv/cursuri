@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Button } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import Input from './ui/Input'; // Use custom Input component
 import { useRouter, usePathname } from 'next/navigation';
 import { useContext } from 'react';

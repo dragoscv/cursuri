@@ -20,8 +20,7 @@
     "test:e2e:report": "playwright show-report",
     "merge": "git checkout main && git merge dev && git push origin main && git checkout dev",
     "update:all": "npx npm-check-updates -u && npm i",
-    "type-check": "tsc --noEmit > type-errors.log 2>&1",
-    "prepare": "husky"
+    "type-check": "tsc --noEmit > type-errors.log 2>&1"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -70,7 +69,6 @@
     "eslint-formatter-compact": "^9.0.1",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react-hooks": "^7.0.0",
-    "husky": "^9.1.7",
     "jest": "^30.2.0",
     "jest-environment-jsdom": "^30.2.0",
     "lint-staged": "^16.2.6",

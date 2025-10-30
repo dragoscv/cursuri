@@ -1,5 +1,6 @@
 import React from 'react';
-import { Card, CardHeader, CardBody, Button } from '@heroui/react';
+import { Card, CardHeader, CardBody } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { FiBookOpen } from '@/components/icons/FeatherIcons';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';

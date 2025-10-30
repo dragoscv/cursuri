@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Button } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 

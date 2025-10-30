@@ -4,7 +4,8 @@ import React, { useState, useEffect, useCallback, useMemo, useContext, useRef } 
 import { useTranslations } from 'next-intl';
 import { AppContext } from '../AppContext';
 import { Lesson, Course, AppContextProps, Resource, LessonSettingsProps, QAProps } from '@/types';
-import { Button, Card, Chip, Divider, Badge } from '@heroui/react';
+import { Card, Chip, Divider, Badge } from '@heroui/react';
+import Button from '@/components/ui/Button';
 import styles from './styles/LessonContent.module.css';
 import VideoPlayer from './Video/VideoPlayer';
 import LessonSettings from './Settings/LessonSettings';
@@ -397,11 +398,11 @@ function LessonContent({
             lesson={
               isUsingOfflineContent
                 ? {
-                    ...lesson,
-                    videoUrl: offlineLessonContent?.videoUrl || lesson.videoUrl,
-                    thumbnailUrl:
-                      offlineLessonContent?.thumbnailUrl || lesson.thumbnailUrl || lesson.thumbnail,
-                  }
+                  ...lesson,
+                  videoUrl: offlineLessonContent?.videoUrl || lesson.videoUrl,
+                  thumbnailUrl:
+                    offlineLessonContent?.thumbnailUrl || lesson.thumbnailUrl || lesson.thumbnail,
+                }
                 : lesson
             }
             isCompleted={isCompleted}
@@ -504,19 +505,19 @@ function LessonContent({
             (isUsingOfflineContent &&
               offlineLessonContent?.resources &&
               offlineLessonContent.resources.length > 0)) && (
-            <ResourcesList
-              resources={
-                isUsingOfflineContent && offlineLessonContent?.resources
-                  ? offlineLessonContent.resources.map((r: any) => ({
+              <ResourcesList
+                resources={
+                  isUsingOfflineContent && offlineLessonContent?.resources
+                    ? offlineLessonContent.resources.map((r: any) => ({
                       url: r.data,
                       name: r.name,
                       type: r.type,
                     }))
-                  : lesson.resources || []
-              }
-              isOfflineMode={isUsingOfflineContent}
-            />
-          )}
+                    : lesson.resources || []
+                }
+                isOfflineMode={isUsingOfflineContent}
+              />
+            )}
         </div>
       </div>
     </div>

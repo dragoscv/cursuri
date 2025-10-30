@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from '@heroui/react'; // Updated to use HeroUI instead of NextUI
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@heroui/react'; // Updated to use HeroUI instead of NextUI
+import Button from '@/components/ui/Button';
 
 import { ModalProps } from '@/types';
 
