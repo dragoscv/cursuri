@@ -10,6 +10,7 @@ import {
   AdminSettings,
   BookmarkedLessons,
 } from '@/types';
+import { EnrichedSubscription } from '@/types/stripe';
 
 // Define the Modal interface for proper typing
 interface AppModal {
@@ -56,6 +57,9 @@ export interface AppState {
   bookmarksLoadingState: CacheStatus;
   wishlistCourses: any[];
   wishlistLoadingState: CacheStatus;
+  subscriptions: EnrichedSubscription[];
+  subscriptionsLoading: boolean;
+  subscriptionsError: string | null;
   pendingRequests: Record<string, boolean>;
 }
 
@@ -86,6 +90,9 @@ type AppActionType =
   | 'SET_BOOKMARKS_LOADING_STATE'
   | 'SET_WISHLIST_COURSES'
   | 'SET_WISHLIST_LOADING_STATE'
+  | 'SET_SUBSCRIPTIONS'
+  | 'SET_SUBSCRIPTIONS_LOADING'
+  | 'SET_SUBSCRIPTIONS_ERROR'
   | 'SET_PENDING_REQUEST'
   | 'CLEAR_CACHE'
   | 'INITIALIZE_COURSE_LESSONS'
@@ -122,6 +129,9 @@ export const initialState: AppState = {
   bookmarksLoadingState: 'idle' as CacheStatus,
   wishlistCourses: [],
   wishlistLoadingState: 'idle' as CacheStatus,
+  subscriptions: [],
+  subscriptionsLoading: false,
+  subscriptionsError: null,
   pendingRequests: {} as Record<string, boolean>,
 };
 
@@ -141,11 +151,10 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       }
     }
     case 'CLOSE_MODAL':
+      // Remove the modal from the array instead of just setting isOpen: false
       return {
         ...state,
-        modals: state.modals.map((modal) =>
-          modal.id === action.payload ? { ...modal, isOpen: false } : modal
-        ),
+        modals: state.modals.filter((modal) => modal.id !== action.payload),
       };
     case 'UPDATE_MODAL':
       return {
@@ -309,6 +318,24 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return {
         ...state,
         wishlistCourses: state.wishlistCourses.filter((id: string) => id !== action.payload),
+      };
+    case 'SET_SUBSCRIPTIONS':
+      return {
+        ...state,
+        subscriptions: action.payload,
+        subscriptionsLoading: false,
+        subscriptionsError: null,
+      };
+    case 'SET_SUBSCRIPTIONS_LOADING':
+      return {
+        ...state,
+        subscriptionsLoading: action.payload,
+      };
+    case 'SET_SUBSCRIPTIONS_ERROR':
+      return {
+        ...state,
+        subscriptionsError: action.payload,
+        subscriptionsLoading: false,
       };
     case 'SET_PENDING_REQUEST':
       return {

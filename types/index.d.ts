@@ -93,6 +93,10 @@ export interface AppContextProps {
     amount: number;
     currency: string;
   }) => Promise<void>;
+  subscriptions: import('@/types/stripe').EnrichedSubscription[];
+  subscriptionsLoading: boolean;
+  subscriptionsError: string | null;
+  refreshSubscriptions: () => Promise<void>;
   isAdmin: boolean;
   courses: Record<string, Course>;
   courseLoadingStates: Record<string, CacheStatus>;
@@ -285,13 +289,13 @@ export interface Course {
   updatedAt?: string | Date;
   /** The instructor/author of the course. */
   instructor?:
-    | string
-    | {
-        name?: string;
-        photoUrl?: string;
-        bio?: string;
-        title?: string;
-      };
+  | string
+  | {
+    name?: string;
+    photoUrl?: string;
+    bio?: string;
+    title?: string;
+  };
   /** Alternative name for instructor (used in some components) */
   instructorName?: string;
   /** Course rating average */

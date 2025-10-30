@@ -125,13 +125,6 @@ const FeaturedCoursesSection = React.memo(function FeaturedCoursesSection() {
                         `${amount} ${currency}`
                       )}
                     </span>
-                    <Button
-                      color="primary"
-                      onClick={() => router.push(`/courses/${course.id}`)}
-                      className="rounded-full px-4"
-                    >
-                      {tCommon('views.view')}
-                    </Button>
                   </div>
                 </div>
               </div>

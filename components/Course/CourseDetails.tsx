@@ -317,7 +317,7 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
               animate="visible"
               exit="hidden"
             >
-              <Reviews courseId={courseId || course.id} />
+              <Reviews courseId={courseId || course.id} isPurchased={hasAccess} />
             </motion.div>
           </AnimatePresence>
         </Tab>

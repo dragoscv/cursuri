@@ -15,17 +15,20 @@ import {
   FiArrowDown,
   FiArrowUp,
 } from '@/components/icons/FeatherIcons';
+import usePaymentHistory from '@/components/Profile/hooks/usePaymentHistory';
 
 export default function PaymentHistory() {
   const locale = useLocale();
   const t = useTranslations('payment');
   const tp = useTranslations('profile.paymentsPage');
   const context = useContext(AppContext);
+  const { payments, loading, error, downloadInvoice } = usePaymentHistory();
+
   if (!context) {
     throw new Error('AppContext not found');
   }
 
-  const { user, courses, userPaidProducts } = context;
+  const { user } = context;
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -33,74 +36,48 @@ export default function PaymentHistory() {
 
   // Process payment data
   useEffect(() => {
-    if (!userPaidProducts || !courses) {
+    if (!payments) {
       setFilteredPayments([]);
       return;
     }
 
-    // Create enhanced payment objects with course info
-    const enhancedPayments = userPaidProducts
-      .map((payment) => {
-        const courseId = payment.metadata?.courseId;
-        const course = courseId ? courses[courseId] : undefined;
-
-        if (!course) return null;
-
-        // Extract the price amount
-        const priceAmount = course.priceProduct?.prices?.[0]?.unit_amount || 0;
-        const currency = course.priceProduct?.prices?.[0]?.currency || 'RON';
-
-        return {
-          id: payment.id,
-          courseId,
-          courseName: course.name,
-          date: payment.created ? new Date(payment.created * 1000) : new Date(),
-          amount: priceAmount / 100, // Convert from cents to whole currency
-          currency,
-          status: payment.status,
-          invoiceId: `INV-${payment.id.slice(0, 8).toUpperCase()}`,
-        };
-      })
-      .filter(Boolean);
-
     // Apply search filter
-    let filtered = enhancedPayments;
+    let filtered = [...payments];
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(
         (payment) =>
-          payment?.courseName.toLowerCase().includes(term) ||
-          payment?.invoiceId.toLowerCase().includes(term)
+          payment?.productName?.toLowerCase().includes(term) ||
+          payment?.courseName?.toLowerCase().includes(term) ||
+          payment?.id?.toLowerCase().includes(term)
       );
     }
 
     // Apply sorting
     filtered.sort((a, b) => {
       if (!a || !b) return 0;
-      const comparison = a.date.getTime() - b.date.getTime();
+      const dateA = a.date instanceof Date ? a.date : new Date(String(a.date));
+      const dateB = b.date instanceof Date ? b.date : new Date(String(b.date));
+      const comparison = dateA.getTime() - dateB.getTime();
       return sortOrder === 'asc' ? comparison : -comparison;
     });
 
     setFilteredPayments(filtered);
-  }, [userPaidProducts, courses, searchTerm, sortOrder]); // Function to generate and download an invoice
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const downloadInvoice = (payment: any) => {
-    // This would typically call an API to generate an invoice PDF
-    // For now, we'll just simulate it with an alert
-
-    alert(`Invoice ${payment.invoiceId} for ${payment.courseName} would be downloaded now.`);
-
-    // In a real implementation, you might do something like:
-    // 1. Call an API endpoint that generates the PDF
-    // 2. Get the PDF binary data or URL
-    // 3. Trigger a download using that data or URL
-  };
+  }, [payments, searchTerm, sortOrder]);
 
   // Format currency
   const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat(locale, {
+    // Amount is already in whole units (not cents), check if it has decimals
+    const hasDecimals = amount % 1 !== 0;
+
+    // Use locale-specific formatting based on current locale
+    const localeCode = locale === 'ro' ? 'ro-RO' : 'en-US';
+
+    return new Intl.NumberFormat(localeCode, {
       style: 'currency',
       currency: currency,
+      minimumFractionDigits: hasDecimals ? 2 : 0,
+      maximumFractionDigits: 2,
     }).format(amount);
   };
 
@@ -114,6 +91,25 @@ export default function PaymentHistory() {
   };
   if (!user) {
     return null;
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[color:var(--ai-primary)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-[color:var(--ai-muted)]">{tp('loading')}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-6 text-center">
+        <p className="text-red-500">{error}</p>
+      </div>
+    );
   }
 
   return (
@@ -185,7 +181,7 @@ export default function PaymentHistory() {
                         {tp('table.invoice')}
                       </th>
                       <th className="px-6 py-4 text-left text-xs font-semibold text-[color:var(--ai-muted)] uppercase tracking-wider">
-                        {tp('table.course')}
+                        {tp('table.product')}
                       </th>
                       <th className="px-6 py-4 text-left text-xs font-semibold text-[color:var(--ai-muted)] uppercase tracking-wider">
                         {tp('table.date')}
@@ -202,7 +198,6 @@ export default function PaymentHistory() {
                     </tr>
                   </thead>
                   <tbody className="bg-[color:var(--ai-card-bg)] divide-y divide-[color:var(--ai-card-border)]">
-                    {' '}
                     {filteredPayments.map((payment, index) => (
                       <motion.tr
                         key={payment.id}
@@ -216,16 +211,22 @@ export default function PaymentHistory() {
                             <div className="w-8 h-8 flex items-center justify-center bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] rounded-full mr-2">
                               <FiFileText className="w-4 h-4" />
                             </div>
-                            {payment.invoiceId}
+                            {payment.invoiceId || `INV-${payment.id.slice(0, 8).toUpperCase()}`}
                           </div>
                         </td>
                         <td className="px-6 py-5 whitespace-nowrap text-sm text-[color:var(--ai-foreground)]">
-                          <Link
-                            href={`/courses/${payment.courseId}`}
-                            className="text-[color:var(--ai-primary)] hover:text-[color:var(--ai-secondary)] transition-colors duration-200 hover:underline"
-                          >
-                            {payment.courseName}
-                          </Link>
+                          {payment.courseId ? (
+                            <Link
+                              href={`/courses/${payment.courseId}`}
+                              className="text-[color:var(--ai-primary)] hover:text-[color:var(--ai-secondary)] transition-colors duration-200 hover:underline"
+                            >
+                              {payment.productName || payment.courseName}
+                            </Link>
+                          ) : (
+                            <span className="text-[color:var(--ai-foreground)]">
+                              {payment.productName || payment.courseName}
+                            </span>
+                          )}
                         </td>
                         <td className="px-6 py-5 whitespace-nowrap text-sm text-[color:var(--ai-foreground)]">
                           <div className="flex items-center">
@@ -244,8 +245,8 @@ export default function PaymentHistory() {
                           <Chip
                             className={
                               payment.status === 'succeeded'
-                                ? 'bg-[color:var(--ai-success)]/10 text-[color:var(--ai-success)] border border-[color:var(--ai-success)]/20'
-                                : 'bg-[color:var(--ai-warning)]/10 text-[color:var(--ai-warning)] border border-[color:var(--ai-warning)]/20'
+                                ? 'bg-[color:var(--ai-success)]/10 text-[color:var(--ai-success)]'
+                                : 'bg-[color:var(--ai-warning)]/10 text-[color:var(--ai-warning)]'
                             }
                             variant="flat"
                             size="sm"
@@ -261,7 +262,14 @@ export default function PaymentHistory() {
                             size="sm"
                             radius="lg"
                             startContent={<FiDownload className="w-4 h-4" />}
-                            onClick={() => downloadInvoice(payment)}
+                            onClick={async () => {
+                              const invoiceUrl = await downloadInvoice(payment.id);
+                              if (invoiceUrl) {
+                                window.open(invoiceUrl, '_blank');
+                              } else {
+                                alert(tp('actions.invoiceError'));
+                              }
+                            }}
                           >
                             {tp('actions.invoice')}
                           </Button>
@@ -338,16 +346,14 @@ export default function PaymentHistory() {
               {tp('help.title')}
             </p>
             <p className="text-[color:var(--ai-muted)]">
-              {tp.rich('help.description', {
-                email: (chunks) => (
-                  <a
-                    href={`mailto:${tp('help.email')}`}
-                    className="text-[color:var(--ai-primary)] hover:text-[color:var(--ai-secondary)] transition-colors duration-200 hover:underline"
-                  >
-                    {chunks}
-                  </a>
-                ),
-              })}
+              {tp('help.description')}{' '}
+              <a
+                href={`mailto:${tp('help.email')}`}
+                className="text-[color:var(--ai-primary)] hover:text-[color:var(--ai-secondary)] transition-colors duration-200 hover:underline"
+              >
+                {tp('help.email')}
+              </a>
+              .
             </p>
           </div>
         </div>

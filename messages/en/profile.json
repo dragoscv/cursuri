@@ -4,6 +4,7 @@
     "dashboard": "Dashboard",
     "myCourses": "My Courses",
     "certificates": "Certificates",
+    "subscription": "Subscription",
     "paymentHistory": "Payment History",
     "settings": "Settings"
   },
@@ -432,9 +433,11 @@
   "paymentsPage": {
     "title": "Payment History",
     "description": "View your transaction history and download invoices for all your course purchases.",
+    "loading": "Loading payment history...",
     "table": {
       "invoice": "Invoice",
       "course": "Course",
+      "product": "Product",
       "date": "Date",
       "amount": "Amount",
       "status": "Status",
@@ -444,13 +447,23 @@
       "paid": "Paid"
     },
     "actions": {
-      "invoice": "Invoice"
+      "invoice": "Invoice",
+      "invoiceError": "Could not generate invoice. Please try again."
     },
     "help": {
       "title": "Need help with a payment?",
-      "description": "If you have any questions about your payments or need assistance with refunds, please contact our support team at {email}.",
+      "description": "If you have any questions about your payments or need assistance with refunds, please contact our support team at",
       "email": "support@cursuri.com"
     }
   },
-  "settingsSaved": "Settings saved successfully"
+  "settingsSaved": "Settings saved successfully",
+  "subscriptionPage": {
+    "title": "Subscription Management",
+    "description": "Manage your subscription plan, view billing details, and update payment methods.",
+    "manageSubscription": "Your Subscription",
+    "help": {
+      "title": "Need help with your subscription?",
+      "description": "If you have questions about your subscription, billing, or need to make changes, please contact our support team at support@cursuri.com"
+    }
+  }
 }

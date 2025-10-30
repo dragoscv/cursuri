@@ -27,7 +27,7 @@ export const LoadingButton: React.FC<LoadingButtonProps> = ({
     <button
       disabled
       type="button"
-      className={`font-medium rounded-lg border bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-primary)] text-white flex items-center justify-center transition-all ${sizeClasses[size]} ${className}`}
+      className={`font-medium rounded-full border bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-primary)] text-white flex items-center justify-center transition-all ${sizeClasses[size]} ${className}`}
     >
       <LoadingIcon className="w-5 h-5 mr-3 text-white" />
       {finalLoadingText}

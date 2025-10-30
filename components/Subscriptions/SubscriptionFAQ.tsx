@@ -44,7 +44,7 @@ export default function SubscriptionFAQ() {
         {faqs.map((faq, index) => (
           <Card
             key={index}
-            className="backdrop-blur-sm border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/50 transition-all duration-300 overflow-hidden"
+            className="rounded-xl bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] backdrop-blur-sm border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/50 transition-all duration-300 overflow-hidden shadow-lg"
           >
             <button
               onClick={() => setOpenIndex(openIndex === index ? null : index)}

@@ -7,91 +7,90 @@
       "price": "$0",
       "period": "forever",
       "description": "Perfect for getting started",
-      "features": [
-        "Access to free courses",
-        "Basic course materials",
-        "Community support",
-        "Progress tracking",
-        "Certificate of completion"
-      ],
+      "features": {
+        "access": "Access to free courses",
+        "basicSupport": "Basic course materials",
+        "communityAccess": "Community support",
+        "limitedResources": "Progress tracking",
+        "certificates": "Certificate of completion"
+      },
       "cta": "Current Plan"
     },
     "proMonthly": {
       "name": "Pro Monthly",
-      "price": "$19.99",
+      "price": "100 RON",
       "period": "per month",
       "description": "Best for continuous learning",
-      "features": [
-        "Unlimited access to all courses",
-        "Priority support",
-        "Downloadable resources",
-        "Advanced analytics",
-        "Exclusive webinars",
-        "Ad-free experience",
-        "Early access to new content"
-      ],
-      "cta": "Subscribe Monthly",
-      "popular": "Most Popular"
+      "features": {
+        "unlimitedAccess": "Unlimited access to all courses",
+        "allCourses": "Access to all premium courses",
+        "prioritySupport": "Priority support",
+        "exclusiveContent": "Exclusive content and resources",
+        "advancedFeatures": "Advanced analytics and features",
+        "certificates": "Certificate of completion",
+        "cancelAnytime": "Cancel anytime"
+      },
+      "cta": "Subscribe Monthly"
     },
+    "popular": "Most Popular",
     "proYearly": {
       "name": "Pro Yearly",
-      "price": "$199.99",
+      "price": "1000 RON",
       "period": "per year",
-      "description": "Best value - Save 17%",
-      "features": [
-        "Everything in Pro Monthly",
-        "2 months free",
-        "Priority email support",
-        "Annual progress report",
-        "Exclusive yearly bonus content",
-        "Special community badges"
-      ],
+      "description": "Best value - 2 months free",
+      "features": {
+        "everything": "Everything in Pro Monthly",
+        "twoMonthsFree": "2 months free",
+        "prioritySupport": "Priority email support",
+        "exclusiveWorkshops": "Exclusive workshops and webinars",
+        "earlyAccess": "Early access to new content",
+        "careerResources": "Career development resources"
+      },
       "cta": "Subscribe Yearly",
-      "savings": "Save $40/year"
+      "save": "Save",
+      "savings": "Save 200 RON per year",
+      "badge": "Best Value"
     }
   },
   "benefits": {
     "title": "Why Go Pro?",
     "subtitle": "Unlock your full potential with premium features",
-    "list": [
-      {
-        "title": "Unlimited Access",
-        "description": "Learn at your own pace with full access to our entire course library"
-      },
-      {
-        "title": "Priority Support",
-        "description": "Get help when you need it with dedicated priority support"
-      },
-      {
-        "title": "Advanced Features",
-        "description": "Access exclusive tools and analytics to track your progress"
-      },
-      {
-        "title": "Community Access",
-        "description": "Join our exclusive community of Pro learners"
-      }
-    ]
+    "comprehensive": {
+      "title": "Comprehensive Access",
+      "description": "Learn at your own pace with full access to our entire course library and premium resources"
+    },
+    "community": {
+      "title": "Exclusive Community",
+      "description": "Join a vibrant community of learners, collaborate on projects, and share experiences"
+    },
+    "careerGrowth": {
+      "title": "Career Growth",
+      "description": "Accelerate your career growth with in-demand skills and personalized guidance from industry experts"
+    },
+    "certification": {
+      "title": "Professional Certifications",
+      "description": "Earn industry-recognized certificates that validate your expertise and enhance your resume"
+    }
   },
   "faq": {
     "title": "Frequently Asked Questions",
-    "questions": [
-      {
-        "question": "Can I cancel anytime?",
-        "answer": "Yes, you can cancel your subscription at any time. You'll continue to have access until the end of your billing period."
-      },
-      {
-        "question": "Do you offer refunds?",
-        "answer": "Yes, we offer a 30-day money-back guarantee. If you're not satisfied, contact us for a full refund."
-      },
-      {
-        "question": "Can I switch between plans?",
-        "answer": "Absolutely! You can upgrade or downgrade your plan at any time from your account settings."
-      },
-      {
-        "question": "What payment methods do you accept?",
-        "answer": "We accept all major credit cards, debit cards, and various other payment methods through Stripe."
-      }
-    ]
+    "subtitle": "Everything you need to know about our subscriptions",
+    "cancelAnytime": {
+      "question": "Can I cancel anytime?",
+      "answer": "Yes, you can cancel your subscription at any time. You'll continue to have access until the end of your current billing period."
+    },
+    "switchPlans": {
+      "question": "Can I switch between plans?",
+      "answer": "Absolutely! You can upgrade or downgrade your plan at any time from your account settings. Changes will apply at your next billing cycle."
+    },
+    "refundPolicy": {
+      "question": "What is the refund policy?",
+      "answer": "We offer a 30-day money-back guarantee for new subscriptions. If you're not satisfied, contact us for a full refund."
+    },
+    "groupDiscount": {
+      "question": "Do you offer team discounts?",
+      "answer": "Yes! We offer special pricing for teams of 5 or more members. Contact our sales team for more details."
+    }
   },
   "manage": {
     "title": "Subscription Management",

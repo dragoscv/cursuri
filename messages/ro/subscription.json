@@ -7,91 +7,90 @@
       "price": "$0",
       "period": "pentru totdeauna",
       "description": "Perfect pentru început",
-      "features": [
-        "Acces la cursuri gratuite",
-        "Materiale de curs de bază",
-        "Suport comunitate",
-        "Urmărire progres",
-        "Certificat de finalizare"
-      ],
+      "features": {
+        "access": "Acces la cursuri gratuite",
+        "basicSupport": "Materiale de curs de bază",
+        "communityAccess": "Suport comunitate",
+        "limitedResources": "Urmărire progres",
+        "certificates": "Certificat de finalizare"
+      },
       "cta": "Plan Curent"
     },
     "proMonthly": {
       "name": "Pro Lunar",
-      "price": "$19.99",
+      "price": "100 RON",
       "period": "pe lună",
       "description": "Cel mai bun pentru învățare continuă",
-      "features": [
-        "Acces nelimitat la toate cursurile",
-        "Suport prioritar",
-        "Resurse descărcabile",
-        "Analiză avansată",
-        "Webinarii exclusive",
-        "Experiență fără reclame",
-        "Acces anticipat la conținut nou"
-      ],
-      "cta": "Abonează-te Lunar",
-      "popular": "Cel Mai Popular"
+      "features": {
+        "unlimitedAccess": "Acces nelimitat la toate cursurile",
+        "allCourses": "Acces la toate cursurile premium",
+        "prioritySupport": "Suport prioritar",
+        "exclusiveContent": "Conținut și resurse exclusive",
+        "advancedFeatures": "Analiză și funcții avansate",
+        "certificates": "Certificat de finalizare",
+        "cancelAnytime": "Anulare oricând"
+      },
+      "cta": "Abonează-te Lunar"
     },
+    "popular": "Cel Mai Popular",
     "proYearly": {
       "name": "Pro Anual",
-      "price": "$199.99",
+      "price": "1000 RON",
       "period": "pe an",
-      "description": "Cea mai bună valoare - Economisești 17%",
-      "features": [
-        "Tot din Pro Lunar",
-        "2 luni gratuite",
-        "Suport email prioritar",
-        "Raport anual de progres",
-        "Conținut bonus anual exclusiv",
-        "Insigne speciale comunitate"
-      ],
+      "description": "Cea mai bună valoare - 2 luni gratuite",
+      "features": {
+        "everything": "Tot din Pro Lunar",
+        "twoMonthsFree": "2 luni gratuite",
+        "prioritySupport": "Suport email prioritar",
+        "exclusiveWorkshops": "Workshop-uri și webinarii exclusive",
+        "earlyAccess": "Acces anticipat la conținut nou",
+        "careerResources": "Resurse pentru dezvoltare în carieră"
+      },
       "cta": "Abonează-te Anual",
-      "savings": "Economisești $40/an"
+      "save": "Economisești",
+      "savings": "Economisești 200 RON pe an",
+      "badge": "Cea Mai Bună Valoare"
     }
   },
   "benefits": {
     "title": "De Ce Pro?",
     "subtitle": "Deblochează-ți întregul potențial cu funcționalități premium",
-    "list": [
-      {
-        "title": "Acces Nelimitat",
-        "description": "Învață în ritmul tău cu acces complet la întreaga noastră bibliotecă de cursuri"
-      },
-      {
-        "title": "Suport Prioritar",
-        "description": "Primește ajutor când ai nevoie cu suport prioritar dedicat"
-      },
-      {
-        "title": "Funcționalități Avansate",
-        "description": "Acces la instrumente și analiză exclusive pentru a-ți urmări progresul"
-      },
-      {
-        "title": "Acces Comunitate",
-        "description": "Alătură-te comunității noastre exclusive de cursanți Pro"
-      }
-    ]
+    "comprehensive": {
+      "title": "Acces Complet",
+      "description": "Învață în ritmul tău cu acces complet la întreaga noastră bibliotecă de cursuri și resurse premium"
+    },
+    "community": {
+      "title": "Comunitate Exclusivă",
+      "description": "Alătură-te unei comunități vibrante de cursanți, colaborează pe proiecte și împărtășește experiențe"
+    },
+    "careerGrowth": {
+      "title": "Creștere în Carieră",
+      "description": "Accelerează-ți creșterea în carieră cu abilități căutate și ghidare personalizată de la experți din industrie"
+    },
+    "certification": {
+      "title": "Certificări Profesionale",
+      "description": "Obține certificate recunoscute în industrie care validează expertiza ta și îmbunătățesc CV-ul"
+    }
   },
   "faq": {
     "title": "Întrebări Frecvente",
-    "questions": [
-      {
-        "question": "Pot anula oricând?",
-        "answer": "Da, poți anula abonamentul oricând. Vei continua să ai acces până la sfârșitul perioadei de facturare."
-      },
-      {
-        "question": "Oferiți rambursări?",
-        "answer": "Da, oferim o garanție de returnare a banilor de 30 de zile. Dacă nu ești mulțumit, contactează-ne pentru o rambursare completă."
-      },
-      {
-        "question": "Pot schimba între planuri?",
-        "answer": "Absolut! Poți face upgrade sau downgrade la planul tău oricând din setările contului."
-      },
-      {
-        "question": "Ce metode de plată acceptați?",
-        "answer": "Acceptăm toate cardurile majore de credit, carduri de debit și alte metode de plată prin Stripe."
-      }
-    ]
+    "subtitle": "Tot ce trebuie să știi despre abonamentele noastre",
+    "cancelAnytime": {
+      "question": "Pot anula oricând?",
+      "answer": "Da, poți anula abonamentul oricând. Vei continua să ai acces până la sfârșitul perioadei de facturare curente."
+    },
+    "switchPlans": {
+      "question": "Pot schimba între planuri?",
+      "answer": "Absolut! Poți face upgrade sau downgrade la planul tău oricând din setările contului. Modificările se vor aplica în următorul ciclu de facturare."
+    },
+    "refundPolicy": {
+      "question": "Care este politica de rambursare?",
+      "answer": "Oferim o garanție de returnare a banilor de 30 de zile pentru abonamentele noi. Dacă nu ești mulțumit, contactează-ne pentru o rambursare completă."
+    },
+    "groupDiscount": {
+      "question": "Oferiți reduceri pentru echipe?",
+      "answer": "Da! Oferim prețuri speciale pentru echipe de 5 sau mai mulți membri. Contactează departamentul nostru de vânzări pentru mai multe detalii."
+    }
   },
   "manage": {
     "title": "Gestionarea Abonamentului",

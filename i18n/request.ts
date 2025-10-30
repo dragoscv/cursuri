@@ -26,15 +26,24 @@ export default getRequestConfig(async () => {
     const validLocale = locale === 'ro' ? 'ro' : 'en';
 
     // Load all domain translation files and merge them
-    const domains = ['common', 'auth', 'courses', 'lessons', 'profile', 'admin', 'home', 'legal', 'about', 'contact'];
+    const domains = ['common', 'auth', 'courses', 'lessons', 'profile', 'admin', 'home', 'legal', 'about', 'contact', 'subscription'];
     const messages: Record<string, any> = {};
 
     for (const domain of domains) {
         try {
             const domainMessages = await import(`../messages/${validLocale}/${domain}.json`);
             messages[domain] = domainMessages.default;
+            if (domain === 'subscription') {
+                console.log(`[i18n] Loaded subscription for ${validLocale}:`, {
+                    hasDefault: !!domainMessages.default,
+                    keys: Object.keys(domainMessages.default || domainMessages),
+                    hasPlans: !!(domainMessages.default?.plans || domainMessages.plans),
+                    hasBenefits: !!(domainMessages.default?.benefits || domainMessages.benefits),
+                    hasFaq: !!(domainMessages.default?.faq || domainMessages.faq)
+                });
+            }
         } catch (error) {
-            console.warn(`Warning: Could not load ${domain}.json for locale ${validLocale}`);
+            console.warn(`Warning: Could not load ${domain}.json for locale ${validLocale}`, error);
         }
     }
 

@@ -65,7 +65,7 @@ export default function SubscriptionBenefits() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <Card className="p-6 h-full backdrop-blur-sm border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/50 transition-all duration-300 hover:shadow-xl group">
+              <Card className="p-6 h-full rounded-xl bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] backdrop-blur-sm border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/50 transition-all duration-300 hover:shadow-xl shadow-lg group">
                 <div className="mb-4">
                   <div
                     className={`w-12 h-12 rounded-xl bg-gradient-to-br ${benefit.gradient} bg-opacity-10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}

@@ -9,6 +9,7 @@ export interface Payment {
     courseId?: string;
     courseName?: string;
     productId?: string;
+    productName?: string;
     amount?: number;
     currency?: string;
     formattedAmount?: string;
@@ -29,7 +30,7 @@ export interface PaymentHistoryData {
 }
 
 export default function usePaymentHistory(): PaymentHistoryData {
-    const { user, userPaidProducts = [], courses = {} } = useContext(AppContext) as AppContextProps;
+    const { user, userPaidProducts = [], courses = {}, products = [], subscriptions = [] } = useContext(AppContext) as AppContextProps;
 
     const [payments, setPayments] = useState<Payment[]>([]);
     const [loading, setLoading] = useState(true);
@@ -58,12 +59,89 @@ export default function usePaymentHistory(): PaymentHistoryData {
                     const courseId = paymentData.metadata?.courseId || paymentData.courseId;
                     const course = courseId ? courses[courseId] : null;
 
-                    // Handle amount - Stripe extension uses amount_total (in cents), custom format uses amount (already in dollars)
+                    // Get product ID from multiple possible locations
+                    let productId = paymentData.items?.[0]?.price?.product ||
+                        paymentData.productId ||
+                        paymentData.product ||
+                        paymentData.metadata?.productId ||
+                        paymentData.lines?.data?.[0]?.price?.product ||
+                        '';
+
+                    // Extract product ID from Firestore price reference if present
+                    if (!productId && paymentData.prices?.[0]) {
+                        const priceRef = paymentData.prices[0];
+                        // The referencePath is a plain string property in the Firestore extension format
+                        const referencePath = priceRef.referencePath;
+
+                        if (referencePath && typeof referencePath === 'string') {
+                            const match = referencePath.match(/products\/([^\/]+)/);
+                            if (match) {
+                                productId = match[1];
+                            }
+                        }
+                    }
+
+                    // For payment intents, use active subscription's product if description is "Subscription creation"
+                    if (!productId && paymentData.description === 'Subscription creation' && subscriptions.length > 0) {
+                        // Find active subscription with matching customer
+                        const activeSubscription = subscriptions.find(s =>
+                            s.status === 'active' && s.product?.id
+                        );
+                        if (activeSubscription) {
+                            productId = activeSubscription.product.id;
+                        }
+                    }
+
+                    // For other payment intents, try matching by description
+                    if (!productId && paymentData.description && paymentData.description !== 'Subscription creation') {
+                        const description = paymentData.description.toLowerCase();
+
+                        const matchedSubscription = subscriptions.find(s =>
+                            s.product?.name && description.includes(s.product.name.toLowerCase())
+                        );
+
+                        if (matchedSubscription && matchedSubscription.product?.id) {
+                            productId = matchedSubscription.product.id;
+                        } else {
+                            const matchedProduct = products.find(p =>
+                                p.name && description.includes(p.name.toLowerCase())
+                            );
+                            if (matchedProduct) {
+                                productId = matchedProduct.id;
+                            }
+                        }
+                    }
+
+                    // Find product or subscription name
+                    let productName = 'Unknown Product';
+
+                    if (course) {
+                        // Check if it's a course
+                        productName = course.name;
+                    } else if (productId) {
+                        // Check subscriptions first (most common for subscription payments)
+                        const subscription = subscriptions.find(s => s.product?.id === productId || s.id === productId);
+                        if (subscription && subscription.product) {
+                            productName = subscription.product.name || 'Subscription';
+                        } else {
+                            // Check products
+                            const product = products.find(p => p.id === productId);
+                            if (product) {
+                                productName = product.name || 'Product';
+                            }
+                        }
+                    } else if (paymentData.description && paymentData.description !== 'Subscription creation') {
+                        // Use description as fallback (but not generic ones)
+                        productName = paymentData.description;
+                    }
+
+                    // Handle amount - amounts in database are stored without decimals (in cents/bani)
+                    // We need to divide by 100 to get the actual currency amount
                     const rawAmount = paymentData.amount_total ?? paymentData.amount ?? 0;
-                    const amount = paymentData.amount_total ? rawAmount / 100 : rawAmount;
+                    const amount = rawAmount / 100;
 
                     // Handle currency
-                    const currency = (paymentData.currency || 'USD').toUpperCase();
+                    const currency = (paymentData.currency || 'RON').toUpperCase();
 
                     // Handle date - Stripe extension uses created (timestamp), custom format uses createdAt (ISO string)
                     let date: Date;
@@ -81,7 +159,8 @@ export default function usePaymentHistory(): PaymentHistoryData {
                         id: doc.id,
                         courseId: courseId,
                         courseName: course?.name || 'Unknown Course',
-                        productId: paymentData.items?.[0]?.price?.product || '',
+                        productId: productId,
+                        productName: productName,
                         amount: amount,
                         currency: currency,
                         formattedAmount: `${amount.toFixed(2)} ${currency}`,
@@ -112,7 +191,7 @@ export default function usePaymentHistory(): PaymentHistoryData {
         }
 
         fetchPaymentHistory();
-    }, [user, courses]);
+    }, [user, courses, products, subscriptions]);
 
     const downloadInvoice = async (paymentId: string): Promise<string | null> => {
         if (!user) return null;

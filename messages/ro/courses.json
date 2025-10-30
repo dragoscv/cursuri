@@ -75,6 +75,8 @@
   },
   "enrollment": {
     "youreEnrolled": "Ești Înscris",
+    "subscriptionAccess": "Acces prin Abonament",
+    "viaSubscription": "Abonament",
     "active": "Activ",
     "yourProgress": "Progresul Tău",
     "percentComplete": "{percent}% finalizat",

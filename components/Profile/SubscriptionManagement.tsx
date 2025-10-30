@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import { AppContext } from '@/components/AppContext';
 import { Card } from '@heroui/react';
 import Button from '@/components/ui/Button';
@@ -13,67 +13,72 @@ import {
   FiAlertCircle,
   FiArrowRight,
 } from '@/components/icons/FeatherIcons';
-import { getCurrentUserSubscriptions } from 'firewand';
+import { createPortalLink } from 'firewand';
 import { stripePayments } from '@/utils/firebase/stripe';
 import { firebaseApp } from '@/utils/firebase/firebase.config';
 import Link from 'next/link';
-
-// Using any type for Subscription since firewand types may vary
-type Subscription = any;
 
 export default function SubscriptionManagement() {
   const t = useTranslations('subscription.manage');
   const tCommon = useTranslations('common');
   const context = useContext(AppContext);
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [creatingPortalLink, setCreatingPortalLink] = useState<string | null>(null);
 
   if (!context) {
     throw new Error('SubscriptionManagement must be used within AppContextProvider');
   }
 
-  const { user } = context;
+  const { user, subscriptions, subscriptionsLoading } = context;
 
-  useEffect(() => {
-    const fetchSubscriptions = async () => {
-      if (!user) {
-        setLoading(false);
-        return;
+  console.log('[SubscriptionManagement] Context subscriptions:', subscriptions);
+  console.log('[SubscriptionManagement] Loading state:', subscriptionsLoading);
+
+  const formatDate = (dateInput: string | number) => {
+    try {
+      let date: Date;
+
+      if (typeof dateInput === 'string') {
+        // Handle GMT string format: "Thu, 30 Oct 2025 19:21:56 GMT"
+        date = new Date(dateInput);
+      } else {
+        // Handle Unix timestamp (seconds)
+        date = new Date(dateInput * 1000);
       }
 
-      try {
-        const payments = stripePayments(firebaseApp);
-        const subs = await getCurrentUserSubscriptions(payments, {
-          status: ['active', 'trialing', 'past_due'],
-        });
-        setSubscriptions(subs as Subscription[]);
-      } catch (error) {
-        console.error('Error fetching subscriptions:', error);
-      } finally {
-        setLoading(false);
+      if (isNaN(date.getTime())) {
+        console.error('[formatDate] Invalid date:', dateInput);
+        return 'Invalid Date';
       }
-    };
 
-    fetchSubscriptions();
-  }, [user]);
-
-  const formatDate = (timestamp: string | number) => {
-    const date = typeof timestamp === 'string' ? parseInt(timestamp) * 1000 : timestamp * 1000;
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+    } catch (error) {
+      console.error('[formatDate] Error formatting date:', error, dateInput);
+      return 'Invalid Date';
+    }
   };
 
-  const formatPrice = (amount: number, currency: string) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency.toUpperCase(),
-    }).format(amount / 100);
+  const formatPrice = (amount: number | undefined, currency: string | undefined) => {
+    if (!amount || !currency) {
+      console.warn('[formatPrice] Missing amount or currency:', { amount, currency });
+      return 'N/A';
+    }
+
+    try {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: currency.toUpperCase(),
+      }).format(amount / 100);
+    } catch (error) {
+      console.error('[formatPrice] Error formatting price:', error);
+      return `${amount / 100} ${currency}`;
+    }
   };
 
-  if (loading) {
+  if (subscriptionsLoading) {
     return (
       <Card className="p-6">
         <div className="flex items-center justify-center py-12">
@@ -97,7 +102,7 @@ export default function SubscriptionManagement() {
     );
   }
 
-  if (subscriptions.length === 0) {
+  if (!subscriptions || subscriptions.length === 0) {
     return (
       <Card className="p-6 border border-[color:var(--ai-card-border)]">
         <div className="text-center py-8">
@@ -131,7 +136,7 @@ export default function SubscriptionManagement() {
               <div>
                 <div className="flex items-center gap-3 mb-2">
                   <h3 className="text-xl font-bold text-[color:var(--ai-foreground)]">
-                    {subscription.product.name}
+                    {subscription.product?.name || 'Subscription'}
                   </h3>
                   {subscription.status === 'active' && (
                     <span className="bg-[color:var(--ai-success)]/10 text-[color:var(--ai-success)] px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
@@ -151,7 +156,7 @@ export default function SubscriptionManagement() {
                     </span>
                   )}
                 </div>
-                {subscription.product.description && (
+                {subscription.product?.description && (
                   <p className="text-sm text-[color:var(--ai-muted)]">
                     {subscription.product.description}
                   </p>
@@ -160,11 +165,13 @@ export default function SubscriptionManagement() {
 
               <div className="text-right">
                 <div className="text-2xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">
-                  {formatPrice(subscription.price.unit_amount, subscription.price.currency)}
+                  {formatPrice(subscription.price?.unit_amount, subscription.price?.currency)}
                 </div>
-                <div className="text-sm text-[color:var(--ai-muted)]">
-                  /{subscription.price.recurring.interval}
-                </div>
+                {subscription.price?.recurring?.interval && (
+                  <div className="text-sm text-[color:var(--ai-muted)]">
+                    /{subscription.price.recurring.interval}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -222,22 +229,36 @@ export default function SubscriptionManagement() {
             {/* Actions */}
             <div className="flex flex-wrap gap-3">
               <Button
-                variant="bordered"
-                color="default"
-                size="md"
-                onClick={() => {
-                  // Navigate to Stripe customer portal
-                  window.location.href = '/api/stripe/create-portal-session';
+                color="primary"
+                startContent={
+                  creatingPortalLink === subscription.id ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                  ) : (
+                    <FiCreditCard />
+                  )
+                }
+                isDisabled={creatingPortalLink === subscription.id}
+                radius="lg"
+                className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] border-none text-white font-medium px-5 py-2 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+                onClick={async () => {
+                  setCreatingPortalLink(subscription.id);
+                  try {
+                    const payments = stripePayments(firebaseApp);
+                    console.log('[DEBUG] Creating portal link...');
+                    const portalLink = await createPortalLink(payments, {
+                      returnUrl: window.location.href,
+                    });
+                    console.log('[DEBUG] Portal link created:', portalLink);
+                    window.location.href = portalLink.url;
+                  } catch (error) {
+                    console.error('[SubscriptionManagement] Error creating portal link:', error);
+                    console.error('[DEBUG] Error details:', JSON.stringify(error, null, 2));
+                    setCreatingPortalLink(null);
+                  }
                 }}
               >
-                {t('manageSubscription')}
+                {creatingPortalLink === subscription.id ? tCommon('loading') : t('manageSubscription')}
               </Button>
-
-              <Link href="/subscriptions">
-                <Button variant="flat" color="primary" size="md">
-                  {t('upgradePlan')}
-                </Button>
-              </Link>
             </div>
           </Card>
         </motion.div>

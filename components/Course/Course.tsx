@@ -373,7 +373,7 @@ export default function Course({ courseId }: CourseProps) {
 
                 {/* Reviews Tab */}
                 {selectedTab === "reviews" && (
-                    <Reviews courseId={courseId} />
+                    <Reviews courseId={courseId} isPurchased={!!hasAccess || isAdmin} />
                 )}
 
                 {/* Resources Tab */}

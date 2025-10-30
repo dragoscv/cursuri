@@ -4,6 +4,7 @@
     "dashboard": "Tablou de Bord",
     "myCourses": "Cursurile Mele",
     "certificates": "Certificate",
+    "subscription": "Abonament",
     "paymentHistory": "Istoric Plăți",
     "settings": "Setări"
   },
@@ -473,9 +474,11 @@
   "paymentsPage": {
     "title": "Istoric Plăți",
     "description": "Vizualizează istoricul tranzacțiilor și descarcă facturile pentru toate achizițiile de cursuri.",
+    "loading": "Se încarcă istoricul plăților...",
     "table": {
       "invoice": "Factură",
       "course": "Curs",
+      "product": "Produs",
       "date": "Dată",
       "amount": "Sumă",
       "status": "Status",
@@ -485,13 +488,23 @@
       "paid": "Plătit"
     },
     "actions": {
-      "invoice": "Factură"
+      "invoice": "Factură",
+      "invoiceError": "Nu s-a putut genera factura. Vă rugăm să încercați din nou."
     },
     "help": {
       "title": "Ai nevoie de ajutor cu o plată?",
-      "description": "Dacă ai întrebări despre plățile tale sau ai nevoie de asistență cu rambursări, te rugăm să contactezi echipa noastră de suport la {email}.",
+      "description": "Dacă ai întrebări despre plățile tale sau ai nevoie de asistență cu rambursări, te rugăm să contactezi echipa noastră de suport la",
       "email": "support@cursuri.com"
     }
   },
-  "settingsSaved": "Setări salvate cu succes"
+  "settingsSaved": "Setările au fost salvate cu succes",
+  "subscriptionPage": {
+    "title": "Gestionare Abonament",
+    "description": "Gestionează planul de abonament, vizualizează detaliile de facturare și actualizează metodele de plată.",
+    "manageSubscription": "Abonamentul Tău",
+    "help": {
+      "title": "Ai nevoie de ajutor cu abonamentul?",
+      "description": "Dacă ai întrebări despre abonament, facturare sau ai nevoie să faci modificări, te rugăm să contactezi echipa noastră de suport la support@cursuri.com"
+    }
+  }
 }

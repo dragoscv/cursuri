@@ -36,6 +36,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       'about',
       'contact',
       'payment',
+      'subscription',
     ];
     Promise.all(
       domains.map((domain) =>
@@ -65,6 +66,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           'about',
           'contact',
           'payment',
+          'subscription',
         ];
         Promise.all(
           fallbackDomains.map((domain) =>

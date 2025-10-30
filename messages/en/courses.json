@@ -92,6 +92,8 @@
     },
     "enrollment": {
         "youreEnrolled": "You're Enrolled",
+        "subscriptionAccess": "Access via Subscription",
+        "viaSubscription": "Subscription",
         "active": "Active",
         "yourProgress": "Your Progress",
         "percentComplete": "{percent}% complete",

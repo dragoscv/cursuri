@@ -1,6 +1,6 @@
 import { getCurrentUserSubscriptions } from 'firewand';
 import { stripePayments } from './firebase/stripe';
-import { firebaseApp } from './firebase/firebase.config';
+import { firebaseApp, firebaseAuth } from './firebase/firebase.config';
 
 /**
  * Check if the current user has an active subscription
@@ -8,6 +8,12 @@ import { firebaseApp } from './firebase/firebase.config';
  */
 export async function hasActiveSubscription(): Promise<boolean> {
   try {
+    // Check if user is authenticated first
+    const currentUser = firebaseAuth.currentUser;
+    if (!currentUser) {
+      return false;
+    }
+
     const payments = stripePayments(firebaseApp);
     const subscriptions = await getCurrentUserSubscriptions(payments, {
       status: ['active', 'trialing'],

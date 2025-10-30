@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Course, ModalProps } from '../../types';
 import { getCoursePrice as getUnifiedCoursePrice } from '@/utils/pricing';
@@ -50,11 +50,16 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
     throw new Error('CourseEnrollment must be used within an AppContextProvider');
   }
 
-  const { user, openModal, closeModal } = context;
+  const { user, openModal, closeModal, subscriptions } = context;
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const t = useTranslations('courses.enrollment');
   const tCommon = useTranslations('common');
+
+  // Check for active subscription from context
+  const hasSubscription = subscriptions && subscriptions.length > 0 && subscriptions.some((sub: any) => 
+    sub.status === 'active' || sub.status === 'trialing'
+  );
 
   // Find the first uncompleted lesson
   const getNextLessonUrl = () => {
@@ -234,8 +239,13 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
   const price = typeof course.price === 'string' ? parseFloat(course.price) : course.price || 0;
   const discountPercentage = originalPrice
     ? Math.round(((originalPrice - price) / originalPrice) * 100)
-    : 0; // If user is already enrolled, show an enhanced enrolled view
-  if (isPurchased) {
+    : 0;
+
+  // Check if user has access (purchased OR subscribed)
+  const hasAccess = isPurchased || hasSubscription;
+
+  // If user is already enrolled or has subscription, show an enhanced enrolled view
+  if (hasAccess) {
     return (
       <>
         {/* Top success indicator bar */}
@@ -249,7 +259,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
                 <FiCheck className="text-[color:var(--ai-success)]" size={18} />
               </div>
               <h3 className="font-bold text-lg text-[color:var(--ai-foreground)]">
-                {t('youreEnrolled')}
+                {hasSubscription && !isPurchased ? t('subscriptionAccess') : t('youreEnrolled')}
               </h3>
             </div>
             <Chip
@@ -257,7 +267,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
               variant="flat"
               className="bg-[color:var(--ai-success)]/10 text-[color:var(--ai-success)] font-medium"
             >
-              {t('active')}
+              {hasSubscription && !isPurchased ? t('viaSubscription') : t('active')}
             </Chip>
           </div>{' '}
           {/* Progress card */}
@@ -607,10 +617,9 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
                   openModal({
                     id: 'login',
                     isOpen: true,
-                    modalBody: 'login',
                     modalHeader: tCommon('buttons.login'),
-                    headerDisabled: true,
-                    footerDisabled: true,
+                    modalBody: <Login onClose={() => closeModal('login')} />,
+                    onClose: () => closeModal('login'),
                   });
                 }}
               >

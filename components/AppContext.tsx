@@ -2,7 +2,7 @@
 
 import React, { createContext, useState, useEffect, useReducer, useCallback } from 'react';
 
-import { getProducts } from 'firewand';
+import { getProducts, getCurrentUserSubscriptions, getProduct, getPrice } from 'firewand';
 import { firebaseApp, firestoreDB, firebaseAuth } from '@/utils/firebase/firebase.config';
 import { stripePayments } from '@/utils/firebase/stripe';
 import { onAuthStateChanged, User } from 'firebase/auth';
@@ -1831,6 +1831,120 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Run only once on mount to avoid infinite loop
 
+  // Function to refresh subscriptions from Stripe
+  const refreshSubscriptions = useCallback(
+    async () => {
+      if (!user) {
+        dispatch({ type: 'SET_SUBSCRIPTIONS', payload: [] });
+        return;
+      }
+
+      // Double-check that Firebase Auth currentUser is available
+      if (!firebaseAuth.currentUser) {
+        console.warn('[AppContext] Firebase Auth currentUser not available yet, skipping subscription refresh');
+        dispatch({ type: 'SET_SUBSCRIPTIONS', payload: [] });
+        return;
+      }
+
+      try {
+        dispatch({ type: 'SET_SUBSCRIPTIONS_LOADING', payload: true });
+        console.log('[AppContext] Fetching subscriptions for user:', user.uid);
+
+        // Fetch subscriptions directly from Firestore to avoid firewand timing issues
+        const subscriptionsRef = collection(firestoreDB, 'customers', user.uid, 'subscriptions');
+        const q = query(
+          subscriptionsRef,
+          where('status', 'in', ['active', 'trialing', 'past_due'])
+        );
+        const querySnapshot = await getDocs(q);
+        
+        const allSubs: any[] = [];
+        querySnapshot.forEach((doc) => {
+          allSubs.push({
+            id: doc.id,
+            ...doc.data()
+          });
+        });
+
+        console.log('[AppContext] Subscriptions found:', allSubs);
+
+        const payments = stripePayments(firebaseApp);
+
+        // Enrich subscriptions with full price and product data
+        const enrichedSubs = await Promise.all(
+          allSubs.map(async (sub: any) => {
+            try {
+              // Fetch full product and price data if they are string IDs
+              let productData = sub.product;
+              let priceData = sub.price;
+
+              // Only fetch if product is a string ID
+              if (typeof sub.product === 'string') {
+                try {
+                  productData = await getProduct(payments, sub.product);
+                } catch (productError) {
+                  console.warn(`[AppContext] Could not fetch product ${sub.product}:`, productError);
+                  // Keep the product ID as-is if fetch fails
+                  productData = { id: sub.product, name: 'Unknown Product' };
+                }
+              }
+
+              // Only fetch if price is a string ID and we have a valid product
+              if (typeof sub.price === 'string' && typeof sub.product === 'string') {
+                try {
+                  priceData = await getPrice(payments, sub.product, sub.price);
+                } catch (priceError) {
+                  console.warn(`[AppContext] Could not fetch price ${sub.price}:`, priceError);
+                  // Keep the price ID as-is if fetch fails
+                  priceData = { id: sub.price };
+                }
+              }
+
+              console.log('[AppContext] Enriched subscription:', { productData, priceData });
+
+              return {
+                ...sub,
+                product: productData,
+                price: priceData
+              };
+            } catch (error) {
+              console.error('[AppContext] Error enriching subscription:', error);
+              // Return subscription with minimal data if enrichment fails completely
+              return {
+                ...sub,
+                product: typeof sub.product === 'string' ? { id: sub.product, name: 'Unknown Product' } : sub.product,
+                price: typeof sub.price === 'string' ? { id: sub.price } : sub.price
+              };
+            }
+          })
+        );
+
+        console.log('[AppContext] Enriched subscriptions:', enrichedSubs);
+        dispatch({ type: 'SET_SUBSCRIPTIONS', payload: enrichedSubs });
+      } catch (error) {
+        console.error('[AppContext] Error refreshing subscriptions:', error);
+        dispatch({ type: 'SET_SUBSCRIPTIONS_ERROR', payload: (error as Error).message });
+      }
+    },
+    [user]
+  );
+
+  // Fetch subscriptions when user logs in
+  useEffect(() => {
+    console.log('[AppContext useEffect] User changed:', user?.uid);
+    console.log('[AppContext useEffect] Current subscriptions state:', state.subscriptions);
+
+    if (user) {
+      console.log('[AppContext useEffect] Calling refreshSubscriptions for user:', user.uid);
+      refreshSubscriptions();
+    } else {
+      // Clear subscriptions when user logs out
+      console.log('[AppContext useEffect] No user, clearing subscriptions');
+      dispatch({ type: 'SET_SUBSCRIPTIONS', payload: [] });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.uid]); // Only re-run when user UID changes
+
   useEffect(() => {
     let mounted = true;
     const unsubscribes: Unsubscribe[] = [];
@@ -2206,6 +2320,10 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         updateModal,
         products: state.products,
         refreshProducts,
+        subscriptions: state.subscriptions,
+        subscriptionsLoading: state.subscriptionsLoading,
+        subscriptionsError: state.subscriptionsError,
+        refreshSubscriptions,
         courses: state.courses,
         courseLoadingStates: state.courseLoadingStates,
         lessons: state.lessons,

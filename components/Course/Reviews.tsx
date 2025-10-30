@@ -22,7 +22,7 @@ import { FiStar } from '../icons/FeatherIcons';
 import { FiEdit } from '../icons/FeatherIcons/FiEdit';
 import { FiMessageCircle } from '../icons/FeatherIcons/FiMessageCircle';
 
-export default function Reviews({ courseId: propCourseId }: { courseId: string }) {
+export default function Reviews({ courseId: propCourseId, isPurchased = false }: { courseId: string; isPurchased?: boolean }) {
     const [review, setReview] = useState('');
     const [htmlContent, setHtmlContent] = useState('');
     const [rating, setRating] = useState(5);
@@ -36,7 +36,7 @@ export default function Reviews({ courseId: propCourseId }: { courseId: string }
     if (!context) {
         throw new Error('You probably forgot to put <AppProvider>.');
     }
-    const { user } = context;
+    const { user, subscriptions } = context;
 
     const params = useParams();
     const courseId = propCourseId || params.courseId;
@@ -100,11 +100,16 @@ export default function Reviews({ courseId: propCourseId }: { courseId: string }
         }
     };
 
+    // Check for active subscription from context
+    const hasSubscription = subscriptions && subscriptions.length > 0 && subscriptions.some((sub: any) => 
+        sub.status === 'active' || sub.status === 'trialing'
+    );
+
     useEffect(() => {
-        if (courseId && user?.uid) {
+        if (courseId) {
             getReviews();
         }
-    }, [courseId, user?.uid]);
+    }, [courseId]);
 
     const handleReview = async (e: any) => {
         e.preventDefault();
@@ -165,6 +170,9 @@ export default function Reviews({ courseId: propCourseId }: { courseId: string }
         },
     };
 
+    // Check if user has access (purchased OR subscribed)
+    const hasAccess = isPurchased || hasSubscription;
+
     return (
         <motion.div
             variants={containerVariants}
@@ -172,8 +180,9 @@ export default function Reviews({ courseId: propCourseId }: { courseId: string }
             animate="visible"
             className="space-y-6"
         >
-            {/* Write a review section */}
-            <motion.div
+            {/* Write a review section - only show if user has purchased or has active subscription */}
+            {hasAccess && (
+                <motion.div
                 variants={itemVariants}
                 className="border border-[color:var(--ai-card-border)] rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)] shadow-sm"
             >
@@ -264,6 +273,7 @@ export default function Reviews({ courseId: propCourseId }: { courseId: string }
                     </form>
                 </div>
             </motion.div>
+            )}
 
             {/* Reviews list section */}
             <motion.div

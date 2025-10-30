@@ -19,7 +19,6 @@ import {
   FiTrash2,
   FiCreditCard,
 } from '@/components/icons/FeatherIcons';
-import SubscriptionManagement from '@/components/Profile/SubscriptionManagement';
 import { motion } from 'framer-motion';
 import PasswordStrengthMeter from '@/components/ui/PasswordStrengthMeter';
 import { useTranslations } from 'next-intl';
@@ -773,26 +772,6 @@ export default function ProfileSettings() {
                 {tProfile('saveChanges')}
               </Button>
             </div>
-          </CardBody>
-        </Card>
-      </motion.div>
-
-      {/* Subscription Management Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6, duration: 0.4 }}
-      >
-        <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/80 backdrop-blur-sm shadow-md rounded-xl overflow-hidden">
-          <CardBody className="p-5">
-            <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-primary)]/5 to-transparent py-3 px-4 -m-5 mb-4 border-b border-[color:var(--ai-card-border)]">
-              <h2 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
-                <FiCreditCard className="mr-2 text-[color:var(--ai-primary)]" />
-                <span>{tProfile('subscription')}</span>
-              </h2>
-            </div>
-
-            <SubscriptionManagement />
           </CardBody>
         </Card>
       </motion.div>

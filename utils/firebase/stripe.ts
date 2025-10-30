@@ -13,4 +13,5 @@ import {
 export const stripePayments = (firebaseApp: FirebaseApp): StripePayments => getStripePayments(firebaseApp, {
     productsCollection: "products",
     customersCollection: "/customers",
+    functionsRegion: process.env.NEXT_PUBLIC_FIREBASE_FUNCTIONS_REGION || 'europe-west1'
 });

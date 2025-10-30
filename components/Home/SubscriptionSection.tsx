@@ -1,15 +1,102 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useContext } from 'react';
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 import { Card } from '@heroui/react';
 import Button from '@/components/ui/Button';
-import { FiCheck, FiArrowRight, FiStar } from '@/components/icons/FeatherIcons';
-import Link from 'next/link';
+import { FiCheck, FiArrowRight, FiStar, FiSettings } from '@/components/icons/FeatherIcons';
+import { AppContext } from '@/components/AppContext';
+import { createCheckoutSession } from 'firewand';
+import { stripePayments } from '@/utils/firebase/stripe';
+import { firebaseApp } from '@/utils/firebase/firebase.config';
+import Login from '@/components/Login';
+import LoadingButton from '@/components/Buttons/LoadingButton';
+import { useRouter } from 'next/navigation';
+
+// Stripe Price IDs from the created products
+const PRICE_IDS = {
+  monthly: 'price_1SO07cLG0nGypmDBXjef95ut',
+  yearly: 'price_1SO07cLG0nGypmDBTeHZEoRE',
+};
 
 export default function SubscriptionSection() {
   const t = useTranslations('subscription');
+  const context = useContext(AppContext);
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const router = useRouter();
+
+  if (!context) {
+    throw new Error('SubscriptionSection must be used within an AppContextProvider');
+  }
+
+  const { user, openModal, closeModal, products, subscriptions } = context;
+
+  // Check if user has an active subscription
+  const hasActiveSubscription = subscriptions && subscriptions.length > 0;
+
+  // Helper function to find subscription prices from products
+  const getSubscriptionPrice = (priceId: string) => {
+    for (const product of products) {
+      if (product.prices) {
+        const price = product.prices.find((p: { id: string }) => p.id === priceId);
+        if (price) {
+          const amountValue = price.unit_amount ? price.unit_amount / 100 : 0;
+          const currency = price.currency?.toUpperCase() || 'USD';
+
+          // Format price using Intl.NumberFormat for proper locale formatting
+          const formatted = new Intl.NumberFormat('ro-RO', {
+            style: 'currency',
+            currency: currency,
+            minimumFractionDigits: amountValue % 1 === 0 ? 0 : 2,
+            maximumFractionDigits: 2,
+          }).format(amountValue);
+
+          return {
+            amount: amountValue.toString(),
+            currency,
+            formatted,
+          };
+        }
+      }
+    }
+    return null;
+  };
+
+  const handleSubscribe = async (priceId: string, planName: string) => {
+    setLoadingPlan(planName);
+
+    // Check if user is logged in
+    if (!user) {
+      setLoadingPlan(null);
+      openModal({
+        id: 'login-modal',
+        isOpen: true,
+        modalHeader: t('toast.loginRequired'),
+        modalBody: <Login onClose={() => closeModal('login-modal')} />,
+        onClose: () => closeModal('login-modal'),
+      });
+      return;
+    }
+
+    try {
+      const payments = stripePayments(firebaseApp);
+      const session = await createCheckoutSession(payments, {
+        price: priceId,
+        allow_promotion_codes: true,
+        mode: 'subscription',
+        success_url: `${window.location.origin}/profile/subscriptions?status=success`,
+        cancel_url: `${window.location.origin}/?status=cancel`,
+      });
+      window.location.assign(session.url);
+    } catch (error) {
+      console.error('Subscription error:', error);
+      setLoadingPlan(null);
+    }
+  };
+
+  const monthlyPrice = getSubscriptionPrice(PRICE_IDS.monthly);
+  const yearlyPrice = getSubscriptionPrice(PRICE_IDS.yearly);
 
   return (
     <section className="relative w-full py-20 overflow-hidden bg-gradient-to-br from-[color:var(--ai-background)] via-[color:var(--ai-card-bg)]/30 to-[color:var(--ai-background)]">
@@ -38,156 +125,174 @@ export default function SubscriptionSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {/* Monthly Plan */}
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="relative"
           >
-            <Card className="p-8 h-full backdrop-blur-sm border-2 border-[color:var(--ai-primary)] shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden group">
-              {/* Popular badge */}
-              <div className="absolute -top-3 -right-3">
-                <div className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-1 shadow-lg rotate-12">
-                  <FiStar size={14} />
-                  {t('plans.popular')}
-                </div>
+            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
+              <div className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-1 shadow-lg">
+                <FiStar size={14} />
+                {t('plans.popular')}
               </div>
+            </div>
 
-              {/* Animated background gradient */}
-              <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--ai-primary)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
-              <div className="relative z-10">
+            <Card className="p-8 h-full flex flex-col rounded-xl bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] backdrop-blur-sm transition-all duration-300 hover:shadow-2xl border-2 border-[color:var(--ai-primary)] shadow-xl scale-105">
+              {/* Plan Header */}
+              <div className="mb-6">
                 <h3 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-2">
                   {t('plans.proMonthly.name')}
                 </h3>
-                <p className="text-sm text-[color:var(--ai-muted)] mb-6">
-                  {t('plans.proMonthly.description')}
-                </p>
-
-                <div className="mb-6">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">
-                      {t('plans.proMonthly.price')}
-                    </span>
-                    <span className="text-[color:var(--ai-muted)]">/{t('plans.proMonthly.period')}</span>
-                  </div>
-                </div>
-
-                <ul className="space-y-3 mb-8">
-                  {[
-                    t('plans.proMonthly.features.unlimitedAccess'),
-                    t('plans.proMonthly.features.allCourses'),
-                    t('plans.proMonthly.features.prioritySupport'),
-                    t('plans.proMonthly.features.exclusiveContent'),
-                  ].map((feature, index) => (
-                    <li key={index} className="flex items-start gap-3">
-                      <div className="w-5 h-5 rounded-full bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <FiCheck size={14} />
-                      </div>
-                      <span className="text-sm text-[color:var(--ai-muted)]">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <Link href="/subscriptions">
-                  <Button
-                    color="primary"
-                    size="lg"
-                    className="w-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] shadow-lg hover:shadow-xl font-semibold"
-                    endContent={<FiArrowRight />}
-                  >
-                    {t('plans.proMonthly.cta')}
-                  </Button>
-                </Link>
+                <p className="text-sm text-[color:var(--ai-muted)]">{t('plans.proMonthly.description')}</p>
               </div>
+
+              {/* Price */}
+              <div className="mb-6">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">
+                    {monthlyPrice ? monthlyPrice.formatted : t('plans.proMonthly.price')}
+                  </span>
+                  <span className="text-[color:var(--ai-muted)]">/{t('plans.proMonthly.period')}</span>
+                </div>
+              </div>
+
+              {/* Features */}
+              <ul className="space-y-3 mb-8 flex-grow">
+                {[
+                  t('plans.proMonthly.features.unlimitedAccess'),
+                  t('plans.proMonthly.features.allCourses'),
+                  t('plans.proMonthly.features.prioritySupport'),
+                  t('plans.proMonthly.features.exclusiveContent'),
+                ].map((feature, index) => (
+                  <li key={index} className="flex items-start gap-3">
+                    <div className="w-5 h-5 rounded-full bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <FiCheck size={14} />
+                    </div>
+                    <span className="text-sm text-[color:var(--ai-muted)]">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              {/* CTA Button */}
+              {loadingPlan === 'monthly' ? (
+                <LoadingButton
+                  className="w-full"
+                  size="lg"
+                  loadingText={t('toast.processing')}
+                />
+              ) : hasActiveSubscription ? (
+                // Show "Manage Subscription" button if user already has a subscription
+                <Button
+                  size="lg"
+                  radius="lg"
+                  className="w-full font-medium border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)] px-5 py-2 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 text-[color:var(--ai-foreground)]"
+                  startContent={<FiSettings />}
+                  onClick={() => router.push('/profile/subscriptions')}
+                >
+                  {t('manage.manageSubscription')}
+                </Button>
+              ) : (
+                <Button
+                  size="lg"
+                  radius="lg"
+                  className="w-full font-medium px-5 py-2 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] border-none text-white"
+                  endContent={<FiArrowRight />}
+                  onClick={() => handleSubscribe(PRICE_IDS.monthly, 'monthly')}
+                >
+                  {t('plans.proMonthly.cta')}
+                </Button>
+              )}
             </Card>
           </motion.div>
 
           {/* Yearly Plan */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="relative"
           >
-            <Card className="p-8 h-full backdrop-blur-sm border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-secondary)]/50 shadow-lg hover:shadow-2xl transition-all duration-300 relative overflow-hidden group">
-              {/* Best value badge */}
-              <div className="absolute -top-3 right-4">
-                <div className="bg-gradient-to-r from-[color:var(--ai-accent)] to-[color:var(--ai-secondary)] text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
-                  {t('plans.proYearly.badge')}
-                </div>
+            <div className="absolute -top-4 right-4 z-10">
+              <div className="bg-gradient-to-r from-[color:var(--ai-accent)] to-[color:var(--ai-secondary)] text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
+                {t('plans.proYearly.badge')}
               </div>
+            </div>
 
-              <div className="relative z-10">
+            <Card className="p-8 h-full flex flex-col rounded-xl bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] backdrop-blur-sm transition-all duration-300 hover:shadow-2xl border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/50 shadow-lg">
+              {/* Plan Header */}
+              <div className="mb-6">
                 <h3 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-2">
                   {t('plans.proYearly.name')}
                 </h3>
-                <p className="text-sm text-[color:var(--ai-muted)] mb-6">
-                  {t('plans.proYearly.description')}
-                </p>
-
-                <div className="mb-6">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-bold bg-gradient-to-r from-[color:var(--ai-secondary)] to-[color:var(--ai-accent)] bg-clip-text text-transparent">
-                      {t('plans.proYearly.price')}
-                    </span>
-                    <span className="text-[color:var(--ai-muted)]">/{t('plans.proYearly.period')}</span>
-                  </div>
-                  <p className="text-sm text-[color:var(--ai-success)] font-medium mt-1">
-                    {t('plans.proYearly.savings')}
-                  </p>
-                </div>
-
-                <ul className="space-y-3 mb-8">
-                  {[
-                    t('plans.proYearly.features.everything'),
-                    t('plans.proYearly.features.twoMonthsFree'),
-                    t('plans.proYearly.features.prioritySupport'),
-                    t('plans.proYearly.features.exclusiveWorkshops'),
-                  ].map((feature, index) => (
-                    <li key={index} className="flex items-start gap-3">
-                      <div className="w-5 h-5 rounded-full bg-[color:var(--ai-success)]/10 text-[color:var(--ai-success)] flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <FiCheck size={14} />
-                      </div>
-                      <span className="text-sm text-[color:var(--ai-muted)]">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <Link href="/subscriptions">
-                  <Button
-                    color="secondary"
-                    size="lg"
-                    variant="bordered"
-                    className="w-full font-semibold hover:bg-[color:var(--ai-secondary)]/10"
-                    endContent={<FiArrowRight />}
-                  >
-                    {t('plans.proYearly.cta')}
-                  </Button>
-                </Link>
+                <p className="text-sm text-[color:var(--ai-muted)]">{t('plans.proYearly.description')}</p>
               </div>
+
+              {/* Price */}
+              <div className="mb-6">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">
+                    {yearlyPrice ? yearlyPrice.formatted : t('plans.proYearly.price')}
+                  </span>
+                  <span className="text-[color:var(--ai-muted)]">/{t('plans.proYearly.period')}</span>
+                </div>
+                <p className="text-sm text-[color:var(--ai-success)] font-medium mt-1">
+                  {t('plans.proYearly.savings')}
+                </p>
+              </div>
+
+              {/* Features */}
+              <ul className="space-y-3 mb-8 flex-grow">
+                {[
+                  t('plans.proYearly.features.everything'),
+                  t('plans.proYearly.features.twoMonthsFree'),
+                  t('plans.proYearly.features.prioritySupport'),
+                  t('plans.proYearly.features.exclusiveWorkshops'),
+                ].map((feature, index) => (
+                  <li key={index} className="flex items-start gap-3">
+                    <div className="w-5 h-5 rounded-full bg-[color:var(--ai-success)]/10 text-[color:var(--ai-success)] flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <FiCheck size={14} />
+                    </div>
+                    <span className="text-sm text-[color:var(--ai-muted)]">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              {/* CTA Button */}
+              {loadingPlan === 'yearly' ? (
+                <LoadingButton
+                  className="w-full"
+                  size="lg"
+                  loadingText={t('toast.processing')}
+                />
+              ) : hasActiveSubscription ? (
+                // Show "Manage Subscription" button if user already has a subscription
+                <Button
+                  size="lg"
+                  radius="lg"
+                  className="w-full font-medium border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)] px-5 py-2 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 text-[color:var(--ai-foreground)]"
+                  startContent={<FiSettings />}
+                  onClick={() => router.push('/profile/subscriptions')}
+                >
+                  {t('manage.manageSubscription')}
+                </Button>
+              ) : (
+                <Button
+                  size="lg"
+                  radius="lg"
+                  className="w-full font-medium px-5 py-2 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 bg-gradient-to-r from-[color:var(--ai-accent)] to-[color:var(--ai-secondary)] border-none text-white"
+                  endContent={<FiArrowRight />}
+                  onClick={() => handleSubscribe(PRICE_IDS.yearly, 'yearly')}
+                >
+                  {t('plans.proYearly.cta')}
+                </Button>
+              )}
             </Card>
           </motion.div>
         </div>
 
-        {/* Bottom CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="text-center mt-12"
-        >
-          <Link href="/subscriptions">
-            <Button
-              variant="flat"
-              size="lg"
-              className="font-medium"
-              endContent={<FiArrowRight />}
-            >
-              {t('plans.free.cta')}
-            </Button>
-          </Link>
-        </motion.div>
+
       </div>
     </section>
   );

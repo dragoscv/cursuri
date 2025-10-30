@@ -113,7 +113,7 @@ export default function ModalComponent({
           <>
             <ModalHeader>
               {modalHeader}
-              {!hideCloseIcon && (
+              {!hideCloseButton && (
                 <button
                   type="button"
                   className="cursor-pointer p-2 rounded-full hover:bg-[color:var(--ai-card-border)]/40 dark:hover:bg-[color:var(--ai-card-border)]/20 transition-colors focus:outline-none focus:ring-2 focus:ring-ai-primary focus:ring-offset-2"
