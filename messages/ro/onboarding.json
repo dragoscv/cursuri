@@ -1,0 +1,19 @@
+{
+  "step1": {
+    "title": "Bine ai venit la Cursuri!",
+    "description": "Începe prin a explora catalogul nostru de cursuri și personalizează-ți profilul."
+  },
+  "step2": {
+    "title": "Urmărește-ți Progresul",
+    "description": "Marchează lecțiile ca fiind completate și vezi cum evoluează parcursul tău de învățare."
+  },
+  "step3": {
+    "title": "Alătură-te Comunității",
+    "description": "Lasă recenzii, pune întrebări și conectează-te cu alți cursanți."
+  },
+  "buttons": {
+    "back": "Înapoi",
+    "next": "Următorul",
+    "getStarted": "Începe Acum"
+  }
+}

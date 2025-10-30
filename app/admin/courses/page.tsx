@@ -17,7 +17,7 @@ import { useToast } from '@/components/Toast/ToastContext';
 export default function CoursesPage() {
   const locale = useLocale();
   const t = useTranslations('admin.courses');
-  const [selectedView, setSelectedView] = useState<'grid' | 'list'>('grid');
+  const [selectedView, setSelectedView] = useState<'grid' | 'list'>('list');
   const [deletingCourse, setDeletingCourse] = useState<string | null>(null);
 
   const context = useContext(AppContext);

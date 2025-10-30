@@ -53,7 +53,10 @@
     "viewCourse": "Vezi Cursul & Achiziționează",
     "signIn": "Autentifică-te",
     "needHelp": "Ai nevoie de ajutor?",
-    "contactUs": "Contactează-ne"
+    "contactUs": "Contactează-ne",
+    "errorLoadingLessonMessage": "A apărut o problemă la încărcarea acestei lecții. Te rugăm să încerci din nou mai târziu.",
+    "backToCourses": "Înapoi la Cursuri",
+    "debuggingInformation": "Informații de Depanare:"
   },
   "form": {
     "basicInfo": "Informații de Bază",
@@ -221,5 +224,19 @@
     "available": "Disponibil Offline",
     "size": "Dimensiune",
     "downloadedOn": "Descărcat pe"
+  },
+  "status": {
+    "offlineMode": "Mod Offline",
+    "completed": "Completat",
+    "progressSaved": "Progres Salvat",
+    "autoplayNext": "Redare Automată Următoare"
+  },
+  "sections": {
+    "content": "Conținut Lecție",
+    "knowledgeCheck": "Verificare Cunoștințe"
+  },
+  "knowledgeCheck": {
+    "description": "Testează-ți înțelegerea conceptelor cheie acoperite în această lecție.",
+    "startButton": "Începe Quiz-ul"
   }
 }

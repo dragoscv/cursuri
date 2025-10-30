@@ -106,7 +106,7 @@ function SortableRow({ lesson, index, courseId, onEdit }: SortableRowProps) {
           Edit
         </Button>
         <Link
-          href={`/admin/courses/${courseId}/lessons/${lesson.id}`}
+          href={`/courses/${courseId}/lessons/${lesson.id}`}
           className="ml-2 text-xs text-[color:var(--ai-primary)] underline"
         >
           View

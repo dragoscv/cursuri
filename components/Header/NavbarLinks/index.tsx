@@ -1,9 +1,10 @@
 'use client';
 
 import React from 'react';
-import { NavbarContent, NavbarItem, Link } from '@heroui/react';
+import { NavbarContent, NavbarItem } from '@heroui/react';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 
 /**
  * NavbarLinks component that displays the main navigation links

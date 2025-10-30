@@ -1,5 +1,27 @@
 {
   "title": "Profile",
+  "nav": {
+    "dashboard": "Dashboard",
+    "myCourses": "My Courses",
+    "certificates": "Certificates",
+    "paymentHistory": "Payment History",
+    "settings": "Settings"
+  },
+  "defaultUserName": "User",
+  "courseCount": {
+    "singular": "Course",
+    "plural": "Courses"
+  },
+  "themes": {
+    "blackAndWhite": "Black and White",
+    "modernPurple": "Modern Purple",
+    "greenNeon": "Green Neon",
+    "blueOcean": "Blue Ocean",
+    "brownSunset": "Brown Sunset",
+    "yellowMorning": "Yellow Morning",
+    "redBlood": "Red Blood",
+    "pinkCandy": "Pink Candy"
+  },
   "purchases": "Purchases",
   "certificates": "Certificates",
   "myProgress": "My Progress",
@@ -210,6 +232,11 @@
       "payments": "Get email receipts for all your purchases",
       "weeklyDigest": "Receive a weekly summary of your learning activities",
       "marketing": "Get updates about new courses and special promotions"
+    },
+    "languages": {
+      "spanish": "Spanish",
+      "french": "French",
+      "german": "German"
     }
   },
   "certificatesPage": {
@@ -230,6 +257,12 @@
       "download": "Download Certificate",
       "view": "View Certificate",
       "browseCourses": "Browse Courses"
+    },
+    "filters": {
+      "all": "All certificates",
+      "recent": "Last 30 days",
+      "threeMonths": "Last 3 months",
+      "year": "Last year"
     }
   },
   "courses": {
@@ -286,6 +319,29 @@
   },
   "payments": {
     "title": "Payments"
+  },
+  "paymentsPage": {
+    "title": "Payment History",
+    "description": "View your transaction history and download invoices for all your course purchases.",
+    "table": {
+      "invoice": "Invoice",
+      "course": "Course",
+      "date": "Date",
+      "amount": "Amount",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": {
+      "paid": "Paid"
+    },
+    "actions": {
+      "invoice": "Invoice"
+    },
+    "help": {
+      "title": "Need help with a payment?",
+      "description": "If you have any questions about your payments or need assistance with refunds, please contact our support team at {email}.",
+      "email": "support@cursuri.com"
+    }
   },
   "settingsSaved": "Settings saved successfully"
 }

@@ -12,7 +12,7 @@ import {
   query,
   where,
 } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 import { motion } from 'framer-motion';
 import { FiBook } from '../icons/FeatherIcons';
 import {
@@ -41,7 +41,7 @@ import Accordion, { AccordionItem } from '../ui/Accordion';
 import Checkbox from '@/components/ui/Checkbox';
 import RichTextEditor from '@/components/Lesson/QA/RichTextEditor';
 
-export default function LessonForm({ courseId, lessonId, onClose }: LessonFormProps) {
+export default function LessonForm({ courseId, lessonId, onClose, onSave }: LessonFormProps) {
   const t = useTranslations('lessons.form');
   const [lessonName, setLessonName] = useState('');
   const [lessonDescription, setLessonDescription] = useState('');
@@ -95,6 +95,11 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
     requireQuiz: false,
     requireExercise: false,
   });
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [uploadingFile, setUploadingFile] = useState<string>('');
+  const [additionalFilesProgress, setAdditionalFilesProgress] = useState<{ [key: string]: number }>(
+    {}
+  );
 
   // Interface for quiz questions
   interface QuizQuestion {
@@ -261,8 +266,18 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
     fetchNextLessonOrder();
     loadLessonData();
   }, [lessonId, courseId]);
+
+  // Cleanup blob URLs on unmount
+  useEffect(() => {
+    return () => {
+      if (filePreview && filePreview.startsWith('blob:')) {
+        URL.revokeObjectURL(filePreview);
+      }
+    };
+  }, [filePreview]);
   const addLesson = useCallback(async () => {
     setLoading(true);
+    setUploadProgress(0);
     if (!file && lessonType === 'video') {
       alert('Please select a video file to upload');
       setLoading(false);
@@ -272,25 +287,109 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
       // Upload main lesson file if provided
       let downloadURL = '';
       if (file) {
-        const storageRef = ref(firebaseStorage, `lessons/${courseId}/${file.name}_${Date.now()}`);
-        const snapshot = await uploadBytes(storageRef, file);
-        downloadURL = await getDownloadURL(snapshot.ref);
+        try {
+          setUploadingFile(file.name);
+          console.log('Starting file upload:', {
+            filename: file.name,
+            size: file.size,
+            sizeInMB: (file.size / 1024 / 1024).toFixed(2) + ' MB',
+            type: file.type,
+          });
+
+          const storageRef = ref(firebaseStorage, `lessons/${courseId}/${file.name}_${Date.now()}`);
+
+          // Use uploadBytesResumable for progress tracking
+          const uploadTask = uploadBytesResumable(storageRef, file);
+
+          downloadURL = await new Promise<string>((resolve, reject) => {
+            let lastLoggedProgress = 0;
+            uploadTask.on(
+              'state_changed',
+              (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                const bytesTransferredMB = (snapshot.bytesTransferred / 1024 / 1024).toFixed(2);
+                const totalBytesMB = (snapshot.totalBytes / 1024 / 1024).toFixed(2);
+
+                // Log every 10% progress
+                if (progress - lastLoggedProgress >= 10 || progress === 100) {
+                  console.log(
+                    `Upload progress: ${progress.toFixed(2)}% (${bytesTransferredMB}MB / ${totalBytesMB}MB)`
+                  );
+                  lastLoggedProgress = Math.floor(progress / 10) * 10;
+                }
+
+                setUploadProgress(progress);
+              },
+              (error) => {
+                console.error('Upload error:', error);
+                setUploadingFile('');
+                reject(error);
+              },
+              async () => {
+                try {
+                  console.log('Upload completion callback triggered, fetching download URL...');
+                  const url = await getDownloadURL(uploadTask.snapshot.ref);
+                  console.log('Upload complete, URL:', url);
+                  setUploadingFile('');
+                  resolve(url);
+                } catch (error) {
+                  console.error('Error getting download URL:', error);
+                  setUploadingFile('');
+                  reject(error);
+                }
+              }
+            );
+          });
+
+          if (!downloadURL) {
+            throw new Error('Failed to get download URL after upload');
+          }
+
+          console.log('File uploaded successfully, URL:', downloadURL);
+        } catch (error) {
+          console.error('File upload failed:', error);
+          throw new Error(
+            `Failed to upload file: ${error instanceof Error ? error.message : 'Unknown error'}`
+          );
+        }
       }
 
       // Upload additional files if any
       const additionalFilesData = [];
-      for (const addFile of additionalFiles) {
+      for (let i = 0; i < additionalFiles.length; i++) {
+        const addFile = additionalFiles[i];
+        setUploadingFile(addFile.name);
         const fileRef = ref(
           firebaseStorage,
           `lessons/${courseId}/resources/${addFile.file.name}_${Date.now()}`
         );
-        const fileSnapshot = await uploadBytes(fileRef, addFile.file);
-        const fileUrl = await getDownloadURL(fileSnapshot.ref);
+
+        const uploadTask = uploadBytesResumable(fileRef, addFile.file);
+
+        const fileUrl = await new Promise<string>((resolve, reject) => {
+          uploadTask.on(
+            'state_changed',
+            (snapshot) => {
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              setAdditionalFilesProgress((prev) => ({ ...prev, [addFile.name]: progress }));
+            },
+            (error) => {
+              console.error('Additional file upload error:', error);
+              reject(error);
+            },
+            async () => {
+              const url = await getDownloadURL(uploadTask.snapshot.ref);
+              resolve(url);
+            }
+          );
+        });
+
         additionalFilesData.push({
           name: addFile.name,
           url: fileUrl,
           description: addFile.description,
         });
+        setUploadingFile('');
       }
 
       // Create the base lesson object
@@ -313,7 +412,10 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
 
       // Add file URL if a file was uploaded
       if (downloadURL) {
+        console.log('Adding file URL to lesson:', downloadURL);
         lesson.file = downloadURL;
+      } else {
+        console.log('No file URL to add (no file uploaded)');
       }
 
       // Add module ID if selected
@@ -349,13 +451,23 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
       lesson.completionCriteria = completionCriteria;
 
       // Add the lesson to Firestore
+      console.log('Saving lesson to Firestore:', {
+        courseId,
+        lessonName,
+        hasFile: !!lesson.file,
+        fileUrl: lesson.file || 'none',
+      });
+
       const lessonDocRef = await addDoc(
         collection(firestoreDB, `courses/${courseId}/lessons`),
         lesson
       );
 
+      console.log('Lesson saved successfully with ID:', lessonDocRef.id);
+
       // If the lesson has a quiz, add the questions
       if (hasQuiz && quizQuestions.length > 0) {
+        console.log('Saving quiz questions:', quizQuestions.length);
         const questionsRef = collection(
           firestoreDB,
           `courses/${courseId}/lessons/${lessonDocRef.id}/quizQuestions`
@@ -369,11 +481,27 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
             explanation: question.explanation,
           });
         }
+        console.log('Quiz questions saved successfully');
       }
 
+      console.log('All operations completed, resetting state');
+      setUploadProgress(0);
+      setUploadingFile('');
+      setAdditionalFilesProgress({});
       setLoading(false);
-      onClose();
+
+      // For new lessons, close the form. For updates, just notify parent to reload data
+      if (lessonId && onSave) {
+        console.log('Lesson updated successfully, notifying parent to reload');
+        onSave();
+      } else {
+        console.log('New lesson created, closing form');
+        onClose();
+      }
     } catch (error) {
+      setUploadProgress(0);
+      setUploadingFile('');
+      setAdditionalFilesProgress({});
       setLoading(false);
       console.error('Error adding lesson:', error);
       alert('Failed to add lesson. Please try again.');
@@ -408,6 +536,7 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
   const updateLesson = useCallback(async () => {
     if (!lessonId) return;
     setLoading(true);
+    setUploadProgress(0);
     try {
       // Create the updated data object
       const updatedData: any = {
@@ -427,29 +556,113 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
 
       // Update main file if a new one is provided
       if (file) {
-        const storageRef = ref(firebaseStorage, `lessons/${courseId}/${file.name}_${Date.now()}`);
-        const snapshot = await uploadBytes(storageRef, file);
-        const downloadURL = await getDownloadURL(snapshot.ref);
-        updatedData.file = downloadURL;
+        try {
+          setUploadingFile(file.name);
+          console.log('Starting file upload for update:', {
+            filename: file.name,
+            size: file.size,
+            sizeInMB: (file.size / 1024 / 1024).toFixed(2) + ' MB',
+            type: file.type,
+          });
+
+          const storageRef = ref(firebaseStorage, `lessons/${courseId}/${file.name}_${Date.now()}`);
+          const uploadTask = uploadBytesResumable(storageRef, file);
+
+          const downloadURL = await new Promise<string>((resolve, reject) => {
+            let lastLoggedProgress = 0;
+            uploadTask.on(
+              'state_changed',
+              (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                const bytesTransferredMB = (snapshot.bytesTransferred / 1024 / 1024).toFixed(2);
+                const totalBytesMB = (snapshot.totalBytes / 1024 / 1024).toFixed(2);
+
+                // Log every 10% progress
+                if (progress - lastLoggedProgress >= 10 || progress === 100) {
+                  console.log(
+                    `Update upload progress: ${progress.toFixed(2)}% (${bytesTransferredMB}MB / ${totalBytesMB}MB)`
+                  );
+                  lastLoggedProgress = Math.floor(progress / 10) * 10;
+                }
+
+                setUploadProgress(progress);
+              },
+              (error) => {
+                console.error('Update upload error:', error);
+                setUploadingFile('');
+                reject(error);
+              },
+              async () => {
+                try {
+                  console.log(
+                    'Update upload completion callback triggered, fetching download URL...'
+                  );
+                  const url = await getDownloadURL(uploadTask.snapshot.ref);
+                  console.log('Update upload complete, URL:', url);
+                  setUploadingFile('');
+                  resolve(url);
+                } catch (error) {
+                  console.error('Error getting download URL on update:', error);
+                  setUploadingFile('');
+                  reject(error);
+                }
+              }
+            );
+          });
+
+          if (!downloadURL) {
+            throw new Error('Failed to get download URL after update upload');
+          }
+
+          updatedData.file = downloadURL;
+          console.log('File URL set in updatedData:', downloadURL);
+        } catch (error) {
+          console.error('File upload failed on update:', error);
+          throw new Error(
+            `Failed to upload file: ${error instanceof Error ? error.message : 'Unknown error'}`
+          );
+        }
       }
 
       // Upload additional files if any new ones were added
       if (additionalFiles.length > 0) {
         const additionalFilesData = [];
-        for (const addFile of additionalFiles) {
+        for (let i = 0; i < additionalFiles.length; i++) {
+          const addFile = additionalFiles[i];
           // Only upload files that don't have URLs already
           if (addFile.file) {
+            setUploadingFile(addFile.name);
             const fileRef = ref(
               firebaseStorage,
               `lessons/${courseId}/resources/${addFile.file.name}_${Date.now()}`
             );
-            const fileSnapshot = await uploadBytes(fileRef, addFile.file);
-            const fileUrl = await getDownloadURL(fileSnapshot.ref);
+
+            const uploadTask = uploadBytesResumable(fileRef, addFile.file);
+
+            const fileUrl = await new Promise<string>((resolve, reject) => {
+              uploadTask.on(
+                'state_changed',
+                (snapshot) => {
+                  const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                  setAdditionalFilesProgress((prev) => ({ ...prev, [addFile.name]: progress }));
+                },
+                (error) => {
+                  console.error('Additional file upload error:', error);
+                  reject(error);
+                },
+                async () => {
+                  const url = await getDownloadURL(uploadTask.snapshot.ref);
+                  resolve(url);
+                }
+              );
+            });
+
             additionalFilesData.push({
               name: addFile.name,
               url: fileUrl,
               description: addFile.description,
             });
+            setUploadingFile('');
           }
         }
         updatedData.additionalFiles = additionalFilesData;
@@ -488,11 +701,22 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
       updatedData.completionCriteria = completionCriteria;
 
       // Update the lesson document
+      console.log('Updating lesson in Firestore:', {
+        courseId,
+        lessonId,
+        lessonName,
+        hasFile: !!updatedData.file,
+        fileUrl: updatedData.file || 'none',
+      });
+
       const lessonRef = doc(firestoreDB, `courses/${courseId}/lessons/${lessonId}`);
       await updateDoc(lessonRef, updatedData);
 
+      console.log('Lesson updated successfully');
+
       // Update quiz questions if the lesson has a quiz
       if (hasQuiz && quizQuestions.length > 0) {
+        console.log('Updating quiz questions:', quizQuestions.length);
         // First delete existing questions
         const questionsRef = collection(
           firestoreDB,
@@ -515,11 +739,26 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
             explanation: question.explanation,
           });
         }
+        console.log('Quiz questions updated successfully');
       }
 
+      console.log('All update operations completed, resetting state');
+      setUploadProgress(0);
+      setUploadingFile('');
+      setAdditionalFilesProgress({});
       setLoading(false);
-      onClose();
+
+      // For updates, notify parent to reload data instead of closing
+      if (onSave) {
+        console.log('Update completed, notifying parent to reload');
+        onSave();
+      } else {
+        onClose();
+      }
     } catch (error) {
+      setUploadProgress(0);
+      setUploadingFile('');
+      setAdditionalFilesProgress({});
       setLoading(false);
       console.error('Error updating lesson:', error);
       alert('Failed to update lesson. Please try again.');
@@ -561,10 +800,46 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
     if (e.target.files && e.target.files.length > 0) {
       const selectedFile = e.target.files[0];
       setFile(selectedFile);
+
+      // Clean up previous preview URL if it exists
+      if (filePreview && filePreview.startsWith('blob:')) {
+        URL.revokeObjectURL(filePreview);
+      }
+
       if (selectedFile.type.startsWith('video/')) {
-        setFilePreview(
-          'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iY3VycmVudENvbG9yIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxwb2x5Z29uIHBvaW50cz0iMTAgOCAxNiAxMiAxMCAxNiAxMCA4Ij48L3BvbHlnb24+PC9zdmc+'
-        );
+        // Create a blob URL for video preview
+        const videoUrl = URL.createObjectURL(selectedFile);
+        setFilePreview(videoUrl);
+
+        // Extract video duration automatically using a separate video element
+        const videoElement = document.createElement('video');
+        videoElement.preload = 'metadata';
+
+        videoElement.onloadedmetadata = () => {
+          // Get duration in minutes (rounded up)
+          const durationInMinutes = Math.ceil(videoElement.duration / 60);
+
+          console.log('Video duration extracted:', {
+            seconds: videoElement.duration,
+            minutes: durationInMinutes,
+          });
+
+          // Auto-fill the duration field
+          setDurationMinutes(durationInMinutes.toString());
+
+          // Clean up the temporary video element (but not the preview URL)
+          videoElement.src = '';
+          videoElement.load();
+        };
+
+        videoElement.onerror = () => {
+          console.error('Failed to load video metadata');
+          videoElement.src = '';
+          videoElement.load();
+        };
+
+        // Use the same blob URL for metadata extraction
+        videoElement.src = videoUrl;
       } else {
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -954,25 +1229,37 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
                   <div className="border-2 border-dashed border-[color:var(--ai-card-border)] rounded-xl p-4 text-center cursor-pointer hover:bg-[color:var(--ai-card-bg)]/50 transition-all hover:border-[color:var(--ai-primary)]/30 hover:shadow-lg mb-6">
                     {filePreview ? (
                       <div className="relative group">
-                        <img
-                          src={filePreview}
-                          alt="Lesson preview"
-                          className="w-full h-48 object-cover rounded-lg shadow-md"
-                        />
-                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all rounded-lg flex items-center justify-center">
-                          <Button
-                            color="danger"
-                            variant="flat"
-                            size="sm"
-                            className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                            onPress={() => {
-                              setFile(null);
-                              setFilePreview(null);
-                            }}
+                        {lessonType === 'video' ? (
+                          <video
+                            src={filePreview}
+                            className="w-full h-48 object-contain rounded-lg shadow-md bg-black relative z-10"
+                            controls
+                            preload="metadata"
                           >
-                            {t('remove')}
-                          </Button>
-                        </div>
+                            Your browser does not support the video tag.
+                          </video>
+                        ) : (
+                          <img
+                            src={filePreview}
+                            alt="Lesson preview"
+                            className="w-full h-48 object-cover rounded-lg shadow-md"
+                          />
+                        )}
+                        <Button
+                          color="danger"
+                          variant="flat"
+                          size="sm"
+                          className="absolute top-6 right-6 z-20 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onPress={() => {
+                            if (filePreview && filePreview.startsWith('blob:')) {
+                              URL.revokeObjectURL(filePreview);
+                            }
+                            setFile(null);
+                            setFilePreview(null);
+                          }}
+                        >
+                          {t('remove')}
+                        </Button>
                       </div>
                     ) : (
                       <label className="flex flex-col items-center justify-center h-48 cursor-pointer">
@@ -1589,8 +1876,51 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
         </Tab>
       </Tabs>
 
+      {/* Upload Progress Indicator */}
+      {loading && uploadProgress > 0 && (
+        <div className="mb-6 p-4 bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-xl">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-[color:var(--ai-primary)] rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium text-[color:var(--ai-foreground)]">
+                {uploadingFile ? `Uploading ${uploadingFile}...` : 'Processing...'}
+              </span>
+            </div>
+            <span className="text-sm font-semibold text-[color:var(--ai-primary)]">
+              {Math.round(uploadProgress)}%
+            </span>
+          </div>
+          <div className="w-full bg-[color:var(--ai-card-border)] rounded-full h-2.5 overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] transition-all duration-300 ease-out rounded-full"
+              style={{ width: `${uploadProgress}%` }}
+            ></div>
+          </div>
+          {Object.keys(additionalFilesProgress).length > 0 && (
+            <div className="mt-3 space-y-2">
+              {Object.entries(additionalFilesProgress).map(([fileName, progress]) => (
+                <div key={fileName} className="flex items-center justify-between text-xs">
+                  <span className="text-[color:var(--ai-muted)] truncate max-w-[70%]">
+                    {fileName}
+                  </span>
+                  <span className="text-[color:var(--ai-primary)] font-medium">
+                    {Math.round(progress)}%
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="flex justify-end gap-4 mt-8">
-        <Button color="default" variant="flat" onPress={onClose} className="px-6">
+        <Button
+          color="default"
+          variant="flat"
+          onPress={onClose}
+          className="px-6"
+          isDisabled={loading}
+        >
           Cancel
         </Button>
         <Button
@@ -1598,8 +1928,13 @@ export default function LessonForm({ courseId, lessonId, onClose }: LessonFormPr
           isLoading={loading}
           onPress={editMode ? updateLesson : addLesson}
           className="px-8"
+          isDisabled={loading}
         >
-          {editMode ? 'Update Lesson' : 'Add Lesson'}
+          {loading && uploadProgress > 0
+            ? `Uploading ${Math.round(uploadProgress)}%`
+            : editMode
+              ? 'Update Lesson'
+              : 'Add Lesson'}
         </Button>
       </div>
     </motion.div>

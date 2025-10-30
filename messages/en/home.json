@@ -19,8 +19,11 @@
       "reviews": "from {count} reviews",
       "courses": "Courses Available",
       "students": "Active Students",
-      "rating": "Average Rating"
+      "rating": "Average Rating",
+      "coursesAvailable": "Courses Available",
+      "projectBasedCurriculum": "Project-based curriculum"
     },
+    "imageAlt": "Programming",
     "scrollToExplore": "Scroll to explore"
   },
   "whyChooseUs": {

@@ -347,7 +347,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
                     {course.originalPrice}
                   </span>
                   <Chip color="danger" size="sm" variant="flat" className="font-medium">
-                    {discountPercentage}% off
+                    {discountPercentage}% {t('off')}
                   </Chip>
                 </div>
               )}

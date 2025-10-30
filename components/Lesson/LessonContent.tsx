@@ -241,7 +241,7 @@ function LessonContent({
             {!isOnline && (
               <Badge color="danger" variant="flat" className="mb-1 flex items-center gap-1">
                 <FiWifiOff size={12} />
-                Offline Mode
+                {t('status.offlineMode')}
               </Badge>
             )}
             {/* Download for offline button */}
@@ -284,7 +284,7 @@ function LessonContent({
                 </svg>
               }
             >
-              Completed
+              {t('status.completed')}
             </Chip>
           )}
 
@@ -308,7 +308,7 @@ function LessonContent({
                 </svg>
               }
             >
-              Progress Saved
+              {t('status.progressSaved')}
             </Chip>
           )}
 
@@ -332,7 +332,7 @@ function LessonContent({
                 </svg>
               }
             >
-              Autoplay Next
+              {t('status.autoplayNext')}
             </Chip>
           )}
         </div>
@@ -367,7 +367,7 @@ function LessonContent({
             <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-xl">
               <div className="p-6">
                 <h2 className="text-xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-4">
-                  Lesson Content
+                  {t('sections.content')}
                 </h2>
                 <div
                   className="prose dark:prose-invert max-w-none"
@@ -383,10 +383,10 @@ function LessonContent({
             <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-xl overflow-hidden">
               <div className="p-6">
                 <h2 className="text-xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-4">
-                  Knowledge Check
+                  {t('sections.knowledgeCheck')}
                 </h2>
                 <p className="text-[color:var(--ai-muted)] mb-4">
-                  Test your understanding of the key concepts covered in this lesson.
+                  {t('knowledgeCheck.description')}
                 </p>
                 <Button
                   color="primary"
@@ -402,7 +402,7 @@ function LessonContent({
                     </svg>
                   }
                 >
-                  Start Quiz
+                  {t('knowledgeCheck.startButton')}
                 </Button>
               </div>
             </Card>

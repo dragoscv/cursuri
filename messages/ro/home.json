@@ -19,8 +19,11 @@
       "reviews": "din {count} recenzii",
       "courses": "Cursuri Disponibile",
       "students": "Cursanți Activi",
-      "rating": "Rating Mediu"
+      "rating": "Rating Mediu",
+      "coursesAvailable": "Cursuri Disponibile",
+      "projectBasedCurriculum": "Curriculum bazat pe proiecte"
     },
+    "imageAlt": "Programare",
     "scrollToExplore": "Derulează pentru a explora"
   },
   "whyChooseUs": {

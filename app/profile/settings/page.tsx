@@ -39,6 +39,7 @@ export default function ProfileSettings() {
     language: 'en',
   });
   const [isLoading, setIsLoading] = useState(false);
+  const tLanguages = useTranslations('profile.settingsPage.languages');
   const showToast = ({
     type,
     title,
@@ -469,9 +470,9 @@ export default function ProfileSettings() {
               >
                 <option value="en">{tProfile('english')}</option>
                 <option value="ro">{tProfile('romanian')}</option>
-                <option value="es">Spanish</option>
-                <option value="fr">French</option>
-                <option value="de">German</option>
+                <option value="es">{tLanguages('spanish')}</option>
+                <option value="fr">{tLanguages('french')}</option>
+                <option value="de">{tLanguages('german')}</option>
               </select>
             </div>{' '}
             <div className="mt-6">

@@ -46,6 +46,7 @@ const EnhancedUserManagement: React.FC = () => {
   const t = useTranslations('admin');
   const tCommon = useTranslations('common');
   const tUser = useTranslations('admin.userManagement');
+  const tError = useTranslations('admin.users.errors');
   const context = useContext(AppContext);
   if (!context) {
     throw new Error('EnhancedUserManagement must be used within an AppProvider');
@@ -93,52 +94,52 @@ const EnhancedUserManagement: React.FC = () => {
   // Filtered and sorted users
   const filteredUsers = users
     ? (Object.values(users) as UserProfile[])
-      .filter((user: UserProfile) => {
-        if (!user) return false;
-        // Text search filter
-        const textMatch =
-          user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          user.displayName?.toLowerCase().includes(searchTerm.toLowerCase());
+        .filter((user: UserProfile) => {
+          if (!user) return false;
+          // Text search filter
+          const textMatch =
+            user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.displayName?.toLowerCase().includes(searchTerm.toLowerCase());
 
-        // Role filter
-        const roleMatch = userRoleFilter === 'all' || user.role === userRoleFilter;
+          // Role filter
+          const roleMatch = userRoleFilter === 'all' || user.role === userRoleFilter;
 
-        // Verification filter
-        const verificationMatch =
-          verificationFilter === 'all' ||
-          (verificationFilter === 'verified' && user.emailVerified) ||
-          (verificationFilter === 'unverified' && !user.emailVerified);
+          // Verification filter
+          const verificationMatch =
+            verificationFilter === 'all' ||
+            (verificationFilter === 'verified' && user.emailVerified) ||
+            (verificationFilter === 'unverified' && !user.emailVerified);
 
-        // Activity filter (simplified for demo - in real app would check actual activity)
-        const activityMatch =
-          activityFilter === 'all' ||
-          (activityFilter === 'active' && Object.keys(user.enrollments || {}).length > 0) ||
-          (activityFilter === 'inactive' && Object.keys(user.enrollments || {}).length === 0);
+          // Activity filter (simplified for demo - in real app would check actual activity)
+          const activityMatch =
+            activityFilter === 'all' ||
+            (activityFilter === 'active' && Object.keys(user.enrollments || {}).length > 0) ||
+            (activityFilter === 'inactive' && Object.keys(user.enrollments || {}).length === 0);
 
-        return textMatch && roleMatch && verificationMatch && activityMatch;
-      })
-      .sort((a, b) => {
-        // Convert timestamps to dates for comparison
-        const getDateValue = (user: UserProfile, field: string) => {
-          if (field === 'createdAt') {
-            const createdAt = user.createdAt;
-            if (typeof createdAt === 'object' && 'seconds' in createdAt) {
-              return new Date(createdAt.seconds * 1000);
+          return textMatch && roleMatch && verificationMatch && activityMatch;
+        })
+        .sort((a, b) => {
+          // Convert timestamps to dates for comparison
+          const getDateValue = (user: UserProfile, field: string) => {
+            if (field === 'createdAt') {
+              const createdAt = user.createdAt;
+              if (typeof createdAt === 'object' && 'seconds' in createdAt) {
+                return new Date(createdAt.seconds * 1000);
+              }
+              return new Date(createdAt || 0);
             }
-            return new Date(createdAt || 0);
+            return user.displayName || user.email || '';
+          };
+
+          const valueA = getDateValue(a, sortBy);
+          const valueB = getDateValue(b, sortBy);
+
+          if (sortDirection === 'asc') {
+            return valueA > valueB ? 1 : -1;
+          } else {
+            return valueA < valueB ? 1 : -1;
           }
-          return user.displayName || user.email || '';
-        };
-
-        const valueA = getDateValue(a, sortBy);
-        const valueB = getDateValue(b, sortBy);
-
-        if (sortDirection === 'asc') {
-          return valueA > valueB ? 1 : -1;
-        } else {
-          return valueA < valueB ? 1 : -1;
-        }
-      })
+        })
     : [];
 
   const paginatedUsers = filteredUsers.slice((page - 1) * rowsPerPage, page * rowsPerPage);
@@ -178,7 +179,7 @@ const EnhancedUserManagement: React.FC = () => {
       setEditMode(false);
     } catch (error) {
       console.error('Error updating user:', error);
-      setError('Failed to update user');
+      setError(tError('updateFailed'));
     }
   };
 
@@ -703,7 +704,7 @@ const EnhancedUserManagement: React.FC = () => {
                                   <Chip
                                     color={
                                       selectedUser.role === UserRole.ADMIN ||
-                                        selectedUser.role === UserRole.SUPER_ADMIN
+                                      selectedUser.role === UserRole.SUPER_ADMIN
                                         ? 'primary'
                                         : 'default'
                                     }
@@ -731,8 +732,8 @@ const EnhancedUserManagement: React.FC = () => {
                                     ? typeof selectedUser.createdAt === 'object' &&
                                       'seconds' in selectedUser.createdAt
                                       ? new Date(
-                                        selectedUser.createdAt.seconds * 1000
-                                      ).toLocaleString()
+                                          selectedUser.createdAt.seconds * 1000
+                                        ).toLocaleString()
                                       : new Date(selectedUser.createdAt).toLocaleString()
                                     : 'Unknown'}
                                 </p>
@@ -747,8 +748,8 @@ const EnhancedUserManagement: React.FC = () => {
                                     ? typeof selectedUser.updatedAt === 'object' &&
                                       'seconds' in selectedUser.updatedAt
                                       ? new Date(
-                                        selectedUser.updatedAt.seconds * 1000
-                                      ).toLocaleString()
+                                          selectedUser.updatedAt.seconds * 1000
+                                        ).toLocaleString()
                                       : new Date(selectedUser.updatedAt).toLocaleString()
                                     : 'Never'}
                                 </p>
@@ -811,7 +812,7 @@ const EnhancedUserManagement: React.FC = () => {
                         </div>
 
                         {selectedUser.enrollments &&
-                          Object.keys(selectedUser.enrollments).length > 0 ? (
+                        Object.keys(selectedUser.enrollments).length > 0 ? (
                           <div className="space-y-2">
                             {Object.entries(selectedUser.enrollments).map(
                               ([courseId, enrollment]) => {
@@ -831,8 +832,8 @@ const EnhancedUserManagement: React.FC = () => {
                                           ? typeof enrollment.enrolledAt === 'object' &&
                                             'seconds' in enrollment.enrolledAt
                                             ? new Date(
-                                              enrollment.enrolledAt.seconds * 1000
-                                            ).toLocaleDateString()
+                                                enrollment.enrolledAt.seconds * 1000
+                                              ).toLocaleDateString()
                                             : new Date(enrollment.enrolledAt).toLocaleDateString()
                                           : 'Unknown date'}
                                       </p>
@@ -927,8 +928,8 @@ const EnhancedUserManagement: React.FC = () => {
                                   ? typeof selectedUser.createdAt === 'object' &&
                                     'seconds' in selectedUser.createdAt
                                     ? new Date(
-                                      selectedUser.createdAt.seconds * 1000
-                                    ).toLocaleString()
+                                        selectedUser.createdAt.seconds * 1000
+                                      ).toLocaleString()
                                     : new Date(selectedUser.createdAt).toLocaleString()
                                   : 'Unknown'}
                               </p>
@@ -961,8 +962,8 @@ const EnhancedUserManagement: React.FC = () => {
                                         ? typeof enrollment.enrolledAt === 'object' &&
                                           'seconds' in enrollment.enrolledAt
                                           ? new Date(
-                                            enrollment.enrolledAt.seconds * 1000
-                                          ).toLocaleString()
+                                              enrollment.enrolledAt.seconds * 1000
+                                            ).toLocaleString()
                                           : new Date(enrollment.enrolledAt).toLocaleString()
                                         : 'Unknown date'}
                                     </p>
@@ -1013,7 +1014,7 @@ const EnhancedUserManagement: React.FC = () => {
                               <Chip
                                 color={
                                   selectedUser.role === UserRole.ADMIN ||
-                                    selectedUser.role === UserRole.SUPER_ADMIN
+                                  selectedUser.role === UserRole.SUPER_ADMIN
                                     ? 'primary'
                                     : 'default'
                                 }
@@ -1038,13 +1039,13 @@ const EnhancedUserManagement: React.FC = () => {
                                   size="sm"
                                   color={
                                     selectedUser.role === UserRole.ADMIN ||
-                                      selectedUser.role === UserRole.SUPER_ADMIN
+                                    selectedUser.role === UserRole.SUPER_ADMIN
                                       ? 'success'
                                       : 'danger'
                                   }
                                 >
                                   {selectedUser.role === UserRole.ADMIN ||
-                                    selectedUser.role === UserRole.SUPER_ADMIN
+                                  selectedUser.role === UserRole.SUPER_ADMIN
                                     ? 'Yes'
                                     : 'No'}
                                 </Chip>
@@ -1055,13 +1056,13 @@ const EnhancedUserManagement: React.FC = () => {
                                   size="sm"
                                   color={
                                     selectedUser.role === UserRole.ADMIN ||
-                                      selectedUser.role === UserRole.SUPER_ADMIN
+                                    selectedUser.role === UserRole.SUPER_ADMIN
                                       ? 'success'
                                       : 'danger'
                                   }
                                 >
                                   {selectedUser.role === UserRole.ADMIN ||
-                                    selectedUser.role === UserRole.SUPER_ADMIN
+                                  selectedUser.role === UserRole.SUPER_ADMIN
                                     ? 'Yes'
                                     : 'No'}
                                 </Chip>
@@ -1081,13 +1082,13 @@ const EnhancedUserManagement: React.FC = () => {
                                   size="sm"
                                   color={
                                     selectedUser.role === UserRole.ADMIN ||
-                                      selectedUser.role === UserRole.SUPER_ADMIN
+                                    selectedUser.role === UserRole.SUPER_ADMIN
                                       ? 'success'
                                       : 'danger'
                                   }
                                 >
                                   {selectedUser.role === UserRole.ADMIN ||
-                                    selectedUser.role === UserRole.SUPER_ADMIN
+                                  selectedUser.role === UserRole.SUPER_ADMIN
                                     ? 'Yes'
                                     : 'No'}
                                 </Chip>

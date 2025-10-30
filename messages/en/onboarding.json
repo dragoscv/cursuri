@@ -1,0 +1,19 @@
+{
+  "step1": {
+    "title": "Welcome to Cursuri!",
+    "description": "Get started by exploring our course catalog and customizing your profile."
+  },
+  "step2": {
+    "title": "Track Your Progress",
+    "description": "Mark lessons as complete and see your learning journey unfold."
+  },
+  "step3": {
+    "title": "Join the Community",
+    "description": "Leave reviews, ask questions, and connect with other learners."
+  },
+  "buttons": {
+    "back": "Back",
+    "next": "Next",
+    "getStarted": "Get Started"
+  }
+}

@@ -18,6 +18,7 @@ import {
 export default function PaymentHistory() {
   const locale = useLocale();
   const t = useTranslations('payment');
+  const tp = useTranslations('profile.paymentsPage');
   const context = useContext(AppContext);
   if (!context) {
     throw new Error('AppContext not found');
@@ -125,12 +126,10 @@ export default function PaymentHistory() {
         <div className="flex flex-col gap-2">
           <h1 className="text-3xl font-bold text-[color:var(--ai-foreground)] mb-2">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]">
-              Payment History
+              {tp('title')}
             </span>
           </h1>
-          <p className="text-[color:var(--ai-muted)] max-w-2xl">
-            View your transaction history and download invoices for all your course purchases.
-          </p>
+          <p className="text-[color:var(--ai-muted)] max-w-2xl">{tp('description')}</p>
         </div>
         <div className="h-1 w-24 mt-4 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-full"></div>
       </motion.div>
@@ -180,22 +179,22 @@ export default function PaymentHistory() {
                   <thead className="bg-[color:var(--ai-card-bg)]/80 border-b border-[color:var(--ai-card-border)]">
                     <tr>
                       <th className="px-6 py-4 text-left text-xs font-semibold text-[color:var(--ai-muted)] uppercase tracking-wider">
-                        Invoice
+                        {tp('table.invoice')}
                       </th>
                       <th className="px-6 py-4 text-left text-xs font-semibold text-[color:var(--ai-muted)] uppercase tracking-wider">
-                        Course
+                        {tp('table.course')}
                       </th>
                       <th className="px-6 py-4 text-left text-xs font-semibold text-[color:var(--ai-muted)] uppercase tracking-wider">
-                        Date
+                        {tp('table.date')}
                       </th>
                       <th className="px-6 py-4 text-left text-xs font-semibold text-[color:var(--ai-muted)] uppercase tracking-wider">
-                        Amount
+                        {tp('table.amount')}
                       </th>
                       <th className="px-6 py-4 text-left text-xs font-semibold text-[color:var(--ai-muted)] uppercase tracking-wider">
-                        Status
+                        {tp('table.status')}
                       </th>
                       <th className="px-6 py-4 text-right text-xs font-semibold text-[color:var(--ai-muted)] uppercase tracking-wider">
-                        Actions
+                        {tp('table.actions')}
                       </th>
                     </tr>
                   </thead>
@@ -248,7 +247,7 @@ export default function PaymentHistory() {
                             variant="flat"
                             size="sm"
                           >
-                            {payment.status === 'succeeded' ? 'Paid' : payment.status}
+                            {payment.status === 'succeeded' ? tp('status.paid') : payment.status}
                           </Chip>
                         </td>
                         <td className="px-6 py-5 whitespace-nowrap text-right">
@@ -259,7 +258,7 @@ export default function PaymentHistory() {
                             startContent={<FiDownload className="w-4 h-4" />}
                             onClick={() => downloadInvoice(payment)}
                           >
-                            Invoice
+                            {tp('actions.invoice')}
                           </Button>
                         </td>
                       </motion.tr>
@@ -330,18 +329,19 @@ export default function PaymentHistory() {
           </div>
           <div>
             <p className="mb-2 font-semibold text-[color:var(--ai-foreground)] text-base">
-              Need help with a payment?
+              {tp('help.title')}
             </p>
             <p className="text-[color:var(--ai-muted)]">
-              If you have any questions about your payments or need assistance with refunds, please
-              contact our support team at{' '}
-              <a
-                href="mailto:support@cursuri.com"
-                className="text-[color:var(--ai-primary)] hover:text-[color:var(--ai-secondary)] transition-colors duration-200 hover:underline"
-              >
-                support@cursuri.com
-              </a>
-              .
+              {tp.rich('help.description', {
+                email: (chunks) => (
+                  <a
+                    href={`mailto:${tp('help.email')}`}
+                    className="text-[color:var(--ai-primary)] hover:text-[color:var(--ai-secondary)] transition-colors duration-200 hover:underline"
+                  >
+                    {chunks}
+                  </a>
+                ),
+              })}
             </p>
           </div>
         </div>

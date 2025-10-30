@@ -115,7 +115,7 @@ export default async function Page({ params }: PageParams<{ courseId: string; le
       }
     }
 
-    // SERVER-SIDE ACCESS CONTROL: 
+    // SERVER-SIDE ACCESS CONTROL:
     // For paid lessons, we don't render the full content in HTML for SEO/security
     // The lesson will still load for authenticated users via ClientLessonWrapper
     // This prevents:
@@ -271,7 +271,7 @@ export default async function Page({ params }: PageParams<{ courseId: string; le
             </a>
             {/* Debugging information */}
             <div className="mt-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-left max-w-lg w-full">
-              <h3 className="font-bold mb-2">Debugging Information:</h3>
+              <h3 className="font-bold mb-2">{t('debuggingInformation')}</h3>
               <ul className="list-disc pl-5 space-y-1 text-sm">
                 <li>Course ID: {courseIdFallback}</li>
                 <li>Lesson ID: {lessonIdFallback}</li>
@@ -319,14 +319,12 @@ export default async function Page({ params }: PageParams<{ courseId: string; le
       return (
         <div className="flex flex-col items-center justify-center min-h-screen p-4">
           <h1 className="text-2xl font-bold mb-4">{t('errorLoadingLesson')}</h1>
-          <p className="mb-6">
-            There was a problem loading this lesson. Please try again later.
-          </p>{' '}
+          <p className="mb-6">{t('errorLoadingLessonMessage')}</p>{' '}
           <Link
             href="/courses"
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Back to Courses
+            {t('backToCourses')}
           </Link>
         </div>
       );

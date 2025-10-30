@@ -3,21 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@heroui/react';
 import { useAuth } from '../contexts/modules';
-
-const steps = [
-  {
-    title: 'Welcome to Cursuri!',
-    description: 'Get started by exploring our course catalog and customizing your profile.',
-  },
-  {
-    title: 'Track Your Progress',
-    description: 'Mark lessons as complete and see your learning journey unfold.',
-  },
-  {
-    title: 'Join the Community',
-    description: 'Leave reviews, ask questions, and connect with other learners.',
-  },
-];
+import { useTranslations } from 'next-intl';
 
 /**
  * Onboarding Modal Component - Migrated to use modular contexts
@@ -27,7 +13,24 @@ const steps = [
  */
 export default function OnboardingModal() {
   const [step, setStep] = useState(0);
+  const t = useTranslations('onboarding');
   // const { closeModal } = useModal();
+
+  const steps = [
+    {
+      title: t('step1.title'),
+      description: t('step1.description'),
+    },
+    {
+      title: t('step2.title'),
+      description: t('step2.description'),
+    },
+    {
+      title: t('step3.title'),
+      description: t('step3.description'),
+    },
+  ];
+
   const isLast = step === steps.length - 1;
 
   const handleComplete = async () => {
@@ -47,17 +50,17 @@ export default function OnboardingModal() {
       <div className="flex gap-2 mt-4">
         {step > 0 && (
           <Button variant="flat" onClick={() => setStep(step - 1)}>
-            Back
+            {t('buttons.back')}
           </Button>
         )}
         {!isLast && (
           <Button color="primary" onClick={() => setStep(step + 1)}>
-            Next
+            {t('buttons.next')}
           </Button>
         )}
         {isLast && (
           <Button color="primary" onClick={handleComplete}>
-            Get Started
+            {t('buttons.getStarted')}
           </Button>
         )}
       </div>

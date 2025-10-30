@@ -2,6 +2,7 @@
 
 import React from 'react';
 import dynamic from 'next/dynamic';
+import { useTranslations } from 'next-intl';
 import AdminPageHeader from '@/components/Admin/AdminPageHeader';
 
 // Dynamic import for AdminAnalytics to reduce initial bundle size
@@ -15,12 +16,11 @@ const AdminAnalytics = dynamic(() => import('@/components/Admin/AdminAnalytics')
 });
 
 export default function AnalyticsPage() {
+  const t = useTranslations('admin.analytics');
+
   return (
     <>
-      <AdminPageHeader
-        title="Analytics & Insights"
-        description="Detailed analytics on course enrollments, user engagement, and platform performance."
-      />
+      <AdminPageHeader title={t('title')} description={t('description')} />
       <AdminAnalytics />
     </>
   );

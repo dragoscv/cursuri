@@ -65,7 +65,7 @@
     "totalLessonsCreated": "Total lecții create"
   },
   "analytics": {
-    "title": "Analize",
+    "title": "Analiză și Perspective",
     "revenueOverTime": "Venituri În Timp",
     "noRevenueData": "Nu există date despre venituri",
     "totalRevenue": "Venituri Totale",
@@ -79,7 +79,8 @@
     "totalLessons": "Total Lecții",
     "popularCourses": "Cursuri Populare",
     "failedToLoad": "Eșec la încărcarea datelor de analiză",
-    "pleaseTryAgain": "Vă rugăm să încercați din nou mai târziu"
+    "pleaseTryAgain": "Vă rugăm să încercați din nou mai târziu",
+    "description": "Analiză detaliată a înscrierilor la cursuri, implicării utilizatorilor și performanței platformei."
   },
   "users": {
     "title": "Gestionare Utilizatori",
@@ -112,7 +113,10 @@
     "assigningCourseTo": "Se atribuie curs către:",
     "selectCourse": "Selectează Curs",
     "chooseACourse": "Alege un curs",
-    "courseImmediatelyAvailable": "Cursul selectat va fi disponibil imediat pentru acest utilizator."
+    "courseImmediatelyAvailable": "Cursul selectat va fi disponibil imediat pentru acest utilizator.",
+    "errors": {
+      "updateFailed": "Actualizarea utilizatorului a eșuat"
+    }
   },
   "roleManagement": {
     "title": "Gestionare Roluri Administrator",
@@ -209,7 +213,13 @@
     "paymentProcessing": "Procesare Plăți",
     "whenDisabledNoPurchases": "Când este dezactivată, utilizatorii nu pot face achiziții",
     "currency": "Monedă",
-    "taxRate": "Cotă TVA (%)"
+    "taxRate": "Cotă TVA (%)",
+    "currencies": {
+      "ron": "Leu Românesc (RON)",
+      "usd": "Dolar American (USD)",
+      "eur": "Euro (EUR)",
+      "gbp": "Liră Sterlină (GBP)"
+    }
   },
   "auditLogs": {
     "warnings": "Avertismente",
@@ -238,5 +248,16 @@
     "lessons": "Lecții",
     "statistics": "Statistici curs",
     "title": "Detalii curs"
+  },
+  "tabs": {
+    "dashboard": "Tablou de Bord",
+    "courses": "Cursuri",
+    "batchOperations": "Operații în Serie",
+    "users": "Utilizatori",
+    "enhancedUsers": "Utilizatori Avansați",
+    "roleManagement": "Gestionare Roluri",
+    "analytics": "Analiză",
+    "courseEngagement": "Implicare în Cursuri",
+    "settings": "Setări"
   }
 }

@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React, { useRef } from 'react';
 import { useTranslations } from 'next-intl';
@@ -13,7 +13,7 @@ import {
   CheckIcon,
   FullscreenIcon,
   ExitFullscreenIcon,
-  PlaybackSpeedIcon
+  PlaybackSpeedIcon,
 } from '@/components/icons/svg';
 import CaptionsIcon from '@/components/icons/svg/CaptionsIcon';
 import VolumeIcon from '@/components/icons/svg/VolumeIcon';
@@ -24,7 +24,12 @@ interface VideoPlayerProps {
   lesson: Lesson;
   isCompleted: boolean;
   saveProgress: boolean;
-  saveLessonProgress: (courseId: string, lessonId: string, position: number, isCompleted: boolean) => void;
+  saveLessonProgress: (
+    courseId: string,
+    lessonId: string,
+    position: number,
+    isCompleted: boolean
+  ) => void;
   markLessonComplete: (courseId: string, lessonId: string) => void;
   setIsCompleted: (isCompleted: boolean) => void;
   setProgressSaved: (isSaved: boolean) => void;
@@ -38,7 +43,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   saveLessonProgress,
   markLessonComplete,
   setIsCompleted,
-  setProgressSaved
+  setProgressSaved,
 }) => {
   const t = useTranslations('common.videoPlayer');
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -63,7 +68,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
     togglePlayPause,
     seek,
     toggleFullscreen,
-    formatTime
+    formatTime,
   } = useVideoControls({
     videoRef,
     videoContainerRef,
@@ -74,7 +79,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
     saveLessonProgress,
     markLessonComplete,
     setIsCompleted,
-    setProgressSaved
+    setProgressSaved,
   });
 
   // Toggle mute state
@@ -159,7 +164,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       {/* Video Element */}
       <video
         ref={videoRef}
-        src={lesson.file}
+        src={lesson.file || lesson.videoUrl || ''}
         className="w-full aspect-video bg-black"
         onTimeUpdate={handleTimeUpdate}
         onPlay={() => isPlaying}
@@ -168,7 +173,14 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
         playsInline
         preload="metadata"
         onClick={togglePlayPause}
-      />
+        poster={lesson.thumbnail || lesson.thumbnailUrl || ''}
+      >
+        {lesson.file || lesson.videoUrl ? null : (
+          <div className="absolute inset-0 flex items-center justify-center bg-black">
+            <p className="text-white text-center">No video available</p>
+          </div>
+        )}
+      </video>
 
       {/* Custom Play Button Overlay */}
       {!isPlaying && (
@@ -188,7 +200,8 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       >
         {/* Progress Bar */}
         <div className="relative w-full mb-2">
-          <div className="h-1.5 bg-[color:var(--ai-card-border)]/50 rounded-full overflow-hidden cursor-pointer"
+          <div
+            className="h-1.5 bg-[color:var(--ai-card-border)]/50 rounded-full overflow-hidden cursor-pointer"
             onClick={(e) => {
               if (videoRef.current) {
                 const rect = e.currentTarget.getBoundingClientRect();
@@ -207,9 +220,13 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
           <div
             className="absolute left-0 top-0 h-1.5 bg-[color:var(--ai-card-border)]/20 pointer-events-none rounded-full"
             style={{
-              width: `${videoRef.current && videoRef.current.buffered.length > 0
-                ? (videoRef.current.buffered.end(videoRef.current.buffered.length - 1) / videoRef.current.duration) * 100
-                : 0}%`
+              width: `${
+                videoRef.current && videoRef.current.buffered.length > 0
+                  ? (videoRef.current.buffered.end(videoRef.current.buffered.length - 1) /
+                      videoRef.current.duration) *
+                    100
+                  : 0
+              }%`,
             }}
           ></div>
         </div>
@@ -225,7 +242,6 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
             >
               <RewindIcon />
             </button>
-
             {/* Play/Pause */}
             <button
               className="p-2 rounded-xl hover:bg-white/20 transition duration-300"
@@ -234,7 +250,6 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
             >
               {isPlaying ? <PauseIcon /> : <PlayIcon />}
             </button>
-
             {/* Forward */}
             <button
               className="p-1.5 rounded-xl hover:bg-white/20 transition duration-300"
@@ -243,13 +258,13 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
             >
               <ForwardIcon />
             </button>
-
-            {/* Time Display */}            <span className="text-sm font-medium ml-2">
+            {/* Time Display */}{' '}
+            <span className="text-sm font-medium ml-2">
               {videoRef.current
                 ? `${formatTime(videoRef.current?.currentTime || 0)} / ${formatTime(videoRef.current?.duration || 0)}`
-                : '0:00 / 0:00'
-              }
-            </span>            {/* Volume Control */}
+                : '0:00 / 0:00'}
+            </span>{' '}
+            {/* Volume Control */}
             <Button
               isIconOnly
               variant="light"
@@ -261,11 +276,13 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
             </Button>
           </div>
 
-          <div className="flex items-center gap-3">            {/* Captions Toggle */}
+          <div className="flex items-center gap-3">
+            {' '}
+            {/* Captions Toggle */}
             {lesson.captions && Object.keys(lesson.captions).length > 0 && (
               <Button
                 isIconOnly
-                variant={captionsEnabled ? "primary" : "light"}
+                variant={captionsEnabled ? 'primary' : 'light'}
                 size="sm"
                 onClick={toggleCaptions}
                 aria-label={captionsEnabled ? t('disableCaptions') : t('enableCaptions')}
@@ -274,8 +291,8 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
                 <CaptionsIcon />
               </Button>
             )}
-
-            {/* Playback Speed */}            <Dropdown>
+            {/* Playback Speed */}{' '}
+            <Dropdown>
               <DropdownTrigger>
                 <Button
                   variant="light"
@@ -302,17 +319,19 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
                 <DropdownItem key="1.5">1.5x</DropdownItem>
                 <DropdownItem key="2">2x</DropdownItem>
               </DropdownMenu>
-            </Dropdown>            {/* Mark Complete Button */}
+            </Dropdown>{' '}
+            {/* Mark Complete Button */}
             <Button
               isIconOnly
-              variant={isCompleted ? "success" : "light"}
+              variant={isCompleted ? 'success' : 'light'}
               size="sm"
               onClick={handleMarkComplete}
               isDisabled={isCompleted}
               aria-label={isCompleted ? t('lessonCompleted') : t('markLessonComplete')}
-            >              <CheckIcon />
+            >
+              {' '}
+              <CheckIcon />
             </Button>
-
             {/* Fullscreen Toggle */}
             <Button
               isIconOnly

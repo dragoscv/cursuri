@@ -65,7 +65,13 @@
     "overview": "Prezentare Generală",
     "reviews": "Recenzii",
     "resources": "Resurse",
-    "courseResources": "Resurse Curs"
+    "courseResources": "Resurse Curs",
+    "lessonCount": "lecții",
+    "durationLabel": "durată",
+    "noLessonsYet": "Nicio lecție disponibilă încă. Verifică mai târziu pentru actualizări de conținut.",
+    "anonymousUser": "Utilizator Anonim",
+    "recently": "Recent",
+    "noReviewsYet": "Nicio recenzie încă. Fii primul care evaluează acest curs după înscriere!"
   },
   "enrollment": {
     "youreEnrolled": "Ești Înscris",
@@ -85,6 +91,7 @@
     "buyNow": "Cumpără Acum",
     "startLearning": "Începe să Înveți",
     "free": "Gratuit",
+    "off": "reducere",
     "loginRequired": "Autentificare Necesară",
     "prerequisitesRequired": "Cerințe Prealabile Necesare",
     "prerequisitesDescription": "Înainte de a te înscrie la acest curs, trebuie să finalizezi următoarele cursuri prealabile:",

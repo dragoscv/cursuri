@@ -65,8 +65,9 @@
     "totalLessonsCreated": "Total lessons created"
   },
   "analytics": {
-    "title": "Analytics",
-    "pageDescription": "View detailed analytics and insights about your platform."
+    "title": "Analytics & Insights",
+    "pageDescription": "View detailed analytics and insights about your platform.",
+    "description": "Detailed analytics on course enrollments, user engagement, and platform performance."
   },
   "batchOperations": {
     "actions": {
@@ -164,7 +165,10 @@
     "assigningCourseTo": "Assigning course to:",
     "selectCourse": "Select Course",
     "chooseACourse": "Choose a course",
-    "courseImmediatelyAvailable": "The selected course will be immediately available to this user."
+    "courseImmediatelyAvailable": "The selected course will be immediately available to this user.",
+    "errors": {
+      "updateFailed": "Failed to update user"
+    }
   },
   "engagement": {
     "totalCourses": "Total Courses",
@@ -214,7 +218,13 @@
     "paymentProcessing": "Payment Processing",
     "whenDisabledNoPurchases": "When disabled, users cannot make purchases",
     "currency": "Currency",
-    "taxRate": "Tax Rate (%)"
+    "taxRate": "Tax Rate (%)",
+    "currencies": {
+      "ron": "Romanian Leu (RON)",
+      "usd": "US Dollar (USD)",
+      "eur": "Euro (EUR)",
+      "gbp": "British Pound (GBP)"
+    }
   },
   "auditLogs": {
     "warnings": "Warnings",
@@ -243,5 +253,16 @@
     "lessons": "Lessons",
     "statistics": "Course Statistics",
     "title": "Course Details"
+  },
+  "tabs": {
+    "dashboard": "Dashboard",
+    "courses": "Courses",
+    "batchOperations": "Batch Operations",
+    "users": "Users",
+    "enhancedUsers": "Enhanced Users",
+    "roleManagement": "Role Management",
+    "analytics": "Analytics",
+    "courseEngagement": "Course Engagement",
+    "settings": "Settings"
   }
 }

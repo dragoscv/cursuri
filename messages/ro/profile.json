@@ -1,5 +1,27 @@
 {
   "title": "Profil",
+  "nav": {
+    "dashboard": "Tablou de Bord",
+    "myCourses": "Cursurile Mele",
+    "certificates": "Certificate",
+    "paymentHistory": "Istoric Plăți",
+    "settings": "Setări"
+  },
+  "defaultUserName": "Utilizator",
+  "courseCount": {
+    "singular": "Curs",
+    "plural": "Cursuri"
+  },
+  "themes": {
+    "blackAndWhite": "Alb și Negru",
+    "modernPurple": "Violet Modern",
+    "greenNeon": "Verde Neon",
+    "blueOcean": "Ocean Albastru",
+    "brownSunset": "Apus Maro",
+    "yellowMorning": "Dimineață Galbenă",
+    "redBlood": "Roșu Sânge",
+    "pinkCandy": "Bomboane Roz"
+  },
   "purchases": "Achiziții",
   "certificates": "Certificate",
   "myProgress": "Progresul Meu",
@@ -192,6 +214,11 @@
       "payments": "Primește chitanțe prin email pentru toate achizițiile",
       "weeklyDigest": "Primește un rezumat săptămânal al activităților tale de învățare",
       "marketing": "Primește actualizări despre cursuri noi și promoții speciale"
+    },
+    "languages": {
+      "spanish": "Spaniolă",
+      "french": "Franceză",
+      "german": "Germană"
     }
   },
   "certificatesPage": {
@@ -212,6 +239,12 @@
       "download": "Descarcă Certificat",
       "view": "Vizualizează Certificat",
       "browseCourses": "Răsfoiește Cursuri"
+    },
+    "filters": {
+      "all": "Toate certificatele",
+      "recent": "Ultimele 30 zile",
+      "threeMonths": "Ultimele 3 luni",
+      "year": "Ultimul an"
     }
   },
   "courses": {
@@ -270,6 +303,29 @@
   },
   "payments": {
     "title": "Plăți"
+  },
+  "paymentsPage": {
+    "title": "Istoric Plăți",
+    "description": "Vizualizează istoricul tranzacțiilor și descarcă facturile pentru toate achizițiile de cursuri.",
+    "table": {
+      "invoice": "Factură",
+      "course": "Curs",
+      "date": "Dată",
+      "amount": "Sumă",
+      "status": "Status",
+      "actions": "Acțiuni"
+    },
+    "status": {
+      "paid": "Plătit"
+    },
+    "actions": {
+      "invoice": "Factură"
+    },
+    "help": {
+      "title": "Ai nevoie de ajutor cu o plată?",
+      "description": "Dacă ai întrebări despre plățile tale sau ai nevoie de asistență cu rambursări, te rugăm să contactezi echipa noastră de suport la {email}.",
+      "email": "support@cursuri.com"
+    }
   },
   "settingsSaved": "Setări salvate cu succes"
 }

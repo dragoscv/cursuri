@@ -53,7 +53,10 @@
     "viewCourse": "View Course & Purchase",
     "signIn": "Sign In",
     "needHelp": "Need help?",
-    "contactUs": "Contact us"
+    "contactUs": "Contact us",
+    "errorLoadingLessonMessage": "There was a problem loading this lesson. Please try again later.",
+    "backToCourses": "Back to Courses",
+    "debuggingInformation": "Debugging Information:"
   },
   "form": {
     "basicInfo": "Basic Information",
@@ -229,5 +232,19 @@
     "available": "Available Offline",
     "size": "Size",
     "downloadedOn": "Downloaded on"
+  },
+  "status": {
+    "offlineMode": "Offline Mode",
+    "completed": "Completed",
+    "progressSaved": "Progress Saved",
+    "autoplayNext": "Autoplay Next"
+  },
+  "sections": {
+    "content": "Lesson Content",
+    "knowledgeCheck": "Knowledge Check"
+  },
+  "knowledgeCheck": {
+    "description": "Test your understanding of the key concepts covered in this lesson.",
+    "startButton": "Start Quiz"
   }
 }

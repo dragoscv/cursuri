@@ -3,6 +3,7 @@
 import React from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Button } from '@heroui/react';
+import { useRouter } from 'next/navigation';
 
 /**
  * LanguageSwitcher component for instant language switching
@@ -11,13 +12,15 @@ import { Button } from '@heroui/react';
 const LanguageSwitcher = React.memo(function LanguageSwitcher() {
   const currentLocale = useLocale();
   const t = useTranslations('common.accessibility');
+  const router = useRouter();
 
   const switchLanguage = async (newLocale: 'en' | 'ro') => {
     // Set cookie for locale preference
     document.cookie = `locale=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
 
-    // Reload page to apply new locale
-    window.location.reload();
+    // Navigate to current path to trigger re-render with new locale
+    // This is smoother than window.location.reload() as it uses client-side navigation
+    window.location.href = window.location.pathname + window.location.search;
   };
 
   return (
