@@ -57,7 +57,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
   const tCommon = useTranslations('common');
 
   // Check for active subscription from context
-  const hasSubscription = subscriptions && subscriptions.length > 0 && subscriptions.some((sub: any) => 
+  const hasSubscription = subscriptions && subscriptions.length > 0 && subscriptions.some((sub: any) =>
     sub.status === 'active' || sub.status === 'trialing'
   );
 

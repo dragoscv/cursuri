@@ -1857,7 +1857,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
           where('status', 'in', ['active', 'trialing', 'past_due'])
         );
         const querySnapshot = await getDocs(q);
-        
+
         const allSubs: any[] = [];
         querySnapshot.forEach((doc) => {
           allSubs.push({

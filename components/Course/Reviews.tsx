@@ -101,7 +101,7 @@ export default function Reviews({ courseId: propCourseId, isPurchased = false }:
     };
 
     // Check for active subscription from context
-    const hasSubscription = subscriptions && subscriptions.length > 0 && subscriptions.some((sub: any) => 
+    const hasSubscription = subscriptions && subscriptions.length > 0 && subscriptions.some((sub: any) =>
         sub.status === 'active' || sub.status === 'trialing'
     );
 
@@ -183,96 +183,96 @@ export default function Reviews({ courseId: propCourseId, isPurchased = false }:
             {/* Write a review section - only show if user has purchased or has active subscription */}
             {hasAccess && (
                 <motion.div
-                variants={itemVariants}
-                className="border border-[color:var(--ai-card-border)] rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)] shadow-sm"
-            >
-                <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 border-b border-[color:var(--ai-card-border)]">
-                    <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
-                        <FiEdit className="mr-2 text-[color:var(--ai-primary)]" />
-                        <span>{hasExistingReview ? t('editReview') : t('writeReview')}</span>
-                    </h3>
-                </div>
+                    variants={itemVariants}
+                    className="border border-[color:var(--ai-card-border)] rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)] shadow-sm"
+                >
+                    <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 border-b border-[color:var(--ai-card-border)]">
+                        <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
+                            <FiEdit className="mr-2 text-[color:var(--ai-primary)]" />
+                            <span>{hasExistingReview ? t('editReview') : t('writeReview')}</span>
+                        </h3>
+                    </div>
 
-                <div className="p-4">
-                    <form onSubmit={handleReview}>
-                        <div className="space-y-4">
-                            <div>
-                                <label
-                                    htmlFor="review"
-                                    className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2"
-                                >
-                                    {t('yourThoughts')}
-                                </label>
-                                <RichTextEditor
-                                    value={htmlContent}
-                                    onChange={handleEditorChange}
-                                    placeholder={t('shareExperience')}
-                                    minHeight={150}
-                                />
-                            </div>{' '}
-                            <div className="flex items-center gap-2">
-                                {' '}
-                                <label className="block text-sm font-medium text-[color:var(--ai-foreground)]">
-                                    {t('yourRating')}
-                                </label>{' '}
-                                <RatingStars
-                                    size="lg"
-                                    value={rating}
-                                    onChange={(value) => setRating(value)}
-                                    classNames={{
-                                        base: 'gap-1',
-                                        item: 'text-[color:var(--ai-accent)]',
-                                    }}
-                                />
-                            </div>
-                            {error && (
-                                <div className="p-3 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-lg">
-                                    {error}
+                    <div className="p-4">
+                        <form onSubmit={handleReview}>
+                            <div className="space-y-4">
+                                <div>
+                                    <label
+                                        htmlFor="review"
+                                        className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2"
+                                    >
+                                        {t('yourThoughts')}
+                                    </label>
+                                    <RichTextEditor
+                                        value={htmlContent}
+                                        onChange={handleEditorChange}
+                                        placeholder={t('shareExperience')}
+                                        minHeight={150}
+                                    />
+                                </div>{' '}
+                                <div className="flex items-center gap-2">
+                                    {' '}
+                                    <label className="block text-sm font-medium text-[color:var(--ai-foreground)]">
+                                        {t('yourRating')}
+                                    </label>{' '}
+                                    <RatingStars
+                                        size="lg"
+                                        value={rating}
+                                        onChange={(value) => setRating(value)}
+                                        classNames={{
+                                            base: 'gap-1',
+                                            item: 'text-[color:var(--ai-accent)]',
+                                        }}
+                                    />
                                 </div>
-                            )}
-                            {success && (
-                                <div className="p-3 text-sm text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                                    {success}
+                                {error && (
+                                    <div className="p-3 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                                        {error}
+                                    </div>
+                                )}
+                                {success && (
+                                    <div className="p-3 text-sm text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                                        {success}
+                                    </div>
+                                )}
+                                <div>
+                                    <Button
+                                        type="submit"
+                                        size="md"
+                                        radius="lg"
+                                        color="primary"
+                                        isDisabled={!user || isSubmitting || !review.trim()}
+                                        isLoading={isSubmitting}
+                                        className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white border-none transition-transform hover:scale-[1.02] rounded-lg font-semibold"
+                                        startContent={
+                                            <svg
+                                                width="18"
+                                                height="18"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                            >
+                                                <path
+                                                    d="M12 4V20M4 12H20"
+                                                    stroke="currentColor"
+                                                    strokeWidth="2"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                />
+                                            </svg>
+                                        }
+                                    >
+                                        {!user
+                                            ? t('loginToReview')
+                                            : hasExistingReview
+                                                ? t('updateReview')
+                                                : t('submitReview')}
+                                    </Button>
                                 </div>
-                            )}
-                            <div>
-                                <Button
-                                    type="submit"
-                                    size="md"
-                                    radius="lg"
-                                    color="primary"
-                                    isDisabled={!user || isSubmitting || !review.trim()}
-                                    isLoading={isSubmitting}
-                                    className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white border-none transition-transform hover:scale-[1.02] rounded-lg font-semibold"
-                                    startContent={
-                                        <svg
-                                            width="18"
-                                            height="18"
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                            <path
-                                                d="M12 4V20M4 12H20"
-                                                stroke="currentColor"
-                                                strokeWidth="2"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            />
-                                        </svg>
-                                    }
-                                >
-                                    {!user
-                                        ? t('loginToReview')
-                                        : hasExistingReview
-                                            ? t('updateReview')
-                                            : t('submitReview')}
-                                </Button>
                             </div>
-                        </div>
-                    </form>
-                </div>
-            </motion.div>
+                        </form>
+                    </div>
+                </motion.div>
             )}
 
             {/* Reviews list section */}
