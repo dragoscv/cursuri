@@ -5,10 +5,12 @@ import { SimpleProviders } from '@/components/contexts/SimpleProviders';
 import SecurityInitializer from '@/components/SecurityInitializer';
 import { NextIntlClientProvider } from 'next-intl';
 import { useEffect, useState } from 'react';
+import AppLoader from '@/components/ui/AppLoader';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [messages, setMessages] = useState<Record<string, Record<string, string>> | null>(null);
   const [locale, setLocale] = useState<string>('en');
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Get locale from cookie
@@ -79,29 +81,21 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   }, []);
 
   if (!messages) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '100vh',
-        }}
-      >
-        Loading...
-      </div>
-    );
+    return <AppLoader />;
   }
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
-      <HeroUIProvider>
-        <ToastProvider>
-          <SimpleProviders>
-            <SecurityInitializer>{children}</SecurityInitializer>
-          </SimpleProviders>
-        </ToastProvider>
-      </HeroUIProvider>
-    </NextIntlClientProvider>
+    <>
+      {isLoading && <AppLoader onLoadingComplete={() => setIsLoading(false)} />}
+      <NextIntlClientProvider locale={locale} messages={messages}>
+        <HeroUIProvider>
+          <ToastProvider>
+            <SimpleProviders>
+              <SecurityInitializer>{children}</SecurityInitializer>
+            </SimpleProviders>
+          </ToastProvider>
+        </HeroUIProvider>
+      </NextIntlClientProvider>
+    </>
   );
 }
