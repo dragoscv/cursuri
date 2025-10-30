@@ -14,12 +14,6 @@ import Login from '@/components/Login';
 import LoadingButton from '@/components/Buttons/LoadingButton';
 import { useRouter } from 'next/navigation';
 
-// Stripe Price IDs from the created products
-const PRICE_IDS = {
-  monthly: 'price_1SO07cLG0nGypmDBXjef95ut',
-  yearly: 'price_1SO07cLG0nGypmDBTeHZEoRE',
-};
-
 export default function SubscriptionPlans() {
   const t = useTranslations('subscription');
   const tCommon = useTranslations('common');
@@ -36,59 +30,53 @@ export default function SubscriptionPlans() {
   // Check if user has an active subscription
   const hasActiveSubscription = subscriptions && subscriptions.length > 0;
 
-  // Debug: Log products to see if subscription product is now available
-  console.log('Products in context:', products?.length || 0);
-  console.log('Subscription product IDs we need:', PRICE_IDS);
-
-  // Find subscription product
+  // Find subscription product from products
   const subscriptionProduct = products?.find((p: any) =>
-    p.metadata?.type === 'subscription' || p.name?.includes('Subscription')
+    p.metadata?.type === 'subscription' || p.name?.toLowerCase().includes('subscription')
   );
-  console.log('Found subscription product:', subscriptionProduct);
 
-  // Helper function to find subscription prices from products
-  const getSubscriptionPrice = (priceId: string) => {
-    for (const product of products) {
-      if (product.prices) {
-        const price = product.prices.find((p: { id: string }) => p.id === priceId);
-        if (price) {
-          console.log('Found price in Firebase:', price);
-          const amountValue = price.unit_amount ? price.unit_amount / 100 : 0;
-          const currency = price.currency?.toUpperCase() || 'USD';
+  // Get monthly and yearly prices from the subscription product
+  const monthlyPrice = subscriptionProduct?.prices?.find((p: any) =>
+    p.interval === 'month' && p.recurring?.interval === 'month'
+  );
 
-          // Format price using Intl.NumberFormat for proper locale formatting
-          const formatted = new Intl.NumberFormat('ro-RO', {
-            style: 'currency',
-            currency: currency,
-            minimumFractionDigits: amountValue % 1 === 0 ? 0 : 2,
-            maximumFractionDigits: 2,
-          }).format(amountValue);
+  const yearlyPrice = subscriptionProduct?.prices?.find((p: any) =>
+    p.interval === 'year' && p.recurring?.interval === 'year'
+  );
 
-          // If currency is RON and locale is not Romanian, show approximate USD conversion
-          let approximateUSD = '';
-          if (currency === 'RON') {
-            // Approximate conversion rate: 1 USD ≈ 4.5 RON
-            const usdAmount = amountValue / 4.5;
-            approximateUSD = new Intl.NumberFormat('en-US', {
-              style: 'currency',
-              currency: 'USD',
-              minimumFractionDigits: usdAmount % 1 === 0 ? 0 : 2,
-              maximumFractionDigits: 2,
-            }).format(usdAmount);
-          }
+  // Helper function to format price
+  const formatPrice = (price: any) => {
+    if (!price || !price.unit_amount) return null;
 
-          return {
-            amount: amountValue.toString(),
-            currency,
-            formatted,
-            approximateUSD,
-          };
-        }
-      }
+    const amountValue = price.unit_amount / 100;
+    const currency = price.currency?.toUpperCase() || 'USD';
+
+    // Format price using Intl.NumberFormat for proper locale formatting
+    const formatted = new Intl.NumberFormat('ro-RO', {
+      style: 'currency',
+      currency: currency,
+      minimumFractionDigits: amountValue % 1 === 0 ? 0 : 2,
+      maximumFractionDigits: 2,
+    }).format(amountValue);
+
+    // If currency is RON, show approximate USD conversion
+    let approximateUSD = '';
+    if (currency === 'RON') {
+      const usdAmount = amountValue / 4.5; // Approximate conversion rate
+      approximateUSD = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: usdAmount % 1 === 0 ? 0 : 2,
+        maximumFractionDigits: 2,
+      }).format(usdAmount);
     }
-    console.log(`Price ${priceId} not found in products - using fallback`);
-    // Fallback to hardcoded values if not found in products
-    return null;
+
+    return {
+      amount: amountValue,
+      currency,
+      formatted,
+      approximateUSD,
+    };
   };
 
   const handleSubscribe = async (priceId: string, planName: string) => {
@@ -144,11 +132,11 @@ export default function SubscriptionPlans() {
     {
       name: t('plans.proMonthly.name'),
       price: (() => {
-        const priceInfo = getSubscriptionPrice(PRICE_IDS.monthly);
-        return priceInfo ? priceInfo.formatted : t('plans.proMonthly.price');
+        const priceInfo = formatPrice(monthlyPrice);
+        return priceInfo ? priceInfo.formatted : 'Error: Price not found';
       })(),
       approximateUSD: (() => {
-        const priceInfo = getSubscriptionPrice(PRICE_IDS.monthly);
+        const priceInfo = formatPrice(monthlyPrice);
         return priceInfo?.approximateUSD || '';
       })(),
       period: t('plans.proMonthly.period'),
@@ -164,32 +152,32 @@ export default function SubscriptionPlans() {
       ],
       buttonText: t('plans.proMonthly.cta'),
       popular: true,
-      priceId: PRICE_IDS.monthly,
+      priceId: monthlyPrice?.id || null,
       planKey: 'monthly',
     },
     {
       name: t('plans.proYearly.name'),
       price: (() => {
-        const priceInfo = getSubscriptionPrice(PRICE_IDS.yearly);
-        return priceInfo ? priceInfo.formatted : t('plans.proYearly.price');
+        const priceInfo = formatPrice(yearlyPrice);
+        return priceInfo ? priceInfo.formatted : 'Error: Price not found';
       })(),
       approximateUSD: (() => {
-        const priceInfo = getSubscriptionPrice(PRICE_IDS.yearly);
+        const priceInfo = formatPrice(yearlyPrice);
         return priceInfo?.approximateUSD || '';
       })(),
       period: t('plans.proYearly.period'),
       description: t('plans.proYearly.description'),
       savings: (() => {
-        const monthlyPrice = getSubscriptionPrice(PRICE_IDS.monthly);
-        const yearlyPrice = getSubscriptionPrice(PRICE_IDS.yearly);
-        if (monthlyPrice && yearlyPrice) {
-          const monthlyCost = parseFloat(monthlyPrice.amount) * 12;
-          const yearlyCost = parseFloat(yearlyPrice.amount);
+        const monthlyPriceInfo = formatPrice(monthlyPrice);
+        const yearlyPriceInfo = formatPrice(yearlyPrice);
+        if (monthlyPriceInfo && yearlyPriceInfo) {
+          const monthlyCost = monthlyPriceInfo.amount * 12;
+          const yearlyCost = yearlyPriceInfo.amount;
           const savings = monthlyCost - yearlyCost;
           const percentage = ((savings / monthlyCost) * 100).toFixed(0);
-          return `${t('plans.proYearly.save')} ${savings.toFixed(2)} ${yearlyPrice.currency} (${percentage}%)`;
+          return `${t('plans.proYearly.save')} ${savings.toFixed(2)} ${yearlyPriceInfo.currency} (${percentage}%)`;
         }
-        return t('plans.proYearly.savings');
+        return '';
       })(),
       features: [
         t('plans.proYearly.features.everything'),
@@ -201,7 +189,7 @@ export default function SubscriptionPlans() {
       ],
       buttonText: t('plans.proYearly.cta'),
       popular: false,
-      priceId: PRICE_IDS.yearly,
+      priceId: yearlyPrice?.id || null,
       planKey: 'yearly',
       badge: t('plans.proYearly.badge'),
     },
