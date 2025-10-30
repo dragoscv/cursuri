@@ -109,7 +109,7 @@ service cloud.firestore {
     
     // Questions collection for lesson Q&A
     match /questions/{questionId} {
-      allow read: if request.auth != null;
+      allow read: if true; // Allow public read access to questions
       allow create: if request.auth != null;
       allow update: if request.auth != null && 
         (request.auth.uid == resource.data.userId || hasAdminAccess() || 
