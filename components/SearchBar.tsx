@@ -136,13 +136,20 @@ const SearchBar = React.memo(function SearchBar() {
     router.push(`/courses/${courseId}`);
   };
 
+  // Handle search button click with event propagation control
+  const handleSearchButtonClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsSearchOpen(true);
+  };
+
   // Render search component on all pages
   return (
     <div ref={searchContainerRef} className="relative z-50">
       {/* Search toggle button */}
       <Button
         variant="light"
-        onClick={() => setIsSearchOpen(true)}
+        onClick={handleSearchButtonClick}
         className="hidden md:flex items-center gap-2 text-sm text-[color:var(--ai-muted)]"
         startContent={searchIconSmall}
         aria-label={t('accessibility.openSearch', { default: t('search.buttonText') })}
@@ -157,7 +164,7 @@ const SearchBar = React.memo(function SearchBar() {
       <Button
         isIconOnly
         variant="light"
-        onClick={() => setIsSearchOpen(true)}
+        onClick={handleSearchButtonClick}
         className="md:hidden"
         aria-label={t('ariaLabels.searchInput')}
       >
@@ -173,7 +180,9 @@ const SearchBar = React.memo(function SearchBar() {
           aria-labelledby="search-dialog-title"
         >
           <div className="w-full max-w-2xl bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-2xl overflow-hidden">
-            <h2 id="search-dialog-title" className="sr-only">{t('search.placeholder')}</h2>
+            <h2 id="search-dialog-title" className="sr-only">
+              {t('search.placeholder')}
+            </h2>
             <div className="p-4">
               <Input
                 ref={searchInputRef}
@@ -209,15 +218,14 @@ const SearchBar = React.memo(function SearchBar() {
             </div>
 
             {/* Search results */}
-            <div className="max-h-[70vh] overflow-y-auto" role="region" aria-label={t('accessibility.searchResults', { default: 'Search results' })}>
+            <div
+              className="max-h-[70vh] overflow-y-auto"
+              role="region"
+              aria-label={t('accessibility.noSearchResults')}
+            >
               {searchResults.length > 0 ? (
                 <>
-                  <div
-                    role="status"
-                    aria-live="polite"
-                    aria-atomic="true"
-                    className="sr-only"
-                  >
+                  <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
                     {t('accessibility.searchResults', { count: searchResults.length })}
                   </div>
                   <div className="p-2" role="list">

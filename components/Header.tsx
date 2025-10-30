@@ -15,6 +15,7 @@ import AuthActions from '@/components/Header/AuthActions';
 import AdminActions from '@/components/Header/AdminActions';
 import ThemeToggle from '@/components/Header/ThemeToggle';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import MobileMenu from '@/components/Header/MobileMenu';
 
 /**
  * Main Header component for the application
@@ -67,29 +68,34 @@ const Header = React.memo(function Header() {
 
       {/* Right side content with search, language switcher, theme toggle, auth and user actions */}
       <NavbarContent justify="end" as="div" className="flex items-center gap-4">
-        {/* Search Bar */}
+        {/* Search Bar - visible on all screen sizes */}
         <NavbarItem className="flex-shrink-0">
           <SearchBar />
         </NavbarItem>
 
-        {/* Language Switcher */}
-        <NavbarItem className="flex-shrink-0">
+        {/* Language Switcher - hidden on mobile */}
+        <NavbarItem className="hidden md:flex flex-shrink-0">
           <LanguageSwitcher />
         </NavbarItem>
 
-        {/* Theme Toggle */}
-        <NavbarItem className="flex-shrink-0">
+        {/* Theme Toggle - hidden on mobile */}
+        <NavbarItem className="hidden md:flex flex-shrink-0">
           <ThemeToggle />
         </NavbarItem>
 
-        {/* Admin Actions - only visible if user is admin */}
+        {/* Admin Actions - only visible on desktop if user is admin */}
         <NavbarItem className="hidden md:flex flex-shrink-0">
           <AdminActions />
         </NavbarItem>
 
-        {/* Auth Actions - visible on desktop when not logged in, visible on mobile when not logged in */}
-        <NavbarItem className={`flex-shrink-0 ${user ? 'hidden md:flex' : 'flex'}`}>
+        {/* Auth Actions - visible on desktop when not logged in */}
+        <NavbarItem className="hidden md:flex flex-shrink-0">
           <AuthActions />
+        </NavbarItem>
+
+        {/* Mobile Menu - only for non-authenticated users */}
+        <NavbarItem className="md:hidden flex-shrink-0">
+          <MobileMenu />
         </NavbarItem>
 
         {/* User Dropdown Menu - only visible when user is logged in */}

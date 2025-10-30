@@ -27,7 +27,7 @@ const LanguageSwitcher = React.memo(function LanguageSwitcher() {
         variant={currentLocale === 'en' ? 'solid' : 'light'}
         onClick={() => switchLanguage('en')}
         className={`
-          font-medium text-xs px-3 py-1 min-w-[45px]
+          font-medium text-xs px-3 py-1 min-w-[45px] rounded-full
           ${
             currentLocale === 'en'
               ? 'bg-[color:var(--ai-primary)] text-white'
@@ -44,7 +44,7 @@ const LanguageSwitcher = React.memo(function LanguageSwitcher() {
         variant={currentLocale === 'ro' ? 'solid' : 'light'}
         onClick={() => switchLanguage('ro')}
         className={`
-          font-medium text-xs px-3 py-1 min-w-[45px]
+          font-medium text-xs px-3 py-1 min-w-[45px] rounded-full
           ${
             currentLocale === 'ro'
               ? 'bg-[color:var(--ai-primary)] text-white'
