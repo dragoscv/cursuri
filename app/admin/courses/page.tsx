@@ -265,11 +265,7 @@ export default function CoursesPage() {
                             size="sm"
                             color="danger"
                             variant="flat"
-                            onClick={(e: React.MouseEvent) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              handleConfirmDelete(course);
-                            }}
+                            onClick={() => handleConfirmDelete(course)}
                           >
                             {t('delete')}
                           </Button>
