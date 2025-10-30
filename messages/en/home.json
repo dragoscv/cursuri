@@ -1,64 +1,64 @@
 {
   "metadata": {
-    "title": "Home",
-    "description": "Transform your career with expert-led online courses in AI, Machine Learning, Digital Marketing, Data Science, Cybersecurity, and more. Learn at your own pace with project-based curriculum.",
-    "keywords": "online courses, AI courses, machine learning courses, digital marketing, data science, cybersecurity training, prompt engineering, generative AI, cloud computing, business skills, career development, online learning platform"
+    "title": "Master AI - Learn How to Use AI in Real Life",
+    "description": "Learn practical AI applications without coding. Master ChatGPT, prompt engineering, AI automation, content creation, and productivity tools. Real-world AI courses for professionals.",
+    "keywords": "AI courses, ChatGPT training, prompt engineering, AI automation, AI for business, AI content creation, AI productivity tools, generative AI, AI for beginners, practical AI applications, no-code AI, AI workflows"
   },
   "hero": {
     "title": {
-      "line1": "Transform Your Career with",
-      "line2": "AI & In-Demand Skills"
+      "line1": "Master the Future of AI",
+      "line2": "Transform Ideas into Reality"
     },
-    "subtitle": "Master AI, Machine Learning, Digital Marketing, Data Science, and more. Learn from industry experts and build real-world projects that accelerate your career.",
-    "getStarted": "Get Started",
-    "exploreCourses": "Explore Courses",
-    "learnersEnrolled": "learners already enrolled",
-    "projectBased": "Project-Based Learning",
+    "subtitle": "Learn how to leverage AI tools, prompt engineering, and automation to solve real problems. No coding required - just creativity and the right guidance.",
+    "getStarted": "Start Learning",
+    "exploreCourses": "Explore AI Courses",
+    "learnersEnrolled": "AI enthusiasts already learning",
+    "projectBased": "AI-Powered Projects",
     "stats": {
-      "studentRating": "Student Rating",
+      "studentRating": "Learner Satisfaction",
       "reviews": "from {count} reviews",
-      "courses": "Courses Available",
-      "students": "Active Students",
+      "courses": "AI Courses Available",
+      "students": "AI Learners",
       "rating": "Average Rating",
-      "coursesAvailable": "Courses Available",
-      "projectBasedCurriculum": "Project-based curriculum"
+      "coursesAvailable": "AI Courses Available",
+      "projectBasedCurriculum": "Real-world AI applications"
     },
-    "imageAlt": "Programming",
+    "imageAlt": "AI Technology and Innovation",
     "scrollToExplore": "Scroll to explore"
   },
   "whyChooseUs": {
-    "title": "Why Choose Our Platform",
-    "subtitle": "Discover what makes our learning experience unique and effective",
+    "title": "Why Learn AI With Us",
+    "subtitle": "Discover how we make AI accessible and practical for everyone",
     "features": {
       "projectBased": {
         "icon": "🚀",
-        "title": "Project-Based Learning",
-        "description": "Build real-world projects in AI, marketing, data science, and more that you can showcase in your portfolio."
+        "title": "Real AI Applications",
+        "description": "Build practical AI solutions you can use immediately - from automating workflows to creating content with AI assistants."
       },
       "experts": {
-        "icon": "👨‍💻",
-        "title": "Expert Instructors",
-        "description": "Learn from industry professionals with years of practical experience across technology, business, and creative fields."
+        "icon": "🧠",
+        "title": "AI Practitioners",
+        "description": "Learn from professionals who use AI daily to solve business problems, boost productivity, and drive innovation."
       },
       "updates": {
-        "icon": "🔄",
-        "title": "Continuous Updates",
-        "description": "All courses are regularly updated with the latest trends, tools, and best practices in each field."
+        "icon": "⚡",
+        "title": "Latest AI Tools",
+        "description": "Stay current with the newest AI platforms, prompt techniques, and automation tools as they emerge."
       },
       "aiPowered": {
         "icon": "🤖",
-        "title": "AI-Powered Learning",
-        "description": "Master cutting-edge AI tools and techniques to stay ahead in the rapidly evolving digital landscape."
+        "title": "No Coding Required",
+        "description": "Master AI through practical use cases - no programming background needed, just curiosity and creativity."
       },
       "community": {
-        "icon": "🤝",
-        "title": "Supportive Community",
-        "description": "Join a diverse community of learners from various industries and get help when you need it."
+        "icon": "💡",
+        "title": "AI Innovation Network",
+        "description": "Connect with forward-thinking professionals exploring AI applications across all industries."
       },
       "anywhere": {
-        "icon": "📱",
-        "title": "Learn Anywhere",
-        "description": "Access courses on any device, anytime, with our responsive platform designed for modern learners."
+        "icon": "🌐",
+        "title": "Instant AI Access",
+        "description": "Start using AI tools immediately on any device - learn and apply simultaneously."
       }
     },
     "expertInstructors": "Expert Instructors",
@@ -113,9 +113,9 @@
     }
   },
   "cta": {
-    "title": "Ready to Start Your Learning Journey?",
-    "subtitle": "Join thousands of students already learning on our platform",
-    "button": "Browse All Courses",
+    "title": "Ready to Harness the Power of AI?",
+    "subtitle": "Join thousands already using AI to transform their work and creativity",
+    "button": "Explore AI Courses",
     "benefits": {
       "moneyBack": "30-Day Money Back Guarantee",
       "lifetimeAccess": "Lifetime Access",
@@ -123,9 +123,9 @@
     }
   },
   "statistics": {
-    "badge": "Our Achievements",
-    "title": "Our Impact in Numbers",
-    "description": "Join thousands of learners who are already enhancing their skills in AI, marketing, data science, and more through our platform.",
+    "badge": "AI Learning Impact",
+    "title": "Transforming Careers with AI",
+    "description": "Join thousands of professionals learning to leverage AI for productivity, creativity, and career growth.",
     "courses": {
       "value": "15+",
       "label": "Courses",
@@ -148,56 +148,56 @@
     }
   },
   "learningPath": {
-    "title": "Your Learning Journey",
-    "subtitle": "Follow our structured path from beginner to professional",
+    "title": "Your AI Mastery Path",
+    "subtitle": "From AI beginner to power user - build practical skills step by step",
     "steps": {
       "fundamentals": {
         "number": "01",
-        "title": "Core Fundamentals",
-        "description": "Master the essential building blocks of modern web development with HTML, CSS, and JavaScript."
+        "title": "AI Foundations",
+        "description": "Understand how AI works, explore major AI tools, and learn the art of effective prompting."
       },
       "frontend": {
         "number": "02",
-        "title": "Frontend Development",
-        "description": "Build interactive user interfaces with React, TypeScript, and modern CSS frameworks."
+        "title": "AI for Content & Creativity",
+        "description": "Master AI for writing, design, video creation, and creative workflows. Generate professional content effortlessly."
       },
       "backend": {
         "number": "03",
-        "title": "Backend Integration",
-        "description": "Create robust server-side applications with Node.js and integrate with databases."
+        "title": "AI for Productivity & Automation",
+        "description": "Automate repetitive tasks, build AI-powered workflows, and integrate AI into your daily operations."
       },
       "fullstack": {
         "number": "04",
-        "title": "Full Stack Projects",
-        "description": "Combine frontend and backend skills to build complete, production-ready applications."
+        "title": "Advanced AI Applications",
+        "description": "Create custom AI solutions, build intelligent assistants, and leverage AI for data analysis and decision-making."
       }
     }
   },
   "reviews": {
-    "title": "What Our Students Say",
-    "subtitle": "Hear from our community of developers who have transformed their skills through our courses.",
-    "sectionTitle": "Voices of Our AI Community",
-    "sectionSubtitle": "Discover how our AI curriculum is empowering professionals to break new ground in machine learning and artificial intelligence.",
+    "title": "Success Stories from AI Learners",
+    "subtitle": "Hear from professionals who transformed their careers by mastering AI tools and techniques.",
+    "sectionTitle": "Real Results from AI Adoption",
+    "sectionSubtitle": "Discover how our practical AI training is helping professionals across industries boost productivity and unlock new opportunities.",
     "badge": "Success Stories",
     "viewAll": "View All Success Stories",
     "fallback": {
       "review1": {
-        "content": "The AI prediction models taught in this course completely transformed my approach to data analysis. The real-time feedback system makes learning intuitive and effective.",
-        "author": "Alex Johnson",
-        "role": "AI Research Engineer",
-        "courseType": "Predictive Analysis"
+        "content": "Learning to use AI for content creation cut my writing time in half. The prompt engineering techniques taught here are game-changing for any marketer.",
+        "author": "Sarah Mitchell",
+        "role": "Digital Marketing Manager",
+        "courseType": "AI Content Creation"
       },
       "review2": {
-        "content": "I've taken many ML courses before, but the neural network visualization tools here made complex concepts crystal clear. The hands-on projects with cutting-edge tech were invaluable.",
-        "author": "Maria Garcia",
-        "role": "Machine Learning Specialist",
-        "courseType": "Neural Networks"
+        "content": "I automated 80% of my repetitive tasks using AI workflows from this course. No coding needed - just practical, step-by-step AI implementation.",
+        "author": "David Chen",
+        "role": "Operations Director",
+        "courseType": "AI Automation"
       },
       "review3": {
-        "content": "This platform's approach to teaching transformer models is revolutionary. I went from basic understanding to implementing advanced NLP systems in just weeks.",
-        "author": "David Kim",
-        "role": "NLP Developer",
-        "courseType": "NLP & Transformers"
+        "content": "As a designer, AI tools seemed intimidating. These courses made them accessible and practical. Now I use AI daily to enhance my creative workflow.",
+        "author": "Maria Rodriguez",
+        "role": "Creative Director",
+        "courseType": "AI for Designers"
       }
     }
   },

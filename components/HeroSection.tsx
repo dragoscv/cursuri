@@ -10,20 +10,16 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import {
-  TypeScriptIcon,
-  ReactIcon,
-  FirebaseIcon,
-  NodeJsIcon,
-  TailwindCssIcon,
-  JavaScriptIcon,
-  NextJsIcon,
-  MongoDBIcon,
-  CSSIcon,
-  HTMLIcon,
-  NoSQLIcon,
-  ExpoIcon,
-  StripeIcon,
-  ReactNativeIcon,
+  ChatGPTIcon,
+  MidjourneyIcon,
+  ClaudeIcon,
+  GeminiIcon,
+  CopilotIcon,
+  StableDiffusionIcon,
+  PromptEngineeringIcon,
+  AutomationIcon,
+  DataAnalysisIcon,
+  ContentCreationIcon,
 } from './icons/tech';
 import DefaultAvatar from './shared/DefaultAvatar';
 
@@ -51,7 +47,7 @@ const HeroSection = memo(function HeroSection() {
         totalStudents: 0,
         totalReviews: 0,
         avgRating: 4.8,
-        topTechnologies: ['TypeScript', 'React', 'Firebase', 'Node.js', 'Tailwind CSS'],
+        topTechnologies: ['ChatGPT', 'Prompt Engineering', 'AI Automation', 'Data Analysis', 'Content Creation'],
       };
     }
 
@@ -98,8 +94,8 @@ const HeroSection = memo(function HeroSection() {
       .slice(0, 5)
       .map((entry) => entry[0]);
 
-    // Default to curated list if not enough data
-    const defaultTechnologies = ['TypeScript', 'React', 'Firebase', 'Node.js', 'Tailwind CSS'];
+    // Default to curated AI tools list if not enough data
+    const defaultTechnologies = ['ChatGPT', 'Prompt Engineering', 'AI Automation', 'Data Analysis', 'Content Creation'];
     const finalTechnologies = topTechnologies.length >= 3 ? topTechnologies : defaultTechnologies;
 
     return {
@@ -306,31 +302,29 @@ const HeroSection = memo(function HeroSection() {
     }
   };
 
-  // Skills and technologies for the floating nodes
+  // Skills and AI tools for the floating nodes
   const techNodes = [
-    'AI & ML',
-    'Data Science',
-    'Marketing',
-    'Python',
-    'Business',
-    'Cloud Computing',
-  ]; // Map technology names to their corresponding icon components
+    'ChatGPT',
+    'Midjourney',
+    'Claude',
+    'Gemini',
+    'Copilot',
+    'Stable Diffusion',
+  ];
+
+  // Map technology names to their corresponding icon components
   const getTechIcon = (tech: string) => {
     const iconMap: Record<string, React.FC<{ className?: string; size?: number }>> = {
-      TypeScript: TypeScriptIcon,
-      JavaScript: JavaScriptIcon,
-      React: ReactIcon,
-      'React Native': ReactNativeIcon,
-      'Node.js': NodeJsIcon,
-      'Next.js': NextJsIcon,
-      Firebase: FirebaseIcon,
-      'Tailwind CSS': TailwindCssIcon,
-      MongoDB: MongoDBIcon,
-      NoSQL: NoSQLIcon,
-      HTML: HTMLIcon,
-      CSS: CSSIcon,
-      Expo: ExpoIcon,
-      Stripe: StripeIcon,
+      ChatGPT: ChatGPTIcon,
+      Midjourney: MidjourneyIcon,
+      Claude: ClaudeIcon,
+      Gemini: GeminiIcon,
+      Copilot: CopilotIcon,
+      'Stable Diffusion': StableDiffusionIcon,
+      'Prompt Engineering': PromptEngineeringIcon,
+      'AI Automation': AutomationIcon,
+      'Content Creation': ContentCreationIcon,
+      'Data Analysis': DataAnalysisIcon,
     };
 
     const IconComponent = iconMap[tech];
@@ -511,7 +505,7 @@ const HeroSection = memo(function HeroSection() {
             <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-[color:var(--ai-card-bg)] to-[color:var(--ai-primary)]/20 border border-[color:var(--ai-card-border)]">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.1),transparent)] opacity-50" />{' '}
               <Image
-                src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2672&q=80"
+                src="https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2832&q=80"
                 alt={t('imageAlt')}
                 className="w-full h-auto object-cover mix-blend-lighten opacity-90"
                 width={600}

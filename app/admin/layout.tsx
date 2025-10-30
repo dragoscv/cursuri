@@ -10,21 +10,31 @@ import { useTranslations } from 'next-intl';
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const context = useContext(AppContext);
-  const [isLoading, setIsLoading] = useState(true);
   const t = useTranslations('common');
 
   // Safe access to context
+  const authLoading = context?.authLoading ?? true;
   const isAdmin = context?.isAdmin || false;
-  const user = context?.user || null; // Redirect if not admin
+  const user = context?.user || null;
+
+  // Redirect non-admin users once auth is loaded
   useEffect(() => {
-    // Only run this effect once when context is available
-    if (context && isLoading) {
-      if (!isAdmin && user) {
+    if (!authLoading) {
+      // If user is not authenticated, redirect to home
+      if (!user) {
         router.push('/');
+        return;
       }
-      setIsLoading(false);
+
+      // If user is authenticated but not admin, redirect to home
+      if (!isAdmin) {
+        router.push('/');
+        return;
+      }
     }
-  }, [isAdmin, user, router, context, isLoading]); // Content to show based on authentication state
+  }, [authLoading, user, isAdmin, router]);
+
+  // Content to show based on authentication state
   const adminLayout = (
     <div className="min-h-screen bg-[color:var(--ai-background)] pt-8 md:pt-16 pb-6 md:pb-12">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 md:py-8">
@@ -53,6 +63,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className="min-h-screen bg-[color:var(--ai-background)] pt-16 pb-12 flex items-center justify-center">
       <div className="animate-pulse text-[color:var(--ai-primary)] text-lg">{t('loading')}</div>
     </div>
-  ); // Render based on authentication and loading state
-  return isLoading || !isAdmin ? loadingView : adminLayout;
+  );
+
+  // Show loading while checking authentication
+  if (authLoading) {
+    return loadingView;
+  }
+
+  // If not authenticated or not admin, show loading briefly while redirect happens
+  if (!user || !isAdmin) {
+    return loadingView;
+  }
+
+  // User is authenticated and is admin - show admin layout
+  return adminLayout;
 }

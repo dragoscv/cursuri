@@ -1,6 +1,6 @@
 {
-  "title": "Choose Your Plan",
-  "subtitle": "Get unlimited access to all courses and premium features",
+  "title": "Unlock Your AI Potential",
+  "subtitle": "Get unlimited access to all AI courses and master the tools shaping the future",
   "plans": {
     "free": {
       "name": "Free",
@@ -17,36 +17,36 @@
       "cta": "Current Plan"
     },
     "proMonthly": {
-      "name": "Pro Monthly",
+      "name": "AI Learner Monthly",
       "price": "100 RON",
       "period": "per month",
-      "description": "Best for continuous learning",
+      "description": "Perfect for mastering AI tools",
       "features": {
-        "unlimitedAccess": "Unlimited access to all courses",
-        "allCourses": "Access to all premium courses",
-        "prioritySupport": "Priority support",
-        "exclusiveContent": "Exclusive content and resources",
-        "advancedFeatures": "Advanced analytics and features",
+        "unlimitedAccess": "Unlimited access to all AI courses",
+        "allCourses": "Learn ChatGPT, automation, and AI workflows",
+        "prioritySupport": "Priority support from AI practitioners",
+        "exclusiveContent": "Exclusive AI prompts and templates",
+        "advancedFeatures": "Advanced AI projects and case studies",
         "certificates": "Certificate of completion",
         "cancelAnytime": "Cancel anytime"
       },
-      "cta": "Subscribe Monthly"
+      "cta": "Start AI Journey"
     },
     "popular": "Most Popular",
     "proYearly": {
-      "name": "Pro Yearly",
+      "name": "AI Master Yearly",
       "price": "1000 RON",
       "period": "per year",
-      "description": "Best value - 2 months free",
+      "description": "Best value - become an AI expert",
       "features": {
-        "everything": "Everything in Pro Monthly",
+        "everything": "Everything in AI Learner Monthly",
         "twoMonthsFree": "2 months free",
         "prioritySupport": "Priority email support",
-        "exclusiveWorkshops": "Exclusive workshops and webinars",
-        "earlyAccess": "Early access to new content",
-        "careerResources": "Career development resources"
+        "exclusiveWorkshops": "Exclusive AI workshops and live sessions",
+        "earlyAccess": "Early access to new AI tools and courses",
+        "careerResources": "AI career resources and community"
       },
-      "cta": "Subscribe Yearly",
+      "cta": "Become AI Expert",
       "save": "Save",
       "savings": "Save 200 RON per year",
       "badge": "Best Value"

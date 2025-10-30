@@ -42,7 +42,7 @@ export default function Home() {
       <LearningPathSection />
 
       {/* Featured Courses section */}
-      <FeaturedCoursesSection />
+      {/* <FeaturedCoursesSection /> */}
 
       {/* Subscription plans section */}
       <SubscriptionSection />

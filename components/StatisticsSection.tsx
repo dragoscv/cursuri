@@ -1,13 +1,15 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useContext } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import ScrollAnimationWrapper from './animations/ScrollAnimationWrapper';
+import { AppContext } from './AppContext';
 
 const StatisticsSection = React.memo(function StatisticsSection() {
   const t = useTranslations('home.statistics');
   const ref = React.useRef(null);
+  const context = useContext(AppContext);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start end', 'end start'],
@@ -15,6 +17,119 @@ const StatisticsSection = React.memo(function StatisticsSection() {
 
   // Create parallax effect for the background
   const y = useTransform(scrollYProgress, [0, 1], [0, 100]);
+
+  // Calculate real statistics from context data
+  const realStats = useMemo(() => {
+    if (!context) {
+      return {
+        totalCourses: 0,
+        totalStudents: 0,
+        totalHours: 0,
+        avgRating: 0,
+      };
+    }
+
+    const { courses = {}, reviews = {}, lessons = {} } = context;
+
+    // Calculate total active courses
+    const totalCourses = Object.keys(courses).length;
+
+    // Calculate total content hours from actual lesson durations
+    let totalMinutes = 0;
+
+    // Iterate through all courses and their lessons
+    Object.keys(courses).forEach((courseId: string) => {
+      const courseLessons = lessons[courseId];
+      if (courseLessons && typeof courseLessons === 'object') {
+        Object.values(courseLessons).forEach((lesson: any) => {
+          if (lesson && lesson.duration) {
+            // Lesson duration is stored as number in minutes
+            const durationMins = typeof lesson.duration === 'number'
+              ? lesson.duration
+              : parseInt(lesson.duration, 10) || 0;
+            totalMinutes += durationMins;
+          }
+        });
+      }
+    });
+
+    // Convert total minutes to hours
+    const totalHours = Math.round(totalMinutes / 60);
+
+    // Calculate average rating across all reviews
+    let totalRating = 0;
+    let reviewCount = 0;
+    Object.values(reviews).forEach((courseReviews: any) => {
+      if (courseReviews && typeof courseReviews === 'object') {
+        Object.values(courseReviews).forEach((review: any) => {
+          if (review && typeof review.rating === 'number') {
+            totalRating += review.rating;
+            reviewCount++;
+          }
+        });
+      }
+    });
+    const avgRating = reviewCount > 0 ? (totalRating / reviewCount).toFixed(1) : '4.8';
+
+    // For student count, we need to query the database directly
+    // This will be done via a separate effect
+    return {
+      totalCourses,
+      totalStudents: 0, // Will be updated by useEffect
+      totalHours: Math.round(totalHours),
+      avgRating,
+      reviewCount,
+    };
+  }, [context]);
+
+  // Fetch real total students count from database
+  const [totalStudents, setTotalStudents] = React.useState(0);
+
+  React.useEffect(() => {
+    async function fetchTotalStudents() {
+      // Only fetch if user is authenticated and is admin
+      if (!context?.user || !context?.isAdmin) {
+        return;
+      }
+
+      try {
+        // Import Firebase functions dynamically to avoid SSR issues
+        const { getFirestore, collectionGroup, query, where, getDocs } = await import('firebase/firestore');
+        const { firebaseApp } = await import('@/utils/firebase/firebase.config');
+
+        const db = getFirestore(firebaseApp);
+
+        // Query all payments across all users using collectionGroup
+        const paymentsQuery = query(
+          collectionGroup(db, 'payments'),
+          where('status', '==', 'succeeded')
+        );
+
+        const paymentsSnapshot = await getDocs(paymentsQuery);
+
+        // Extract unique user IDs from payment documents
+        const uniqueUserIds = new Set<string>();
+        paymentsSnapshot.forEach((doc) => {
+          // The parent path contains the user ID: customers/{userId}/payments/{paymentId}
+          const pathParts = doc.ref.path.split('/');
+          const userIdIndex = pathParts.indexOf('customers') + 1;
+          if (userIdIndex > 0 && userIdIndex < pathParts.length) {
+            const userId = pathParts[userIdIndex];
+            if (userId) {
+              uniqueUserIds.add(userId);
+            }
+          }
+        });
+
+        setTotalStudents(uniqueUserIds.size);
+      } catch (error) {
+        console.error('Error fetching total students:', error);
+        // Keep at 0 on error
+      }
+    }
+
+    fetchTotalStudents();
+  }, [context?.user, context?.isAdmin]);
 
   // Memoize stat card hover props
   const statCardHoverProps = useMemo(
@@ -45,25 +160,25 @@ const StatisticsSection = React.memo(function StatisticsSection() {
 
   const stats = [
     {
-      value: t('courses.value'),
+      value: realStats.totalCourses > 0 ? `${realStats.totalCourses}+` : t('courses.value'),
       label: t('courses.label'),
       icon: t('courses.icon'),
       color: 'from-[color:var(--ai-primary)] to-[color:var(--ai-primary)]/80',
     },
     {
-      value: t('students.value'),
+      value: totalStudents > 0 ? `${totalStudents.toLocaleString()}+` : t('students.value'),
       label: t('students.label'),
       icon: t('students.icon'),
       color: 'from-[color:var(--ai-secondary)] to-[color:var(--ai-secondary)]/80',
     },
     {
-      value: t('hours.value'),
+      value: realStats.totalHours > 0 ? `${realStats.totalHours.toLocaleString()}+` : t('hours.value'),
       label: t('hours.label'),
       icon: t('hours.icon'),
       color: 'from-[color:var(--ai-accent)] to-[color:var(--ai-accent)]/80',
     },
     {
-      value: t('rating.value'),
+      value: realStats.avgRating || t('rating.value'),
       label: t('rating.label'),
       icon: t('rating.icon'),
       color: 'from-amber-500 to-amber-400',

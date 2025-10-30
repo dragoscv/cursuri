@@ -4,9 +4,9 @@
 
 // Base URL for the website
 const siteConfig = {
-    name: 'Cursuri',
+    name: 'StudiAI',
     description: 'Advance your career with expert-led online courses in programming, technology, and digital skills.',
-    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://cursuri.com',
+    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://studiai.ro',
     ogImage: '/images/og-image.jpg',
 };
 

@@ -1,6 +1,6 @@
 {
-  "title": "Alege-ți Planul",
-  "subtitle": "Obține acces nelimitat la toate cursurile și funcționalitățile premium",
+  "title": "Desfășoară-ți Potențialul AI",
+  "subtitle": "Obține acces nelimitat la toate cursurile AI și stăpânește instrumentele care modelează viitorul",
   "plans": {
     "free": {
       "name": "Gratuit",
@@ -17,36 +17,36 @@
       "cta": "Plan Curent"
     },
     "proMonthly": {
-      "name": "Pro Lunar",
+      "name": "Cursanț AI Lunar",
       "price": "100 RON",
       "period": "pe lună",
-      "description": "Cel mai bun pentru învățare continuă",
+      "description": "Perfect pentru stăpânirea instrumentelor AI",
       "features": {
-        "unlimitedAccess": "Acces nelimitat la toate cursurile",
-        "allCourses": "Acces la toate cursurile premium",
-        "prioritySupport": "Suport prioritar",
-        "exclusiveContent": "Conținut și resurse exclusive",
-        "advancedFeatures": "Analiză și funcții avansate",
+        "unlimitedAccess": "Acces nelimitat la toate cursurile AI",
+        "allCourses": "Învață ChatGPT, automatizare și fluxuri AI",
+        "prioritySupport": "Suport prioritar de la practicieni AI",
+        "exclusiveContent": "Prompt-uri și șabloane AI exclusive",
+        "advancedFeatures": "Proiecte și studii de caz AI avansate",
         "certificates": "Certificat de finalizare",
         "cancelAnytime": "Anulare oricând"
       },
-      "cta": "Abonează-te Lunar"
+      "cta": "Începe Călătoria AI"
     },
     "popular": "Cel Mai Popular",
     "proYearly": {
-      "name": "Pro Anual",
+      "name": "Expert AI Anual",
       "price": "1000 RON",
       "period": "pe an",
-      "description": "Cea mai bună valoare - 2 luni gratuite",
+      "description": "Cea mai bună valoare - devino expert AI",
       "features": {
-        "everything": "Tot din Pro Lunar",
+        "everything": "Tot din Cursanț AI Lunar",
         "twoMonthsFree": "2 luni gratuite",
         "prioritySupport": "Suport email prioritar",
-        "exclusiveWorkshops": "Workshop-uri și webinarii exclusive",
-        "earlyAccess": "Acces anticipat la conținut nou",
-        "careerResources": "Resurse pentru dezvoltare în carieră"
+        "exclusiveWorkshops": "Workshop-uri AI exclusive și sesiuni live",
+        "earlyAccess": "Acces anticipat la noi instrumente și cursuri AI",
+        "careerResources": "Resurse pentru carieră AI și comunitate"
       },
-      "cta": "Abonează-te Anual",
+      "cta": "Devino Expert AI",
       "save": "Economisești",
       "savings": "Economisești 200 RON pe an",
       "badge": "Cea Mai Bună Valoare"

@@ -188,7 +188,7 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
   // Social share handler
   const handleShare = (course: any) => {
     const shareUrl = `${window.location.origin}/courses/${course.id}`;
-    const shareText = `Check out the course "${course.name}" on Cursuri!`;
+    const shareText = `Check out the course "${course.name}" on StudiAI!`;
     if (navigator.share) {
       navigator.share({
         title: course.name,

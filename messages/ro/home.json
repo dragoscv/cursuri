@@ -1,64 +1,64 @@
 {
   "metadata": {
-    "title": "Acasă",
-    "description": "Transformă-ți cariera cu cursuri online conduse de experți în AI, Machine Learning, Marketing Digital, Data Science, Securitate Cibernetică și multe altele. Învață în ritmul tău cu un curriculum bazat pe proiecte.",
-    "keywords": "cursuri online, cursuri AI, cursuri machine learning, marketing digital, data science, training securitate cibernetică, prompt engineering, AI generativ, cloud computing, abilități business, dezvoltare carieră, platformă de învățare online"
+    "title": "Stăpânește AI - Învață cum să folosești AI în Viața Reală",
+    "description": "Învață aplicații practice AI fără programare. Stăpânește ChatGPT, prompt engineering, automatizare AI, creare conținut, și instrumente de productivitate. Cursuri AI din viața reală pentru profesioniști.",
+    "keywords": "cursuri AI, training ChatGPT, prompt engineering, automatizare AI, AI pentru business, creare conținut AI, instrumente productivitate AI, AI generativ, AI pentru începători, aplicații practice AI, AI fără cod, fluxuri lucru AI"
   },
   "hero": {
     "title": {
-      "line1": "Transformă-ți Cariera cu",
-      "line2": "AI și Abilități Solicitate"
+      "line1": "Stăpânește Viitorul AI",
+      "line2": "Transformă Ideile în Realitate"
     },
-    "subtitle": "Stăpânește AI, Machine Learning, Marketing Digital, Data Science și multe altele. Învață de la experți din industrie și construiește proiecte reale care îți accelerează cariera.",
-    "getStarted": "Începe Acum",
-    "exploreCourses": "Explorează Cursurile",
-    "learnersEnrolled": "cursanți deja înscriși",
-    "projectBased": "Învățare Bazată pe Proiecte",
+    "subtitle": "Învață să folosești instrumente AI, prompt engineering și automatizare pentru a rezolva probleme reale. Nu este necesară programare - doar creativitate și îndrumare corectă.",
+    "getStarted": "Începe să Înveți",
+    "exploreCourses": "Explorează Cursurile AI",
+    "learnersEnrolled": "pasionați de AI învață deja",
+    "projectBased": "Proiecte Susținute de AI",
     "stats": {
-      "studentRating": "Evaluare Cursanți",
+      "studentRating": "Satisfacția Cursanților",
       "reviews": "din {count} recenzii",
-      "courses": "Cursuri Disponibile",
-      "students": "Cursanți Activi",
+      "courses": "Cursuri AI Disponibile",
+      "students": "Cursanți AI",
       "rating": "Rating Mediu",
-      "coursesAvailable": "Cursuri Disponibile",
-      "projectBasedCurriculum": "Curriculum bazat pe proiecte"
+      "coursesAvailable": "Cursuri AI Disponibile",
+      "projectBasedCurriculum": "Aplicații AI din viața reală"
     },
-    "imageAlt": "Programare",
+    "imageAlt": "Tehnologie și Inovație AI",
     "scrollToExplore": "Derulează pentru a explora"
   },
   "whyChooseUs": {
-    "title": "De ce să alegi platforma noastră",
-    "subtitle": "Descoperă ce face experiența noastră de învățare unică și eficientă",
+    "title": "De ce să Înveți AI Cu Noi",
+    "subtitle": "Descoperă cum facem AI accesibil și practic pentru toată lumea",
     "features": {
       "projectBased": {
         "icon": "🚀",
-        "title": "Învățare Bazată pe Proiecte",
-        "description": "Construiește proiecte reale în AI, marketing, data science și multe altele pe care le poți prezenta în portofoliul tău."
+        "title": "Aplicații AI Reale",
+        "description": "Construiește soluții AI practice pe care le poți folosi imediat - de la automatizarea sarcinilor la crearea de conținut cu asistenți AI."
       },
       "experts": {
-        "icon": "👨‍💻",
-        "title": "Instructori Experți",
-        "description": "Învață de la profesioniști din industrie cu ani de experiență practică în tehnologie, business și domenii creative."
+        "icon": "🧠",
+        "title": "Practicieni AI",
+        "description": "Învață de la profesioniști care folosesc AI zilnic pentru a rezolva probleme de business, a crește productivitatea și a conduce inovația."
       },
       "updates": {
-        "icon": "🔄",
-        "title": "Actualizări Continue",
-        "description": "Toate cursurile sunt actualizate regulat cu cele mai recente tendințe, instrumente și practici din fiecare domeniu."
+        "icon": "⚡",
+        "title": "Cele Mai Noi Instrumente AI",
+        "description": "Rămâi la curent cu cele mai noi platforme AI, tehnici de prompting și instrumente de automatizare pe măsură ce apar."
       },
       "aiPowered": {
         "icon": "🤖",
-        "title": "Învățare Bazată pe AI",
-        "description": "Stăpânește instrumente și tehnici AI de ultimă generație pentru a rămâne în frunte în peisajul digital în evoluție rapidă."
+        "title": "Fără Programare",
+        "description": "Stăpânește AI prin cazuri practice de utilizare - nu este necesară experiență în programare, doar curiozitate și creativitate."
       },
       "community": {
-        "icon": "🤝",
-        "title": "Comunitate de Suport",
-        "description": "Alătură-te unei comunități diverse de cursanți din diverse industrii și primește ajutor când ai nevoie."
+        "icon": "💡",
+        "title": "Rețea de Inovație AI",
+        "description": "Conectează-te cu profesioniști inovatori care explorează aplicații AI în toate industriile."
       },
       "anywhere": {
-        "icon": "📱",
-        "title": "Învață Oriunde",
-        "description": "Accesează cursurile pe orice dispozitiv, oricând, cu platforma noastră responsive concepută pentru cursanții moderni."
+        "icon": "🌐",
+        "title": "Acces Instant la AI",
+        "description": "Începe să folosești instrumente AI imediat pe orice dispozitiv - învață și aplică simultan."
       }
     },
     "expertInstructors": "Instructori Experți",
@@ -113,9 +113,9 @@
     }
   },
   "cta": {
-    "title": "Pregătit Să Începi Călătoria Ta de Învățare?",
-    "subtitle": "Alătură-te miilor de cursanți care învață deja pe platforma noastră",
-    "button": "Vezi Toate Cursurile",
+    "title": "Pregătit să Valorifici Puterea AI?",
+    "subtitle": "Alătură-te miilor care folosesc deja AI pentru a-și transforma munca și creativitatea",
+    "button": "Explorează Cursurile AI",
     "benefits": {
       "moneyBack": "Garanție de Returnare a Banilor de 30 de Zile",
       "lifetimeAccess": "Acces pe Viață",
@@ -123,9 +123,9 @@
     }
   },
   "statistics": {
-    "badge": "Realizările Noastre",
-    "title": "Impactul Nostru în Cifre",
-    "description": "Alătură-te miilor de cursanți care își îmbunătățesc deja abilitățile în AI, marketing, data science și multe altele prin platforma noastră.",
+    "badge": "Impact în Învățarea AI",
+    "title": "Transformăm Cariere cu AI",
+    "description": "Alătură-te miilor de profesioniști care învață să folosească AI pentru productivitate, creativitate și creștere în carieră.",
     "courses": {
       "value": "15+",
       "label": "Cursuri",
@@ -148,56 +148,56 @@
     }
   },
   "learningPath": {
-    "title": "Călătoria Ta de Învățare",
-    "subtitle": "Urmează calea noastră structurată de la începător la profesionist",
+    "title": "Calea Ta către Stăpânirea AI",
+    "subtitle": "De la începător AI la utilizator avansat - construiește abilități practice pas cu pas",
     "steps": {
       "fundamentals": {
         "number": "01",
-        "title": "Fundamentele de Bază",
-        "description": "Stăpânește elementele esențiale ale dezvoltării web moderne cu HTML, CSS și JavaScript."
+        "title": "Fundamente AI",
+        "description": "Înțelege cum funcționează AI, explorează principalele instrumente AI și învață arta promptingului eficient."
       },
       "frontend": {
         "number": "02",
-        "title": "Dezvoltare Frontend",
-        "description": "Construiește interfețe de utilizator interactive cu React, TypeScript și framework-uri CSS moderne."
+        "title": "AI pentru Conținut și Creativitate",
+        "description": "Stăpânește AI pentru scriere, design, creare video și fluxuri de lucru creative. Generează conținut profesional fără efort."
       },
       "backend": {
         "number": "03",
-        "title": "Integrare Backend",
-        "description": "Creează aplicații server-side robuste cu Node.js și integrează cu baze de date."
+        "title": "AI pentru Productivitate și Automatizare",
+        "description": "Automatizează sarcinile repetitive, construiește fluxuri de lucru susținute de AI și integrează AI în operațiunile tale zilnice."
       },
       "fullstack": {
         "number": "04",
-        "title": "Proiecte Full Stack",
-        "description": "Combină abilitățile frontend și backend pentru a construi aplicații complete, gata de producție."
+        "title": "Aplicații AI Avansate",
+        "description": "Creează soluții AI personalizate, construiește asistenți inteligenți și folosește AI pentru analiză de date și luarea deciziilor."
       }
     }
   },
   "reviews": {
-    "title": "Ce spun cursanții noștri",
-    "subtitle": "Ascultă de la comunitatea noastră de dezvoltatori care și-au transformat abilitățile prin cursurile noastre.",
-    "sectionTitle": "Vocile Comunității Noastre AI",
-    "sectionSubtitle": "Descoperă cum curriculum-ul nostru AI îi împuternicește pe profesioniști să facă progrese noi în machine learning și inteligență artificială.",
+    "title": "Povești de Succes de la Cursanții AI",
+    "subtitle": "Ascultă de la profesioniști care și-au transformat carierele stăpânind instrumente și tehnici AI.",
+    "sectionTitle": "Rezultate Reale din Adoptarea AI",
+    "sectionSubtitle": "Descoperă cum trainingul nostru practic în AI ajută profesioniștii din toate industriile să crească productivitatea și să deschidă noi oportunități.",
     "badge": "Povești de Succes",
     "viewAll": "Vezi Toate Poveștile de Succes",
     "fallback": {
       "review1": {
-        "content": "Modelele de predicție AI predate în acest curs mi-au transformat complet abordarea analizei datelor. Sistemul de feedback în timp real face învățarea intuitivă și eficientă.",
-        "author": "Alexandru Popescu",
-        "role": "Inginer Cercetare AI",
-        "courseType": "Analiză Predictivă"
+        "content": "Învățarea folosirii AI pentru crearea de conținut mi-a redus timpul de scriere la jumătate. Tehnicile de prompt engineering predate aici schimbă jocul pentru orice marketer.",
+        "author": "Ana Popescu",
+        "role": "Manager Marketing Digital",
+        "courseType": "Creare Conținut AI"
       },
       "review2": {
-        "content": "Am urmat multe cursuri ML înainte, dar instrumentele de vizualizare ale rețelelor neuronale de aici au clarificat concepte complexe în mod cristallin. Proiectele practice cu tehnologie de ultimă oră au fost neprețuite.",
-        "author": "Maria Ionescu",
-        "role": "Specialist Machine Learning",
-        "courseType": "Rețele Neuronale"
+        "content": "Am automatizat 80% din sarcinile mele repetitive folosind fluxuri de lucru AI din acest curs. Nu este necesară programare - doar implementare AI practică, pas cu pas.",
+        "author": "Mihai Ionescu",
+        "role": "Director Operațiuni",
+        "courseType": "Automatizare AI"
       },
       "review3": {
-        "content": "Abordarea acestei platforme în predarea modelelor transformer este revoluționară. Am trecut de la înțelegere de bază la implementarea sistemelor NLP avansate în doar câteva săptămâni.",
-        "author": "David Georgescu",
-        "role": "Dezvoltator NLP",
-        "courseType": "NLP & Transformers"
+        "content": "Ca designer, instrumentele AI păreau intimidante. Aceste cursuri le-au făcut accesibile și practice. Acum folosesc AI zilnic pentru a-mi îmbunătăți fluxul de lucru creativ.",
+        "author": "Elena Georgescu",
+        "role": "Director Creativ",
+        "courseType": "AI pentru Designeri"
       }
     }
   },

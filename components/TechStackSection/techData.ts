@@ -1,16 +1,12 @@
 import {
-    TypeScriptIcon,
+    PythonIcon,
+    AIMLIcon,
+    DataAnalysisIcon,
+    MarketingIcon,
     ReactIcon,
-    FirebaseIcon,
-    NodeJsIcon,
-    TailwindCssIcon,
-    JavaScriptIcon,
-    NextJsIcon,
-    MongoDBIcon,
-    CSSIcon,
-    HTMLIcon,
-    NoSQLIcon,
-    ExpoIcon
+    CloudIcon,
+    SecurityIcon,
+    BusinessIcon
 } from '../icons/tech';
 
 export interface TechItem {
@@ -22,22 +18,22 @@ export interface TechItem {
 export const technologies: TechItem[] = [
     {
         key: 'python',
-        icon: JavaScriptIcon, // Placeholder - can be updated with Python icon
+        icon: PythonIcon,
         color: '#3776AB'
     },
     {
         key: 'aiml',
-        icon: TypeScriptIcon, // Placeholder - can be updated with AI icon
+        icon: AIMLIcon,
         color: '#FF6B6B'
     },
     {
         key: 'dataScience',
-        icon: MongoDBIcon, // Placeholder - can be updated with Data icon
+        icon: DataAnalysisIcon,
         color: '#4ECDC4'
     },
     {
         key: 'marketing',
-        icon: FirebaseIcon, // Placeholder - can be updated with Marketing icon
+        icon: MarketingIcon,
         color: '#FF9F1C'
     },
     {
@@ -47,17 +43,17 @@ export const technologies: TechItem[] = [
     },
     {
         key: 'cloud',
-        icon: NodeJsIcon, // Placeholder - can be updated with Cloud icon
+        icon: CloudIcon,
         color: '#00A8E8'
     },
     {
         key: 'security',
-        icon: NoSQLIcon, // Placeholder - can be updated with Security icon
+        icon: SecurityIcon,
         color: '#E63946'
     },
     {
         key: 'business',
-        icon: TailwindCssIcon, // Placeholder - can be updated with Business icon
+        icon: BusinessIcon,
         color: '#9B51E0'
     }
 ];

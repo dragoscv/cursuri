@@ -2,13 +2,13 @@ import type { Metadata } from 'next';
 
 // Base URL for the website - update this with your actual domain in production
 export const siteConfig = {
-    name: 'Cursuri',
+    name: 'StudiAI',
     description: 'Advance your career with expert-led online courses in programming, technology, and digital skills.',
-    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://cursuri.com',
+    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://studiai.ro',
     ogImage: '/images/og-image.jpg',
     links: {
-        twitter: 'https://twitter.com/cursuri',
-        github: 'https://github.com/cursuri',
+        twitter: 'https://twitter.com/studiai',
+        github: 'https://github.com/studiai',
     },
 };
 
@@ -107,8 +107,8 @@ export function constructMetadata({
             title: metaTitle,
             description: metaDescription,
             images: [metaImage],
-            site: '@cursuri',
-            creator: '@cursuri',
+            site: '@studiai',
+            creator: '@studiai',
         },
         robots: {
             index: true,
@@ -256,7 +256,7 @@ export function constructLessonMetadata(lesson: {
         isFree ? 'free lesson' : 'premium content',
     ];
 
-    const metaDescription = description || `${lessonTitle} - Part of the ${courseTitle} course. Learn at your own pace with Cursuri.`;
+    const metaDescription = description || `${lessonTitle} - Part of the ${courseTitle} course. Learn at your own pace with StudiAI.`;
 
     return constructMetadata({
         title: `${lessonTitle} | ${courseTitle}`,

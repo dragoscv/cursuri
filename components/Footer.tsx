@@ -33,7 +33,7 @@ const Footer = React.memo(function Footer() {
           {/* Left column - About */}
           <div>
             <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-4">
-              Cursuri
+              StudiAI
             </h3>
             <p className="text-[color:var(--ai-muted)] mb-4">{t('footer.about')}</p>
             <p className="text-sm text-[color:var(--ai-muted)]">
@@ -169,7 +169,7 @@ const Footer = React.memo(function Footer() {
 
         <div className="mt-12 pt-8 border-t border-[color:var(--ai-card-border)]">
           <p className="text-center text-[color:var(--ai-muted)] text-sm">
-            &copy; {year} Cursuri StudiAI. {t('footer.copyright')}
+            &copy; {year} StudiAI. {t('footer.copyright')}
           </p>
         </div>
       </div>
