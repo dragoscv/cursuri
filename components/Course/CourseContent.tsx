@@ -26,15 +26,6 @@ const CourseContent: React.FC<CourseContentProps> = ({
 }) => {
   const t = useTranslations('courses.content');
 
-  // Debug lessons input with more detailed information
-  console.log('CourseContent received lessons:', {
-    count: lessons?.length || 0,
-    isArray: Array.isArray(lessons),
-    isEmpty: !lessons || lessons.length === 0,
-    firstLesson: lessons && lessons.length > 0 ? lessons[0] : null,
-    courseName: course?.name || t('fallbacks.unknownCourse'),
-  });
-
   // Safely handle potentially invalid lessons input
   const validLessons = Array.isArray(lessons)
     ? lessons.filter((lesson) => lesson != null && lesson.id)
@@ -45,7 +36,9 @@ const CourseContent: React.FC<CourseContentProps> = ({
     const orderA = a.order || 0;
     const orderB = b.order || 0;
     return orderA - orderB;
-  }); // Group lessons by module/section if available
+  });
+
+  // Group lessons by module/section if available
   const lessonsByModule = sortedLessons.reduce(
     (groups, lesson) => {
       // Skip null/undefined lessons
@@ -60,13 +53,6 @@ const CourseContent: React.FC<CourseContentProps> = ({
     },
     {} as Record<string, Lesson[]>
   );
-
-  // Debug the module grouping
-  console.log('Lessons by module:', {
-    moduleCount: Object.keys(lessonsByModule).length,
-    moduleKeys: Object.keys(lessonsByModule),
-    defaultModuleLessonCount: lessonsByModule['default']?.length || 0,
-  });
 
   const modules = course.modules || [];
   const defaultModule = { id: 'default', title: 'Course Content' }; // Animation variants
@@ -375,12 +361,13 @@ const LessonItem: React.FC<LessonItemProps> = ({
       <div
         className={`
                 flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full mr-4 transition-all duration-300 relative 
-                ${isCompleted
-            ? 'bg-[color:var(--ai-success, #10b981)] text-white border-4 border-[color:var(--ai-success, #10b981)]/60 ring-4 ring-[color:var(--ai-success, #10b981)]/20 shadow-lg'
-            : !isAccessible
-              ? 'bg-[color:var(--ai-card-border)]/20 text-[color:var(--ai-muted)] border border-[color:var(--ai-card-border)]/30'
-              : 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] border border-[color:var(--ai-primary)]/30'
-          }
+                ${
+                  isCompleted
+                    ? 'bg-[color:var(--ai-success, #10b981)] text-white border-4 border-[color:var(--ai-success, #10b981)]/60 ring-4 ring-[color:var(--ai-success, #10b981)]/20 shadow-lg'
+                    : !isAccessible
+                      ? 'bg-[color:var(--ai-card-border)]/20 text-[color:var(--ai-muted)] border border-[color:var(--ai-card-border)]/30'
+                      : 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] border border-[color:var(--ai-primary)]/30'
+                }
             `}
       >
         {isCompleted ? <FiCheck size={24} className="text-white" /> : getIcon()}
@@ -398,12 +385,13 @@ const LessonItem: React.FC<LessonItemProps> = ({
           <div className="flex items-center">
             <h4
               className={`font-medium truncate
-                        ${isCompleted
-                  ? 'text-[color:var(--ai-success, #10b981)]'
-                  : !isAccessible
-                    ? 'text-[color:var(--ai-muted)]'
-                    : 'text-[color:var(--ai-foreground)]'
-                }
+                        ${
+                          isCompleted
+                            ? 'text-[color:var(--ai-success, #10b981)]'
+                            : !isAccessible
+                              ? 'text-[color:var(--ai-muted)]'
+                              : 'text-[color:var(--ai-foreground)]'
+                        }
                     `}
             >
               {lesson.name}

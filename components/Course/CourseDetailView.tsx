@@ -129,6 +129,7 @@ export default function CourseDetailView({
             completedLessons={completedLessons}
             progressPercentage={progressPercentage}
             totalLessons={courseLessons.length}
+            courseLessons={courseLessons}
           />
         </motion.div>
       </div>

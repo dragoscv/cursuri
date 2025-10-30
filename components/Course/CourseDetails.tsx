@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import LessonsList from './LessonsList';
 import CourseOverview from './CourseOverview';
+import Reviews from './Reviews';
 
 interface CourseDetailsProps {
   course: Course;
@@ -316,75 +317,7 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
               animate="visible"
               exit="hidden"
             >
-              {course.reviews && course.reviews.length > 0 ? (
-                <div className="space-y-4 sm:space-y-6">
-                  {course.reviews.map((review, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)]/60 rounded-xl p-3 sm:p-5 shadow-sm hover:shadow-md transition-shadow border border-[color:var(--ai-card-border)]"
-                    >
-                      <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] flex items-center justify-center text-white font-medium text-base sm:text-lg shadow-md">
-                          {review.userName?.charAt(0) || 'U'}
-                        </div>
-                        <div>
-                          <div className="font-medium text-[color:var(--ai-foreground)]">
-                            {review.userName || t('anonymousUser')}
-                          </div>
-                          <div className="text-xs sm:text-sm text-[color:var(--ai-muted)]">
-                            {review.date || t('recently')}
-                          </div>
-                        </div>
-                        <div className="ml-auto flex items-center bg-amber-50 dark:bg-amber-900/20 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full shadow-sm">
-                          <span className="text-amber-600 dark:text-amber-400 font-medium mr-1">
-                            {review.rating || 5}
-                          </span>
-                          <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                            className="text-amber-500"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path d="M11.2691 4.41115C11.5006 3.89177 11.6164 3.63208 11.7776 3.55211C11.9176 3.48263 12.082 3.48263 12.222 3.55211C12.3832 3.63208 12.499 3.89177 12.7305 4.41115L14.5745 8.54808C14.643 8.70162 14.6772 8.77839 14.7302 8.83718C14.777 8.8892 14.8343 8.93081 14.8982 8.95929C14.9705 8.99149 15.0541 9.00031 15.2213 9.01795L19.7256 9.49336C20.2911 9.55304 20.5738 9.58288 20.6997 9.71147C20.809 9.82316 20.8598 9.97956 20.837 10.1342C20.8108 10.3122 20.5996 10.5025 20.1772 10.8832L16.8125 13.9154C16.6877 14.0279 16.6252 14.0842 16.5857 14.1527C16.5507 14.2134 16.5288 14.2807 16.5215 14.3503C16.5132 14.429 16.5306 14.5112 16.5655 14.6757L17.5053 19.1064C17.6233 19.6627 17.6823 19.9408 17.5989 20.1002C17.5264 20.2388 17.3934 20.3354 17.2393 20.3615C17.0619 20.3915 16.8156 20.2495 16.323 19.9654L12.3995 17.7024C12.2539 17.6184 12.1811 17.5765 12.1037 17.56C12.0352 17.5455 11.9644 17.5455 11.8959 17.56C11.8185 17.5765 11.7457 17.6184 11.6001 17.7024L7.67662 19.9654C7.18404 20.2495 6.93775 20.3915 6.76034 20.3615C6.60623 20.3354 6.47319 20.2388 6.40075 20.1002C6.31736 19.9408 6.37635 19.6627 6.49434 19.1064L7.4341 14.6757C7.46898 14.5112 7.48642 14.429 7.47814 14.3503C7.47081 14.2807 7.44894 14.2134 7.41393 14.1527C7.37439 14.0842 7.31195 14.0279 7.18708 13.9154L3.82246 10.8832C3.40005 10.5025 3.18884 10.3122 3.16258 10.1342C3.13978 9.97956 3.19059 9.82316 3.29993 9.71147C3.42581 9.58288 3.70856 9.55304 4.27406 9.49336L8.77835 9.01795C8.94553 9.00031 9.02911 8.99149 9.10139 8.95929C9.16534 8.93081 9.2226 8.8892 9.26946 8.83718C9.32241 8.77839 9.35663 8.70162 9.42508 8.54808L11.2691 4.41115Z" />
-                          </svg>
-                        </div>
-                      </div>
-                      <div className="relative pl-3">
-                        <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[color:var(--ai-primary)]/30 to-[color:var(--ai-secondary)]/30 rounded-full opacity-50"></div>
-                        <p className="text-sm sm:text-base text-[color:var(--ai-muted)] leading-relaxed">
-                          {review.comment ||
-                            'This course exceeded my expectations. The content is well-structured and the instructor explains complex concepts clearly.'}
-                        </p>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              ) : (
-                <div className="bg-[color:var(--ai-card-bg)]/30 rounded-xl p-5 sm:p-8 text-center border border-[color:var(--ai-card-border)]/50 shadow-inner">
-                  <svg
-                    className="w-10 h-10 sm:w-16 sm:h-16 text-[color:var(--ai-muted)] mx-auto mb-3 sm:mb-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="1.5"
-                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                    ></path>
-                  </svg>
-                  <p className="text-sm sm:text-base text-[color:var(--ai-muted)]">
-                    {t('noReviewsYet')}
-                  </p>
-                </div>
-              )}
+              <Reviews courseId={courseId || course.id} />
             </motion.div>
           </AnimatePresence>
         </Tab>

@@ -101,8 +101,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   } = props;
 
   const [isFocused, setIsFocused] = useState(false);
-  const hasValue = value !== undefined && value !== '';
-  const showLabel = isFocused || hasValue;
+  const hasValue = value !== undefined && value !== '' && String(value).length > 0;
+  const showLabel = label && (isFocused || hasValue || placeholder);
 
   // Generate variant-specific styles
   const getVariantStyles = () => {
@@ -151,15 +151,17 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
       default:
         return 'h-10 text-sm';
     }
-  }; // Label animation classes
+  };
+
+  // Label animation classes with improved positioning
   const labelClasses = `
-        absolute transition-all duration-200 pointer-events-none
+        absolute transition-all duration-200 pointer-events-none z-10
         ${
           showLabel
-            ? '-top-6 left-0 text-xs font-medium'
+            ? '-top-2.5 left-2 text-xs font-medium bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-background)] px-1'
             : `${startContent ? 'left-10' : 'left-3'} top-1/2 -translate-y-1/2 text-sm`
         }
-        ${isDisabled ? 'text-[color:var(--ai-muted)]' : 'text-[color:var(--ai-foreground)]'}
+        ${isDisabled ? 'text-[color:var(--ai-muted)]' : isFocused ? 'text-[color:var(--ai-primary)]' : 'text-[color:var(--ai-foreground)]'}
         ${classNames.label || ''}
     `;
 
@@ -206,7 +208,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           onChange={onChange}
           disabled={isDisabled}
           readOnly={isReadOnly}
-          placeholder={isFocused || !label ? placeholder : ''}
+          placeholder={placeholder}
           className={inputClasses}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
@@ -230,7 +232,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           id="input-error"
           role="alert"
           aria-live="polite"
-          className={`mt-1 text-xs text-[color:var(--ai-danger)] ${classNames.errorMessage || ''}`}
+          className={`mt-2 text-sm font-medium text-red-600 dark:text-red-400 ${classNames.errorMessage || ''}`}
         >
           {errorMessage}
         </p>

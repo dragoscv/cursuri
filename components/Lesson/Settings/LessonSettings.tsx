@@ -39,12 +39,13 @@ const LessonSettings: React.FC<LessonSettingsProps> = ({
       <div className="p-5 bg-[color:var(--ai-card-bg)]/30 space-y-5">
         {/* Mark as Complete/Incomplete Button */}
         <Button
+          size="lg"
           color={isCompleted ? 'success' : 'primary'}
           className={`w-full ${
             isCompleted
-              ? 'bg-[color:var(--ai-success, #10b981)]'
+              ? 'bg-gradient-to-r from-[color:var(--ai-success)] to-[color:var(--ai-primary)]'
               : 'bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]'
-          } text-white border-none shadow-md transition-all duration-300 hover:shadow-lg hover:scale-[1.02]`}
+          } text-white border-none shadow-md transition-all duration-300 hover:shadow-lg hover:scale-[1.02] rounded-lg h-12 sm:h-14 font-semibold`}
           onClick={onMarkComplete}
           startContent={<FiCheck size={18} />}
         >

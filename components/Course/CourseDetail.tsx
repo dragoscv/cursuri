@@ -24,9 +24,6 @@ export default function CourseDetail({ courseId }: { courseId: string }) {
     fetchLessonsForCourse,
   } = context;
 
-  // Track if lessons have been fetched to avoid infinite loop
-  const lessonsFetched = React.useRef(false);
-
   // Fetch course data if not available
   useEffect(() => {
     if (courseId) {
@@ -37,25 +34,18 @@ export default function CourseDetail({ courseId }: { courseId: string }) {
     }
   }, [courseId, fetchCourseById, courses]);
 
-  // Separate useEffect for lessons to avoid dependency loops
+  // Always fetch fresh lessons on mount to ensure latest order
   useEffect(() => {
     if (courseId) {
-      const hasNoLessons =
-        !lessons ||
-        !lessons[courseId] ||
-        (lessons[courseId] && Object.keys(lessons[courseId]).length === 0);
-
-      if (hasNoLessons && !lessonsFetched.current) {
-        lessonsFetched.current = true;
-        console.log('[CourseDetail] Fetching lessons for course:', courseId);
-        // Force fresh fetch by clearing cache
-        fetchLessonsForCourse(courseId, {
-          persist: false,
-          cacheKey: `lessons_${courseId}_${Date.now()}`,
-        });
-      }
+      // Force fresh fetch by clearing cache to get latest order
+      fetchLessonsForCourse(courseId, {
+        persist: false,
+        cacheKey: `lessons_${courseId}_${Date.now()}`,
+      });
     }
-  }, [courseId, fetchLessonsForCourse, lessons]);
+    // Only run on mount and when courseId changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [courseId]);
 
   const course = courses ? courses[courseId] : null;
 
@@ -64,8 +54,6 @@ export default function CourseDetail({ courseId }: { courseId: string }) {
     lessons && courseId && lessons[courseId]
       ? (() => {
           const lessonsData = lessons[courseId];
-
-          console.log('[CourseDetail] Raw lessons data from context:', lessonsData);
 
           // Handle the case where lessons data might be nested
           if (Array.isArray(lessonsData)) {
@@ -105,16 +93,6 @@ export default function CourseDetail({ courseId }: { courseId: string }) {
                     item.file ||
                     item.order !== undefined ||
                     item.id)
-              );
-              console.log('[CourseDetail] Filtered lessons (object values):', filtered);
-              console.log(
-                '[CourseDetail] Lesson durations after filter:',
-                filtered.map((l: any) => ({
-                  id: l.id,
-                  name: l.name || l.title,
-                  duration: l.duration,
-                  type: typeof l.duration,
-                }))
               );
               return filtered;
             }

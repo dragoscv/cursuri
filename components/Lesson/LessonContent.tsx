@@ -40,7 +40,7 @@ function LessonContent({
   const [progressSaved, setProgressSaved] = useState(false);
   const [videoPosition, setVideoPosition] = useState(0); // Track video position in seconds
   const [notes, setNotes] = useState('');
-  const [showNotes, setShowNotes] = useState(false);
+  const [showNotes, setShowNotes] = useState(true);
   const [isOnline, setIsOnline] = useState(true);
   const [isUsingOfflineContent, setIsUsingOfflineContent] = useState(false);
   const [offlineLessonContent, setOfflineLessonContent] = useState<any>(null);
@@ -475,7 +475,7 @@ function LessonContent({
             </Card>
           )}
           {/* Q&A Discussion Section */}
-          <QASection courseId={lesson.courseId || ''} lessonId={lesson.id} />
+          <QASection courseId={courseId} lessonId={lesson.id} />
         </div>
 
         {/* Right Sidebar */}

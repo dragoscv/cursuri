@@ -31,19 +31,6 @@ export default function LessonsList({
   const courseId = propsCourseId || params.courseId;
   const t = useTranslations('courses.lessonsList');
 
-  // Debug: Log lessons data to see duration values
-  React.useEffect(() => {
-    console.log(
-      'LessonsList - Lessons data:',
-      lessons.map((l) => ({
-        id: l.id,
-        name: l.name || l.title,
-        duration: l.duration,
-        type: typeof l.duration,
-      }))
-    );
-  }, [lessons]);
-
   // Format duration in minutes to "HH:MM" format or "MM min" if less than an hour
   const formatDuration = (minutes?: number) => {
     if (!minutes) return '00:00';
@@ -89,14 +76,18 @@ export default function LessonsList({
         damping: 15,
       },
     },
-  }; // Filter out null or undefined lessons and then sort by order property
+  };
+
+  // Filter out null or undefined lessons and then sort by order property
   const sortedLessons = [...lessons]
     .filter((lesson) => lesson != null)
     .sort((a, b) => {
       const orderA = a.order || 0;
       const orderB = b.order || 0;
       return orderA - orderB;
-    }); // Calculate total duration in minutes
+    });
+
+  // Calculate total duration in minutes
   const totalDuration = sortedLessons.reduce((total, lesson) => {
     // Skip if lesson is undefined or null
     if (!lesson) return total;

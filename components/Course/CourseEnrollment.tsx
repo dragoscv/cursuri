@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import { useRouter } from 'next/navigation';
 import { Course, ModalProps } from '../../types';
 import { getCoursePrice as getUnifiedCoursePrice } from '@/utils/pricing';
 import { useTranslations } from 'next-intl';
@@ -30,6 +31,7 @@ interface CourseEnrollmentProps {
   completedLessons?: Record<string, boolean>;
   progressPercentage?: number;
   totalLessons?: number;
+  courseLessons?: any[];
 }
 
 export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
@@ -38,6 +40,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
   completedLessons = {},
   progressPercentage = 0,
   totalLessons = 0,
+  courseLessons = [],
 }) => {
   const context = useContext(AppContext);
 
@@ -47,8 +50,29 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
 
   const { user, openModal, closeModal } = context;
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const t = useTranslations('courses.enrollment');
   const tCommon = useTranslations('common');
+
+  // Find the first uncompleted lesson
+  const getNextLessonUrl = () => {
+    if (!courseLessons || courseLessons.length === 0) {
+      return `/courses/${course.id}/lessons`;
+    }
+
+    // Sort lessons by order
+    const sortedLessons = [...courseLessons].sort((a, b) => (a.order || 0) - (b.order || 0));
+
+    // Find first uncompleted lesson
+    const firstUncompletedLesson = sortedLessons.find((lesson) => !completedLessons[lesson.id]);
+
+    if (firstUncompletedLesson) {
+      return `/courses/${course.id}/lessons/${firstUncompletedLesson.id}`;
+    }
+
+    // If all lessons completed, go to first lesson
+    return `/courses/${course.id}/lessons/${sortedLessons[0]?.id || ''}`;
+  };
 
   // Check if the user has completed all prerequisites before enrolling
   const checkPrerequisites = () => {
@@ -213,14 +237,14 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
     return (
       <>
         {/* Top success indicator bar */}
-        <div className="h-1.5 w-full bg-gradient-to-r from-emerald-400 via-teal-500 to-emerald-500"></div>
+        <div className="h-1.5 w-full bg-gradient-to-r from-[color:var(--ai-success)] via-[color:var(--ai-primary)] to-[color:var(--ai-success)]"></div>
 
         <div className="p-6">
           {/* Header with status */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <div className="bg-emerald-500/10 p-2 rounded-full">
-                <FiCheck className="text-emerald-500" size={18} />
+              <div className="bg-[color:var(--ai-success)]/10 p-2 rounded-full">
+                <FiCheck className="text-[color:var(--ai-success)]" size={18} />
               </div>
               <h3 className="font-bold text-lg text-[color:var(--ai-foreground)]">
                 {t('youreEnrolled')}
@@ -229,18 +253,18 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
             <Chip
               color="success"
               variant="flat"
-              className="bg-emerald-500/10 text-emerald-500 font-medium"
+              className="bg-[color:var(--ai-success)]/10 text-[color:var(--ai-success)] font-medium"
             >
               {t('active')}
             </Chip>
           </div>{' '}
           {/* Progress card */}
-          <div className="bg-gradient-to-br from-emerald-50/10 via-teal-50/5 to-emerald-50/10 dark:from-emerald-900/10 dark:via-teal-900/5 dark:to-emerald-900/10 backdrop-blur-sm rounded-xl p-5 border border-emerald-200/20 dark:border-emerald-800/20 shadow-sm hover:shadow-md transition-all duration-300 mb-6">
+          <div className="bg-gradient-to-br from-[color:var(--ai-success)]/10 via-[color:var(--ai-primary)]/5 to-[color:var(--ai-success)]/10 backdrop-blur-sm rounded-xl p-5 border border-[color:var(--ai-success)]/20 shadow-sm hover:shadow-md transition-all duration-300 mb-6">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-sm font-medium bg-gradient-to-r from-emerald-600 to-teal-500 dark:from-emerald-400 dark:to-teal-300 bg-clip-text text-transparent">
+              <span className="text-sm font-medium text-[color:var(--ai-foreground)]">
                 {t('yourProgress')}
               </span>
-              <span className="text-xs bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-2.5 py-1 rounded-full font-medium">
+              <span className="text-xs bg-[color:var(--ai-success)]/20 text-[color:var(--ai-success)] px-2.5 py-1 rounded-full font-medium">
                 {t('inProgress')}
               </span>
             </div>{' '}
@@ -274,13 +298,13 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
           >
             <div className="relative overflow-hidden rounded-xl group">
               {/* Subtle animated glow effect */}
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-30 blur-lg bg-gradient-to-r from-emerald-400 to-teal-400 transition-opacity duration-500"></div>
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-30 blur-lg bg-gradient-to-r from-[color:var(--ai-success)] to-[color:var(--ai-primary)] transition-opacity duration-500"></div>
 
               <Button
                 color="success"
-                className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 py-6 rounded-xl shadow-md hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300 font-semibold"
+                className="w-full bg-gradient-to-r from-[color:var(--ai-success)] to-[color:var(--ai-primary)] py-6 rounded-xl shadow-md hover:shadow-lg hover:shadow-[color:var(--ai-success)]/20 transition-all duration-300 font-semibold"
                 size="lg"
-                href={`/courses/${course.id}/lessons`}
+                onClick={() => router.push(getNextLessonUrl())}
                 endContent={
                   <FiArrowRight className="text-lg ml-1 group-hover:translate-x-1 transition-transform duration-200" />
                 }
@@ -365,7 +389,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
             </div>
 
             {course.limitedOffer && (
-              <div className="bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 text-xs font-medium flex items-center gap-1 py-1.5 px-2.5 rounded-full">
+              <div className="bg-[color:var(--ai-accent)]/10 text-[color:var(--ai-accent)] text-xs font-medium flex items-center gap-1 py-1.5 px-2.5 rounded-full border border-[color:var(--ai-accent)]/20">
                 <FiClock className="animate-pulse" />
                 <span>{t('enrollment.limitedTimeOffer')}</span>
               </div>
@@ -373,8 +397,8 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
           </div>
 
           {course.moneyBackGuarantee && (
-            <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 text-xs font-medium mb-3">
-              <FiCheck className="text-emerald-500" />
+            <div className="flex items-center gap-1.5 text-[color:var(--ai-success)] text-xs font-medium mb-3">
+              <FiCheck className="text-[color:var(--ai-success)]" />
               <span>{t('moneyBackGuarantee')}</span>
             </div>
           )}
@@ -535,15 +559,15 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
                     key={prerequisiteId}
                     className={`flex items-center justify-between p-2 rounded-md mb-2 ${
                       hasPurchased
-                        ? 'bg-green-500/10 border border-green-500/20'
-                        : 'bg-amber-500/10 border border-amber-500/20'
+                        ? 'bg-[color:var(--ai-success)]/10 border border-[color:var(--ai-success)]/20'
+                        : 'bg-[color:var(--ai-accent)]/10 border border-[color:var(--ai-accent)]/20'
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       {hasPurchased ? (
                         <FiCheck className="text-[color:var(--ai-success)]" size={16} />
                       ) : (
-                        <FiLock className="text-amber-500" size={16} />
+                        <FiLock className="text-[color:var(--ai-accent)]" size={16} />
                       )}
                       <span className="text-sm">
                         {prerequisiteCourse?.name || `Course ${prerequisiteId}`}
@@ -552,7 +576,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
                     {!hasPurchased && (
                       <a
                         href={`/courses/${prerequisiteId}`}
-                        className="text-xs px-2 py-1 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 hover:bg-amber-500/30 transition-colors"
+                        className="text-xs px-2 py-1 rounded-full bg-[color:var(--ai-accent)]/20 text-[color:var(--ai-accent)] hover:bg-[color:var(--ai-accent)]/30 transition-colors"
                       >
                         {t('enrollFirst')}
                       </a>

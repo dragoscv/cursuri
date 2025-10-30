@@ -18,17 +18,27 @@ export default function RichTextEditor({
 }: RichTextEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const [isFocused, setIsFocused] = useState(false);
+  const [showPlaceholder, setShowPlaceholder] = useState(true);
+  const lastValueRef = useRef<string>('');
 
+  // Update content whenever value prop changes (but not during typing)
   useEffect(() => {
-    if (editorRef.current && editorRef.current.innerHTML !== value) {
+    if (editorRef.current && !isFocused && value !== lastValueRef.current) {
       editorRef.current.innerHTML = value || '';
+      lastValueRef.current = value;
+      // Update placeholder visibility based on content
+      const textContent = editorRef.current.textContent || '';
+      setShowPlaceholder(textContent.trim().length === 0);
     }
-  }, [value]);
+  }, [value, isFocused]);
 
   const handleInput = () => {
     if (editorRef.current) {
       const htmlContent = editorRef.current.innerHTML;
       const textContent = editorRef.current.textContent || '';
+      lastValueRef.current = htmlContent;
+      // Update placeholder visibility
+      setShowPlaceholder(textContent.trim().length === 0);
       onChange(textContent, htmlContent);
     }
   };
@@ -145,27 +155,31 @@ export default function RichTextEditor({
       </div>
 
       {/* Editor Content */}
-      <div
-        ref={editorRef}
-        contentEditable
-        onInput={handleInput}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        className={`p-4 outline-none overflow-auto text-[color:var(--ai-foreground)] ${
-          isFocused ? 'ring-2 ring-[color:var(--ai-primary)]/20' : ''
-        }`}
-        style={{ minHeight: `${minHeight}px` }}
-        data-placeholder={placeholder}
-        suppressContentEditableWarning
-      />
+      <div className="relative">
+        {showPlaceholder && (
+          <div
+            className="absolute top-4 left-4 text-[color:var(--ai-muted)] pointer-events-none"
+            aria-hidden="true"
+          >
+            {placeholder}
+          </div>
+        )}
+        <div
+          ref={editorRef}
+          contentEditable
+          onInput={handleInput}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          className={`p-4 outline-none overflow-auto text-[color:var(--ai-foreground)] ${
+            isFocused ? 'ring-2 ring-[color:var(--ai-primary)]/20' : ''
+          }`}
+          style={{ minHeight: `${minHeight}px` }}
+          suppressContentEditableWarning
+        />
+      </div>
 
       <style jsx>{`
-        [contenteditable]:empty:before {
-          content: attr(data-placeholder);
-          color: var(--ai-muted);
-          pointer-events: none;
-          display: block;
-        }
+        /* Removed CSS placeholder logic */
       `}</style>
     </div>
   );

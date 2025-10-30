@@ -94,7 +94,8 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => 
   } = props;
 
   const [isFocused, setIsFocused] = useState(false);
-  const hasValue = value !== undefined && value !== '';
+  const hasValue = value !== undefined && value !== '' && String(value).length > 0;
+  const showLabel = label && (isFocused || hasValue || placeholder);
 
   // Generate variant-specific styles
   const getVariantStyles = () => {
@@ -131,10 +132,14 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => 
       default:
         return 'focus-within:border-[color:var(--ai-card-border)] focus-within:ring-[color:var(--ai-foreground)]/20';
     }
-  }; // Label animation classes
-  const labelClasses = `absolute transition-all duration-200 pointer-events-none ${
-    isFocused || hasValue ? '-top-6 left-0 text-xs font-medium' : 'left-3 top-3 text-sm'
-  } ${isDisabled ? 'text-[color:var(--ai-muted)]' : 'text-[color:var(--ai-foreground)]'} ${
+  };
+
+  // Label animation classes with improved positioning
+  const labelClasses = `absolute transition-all duration-200 pointer-events-none z-10 ${
+    showLabel
+      ? '-top-2.5 left-2 text-xs font-medium bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-background)] px-1'
+      : 'left-3 top-3 text-sm'
+  } ${isDisabled ? 'text-[color:var(--ai-muted)]' : isFocused ? 'text-[color:var(--ai-primary)]' : 'text-[color:var(--ai-foreground)]'} ${
     classNames.label || ''
   }`;
 
@@ -176,13 +181,19 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => 
           onChange={onChange}
           disabled={isDisabled}
           readOnly={isReadOnly}
-          placeholder={isFocused || !label ? placeholder : ''}
+          placeholder={placeholder}
           className={textareaClasses}
           rows={rows}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           aria-invalid={isInvalid ? 'true' : 'false'}
-          aria-describedby={isInvalid && errorMessage ? 'textarea-error' : description ? 'textarea-description' : undefined}
+          aria-describedby={
+            isInvalid && errorMessage
+              ? 'textarea-error'
+              : description
+                ? 'textarea-description'
+                : undefined
+          }
           required={isRequired}
           {...rest}
         />
@@ -193,14 +204,17 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>((props, ref) => 
           id="textarea-error"
           role="alert"
           aria-live="polite"
-          className={`mt-1 text-xs text-[color:var(--ai-danger)] ${classNames.errorMessage || ''}`}
+          className={`mt-2 text-sm font-medium text-red-600 dark:text-red-400 ${classNames.errorMessage || ''}`}
         >
           {errorMessage}
         </p>
       )}
 
       {description && !isInvalid && (
-        <p id="textarea-description" className={`mt-1 text-xs text-[color:var(--ai-muted)] ${classNames.description || ''}`}>
+        <p
+          id="textarea-description"
+          className={`mt-1 text-xs text-[color:var(--ai-muted)] ${classNames.description || ''}`}
+        >
           {description}
         </p>
       )}
