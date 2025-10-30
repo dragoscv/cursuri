@@ -4,6 +4,9 @@
   "previousLesson": "Lecția Anterioară",
   "nextLesson": "Lecția Următoare",
   "markComplete": "Marchează ca Finalizat",
+  "navigation": {
+    "title": "Navigare Lecție"
+  },
   "completed": "Finalizat",
   "inProgress": "În Desfășurare",
   "notStarted": "Neînceput",
@@ -208,6 +211,7 @@
     "title": "Setări Lecție",
     "lessonCompleted": "Lecție Finalizată",
     "markAsComplete": "Marchează ca Finalizată",
+    "markAsIncomplete": "Marchează ca Nefinalizată",
     "autoPlayNext": "Redare Automată Lecție Următoare",
     "autoPlayNextDesc": "Redă automat lecția următoare când aceasta se termină",
     "autoSaveProgress": "Salvare Automată Progres",

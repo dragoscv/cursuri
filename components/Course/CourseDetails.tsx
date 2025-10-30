@@ -13,6 +13,7 @@ interface CourseDetailsProps {
   lessons?: Lesson[];
   courseId?: string;
   hasAccess?: boolean;
+  completedLessons?: Record<string, boolean>;
 }
 
 export const CourseDetails: React.FC<CourseDetailsProps> = ({
@@ -20,6 +21,7 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
   lessons = [],
   courseId,
   hasAccess = false,
+  completedLessons = {},
 }) => {
   const t = useTranslations('courses.tabs');
   // For handling tab selection in URL
@@ -159,7 +161,7 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
                     lessons={lessons || []}
                     course={course}
                     courseId={courseId}
-                    completedLessons={{}}
+                    completedLessons={completedLessons}
                     userHasAccess={hasAccess}
                   />
                 </div>

@@ -660,9 +660,19 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
   const markLessonComplete = useCallback(
     async (courseId: string, lessonId: string) => {
-      return saveLessonProgress(courseId, lessonId, 0, true);
+      // Get current completion status
+      const currentProgress = state.lessonProgress?.[courseId]?.[lessonId];
+      const isCurrentlyCompleted = currentProgress?.isCompleted || false;
+
+      // Toggle the completion status
+      return saveLessonProgress(
+        courseId,
+        lessonId,
+        currentProgress?.lastPosition || 0,
+        !isCurrentlyCompleted
+      );
     },
-    [saveLessonProgress]
+    [saveLessonProgress, state.lessonProgress]
   );
 
   const getUserLessonProgress = useCallback(async () => {
@@ -678,9 +688,19 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
       // Explicitly type this as a Firebase Unsubscribe function
       const unsubscribe: Unsubscribe = onSnapshot(q, (querySnapshot) => {
+        console.log(`[LISTENER] Snapshot received with ${querySnapshot.docs.length} documents`);
+
         querySnapshot.forEach((doc) => {
           const data = doc.data() as UserLessonProgress;
           const { courseId, lessonId } = data;
+
+          console.log(`[LISTENER] Processing progress document:`, {
+            docId: doc.id,
+            courseId,
+            lessonId,
+            isCompleted: data.isCompleted,
+            data,
+          });
 
           dispatch({
             type: 'SET_LESSON_PROGRESS',
@@ -1949,6 +1969,11 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         querySnapshot.forEach((doc) => {
           const data = doc.data();
           data.id = doc.id;
+          console.log(
+            `[AppContext] Lesson ${doc.id} duration:`,
+            data.duration,
+            typeof data.duration
+          );
           lessonsData[doc.id] = data as Lesson;
         }); // Initialize the course lessons structure first
         dispatch({ type: 'INITIALIZE_COURSE_LESSONS', payload: { courseId } });

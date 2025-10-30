@@ -54,6 +54,16 @@ function LessonContent({
   const { lessons, lessonProgress, saveLessonProgress, markLessonComplete, courses } = context;
   const { getOfflineLesson, isLessonAvailableOffline } = useOfflineContent();
 
+  // Debug: Log lessonProgress changes
+  useEffect(() => {
+    console.log('[LessonContent] lessonProgress changed:', {
+      hasLessonProgress: !!lessonProgress,
+      courseIds: lessonProgress ? Object.keys(lessonProgress) : [],
+      fullProgress: lessonProgress,
+      fullProgressStringified: JSON.stringify(lessonProgress, null, 2),
+    });
+  }, [lessonProgress]);
+
   // Check online status
   useEffect(() => {
     const updateOnlineStatus = () => {
@@ -91,7 +101,8 @@ function LessonContent({
   }, [isOnline, lesson?.id, getOfflineLesson, isLessonAvailableOffline]);
 
   // Check if lesson is undefined before accessing properties
-  const courseId = lesson?.courseId || ''; // Set up loading state component for when lesson is not available
+  // Use course.id first since lesson.courseId might not be set in Firestore
+  const courseId = course?.id || lesson?.courseId || ''; // Set up loading state component for when lesson is not available
   const loadingComponent = (
     <div className="flex flex-col w-full max-w-7xl mx-auto animate-in fade-in duration-500">
       <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-[color:var(--ai-accent)]/10 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-[color:var(--ai-card-border)]/50 shadow-xl">
@@ -193,27 +204,69 @@ function LessonContent({
       }));
   };
 
-  // Calculate progress percentage for the progress bar
-  const calculateProgress = () => {
-    if (!lessons || !courseId || !lessons[courseId]) return 0;
-
-    const totalLessons = Object.keys(lessons[courseId]).length;
-    if (totalLessons === 0) return 0;
-
-    // Find current lesson index
-    const sortedLessons = Object.values(lessons[courseId]).sort((a, b) => {
-      const orderA = a.order || 0;
-      const orderB = b.order || 0;
-      return orderA - orderB;
+  // Calculate progress percentage for the progress bar based on completed lessons
+  // Using useMemo to recalculate when dependencies change
+  const progressPercentage = useMemo(() => {
+    console.log('[LessonContent] useMemo triggered', {
+      hasLessons: !!lessons,
+      courseId,
+      hasLessonProgress: !!lessonProgress,
+      lessonProgressKeys: lessonProgress ? Object.keys(lessonProgress) : [],
     });
 
-    if (!lesson || !lesson.id) return 0;
+    if (!lessons || !courseId || !lessons[courseId]) {
+      console.log('[LessonContent] calculateProgress: Missing data', {
+        hasLessons: !!lessons,
+        courseId,
+        hasCourseInLessons: lessons ? !!lessons[courseId] : false,
+      });
+      return 0;
+    }
 
-    const currentIndex = sortedLessons.findIndex((l) => l.id === lesson.id);
-    if (currentIndex === -1) return 0;
+    const courseLessons = Object.values(lessons[courseId]);
+    const totalLessons = courseLessons.length;
+    if (totalLessons === 0) {
+      console.log('[LessonContent] calculateProgress: No lessons found');
+      return 0;
+    }
 
-    return ((currentIndex + 1) / totalLessons) * 100;
-  };
+    // Get the progress data for this course
+    const courseProgress = lessonProgress?.[courseId] || {};
+    console.log('[LessonContent] Course progress data:', {
+      courseId,
+      progressKeys: Object.keys(courseProgress),
+      progressData: courseProgress,
+    });
+
+    // Count completed lessons from lessonProgress
+    const completedCount = courseLessons.filter((lessonItem) => {
+      const progress = courseProgress[lessonItem.id];
+      const isComplete = progress?.isCompleted === true;
+
+      console.log(`[LessonContent] Lesson ${lessonItem.id} (${lessonItem.name}):`, {
+        hasProgress: !!progress,
+        isCompleted: progress?.isCompleted,
+        isComplete,
+      });
+
+      return isComplete;
+    }).length;
+
+    const progressPercent = (completedCount / totalLessons) * 100;
+
+    console.log('[LessonContent] calculateProgress FINAL:', {
+      courseId,
+      totalLessons,
+      completedCount,
+      progressPercent: Math.round(progressPercent),
+      lessonProgressExists: !!lessonProgress?.[courseId],
+      completedLessonIds: courseLessons
+        .filter((l) => courseProgress[l.id]?.isCompleted === true)
+        .map((l) => l.id),
+    });
+
+    return progressPercent;
+  }, [lessons, courseId, lessonProgress]);
 
   // If lesson is not available, show the loading component
   if (!lesson) {
@@ -250,14 +303,11 @@ function LessonContent({
             <div className="flex items-center gap-2 mb-2">
               <span className="text-sm text-[color:var(--ai-muted)]">{t('courseProgress')}</span>
               <span className="font-semibold text-[color:var(--ai-primary)]">
-                {Math.round(calculateProgress())}%
+                {Math.round(progressPercentage)}%
               </span>
             </div>{' '}
             <div className={styles.progressContainer}>
-              <div
-                className={styles.progressBar}
-                style={{ width: `${calculateProgress()}%` }}
-              ></div>
+              <div className={styles.progressBar} style={{ width: `${progressPercentage}%` }}></div>
             </div>
           </div>
         </div>
@@ -362,6 +412,23 @@ function LessonContent({
             setProgressSaved={setProgressSaved}
             isOfflineMode={isUsingOfflineContent}
           />
+          {/* Lesson Navigation - Positioned directly below video player */}
+          {(prevLessonId || nextLessonId || onClose) && (
+            <Card
+              className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-xl overflow-hidden 
+                            transform transition-all duration-300 hover:shadow-2xl hover:border-[color:var(--ai-primary)]/30 rounded-lg"
+            >
+              <LessonNavigation
+                prevLessonId={prevLessonId}
+                nextLessonId={nextLessonId}
+                isCompleted={isCompleted}
+                onNavigateLesson={(lessonId) => onNavigateLesson && onNavigateLesson(lessonId)}
+                onClose={onClose}
+                lessons={navigationLessons}
+                currentLessonId={lesson.id}
+              />
+            </Card>
+          )}
           {/* Lesson Content */}
           {(lesson.content || (isUsingOfflineContent && offlineLessonContent?.content)) && (
             <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-xl">
@@ -409,23 +476,6 @@ function LessonContent({
           )}
           {/* Q&A Discussion Section */}
           <QASection courseId={lesson.courseId || ''} lessonId={lesson.id} />
-          {/* Lesson Navigation - Positioned at bottom of content for all screen sizes */}
-          {(prevLessonId || nextLessonId || onClose) && (
-            <Card
-              className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-xl overflow-hidden 
-                            transform transition-all duration-300 hover:shadow-2xl hover:border-[color:var(--ai-primary)]/30 rounded-lg"
-            >
-              <LessonNavigation
-                prevLessonId={prevLessonId}
-                nextLessonId={nextLessonId}
-                isCompleted={isCompleted}
-                onNavigateLesson={(lessonId) => onNavigateLesson && onNavigateLesson(lessonId)}
-                onClose={onClose}
-                lessons={navigationLessons}
-                currentLessonId={lesson.id}
-              />
-            </Card>
-          )}
         </div>
 
         {/* Right Sidebar */}

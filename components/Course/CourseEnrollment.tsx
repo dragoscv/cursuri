@@ -27,9 +27,18 @@ import LoadingButton from '../Buttons/LoadingButton';
 interface CourseEnrollmentProps {
   course: Course;
   isPurchased: boolean;
+  completedLessons?: Record<string, boolean>;
+  progressPercentage?: number;
+  totalLessons?: number;
 }
 
-export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPurchased }) => {
+export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
+  course,
+  isPurchased,
+  completedLessons = {},
+  progressPercentage = 0,
+  totalLessons = 0,
+}) => {
   const context = useContext(AppContext);
 
   if (!context) {
@@ -236,19 +245,21 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({ course, isPu
               </span>
             </div>{' '}
             <Progress
-              value={30}
+              value={progressPercentage}
               color="success"
               className="mb-2 h-2 rounded-full overflow-hidden"
               size="sm"
               aria-label="Course progress"
             />
             <div className="flex justify-between items-center text-xs text-[color:var(--ai-muted)]">
-              <span className="font-medium">{t('percentComplete', { percent: 30 })}</span>
+              <span className="font-medium">
+                {t('percentComplete', { percent: progressPercentage })}
+              </span>
               <span>
-                {course.lessonsCount
+                {totalLessons > 0
                   ? t('lessonsProgress', {
-                      completed: Math.round(course.lessonsCount * 0.3),
-                      total: course.lessonsCount,
+                      completed: Object.values(completedLessons).filter((c) => c === true).length,
+                      total: totalLessons,
                     })
                   : t('inProgress')}
               </span>

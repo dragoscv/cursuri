@@ -4,6 +4,9 @@
   "previousLesson": "Previous Lesson",
   "nextLesson": "Next Lesson",
   "markComplete": "Mark as Complete",
+  "navigation": {
+    "title": "Lesson Navigation"
+  },
   "completed": "Completed",
   "inProgress": "In Progress",
   "notStarted": "Not Started",
@@ -216,6 +219,7 @@
     "title": "Lesson Settings",
     "lessonCompleted": "Lesson Completed",
     "markAsComplete": "Mark as Complete",
+    "markAsIncomplete": "Mark as Incomplete",
     "autoPlayNext": "Auto-play Next Lesson",
     "autoPlayNextDesc": "Automatically play the next lesson when this one ends",
     "autoSaveProgress": "Auto-save Progress",

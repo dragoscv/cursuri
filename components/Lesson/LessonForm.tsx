@@ -832,14 +832,23 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
           videoElement.load();
         };
 
-        videoElement.onerror = () => {
-          console.error('Failed to load video metadata');
+        videoElement.onerror = (error) => {
+          console.warn(
+            'Could not extract video duration automatically. You can enter it manually.',
+            error
+          );
+          // Don't throw error - just let user enter duration manually
           videoElement.src = '';
           videoElement.load();
         };
 
         // Use the same blob URL for metadata extraction
-        videoElement.src = videoUrl;
+        // Wrap in try-catch to handle any edge cases
+        try {
+          videoElement.src = videoUrl;
+        } catch (err) {
+          console.warn('Could not load video for duration extraction:', err);
+        }
       } else {
         const reader = new FileReader();
         reader.onloadend = () => {
