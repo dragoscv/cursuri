@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Input, Button } from '@heroui/react'; // Updated to use HeroUI
+import { Button } from '@heroui/react';
+import Input from './ui/Input'; // Use custom Input component
 import { useRouter, usePathname } from 'next/navigation';
 import { useContext } from 'react';
 import { AppContext } from './AppContext';
@@ -196,6 +197,7 @@ const SearchBar = React.memo(function SearchBar() {
                     handleSelectCourse(searchResults[0].id);
                   }
                 }}
+                variant="bordered"
                 startContent={searchIconMuted}
                 endContent={
                   searchQuery && (
@@ -210,10 +212,7 @@ const SearchBar = React.memo(function SearchBar() {
                     </Button>
                   )
                 }
-                classNames={{
-                  base: 'w-full',
-                  inputWrapper: 'bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)]',
-                }}
+                className="w-full"
               />
             </div>
 
