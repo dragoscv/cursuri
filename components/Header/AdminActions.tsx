@@ -1,33 +1,33 @@
-'use client'
+'use client';
 
 import React, { useContext } from 'react';
-import { AppContext } from "@/components/AppContext";
-import { Button } from "@heroui/react";
-import { PlusIcon } from "@/components/icons/FeatherIcons";
-import AddCourse from "@/components/Course/AddCourse";
-import { useRouter } from "next/navigation";
+import { AppContext } from '@/components/AppContext';
+import { Button } from '@heroui/react';
+import { PlusIcon } from '@/components/icons/FeatherIcons';
+import AddCourse from '@/components/Course/AddCourse';
+import { useRouter } from 'next/navigation';
 
 /**
  * AdminActions component that displays admin-specific buttons and actions
  */
 export default function AdminActions() {
-    const context = useContext(AppContext);
-    const router = useRouter();
+  const context = useContext(AppContext);
+  const router = useRouter();
 
-    if (!context) {
-        throw new Error("Missing context value");
-    }
+  if (!context) {
+    throw new Error('Missing context value');
+  }
 
-    const { isAdmin, openModal, closeModal } = context;
+  const { isAdmin, openModal, closeModal } = context;
 
-    // Don't show admin actions if user is not an admin
-    if (!isAdmin) {
-        return null;
-    }
+  // Don't show admin actions if user is not an admin
+  if (!isAdmin) {
+    return null;
+  }
 
-    return (
-        <div className="flex gap-2">
-            <Button
+  return (
+    <div className="flex gap-2">
+      {/* <Button
                 color="primary"
                 startContent={<PlusIcon size={16} />}
                 onPress={() => openModal({
@@ -49,16 +49,16 @@ export default function AdminActions() {
                 size="sm"
             >
                 Add Course
-            </Button>
-            <Button
-                variant="flat"
-                color="primary"
-                onPress={() => router.push('/admin')}
-                className="font-medium"
-                size="sm"
-            >
-                Admin Panel
-            </Button>
-        </div>
-    );
+            </Button> */}
+      <Button
+        variant="flat"
+        color="primary"
+        onPress={() => router.push('/admin')}
+        className="font-medium"
+        size="sm"
+      >
+        Admin Panel
+      </Button>
+    </div>
+  );
 }

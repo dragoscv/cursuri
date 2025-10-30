@@ -9,7 +9,8 @@ import {
   DropdownSection,
   DropdownItem,
 } from '@heroui/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
 import { AppContext } from '@/components/AppContext';
 import {
   UserIcon,
@@ -35,6 +36,7 @@ import ThemeToggle from '@/components/Header/ThemeToggle';
 export default function UserDropdown() {
   const t = useTranslations('common');
   const router = useRouter();
+  const pathname = usePathname();
   const context = useContext(AppContext);
 
   if (!context) {
@@ -50,6 +52,35 @@ export default function UserDropdown() {
 
   const handleSignOut = async () => {
     await signOut(firebaseAuth);
+  };
+
+  // Navigation links section - always show
+  const renderNavigationSection = () => {
+    return (
+      <DropdownSection aria-label="Navigation" showDivider {...({} as any)}>
+        <DropdownItem key="courses" textValue="Courses" className="p-0">
+          <Link href="/courses" className="block w-full">
+            <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors">
+              {t('nav.courses')}
+            </div>
+          </Link>
+        </DropdownItem>
+        <DropdownItem key="about" textValue="About" className="p-0">
+          <Link href="/about" className="block w-full">
+            <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors">
+              {t('nav.about')}
+            </div>
+          </Link>
+        </DropdownItem>
+        <DropdownItem key="contact" textValue="Contact" className="p-0">
+          <Link href="/contact" className="block w-full">
+            <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors">
+              {t('nav.contact')}
+            </div>
+          </Link>
+        </DropdownItem>
+      </DropdownSection>
+    );
   };
 
   // Mobile utilities section (language, theme) - only on mobile
@@ -114,33 +145,28 @@ export default function UserDropdown() {
           </div>
         </DropdownItem>
         <DropdownItem key="mobile-admin-panel" textValue="Admin Panel" className="p-0">
-          <div
-            className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors flex items-center gap-2"
-            onClick={() => router.push('/admin')}
-          >
-            <ShieldIcon className="text-[color:var(--ai-primary)]" size={18} />
-            Admin Panel
-          </div>
+          <Link href="/admin" className="block w-full">
+            <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors flex items-center gap-2">
+              <ShieldIcon className="text-[color:var(--ai-primary)]" size={18} />
+              Admin Panel
+            </div>
+          </Link>
         </DropdownItem>
       </DropdownSection>
     );
   };
 
-  // Define sections separately to handle conditional rendering properly
+  // Profile info section
   const renderProfileSection = () => {
-    if (!user) return null;
-
     return (
-      <DropdownSection aria-label="Profile & Actions" showDivider {...({} as any)}>
+      <DropdownSection aria-label="Profile Info" showDivider {...({} as any)}>
         <DropdownItem
           key="profile-info"
-          className="h-14 gap-2 border-0 text-[color:var(--ai-foreground)]/80"
+          className="h-14 gap-2 border-0 text-[color:var(--ai-foreground)]/80 opacity-100"
           textValue="Profile Details"
+          isReadOnly
         >
-          <div
-            className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 rounded-lg p-2 border-0 transition-colors"
-            onClick={() => router.push('/profile')}
-          >
+          <div className="p-2 border-0">
             <p className="font-semibold text-[color:var(--ai-foreground)]">
               {t('userMenu.signedInAs')}
             </p>
@@ -157,116 +183,81 @@ export default function UserDropdown() {
         </DropdownItem>
       </DropdownSection>
     );
-  }; // Actions section (Profile Dashboard)
+  };
+
+  // Actions section (Profile Dashboard, Settings)
   const renderActionsSection = () => {
     return (
-      <DropdownSection aria-label="Actions" showDivider {...({} as any)}>
-        {user && (
-          <>
-            <DropdownItem key="profile" textValue="Profile Dashboard" className="p-0">
-              <div
-                className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors flex items-center gap-2"
-                onClick={() => router.push('/profile')}
-              >
-                <UserIcon className="text-[color:var(--ai-primary)]" size={18} />
-                {t('userMenu.profileDashboard')}
-              </div>
-            </DropdownItem>
-            <DropdownItem key="settings" textValue="Settings" className="p-0">
-              <div
-                className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors flex items-center gap-2"
-                onClick={() => router.push('/profile/settings')}
-              >
-                <FiSettings className="text-[color:var(--ai-primary)]" size={18} />
-                {t('userMenu.settings')}
-              </div>
-            </DropdownItem>
-          </>
-        )}
+      <DropdownSection aria-label="User Actions" showDivider {...({} as any)}>
+        <DropdownItem key="profile" textValue="Profile Dashboard" className="p-0">
+          <Link href="/profile" className="block w-full">
+            <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors flex items-center gap-2">
+              <UserIcon className="text-[color:var(--ai-primary)]" size={18} />
+              {t('userMenu.profileDashboard')}
+            </div>
+          </Link>
+        </DropdownItem>
+        <DropdownItem key="settings" textValue="Settings" className="p-0">
+          <Link href="/profile/settings" className="block w-full">
+            <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors flex items-center gap-2">
+              <FiSettings className="text-[color:var(--ai-primary)]" size={18} />
+              {t('userMenu.settings')}
+            </div>
+          </Link>
+        </DropdownItem>
       </DropdownSection>
     );
-  }; // Admin section
+  };
+
+  // Admin section
   const renderAdminSection = () => {
     if (!isAdmin) return null;
 
     return (
       <DropdownSection aria-label="Admin Actions" showDivider {...({} as any)}>
         <DropdownItem key="adminDashboard" textValue="Admin Dashboard" className="p-0">
-          <div
-            className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors flex items-center gap-2"
-            onClick={() => router.push('/admin')}
-          >
-            <ShieldIcon className="text-[color:var(--ai-primary)]" size={18} />
-            {t('userMenu.adminDashboard')}
-          </div>
+          <Link href="/admin" className="block w-full">
+            <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors flex items-center gap-2">
+              <ShieldIcon className="text-[color:var(--ai-primary)]" size={18} />
+              {t('userMenu.adminDashboard')}
+            </div>
+          </Link>
         </DropdownItem>
       </DropdownSection>
     );
   };
 
-  // Core actions section (Suggestions, Login/Logout)
-  const renderCoreActionsSection = () => {
+  // Suggestions section
+  const renderSuggestionsSection = () => {
     return (
-      <DropdownSection aria-label="Actions" showDivider {...({} as any)}>
-        {/* Suggestions Item */}
+      <DropdownSection aria-label="Suggestions" showDivider {...({} as any)}>
         <DropdownItem key="suggestions" textValue="Suggestions" className="p-0">
           <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors flex items-center gap-2">
             <MessageSquareIcon className="text-[color:var(--ai-primary)]" size={18} />
             {t('userMenu.suggestions')}
           </div>
         </DropdownItem>
+      </DropdownSection>
+    );
+  };
 
-        {/* Auth Actions */}
-        {user ? (
-          <DropdownItem key="logout" textValue="Logout" className="p-0">
-            {' '}
-            <div
-              className="cursor-pointer hover:bg-[color:var(--ai-error)]/10 text-[color:var(--ai-error)] rounded-lg p-2 transition-colors flex items-center gap-2"
-              onClick={handleSignOut}
-            >
-              <LogOutIcon
-                className="text-[color:var(--ai-error)]"
-                size={18}
-                color="var(--ai-error)"
-              />
-              {t('userMenu.logout')}
-            </div>
-          </DropdownItem>
-        ) : (
-          <DropdownItem key="login" textValue="Login" className="p-0">
-            <div
-              className="cursor-pointer hover:bg-[color:var(--ai-success)]/10 hover:text-[color:var(--ai-success)] rounded-lg p-2 transition-colors flex items-center gap-2"
-              onClick={() =>
-                openModal({
-                  id: 'login',
-                  isOpen: true,
-                  hideCloseButton: false,
-                  backdrop: 'blur',
-                  size: 'md',
-                  scrollBehavior: 'inside',
-                  isDismissable: true,
-                  modalHeader: t('userMenu.login'),
-                  modalBody: <Login onClose={() => closeModal('login')} />,
-                  headerDisabled: true,
-                  footerDisabled: true,
-                  noReplaceURL: true,
-                  onClose: () => closeModal('login'),
-                  classNames: {
-                    backdrop:
-                      'z-50 backdrop-blur-md backdrop-saturate-150 bg-black/60 w-screen min-h-[100dvh] fixed inset-0',
-                    base: 'z-50 mx-auto my-auto rounded-xl shadow-xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] overflow-hidden h-auto min-h-0',
-                    wrapper:
-                      'z-50 w-full flex flex-col justify-center items-center overflow-hidden min-h-[100dvh]',
-                    content: 'h-auto min-h-0',
-                  },
-                })
-              }
-            >
-              <UserIcon className="text-[color:var(--ai-success)]" size={18} />
-              {t('userMenu.login')}
-            </div>
-          </DropdownItem>
-        )}
+  // Logout section
+  const renderLogoutSection = () => {
+    return (
+      <DropdownSection aria-label="Logout" showDivider {...({} as any)}>
+        <DropdownItem key="logout" textValue="Logout" className="p-0">
+          <div
+            className="cursor-pointer hover:bg-[color:var(--ai-error)]/10 text-[color:var(--ai-error)] rounded-lg p-2 transition-colors flex items-center gap-2"
+            onClick={handleSignOut}
+          >
+            <LogOutIcon
+              className="text-[color:var(--ai-error)]"
+              size={18}
+              color="var(--ai-error)"
+            />
+            {t('userMenu.logout')}
+          </div>
+        </DropdownItem>
       </DropdownSection>
     );
   };
@@ -344,12 +335,14 @@ export default function UserDropdown() {
         }}
         className="z-[9999]"
       >
-        {renderMobileUtilitiesSection()}
-        {renderMobileAdminSection()}
         {renderProfileSection()}
+        {renderNavigationSection()}
         {renderActionsSection()}
         {renderAdminSection()}
-        {renderCoreActionsSection()}
+        {renderMobileUtilitiesSection()}
+        {renderMobileAdminSection()}
+        {/* {renderSuggestionsSection()} */}
+        {renderLogoutSection()}
         {renderSocialSection()}
       </DropdownMenu>
     </Dropdown>

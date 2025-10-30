@@ -120,6 +120,9 @@
     }
   },
   "statistics": {
+    "badge": "Realizările Noastre",
+    "title": "Impactul Nostru în Cifre",
+    "description": "Alătură-te miilor de cursanți care își îmbunătățesc deja abilitățile în AI, marketing, data science și multe altele prin platforma noastră.",
     "courses": {
       "value": "15+",
       "label": "Cursuri",
@@ -177,19 +180,19 @@
     "fallback": {
       "review1": {
         "content": "Modelele de predicție AI predate în acest curs mi-au transformat complet abordarea analizei datelor. Sistemul de feedback în timp real face învățarea intuitivă și eficientă.",
-        "author": "Alex Johnson",
+        "author": "Alexandru Popescu",
         "role": "Inginer Cercetare AI",
         "courseType": "Analiză Predictivă"
       },
       "review2": {
         "content": "Am urmat multe cursuri ML înainte, dar instrumentele de vizualizare ale rețelelor neuronale de aici au clarificat concepte complexe în mod cristallin. Proiectele practice cu tehnologie de ultimă oră au fost neprețuite.",
-        "author": "Maria Garcia",
+        "author": "Maria Ionescu",
         "role": "Specialist Machine Learning",
         "courseType": "Rețele Neuronale"
       },
       "review3": {
         "content": "Abordarea acestei platforme în predarea modelelor transformer este revoluționară. Am trecut de la înțelegere de bază la implementarea sistemelor NLP avansate în doar câteva săptămâni.",
-        "author": "David Kim",
+        "author": "David Georgescu",
         "role": "Dezvoltator NLP",
         "courseType": "NLP & Transformers"
       }

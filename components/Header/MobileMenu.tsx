@@ -9,7 +9,8 @@ import {
   DropdownSection,
   DropdownItem,
 } from '@heroui/react';
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 import { AppContext } from '@/components/AppContext';
 import { useTranslations } from 'next-intl';
 import Login from '@/components/Login';
@@ -22,7 +23,6 @@ import ThemeToggle from '@/components/Header/ThemeToggle';
  */
 export default function MobileMenu() {
   const t = useTranslations('common');
-  const router = useRouter();
   const pathname = usePathname();
   const context = useContext(AppContext);
 
@@ -130,41 +130,29 @@ export default function MobileMenu() {
           }}
           className="z-[9999]"
         >
-          {/* Navigation Links - only show if not on course/lesson page */}
-          {!isCourseOrLessonPage ? (
-            <DropdownSection aria-label="Navigation" showDivider {...({} as any)}>
-              <DropdownItem
-                key="courses"
-                textValue="Courses"
-                className="p-0"
-                onClick={() => router.push('/courses')}
-              >
+          <DropdownSection aria-label="Navigation" showDivider {...({} as any)}>
+            <DropdownItem key="courses" textValue="Courses" className="p-0">
+              <Link href="/courses" className="block w-full">
                 <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors">
                   {t('nav.courses')}
                 </div>
-              </DropdownItem>
-              <DropdownItem
-                key="about"
-                textValue="About"
-                className="p-0"
-                onClick={() => router.push('/about')}
-              >
+              </Link>
+            </DropdownItem>
+            <DropdownItem key="about" textValue="About" className="p-0">
+              <Link href="/about" className="block w-full">
                 <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors">
                   {t('nav.about')}
                 </div>
-              </DropdownItem>
-              <DropdownItem
-                key="contact"
-                textValue="Contact"
-                className="p-0"
-                onClick={() => router.push('/contact')}
-              >
+              </Link>
+            </DropdownItem>
+            <DropdownItem key="contact" textValue="Contact" className="p-0">
+              <Link href="/contact" className="block w-full">
                 <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors">
                   {t('nav.contact')}
                 </div>
-              </DropdownItem>
-            </DropdownSection>
-          ) : null}
+              </Link>
+            </DropdownItem>
+          </DropdownSection>
 
           {/* Settings Section */}
           <DropdownSection aria-label="Settings" showDivider {...({} as any)}>

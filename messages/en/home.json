@@ -120,6 +120,9 @@
     }
   },
   "statistics": {
+    "badge": "Our Achievements",
+    "title": "Our Impact in Numbers",
+    "description": "Join thousands of learners who are already enhancing their skills in AI, marketing, data science, and more through our platform.",
     "courses": {
       "value": "15+",
       "label": "Courses",
