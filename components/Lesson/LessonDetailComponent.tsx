@@ -7,6 +7,8 @@ import { Spinner, Card } from "@heroui/react";
 import LessonContent from '@/components/Lesson/LessonContent';
 import LessonViewer from '@/components/Lesson/LessonViewer';
 import { useRouter } from 'next/navigation';
+import { logLessonView } from '@/utils/analytics';
+import { incrementLessonViews } from '@/utils/statistics';
 
 interface DebugInfo {
     courseId: string;
@@ -52,13 +54,10 @@ export default function LessonDetailComponent({
         throw new Error('LessonDetailComponent must be used within an AppContextProvider');
     }
 
-    const { courses, lessons, user, userPaidProducts, isAdmin, getCourseLessons } = context;    // Debug information
-    useEffect(() => {
-        console.log("Debug info - courseId:", courseId);
-        console.log("Debug info - lessonId:", lessonId);
-        console.log("Debug info - course exists:", Boolean(courses[courseId]));
-        console.log("Debug info - courseLessons exists:", Boolean(lessons[courseId]));
+    const { courses, lessons, user, userPaidProducts, isAdmin, getCourseLessons, subscriptions } = context;
 
+    // Debug information
+    useEffect(() => {
         // Store debug info for rendering
         setDebug({
             courseId,
@@ -81,14 +80,7 @@ export default function LessonDetailComponent({
             courses &&
             courses[courseId] &&
             (!lessons || !lessons[courseId] || Object.keys(lessons[courseId] || {}).length === 0)) {
-            console.log("Debug info - attempting to fetch lessons for course:", courseId);
             getCourseLessons(courseId);
-        } else {
-            console.log("Debug info - not fetching lessons:", {
-                courseId: courseId,
-                courseExists: Boolean(courses && courses[courseId]),
-                lessonsExist: Boolean(lessons && lessons[courseId])
-            });
         }
     }, [courseId, courses, getCourseLessons]);
 
@@ -152,10 +144,44 @@ export default function LessonDetailComponent({
                 }
             }
 
+            // Check if user has active subscription (grants access to all courses)
+            if (user && subscriptions && subscriptions.length > 0) {
+                setHasAccess(true);
+                return;
+            }
+
             // If no access conditions are met, user doesn't have access
             setHasAccess(false);
         }
-    }, [courseId, course, courseLessons, lessonId, isAdmin, user, userPaidProducts]);
+    }, [courseId, course, courseLessons, lessonId, isAdmin, user, userPaidProducts, subscriptions]);
+
+    // Track lesson view analytics
+    useEffect(() => {
+        if (!courseId || !lessonId || !course || !courseLessons) return;
+
+        // Get lesson data for analytics
+        let lesson = null;
+        if (Array.isArray(courseLessons)) {
+            lesson = courseLessons.find(l => l.id === lessonId);
+        } else {
+            lesson = courseLessons[lessonId];
+        }
+
+        if (lesson && hasAccess) {
+            // Log analytics event
+            logLessonView(
+                lessonId,
+                lesson.name || 'Unknown Lesson',
+                courseId,
+                course.name || 'Unknown Course'
+            );
+
+            // Increment view count in database
+            incrementLessonViews(courseId, lessonId).catch(error => {
+                console.error('Failed to increment lesson views:', error);
+            });
+        }
+    }, [courseId, lessonId, course, courseLessons, hasAccess]);
 
     // If course doesn't exist, show error
     if (!course) {
@@ -198,18 +224,9 @@ export default function LessonDetailComponent({
     }    // Get the lesson, handling both array and object formats
     let lesson;
     if (Array.isArray(courseLessons)) {
-        console.log(`Looking for lesson ${lessonId} in array of ${courseLessons.length} lessons`);
         lesson = courseLessons.find(l => l.id === lessonId);
-        if (!lesson) {
-            console.log(`Lesson ${lessonId} not found in array. Available lessons:`,
-                courseLessons.map(l => ({ id: l.id, name: l.name })));
-        }
     } else {
-        console.log(`Looking for lesson ${lessonId} in object with keys:`, Object.keys(courseLessons));
         lesson = courseLessons[lessonId];
-        if (!lesson) {
-            console.log(`Lesson ${lessonId} not found in object`);
-        }
     }    // Handle case where lesson is not found
     if (!lesson) {
         // If we should use the new viewer component for better error handling

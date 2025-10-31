@@ -33,7 +33,6 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
 
         const fetchData = async () => {
             if (!context) {
-                console.log('No context available yet');
                 return;
             }
 
@@ -43,12 +42,9 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
                 setIsLoading(true);
                 const { courses, lessons, fetchCourseById, getCourseLessons } = context;
 
-                console.log('[ClientLessonWrapper] Fetching lesson data:', { courseId, lessonId });
-
                 // First, ensure the course is loaded
                 let currentCourse = courses?.[courseId];
                 if (!currentCourse) {
-                    console.log('[ClientLessonWrapper] Course not in context, fetching...');
                     if (fetchCourseById) {
                         await fetchCourseById(courseId);
                         // Wait for state to update
@@ -71,7 +67,6 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
 
                 if (mounted) {
                     setCourse(currentCourse);
-                    console.log('[ClientLessonWrapper] Course loaded:', currentCourse.name);
                 }
 
                 // Now ensure lessons are loaded for this course
@@ -80,10 +75,8 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
                 // Check if lessons are already in context
                 if (lessons[courseId] && lessons[courseId][lessonId]) {
                     currentLesson = lessons[courseId][lessonId] as LessonType;
-                    console.log('[ClientLessonWrapper] Lesson found in context');
                 } else {
                     // Lessons not loaded yet, fetch them
-                    console.log('[ClientLessonWrapper] Lessons not in context, fetching...');
                     if (getCourseLessons) {
                         await getCourseLessons(courseId);
                         // Wait for state to update with a longer timeout
@@ -95,13 +88,8 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
                         // Check again after fetching
                         if (context.lessons[courseId] && context.lessons[courseId][lessonId]) {
                             currentLesson = context.lessons[courseId][lessonId] as LessonType;
-                            console.log('[ClientLessonWrapper] Lesson found after fetching');
                         } else {
                             console.warn('[ClientLessonWrapper] Lesson not found after fetching');
-                            console.log(
-                                '[ClientLessonWrapper] Available lessons:',
-                                context.lessons[courseId] ? Object.keys(context.lessons[courseId]) : 'none'
-                            );
                         }
                     }
                 }
@@ -116,23 +104,20 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
                         // 1. Lesson is marked as free
                         // 2. User is admin
                         // 3. User is authenticated AND has purchased the course
+                        // 4. User has active subscription (grants access to all courses)
                         const user = context.user;
                         const isAdmin = context.isAdmin;
                         const userCourseAccess = context.userCourseAccess;
-
-                        console.log('[ClientLessonWrapper] Access check:', {
-                            lessonId,
-                            isFree: currentLesson.isFree,
-                            isAdmin,
-                            isAuthenticated: !!user,
-                            hasCoursePurchase: userCourseAccess?.[courseId],
-                        });
+                        const subscriptions = context.subscriptions;
+                        const hasActiveSubscription = subscriptions && subscriptions.length > 0;
 
                         if (currentLesson.isFree) {
                             setHasAccess(true);
                         } else if (isAdmin) {
                             setHasAccess(true);
                         } else if (user && userCourseAccess && userCourseAccess[courseId]) {
+                            setHasAccess(true);
+                        } else if (user && hasActiveSubscription) {
                             setHasAccess(true);
                         } else {
                             setHasAccess(false);
@@ -319,13 +304,6 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
                     nextLessonId = sortedLessons[currentIndex + 1].id;
                 }
             }
-
-            console.log('[ClientLessonWrapper] Navigation:', {
-                currentIndex,
-                prevLessonId,
-                nextLessonId,
-                totalLessons: sortedLessons.length,
-            });
         }
 
         return (

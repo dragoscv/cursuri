@@ -42,9 +42,12 @@ export default function useProfileStats() {
         let completedCourses = 0;
         const recentActivity: typeof stats.recentActivity = [];
 
+        // Filter out subscription payments - only process course purchases with courseId
+        const coursePurchases = userPaidProducts.filter(product => product.metadata?.courseId);
+
         // Process each purchased course
-        userPaidProducts.forEach(product => {
-            const courseId = product.metadata?.courseId;
+        coursePurchases.forEach(product => {
+            const courseId = product.metadata.courseId;
             const course = courses[courseId];
 
             if (course) {
@@ -109,9 +112,9 @@ export default function useProfileStats() {
         // Sort activities by date (most recent first)
         recentActivity.sort((a, b) => b.date.getTime() - a.date.getTime());
 
-        // Update stats state
+        // Update stats state - use coursePurchases.length for accurate count
         setStats({
-            totalCoursesEnrolled: userPaidProducts.length,
+            totalCoursesEnrolled: coursePurchases.length,
             completedCourses,
             totalLessons,
             completedLessons,

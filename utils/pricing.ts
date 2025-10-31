@@ -29,7 +29,6 @@ export function getCoursePrice(course: any, products?: any[]): PriceInfo {
 
     // Check if we have price product information
     if (!course?.priceProduct) {
-        console.log('getCoursePrice: No priceProduct found for course', course?.id);
         return defaultPriceInfo;
     }
 
@@ -98,13 +97,6 @@ export function getCoursePrice(course: any, products?: any[]): PriceInfo {
             };
         }
     }
-
-    console.log('getCoursePrice: Unable to determine price for course', course?.id, {
-        hasPrice: !!course?.price,
-        hasPriceProduct: !!course?.priceProduct,
-        priceType: typeof course?.price,
-        priceValue: course?.price
-    });
 
     return defaultPriceInfo;
 }

@@ -13,6 +13,7 @@ import { Course } from '@/types';
 import { getCoursePrice as getUnifiedCoursePrice } from '@/utils/pricing';
 import { FiLink } from '../icons/FeatherIcons/FiLink';
 import { useTranslations } from 'next-intl';
+import { logSearchResultClick, logCourseShare } from '@/utils/analytics';
 
 interface CoursesListProps {
   filter?: string;
@@ -118,10 +119,19 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
   );
 
   const handleCourseClick = useCallback(
-    (course: any) => {
+    (course: any, position?: number) => {
+      // Track course click if this is from a search/filter result
+      if (filter || category) {
+        logSearchResultClick(
+          filter || category || 'browse',
+          course.id,
+          position || 0
+        );
+      }
+
       router.push(`/courses/${course.id}`);
     },
-    [router]
+    [router, filter, category]
   );
 
   // Use unified pricing logic
@@ -189,7 +199,12 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
   const handleShare = (course: any) => {
     const shareUrl = `${window.location.origin}/courses/${course.id}`;
     const shareText = `Check out the course "${course.name}" on StudiAI!`;
+
+    // Determine share method
+    let shareMethod = 'link_copy';
+
     if (navigator.share) {
+      shareMethod = 'web_share_api';
       navigator.share({
         title: course.name,
         text: shareText,
@@ -200,6 +215,9 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
       // Optionally show a toast/alert
       alert('Course link copied to clipboard!');
     }
+
+    // Track course share
+    logCourseShare(course.id, course.name, shareMethod);
   };
 
   if (filteredCourses.length === 0) {
@@ -290,7 +308,7 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
               {/* Course image */}
               <div
                 className="relative h-48 w-full cursor-pointer overflow-hidden"
-                onClick={() => handleCourseClick(course)}
+                onClick={() => handleCourseClick(course, idx)}
               >
                 {/* Gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent z-10"></div>{' '}
@@ -356,7 +374,7 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
               {/* Course title */}
               <h3
                 className="mb-2 text-xl font-bold text-[color:var(--ai-foreground)] cursor-pointer hover:text-[color:var(--ai-primary)] transition-colors"
-                onClick={() => handleCourseClick(course)}
+                onClick={() => handleCourseClick(course, idx)}
               >
                 {course.name}
               </h3>
@@ -364,7 +382,7 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
               {/* Course description */}
               <p
                 className="mb-4 flex-1 text-sm text-[color:var(--ai-muted)] line-clamp-2"
-                onClick={() => handleCourseClick(course)}
+                onClick={() => handleCourseClick(course, idx)}
               >
                 {course.description || ''}
               </p>

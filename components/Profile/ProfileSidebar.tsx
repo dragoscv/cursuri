@@ -33,31 +33,34 @@ const calculateOverallProgress = (
     let completedLessons = 0;
     let totalLessons = 0;
 
-    userPaidProducts.forEach((product) => {
-        const courseId = product.metadata?.courseId;
-        if (courseId) {
-            // Get total lessons from lessons collection if available, otherwise use lessonProgress
-            const courseLessonsData = lessons?.[courseId] || {};
-            const courseLessonsFromProgress = lessonProgress[courseId] || {};
+    // Only consider products with courseId (exclude subscription payments)
+    userPaidProducts
+        .filter(product => product.metadata?.courseId)
+        .forEach((product) => {
+            const courseId = product.metadata.courseId;
+            if (courseId) {
+                // Get total lessons from lessons collection if available, otherwise use lessonProgress
+                const courseLessonsData = lessons?.[courseId] || {};
+                const courseLessonsFromProgress = lessonProgress[courseId] || {};
 
-            // Use lessons collection for accurate total count
-            const courseLessonsCount =
-                Object.keys(courseLessonsData).length > 0
-                    ? Object.keys(courseLessonsData).length
-                    : Object.keys(courseLessonsFromProgress).length;
+                // Use lessons collection for accurate total count
+                const courseLessonsCount =
+                    Object.keys(courseLessonsData).length > 0
+                        ? Object.keys(courseLessonsData).length
+                        : Object.keys(courseLessonsFromProgress).length;
 
-            totalLessons += courseLessonsCount;
+                totalLessons += courseLessonsCount;
 
-            // Count completed lessons from progress
-            if (courseLessonsFromProgress) {
-                Object.values(courseLessonsFromProgress).forEach((progress) => {
-                    if ((progress as any).isCompleted) {
-                        completedLessons++;
-                    }
-                });
+                // Count completed lessons from progress
+                if (courseLessonsFromProgress) {
+                    Object.values(courseLessonsFromProgress).forEach((progress) => {
+                        if ((progress as any).isCompleted) {
+                            completedLessons++;
+                        }
+                    });
+                }
             }
-        }
-    });
+        });
 
     return totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
 };
@@ -76,8 +79,9 @@ const ProfileSidebar: React.FC = () => {
 
     if (!user) return null;
 
-    // Count enrolled courses
-    const enrolledCoursesCount = userPaidProducts?.length || 0;
+    // Count enrolled courses - only count products with courseId metadata
+    // Subscription payments don't have courseId and shouldn't be counted as individual courses
+    const enrolledCoursesCount = userPaidProducts?.filter(product => product.metadata?.courseId).length || 0;
 
     // Navigation items
     const navItems = [

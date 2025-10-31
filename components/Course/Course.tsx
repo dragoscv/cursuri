@@ -45,15 +45,6 @@ export default function Course({ courseId }: CourseProps) {
         // We need to get course reviews and ensure lessons are loaded
         getCourseReviews(courseId);
 
-        // Debug what courses and lessons we have in the context
-        console.log('Current AppContext state:', {
-            courseId,
-            course,
-            hasCourseLessons: !!lessons[courseId],
-            lessonKeys: lessons[courseId] ? Object.keys(lessons[courseId]) : [],
-            allLessonKeys: Object.keys(lessons)
-        });
-
         // Always fetch lessons when the component mounts to ensure fresh data
         getCourseLessons(courseId);
         // Only run when courseId changes, not when data updates
@@ -87,16 +78,6 @@ export default function Course({ courseId }: CourseProps) {
             return [];
         }
 
-        // Debug the data structure
-        console.log(`Lessons data structure for course ${courseId}:`,
-            {
-                isArray: Array.isArray(lessons[courseId]),
-                isObject: typeof lessons[courseId] === 'object',
-                isNull: lessons[courseId] === null,
-                keys: Object.keys(lessons[courseId])
-            }
-        );
-
         // Handle both possible data structures: object with lesson IDs as keys or array of lessons
         let lessonsArray: Lesson[];
 
@@ -105,7 +86,6 @@ export default function Course({ courseId }: CourseProps) {
         } else if (typeof lessons[courseId] === 'object' && lessons[courseId] !== null) {
             // Only try to get values if it's a non-null object
             lessonsArray = Object.values(lessons[courseId]);
-            console.log(`Converted object to array with ${lessonsArray.length} lessons`);
         } else {
             // If it's neither an array nor an object, return an empty array
             console.warn('Lessons data has unexpected format', { lessons: lessons[courseId], courseId });
@@ -120,8 +100,6 @@ export default function Course({ courseId }: CourseProps) {
 
         // Filter out any null/undefined lessons
         lessonsArray = lessonsArray.filter(lesson => lesson != null);
-
-        console.log(`Found ${lessonsArray.length} lessons for course ${courseId}`);
 
         return lessonsArray.sort((a: Lesson, b: Lesson) => {
             const orderA = a?.order || 0;

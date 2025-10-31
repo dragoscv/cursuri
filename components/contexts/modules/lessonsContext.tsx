@@ -219,7 +219,6 @@ export const LessonsProvider: React.FC<LessonsProviderProps> = ({ children }) =>
 
         // Check if we're already loading this data
         if (isRequestPending(cacheKey)) {
-            console.log(`Request already pending for ${cacheKey}`);
             return;
         }
 
@@ -267,11 +266,8 @@ export const LessonsProvider: React.FC<LessonsProviderProps> = ({ children }) =>
             const lessonsCollection = collection(db, `courses/${courseId}/lessons`);
             const lessonsQuery = query(lessonsCollection, orderBy('order', 'asc'));
 
-            console.log(`Setting up listener for lessons in course: ${courseId}`);
-
             const unsubscribe = onSnapshot(lessonsQuery, (querySnapshot) => {
                 const lessonData: Record<string, Lesson> = {};
-                console.log(`Loaded ${querySnapshot.size} lessons for course ${courseId}`);
 
                 if (querySnapshot.size === 0) {
                     console.warn(`No lessons found for course: ${courseId}. This might be expected for new courses.`);
@@ -508,7 +504,6 @@ export const LessonsProvider: React.FC<LessonsProviderProps> = ({ children }) =>
             });
         } catch (updateError) {
             // Course progress might not exist yet, create it
-            console.log(`Course progress document not found, creating it for course ${courseId}:`, updateError instanceof Error ? updateError.message : updateError);
             try {
                 const courseProgressRef = doc(db, 'users', userId, 'courseProgress', courseId);
                 await setDoc(courseProgressRef, {

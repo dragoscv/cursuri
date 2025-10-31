@@ -182,7 +182,6 @@ export const ReviewsProvider: React.FC<ReviewsProviderProps> = ({ children }) =>
 
         // Check if we're already loading this data
         if (isRequestPending(cacheKey)) {
-            console.log(`Request already pending for ${cacheKey}`);
             return;
         }
 
@@ -234,11 +233,8 @@ export const ReviewsProvider: React.FC<ReviewsProviderProps> = ({ children }) =>
                 orderBy('createdAt', 'desc')
             );
 
-            console.log(`Setting up listener for reviews in course: ${courseId}`);
-
             const unsubscribe = onSnapshot(reviewsQuery, (querySnapshot) => {
                 const reviewsData: Record<string, Review> = {};
-                console.log(`Loaded ${querySnapshot.size} reviews for course ${courseId}`);
 
                 if (querySnapshot.size === 0) {
                     console.warn(`No reviews found for course: ${courseId}. This might be expected for new courses.`);

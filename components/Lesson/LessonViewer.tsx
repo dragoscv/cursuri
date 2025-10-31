@@ -38,7 +38,6 @@ export default function LessonViewer({ courseId, lessonId }: LessonViewerProps) 
 
                 // If not found, try loading all course lessons first
                 if (!lesson) {
-                    console.log('Lesson not found directly. Loading course lessons...');
                     await getCourseLessons(courseId, { persist: true, ttl: 60 * 60 * 1000 }); // Cache for 1 hour
 
                     // Try again after loading all lessons

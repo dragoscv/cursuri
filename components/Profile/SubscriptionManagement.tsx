@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { AppContext } from '@/components/AppContext';
 import { Card } from '@heroui/react';
 import Button from '@/components/ui/Button';
@@ -17,6 +17,8 @@ import { createPortalLink } from 'firewand';
 import { stripePayments } from '@/utils/firebase/stripe';
 import { firebaseApp } from '@/utils/firebase/firebase.config';
 import Link from 'next/link';
+import { logSubscriptionView, logSubscriptionCancellation, logSubscriptionPurchase } from '@/utils/analytics';
+import { trackSubscriptionEvent, trackRevenue } from '@/utils/statistics';
 
 export default function SubscriptionManagement() {
   const t = useTranslations('subscription.manage');
@@ -30,51 +32,179 @@ export default function SubscriptionManagement() {
 
   const { user, subscriptions, subscriptionsLoading } = context;
 
-  console.log('[SubscriptionManagement] Context subscriptions:', subscriptions);
-  console.log('[SubscriptionManagement] Loading state:', subscriptionsLoading);
+  // Track subscription management page view
+  useEffect(() => {
+    if (subscriptions && subscriptions.length > 0) {
+      const activeSubscription = subscriptions.find((s: any) => s.status === 'active');
+      if (activeSubscription && activeSubscription.product?.name) {
+        logSubscriptionView(activeSubscription.product.name);
+      }
+    }
+  }, [subscriptions]);
 
-  const formatDate = (dateInput: string | number) => {
-    try {
-      let date: Date;
+  // Check for subscription success/cancellation from URL params
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get('status');
 
-      if (typeof dateInput === 'string') {
-        // Handle GMT string format: "Thu, 30 Oct 2025 19:21:56 GMT"
-        date = new Date(dateInput);
+    if (status === 'success' && user) {
+      // Try to get data from URL params first (most reliable)
+      const planFromUrl = urlParams.get('plan');
+      const amountFromUrl = urlParams.get('amount');
+      const currencyFromUrl = urlParams.get('currency');
+      const intervalFromUrl = urlParams.get('interval');
+
+      if (planFromUrl && amountFromUrl && currencyFromUrl && intervalFromUrl) {
+        // Use URL params (more reliable than subscription data which may not be loaded yet)
+        const amount = parseFloat(amountFromUrl);
+        const currency = currencyFromUrl.toUpperCase();
+        const interval = intervalFromUrl;
+
+        // Generate transaction ID from timestamp and user ID
+        const transactionId = `sub_${user.uid}_${Date.now()}`;
+
+        // Track successful subscription purchase in Firebase Analytics
+        logSubscriptionPurchase(planFromUrl, amount, currency, interval, transactionId);
+
+        // Track in Firestore database
+        trackSubscriptionEvent(user.uid, 'subscribe', planFromUrl, amount).catch(error => {
+          console.error('Failed to track subscription event in Firestore:', error);
+        });
+
+        // Track revenue
+        trackRevenue(amount, currency, 'subscription', transactionId).catch(error => {
+          console.error('Failed to track revenue:', error);
+        });
+
+        // Clear URL params after a short delay to ensure tracking completes
+        setTimeout(() => {
+          window.history.replaceState({}, '', window.location.pathname);
+        }, 2000);
+      } else if (subscriptions && subscriptions.length > 0) {
+        // Fallback: use subscription data if available
+        const latestSubscription = subscriptions[0];
+
+        const planName = latestSubscription.product?.name || 'subscription';
+
+        // Handle price data from various possible structures
+        let amount = 0;
+        let currency = 'USD';
+        let interval = 'month';
+
+        if (latestSubscription.price) {
+          const priceData = latestSubscription.price as any;
+          amount = priceData.unit_amount
+            ? priceData.unit_amount / 100
+            : (priceData.amount ? priceData.amount / 100 : 0);
+          currency = (priceData.currency || 'USD').toUpperCase();
+          interval = priceData.recurring?.interval || 'month';
+        }
+
+        // Track successful subscription purchase in Firebase Analytics
+        logSubscriptionPurchase(planName, amount, currency, interval, latestSubscription.id);
+
+        // Track in Firestore database
+        trackSubscriptionEvent(user.uid, 'subscribe', planName, amount).catch(error => {
+          console.error('Failed to track subscription event in Firestore:', error);
+        });
+
+        // Clear URL params after a short delay
+        setTimeout(() => {
+          window.history.replaceState({}, '', window.location.pathname);
+        }, 2000);
       } else {
-        // Handle Unix timestamp (seconds)
-        date = new Date(dateInput * 1000);
+        console.warn('[SubscriptionManagement] Cannot track purchase - no URL params or subscription data');
+      }
+    } else if (status === 'cancel') {
+      // User cancelled subscription checkout
+      // Clear URL params
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, [subscriptions, user]);
+
+  const formatDate = (dateInput: any) => {
+    try {
+      if (!dateInput) {
+        return 'N/A';
       }
 
-      if (isNaN(date.getTime())) {
-        console.error('[formatDate] Invalid date:', dateInput);
+      let date: Date;
+
+      // Handle Firestore Timestamp objects with toDate method
+      if (dateInput && typeof dateInput === 'object' && typeof dateInput.toDate === 'function') {
+        date = dateInput.toDate();
+      }
+      // Handle Firestore Timestamp objects with seconds/nanoseconds
+      else if (dateInput && typeof dateInput === 'object' && 'seconds' in dateInput) {
+        date = new Date(dateInput.seconds * 1000);
+      } else if (typeof dateInput === 'string') {
+        // Handle GMT string format or ISO strings
+        date = new Date(dateInput);
+      } else if (typeof dateInput === 'number') {
+        // Handle Unix timestamp (seconds or milliseconds)
+        date = dateInput > 10000000000 ? new Date(dateInput) : new Date(dateInput * 1000);
+      } else if (dateInput instanceof Date) {
+        date = dateInput;
+      } else {
+        console.error('[formatDate] Unknown date format:', dateInput);
         return 'Invalid Date';
       }
 
-      return date.toLocaleDateString('en-US', {
+      if (isNaN(date.getTime())) {
+        console.error('[formatDate] Invalid date after conversion:', dateInput);
+        return 'Invalid Date';
+      }
+
+      const formatted = date.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
       });
+
+      return formatted;
     } catch (error) {
       console.error('[formatDate] Error formatting date:', error, dateInput);
       return 'Invalid Date';
     }
   };
 
-  const formatPrice = (amount: number | undefined, currency: string | undefined) => {
-    if (!amount || !currency) {
-      console.warn('[formatPrice] Missing amount or currency:', { amount, currency });
-      return 'N/A';
-    }
-
+  const formatPrice = (priceObj: any) => {
     try {
+      if (!priceObj) {
+        return 'N/A';
+      }
+
+      // Extract amount and currency from various possible structures
+      let amount: number | undefined;
+      let currency: string | undefined;
+
+      // Check if priceObj has unit_amount directly
+      if (typeof priceObj.unit_amount === 'number') {
+        amount = priceObj.unit_amount;
+        currency = priceObj.currency;
+      }
+      // Check if priceObj has amount field
+      else if (typeof priceObj.amount === 'number') {
+        amount = priceObj.amount;
+        currency = priceObj.currency;
+      }
+      // Check if priceObj has unitAmount field
+      else if (typeof priceObj.unitAmount === 'number') {
+        amount = priceObj.unitAmount;
+        currency = priceObj.currency;
+      }
+
+      if (!amount || !currency) {
+        return 'N/A';
+      }
+
       return new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: currency.toUpperCase(),
       }).format(amount / 100);
     } catch (error) {
-      console.error('[formatPrice] Error formatting price:', error);
-      return `${amount / 100} ${currency}`;
+      console.error('[formatPrice] Error formatting price:', error, priceObj);
+      return 'N/A';
     }
   };
 
@@ -165,7 +295,7 @@ export default function SubscriptionManagement() {
 
               <div className="text-right">
                 <div className="text-2xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">
-                  {formatPrice(subscription.price?.unit_amount, subscription.price?.currency)}
+                  {formatPrice(subscription.price)}
                 </div>
                 {subscription.price?.recurring?.interval && (
                   <div className="text-sm text-[color:var(--ai-muted)]">
@@ -186,8 +316,7 @@ export default function SubscriptionManagement() {
                     {t('currentPeriod')}
                   </p>
                   <p className="text-sm text-[color:var(--ai-muted)]">
-                    {formatDate(subscription.current_period_start)} -{' '}
-                    {formatDate(subscription.current_period_end)}
+                    {`${formatDate(subscription.current_period_start)} - ${formatDate(subscription.current_period_end)}`}
                   </p>
                 </div>
               </div>
@@ -201,9 +330,7 @@ export default function SubscriptionManagement() {
                     {t('nextBilling')}
                   </p>
                   <p className="text-sm text-[color:var(--ai-muted)]">
-                    {subscription.cancel_at_period_end
-                      ? t('cancelAtPeriodEnd')
-                      : formatDate(subscription.current_period_end)}
+                    {formatDate(subscription.current_period_end)}
                   </p>
                 </div>
               </div>
@@ -244,11 +371,9 @@ export default function SubscriptionManagement() {
                   setCreatingPortalLink(subscription.id);
                   try {
                     const payments = stripePayments(firebaseApp);
-                    console.log('[DEBUG] Creating portal link...');
                     const portalLink = await createPortalLink(payments, {
                       returnUrl: window.location.href,
                     });
-                    console.log('[DEBUG] Portal link created:', portalLink);
                     window.location.href = portalLink.url;
                   } catch (error) {
                     console.error('[SubscriptionManagement] Error creating portal link:', error);

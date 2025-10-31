@@ -9,35 +9,33 @@ service cloud.firestore {
              get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'super_admin'];
     }
     
-    // Helper function to check if user is super admin
-    function isSuperAdmin() {
-      return request.auth != null && 
-             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'super_admin';
-    }
-      // Combined admin check (uses only role-based authentication)
+    // Combined admin check (uses only role-based authentication)
     function hasAdminAccess() {
       return isAdmin();
     }
     
-    // Check if a user has purchased a course using a simplified approach
-    function hasUserPaid() {
-      return request.auth != null;
-    }
-      // Allow admins to list/read all users (collection query)
+    // Allow admins to list/read all users (collection query)
     match /users {
       allow list: if hasAdminAccess();
     }
-      // Allow admins to list/read all users
+    // Allow admins to list/read all users
     match /users/{userId} {
       // Users can read and write their own data, admins can read all user data
       allow read: if request.auth != null && (request.auth.uid == userId || hasAdminAccess());
       allow write: if request.auth != null && (request.auth.uid == userId || hasAdminAccess());
+      // Allow authenticated users to update statistics fields only
+      allow update: if request.auth != null && request.auth.uid == userId &&
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['enrolledCoursesCount', 'completedCoursesCount', 
+                    'hasActiveSubscription', 'subscriptionPlan', 
+                    'lastActivityAt', 'totalWatchTime']);
       
       match /progress/{progressId} {
         // Users can only read and write their own progress, admins can read all progress
         allow read: if request.auth != null && (request.auth.uid == userId || hasAdminAccess());
         allow write: if request.auth != null && (request.auth.uid == userId || hasAdminAccess());
+        // Allow authenticated users to create progress entries
+        allow create: if request.auth != null && request.auth.uid == userId;
       }
       
       // Adding profile settings access
@@ -71,6 +69,13 @@ service cloud.firestore {
         allow write: if request.auth != null && (request.auth.uid == userId || hasAdminAccess());
         allow delete: if request.auth != null && hasAdminAccess();
       }
+      
+      // Adding certificates collection
+      match /certificates/{certificateId} {
+        allow read: if request.auth != null && (request.auth.uid == userId || hasAdminAccess());
+        allow write: if request.auth != null && (request.auth.uid == userId || hasAdminAccess());
+        allow create: if request.auth != null && request.auth.uid == userId;
+      }
     }
     
     // If you need to allow admin to access all users including subcollections
@@ -81,12 +86,22 @@ service cloud.firestore {
     match /courses/{courseId} {
       allow read: if true;
       allow write: if hasAdminAccess();
+      // Allow authenticated users to update statistics fields only
+      allow update: if request.auth != null && 
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['viewCount', 'enrollmentCount', 'completionCount', 
+                    'lastViewedAt', 'lastEnrolledAt', 'lastCompletedAt']);
       
       match /lessons/{lessonId} {
         // Public access for lesson metadata
         allow read: if true;
         // Allow authenticated users to create, update, and delete lessons (for admin users)
         allow create, update, delete: if request.auth != null;
+        // Allow authenticated users to update statistics fields only
+        allow update: if request.auth != null &&
+          request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['viewCount', 'completionCount', 'totalWatchTime', 
+                      'watchCount', 'lastViewedAt', 'lastCompletedAt']);
         
         // Quiz questions subcollection
         match /quizQuestions/{questionId} {
@@ -126,7 +141,34 @@ service cloud.firestore {
     match /analytics/{document=**} {
       allow read: if hasAdminAccess();
       allow create: if request.auth != null; // Logged-in users can create analytics entries
-      allow update, delete: if hasAdminAccess();
+      allow update: if request.auth != null; // Allow updates for incrementing counters
+      allow delete: if hasAdminAccess();
+    }
+    
+    // Specific analytics subcollections with more granular rules
+    match /analytics/daily_active_users/dates/{date} {
+      allow read: if hasAdminAccess();
+      allow create, update: if request.auth != null;
+    }
+    
+    match /analytics/subscriptions/events/{eventId} {
+      allow read: if hasAdminAccess();
+      allow create: if request.auth != null;
+    }
+    
+    match /analytics/revenue/daily/{date} {
+      allow read: if hasAdminAccess();
+      allow create, update: if request.auth != null;
+    }
+    
+    match /analytics/search_queries/queries/{query} {
+      allow read: if hasAdminAccess();
+      allow create, update: if request.auth != null;
+    }
+    
+    match /analytics/platform_stats/{statId} {
+      allow read: if hasAdminAccess();
+      allow create, update: if request.auth != null;
     }
     
     // Audit logs collection - server-side only (Firebase Admin SDK bypasses these rules)
@@ -145,6 +187,9 @@ service cloud.firestore {
         allow read: if request.auth.uid == uid;
       }
       match /payments/{id} {
+        allow read: if request.auth.uid == uid;
+      }
+      match /invoices/{id} {
         allow read: if request.auth.uid == uid;
       }
     }

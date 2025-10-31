@@ -18,17 +18,20 @@ const calculateOverallProgress = (userPaidProducts: any[], lessonProgress: any) 
     let completedLessons = 0;
     let totalLessons = 0;
 
-    userPaidProducts.forEach(product => {
-        const courseId = product.metadata?.courseId;
-        if (courseId && lessonProgress[courseId]) {
-            Object.values(lessonProgress[courseId]).forEach(progress => {
-                if ((progress as any).isCompleted) {
-                    completedLessons++;
-                }
-                totalLessons++;
-            });
-        }
-    });
+    // Only consider products with courseId (exclude subscription payments)
+    userPaidProducts
+        .filter(product => product.metadata?.courseId)
+        .forEach(product => {
+            const courseId = product.metadata.courseId;
+            if (courseId && lessonProgress[courseId]) {
+                Object.values(lessonProgress[courseId]).forEach(progress => {
+                    if ((progress as any).isCompleted) {
+                        completedLessons++;
+                    }
+                    totalLessons++;
+                });
+            }
+        });
 
     return totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
 };
@@ -45,8 +48,11 @@ const ProfileSidebar: React.FC = () => {
 
     if (!user) return null;
 
-    // Count enrolled courses
-    const enrolledCoursesCount = userPaidProducts?.length || 0;    // Navigation items
+    // Count enrolled courses - only count products with courseId metadata
+    // Subscription payments don't have courseId and shouldn't be counted as individual courses
+    const enrolledCoursesCount = userPaidProducts?.filter(product => product.metadata?.courseId).length || 0;
+
+    // Navigation items
     const navItems = [
         { label: 'Dashboard', href: '/profile', icon: FiHome },
         { label: 'My Courses', href: '/profile/courses', icon: FiBookOpen },

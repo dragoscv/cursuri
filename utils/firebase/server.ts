@@ -55,7 +55,6 @@ export async function getCourseById(courseId: string): Promise<DocumentData | nu
             };
             return courseData;
         } else {
-            console.log(`No course found with ID: ${courseId}`);
             return null;
         }
     } catch (error) {
@@ -63,9 +62,9 @@ export async function getCourseById(courseId: string): Promise<DocumentData | nu
         if (error && typeof error === 'object' && 'code' in error) {
             const firebaseError = error as { code: string; message: string };
             if (firebaseError.code === 'permission-denied') {
-                console.log(`Access denied for course ${courseId} - this may be expected based on security rules`);
+                // Expected error, access denied
             } else if (firebaseError.code === 'not-found') {
-                console.log(`Course ${courseId} not found in database`);
+                // Expected error, not found
             } else {
                 console.error(`Firebase error getting course ${courseId}:`, firebaseError.code, firebaseError.message);
             }
@@ -140,29 +139,8 @@ export async function getLessonById(courseId: string, lessonId: string): Promise
                 lessonData.status = "active";
             }
 
-            console.log(`Found lesson ${lessonId} with status: ${lessonData.status}`);
             return lessonData;
         } else {
-            console.log(`No lesson found with ID: ${lessonId} in course: ${courseId}`);
-
-            // For debugging purposes - list available lessons
-            try {
-                const lessonsCollection = collection(firestoreDB, 'courses', courseId, 'lessons');
-                const lessonsSnapshot = await getDocs(lessonsCollection);
-
-                if (!lessonsSnapshot.empty) {
-                    console.log(`Available lessons in course ${courseId}:`);
-                    lessonsSnapshot.forEach(doc => {
-                        const data = doc.data();
-                        console.log(`- ${doc.id}: ${data.name || 'Unnamed'} (Status: ${data.status || 'Not set'})`);
-                    });
-                } else {
-                    console.log(`No lessons found in course ${courseId}`);
-                }
-            } catch (listError) {
-                console.error('Error listing available lessons:', listError);
-            }
-
             return null;
         }
     } catch (error) {
@@ -170,9 +148,9 @@ export async function getLessonById(courseId: string, lessonId: string): Promise
         if (error && typeof error === 'object' && 'code' in error) {
             const firebaseError = error as { code: string; message: string };
             if (firebaseError.code === 'permission-denied') {
-                console.log(`Access denied for lesson ${lessonId} in course ${courseId} - this may be expected based on security rules`);
+                // Expected error, access denied
             } else if (firebaseError.code === 'not-found') {
-                console.log(`Lesson ${lessonId} not found in course ${courseId}`);
+                // Expected error, not found
             } else {
                 console.error(`Firebase error getting lesson ${lessonId} in course ${courseId}:`, firebaseError.code, firebaseError.message);
             }
@@ -208,16 +186,15 @@ export async function getCourseLessons(courseId: string): Promise<Record<string,
             } as DocumentData;
         });
 
-        console.log(`Fetched ${Object.keys(lessons).length} lessons for course ${courseId}`);
         return lessons;
     } catch (error) {
         // Distinguish between expected vs unexpected Firebase errors  
         if (error && typeof error === 'object' && 'code' in error) {
             const firebaseError = error as { code: string; message: string };
             if (firebaseError.code === 'permission-denied') {
-                console.log(`Access denied for lessons in course ${courseId} - this may be expected based on security rules`);
+                // Expected error, access denied
             } else if (firebaseError.code === 'not-found') {
-                console.log(`Course ${courseId} not found when fetching lessons`);
+                // Expected error, not found
             } else {
                 console.error(`Firebase error getting lessons for course ${courseId}:`, firebaseError.code, firebaseError.message);
             }

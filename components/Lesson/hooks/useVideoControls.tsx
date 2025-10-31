@@ -2,6 +2,8 @@
 
 import { useCallback, useRef, useState, useEffect } from 'react';
 import { Lesson } from '@/types';
+import { logVideoPlay, logVideoProgress } from '@/utils/analytics';
+import { trackVideoWatchTime } from '@/utils/statistics';
 
 interface UseVideoControlsProps {
     videoRef: React.RefObject<HTMLVideoElement | null>;
@@ -36,6 +38,9 @@ export const useVideoControls = ({
 
     const progressSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
     const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const lastTrackedProgressRef = useRef<number>(0);
+    const videoPlayTrackedRef = useRef<boolean>(false);
+    const watchTimeStartRef = useRef<number>(0);
 
     // Save current progress to Firebase
     const saveCurrentProgress = useCallback(() => {
@@ -63,6 +68,16 @@ export const useVideoControls = ({
             setVideoProgress(progress);
             setIsPlaying(!videoRef.current.paused);
 
+            // Track video progress analytics at 25%, 50%, 75%, 90% milestones
+            const milestones = [25, 50, 75, 90];
+            for (const milestone of milestones) {
+                if (progress >= milestone && lastTrackedProgressRef.current < milestone) {
+                    logVideoProgress(lessonId, milestone, courseId);
+                    lastTrackedProgressRef.current = milestone;
+                    break;
+                }
+            }
+
             // Auto-save progress every 15 seconds
             if (progressSaveTimerRef.current === null && saveProgress && !videoRef.current.paused) {
                 progressSaveTimerRef.current = setTimeout(() => {
@@ -71,7 +86,7 @@ export const useVideoControls = ({
                 }, 15000); // Save every 15 seconds
             }
         }
-    }, [saveProgress, saveCurrentProgress]);    // Handle mouse movement to show/hide controls
+    }, [saveProgress, saveCurrentProgress, lessonId, courseId]);    // Handle mouse movement to show/hide controls
     const handleMouseMove = useCallback(() => {
         if (isPlaying) {
             setIsControlsVisible(true);
@@ -105,6 +120,15 @@ export const useVideoControls = ({
                 videoRef.current.play();
                 setIsPlaying(true);
 
+                // Track video play event (only once per session)
+                if (!videoPlayTrackedRef.current && videoRef.current.src) {
+                    logVideoPlay(lessonId, videoRef.current.src, courseId);
+                    videoPlayTrackedRef.current = true;
+                }
+
+                // Start tracking watch time
+                watchTimeStartRef.current = Date.now();
+
                 // Hide controls after 3 seconds
                 if (controlsTimeoutRef.current) {
                     clearTimeout(controlsTimeoutRef.current);
@@ -116,13 +140,25 @@ export const useVideoControls = ({
                 }, 3000);
             } else {
                 videoRef.current.pause();
+
+                // Track watch time when paused
+                if (watchTimeStartRef.current > 0) {
+                    const watchedSeconds = Math.floor((Date.now() - watchTimeStartRef.current) / 1000);
+                    if (watchedSeconds > 0) {
+                        trackVideoWatchTime(courseId, lessonId, watchedSeconds).catch(error => {
+                            console.error('Failed to track video watch time:', error);
+                        });
+                    }
+                    watchTimeStartRef.current = 0;
+                }
+
                 // Save progress when paused
                 saveCurrentProgress();
                 setIsPlaying(false);
                 setIsControlsVisible(true); // Always show controls on pause
             }
         }
-    }, [isHovering, saveCurrentProgress, videoRef]);    // Seek forward or backward
+    }, [isHovering, saveCurrentProgress, videoRef, lessonId, courseId]);    // Seek forward or backward
     const seek = useCallback((seconds: number) => {
         if (videoRef.current) {
             videoRef.current.currentTime += seconds;

@@ -7,6 +7,7 @@ import Footer from '@/components/Footer';
 import CookieConsent from '@/components/CookieConsent';
 import BottomNavigation from '@/components/Header/BottomNavigation';
 import SkipLink from '@/components/shared/SkipLink';
+import PageViewTracker from '@/components/Analytics/PageViewTracker';
 import { constructMetadata } from '@/utils/metadata';
 // Security initialization import
 import '@/utils/security/initSecurityChecks';
@@ -28,6 +29,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${inter.className} bg-[rgb(var(--background-start-rgb))]`}>
         {' '}
         <Providers>
+          {/* Analytics page view tracking */}
+          <PageViewTracker />
+
           {/* Skip link for keyboard accessibility */}
           <SkipLink />
 

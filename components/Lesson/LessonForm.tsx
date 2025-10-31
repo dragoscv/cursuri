@@ -289,12 +289,6 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
       if (file) {
         try {
           setUploadingFile(file.name);
-          console.log('Starting file upload:', {
-            filename: file.name,
-            size: file.size,
-            sizeInMB: (file.size / 1024 / 1024).toFixed(2) + ' MB',
-            type: file.type,
-          });
 
           const storageRef = ref(firebaseStorage, `lessons/${courseId}/${file.name}_${Date.now()}`);
 
@@ -312,9 +306,6 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
 
                 // Log every 10% progress
                 if (progress - lastLoggedProgress >= 10 || progress === 100) {
-                  console.log(
-                    `Upload progress: ${progress.toFixed(2)}% (${bytesTransferredMB}MB / ${totalBytesMB}MB)`
-                  );
                   lastLoggedProgress = Math.floor(progress / 10) * 10;
                 }
 
@@ -327,9 +318,7 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
               },
               async () => {
                 try {
-                  console.log('Upload completion callback triggered, fetching download URL...');
                   const url = await getDownloadURL(uploadTask.snapshot.ref);
-                  console.log('Upload complete, URL:', url);
                   setUploadingFile('');
                   resolve(url);
                 } catch (error) {
@@ -344,8 +333,6 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
           if (!downloadURL) {
             throw new Error('Failed to get download URL after upload');
           }
-
-          console.log('File uploaded successfully, URL:', downloadURL);
         } catch (error) {
           console.error('File upload failed:', error);
           throw new Error(
@@ -451,23 +438,13 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
       lesson.completionCriteria = completionCriteria;
 
       // Add the lesson to Firestore
-      console.log('Saving lesson to Firestore:', {
-        courseId,
-        lessonName,
-        hasFile: !!lesson.file,
-        fileUrl: lesson.file || 'none',
-      });
-
       const lessonDocRef = await addDoc(
         collection(firestoreDB, `courses/${courseId}/lessons`),
         lesson
       );
 
-      console.log('Lesson saved successfully with ID:', lessonDocRef.id);
-
       // If the lesson has a quiz, add the questions
       if (hasQuiz && quizQuestions.length > 0) {
-        console.log('Saving quiz questions:', quizQuestions.length);
         const questionsRef = collection(
           firestoreDB,
           `courses/${courseId}/lessons/${lessonDocRef.id}/quizQuestions`
@@ -481,10 +458,8 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
             explanation: question.explanation,
           });
         }
-        console.log('Quiz questions saved successfully');
       }
 
-      console.log('All operations completed, resetting state');
       setUploadProgress(0);
       setUploadingFile('');
       setAdditionalFilesProgress({});
@@ -492,10 +467,8 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
 
       // For new lessons, close the form. For updates, just notify parent to reload data
       if (lessonId && onSave) {
-        console.log('Lesson updated successfully, notifying parent to reload');
         onSave();
       } else {
-        console.log('New lesson created, closing form');
         onClose();
       }
     } catch (error) {
@@ -558,12 +531,6 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
       if (file) {
         try {
           setUploadingFile(file.name);
-          console.log('Starting file upload for update:', {
-            filename: file.name,
-            size: file.size,
-            sizeInMB: (file.size / 1024 / 1024).toFixed(2) + ' MB',
-            type: file.type,
-          });
 
           const storageRef = ref(firebaseStorage, `lessons/${courseId}/${file.name}_${Date.now()}`);
           const uploadTask = uploadBytesResumable(storageRef, file);
@@ -579,9 +546,6 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
 
                 // Log every 10% progress
                 if (progress - lastLoggedProgress >= 10 || progress === 100) {
-                  console.log(
-                    `Update upload progress: ${progress.toFixed(2)}% (${bytesTransferredMB}MB / ${totalBytesMB}MB)`
-                  );
                   lastLoggedProgress = Math.floor(progress / 10) * 10;
                 }
 
@@ -594,11 +558,7 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
               },
               async () => {
                 try {
-                  console.log(
-                    'Update upload completion callback triggered, fetching download URL...'
-                  );
                   const url = await getDownloadURL(uploadTask.snapshot.ref);
-                  console.log('Update upload complete, URL:', url);
                   setUploadingFile('');
                   resolve(url);
                 } catch (error) {
@@ -615,7 +575,6 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
           }
 
           updatedData.file = downloadURL;
-          console.log('File URL set in updatedData:', downloadURL);
         } catch (error) {
           console.error('File upload failed on update:', error);
           throw new Error(
@@ -701,22 +660,11 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
       updatedData.completionCriteria = completionCriteria;
 
       // Update the lesson document
-      console.log('Updating lesson in Firestore:', {
-        courseId,
-        lessonId,
-        lessonName,
-        hasFile: !!updatedData.file,
-        fileUrl: updatedData.file || 'none',
-      });
-
       const lessonRef = doc(firestoreDB, `courses/${courseId}/lessons/${lessonId}`);
       await updateDoc(lessonRef, updatedData);
 
-      console.log('Lesson updated successfully');
-
       // Update quiz questions if the lesson has a quiz
       if (hasQuiz && quizQuestions.length > 0) {
-        console.log('Updating quiz questions:', quizQuestions.length);
         // First delete existing questions
         const questionsRef = collection(
           firestoreDB,
@@ -739,10 +687,8 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
             explanation: question.explanation,
           });
         }
-        console.log('Quiz questions updated successfully');
       }
 
-      console.log('All update operations completed, resetting state');
       setUploadProgress(0);
       setUploadingFile('');
       setAdditionalFilesProgress({});
@@ -1769,27 +1715,24 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                                 {question.options.map((option, oIndex) => (
                                   <div
                                     key={oIndex}
-                                    className={`p-3 rounded-lg flex items-center gap-2 ${
-                                      question.correctOption === oIndex
+                                    className={`p-3 rounded-lg flex items-center gap-2 ${question.correctOption === oIndex
                                         ? 'bg-green-100 dark:bg-green-900/20 border border-green-200 dark:border-green-800/30'
                                         : 'bg-[color:var(--ai-card-bg)]/50 border border-[color:var(--ai-card-border)]/30'
-                                    }`}
+                                      }`}
                                   >
                                     <div
-                                      className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                                        question.correctOption === oIndex
+                                      className={`w-8 h-8 rounded-full flex items-center justify-center ${question.correctOption === oIndex
                                           ? 'bg-green-200 dark:bg-green-800/30 text-green-800 dark:text-green-300'
                                           : 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]'
-                                      } font-medium`}
+                                        } font-medium`}
                                     >
                                       {String.fromCharCode(65 + oIndex)}
                                     </div>
                                     <span
-                                      className={`${
-                                        question.correctOption === oIndex
+                                      className={`${question.correctOption === oIndex
                                           ? 'text-green-800 dark:text-green-300 font-medium'
                                           : 'text-[color:var(--ai-foreground)]'
-                                      }`}
+                                        }`}
                                     >
                                       {option}
                                     </span>

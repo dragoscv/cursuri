@@ -37,7 +37,6 @@ export default function OnboardingModal() {
     try {
       // For now, just log completion
       // TODO: Implement proper onboarding completion tracking and modal closing
-      console.log('Onboarding completed');
     } catch (error) {
       console.error('Failed to complete onboarding:', error);
     }
@@ -89,7 +88,6 @@ export function useOnboardingCheck() {
     // Disabled for now - re-enable when modal context is fixed
     const onboardingEnabled = false;
     if (user && userProfile && onboardingEnabled) {
-      console.log('Onboarding check - would open modal here');
       // TODO: Re-enable when modal context is fixed
       // openModal({
       //     id: 'onboarding',

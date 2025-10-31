@@ -26,10 +26,13 @@ import { stripePayments } from '@/utils/firebase/stripe';
 import { firebaseApp } from '@/utils/firebase/firebase.config';
 import Login from '../Login';
 import LoadingButton from '../Buttons/LoadingButton';
+import { logCourseEnrollment } from '@/utils/analytics';
+import { incrementCourseEnrollments, incrementUserCourseCount } from '@/utils/statistics';
 
 interface CourseEnrollmentProps {
   course: Course;
   isPurchased: boolean;
+  hasActiveSubscription?: boolean;
   completedLessons?: Record<string, boolean>;
   progressPercentage?: number;
   totalLessons?: number;
@@ -39,6 +42,7 @@ interface CourseEnrollmentProps {
 export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
   course,
   isPurchased,
+  hasActiveSubscription = false,
   completedLessons = {},
   progressPercentage = 0,
   totalLessons = 0,
@@ -56,10 +60,13 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
   const t = useTranslations('courses.enrollment');
   const tCommon = useTranslations('common');
 
-  // Check for active subscription from context
-  const hasSubscription = subscriptions && subscriptions.length > 0 && subscriptions.some((sub: any) =>
+  // Check for active subscription from context or prop
+  const hasSubscriptionFromContext = subscriptions && subscriptions.length > 0 && subscriptions.some((sub: any) =>
     sub.status === 'active' || sub.status === 'trialing'
   );
+  
+  // Use prop if provided, otherwise use context check
+  const hasSubscription = hasActiveSubscription || hasSubscriptionFromContext;
 
   // Find the first uncompleted lesson
   const getNextLessonUrl = () => {
@@ -201,14 +208,23 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
         }
 
         const payments = stripePayments(firebaseApp);
+
+        // Prepare course purchase data for success URL
+        const courseName = encodeURIComponent(course.name);
+        const amount = priceInfo.amount / 100; // Convert cents to dollars
+        const currency = priceInfo.currency.toUpperCase();
+
         const session = await createCheckoutSession(payments, {
           price: priceId,
           allow_promotion_codes: true,
           mode: 'payment',
+          success_url: `${window.location.origin}/courses/${course.id}?status=success&courseName=${courseName}&amount=${amount}&currency=${currency}`,
+          cancel_url: `${window.location.origin}/courses/${course.id}?status=cancel`,
           metadata: {
             courseId: course.id,
           },
         });
+
         window.location.assign(session.url);
       } catch (error) {
         console.error('Payment error:', error);

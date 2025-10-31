@@ -19,13 +19,9 @@ export default function PaymentHistorySection() {
       const invoiceUrl = await downloadInvoice(paymentId);
 
       if (invoiceUrl) {
-        // Create temporary link for download
-        const a = document.createElement('a');
-        a.href = invoiceUrl;
-        a.download = `invoice-${paymentId.substring(0, 8)}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        // Open the invoice URL directly in a new tab
+        // Stripe invoice URLs are already PDF links that trigger download
+        window.open(invoiceUrl, '_blank');
       }
     } catch (err) {
       console.error('Error downloading invoice:', err);

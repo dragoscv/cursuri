@@ -6,10 +6,14 @@ import { AppContext } from '../AppContext';
 import { Spinner } from '@heroui/react';
 import CourseDetailView from './CourseDetailView';
 import { generateCourseStructuredData } from '@/utils/metadata';
+import { useSearchParams } from 'next/navigation';
+import { logCoursePurchase } from '@/utils/analytics';
+import { incrementCourseEnrollments, incrementUserCourseCount, trackRevenue } from '@/utils/statistics';
 
 export default function CourseDetail({ courseId }: { courseId: string }) {
   const t = useTranslations('courses');
   const context = useContext(AppContext);
+  const searchParams = useSearchParams();
 
   if (!context) {
     throw new Error('CourseDetail must be used within an AppContextProvider');
@@ -22,7 +26,57 @@ export default function CourseDetail({ courseId }: { courseId: string }) {
     isAdmin,
     fetchCourseById,
     fetchLessonsForCourse,
+    user,
+    subscriptions,
   } = context;
+
+  // Track course purchase success after Stripe payment
+  useEffect(() => {
+    const status = searchParams?.get('status');
+
+    if (status === 'success' && user && courseId) {
+      // Get data from URL params (most reliable)
+      const courseNameFromUrl = searchParams?.get('courseName');
+      const amountFromUrl = searchParams?.get('amount');
+      const currencyFromUrl = searchParams?.get('currency');
+
+      if (courseNameFromUrl && amountFromUrl && currencyFromUrl) {
+        const courseName = decodeURIComponent(courseNameFromUrl);
+        const amount = parseFloat(amountFromUrl);
+        const currency = currencyFromUrl.toUpperCase();
+
+        // Generate transaction ID
+        const transactionId = `course_${user.uid}_${Date.now()}`;
+
+        // Track purchase in Firebase Analytics
+        logCoursePurchase(courseId, courseName, amount, currency, transactionId);
+
+        // Update database statistics
+        incrementCourseEnrollments(courseId).catch(error => {
+          console.error('Failed to increment course enrollments:', error);
+        });
+
+        incrementUserCourseCount(user.uid).catch(error => {
+          console.error('Failed to increment user course count:', error);
+        });
+
+        // Track revenue
+        trackRevenue(amount, currency, 'course', transactionId).catch(error => {
+          console.error('Failed to track revenue:', error);
+        });
+
+        // Clear URL params after tracking
+        setTimeout(() => {
+          window.history.replaceState({}, '', window.location.pathname);
+        }, 2000);
+      } else {
+        console.warn('[CourseDetail] Cannot track purchase - missing URL params');
+      }
+    } else if (status === 'cancel') {
+      // Clear URL params
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, [searchParams, user, courseId]);
 
   // Fetch course data if not available
   useEffect(() => {
@@ -53,64 +107,65 @@ export default function CourseDetail({ courseId }: { courseId: string }) {
   const courseLessons =
     lessons && courseId && lessons[courseId]
       ? (() => {
-          const lessonsData = lessons[courseId];
+        const lessonsData = lessons[courseId];
 
-          // Handle the case where lessons data might be nested
-          if (Array.isArray(lessonsData)) {
-            // If it's already an array, filter out non-lesson items
-            const filtered = lessonsData.filter(
+        // Handle the case where lessons data might be nested
+        if (Array.isArray(lessonsData)) {
+          // If it's already an array, filter out non-lesson items
+          const filtered = lessonsData.filter(
+            (item: any) =>
+              item &&
+              typeof item === 'object' &&
+              (item.name ||
+                item.title ||
+                item.description ||
+                item.file ||
+                item.order !== undefined) &&
+              !(item.timestamp && item.expiresAt)
+          );
+          return filtered;
+        } else if (lessonsData && typeof lessonsData === 'object') {
+          // Check if this is the nested structure {data: ..., metadata: ...}
+          if ('data' in lessonsData && 'metadata' in lessonsData) {
+            const extracted = Object.values(lessonsData.data);
+            return extracted;
+          } else {
+            // This is a direct lesson object structure {lessonId: lesson, lessonId2: lesson2, ...}
+            const allValues = Object.values(lessonsData);
+
+            // Filter to only include actual lesson objects (not strings or other data)
+            const filtered = allValues.filter(
               (item: any) =>
                 item &&
                 typeof item === 'object' &&
+                !Array.isArray(item) &&
                 (item.name ||
                   item.title ||
                   item.description ||
                   item.file ||
-                  item.order !== undefined) &&
-                !(item.timestamp && item.expiresAt)
+                  item.order !== undefined ||
+                  item.id)
             );
-            console.log('[CourseDetail] Filtered lessons (array):', filtered);
             return filtered;
-          } else if (lessonsData && typeof lessonsData === 'object') {
-            // Check if this is the nested structure {data: ..., metadata: ...}
-            if ('data' in lessonsData && 'metadata' in lessonsData) {
-              const extracted = Object.values(lessonsData.data);
-              console.log('[CourseDetail] Extracted lessons (nested):', extracted);
-              return extracted;
-            } else {
-              // This is a direct lesson object structure {lessonId: lesson, lessonId2: lesson2, ...}
-              const allValues = Object.values(lessonsData);
-
-              // Filter to only include actual lesson objects (not strings or other data)
-              const filtered = allValues.filter(
-                (item: any) =>
-                  item &&
-                  typeof item === 'object' &&
-                  !Array.isArray(item) &&
-                  (item.name ||
-                    item.title ||
-                    item.description ||
-                    item.file ||
-                    item.order !== undefined ||
-                    item.id)
-              );
-              return filtered;
-            }
           }
+        }
 
-          return [];
-        })()
+        return [];
+      })()
       : [];
 
   // Check if the course has been purchased
   const isPurchased = userPaidProducts?.some((product) => product.metadata?.courseId === courseId);
 
+  // Check if user has active subscription (grants access to all courses)
+  const hasActiveSubscription = subscriptions && subscriptions.length > 0;
+
   // Check if course is free
   const isFree = course?.isFree === true;
 
   // Separate access logic: admins can VIEW content but shouldn't show as "enrolled"
-  // Only show enrollment UI if actually purchased or course is free
-  const hasAccess = isPurchased || isFree || isAdmin;
+  // Access granted if: purchased this course OR has active subscription OR course is free OR is admin
+  const hasAccess = isPurchased || hasActiveSubscription || isFree || isAdmin;
 
   // Calculate progress data
   const completedLessons = React.useMemo(() => {
@@ -203,6 +258,7 @@ export default function CourseDetail({ courseId }: { courseId: string }) {
       hasAccess={hasAccess}
       isAdmin={isAdmin}
       isPurchased={isPurchased}
+      hasActiveSubscription={hasActiveSubscription}
       completedLessons={completedLessons}
       progressPercentage={progressPercentage}
     />

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 import { Card } from '@heroui/react';
@@ -13,6 +13,8 @@ import { firebaseApp } from '@/utils/firebase/firebase.config';
 import Login from '@/components/Login';
 import LoadingButton from '@/components/Buttons/LoadingButton';
 import { useRouter } from 'next/navigation';
+import { logSubscriptionView, logSubscriptionSelection, logSubscriptionPurchase } from '@/utils/analytics';
+import { trackSubscriptionEvent, trackRevenue } from '@/utils/statistics';
 
 export default function SubscriptionPlans() {
   const t = useTranslations('subscription');
@@ -26,6 +28,11 @@ export default function SubscriptionPlans() {
   }
 
   const { user, openModal, closeModal, products, subscriptions, subscriptionsLoading } = context;
+
+  // Track subscription page view
+  useEffect(() => {
+    logSubscriptionView('subscription_plans_page');
+  }, []);
 
   // Check if user has an active subscription
   const hasActiveSubscription = subscriptions && subscriptions.length > 0;
@@ -96,14 +103,37 @@ export default function SubscriptionPlans() {
     }
 
     try {
+      // Find the price details for analytics
+      let priceAmount = 0;
+      let priceCurrency = 'USD';
+      let priceInterval = 'month';
+
+      if (planName === 'monthly' && monthlyPrice) {
+        priceAmount = monthlyPrice.unit_amount / 100;
+        priceCurrency = monthlyPrice.currency?.toUpperCase() || 'USD';
+        priceInterval = monthlyPrice.recurring?.interval || 'month';
+      } else if (planName === 'yearly' && yearlyPrice) {
+        priceAmount = yearlyPrice.unit_amount / 100;
+        priceCurrency = yearlyPrice.currency?.toUpperCase() || 'USD';
+        priceInterval = yearlyPrice.recurring?.interval || 'year';
+      }
+
+      // Track subscription selection
+      logSubscriptionSelection(
+        planName,
+        priceAmount,
+        priceInterval
+      );
+
       const payments = stripePayments(firebaseApp);
       const session = await createCheckoutSession(payments, {
         price: priceId,
         allow_promotion_codes: true,
         mode: 'subscription',
-        success_url: `${window.location.origin}/profile/subscriptions?status=success`,
+        success_url: `${window.location.origin}/profile/subscriptions?status=success&plan=${planName}&amount=${priceAmount}&currency=${priceCurrency}&interval=${priceInterval}`,
         cancel_url: `${window.location.origin}/subscriptions?status=cancel`,
       });
+
       window.location.assign(session.url);
     } catch (error) {
       console.error('Subscription error:', error);
@@ -309,7 +339,7 @@ export default function SubscriptionPlans() {
                       handleSubscribe(plan.priceId, plan.planKey);
                     } else {
                       // For free plan, redirect to courses
-                      window.location.href = '/courses';
+                      router.push('/courses');
                     }
                   }}
                 >

@@ -24,6 +24,8 @@ import {
   deleteDoc,
   serverTimestamp,
 } from 'firebase/firestore';
+import { setAnalyticsUserId, setAnalyticsUserProperties } from '@/utils/analytics';
+import { trackDailyActiveUser } from '@/utils/statistics';
 import ModalComponent from '@/components/Modal';
 import { useModal } from './contexts/useModal';
 import OnboardingModal from './OnboardingModal';
@@ -346,7 +348,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
       // Check if we're already loading this data
       if (isRequestPending(cacheKey)) {
-        console.log(`Request already pending for ${cacheKey}`);
         return () => {
           /* No cleanup needed for pending request */
         };
@@ -404,10 +405,8 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         const db = getFirestore(firebaseApp);
         const lessonsCollection = collection(db, `courses/${courseId}/lessons`);
         const lessonsQuery = query(lessonsCollection); // Removed status filter to match server implementation
-        console.log(`[LISTENER ATTACHED] Lessons listener for course: ${courseId}`);
         const unsubscribe = onSnapshot(lessonsQuery, (querySnapshot) => {
           const lessonData: Record<string, Lesson> = {};
-          console.log(`Loaded ${querySnapshot.size} lessons for course ${courseId}`);
 
           if (querySnapshot.size === 0) {
             console.warn(
@@ -461,7 +460,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
         // Return the unsubscribe function
         return () => {
-          console.log(`[LISTENER DETACHED] Lessons listener for course: ${courseId}`);
           unsubscribe();
         };
       } catch (error) {
@@ -491,7 +489,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
       // Check if we're already loading this data
       if (isRequestPending(cacheKey)) {
-        console.log(`Request already pending for ${cacheKey}`);
         return () => {
           /* No cleanup needed for pending request */
         };
@@ -537,7 +534,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         const db = getFirestore(firebaseApp);
         const docRef = collection(db, `courses/${courseId}/reviews`);
         const q = query(docRef);
-        console.log(`[LISTENER ATTACHED] Reviews listener for course: ${courseId}`);
         const unsubscribe = onSnapshot(
           q,
           (querySnapshot) => {
@@ -589,7 +585,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
         // Return the unsubscribe function
         return () => {
-          console.log(`[LISTENER DETACHED] Reviews listener for course: ${courseId}`);
           unsubscribe();
         };
       } catch (error) {
@@ -698,23 +693,12 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
     try {
       const progressRef = collection(firestoreDB, 'users', user.uid, 'progress');
       const q = query(progressRef);
-      console.log(`[LISTENER ATTACHED] User progress listener for user: ${user.uid}`);
 
       // Explicitly type this as a Firebase Unsubscribe function
       const unsubscribe: Unsubscribe = onSnapshot(q, (querySnapshot) => {
-        console.log(`[LISTENER] Snapshot received with ${querySnapshot.docs.length} documents`);
-
         querySnapshot.forEach((doc) => {
           const data = doc.data() as UserLessonProgress;
           const { courseId, lessonId } = data;
-
-          console.log(`[LISTENER] Processing progress document:`, {
-            docId: doc.id,
-            courseId,
-            lessonId,
-            isCompleted: data.isCompleted,
-            data,
-          });
 
           dispatch({
             type: 'SET_LESSON_PROGRESS',
@@ -729,7 +713,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
       // Since this is an async function, we need to return a Promise that resolves to the unsubscribe function
       return Promise.resolve(() => {
-        console.log(`[LISTENER DETACHED] User progress listener for user: ${user.uid}`);
         unsubscribe();
       });
     } catch (error) {
@@ -742,10 +725,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
   const getAllUsers = useCallback(
     async (options?: CacheOptions): Promise<Record<string, UserProfile> | null> => {
       if (!user || !state.isAdmin) {
-        console.log('Not fetching users: User is null or not admin', {
-          user: !!user,
-          isAdmin: state.isAdmin,
-        });
         return null;
       }
 
@@ -754,7 +733,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
       // Check if we're already loading this data
       if (isRequestPending(cacheKey)) {
-        console.log(`Request already pending for ${cacheKey}`);
         return state.users || null;
       }
 
@@ -784,15 +762,11 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
       setRequestPending(cacheKey, true);
 
       try {
-        console.log('Attempting to fetch users as admin');
         const usersRef = collection(firestoreDB, 'users');
         const q = query(usersRef, limit(100));
         const usersSnapshot = await getDocs(q);
 
-        console.log(`Found ${usersSnapshot.size} users in database`);
-
         if (usersSnapshot.empty) {
-          console.log('No user documents found in the collection');
           dispatch({ type: 'SET_USERS', payload: {} });
           dispatch({ type: 'SET_USER_LOADING_STATE', payload: 'success' });
           setRequestPending(cacheKey, false);
@@ -802,7 +776,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         const usersData: Record<string, UserProfile> = {};
         usersSnapshot.forEach((doc) => {
           const userData = doc.data();
-          console.log(`Processing user: ${doc.id}`);
 
           usersData[doc.id] = {
             id: doc.id,
@@ -827,7 +800,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
           };
         });
 
-        console.log(`Processed ${Object.keys(usersData).length} user objects`);
         dispatch({ type: 'SET_USERS', payload: usersData });
         dispatch({ type: 'SET_USER_LOADING_STATE', payload: 'success' });
 
@@ -956,7 +928,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
       // Check if we're already loading this data
       if (isRequestPending(cacheKey)) {
-        console.log(`Request already pending for ${cacheKey}`);
         return state.adminAnalytics;
       }
 
@@ -1128,7 +1099,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
       // Check if we're already loading this data
       if (isRequestPending(cacheKey)) {
-        console.log(`Request already pending for ${cacheKey}`);
         return state.adminSettings;
       }
 
@@ -1610,6 +1580,14 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
       if (currentUser) {
         setUser(currentUser);
 
+        // Set analytics user ID
+        setAnalyticsUserId(currentUser.uid);
+
+        // Track daily active user
+        trackDailyActiveUser(currentUser.uid).catch(error => {
+          console.error('Failed to track daily active user:', error);
+        });
+
         // Log successful login/authentication event
         try {
           await fetch('/api/audit/auth-event', {
@@ -1673,6 +1651,13 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
           // Update admin status based on role
           const adminStatus = isAdmin(userProfile);
           dispatch({ type: 'SET_IS_ADMIN', payload: adminStatus });
+
+          // Set analytics user properties
+          setAnalyticsUserProperties({
+            user_role: userProfile.role || 'user',
+            is_admin: adminStatus,
+            email_verified: currentUser.emailVerified,
+          });
 
           // Store user profile in context for permission checks                    dispatch({ type: 'SET_USER_PROFILE', payload: userProfile });
         } catch (error) {
@@ -1848,7 +1833,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
       try {
         dispatch({ type: 'SET_SUBSCRIPTIONS_LOADING', payload: true });
-        console.log('[AppContext] Fetching subscriptions for user:', user.uid);
 
         // Fetch subscriptions directly from Firestore to avoid firewand timing issues
         const subscriptionsRef = collection(firestoreDB, 'customers', user.uid, 'subscriptions');
@@ -1866,41 +1850,69 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
           });
         });
 
-        console.log('[AppContext] Subscriptions found:', allSubs);
-
         const payments = stripePayments(firebaseApp);
 
         // Enrich subscriptions with full price and product data
         const enrichedSubs = await Promise.all(
           allSubs.map(async (sub: any) => {
             try {
-              // Fetch full product and price data if they are string IDs
+              // Fetch full product and price data if they are references or string IDs
               let productData = sub.product;
               let priceData = sub.price;
 
-              // Only fetch if product is a string ID
-              if (typeof sub.product === 'string') {
+              // Handle DocumentReference for product
+              if (sub.product && typeof sub.product === 'object' && 'path' in sub.product) {
+                // It's a DocumentReference, fetch the data
+                try {
+                  console.log('[AppContext] Fetching product DocumentReference:', sub.product.path);
+                  const productSnapshot = await getDoc(sub.product);
+                  if (productSnapshot.exists()) {
+                    productData = { id: productSnapshot.id, ...(productSnapshot.data() as object) };
+                    console.log('[AppContext] Successfully fetched product:', productData);
+                  } else {
+                    console.warn('[AppContext] Product document does not exist');
+                    productData = { id: sub.product.id, name: 'Unknown Product' };
+                  }
+                } catch (productError) {
+                  console.error(`[AppContext] Error fetching product from reference:`, productError);
+                  productData = { id: sub.product.id || 'unknown', name: 'Unknown Product' };
+                }
+              } else if (typeof sub.product === 'string') {
+                // It's a string ID, use Firewand
                 try {
                   productData = await getProduct(payments, sub.product);
                 } catch (productError) {
-                  console.warn(`[AppContext] Could not fetch product ${sub.product}:`, productError);
-                  // Keep the product ID as-is if fetch fails
+                  console.error(`[AppContext] Could not fetch product ${sub.product}:`, productError);
                   productData = { id: sub.product, name: 'Unknown Product' };
                 }
               }
 
-              // Only fetch if price is a string ID and we have a valid product
-              if (typeof sub.price === 'string' && typeof sub.product === 'string') {
+              // Handle DocumentReference for price
+              if (sub.price && typeof sub.price === 'object' && 'path' in sub.price) {
+                // It's a DocumentReference, fetch the data
+                try {
+                  console.log('[AppContext] Fetching price DocumentReference:', sub.price.path);
+                  const priceSnapshot = await getDoc(sub.price);
+                  if (priceSnapshot.exists()) {
+                    priceData = { id: priceSnapshot.id, ...(priceSnapshot.data() as object) };
+                    console.log('[AppContext] Successfully fetched price:', priceData);
+                  } else {
+                    console.warn('[AppContext] Price document does not exist');
+                    priceData = { id: sub.price.id };
+                  }
+                } catch (priceError) {
+                  console.error(`[AppContext] Error fetching price from reference:`, priceError);
+                  priceData = { id: sub.price.id || 'unknown' };
+                }
+              } else if (typeof sub.price === 'string' && typeof sub.product === 'string') {
+                // It's a string ID, use Firewand
                 try {
                   priceData = await getPrice(payments, sub.product, sub.price);
                 } catch (priceError) {
-                  console.warn(`[AppContext] Could not fetch price ${sub.price}:`, priceError);
-                  // Keep the price ID as-is if fetch fails
+                  console.error(`[AppContext] Could not fetch price ${sub.price}:`, priceError);
                   priceData = { id: sub.price };
                 }
               }
-
-              console.log('[AppContext] Enriched subscription:', { productData, priceData });
 
               return {
                 ...sub,
@@ -1919,7 +1931,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
           })
         );
 
-        console.log('[AppContext] Enriched subscriptions:', enrichedSubs);
         dispatch({ type: 'SET_SUBSCRIPTIONS', payload: enrichedSubs });
       } catch (error) {
         console.error('[AppContext] Error refreshing subscriptions:', error);
@@ -1931,15 +1942,10 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
   // Fetch subscriptions when user logs in
   useEffect(() => {
-    console.log('[AppContext useEffect] User changed:', user?.uid);
-    console.log('[AppContext useEffect] Current subscriptions state:', state.subscriptions);
-
     if (user) {
-      console.log('[AppContext useEffect] Calling refreshSubscriptions for user:', user.uid);
       refreshSubscriptions();
     } else {
       // Clear subscriptions when user logs out
-      console.log('[AppContext useEffect] No user, clearing subscriptions');
       dispatch({ type: 'SET_SUBSCRIPTIONS', payload: [] });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -2027,7 +2033,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
   useEffect(() => {
     if (user) {
-      console.log(`[LISTENER ATTACHED] Payments listener for user: ${user.uid}`);
       const collectionRef = collection(firestoreDB, `customers/${user.uid}/payments`);
       const q = query(collectionRef);
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -2041,7 +2046,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
       });
       // Properly type the unsubscribe function to avoid type errors
       return () => {
-        console.log(`[LISTENER DETACHED] Payments listener for user: ${user.uid}`);
         if (typeof unsubscribe === 'function') {
           unsubscribe();
         }
@@ -2159,11 +2163,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         querySnapshot.forEach((doc) => {
           const data = doc.data();
           data.id = doc.id;
-          console.log(
-            `[AppContext] Lesson ${doc.id} duration:`,
-            data.duration,
-            typeof data.duration
-          );
           lessonsData[doc.id] = data as Lesson;
         }); // Initialize the course lessons structure first
         dispatch({ type: 'INITIALIZE_COURSE_LESSONS', payload: { courseId } });
@@ -2227,7 +2226,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
           return courseData;
         } else {
-          console.log(`No course found with ID: ${courseId}`);
           return null;
         }
       } catch (error) {
@@ -2273,25 +2271,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
           return lessonData;
         } else {
-          console.log(`No lesson found with ID: ${lessonId} in course: ${courseId}`);
-
-          // For debugging purposes - list available lessons
-          try {
-            const lessonsCollection = collection(firestoreDB, 'courses', courseId, 'lessons');
-            const lessonsSnapshot = await getDocs(lessonsCollection);
-
-            if (!lessonsSnapshot.empty) {
-              console.log(`Available lessons in course ${courseId}:`);
-              lessonsSnapshot.forEach((doc) =>
-                console.log(`- ${doc.id}: ${doc.data().name || 'Unnamed'}`)
-              );
-            } else {
-              console.log(`No lessons found in course ${courseId}`);
-            }
-          } catch (listError) {
-            console.error('Error listing available lessons:', listError);
-          }
-
           return null;
         }
       } catch (error) {

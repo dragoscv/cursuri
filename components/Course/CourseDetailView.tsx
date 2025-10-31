@@ -4,6 +4,8 @@ import CourseHeader from './CourseHeader';
 import CourseDetails from './CourseDetails';
 import CourseEnrollment from './CourseEnrollment';
 import { AppContext } from '@/components/AppContext';
+import { logCourseView } from '@/utils/analytics';
+import { incrementCourseViews } from '@/utils/statistics';
 
 interface CourseDetailProps {
   course: any;
@@ -12,6 +14,7 @@ interface CourseDetailProps {
   hasAccess: boolean;
   isAdmin: boolean;
   isPurchased?: boolean;
+  hasActiveSubscription?: boolean;
   completedLessons?: Record<string, boolean>;
   progressPercentage?: number;
 }
@@ -23,6 +26,7 @@ export default function CourseDetailView({
   hasAccess,
   isAdmin,
   isPurchased = false,
+  hasActiveSubscription = false,
   completedLessons = {},
   progressPercentage = 0,
 }: CourseDetailProps) {
@@ -38,33 +42,33 @@ export default function CourseDetailView({
     enhancedCourse.lessonsCount = courseLessons ? courseLessons.length : 0; // Calculate minutes of content
     const totalMinutes = courseLessons
       ? courseLessons.reduce((acc, lesson) => {
-          // Ensure lesson is defined
-          if (!lesson) return acc;
+        // Ensure lesson is defined
+        if (!lesson) return acc;
 
-          // Handle different duration property types with enhanced safety checks
-          let durationMins = 0;
+        // Handle different duration property types with enhanced safety checks
+        let durationMins = 0;
 
-          // First try durationMinutes field
-          if (lesson.durationMinutes !== undefined) {
-            if (typeof lesson.durationMinutes === 'number') {
-              durationMins = lesson.durationMinutes;
-            } else if (typeof lesson.durationMinutes === 'string') {
-              const parsed = parseInt(lesson.durationMinutes, 10);
-              if (!isNaN(parsed)) durationMins = parsed;
-            }
+        // First try durationMinutes field
+        if (lesson.durationMinutes !== undefined) {
+          if (typeof lesson.durationMinutes === 'number') {
+            durationMins = lesson.durationMinutes;
+          } else if (typeof lesson.durationMinutes === 'string') {
+            const parsed = parseInt(lesson.durationMinutes, 10);
+            if (!isNaN(parsed)) durationMins = parsed;
           }
-          // Fall back to duration field if durationMinutes is not available
-          else if (lesson.duration !== undefined) {
-            if (typeof lesson.duration === 'number') {
-              durationMins = lesson.duration;
-            } else if (typeof lesson.duration === 'string') {
-              const parsed = parseInt(lesson.duration, 10);
-              if (!isNaN(parsed)) durationMins = parsed;
-            }
+        }
+        // Fall back to duration field if durationMinutes is not available
+        else if (lesson.duration !== undefined) {
+          if (typeof lesson.duration === 'number') {
+            durationMins = lesson.duration;
+          } else if (typeof lesson.duration === 'string') {
+            const parsed = parseInt(lesson.duration, 10);
+            if (!isNaN(parsed)) durationMins = parsed;
           }
+        }
 
-          return acc + durationMins;
-        }, 0)
+        return acc + durationMins;
+      }, 0)
       : 0;
 
     // Format duration based on total minutes
@@ -90,6 +94,23 @@ export default function CourseDetailView({
 
     setCourseWithStats(enhancedCourse);
   }, [course, courseId, courseLessons, context?.userPaidProducts]);
+
+  // Track course view analytics
+  useEffect(() => {
+    if (!course || !courseId) return;
+
+    // Log analytics event
+    logCourseView(
+      courseId,
+      course.name || 'Unknown Course',
+      course.category || 'general'
+    );
+
+    // Increment view count in database
+    incrementCourseViews(courseId).catch(error => {
+      console.error('Failed to increment course views:', error);
+    });
+  }, [courseId, course]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -126,6 +147,7 @@ export default function CourseDetailView({
           <CourseEnrollment
             course={courseWithStats}
             isPurchased={isPurchased}
+            hasActiveSubscription={hasActiveSubscription}
             completedLessons={completedLessons}
             progressPercentage={progressPercentage}
             totalLessons={courseLessons.length}

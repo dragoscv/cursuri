@@ -14,6 +14,7 @@ import { useToast } from '@/components/Toast';
 import { validatePassword } from '@/utils/security/passwordValidation';
 import PasswordStrengthMeter from '@/components/ui/PasswordStrengthMeter';
 import { useTranslations } from 'next-intl';
+import { logUserLogin, logUserRegistration, logError } from '@/utils/analytics';
 
 // Helper function to get user-friendly error messages
 const getFirebaseErrorMessage = (error: any, t: any): string => {
@@ -84,6 +85,9 @@ export default function Login(props: { onClose: () => void }) {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(firebaseAuth, provider);
       if (result) {
+        // Log successful Google login
+        logUserLogin('google');
+
         props.onClose();
         if (toast) {
           toast.showToast({
@@ -98,6 +102,10 @@ export default function Login(props: { onClose: () => void }) {
       console.error('Google login error:', error);
       const errorMsg = getFirebaseErrorMessage(error, t);
       setErrorMessage(errorMsg);
+
+      // Log failed Google login
+      logError('Google login failed', (error as any)?.code, false);
+
       if (toast) {
         toast.showToast({
           type: 'error',
@@ -121,6 +129,9 @@ export default function Login(props: { onClose: () => void }) {
     try {
       const result = await signInWithEmailAndPassword(firebaseAuth, email, password);
       if (result) {
+        // Log successful email login
+        logUserLogin('email');
+
         props.onClose();
         if (toast) {
           toast.showToast({
@@ -133,6 +144,9 @@ export default function Login(props: { onClose: () => void }) {
       }
     } catch (error: any) {
       console.error('Email login error:', error);
+
+      // Log failed email login
+      logError('Email login failed', error?.code, false);
 
       // Check for any provider-related errors first
       if (error.code === 'auth/operation-not-allowed' || error.code === 'auth/invalid-credential') {
@@ -241,6 +255,9 @@ export default function Login(props: { onClose: () => void }) {
     try {
       const result = await createUserWithEmailAndPassword(firebaseAuth, email, password);
       if (result) {
+        // Log successful registration
+        logUserRegistration('email');
+
         props.onClose();
         if (toast) {
           toast.showToast({
@@ -255,6 +272,9 @@ export default function Login(props: { onClose: () => void }) {
       console.error('Registration error:', error);
       const errorMsg = getFirebaseErrorMessage(error, t);
       setErrorMessage(errorMsg);
+
+      // Log failed registration
+      logError('Registration failed', (error as any)?.code, false);
 
       if (toast) {
         toast.showToast({

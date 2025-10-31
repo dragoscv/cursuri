@@ -16,6 +16,8 @@ import LessonNavigation from './Navigation/LessonNavigation';
 import OfflineButton from './OfflineButton';
 import { useOfflineContent } from '../Profile/hooks/useOfflineContent';
 import { FiWifi, FiWifiOff } from '@/components/icons/FeatherIcons';
+import { logLessonCompletion, logVideoProgress, logCourseCompletion } from '@/utils/analytics';
+import { incrementLessonCompletions, trackVideoWatchTime, incrementCourseCompletions, incrementUserCompletedCourses } from '@/utils/statistics';
 
 interface LessonContentProps {
   lesson: Lesson;
@@ -54,16 +56,6 @@ function LessonContent({
 
   const { lessons, lessonProgress, saveLessonProgress, markLessonComplete, courses } = context;
   const { getOfflineLesson, isLessonAvailableOffline } = useOfflineContent();
-
-  // Debug: Log lessonProgress changes
-  useEffect(() => {
-    console.log('[LessonContent] lessonProgress changed:', {
-      hasLessonProgress: !!lessonProgress,
-      courseIds: lessonProgress ? Object.keys(lessonProgress) : [],
-      fullProgress: lessonProgress,
-      fullProgressStringified: JSON.stringify(lessonProgress, null, 2),
-    });
-  }, [lessonProgress]);
 
   // Check online status
   useEffect(() => {
@@ -208,63 +200,28 @@ function LessonContent({
   // Calculate progress percentage for the progress bar based on completed lessons
   // Using useMemo to recalculate when dependencies change
   const progressPercentage = useMemo(() => {
-    console.log('[LessonContent] useMemo triggered', {
-      hasLessons: !!lessons,
-      courseId,
-      hasLessonProgress: !!lessonProgress,
-      lessonProgressKeys: lessonProgress ? Object.keys(lessonProgress) : [],
-    });
-
     if (!lessons || !courseId || !lessons[courseId]) {
-      console.log('[LessonContent] calculateProgress: Missing data', {
-        hasLessons: !!lessons,
-        courseId,
-        hasCourseInLessons: lessons ? !!lessons[courseId] : false,
-      });
       return 0;
     }
 
     const courseLessons = Object.values(lessons[courseId]);
     const totalLessons = courseLessons.length;
     if (totalLessons === 0) {
-      console.log('[LessonContent] calculateProgress: No lessons found');
       return 0;
     }
 
     // Get the progress data for this course
     const courseProgress = lessonProgress?.[courseId] || {};
-    console.log('[LessonContent] Course progress data:', {
-      courseId,
-      progressKeys: Object.keys(courseProgress),
-      progressData: courseProgress,
-    });
 
     // Count completed lessons from lessonProgress
     const completedCount = courseLessons.filter((lessonItem) => {
       const progress = courseProgress[lessonItem.id];
       const isComplete = progress?.isCompleted === true;
 
-      console.log(`[LessonContent] Lesson ${lessonItem.id} (${lessonItem.name}):`, {
-        hasProgress: !!progress,
-        isCompleted: progress?.isCompleted,
-        isComplete,
-      });
-
       return isComplete;
     }).length;
 
     const progressPercent = (completedCount / totalLessons) * 100;
-
-    console.log('[LessonContent] calculateProgress FINAL:', {
-      courseId,
-      totalLessons,
-      completedCount,
-      progressPercent: Math.round(progressPercent),
-      lessonProgressExists: !!lessonProgress?.[courseId],
-      completedLessonIds: courseLessons
-        .filter((l) => courseProgress[l.id]?.isCompleted === true)
-        .map((l) => l.id),
-    });
 
     return progressPercent;
   }, [lessons, courseId, lessonProgress]);
@@ -486,7 +443,45 @@ function LessonContent({
             isCompleted={isCompleted}
             autoPlayNext={autoPlayNext}
             saveProgress={saveProgress}
-            onMarkComplete={() => markLessonComplete(courseId, lesson.id)}
+            onMarkComplete={async () => {
+              await markLessonComplete(courseId, lesson.id);
+
+              // Track lesson completion analytics
+              logLessonCompletion(
+                lesson.id,
+                lesson.name || 'Unknown Lesson',
+                courseId,
+                typeof lesson.duration === 'number' ? lesson.duration : 0
+              );
+
+              // Increment completion count in database
+              await incrementLessonCompletions(courseId, lesson.id);
+
+              // Check if all lessons in course are completed
+              const courseLessonsData = lessons?.[courseId];
+              if (courseLessonsData) {
+                const allLessons = Array.isArray(courseLessonsData)
+                  ? courseLessonsData
+                  : Object.values(courseLessonsData);
+                const completedCount = Object.keys(lessonProgress?.[courseId] || {}).filter(
+                  lid => lessonProgress?.[courseId]?.[lid]?.isCompleted
+                ).length + 1; // +1 for the lesson just completed
+
+                const completionPercentage = Math.round((completedCount / allLessons.length) * 100);
+
+                // If course is 100% complete, log course completion
+                if (completionPercentage >= 100 && course) {
+                  logCourseCompletion(courseId, course.name || 'Unknown Course', 100);
+                  await incrementCourseCompletions(courseId);
+
+                  // Increment user's completed courses count
+                  const userId = context.user?.uid;
+                  if (userId) {
+                    await incrementUserCompletedCourses(userId);
+                  }
+                }
+              }
+            }}
             onAutoPlayToggle={setAutoPlayNext}
             onSaveProgressToggle={setSaveProgress}
             onManualSave={() => saveLessonProgress(courseId, lesson.id, videoPosition, isCompleted)}
