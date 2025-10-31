@@ -3,6 +3,7 @@ import GithubIcon from '@/components/icons/GithubIcon';
 import WebsiteIcon from '@/components/icons/WebsiteIcon';
 import TikTokIcon from '@/components/icons/TikTokIcon';
 import InstagramIcon from '@/components/icons/InstagramIcon';
+import { DiscordIcon } from '@/components/icons/DiscordIcon';
 
 /**
  * SocialIcons component that displays social media links
@@ -18,6 +19,15 @@ export default function SocialIcons() {
                 aria-label="GitHub"
             >
                 <GithubIcon className="text-[color:var(--ai-primary)]" size={20} />
+            </a>
+            <a
+                href="https://discord.gg/SbqrU73MjB"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cursor-pointer p-2 rounded-lg hover:bg-[color:var(--ai-card-border)]/30 dark:hover:bg-[color:var(--ai-card-border)]/20 transition-colors"
+                aria-label="Discord"
+            >
+                <DiscordIcon className="text-[color:var(--ai-primary)]" size={20} />
             </a>
             <a
                 href="https://dragoscatalin.ro"

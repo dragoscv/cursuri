@@ -16,6 +16,7 @@ import { useTranslations } from 'next-intl';
 import Login from '@/components/Login';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import ThemeToggle from '@/components/Header/ThemeToggle';
+import { DiscordIcon } from '@/components/icons/DiscordIcon';
 
 /**
  * MobileMenu component for non-authenticated users
@@ -156,6 +157,14 @@ export default function MobileMenu() {
               <Link href="/contact" className="block w-full">
                 <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors">
                   {t('nav.contact')}
+                </div>
+              </Link>
+            </DropdownItem>
+            <DropdownItem key="discord" textValue="Discord" className="p-0">
+              <Link href="/discord" className="block w-full">
+                <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors flex items-center gap-2">
+                  <DiscordIcon size={18} />
+                  {t('nav.joinDiscord')}
                 </div>
               </Link>
             </DropdownItem>
