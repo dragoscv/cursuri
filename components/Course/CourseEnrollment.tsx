@@ -64,7 +64,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
   const hasSubscriptionFromContext = subscriptions && subscriptions.length > 0 && subscriptions.some((sub: any) =>
     sub.status === 'active' || sub.status === 'trialing'
   );
-  
+
   // Use prop if provided, otherwise use context check
   const hasSubscription = hasActiveSubscription || hasSubscriptionFromContext;
 
