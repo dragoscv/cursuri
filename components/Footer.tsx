@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 import GithubIcon from './icons/GithubIcon';
 import TikTokIcon from './icons/TikTokIcon';
 import WebsiteIcon from './icons/WebsiteIcon';
+import { DiscordIcon } from './icons/DiscordIcon';
 import packageInfo from '../package.json';
 import Button from './ui/Button';
 
@@ -135,6 +136,15 @@ const Footer = React.memo(function Footer() {
                 aria-label="GitHub"
               >
                 <GithubIcon className="text-[color:var(--ai-primary)]" size={24} />
+              </a>
+              <a
+                href="https://discord.gg/SbqrU73MjB"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-lg hover:bg-[color:var(--ai-card-border)]/30 dark:hover:bg-[color:var(--ai-card-border)]/20 transition-colors"
+                aria-label="Discord"
+              >
+                <DiscordIcon className="text-[color:var(--ai-primary)]" size={24} />
               </a>
               <a
                 href="https://www.tiktok.com/@mantreb"

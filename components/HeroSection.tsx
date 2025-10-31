@@ -21,6 +21,7 @@ import {
   DataAnalysisIcon,
   ContentCreationIcon,
 } from './icons/tech';
+import { DiscordIcon } from './icons/DiscordIcon';
 import DefaultAvatar from './shared/DefaultAvatar';
 
 const HeroSection = memo(function HeroSection() {
@@ -441,9 +442,12 @@ const HeroSection = memo(function HeroSection() {
                 size="lg"
                 radius="full"
                 className="px-8 py-6 text-lg font-medium bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] hover:shadow-lg hover:shadow-[color:var(--ai-primary)]/30 transform hover:-translate-y-1 transition-all duration-300"
-                onClick={handleGetStarted}
+                onClick={() => router.push('/discord')}
               >
-                {t('getStarted')}
+                <div className="flex items-center gap-2">
+                  <DiscordIcon size={20} />
+                  {t('joinDiscord')}
+                </div>
               </Button>
 
               <Button
