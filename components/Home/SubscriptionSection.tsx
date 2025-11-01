@@ -51,38 +51,36 @@ export default function SubscriptionSection() {
   const appName = process.env.NEXT_PUBLIC_APP_NAME || 'cursuri';
 
   // Get monthly and yearly prices from the subscription product
-  // Filter by metadata fields and ensure it's for the current app
+  // Since the product already has the correct metadata, just filter by active status and interval
   const monthlyPrice = subscriptionProduct?.prices?.find((p: any) => {
     console.log('SubscriptionSection - Checking monthly price:', {
       priceId: p.id,
       active: p.active,
-      metadata: p.metadata,
-      recurring: p.recurring,
       interval: p.interval,
+      recurring: p.recurring,
+      metadata: p.metadata,
     });
 
-    return p.active !== false &&
-      p.metadata?.type === 'subscription' &&
-      p.metadata?.app === appName &&
-      (p.metadata?.interval === 'month' || p.recurring?.interval === 'month');
+    const isActive = p.active !== false;
+    const isMonthly = p.metadata?.interval === 'month' || p.recurring?.interval === 'month' || p.interval === 'month';
+
+    return isActive && isMonthly;
   });
 
   const yearlyPrice = subscriptionProduct?.prices?.find((p: any) => {
     console.log('SubscriptionSection - Checking yearly price:', {
       priceId: p.id,
       active: p.active,
-      metadata: p.metadata,
-      recurring: p.recurring,
       interval: p.interval,
+      recurring: p.recurring,
+      metadata: p.metadata,
     });
 
-    return p.active !== false &&
-      p.metadata?.type === 'subscription' &&
-      p.metadata?.app === appName &&
-      (p.metadata?.interval === 'year' || p.recurring?.interval === 'year');
-  });
+    const isActive = p.active !== false;
+    const isYearly = p.metadata?.interval === 'year' || p.recurring?.interval === 'year' || p.interval === 'year';
 
-  console.log('Found prices:', { monthlyPrice, yearlyPrice, appName });
+    return isActive && isYearly;
+  }); console.log('Found prices:', { monthlyPrice, yearlyPrice, appName });
 
   // Helper function to format price
   const formatPrice = (price: any) => {

@@ -72,48 +72,38 @@ export default function SubscriptionPlans() {
   const appName = process.env.NEXT_PUBLIC_APP_NAME || 'cursuri';
 
   // Get monthly and yearly prices from the subscription product
-  // Filter by metadata fields and ensure it's for the current app
+  // Since the product already has the correct metadata, just filter by active status and interval
   const monthlyPrice = subscriptionProduct?.prices?.find((p: any) => {
     const isActive = p.active !== false;
-    const hasSubType = p.metadata?.type === 'subscription';
-    const hasAppMatch = p.metadata?.app === appName;
-    const isMonthly = p.metadata?.interval === 'month' || p.recurring?.interval === 'month';
+    const isMonthly = p.metadata?.interval === 'month' || p.recurring?.interval === 'month' || p.interval === 'month';
 
     console.log('Checking monthly price:', {
       priceId: p.id,
       isActive,
-      hasSubType,
-      hasAppMatch,
       isMonthly,
       metadata: p.metadata,
       recurring: p.recurring,
       interval: p.interval,
     });
 
-    return isActive && hasSubType && hasAppMatch && isMonthly;
+    return isActive && isMonthly;
   });
 
   const yearlyPrice = subscriptionProduct?.prices?.find((p: any) => {
     const isActive = p.active !== false;
-    const hasSubType = p.metadata?.type === 'subscription';
-    const hasAppMatch = p.metadata?.app === appName;
-    const isYearly = p.metadata?.interval === 'year' || p.recurring?.interval === 'year';
+    const isYearly = p.metadata?.interval === 'year' || p.recurring?.interval === 'year' || p.interval === 'year';
 
     console.log('Checking yearly price:', {
       priceId: p.id,
       isActive,
-      hasSubType,
-      hasAppMatch,
       isYearly,
       metadata: p.metadata,
       recurring: p.recurring,
       interval: p.interval,
     });
 
-    return isActive && hasSubType && hasAppMatch && isYearly;
-  });
-
-  console.log('=== DEBUG: Found Prices ===', {
+    return isActive && isYearly;
+  }); console.log('=== DEBUG: Found Prices ===', {
     appName,
     monthlyPrice: monthlyPrice ? {
       id: monthlyPrice.id,
