@@ -47,6 +47,7 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
   const { showToast } = useToast();
   const [lessonName, setLessonName] = useState('');
   const [lessonDescription, setLessonDescription] = useState('');
+  const [lessonContent, setLessonContent] = useState(''); // New field for rich text content
   const [repoUrl, setRepoUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -182,6 +183,7 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
 
           setLessonName(lesson.name || '');
           setLessonDescription(lesson.description || '');
+          setLessonContent(lesson.content || ''); // Load content
           setRepoUrl(lesson.repoUrl || '');
           setLessonOrder(lesson.order || 0);
           setDurationMinutes(lesson.duration ? parseInt(lesson.duration, 10) || '' : '');
@@ -390,6 +392,7 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
       const lesson: any = {
         name: lessonName,
         description: lessonDescription,
+        content: lessonContent, // Add content field
         repoUrl: repoUrl,
         status: lessonStatus,
         order: Number(lessonOrder),
@@ -494,6 +497,7 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
   }, [
     lessonName,
     lessonDescription,
+    lessonContent, // Add to dependencies
     repoUrl,
     courseId,
     file,
@@ -527,6 +531,7 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
       const updatedData: any = {
         name: lessonName,
         description: lessonDescription,
+        content: lessonContent, // Add content field
         repoUrl: repoUrl,
         status: lessonStatus,
         order: Number(lessonOrder),
@@ -731,6 +736,7 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
     courseId,
     lessonName,
     lessonDescription,
+    lessonContent, // Add to dependencies
     repoUrl,
     file,
     lessonStatus,
@@ -1057,6 +1063,21 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                       placeholder={t('provideLessonDesc')}
                       minHeight={250}
                     />
+                  </div>
+
+                  <div className="mb-6">
+                    <label className="block text-[color:var(--ai-foreground)] font-medium mb-2">
+                      {t('lessonContent')}
+                    </label>
+                    <RichTextEditor
+                      value={lessonContent}
+                      onChange={(_text, html) => setLessonContent(html)}
+                      placeholder={t('lessonContentPlaceholder')}
+                      minHeight={300}
+                    />
+                    <p className="text-xs text-[color:var(--ai-muted)] mt-2">
+                      {t('lessonContentHelp')}
+                    </p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 mb-6">

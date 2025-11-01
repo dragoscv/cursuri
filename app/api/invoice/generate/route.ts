@@ -4,6 +4,7 @@ import { firebaseApp } from '@/utils/firebase/firebase.config';
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 import { requireAuth, canAccessResource, checkRateLimit } from '@/utils/api/auth';
 import { logAdminAction } from '@/utils/auditLog';
+import { validateRequestBody, APISchemas } from '@/utils/security/inputValidation';
 
 // Initialize Firebase
 const db = getFirestore(firebaseApp);
@@ -25,11 +26,16 @@ export async function POST(request: NextRequest) {
 
     const authenticatedUser = authResult.user!;
 
-    const { paymentId, userId } = await request.json();
-
-    if (!paymentId || !userId) {
-      return NextResponse.json({ error: 'Missing payment ID or user ID' }, { status: 400 });
+    // Validate request body
+    const validation = await validateRequestBody(request, APISchemas.invoiceRequest);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Invalid request', details: validation.errors },
+        { status: 400 }
+      );
     }
+
+    const { paymentId, userId } = validation.data;
 
     // Verify user can access this resource (owner or admin)
     if (!canAccessResource(authenticatedUser, userId)) {

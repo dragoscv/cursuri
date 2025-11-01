@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin, checkRateLimit } from '@/utils/api/auth';
 import Stripe from 'stripe';
 import { logAdminAction, logSecurityEvent, AuditSeverity } from '@/utils/auditLog';
+import { validateRequestBody, APISchemas } from '@/utils/security/inputValidation';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-09-30.clover',
@@ -40,20 +41,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { productName, productDescription, amount, currency, metadata } = await request.json();
-
-    // Validate required fields
-    if (!productName || !amount || !currency) {
+    // Validate request body
+    const validation = await validateRequestBody(request, APISchemas.stripePriceCreate);
+    if (!validation.success) {
       return NextResponse.json(
-        { error: 'Missing required fields: productName, amount, currency' },
+        { error: 'Invalid request', details: validation.errors },
         { status: 400 }
       );
     }
 
-    // Validate amount is a positive number
-    if (typeof amount !== 'number' || amount <= 0) {
-      return NextResponse.json({ error: 'Amount must be a positive number' }, { status: 400 });
-    }
+    const { productName, productDescription, amount, currency, metadata } = validation.data;
 
     // Create or find product
     let product;

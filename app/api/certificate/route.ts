@@ -3,6 +3,7 @@ import { getFirestore } from 'firebase-admin/firestore';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { requireAuth, checkRateLimit } from '@/utils/api/auth';
 import { logAdminAction } from '@/utils/auditLog';
+import { validateRequestBody, APISchemas } from '@/utils/security/inputValidation';
 
 /**
  * Generate Course Completion Certificate
@@ -34,6 +35,17 @@ export async function POST(req: NextRequest) {
     const user = authResult.user!;
     const userId = user.uid;
 
+    // Validate request body
+    const validation = await validateRequestBody(req, APISchemas.certificateRequest);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Invalid request', details: validation.errors },
+        { status: 400 }
+      );
+    }
+
+    const { courseId } = validation.data;
+
     // Rate limiting: 5 certificates per minute per user
     const rateLimitAllowed = await checkRateLimit(`certificate:${userId}`, 5, 60000);
     if (!rateLimitAllowed) {
@@ -41,12 +53,6 @@ export async function POST(req: NextRequest) {
         { error: 'Rate limit exceeded. Please try again later.' },
         { status: 429 }
       );
-    }
-
-    const { courseId } = await req.json();
-
-    if (!courseId) {
-      return NextResponse.json({ error: 'Course ID is required' }, { status: 400 });
     }
 
     // Fetch user and course info

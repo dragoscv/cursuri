@@ -218,8 +218,23 @@ service cloud.firestore {
     
     // Contact messages collection
     match /contactMessages/{messageId} {
-      // Allow anyone to create a contact message (simplified for debugging)
-      allow create: if true;
+      // Allow anyone to create a contact message with validation:
+      // 1. Must include required fields
+      // 2. Honeypot field must be empty (spam prevention)
+      // 3. Rate limiting should be enforced at API level
+      allow create: if request.resource.data.keys().hasAll(['name', 'email', 'subject', 'message', 'timestamp'])
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() >= 2
+                    && request.resource.data.name.size() <= 100
+                    && request.resource.data.email is string
+                    && request.resource.data.email.matches('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$')
+                    && request.resource.data.subject is string
+                    && request.resource.data.subject.size() >= 5
+                    && request.resource.data.subject.size() <= 200
+                    && request.resource.data.message is string
+                    && request.resource.data.message.size() >= 10
+                    && request.resource.data.message.size() <= 5000
+                    && (!request.resource.data.keys().hasAny(['honeypot']) || request.resource.data.honeypot == '');
       // Only admins can read, update, or delete contact messages
       allow read, update, delete: if hasAdminAccess();
     }

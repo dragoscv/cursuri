@@ -31,6 +31,9 @@ const nextConfig = {
     // CSP is now managed centrally in middleware.ts
     // This avoids duplication and makes it easier to maintain
 
+    // Exclude jsdom and dompurify from server bundling to avoid version conflicts
+    serverExternalPackages: ['jsdom', 'dompurify', 'isomorphic-dompurify'],
+
     // Webpack configuration to fix Windows temp directory permission issues
     webpack: (config, { isServer }) => {
         // Exclude Windows temp directories from file watching

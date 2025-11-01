@@ -21,6 +21,7 @@ import { motion } from 'framer-motion';
 import { FiStar } from '../icons/FeatherIcons';
 import { FiEdit } from '../icons/FeatherIcons/FiEdit';
 import { FiMessageCircle } from '../icons/FeatherIcons/FiMessageCircle';
+import { sanitizeModerate } from '@/utils/security/htmlSanitizer';
 
 export default function Reviews({ courseId: propCourseId, isPurchased = false }: { courseId: string; isPurchased?: boolean }) {
     const [review, setReview] = useState('');
@@ -363,7 +364,7 @@ export default function Reviews({ courseId: propCourseId, isPurchased = false }:
                                                 <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[color:var(--ai-primary)]/30 to-[color:var(--ai-secondary)]/30 rounded-full"></div>
                                                 <div className="pl-3 text-[color:var(--ai-muted)] text-sm leading-relaxed text-justify">
                                                     {review.htmlContent ? (
-                                                        <div dangerouslySetInnerHTML={{ __html: review.htmlContent }} />
+                                                        <div dangerouslySetInnerHTML={{ __html: sanitizeModerate(review.htmlContent) }} />
                                                     ) : (
                                                         <p>{review.review}</p>
                                                     )}

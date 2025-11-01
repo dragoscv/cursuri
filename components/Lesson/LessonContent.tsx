@@ -14,8 +14,9 @@ import Notes from './Notes/Notes';
 import QASection from './QA/QASection';
 import LessonNavigation from './Navigation/LessonNavigation';
 import OfflineButton from './OfflineButton';
+import { sanitizeRich } from '@/utils/security/htmlSanitizer';
 import { useOfflineContent } from '../Profile/hooks/useOfflineContent';
-import { FiWifi, FiWifiOff } from '@/components/icons/FeatherIcons';
+import { FiWifi, FiWifiOff, FiFileText } from '@/components/icons/FeatherIcons';
 import { logLessonCompletion, logVideoProgress, logCourseCompletion } from '@/utils/analytics';
 import { incrementLessonCompletions, trackVideoWatchTime, incrementCourseCompletions, incrementUserCompletedCourses } from '@/utils/statistics';
 
@@ -388,16 +389,22 @@ function LessonContent({
             </Card>
           )}
           {/* Lesson Content */}
-          {(lesson.content || (isUsingOfflineContent && offlineLessonContent?.content)) && (
-            <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-xl">
-              <div className="p-6">
-                <h2 className="text-xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-4">
-                  {t('sections.content')}
-                </h2>
+          {(lesson.content) && (
+            <Card
+              className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-xl overflow-hidden 
+                            transform transition-all duration-300 hover:shadow-2xl hover:border-[color:var(--ai-primary)]/30 rounded-lg"
+            >
+              <div className="p-4 sm:p-6">
+                <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 -mx-4 sm:-mx-6 -mt-4 sm:-mt-6 mb-6 border-b border-[color:var(--ai-card-border)]">
+                  <h3 className="font-semibold text-[color:var(--ai-foreground)] flex items-center gap-2">
+                    <FiFileText className="text-[color:var(--ai-primary)]" size={20} />
+                    <span className="text-base sm:text-lg">{t('sections.content')}</span>
+                  </h3>
+                </div>
                 <div
-                  className="prose dark:prose-invert max-w-none"
+                  className="prose dark:prose-invert max-w-none prose-img:rounded-lg prose-img:shadow-md prose-a:text-[color:var(--ai-primary)] text-[color:var(--ai-text-secondary)]"
                   dangerouslySetInnerHTML={{
-                    __html: isUsingOfflineContent ? offlineLessonContent.content : lesson.content,
+                    __html: sanitizeRich(isUsingOfflineContent ? offlineLessonContent.content : lesson.content),
                   }}
                 />
               </div>

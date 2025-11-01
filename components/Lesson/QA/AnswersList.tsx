@@ -8,6 +8,7 @@ import { LikeIcon } from '@/components/icons/svg';
 import { updateDoc, doc, arrayUnion, arrayRemove, increment, Timestamp } from 'firebase/firestore';
 import { firestoreDB } from '@/utils/firebase/firebase.config';
 import { AppContext } from '@/components/AppContext';
+import { sanitizeRich } from '@/utils/security/htmlSanitizer';
 
 interface AnswersListProps {
     answers: Answer[];
@@ -98,7 +99,7 @@ const AnswersList: React.FC<AnswersListProps> = ({ answers, questionId, expanded
                         {answer.htmlContent ? (
                             <div
                                 className="prose dark:prose-invert max-w-none prose-img:rounded-lg prose-img:shadow-md prose-a:text-[color:var(--ai-primary)] text-[color:var(--ai-text-secondary)]"
-                                dangerouslySetInnerHTML={{ __html: answer.htmlContent }}
+                                dangerouslySetInnerHTML={{ __html: sanitizeRich(answer.htmlContent) }}
                             />
                         ) : (
                             <p className="text-[color:var(--ai-text-secondary)] whitespace-pre-wrap">{answer.content}</p>

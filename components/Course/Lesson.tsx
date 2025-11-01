@@ -15,6 +15,7 @@ import QASection from "@/components/Lesson/QA/QASection";
 import { Lesson as LessonInterface, AppContextProps, LessonResource, LessonProps } from "@/types";
 import { useToast } from "@/components/Toast";
 import { FiBookmark, FiBookmarkFilled } from '@/components/icons/FeatherIcons';
+import { sanitizeRich } from '@/utils/security/htmlSanitizer';
 
 export default function Lesson({ lesson, onClose }: LessonProps) {
     const [prevLessonId, setPrevLessonId] = useState<string | null>(null);
@@ -283,7 +284,7 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
                                 </h2>
                                 <div
                                     className="prose dark:prose-invert max-w-none"
-                                    dangerouslySetInnerHTML={{ __html: lesson.content }}
+                                    dangerouslySetInnerHTML={{ __html: sanitizeRich(lesson.content) }}
                                 />
                             </div>
                         </Card>
