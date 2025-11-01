@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { courseId } = validation.data;
+    const { courseId } = validation.data!;
 
     // Rate limiting: 5 certificates per minute per user
     const rateLimitAllowed = await checkRateLimit(`certificate:${userId}`, 5, 60000);

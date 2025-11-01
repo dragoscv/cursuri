@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { productName, productDescription, amount, currency, metadata } = validation.data;
+    const { productName, productDescription, amount, currency, metadata } = validation.data!;
 
     // Create or find product
     let product;
