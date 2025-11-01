@@ -155,7 +155,14 @@ export default function ProfileCourses() {
 
                 // Use the earliest lesson progress timestamp as "start date"
                 const progressTimestamps = Object.values(courseLessonProgress)
-                    .map(p => p.lastAccessedAt || p.startedAt || Date.now())
+                    .map(p => {
+                        const lastUpdated = p.lastUpdated;
+                        if (lastUpdated instanceof Date) return lastUpdated.getTime();
+                        if (typeof lastUpdated === 'number') return lastUpdated;
+                        if (typeof lastUpdated === 'string') return new Date(lastUpdated).getTime();
+                        if (lastUpdated && typeof lastUpdated.toDate === 'function') return lastUpdated.toDate().getTime();
+                        return Date.now();
+                    })
                     .filter(ts => ts);
                 const earliestAccess = progressTimestamps.length > 0
                     ? Math.min(...progressTimestamps)

@@ -105,7 +105,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
         const track = tracks[i];
         if (language === 'off') {
           track.mode = 'hidden';
-        } else if (track.language === language.split('-')[0] || track.srclang === language.split('-')[0]) {
+        } else if (track.language === language.split('-')[0]) {
           track.mode = 'showing';
         } else {
           track.mode = 'hidden';
@@ -133,7 +133,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
             track.src = captionData.url;
 
             // Don't set any track as default since we start with captions off
-            track.mode = 'hidden';
+            (track as any).mode = 'hidden';
 
             videoRef.current?.appendChild(track);
           }
@@ -228,10 +228,10 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
             className="absolute left-0 top-0 h-1.5 bg-[color:var(--ai-card-border)]/20 pointer-events-none rounded-full"
             style={{
               width: `${videoRef.current && videoRef.current.buffered.length > 0
-                  ? (videoRef.current.buffered.end(videoRef.current.buffered.length - 1) /
-                    videoRef.current.duration) *
-                  100
-                  : 0
+                ? (videoRef.current.buffered.end(videoRef.current.buffered.length - 1) /
+                  videoRef.current.duration) *
+                100
+                : 0
                 }%`,
             }}
           ></div>
@@ -312,7 +312,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
                     <DropdownItem key={language}>
                       {language.toUpperCase()}
                     </DropdownItem>
-                  ))}
+                  )) as any}
                 </DropdownMenu>
               </Dropdown>
             )}
