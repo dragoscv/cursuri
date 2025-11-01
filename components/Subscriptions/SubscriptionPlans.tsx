@@ -42,13 +42,23 @@ export default function SubscriptionPlans() {
     p.metadata?.type === 'subscription' || p.name?.toLowerCase().includes('subscription')
   );
 
+  // Get app name for filtering
+  const appName = process.env.NEXT_PUBLIC_APP_NAME || 'cursuri';
+
   // Get monthly and yearly prices from the subscription product
+  // Filter by metadata fields and ensure it's for the current app
   const monthlyPrice = subscriptionProduct?.prices?.find((p: any) =>
-    p.interval === 'month' && p.recurring?.interval === 'month'
+    p.active !== false &&
+    p.metadata?.type === 'subscription' &&
+    p.metadata?.app === appName &&
+    (p.metadata?.interval === 'month' || p.recurring?.interval === 'month')
   );
 
   const yearlyPrice = subscriptionProduct?.prices?.find((p: any) =>
-    p.interval === 'year' && p.recurring?.interval === 'year'
+    p.active !== false &&
+    p.metadata?.type === 'subscription' &&
+    p.metadata?.app === appName &&
+    (p.metadata?.interval === 'year' || p.recurring?.interval === 'year')
   );
 
   // Helper function to format price
