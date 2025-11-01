@@ -11,10 +11,10 @@ service firebase.storage {
     function isAdmin() {
       return request.auth != null && 
              firestore.exists(/databases/(default)/documents/users/$(request.auth.uid)) &&
-             firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role in ['admin', 'super_admin'] &&
-             firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.isActive == true;
+             firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role in ['admin', 'super_admin'];
     }
-      // Combined admin check (uses only role-based authentication)
+    
+    // Combined admin check (uses only role-based authentication)
     function hasAdminAccess() {
       return isAdmin();
     }
