@@ -8,6 +8,7 @@ import CookieConsent from '@/components/CookieConsent';
 import BottomNavigation from '@/components/Header/BottomNavigation';
 import SkipLink from '@/components/shared/SkipLink';
 import PageViewTracker from '@/components/Analytics/PageViewTracker';
+import PreloadLinks from './preload-links';
 import { constructMetadata } from '@/utils/metadata';
 // Security initialization import
 import '@/utils/security/initSecurityChecks';
@@ -25,7 +26,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang={locale}
       className="has-[section[role='dialog'][data-open='true']]:overflow-hidden transition-all ease-in-out duration-500"
     >
-      <head>{/* React Scan removed - causes CSP issues in production */}</head>
+      <head>
+        {/* React Scan removed - causes CSP issues in production */}
+        {/* Preconnect to external domains for better performance */}
+        <link rel="preconnect" href="https://images.unsplash.com" />
+        <link rel="dns-prefetch" href="https://images.unsplash.com" />
+        <PreloadLinks />
+      </head>
       <body className={`${inter.className} bg-[rgb(var(--background-start-rgb))]`}>
         {' '}
         <Providers>

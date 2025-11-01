@@ -21,7 +21,13 @@ const nextConfig = {
             },
         ],
         minimumCacheTTL: 60,
+        formats: ['image/webp', 'image/avif'],
+        deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
+        imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     },
+    // Performance optimizations
+    poweredByHeader: false,
+    compress: true,
     // CSP is now managed centrally in middleware.ts
     // This avoids duplication and makes it easier to maintain
 

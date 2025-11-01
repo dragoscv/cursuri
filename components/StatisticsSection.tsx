@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useContext } from 'react';
+import React, { useMemo, useContext, useEffect, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import ScrollAnimationWrapper from './animations/ScrollAnimationWrapper';
@@ -10,13 +10,16 @@ const StatisticsSection = React.memo(function StatisticsSection() {
   const t = useTranslations('home.statistics');
   const ref = React.useRef(null);
   const context = useContext(AppContext);
+  const [isVisible, setIsVisible] = useState(false);
+
+  // Defer scroll animations until component is in viewport
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start end', 'end start'],
   });
 
-  // Create parallax effect for the background
-  const y = useTransform(scrollYProgress, [0, 1], [0, 100]);
+  // Simplified parallax effect
+  const y = useTransform(scrollYProgress, [0, 1], [0, 50]);
 
   // Calculate real statistics from context data
   const realStats = useMemo(() => {
@@ -82,10 +85,30 @@ const StatisticsSection = React.memo(function StatisticsSection() {
     };
   }, [context]);
 
-  // Fetch real total students count from database
-  const [totalStudents, setTotalStudents] = React.useState(0);
+  // Fetch real total students count from database - deferred until visible
+  const [totalStudents, setTotalStudents] = useState(0);
 
-  React.useEffect(() => {
+  useEffect(() => {
+    // Intersection Observer to detect when component is visible
+    if (!ref.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1, rootMargin: '100px' }
+    );
+
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    // Only fetch when visible
+    if (!isVisible) return;
+
     async function fetchTotalStudents() {
       // Only fetch if user is authenticated and is admin
       if (!context?.user || !context?.isAdmin) {
@@ -129,7 +152,7 @@ const StatisticsSection = React.memo(function StatisticsSection() {
     }
 
     fetchTotalStudents();
-  }, [context?.user, context?.isAdmin]);
+  }, [isVisible, context?.user, context?.isAdmin]);
 
   // Memoize stat card hover props
   const statCardHoverProps = useMemo(

@@ -414,28 +414,20 @@ const HeroSection = memo(function HeroSection() {
       <div ref={particlesRef} className="absolute inset-0 pointer-events-none overflow-hidden" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-24 md:py-32">
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
-            <motion.h1
-              className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight"
-              variants={itemVariants}
-            >
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight">
               <span className="block">{t('title.line1')}</span>
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-[color:var(--ai-secondary)] to-[color:var(--ai-primary)] pb-2">
                 {t('title.line2')}
               </span>
-            </motion.h1>
+            </h1>
 
-            <motion.p className="mt-6 text-lg md:text-xl text-white/90" variants={itemVariants}>
+            <p className="mt-6 text-lg md:text-xl text-white/90">
               {t('subtitle')}
-            </motion.p>
+            </p>
 
-            <motion.div className="mt-8 flex flex-col sm:flex-row gap-4" variants={itemVariants}>
+            <div className="mt-8 flex flex-col sm:flex-row gap-4">
               <Button
                 color="primary"
                 variant="primary"
@@ -460,9 +452,9 @@ const HeroSection = memo(function HeroSection() {
               >
                 {t('exploreCourses')}
               </Button>
-            </motion.div>
+            </div>
 
-            <motion.div className="mt-10" variants={itemVariants}>
+            <div className="mt-10">
               <div className="flex items-center gap-3">
                 <div className="flex -space-x-2">
                   {['Alex M.', 'Sarah K.', 'John D.', 'Maria P.', 'Chris L.'].map((name, i) => (
@@ -481,10 +473,10 @@ const HeroSection = memo(function HeroSection() {
                   {t('learnersEnrolled')}
                 </div>
               </div>
-            </motion.div>
+            </div>
 
             {/* Tech badges/chips */}
-            <motion.div className="mt-8 flex flex-wrap gap-2" variants={itemVariants}>
+            <div className="mt-8 flex flex-wrap gap-2">
               {stats.topTechnologies.map((tech) => (
                 <span
                   key={tech}
@@ -494,27 +486,24 @@ const HeroSection = memo(function HeroSection() {
                   {tech}
                 </span>
               ))}
-            </motion.div>
+            </div>
           </div>
 
-          <motion.div
+          <div
             className="relative"
-            variants={itemVariants}
-            whileHover={{
-              scale: 1.03,
-              transition: { duration: 0.3 },
-            }}
           >
             <div className="absolute -inset-0.5 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-2xl blur-md opacity-75 animate-pulse" />
             <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-[color:var(--ai-card-bg)] to-[color:var(--ai-primary)]/20 border border-[color:var(--ai-card-border)]">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.1),transparent)] opacity-50" />{' '}
               <Image
-                src="https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2832&q=80"
+                src="https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80"
                 alt={t('imageAlt')}
-                className="w-full h-auto object-cover mix-blend-lighten opacity-90"
+                className="w-full h-auto object-cover mix-blend-lighten opacity-100"
                 width={600}
                 height={400}
                 priority
+                fetchPriority="high"
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
               {/* Futuristic overlay elements */}
               <div className="absolute inset-0 flex items-center justify-center">
@@ -600,8 +589,8 @@ const HeroSection = memo(function HeroSection() {
                 </p>
               </div>
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
 
       {/* Scroll indicator */}
