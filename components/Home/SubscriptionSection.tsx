@@ -29,23 +29,10 @@ export default function SubscriptionSection() {
   // Check if user has an active subscription
   const hasActiveSubscription = subscriptions && subscriptions.length > 0;
 
-  // Debug: Log products structure
-  console.log('=== SubscriptionSection DEBUG ===', {
-    productsCount: products?.length,
-    products: products?.map((p: any) => ({
-      id: p.id,
-      name: p.name,
-      metadata: p.metadata,
-      pricesCount: p.prices?.length,
-    }))
-  });
-
   // Find subscription product from products
   const subscriptionProduct = products?.find((p: any) =>
     p.metadata?.type === 'subscription' || p.name?.toLowerCase().includes('subscription')
   );
-
-  console.log('Found subscription product:', subscriptionProduct);
 
   // Get app name for filtering
   const appName = process.env.NEXT_PUBLIC_APP_NAME || 'cursuri';
@@ -53,14 +40,6 @@ export default function SubscriptionSection() {
   // Get monthly and yearly prices from the subscription product
   // Since the product already has the correct metadata, just filter by active status and interval
   const monthlyPrice = subscriptionProduct?.prices?.find((p: any) => {
-    console.log('SubscriptionSection - Checking monthly price:', {
-      priceId: p.id,
-      active: p.active,
-      interval: p.interval,
-      recurring: p.recurring,
-      metadata: p.metadata,
-    });
-
     const isActive = p.active !== false;
     const isMonthly = p.metadata?.interval === 'month' || p.recurring?.interval === 'month' || p.interval === 'month';
 
@@ -68,19 +47,11 @@ export default function SubscriptionSection() {
   });
 
   const yearlyPrice = subscriptionProduct?.prices?.find((p: any) => {
-    console.log('SubscriptionSection - Checking yearly price:', {
-      priceId: p.id,
-      active: p.active,
-      interval: p.interval,
-      recurring: p.recurring,
-      metadata: p.metadata,
-    });
-
     const isActive = p.active !== false;
     const isYearly = p.metadata?.interval === 'year' || p.recurring?.interval === 'year' || p.interval === 'year';
 
     return isActive && isYearly;
-  }); console.log('Found prices:', { monthlyPrice, yearlyPrice, appName });
+  });
 
   // Helper function to format price
   const formatPrice = (price: any) => {
