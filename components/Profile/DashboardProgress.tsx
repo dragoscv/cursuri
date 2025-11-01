@@ -202,6 +202,7 @@ export default function DashboardProgress({
                                     </div>
                                     <Progress
                                         value={courseCompletionPercentage}
+                                        aria-label={t('courseCompletion')}
                                         classNames={{
                                             track: "h-2 rounded-full",
                                             indicator: "bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-full",
@@ -220,6 +221,7 @@ export default function DashboardProgress({
                                     </div>
                                     <Progress
                                         value={lessonCompletionPercentage}
+                                        aria-label={t('lessonCompletion')}
                                         classNames={{
                                             track: "h-2 rounded-full",
                                             indicator: "bg-gradient-to-r from-[color:var(--ai-success)] to-[color:var(--ai-secondary)] rounded-full",
@@ -242,6 +244,7 @@ export default function DashboardProgress({
                                 </div>
                                 <Progress
                                     value={courseCompletionPercentage}
+                                    aria-label={t('courseCompletion')}
                                     classNames={{
                                         track: "h-2 rounded-full",
                                         indicator: "bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-full",
@@ -260,6 +263,7 @@ export default function DashboardProgress({
                                 </div>
                                 <Progress
                                     value={lessonCompletionPercentage}
+                                    aria-label={t('lessonCompletion')}
                                     classNames={{
                                         track: "h-2 rounded-full",
                                         indicator: "bg-gradient-to-r from-[color:var(--ai-success)] to-[color:var(--ai-secondary)] rounded-full",

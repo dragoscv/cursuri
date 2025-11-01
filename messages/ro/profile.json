@@ -40,6 +40,8 @@
   "changePassword": "Schimbare Parolă",
   "notifications": "Notificări",
   "preferences": "Preferințe",
+  "continueLearning": "Continuă Învățarea",
+  "browseCourses": "Explorează Cursurile",
   "appSettings": {
     "title": "Setări Aplicație",
     "saveSettings": "Salvează Setările",
@@ -132,6 +134,8 @@
     "completed": "Finalizate",
     "inProgress": "În Desfășurare"
   },
+  "continueLearning": "Continuă Învățarea",
+  "browseCourses": "Explorează Cursurile",
   "learningPathSection": {
     "title": "Cale de Învățare",
     "currentCourse": "Curs Curent",
