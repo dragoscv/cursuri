@@ -19,11 +19,11 @@ export default getRequestConfig(async () => {
     const cookieStore = await cookies();
     const localeCookie = cookieStore.get('locale');
 
-    // Fallback to English if cookie not set
-    const locale = localeCookie?.value || 'en';
+    // Fallback to Romanian if cookie not set
+    const locale = localeCookie?.value || 'ro';
 
     // Ensure valid locale (en or ro only)
-    const validLocale = locale === 'ro' ? 'ro' : 'en';
+    const validLocale = locale === 'en' ? 'en' : 'ro';
 
     // Load all domain translation files and merge them
     const domains = ['common', 'auth', 'courses', 'lessons', 'profile', 'admin', 'home', 'legal', 'about', 'contact', 'subscription'];

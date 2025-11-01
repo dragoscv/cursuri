@@ -397,5 +397,8 @@
   "draft": "Ciornă",
   "archive": "Arhivă",
   "noItemSelected": "Nicio categorie selectată",
-  "placeholder": "Placeholder componentă checkout"
+  "placeholder": "Placeholder componentă checkout",
+  "appLoader": {
+    "loadingYourExperience": "Se încarcă experiența ta"
+  }
 }

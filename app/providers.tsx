@@ -9,7 +9,7 @@ import AppLoader from '@/components/ui/AppLoader';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [messages, setMessages] = useState<Record<string, Record<string, string>> | null>(null);
-  const [locale, setLocale] = useState<string>('en');
+  const [locale, setLocale] = useState<string>('ro');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -18,9 +18,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       document.cookie
         .split('; ')
         .find((row) => row.startsWith('locale='))
-        ?.split('=')[1] || 'en';
+        ?.split('=')[1] || 'ro';
 
-    const validLocale = cookieLocale === 'ro' ? 'ro' : 'en';
+    const validLocale = cookieLocale === 'en' ? 'en' : 'ro';
     setLocale(validLocale);
 
     // Load all domain translation files and merge them
@@ -85,12 +85,12 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   }, []);
 
   if (!messages) {
-    return <AppLoader />;
+    return <AppLoader locale={locale} />;
   }
 
   return (
     <>
-      {isLoading && <AppLoader onLoadingComplete={() => setIsLoading(false)} />}
+      {isLoading && <AppLoader onLoadingComplete={() => setIsLoading(false)} locale={locale} />}
       <NextIntlClientProvider locale={locale} messages={messages}>
         <HeroUIProvider>
           <ToastProvider>

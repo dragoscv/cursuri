@@ -403,5 +403,8 @@
   "draft": "Draft",
   "archive": "Archive",
   "noItemSelected": "No category selected",
-  "placeholder": "Checkout component placeholder"
+  "placeholder": "Checkout component placeholder",
+  "appLoader": {
+    "loadingYourExperience": "Loading Your Experience"
+  }
 }

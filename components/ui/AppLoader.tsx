@@ -5,9 +5,18 @@ import { useEffect, useState } from 'react';
 
 interface AppLoaderProps {
     onLoadingComplete?: () => void;
+    locale?: string;
+    loadingText?: string;
 }
 
-export default function AppLoader({ onLoadingComplete }: AppLoaderProps) {
+export default function AppLoader({ onLoadingComplete, locale = 'ro', loadingText }: AppLoaderProps) {
+    // Default texts based on locale
+    const defaultTexts = {
+        en: 'Loading Your Experience',
+        ro: 'Se încarcă experiența ta'
+    };
+    const displayText = loadingText || defaultTexts[locale as keyof typeof defaultTexts] || defaultTexts.ro;
+
     const [progress, setProgress] = useState(0);
     const [isComplete, setIsComplete] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
@@ -139,7 +148,7 @@ export default function AppLoader({ onLoadingComplete }: AppLoaderProps) {
                             transition={{ delay: 0.3, duration: 0.6 }}
                             className="text-center space-y-4"
                         >
-                            <h2 className="text-2xl font-bold text-[color:var(--ai-foreground)]">Loading Your Experience</h2>
+                            <h2 className="text-2xl font-bold text-[color:var(--ai-foreground)]">{displayText}</h2>
 
                             {/* Progress bar */}
                             <div className="w-64 h-1.5 bg-[color:var(--ai-card-bg)]/50 border border-[color:var(--ai-card-border)] rounded-full overflow-hidden">
