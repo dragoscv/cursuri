@@ -155,6 +155,40 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
     [userPaidProducts]
   );
 
+  // Calculate total duration from lessons
+  const getCourseTotalDuration = useCallback(
+    (courseId: string) => {
+      if (!lessons || !lessons[courseId]) return null;
+
+      const courseLessons = Object.values(lessons[courseId] || {});
+      const totalDuration = courseLessons.reduce((total: number, lesson: any) => {
+        if (!lesson) return total;
+
+        const durationMins =
+          typeof lesson?.duration === 'number' && lesson.duration > 0
+            ? lesson.duration
+            : typeof lesson?.duration === 'string' &&
+              !isNaN(parseInt(lesson.duration, 10)) &&
+              parseInt(lesson.duration, 10) > 0
+              ? parseInt(lesson.duration, 10)
+              : 0;
+
+        return total + durationMins;
+      }, 0);
+
+      if (totalDuration === 0) return null;
+
+      const hours = Math.floor(totalDuration / 60);
+      const minutes = totalDuration % 60;
+
+      if (hours > 0) {
+        return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
+      }
+      return `${minutes}m`;
+    },
+    [lessons]
+  );
+
   // Calculate course completion percentage
   const getCourseCompletion = useCallback(
     (courseId: string) => {
@@ -213,7 +247,7 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
     } else {
       navigator.clipboard.writeText(shareUrl);
       // Optionally show a toast/alert
-      alert('Course link copied to clipboard!');
+      alert(t('course.linkCopied'));
     }
 
     // Track course share
@@ -224,9 +258,9 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
     return (
       <div className="text-center py-12">
         <h3 className="text-xl font-medium text-[color:var(--ai-foreground)]">
-          No courses found matching your criteria.
+          {t('status.noCourses')}
         </h3>
-        <p className="mt-2 text-[color:var(--ai-muted)]">Try adjusting your search or filters.</p>
+        <p className="mt-2 text-[color:var(--ai-muted)]">{t('status.tryAdjusting')}</p>
       </div>
     );
   }
@@ -237,6 +271,7 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
         const { amount, currency, priceId } = getCoursePrice(course);
         const purchased = isPurchased(course.id);
         const isLoading = loadingPayment && loadingCourseId === course.id;
+        const totalDuration = getCourseTotalDuration(course.id);
 
         // Mark top 3 as most popular
         const showPopularBadge = idx < 3;
@@ -260,7 +295,7 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
                   size="sm"
                   className="text-xs font-medium backdrop-blur-md bg-white/10 dark:bg-black/30 border border-white/20"
                 >
-                  {course.difficulty || 'Intermediate'}
+                  {course.difficulty || t('difficulty.intermediate')}
                 </Chip>
               </div>
               {/* Most Popular badge */}
@@ -315,6 +350,7 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
                 {/* Course image with fallback handling */}
                 <img
                   src={
+                    course.imageUrl ||
                     products?.find((product: any) => product.id === course.priceProduct?.id)
                       ?.images?.[0] || '/placeholder-course.svg'
                   }
@@ -329,23 +365,25 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
                 />
                 {/* Course info overlays */}
                 <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center z-20">
-                  <div className="bg-black/50 backdrop-blur-sm px-3 py-1 rounded-lg text-white text-xs flex items-center">
-                    <svg
-                      className="w-3.5 h-3.5 mr-1.5 text-[color:var(--ai-primary)]"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>{' '}
-                    <span>{course.duration || ''}</span>
-                  </div>
+                  {totalDuration && (
+                    <div className="bg-black/50 backdrop-blur-sm px-3 py-1 rounded-lg text-white text-xs flex items-center">
+                      <svg
+                        className="w-3.5 h-3.5 mr-1.5 text-[color:var(--ai-primary)]"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>{' '}
+                      <span>{totalDuration}</span>
+                    </div>
+                  )}
 
                   {course.lessonsCount !== undefined && (
                     <div className="bg-black/50 backdrop-blur-sm px-3 py-1 rounded-lg text-white text-xs flex items-center">
@@ -363,7 +401,7 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
                           d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
                         />
                       </svg>
-                      <span>{course.lessonsCount} lessons</span>
+                      <span>{course.lessonsCount} {t('course.lessons')}</span>
                     </div>
                   )}
                 </div>

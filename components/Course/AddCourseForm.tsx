@@ -2,4 +2,11 @@
 
 import AddCourse from './AddCourse';
 
-export default AddCourse;
+interface AddCourseFormProps {
+    onClose: () => void;
+    courseId?: string;
+}
+
+export default function AddCourseForm({ onClose, courseId }: AddCourseFormProps) {
+    return <AddCourse courseId={courseId} onClose={onClose} />;
+}

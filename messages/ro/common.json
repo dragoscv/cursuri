@@ -131,7 +131,18 @@
     "inProgress": "În Desfășurare",
     "notStarted": "Neînceput",
     "enrolled": "Înscris",
-    "courseRating": "Evaluare Curs"
+    "courseRating": "Evaluare Curs",
+    "noCourses": "Nu s-au găsit cursuri care să corespundă criteriilor tale.",
+    "tryAdjusting": "Încearcă să ajustezi căutarea sau filtrele."
+  },
+  "difficulty": {
+    "beginner": "Începător",
+    "intermediate": "Intermediar",
+    "advanced": "Avansat"
+  },
+  "course": {
+    "lessons": "lecții",
+    "linkCopied": "Link-ul cursului a fost copiat în clipboard!"
   },
   "courseActions": {
     "enroll": "Înscrie-te",

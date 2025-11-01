@@ -55,7 +55,7 @@ export const CourseHeader: React.FC<CourseHeaderProps> = ({ course }) => {
                         {extendedCourse.title || extendedCourse.name}
                     </h1>
 
-                    <p className="text-[color:var(--ai-muted)] max-w-2xl">{extendedCourse.description}</p>
+                    <p className="text-[color:var(--ai-muted)] line-clamp-3">{extendedCourse.description}</p>
                 </div>
 
                 {extendedCourse.rating && (

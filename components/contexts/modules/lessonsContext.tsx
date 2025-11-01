@@ -266,49 +266,68 @@ export const LessonsProvider: React.FC<LessonsProviderProps> = ({ children }) =>
             const lessonsCollection = collection(db, `courses/${courseId}/lessons`);
             const lessonsQuery = query(lessonsCollection, orderBy('order', 'asc'));
 
-            const unsubscribe = onSnapshot(lessonsQuery, (querySnapshot) => {
-                const lessonData: Record<string, Lesson> = {};
+            const unsubscribe = onSnapshot(
+                lessonsQuery,
+                (querySnapshot) => {
+                    const lessonData: Record<string, Lesson> = {};
 
-                if (querySnapshot.size === 0) {
-                    console.warn(`No lessons found for course: ${courseId}. This might be expected for new courses.`);
+                    if (querySnapshot.size === 0) {
+                        console.warn(`No lessons found for course: ${courseId}. This might be expected for new courses.`);
 
-                    // Even with no lessons, we should set the loading state to success
+                        // Even with no lessons, we should set the loading state to success
+                        dispatch({
+                            type: 'SET_LESSON_LOADING_STATE',
+                            payload: { courseId, status: 'success' }
+                        });
+
+                        // Initialize an empty object for this course to track that we've loaded it
+                        dispatch({
+                            type: 'INITIALIZE_COURSE_LESSONS',
+                            payload: { courseId }
+                        });
+                    }
+
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data() as Lesson;
+                        data.id = doc.id;
+                        lessonData[doc.id] = data;
+                    });
+
+                    // Update state with all lessons at once
+                    dispatch({
+                        type: 'SET_LESSONS_BATCH',
+                        payload: { courseId, lessons: lessonData }
+                    });
+
+                    // Set loading state to success
                     dispatch({
                         type: 'SET_LESSON_LOADING_STATE',
                         payload: { courseId, status: 'success' }
-                    });
+                    });                // Cache data if persist is enabled
+                    if (cacheOptions.persist) {
+                        setCachedData(cacheKey, lessonData);
+                    }
 
-                    // Initialize an empty object for this course to track that we've loaded it
-                    dispatch({
-                        type: 'INITIALIZE_COURSE_LESSONS',
-                        payload: { courseId }
-                    });
-                }
-
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data() as Lesson;
-                    data.id = doc.id;
-                    lessonData[doc.id] = data;
+                    // Mark request as no longer pending
+                    setRequestPending(cacheKey, false);
+                },
+                (error) => {
+                    // Handle permission errors gracefully (e.g., when user signs out)
+                    if (error.code === 'permission-denied') {
+                        console.log(`Lessons listener for ${courseId}: Permission denied (user signed out)`);
+                        dispatch({
+                            type: 'SET_LESSON_LOADING_STATE',
+                            payload: { courseId, status: 'idle' }
+                        });
+                    } else {
+                        console.error("Error in lessons listener:", error);
+                        dispatch({
+                            type: 'SET_LESSON_LOADING_STATE',
+                            payload: { courseId, status: 'error' }
+                        });
+                    }
+                    setRequestPending(cacheKey, false);
                 });
-
-                // Update state with all lessons at once
-                dispatch({
-                    type: 'SET_LESSONS_BATCH',
-                    payload: { courseId, lessons: lessonData }
-                });
-
-                // Set loading state to success
-                dispatch({
-                    type: 'SET_LESSON_LOADING_STATE',
-                    payload: { courseId, status: 'success' }
-                });                // Cache data if persist is enabled
-                if (cacheOptions.persist) {
-                    setCachedData(cacheKey, lessonData);
-                }
-
-                // Mark request as no longer pending
-                setRequestPending(cacheKey, false);
-            });
 
             // Return the unsubscribe function
             return unsubscribe;

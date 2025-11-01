@@ -387,6 +387,50 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
               </span>
             </div>
           </div>
+
+          {/* Instructor Section */}
+          {course.instructor && (
+            <>
+              <Divider className="my-6" />
+              <div>
+                <h4 className="text-sm font-semibold text-[color:var(--ai-foreground)] mb-4">
+                  Instructor
+                </h4>
+                <div className="flex items-start gap-3 p-4 rounded-lg bg-gradient-to-br from-[color:var(--ai-primary)]/5 to-[color:var(--ai-secondary)]/5 border border-[color:var(--ai-card-border)]">
+                  <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] flex items-center justify-center text-white font-bold flex-shrink-0">
+                    {typeof course.instructor !== 'string' && course.instructor.photoUrl ? (
+                      <img
+                        src={course.instructor.photoUrl}
+                        alt={typeof course.instructor !== 'string' ? course.instructor.name || 'Instructor' : 'Instructor'}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      typeof course.instructor !== 'string'
+                        ? (course.instructor.name?.charAt(0) || "I")
+                        : (typeof course.instructor === 'string' ? course.instructor.charAt(0) : "I")
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h5 className="text-[color:var(--ai-foreground)] font-medium text-sm">
+                      {typeof course.instructor !== 'string'
+                        ? course.instructor.name
+                        : course.instructor}
+                    </h5>
+                    {typeof course.instructor !== 'string' && course.instructor.title && (
+                      <p className="text-xs text-[color:var(--ai-muted)] mt-0.5">
+                        {course.instructor.title}
+                      </p>
+                    )}
+                    {typeof course.instructor !== 'string' && course.instructor.bio && (
+                      <p className="text-xs text-[color:var(--ai-muted)] mt-2 leading-relaxed line-clamp-3">
+                        {course.instructor.bio}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </>
     );
@@ -560,6 +604,50 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
             </div>
           </div>
         </div>
+
+        {/* Instructor Section */}
+        {course.instructor && (
+          <>
+            <Divider className="my-6" />
+            <div>
+              <h4 className="text-sm font-semibold text-[color:var(--ai-foreground)] mb-4">
+                Instructor
+              </h4>
+              <div className="flex items-start gap-3 p-4 rounded-lg bg-gradient-to-br from-[color:var(--ai-primary)]/5 to-[color:var(--ai-secondary)]/5 border border-[color:var(--ai-card-border)]">
+                <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] flex items-center justify-center text-white font-bold flex-shrink-0">
+                  {typeof course.instructor !== 'string' && course.instructor.photoUrl ? (
+                    <img
+                      src={course.instructor.photoUrl}
+                      alt={typeof course.instructor !== 'string' ? course.instructor.name || 'Instructor' : 'Instructor'}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    typeof course.instructor !== 'string'
+                      ? (course.instructor.name?.charAt(0) || "I")
+                      : (typeof course.instructor === 'string' ? course.instructor.charAt(0) : "I")
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h5 className="text-[color:var(--ai-foreground)] font-medium text-sm">
+                    {typeof course.instructor !== 'string'
+                      ? course.instructor.name
+                      : course.instructor}
+                  </h5>
+                  {typeof course.instructor !== 'string' && course.instructor.title && (
+                    <p className="text-xs text-[color:var(--ai-muted)] mt-0.5">
+                      {course.instructor.title}
+                    </p>
+                  )}
+                  {typeof course.instructor !== 'string' && course.instructor.bio && (
+                    <p className="text-xs text-[color:var(--ai-muted)] mt-2 leading-relaxed line-clamp-3">
+                      {course.instructor.bio}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </>
+        )}
 
         {/* Prerequisites notice */}
         {course.prerequisites && course.prerequisites.length > 0 && (

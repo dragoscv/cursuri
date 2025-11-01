@@ -14,20 +14,24 @@ const CourseOverview: React.FC<CourseOverviewProps> = ({ course }) => {
     const context = useContext(AppContext);
     const t = useTranslations('courses.overview');
 
-    // Sample benefits if not provided
-    const benefits = course.benefits || [
-        t('sampleBenefits.keyConceptsAndBestPractices'),
-        t('sampleBenefits.buildRealWorldProjects'),
-        t('sampleBenefits.modernDevelopmentTechniques'),
-        t('sampleBenefits.practicalSkills')
-    ];
+    // Sample benefits if not provided or empty
+    const benefits = (course.benefits && course.benefits.length > 0)
+        ? course.benefits
+        : [
+            t('sampleBenefits.keyConceptsAndBestPractices'),
+            t('sampleBenefits.buildRealWorldProjects'),
+            t('sampleBenefits.modernDevelopmentTechniques'),
+            t('sampleBenefits.practicalSkills')
+        ];
 
-    // Sample requirements if not provided
-    const requirements = course.requirements || [
-        t('sampleRequirements.basicProgramming'),
-        t('sampleRequirements.computerAndInternet'),
-        t('sampleRequirements.willingnessToLearn')
-    ];
+    // Sample requirements if not provided or empty
+    const requirements = (course.requirements && course.requirements.length > 0)
+        ? course.requirements
+        : [
+            t('sampleRequirements.basicProgramming'),
+            t('sampleRequirements.computerAndInternet'),
+            t('sampleRequirements.willingnessToLearn')
+        ];
 
     // Animation variants
     const containerVariants = {
@@ -227,62 +231,6 @@ const CourseOverview: React.FC<CourseOverviewProps> = ({ course }) => {
                 </motion.div>
             )}
 
-            {/* Course Instructor */}
-            {course.instructor && (
-                <motion.div
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
-                >
-                    <motion.div
-                        variants={itemVariants}
-                        className="border border-[color:var(--ai-card-border)] rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)] shadow-sm"
-                    >
-                        <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 border-b border-[color:var(--ai-card-border)]">
-                            <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
-                                <FiUser className="w-5 h-5 mr-2 text-[color:var(--ai-primary)]" />
-                                <span>{t('instructor')}</span>
-                            </h3>
-                        </div>
-
-                        <div className="p-4">
-                            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                                <div className="w-16 h-16 rounded-full overflow-hidden bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] flex items-center justify-center text-white font-bold text-xl">
-                                    {typeof course.instructor !== 'string' && course.instructor.photoUrl ? (
-                                        <img
-                                            src={course.instructor.photoUrl}
-                                            alt={typeof course.instructor !== 'string' ? course.instructor.name || 'Instructor' : 'Instructor'}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    ) : (
-                                        typeof course.instructor !== 'string'
-                                            ? (course.instructor.name?.charAt(0) || "I")
-                                            : (typeof course.instructor === 'string' ? course.instructor.charAt(0) : "I")
-                                    )}
-                                </div>
-
-                                <div>
-                                    <h4 className="text-[color:var(--ai-foreground)] font-medium">
-                                        {typeof course.instructor !== 'string'
-                                            ? course.instructor.name
-                                            : course.instructor}
-                                    </h4>
-                                    {typeof course.instructor !== 'string' && course.instructor.title && (
-                                        <p className="text-sm text-[color:var(--ai-muted)]">
-                                            {course.instructor.title}
-                                        </p>
-                                    )}
-                                    {typeof course.instructor !== 'string' && course.instructor.bio && (
-                                        <p className="text-sm text-[color:var(--ai-muted)] mt-2 leading-relaxed">
-                                            {course.instructor.bio}
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
-                </motion.div>
-            )}
         </div>
     );
 };

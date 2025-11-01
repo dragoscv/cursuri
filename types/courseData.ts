@@ -18,7 +18,8 @@ export interface CourseData {
     imageUrl?: string;
     metadata: {
         level: string;
-        category: string;
+        category?: string; // Legacy single category (optional for backward compatibility)
+        categories?: string[]; // New multiple categories array
         tags: string[];
         requirements: string[];
         objectives: string[];

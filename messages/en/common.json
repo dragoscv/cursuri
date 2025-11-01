@@ -131,7 +131,18 @@
     "inProgress": "In Progress",
     "notStarted": "Not Started",
     "enrolled": "Enrolled",
-    "courseRating": "Course Rating"
+    "courseRating": "Course Rating",
+    "noCourses": "No courses found matching your criteria.",
+    "tryAdjusting": "Try adjusting your search or filters."
+  },
+  "difficulty": {
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced"
+  },
+  "course": {
+    "lessons": "lessons",
+    "linkCopied": "Course link copied to clipboard!"
   },
   "courseActions": {
     "enroll": "Enroll",

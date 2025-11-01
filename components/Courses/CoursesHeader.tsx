@@ -9,7 +9,7 @@ export default function CoursesHeader() {
         {t('exploreTitle')}
       </h1>
       <p className="text-[color:var(--ai-muted)]">
-        Discover high-quality courses to advance your skills and knowledge.
+        {t('description')}
       </p>
     </div>
   );

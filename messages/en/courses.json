@@ -68,7 +68,8 @@
         "title": "Cutting-Edge AI Courses",
         "subtitle": "Master the technologies shaping our future with courses designed by AI experts for tomorrow's innovators.",
         "exploreTitle": "Explore Our Courses",
-        "exploreSubtitle": "Discover a wide range of courses to help you learn and grow"
+        "exploreSubtitle": "Discover a wide range of courses to help you learn and grow",
+        "description": "Discover high-quality courses to advance your skills and knowledge."
     },
     "loading": {
         "loadingCourses": "Loading courses...",

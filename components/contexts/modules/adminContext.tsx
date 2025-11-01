@@ -183,9 +183,21 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
       const reviewsRef = collection(db, 'userReviews');
       const q = query(reviewsRef, where('status', '==', 'pending'));
 
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        dispatch({ type: 'SET_PENDING_REVIEWS_COUNT', payload: snapshot.size });
-      });
+      const unsubscribe = onSnapshot(
+        q,
+        (snapshot) => {
+          dispatch({ type: 'SET_PENDING_REVIEWS_COUNT', payload: snapshot.size });
+        },
+        (error) => {
+          // Handle permission errors gracefully (e.g., when user loses admin status or signs out)
+          if (error.code === 'permission-denied') {
+            console.log('Admin reviews listener: Permission denied (admin status revoked or signed out)');
+            dispatch({ type: 'SET_PENDING_REVIEWS_COUNT', payload: 0 });
+          } else {
+            console.error('Error in admin reviews listener:', error);
+          }
+        }
+      );
 
       return unsubscribe;
     }

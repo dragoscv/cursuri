@@ -44,8 +44,9 @@ export default function AddCourse(props: AddCourseProps) {
     const [editMode, setEditMode] = useState(false);
     const [courseImage, setCourseImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [originalImageUrl, setOriginalImageUrl] = useState<string | null>(null);
     const [courseLevel, setCourseLevel] = useState("beginner");
-    const [courseCategory, setCourseCategory] = useState("");
+    const [courseCategories, setCourseCategories] = useState<string[]>([]);
     const [courseTags, setCourseTags] = useState<string[]>([]);
     const [courseRequirements, setCourseRequirements] = useState<string[]>([]);
     const [courseObjectives, setCourseObjectives] = useState<string[]>([]);
@@ -84,13 +85,12 @@ export default function AddCourse(props: AddCourseProps) {
             // Set image preview if there's an existing image
             if (course.imageUrl) {
                 setImagePreview(course.imageUrl);
+                setOriginalImageUrl(course.imageUrl);
             }
 
             // Set additional fields from metadata if they exist            
             // Set values from course properties
             setCourseLevel(course.level || "beginner");
-            // There's no 'category' property on the Course type, so we'll leave it empty or use a custom field
-            setCourseCategory("");
             setCourseTags(course.tags || []);
             setCourseRequirements(course.requirements || []);
             // Set course objectives (benefits in the Course type)
@@ -110,8 +110,16 @@ export default function AddCourse(props: AddCourseProps) {
             setEstimatedDuration(course.duration || "");
             setCourseStatus(course.status || "active");
 
-            // Set certificate and promo codes settings
+            // Set certificate and promo codes settings from metadata
             if (course.metadata) {
+                // Handle both old single category string and new array format
+                if (course.metadata.categories) {
+                    setCourseCategories(course.metadata.categories);
+                } else if (course.metadata.category) {
+                    setCourseCategories([course.metadata.category]);
+                } else {
+                    setCourseCategories([]);
+                }
                 setCertificateEnabled(course.metadata.certificateEnabled || false);
                 setAllowPromoCodes(course.metadata.allowPromoCodes || false);
             }
@@ -138,7 +146,7 @@ export default function AddCourse(props: AddCourseProps) {
                 tags: courseTags,
                 metadata: {
                     level: courseLevel,
-                    category: courseCategory,
+                    categories: courseCategories,
                     tags: courseTags,
                     requirements: courseRequirements,
                     objectives: courseObjectives,
@@ -168,7 +176,7 @@ export default function AddCourse(props: AddCourseProps) {
         }
     }, [
         products, courseName, courseDescription, coursePrice, repoUrl,
-        courseImage, courseLevel, courseCategory, courseTags,
+        courseImage, courseLevel, courseCategories, courseTags,
         courseRequirements, courseObjectives, coursePrerequisites, courseStatus, instructorName,
         estimatedDuration, certificateEnabled, allowPromoCodes, onClose
     ]);
@@ -188,9 +196,15 @@ export default function AddCourse(props: AddCourseProps) {
                 repoUrl: repoUrl,
                 status: courseStatus,
                 prerequisites: coursePrerequisites,
+                // Add top-level fields that match Course interface
+                level: courseLevel,
+                duration: estimatedDuration,
+                tags: courseTags,
+                requirements: courseRequirements,
+                benefits: courseObjectives,
                 metadata: {
                     level: courseLevel,
-                    category: courseCategory,
+                    categories: courseCategories,
                     tags: courseTags,
                     requirements: courseRequirements,
                     objectives: courseObjectives,
@@ -200,26 +214,46 @@ export default function AddCourse(props: AddCourseProps) {
                     allowPromoCodes: allowPromoCodes
                 },
                 updatedAt: new Date().toISOString()
-            };            // If a new image is selected, upload it first
+            };
+
+            // Only add instructor if it has a value (Firestore doesn't allow undefined)
+            if (instructorName) {
+                (updatedData as any).instructor = { name: instructorName };
+            }            // If a new image is selected, upload it first
             if (courseImage) {
                 const storageRef = ref(firebaseStorage, `courses/${courseId}/${courseImage.name}_${Date.now()}`);
                 const snapshot = await uploadBytes(storageRef, courseImage);
                 const downloadURL = await getDownloadURL(snapshot.ref);
                 (updatedData as CourseData).imageUrl = downloadURL;
+            } else if (originalImageUrl) {
+                // Preserve the original image URL if no new image was selected
+                (updatedData as CourseData).imageUrl = originalImageUrl;
             }
 
             // Update the course in Firestore
             await updateDoc(courseRef, updatedData);
             setLoading(false);
-            onClose();
+            // Don't call onClose() to stay on the same page after editing
+            // Show success toast to user
+            showToast({
+                type: 'success',
+                title: 'Success',
+                message: 'Course updated successfully!',
+                duration: 4000,
+            });
         } catch (error) {
             setLoading(false);
             console.error("Error updating course:", error);
-            alert("Failed to update course. Please try again.");
+            showToast({
+                type: 'error',
+                title: 'Error',
+                message: 'Failed to update course. Please try again.',
+                duration: 5000,
+            });
         }
     }, [
         courseId, courseName, courseDescription, coursePrice, repoUrl, products,
-        courseImage, courseLevel, courseCategory, courseTags,
+        courseImage, courseLevel, courseCategories, courseTags,
         courseRequirements, courseObjectives, coursePrerequisites, courseStatus, instructorName,
         estimatedDuration, certificateEnabled, allowPromoCodes, onClose
     ]);
@@ -242,6 +276,19 @@ export default function AddCourse(props: AddCourseProps) {
             };
             reader.readAsDataURL(selectedFile);
         }
+    };
+
+    // Handle adding new category
+    const handleAddCategory = () => {
+        if (currentCategory && !courseCategories.includes(currentCategory)) {
+            setCourseCategories([...courseCategories, currentCategory]);
+            setCurrentCategory('');
+        }
+    };
+
+    // Handle removing category
+    const handleRemoveCategory = (category: string) => {
+        setCourseCategories(courseCategories.filter(c => c !== category));
     };
 
     // Handle adding new tag
@@ -443,6 +490,7 @@ export default function AddCourse(props: AddCourseProps) {
                                         onRemoveImage={() => {
                                             setCourseImage(null);
                                             setImagePreview(null);
+                                            setOriginalImageUrl(null);
                                         }}
                                     />
                                 </div>
@@ -483,18 +531,20 @@ export default function AddCourse(props: AddCourseProps) {
                                         <FiFileText className="text-[color:var(--ai-primary)]" /> {tCourses('addCourse.category')}
                                     </label>
                                     <div className="flex flex-wrap gap-2 mb-3 min-h-[40px] p-2 rounded-lg border border-[color:var(--ai-card-border)]/50">
-                                        {courseCategory ? (
-                                            <Chip key={`category-${courseCategory}`}
-                                                onClose={() => setCourseCategory("")}
-                                                variant="flat"
-                                                color="primary"
-                                                className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 border-none"
-                                                classNames={{
-                                                    content: "font-medium"
-                                                }}
-                                            >
-                                                {courseCategory}
-                                            </Chip>
+                                        {courseCategories.length > 0 ? (
+                                            courseCategories.map((category) => (
+                                                <Chip key={`category-${category}`}
+                                                    onClose={() => handleRemoveCategory(category)}
+                                                    variant="flat"
+                                                    color="primary"
+                                                    className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 border-none"
+                                                    classNames={{
+                                                        content: "font-medium"
+                                                    }}
+                                                >
+                                                    {category}
+                                                </Chip>
+                                            ))
                                         ) : (
                                             <p className="text-sm text-[color:var(--ai-muted)] italic">{tCourses('addCourse.noCategorySelected')}</p>
                                         )}
@@ -506,8 +556,7 @@ export default function AddCourse(props: AddCourseProps) {
                                         onChange={(e: InputChangeEvent) => setCurrentCategory(e.target.value)}
                                         onKeyPress={(e: KeyboardEvent) => {
                                             if (e.key === 'Enter' && currentCategory) {
-                                                setCourseCategory(currentCategory);
-                                                setCurrentCategory('');
+                                                handleAddCategory();
                                             }
                                         }}
                                         className="bg-[color:var(--ai-card-bg)]/40"
@@ -522,12 +571,7 @@ export default function AddCourse(props: AddCourseProps) {
                                         </datalist>
                                         <Button
                                             color="primary"
-                                            onPress={() => {
-                                                if (currentCategory) {
-                                                    setCourseCategory(currentCategory);
-                                                    setCurrentCategory('');
-                                                }
-                                            }}
+                                            onPress={handleAddCategory}
                                             className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var,--ai-secondary)]"
                                         >
                                             {tCourses('addCourse.add')}
@@ -945,9 +989,11 @@ export default function AddCourse(props: AddCourseProps) {
                             </div>
                             <div className="bg-[color:var(--ai-card-bg)]/50 p-4 rounded-xl border border-[color:var(--ai-card-border)]/50">
                                 <h3 className="text-sm font-medium text-[color:var(--ai-muted)] mb-1">{tCourses('addCourse.category')}</h3>
-                                <p className="font-medium text-[color:var(--ai-foreground)]">{courseCategory || tCourses('addCourse.notSpecified')}</p>
+                                <p className="font-medium text-[color:var(--ai-foreground)]">
+                                    {courseCategories.length > 0 ? courseCategories.join(', ') : tCourses('addCourse.notSpecified')}
+                                </p>
                             </div>
-                            <div className="bg-[color:var(--ai-card-bg)]/50 p-4 rounded-xl border border-[color:var,--ai-card-border)]/50">
+                            <div className="bg-[color:var(--ai-card-bg)]/50 p-4 rounded-xl border border-[color:var,--ai-card-border)]/50">                           <h3 className="text-sm font-medium text-[color:var(--ai-muted)] mb-1">{tCourses('addCourse.status')}</h3>
                                 <h3 className="text-sm font-medium text-[color:var(--ai-muted)] mb-1">{tCourses('addCourse.status')}</h3>
                                 <Chip
                                     color={courseStatus === "active" ? "success" : courseStatus === "draft" ? "warning" : "default"}

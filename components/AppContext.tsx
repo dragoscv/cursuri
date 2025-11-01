@@ -405,58 +405,78 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         const db = getFirestore(firebaseApp);
         const lessonsCollection = collection(db, `courses/${courseId}/lessons`);
         const lessonsQuery = query(lessonsCollection); // Removed status filter to match server implementation
-        const unsubscribe = onSnapshot(lessonsQuery, (querySnapshot) => {
-          const lessonData: Record<string, Lesson> = {};
+        const unsubscribe = onSnapshot(
+          lessonsQuery,
+          (querySnapshot) => {
+            const lessonData: Record<string, Lesson> = {};
 
-          if (querySnapshot.size === 0) {
-            console.warn(
-              `No lessons found for course: ${courseId}. This might be expected for new courses.`
-            );
+            if (querySnapshot.size === 0) {
+              console.warn(
+                `No lessons found for course: ${courseId}. This might be expected for new courses.`
+              );
 
-            // Even with no lessons, we should set the loading state to success
+              // Even with no lessons, we should set the loading state to success
+              dispatch({
+                type: 'SET_LESSON_LOADING_STATE',
+                payload: { courseId, status: 'success' },
+              });
+
+              // Initialize an empty object for this course to track that we've loaded it
+              dispatch({
+                type: 'INITIALIZE_COURSE_LESSONS',
+                payload: { courseId },
+              });
+            }
+
+            querySnapshot.forEach((doc) => {
+              const data = doc.data();
+              data.id = doc.id;
+              lessonData[doc.id] = data as Lesson;
+
+              dispatch({
+                type: 'SET_LESSONS',
+                payload: { courseId, lessonId: doc.id, lesson: data },
+              });
+            });
+
+            // Log all lesson IDs for debugging
+            const lessonIds = Object.keys(lessonData);
+            console.log(`Lesson IDs for course ${courseId}:`, lessonIds);
+
+            // Set loading state to success
             dispatch({
               type: 'SET_LESSON_LOADING_STATE',
               payload: { courseId, status: 'success' },
             });
 
-            // Initialize an empty object for this course to track that we've loaded it
-            dispatch({
-              type: 'INITIALIZE_COURSE_LESSONS',
-              payload: { courseId },
-            });
+            // Cache data if persist is enabled
+            if (cacheOptions.persist) {
+              const cacheEntry = {
+                data: lessonData,
+                metadata: generateCacheMetadata('success', cacheOptions.ttl),
+              };
+              saveToLocalStorage(cacheKey, cacheEntry.data, cacheEntry.metadata);
+            } // Mark request as no longer pending
+            setRequestPending(cacheKey, false);
+          },
+          (error) => {
+            // Handle permission errors gracefully (e.g., when user signs out)
+            if (error.code === 'permission-denied') {
+              console.log(`Lessons listener for ${courseId}: Permission denied (user signed out)`);
+              dispatch({
+                type: 'SET_LESSON_LOADING_STATE',
+                payload: { courseId, status: 'idle' },
+              });
+            } else {
+              console.error('Error in lessons listener:', error);
+              dispatch({
+                type: 'SET_LESSON_LOADING_STATE',
+                payload: { courseId, status: 'error' },
+              });
+            }
+            setRequestPending(cacheKey, false);
           }
-
-          querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            data.id = doc.id;
-            lessonData[doc.id] = data as Lesson;
-
-            dispatch({
-              type: 'SET_LESSONS',
-              payload: { courseId, lessonId: doc.id, lesson: data },
-            });
-          });
-
-          // Log all lesson IDs for debugging
-          const lessonIds = Object.keys(lessonData);
-          console.log(`Lesson IDs for course ${courseId}:`, lessonIds);
-
-          // Set loading state to success
-          dispatch({
-            type: 'SET_LESSON_LOADING_STATE',
-            payload: { courseId, status: 'success' },
-          });
-
-          // Cache data if persist is enabled
-          if (cacheOptions.persist) {
-            const cacheEntry = {
-              data: lessonData,
-              metadata: generateCacheMetadata('success', cacheOptions.ttl),
-            };
-            saveToLocalStorage(cacheKey, cacheEntry.data, cacheEntry.metadata);
-          } // Mark request as no longer pending
-          setRequestPending(cacheKey, false);
-        });
+        );
 
         // Return the unsubscribe function
         return () => {
@@ -570,13 +590,20 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             setRequestPending(cacheKey, false);
           },
           (error) => {
-            console.error('Error fetching reviews:', error);
-
-            // Set loading state to error
-            dispatch({
-              type: 'SET_REVIEW_LOADING_STATE',
-              payload: { courseId, status: 'error' },
-            });
+            // Handle permission errors gracefully (e.g., when user signs out)
+            if (error.code === 'permission-denied') {
+              console.log(`Reviews listener for ${courseId}: Permission denied (user signed out)`);
+              dispatch({
+                type: 'SET_REVIEW_LOADING_STATE',
+                payload: { courseId, status: 'idle' },
+              });
+            } else {
+              console.error('Error fetching reviews:', error);
+              dispatch({
+                type: 'SET_REVIEW_LOADING_STATE',
+                payload: { courseId, status: 'error' },
+              });
+            }
 
             // Mark request as no longer pending
             setRequestPending(cacheKey, false);
@@ -695,28 +722,40 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
       const q = query(progressRef);
 
       // Explicitly type this as a Firebase Unsubscribe function
-      const unsubscribe: Unsubscribe = onSnapshot(q, (querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          const data = doc.data() as UserLessonProgress;
-          const { courseId, lessonId } = data;
+      const unsubscribe: Unsubscribe = onSnapshot(
+        q,
+        (querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            const data = doc.data() as UserLessonProgress;
+            const { courseId, lessonId } = data;
 
-          dispatch({
-            type: 'SET_LESSON_PROGRESS',
-            payload: {
-              courseId,
-              lessonId,
-              progress: data,
-            },
+            dispatch({
+              type: 'SET_LESSON_PROGRESS',
+              payload: {
+                courseId,
+                lessonId,
+                progress: data,
+              },
+            });
           });
-        });
-      });
+        },
+        (error) => {
+          // Handle permission errors gracefully (e.g., when user signs out)
+          if (error.code === 'permission-denied') {
+            console.log('Lesson progress listener: Permission denied (user signed out)');
+            // Lesson progress will be cleared when user state becomes null
+          } else {
+            console.error('Error fetching lesson progress:', error);
+          }
+        }
+      );
 
       // Since this is an async function, we need to return a Promise that resolves to the unsubscribe function
       return Promise.resolve(() => {
         unsubscribe();
       });
     } catch (error) {
-      console.error('Error fetching lesson progress:', error);
+      console.error('Error setting up lesson progress listener:', error);
       return Promise.resolve(() => {
         /* No cleanup needed in error case */
       }); // Return a Promise that resolves to a no-op function in case of error
@@ -2032,15 +2071,27 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
     if (user) {
       const collectionRef = collection(firestoreDB, `customers/${user.uid}/payments`);
       const q = query(collectionRef);
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const userPaidProducts: UserPaidProduct[] = [];
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          data.id = doc.id;
-          if (data.status === 'succeeded') userPaidProducts.push(data as UserPaidProduct);
-        });
-        dispatch({ type: 'SET_USER_PAID_PRODUCTS', payload: userPaidProducts });
-      });
+      const unsubscribe = onSnapshot(
+        q,
+        (querySnapshot) => {
+          const userPaidProducts: UserPaidProduct[] = [];
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            data.id = doc.id;
+            if (data.status === 'succeeded') userPaidProducts.push(data as UserPaidProduct);
+          });
+          dispatch({ type: 'SET_USER_PAID_PRODUCTS', payload: userPaidProducts });
+        },
+        (error) => {
+          // Handle permission errors gracefully (e.g., when user signs out)
+          if (error.code === 'permission-denied') {
+            console.log('Payments listener: Permission denied (user signed out)');
+            dispatch({ type: 'SET_USER_PAID_PRODUCTS', payload: [] });
+          } else {
+            console.error('Error in payments listener:', error);
+          }
+        }
+      );
       // Properly type the unsubscribe function to avoid type errors
       return () => {
         if (typeof unsubscribe === 'function') {
@@ -2053,7 +2104,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         /* No cleanup needed when user is null */
       };
     }
-  }, [user]); // Fetch bookmarks and wishlist on login
+  }, [user, dispatch]); // Fetch bookmarks and wishlist on login
   useEffect(() => {
     if (user) {
       getBookmarkedLessons({ persist: true, ttl: 30 * 60 * 1000 }); // Cache for 30 minutes

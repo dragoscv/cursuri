@@ -16,12 +16,12 @@ export default function CourseImageField({ imagePreview, onImageChange, onRemove
                             alt="Course preview"
                             className="w-full h-48 object-cover rounded-lg shadow-md"
                         />
-                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all rounded-lg flex items-center justify-center">
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all rounded-lg pointer-events-none">
                             <Button
                                 color="danger"
                                 variant="flat"
                                 size="sm"
-                                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-auto"
                                 onPress={onRemoveImage}
                             >
                                 Remove
