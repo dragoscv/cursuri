@@ -118,12 +118,12 @@ const Progress = forwardRef<HTMLDivElement, ProgressProps>((props, ref) => {
 
   // Color classes for indicator
   const colorClasses: Record<string, string> = {
-    default: 'bg-[color:var(--ai-muted)]',
-    primary: 'bg-[color:var(--ai-primary)]',
-    secondary: 'bg-[color:var(--ai-secondary)]',
-    success: 'bg-[color:var(--ai-success)]',
-    warning: 'bg-[color:var(--ai-warning)]',
-    danger: 'bg-[color:var(--ai-error)]',
+    default: 'bg-gray-500',
+    primary: 'bg-blue-500',
+    secondary: 'bg-purple-500',
+    success: 'bg-green-500',
+    warning: 'bg-yellow-500',
+    danger: 'bg-red-500',
   };
 
   return (
@@ -133,7 +133,7 @@ const Progress = forwardRef<HTMLDivElement, ProgressProps>((props, ref) => {
       {...rest}
     >
       <div
-        className={`w-full ${sizeClasses[size]} ${radiusClasses[radius]} bg-[color:var(--ai-card-border)] dark:bg-[color:var(--ai-card-border)] border border-[color:var(--ai-card-border)] overflow-hidden ${classNames.track || ''}`}
+        className={`w-full ${sizeClasses[size]} ${radiusClasses[radius]} bg-gray-200 dark:bg-gray-700 border border-[color:var(--ai-card-border)] overflow-hidden ${classNames.track || ''}`}
       >
         <div
           className={`h-full ${radiusClasses[radius]} ${colorClasses[color]} transition-all duration-300 ease-in-out ${classNames.indicator || ''}`}
