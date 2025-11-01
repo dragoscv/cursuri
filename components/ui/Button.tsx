@@ -102,7 +102,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     // Only intercept event handling if we have an onClick to convert
     // Otherwise, let everything pass through naturally for components like DropdownTrigger
     let finalOnPress: HeroButtonProps['onPress'] | undefined;
-    
+
     if (onClick && !onPress) {
         // Convert onClick to onPress
         finalOnPress = (e: any) => {
@@ -110,8 +110,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
                 ...e,
                 target: e?.target || e?.currentTarget || {},
                 currentTarget: e?.currentTarget || e?.target || {},
-                preventDefault: e?.preventDefault || (() => {}),
-                stopPropagation: e?.stopPropagation || (() => {}),
+                preventDefault: e?.preventDefault || (() => { }),
+                stopPropagation: e?.stopPropagation || (() => { }),
                 nativeEvent: e,
             } as any;
             onClick(syntheticEvent);
@@ -194,12 +194,12 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
         className,
         ...rest,
     };
-    
+
     // Only add onPress if we have a finalOnPress (for onClick conversion)
     if (finalOnPress) {
         buttonProps.onPress = finalOnPress;
     }
-    
+
     return (
         <HeroButton {...buttonProps}>
             {isLoading && loadingText ? loadingText : children}
