@@ -249,7 +249,6 @@ export async function initializeAdminSystem(): Promise<void> {
         const querySnapshot = await getDocs(adminQuery);
 
         if (querySnapshot.empty) {
-            console.log('No super admin found. Please create one through the admin interface.');
             // Note: Super admin creation should be done through secure admin interface
             // or server-side initialization scripts
         }

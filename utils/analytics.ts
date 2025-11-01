@@ -161,14 +161,6 @@ export const logCoursePurchase = (
     currency: string = 'USD',
     transactionId: string
 ) => {
-    console.log('[Analytics] Preparing course purchase event:', {
-        courseId,
-        courseName,
-        price,
-        currency,
-        transactionId
-    });
-
     logAnalyticsEvent('purchase', {
         transaction_id: transactionId,
         value: price,
@@ -184,8 +176,6 @@ export const logCoursePurchase = (
         }],
         payment_type: 'one_time',
     });
-
-    console.log('[Analytics] Course purchase event sent');
 };
 
 /**
@@ -319,14 +309,6 @@ export const logSubscriptionPurchase = (
     interval: string,
     transactionId: string
 ) => {
-    console.log('[Analytics] Preparing subscription purchase event:', {
-        planName,
-        price,
-        currency,
-        interval,
-        transactionId
-    });
-
     logAnalyticsEvent('purchase', {
         transaction_id: transactionId,
         value: price,
@@ -347,8 +329,6 @@ export const logSubscriptionPurchase = (
         subscription_interval: interval,
         payment_type: 'subscription',
     });
-
-    console.log('[Analytics] Subscription purchase event sent');
 };
 
 /**

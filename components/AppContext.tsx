@@ -1566,8 +1566,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
           updatedAt: Timestamp.now()
         });
       }
-
-      console.log(`Login streak updated: ${loginStreak} days`);
     } catch (error) {
       // Fail-open: Don't break auth flow if streak tracking fails
       console.error('Login streak tracking failed (non-critical):', error);
@@ -1614,13 +1612,12 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
           const {
             getUserProfile,
             createOrUpdateUserProfile,
-            migrateHardcodedAdmin,
             isAdmin,
             UserRole,
           } = await import('../utils/firebase/adminAuth');
 
-          // Check if this is the hardcoded admin that needs migration
-          let userProfile = await migrateHardcodedAdmin(currentUser);
+          // Get or create user profile
+          let userProfile = await getUserProfile(currentUser.uid);
 
           // If not migrated admin, get or create regular profile
           if (!userProfile) {

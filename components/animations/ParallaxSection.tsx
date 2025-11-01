@@ -26,7 +26,7 @@ export default function ParallaxSection({
     overlayColor = '#000',
     overlayOpacity = 0.5,
 }: ParallaxSectionProps) {
-    const ref = useRef(null);
+    const ref = useRef<HTMLElement>(null);
     const { scrollYProgress } = useScroll({
         target: ref,
         offset: ['start end', 'end start']
@@ -36,40 +36,27 @@ export default function ParallaxSection({
     const yValue = direction === 'up' ? speed * 100 : -speed * 100;
     const y = useTransform(scrollYProgress, [0, 1], [0, yValue]);
 
-    // Create styles
-    const sectionStyle = {
-        position: 'relative',
-        overflow: 'hidden',
-        backgroundColor: bgColor,
-    } as React.CSSProperties;
-
-    const backgroundStyle = {
-        position: 'absolute',
-        inset: '-20%',
-        backgroundImage: bgImage ? `url(${bgImage})` : 'none',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        zIndex: 0,
-    } as React.CSSProperties;
-
     const overlayStyle = overlay ? {
-        position: 'absolute',
+        position: 'absolute' as const,
         inset: 0,
         backgroundColor: overlayColor,
         opacity: overlayOpacity,
         zIndex: 1,
     } as React.CSSProperties : {};
 
-    const contentStyle = {
-        position: 'relative',
-        zIndex: 2,
-    } as React.CSSProperties;
-
     return (
-        <section ref={ref} className={className} style={sectionStyle}>
-            <motion.div style={{ ...backgroundStyle, y }} />
+        <section ref={ref} className={`relative overflow-hidden ${className}`} style={{ backgroundColor: bgColor }}>
+            <motion.div
+                className="absolute inset-0"
+                style={{
+                    backgroundImage: bgImage ? `url(${bgImage})` : 'none',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    y
+                }}
+            />
             {overlay && <div style={overlayStyle} />}
-            <div style={contentStyle}>{children}</div>
+            <div className="relative z-10">{children}</div>
         </section>
     );
 }

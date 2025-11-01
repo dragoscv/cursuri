@@ -102,7 +102,6 @@ async function generateCaptionsFromAudio(
 ): Promise<{ transcription: string; captions: string }> {
   // This is where you would integrate with a speech service like Azure Speech or Google Speech-to-Text
   // Language parameter will be used for speech recognition configuration
-  console.log(`Processing audio with language: ${language}`);
 
   // For Azure Speech Service:
   // const speechConfig = SpeechConfig.fromSubscription(

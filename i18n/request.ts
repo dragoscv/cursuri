@@ -33,15 +33,6 @@ export default getRequestConfig(async () => {
         try {
             const domainMessages = await import(`../messages/${validLocale}/${domain}.json`);
             messages[domain] = domainMessages.default;
-            if (domain === 'subscription') {
-                console.log(`[i18n] Loaded subscription for ${validLocale}:`, {
-                    hasDefault: !!domainMessages.default,
-                    keys: Object.keys(domainMessages.default || domainMessages),
-                    hasPlans: !!(domainMessages.default?.plans || domainMessages.plans),
-                    hasBenefits: !!(domainMessages.default?.benefits || domainMessages.benefits),
-                    hasFaq: !!(domainMessages.default?.faq || domainMessages.faq)
-                });
-            }
         } catch (error) {
             console.warn(`Warning: Could not load ${domain}.json for locale ${validLocale}`, error);
         }

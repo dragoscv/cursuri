@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function Home() {
   return (
-    <main className="flex flex-col items-center justify-start w-full">
+    <main className="relative flex flex-col items-center justify-start w-full">
       {/* Hero section with animated background */}
       <HeroSection />
 

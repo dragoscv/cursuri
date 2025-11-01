@@ -24,7 +24,6 @@ export default function AdminLessonsListPage() {
     const fetchLessons = async () => {
       try {
         setIsLoading(true);
-        console.log(`[AdminLessonsListPage] Fetching lessons for course: ${courseId}`);
 
         const db = getFirestore(firebaseApp);
         const lessonsCollection = collection(db, `courses/${courseId}/lessons`);
@@ -35,7 +34,6 @@ export default function AdminLessonsListPage() {
           ...doc.data(),
         }));
 
-        console.log(`[AdminLessonsListPage] Found ${lessonsData.length} lessons:`, lessonsData);
         setLessons(lessonsData);
       } catch (error) {
         console.error('[AdminLessonsListPage] Error fetching lessons:', error);
@@ -71,20 +69,10 @@ export default function AdminLessonsListPage() {
           throw new Error('No authenticated user');
         }
 
-        console.log('[AdminLessonsListPage] Current user:', {
-          uid: currentUser.uid,
-          email: currentUser.email,
-        });
-
         // Check user role from Firestore
         const db = getFirestore(firebaseApp);
         const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
         const userData = userDoc.data();
-
-        console.log('[AdminLessonsListPage] User data:', {
-          role: userData?.role,
-          isActive: userData?.isActive,
-        });
 
         if (!userData?.role || !['admin', 'super_admin'].includes(userData.role)) {
           throw new Error(`Insufficient permissions. Current role: ${userData?.role || 'none'}`);

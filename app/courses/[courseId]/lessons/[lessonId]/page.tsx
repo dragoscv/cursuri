@@ -25,8 +25,6 @@ export async function generateMetadata({
     const courseId = String(resolvedParams.courseId);
     const lessonId = String(resolvedParams.lessonId);
 
-    console.log('[generateMetadata] Resolved params - courseId:', courseId, 'lessonId:', lessonId);
-
     // Fetch course and lesson data
     const course = (await getCourseById(courseId)) as Course;
     const lesson = (await getLessonById(courseId, lessonId)) as Lesson;
@@ -86,8 +84,6 @@ export default async function Page({ params }: PageParams<{ courseId: string; le
     const courseId = String(resolvedParams.courseId);
     const lessonId = String(resolvedParams.lessonId);
 
-    console.log('Extracted courseId:', courseId, 'lessonId:', lessonId);
-
     // Get course data
     const course = (await getCourseById(courseId)) as Course;
 
@@ -100,17 +96,13 @@ export default async function Page({ params }: PageParams<{ courseId: string; le
 
     // If lesson not found on first try, attempt to load all lessons to see if it's among them
     if (!lesson) {
-      console.log('Lesson not found, trying to load all course lessons');
-
       // Load all course lessons
       const allLessons = await getCourseLessons(courseId);
 
       // Check if our target lesson is among them
       if (allLessons && allLessons[lessonId]) {
-        console.log('Found lesson in course lessons collection');
         lesson = allLessons[lessonId] as Lesson;
       } else {
-        console.log('No such lesson exists even after loading all lessons!');
         return <LessonNotFound courseId={courseId} lessonId={lessonId} courseExists={true} />;
       }
     }
@@ -129,7 +121,6 @@ export default async function Page({ params }: PageParams<{ courseId: string; le
     if (isRestrictedLesson) {
       // For restricted lessons, render minimal server-side content
       // ClientLessonWrapper will check authentication and show content to authorized users
-      console.log(`Lesson ${lessonId} is restricted, using client-side access control`);
 
       // Return minimal server component that delegates to client
       // No structured data for paid content to prevent indexing
@@ -222,7 +213,7 @@ export default async function Page({ params }: PageParams<{ courseId: string; le
     console.error('Error rendering lesson page:', error); // Fallback if data fetch fails - ensure we pass resolved params
     try {
       // Get params again since we might be in the error catch block
-      console.log('Using fallback path'); // Handle params safely in the fallback path
+      // Handle params safely in the fallback path
       const resolvedParamsFallback = 'then' in params ? await params : params;
       const courseIdFallback = resolvedParamsFallback
         ? String(resolvedParamsFallback.courseId)
@@ -230,8 +221,6 @@ export default async function Page({ params }: PageParams<{ courseId: string; le
       const lessonIdFallback = resolvedParamsFallback
         ? String(resolvedParamsFallback.lessonId)
         : '';
-
-      console.log('Fallback params - courseId:', courseIdFallback, 'lessonId:', lessonIdFallback);
 
       // First check if the course exists
       const courseFallback = await getCourseById(courseIdFallback);
@@ -256,7 +245,7 @@ export default async function Page({ params }: PageParams<{ courseId: string; le
       const lessonExists = await getLessonById(courseIdFallback, lessonIdFallback);
 
       if (!lessonExists) {
-        console.log('No such lesson exists in fallback path!');
+        const t = await getTranslations('lessons');
         const t = await getTranslations('lessons');
         // Return a consistent error message with debugging information
         return (

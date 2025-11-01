@@ -8,7 +8,7 @@ import AnimatedParticles from './AnimatedParticles'
 import { statisticsData } from './statsData'
 
 export default function StatisticsSection() {
-    const ref = React.useRef(null)
+    const ref = React.useRef<HTMLElement>(null)
     const { scrollYProgress } = useScroll({
         target: ref,
         offset: ["start end", "end start"]
@@ -28,7 +28,7 @@ export default function StatisticsSection() {
     }
 
     return (
-        <div ref={ref} className="relative py-16 md:py-20 overflow-hidden">
+        <section ref={ref} className="relative py-16 md:py-20 overflow-hidden">
             {/* Animated gradient background */}
             <motion.div
                 className="absolute inset-0 bg-gradient-to-br from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)]"
@@ -77,6 +77,6 @@ export default function StatisticsSection() {
                     ))}
                 </motion.div>
             </div>
-        </div>
+        </section>
     )
 }

@@ -31,10 +31,6 @@ export async function GET(request: NextRequest) {
 
     // Validate required parameters
     if (!courseId || !lessonId) {
-      // Log for debugging but this is expected behavior for malformed requests
-      console.log(
-        `Sync-lesson API: Missing required parameters. courseId: ${courseId}, lessonId: ${lessonId}`
-      );
       return NextResponse.json(
         {
           error: 'Missing required parameters',
@@ -46,9 +42,6 @@ export async function GET(request: NextRequest) {
 
     // Validate parameter format (basic validation)
     if (courseId.length < 10 || lessonId.length < 10) {
-      console.log(
-        `Sync-lesson API: Invalid parameter format. courseId: ${courseId}, lessonId: ${lessonId}`
-      );
       return NextResponse.json(
         {
           error: 'Invalid parameter format',
@@ -63,18 +56,11 @@ export async function GET(request: NextRequest) {
 
     // If not found, load all lessons for the course
     if (!lesson) {
-      console.log(
-        `Sync-lesson API: Lesson ${lessonId} not found directly. Loading all course lessons...`
-      );
       const allLessons = await getCourseLessons(courseId);
 
       // Check if the lesson exists in the returned collection
       if (allLessons[lessonId]) {
         lesson = allLessons[lessonId];
-        console.log('Sync-lesson API: Found lesson in complete course lessons');
-      } else {
-        // This is expected behavior for non-existent lessons
-        console.log(`Sync-lesson API: Lesson ${lessonId} does not exist in course ${courseId}`);
       }
     }
 

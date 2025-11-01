@@ -96,7 +96,7 @@ const RecommendedCoursesSection = React.memo(function RecommendedCoursesSection(
           {t('title')}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {recommendedCourses.map((course) => {
+          {recommendedCourses.map((course, index) => {
             const { amount, currency } = getCoursePrice(course);
             return (
               <div
@@ -111,6 +111,7 @@ const RecommendedCoursesSection = React.memo(function RecommendedCoursesSection(
                     src={course.imageUrl || '/placeholder-course.svg'}
                     alt={course.name}
                     fill
+                    priority={index < 3}
                     className="object-cover transition-transform duration-500 hover:scale-105"
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />

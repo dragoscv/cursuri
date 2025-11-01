@@ -19,8 +19,6 @@ export default function EditLessonPage() {
   const handleSave = () => {
     // Refresh the form to show updated data
     setRefreshKey((prev) => prev + 1);
-    // Optionally show a success message
-    console.log('Lesson updated successfully, staying on page');
   };
 
   return (

@@ -36,40 +36,19 @@ export default function LessonsPage(props: LessonsPageProps) {
   const courseLessons = lessons[courseId] ? Object.values(lessons[courseId]) : [];
 
   useEffect(() => {
-    console.log('[LessonsPage] useEffect triggered', {
-      courseId,
-      hasCourseLessons: !!courseLessons && courseLessons.length > 0,
-      hasLessonProgress: !!lessonProgress,
-      hasCourseProgress: !!lessonProgress?.[courseId],
-      courseProgressKeys: lessonProgress?.[courseId] ? Object.keys(lessonProgress[courseId]) : [],
-    });
-
     // Get completed lessons from lessonProgress in context
     if (courseLessons && lessonProgress && lessonProgress[courseId]) {
       const completed = courseLessons.reduce((result: Record<string, boolean>, lesson: Lesson) => {
         const progress = lessonProgress[courseId]?.[lesson.id];
         const isComplete = progress?.isCompleted === true;
 
-        console.log(`[LessonsPage] Lesson ${lesson.id} (${lesson.name}):`, {
-          hasProgress: !!progress,
-          isCompleted: progress?.isCompleted,
-          isComplete,
-        });
-
         result[lesson.id] = isComplete;
         return result;
       }, {});
 
-      console.log('[LessonsPage] Completed lessons:', {
-        completedLessons: completed,
-        completedCount: Object.values(completed).filter((v) => v === true).length,
-        totalCount: courseLessons.length,
-      });
-
       setCompletedLessons(completed);
       setIsLoading(false);
     } else if (courseLessons) {
-      console.log('[LessonsPage] No progress data, setting empty completed lessons');
       setCompletedLessons({});
       setIsLoading(false);
     }
@@ -78,8 +57,8 @@ export default function LessonsPage(props: LessonsPageProps) {
   // Check if the user has purchased this course
   const hasPurchased = userPurchases
     ? Object.values(userPurchases).some(
-        (purchase: UserPaidProduct) => purchase.metadata?.courseId === courseId
-      )
+      (purchase: UserPaidProduct) => purchase.metadata?.courseId === courseId
+    )
     : false;
 
   if (!course) {

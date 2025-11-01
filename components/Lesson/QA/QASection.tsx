@@ -30,11 +30,8 @@ function QASection({ lessonId, courseId }: QAProps) {
   // Fetch questions for this lesson from Firestore
   useEffect(() => {
     if (!lessonId || !courseId) {
-      console.log('[QASection] Missing lessonId or courseId:', { lessonId, courseId });
       return;
     }
-
-    console.log('[QASection] Setting up questions listener for:', { lessonId, courseId });
 
     const q = query(
       collection(firestoreDB, 'questions'),

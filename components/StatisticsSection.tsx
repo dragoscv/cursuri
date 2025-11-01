@@ -232,8 +232,8 @@ const StatisticsSection = React.memo(function StatisticsSection() {
     return particles;
   }, []);
   return (
-    <section className="relative w-full overflow-hidden">
-      <div ref={ref} className="relative py-16 md:py-20 overflow-hidden">
+    <section ref={ref} className="relative w-full overflow-hidden ">
+      <div className="relative overflow-hidden py-16 md:py-20">
         {/* Simplified animated gradient background */}
         <motion.div
           className="absolute inset-0 bg-gradient-to-br from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)]"
