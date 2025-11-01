@@ -146,7 +146,7 @@ describe('Footer Component', () => {
       </MockAppContextProvider>
     );
 
-    expect(screen.getByText('contact@cursuri.dev')).toBeInTheDocument();
+    expect(screen.getByText('contact@studiai.ro')).toBeInTheDocument();
   });
 
   it('displays theme toggle button', () => {

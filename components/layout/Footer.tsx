@@ -99,7 +99,7 @@ const Footer = () => {
                             </a>
                         </div>
                         <p className="text-[color:var(--ai-muted)]">
-                            {t('footer.contactEmail')} <a href="mailto:contact@cursuri.dev" className="text-[color:var(--ai-primary)] hover:underline">contact@cursuri.dev</a>
+                            {t('footer.contactEmail')} <a href="mailto:contact@studiai.ro" className="text-[color:var(--ai-primary)] hover:underline">contact@studiai.ro</a>
                         </p>
                     </div>
                 </div>

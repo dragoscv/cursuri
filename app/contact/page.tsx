@@ -261,7 +261,7 @@ function ContactForm() {
                       {t('info.email.title')}
                     </h3>
                     <a
-                      href="mailto:contact@cursuri.dev"
+                      href="mailto:contact@studiai.ro"
                       className="text-[color:var(--ai-primary)] hover:underline"
                     >
                       {t('info.email.value')}
