@@ -60,7 +60,7 @@ export default function SubscriptionSection() {
       recurring: p.recurring,
       interval: p.interval,
     });
-    
+
     return p.active !== false &&
       p.metadata?.type === 'subscription' &&
       p.metadata?.app === appName &&
@@ -75,7 +75,7 @@ export default function SubscriptionSection() {
       recurring: p.recurring,
       interval: p.interval,
     });
-    
+
     return p.active !== false &&
       p.metadata?.type === 'subscription' &&
       p.metadata?.app === appName &&

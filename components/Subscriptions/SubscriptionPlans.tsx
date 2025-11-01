@@ -78,7 +78,7 @@ export default function SubscriptionPlans() {
     const hasSubType = p.metadata?.type === 'subscription';
     const hasAppMatch = p.metadata?.app === appName;
     const isMonthly = p.metadata?.interval === 'month' || p.recurring?.interval === 'month';
-    
+
     console.log('Checking monthly price:', {
       priceId: p.id,
       isActive,
@@ -89,7 +89,7 @@ export default function SubscriptionPlans() {
       recurring: p.recurring,
       interval: p.interval,
     });
-    
+
     return isActive && hasSubType && hasAppMatch && isMonthly;
   });
 
@@ -98,7 +98,7 @@ export default function SubscriptionPlans() {
     const hasSubType = p.metadata?.type === 'subscription';
     const hasAppMatch = p.metadata?.app === appName;
     const isYearly = p.metadata?.interval === 'year' || p.recurring?.interval === 'year';
-    
+
     console.log('Checking yearly price:', {
       priceId: p.id,
       isActive,
@@ -109,7 +109,7 @@ export default function SubscriptionPlans() {
       recurring: p.recurring,
       interval: p.interval,
     });
-    
+
     return isActive && hasSubType && hasAppMatch && isYearly;
   });
 
