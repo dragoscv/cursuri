@@ -25,7 +25,7 @@ export default function ThemeToggle() {
       variant="ghost"
       aria-label={t('accessibility.toggleTheme')}
       title={isDark ? t('theme.light') : t('theme.dark')}
-      className="text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-primary)]/10 transition-colors"
+      className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] hover:bg-[color:var(--ai-primary)]/10 transition-colors"
       onClick={toggleTheme}
     >
       {isDark ? (

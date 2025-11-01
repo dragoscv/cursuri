@@ -286,10 +286,10 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
       } else {
         // If no preferences exist yet, create with defaults and local storage values
         const savedTheme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const savedColorScheme = localStorage.getItem('colorScheme') as ColorScheme | null;
 
-        const shouldUseDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+        // Default to dark mode if no saved preference
+        const shouldUseDark = savedTheme ? savedTheme === 'dark' : true;
 
         const initialPreferences: UserPreferences = {
           ...defaultUserPreferences,
@@ -313,12 +313,12 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
   // Initialize theme and color scheme on component mount
   useEffect(() => {
     if (!user) {
-      // If no user is logged in, use localStorage or system preferences
+      // If no user is logged in, use localStorage or default to dark mode
       const savedTheme = localStorage.getItem('theme');
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       const savedColorScheme = localStorage.getItem('colorScheme') as ColorScheme | null;
 
-      const shouldUseDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+      // Default to dark mode if no saved preference
+      const shouldUseDark = savedTheme ? savedTheme === 'dark' : true;
 
       setIsDark(shouldUseDark);
       if (shouldUseDark) {

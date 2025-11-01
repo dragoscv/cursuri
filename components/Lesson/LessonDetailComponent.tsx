@@ -176,12 +176,15 @@ export default function LessonDetailComponent({
                 course.name || 'Unknown Course'
             );
 
-            // Increment view count in database
-            incrementLessonViews(courseId, lessonId).catch(error => {
-                console.error('Failed to increment lesson views:', error);
-            });
+            // Increment view count in database only for authenticated users
+            // (Firestore rules require authentication for updates)
+            if (context?.user) {
+                incrementLessonViews(courseId, lessonId).catch(error => {
+                    console.error('Failed to increment lesson views:', error);
+                });
+            }
         }
-    }, [courseId, lessonId, course, courseLessons, hasAccess]);
+    }, [courseId, lessonId, course, courseLessons, hasAccess, context?.user]);
 
     // If course doesn't exist, show error
     if (!course) {

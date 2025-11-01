@@ -493,12 +493,12 @@ const HeroSection = memo(function HeroSection() {
             className="relative"
           >
             <div className="absolute -inset-0.5 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-2xl blur-md opacity-75 animate-pulse" />
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-[color:var(--ai-card-bg)] to-[color:var(--ai-primary)]/20 border border-[color:var(--ai-card-border)]">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.1),transparent)] opacity-50" />{' '}
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-transparent to-[color:var(--ai-primary)]/10 dark:from-[color:var(--ai-card-bg)] dark:to-[color:var(--ai-primary)]/20 border border-[color:var(--ai-card-border)]">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.1),transparent)] opacity-20 dark:opacity-50" />{' '}
               <Image
                 src="https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80"
                 alt={t('imageAlt')}
-                className="w-full h-auto object-cover mix-blend-lighten opacity-100"
+                className="w-full h-auto object-cover dark:mix-blend-lighten opacity-100"
                 width={600}
                 height={400}
                 priority

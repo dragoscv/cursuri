@@ -246,7 +246,6 @@ export default async function Page({ params }: PageParams<{ courseId: string; le
 
       if (!lessonExists) {
         const t = await getTranslations('lessons');
-        const t = await getTranslations('lessons');
         // Return a consistent error message with debugging information
         return (
           <div className="flex flex-col items-center justify-center min-h-screen p-4">
@@ -259,7 +258,7 @@ export default async function Page({ params }: PageParams<{ courseId: string; le
               {t('errors.returnToCourse')}
             </a>
             {/* Debugging information */}
-            <div className="mt-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-left max-w-lg w-full">
+            <div className="mt-6 p-4 bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-lg text-left max-w-lg w-full">
               <h3 className="font-bold mb-2">{t('debuggingInformation')}</h3>
               <ul className="list-disc pl-5 space-y-1 text-sm">
                 <li>Course ID: {courseIdFallback}</li>

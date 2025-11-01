@@ -106,11 +106,14 @@ export default function CourseDetailView({
       course.category || 'general'
     );
 
-    // Increment view count in database
-    incrementCourseViews(courseId).catch(error => {
-      console.error('Failed to increment course views:', error);
-    });
-  }, [courseId, course]);
+    // Increment view count in database only for authenticated users
+    // (Firestore rules require authentication for updates)
+    if (context?.user) {
+      incrementCourseViews(courseId).catch(error => {
+        console.error('Failed to increment course views:', error);
+      });
+    }
+  }, [courseId, course, context?.user]);
 
   return (
     <div className="container mx-auto px-4 py-8">

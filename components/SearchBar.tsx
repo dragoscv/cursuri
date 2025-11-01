@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useContext } from 'react';
+import { createPortal } from 'react-dom';
 import Button from '@/components/ui/Button';
 import Input from './ui/Input'; // Use custom Input component
 import { useRouter, usePathname } from 'next/navigation';
-import { useContext } from 'react';
 import { AppContext } from './AppContext';
 import SearchIcon from './icons/SearchIcon';
 import CloseIcon from './icons/CloseIcon';
@@ -138,15 +138,15 @@ const SearchBar = React.memo(function SearchBar() {
   };
 
   // Handle search button click with event propagation control
-  const handleSearchButtonClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleSearchButtonClick = (e?: React.MouseEvent) => {
+    e?.preventDefault?.();
+    e?.stopPropagation?.();
     setIsSearchOpen(true);
   };
 
   // Render search component on all pages
   return (
-    <div ref={searchContainerRef} className="relative z-50">
+    <div ref={searchContainerRef} className="z-10">
       {/* Search toggle button */}
       <Button
         variant="light"
@@ -173,9 +173,9 @@ const SearchBar = React.memo(function SearchBar() {
       </Button>
 
       {/* Search modal */}
-      {isSearchOpen && (
+      {isSearchOpen && typeof window !== 'undefined' && createPortal(
         <div
-          className="fixed inset-0 z-50 flex items-start justify-center pt-16 px-4 bg-black/30 backdrop-blur-sm"
+          className="fixed inset-0 z-[9999] flex items-start justify-center pt-16 px-4 bg-black/50 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
           aria-labelledby="search-dialog-title"
@@ -310,7 +310,8 @@ const SearchBar = React.memo(function SearchBar() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

@@ -145,7 +145,7 @@ export default function AuditLogsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-[color:var(--section-light-bg)] to-[color:var(--section-accent-bg)] dark:from-[color:var(--section-dark-bg)] dark:to-[color:var(--ai-background)] py-8 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
@@ -153,8 +153,8 @@ export default function AuditLogsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">{t('title')}</h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <h1 className="text-4xl font-bold text-[color:var(--ai-foreground)] mb-2">{t('title')}</h1>
+          <p className="text-[color:var(--ai-muted)]">
             Monitor and review system activity, security events, and admin actions
           </p>
         </motion.div>
@@ -168,8 +168,8 @@ export default function AuditLogsPage() {
           >
             <Card>
               <CardBody className="text-center">
-                <p className="text-sm text-gray-600 dark:text-gray-400">{t('totalLogs')}</p>
-                <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                <p className="text-sm text-[color:var(--ai-muted)]">{t('totalLogs')}</p>
+                <p className="text-3xl font-bold text-[color:var(--ai-foreground)]">
                   {statistics.totalLogs}
                 </p>
               </CardBody>
@@ -177,8 +177,8 @@ export default function AuditLogsPage() {
 
             <Card>
               <CardBody className="text-center">
-                <p className="text-sm text-gray-600 dark:text-gray-400">{t('failedActions')}</p>
-                <p className="text-3xl font-bold text-red-600 dark:text-red-400">
+                <p className="text-sm text-[color:var(--ai-muted)]">{t('failedActions')}</p>
+                <p className="text-3xl font-bold text-[color:var(--ai-error)]">
                   {statistics.failedActions}
                 </p>
               </CardBody>
@@ -186,8 +186,8 @@ export default function AuditLogsPage() {
 
             <Card>
               <CardBody className="text-center">
-                <p className="text-sm text-gray-600 dark:text-gray-400">{t('criticalEvents')}</p>
-                <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">
+                <p className="text-sm text-[color:var(--ai-muted)]">{t('criticalEvents')}</p>
+                <p className="text-3xl font-bold text-[color:var(--ai-warning)]">
                   {statistics.bySeverity.critical || 0}
                 </p>
               </CardBody>
@@ -195,8 +195,8 @@ export default function AuditLogsPage() {
 
             <Card>
               <CardBody className="text-center">
-                <p className="text-sm text-gray-600 dark:text-gray-400">{t('warnings')}</p>
-                <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
+                <p className="text-sm text-[color:var(--ai-muted)]">{t('warnings')}</p>
+                <p className="text-3xl font-bold text-[color:var(--ai-warning)]">
                   {statistics.bySeverity.warning || 0}
                 </p>
               </CardBody>
@@ -266,11 +266,11 @@ export default function AuditLogsPage() {
           <CardBody>
             {loading ? (
               <div className="text-center py-8">
-                <p className="text-gray-600 dark:text-gray-400">{t('loading')}</p>
+                <p className="text-[color:var(--ai-muted)]">{t('loading')}</p>
               </div>
             ) : logs.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-gray-600 dark:text-gray-400">{t('noLogsFound')}</p>
+                <p className="text-[color:var(--ai-muted)]">{t('noLogsFound')}</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -280,7 +280,7 @@ export default function AuditLogsPage() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="border border-gray-200 dark:border-gray-700 rounded-lg p-4"
+                    className="border border-[color:var(--ai-card-border)] rounded-lg p-4"
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-2">
@@ -296,32 +296,32 @@ export default function AuditLogsPage() {
                           </Chip>
                         )}
                       </div>
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm text-[color:var(--ai-muted)]">
                         {formatTimestamp(log.timestamp)}
                       </span>
                     </div>
 
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                    <h3 className="font-semibold text-[color:var(--ai-foreground)] mb-2">
                       {log.action}
                     </h3>
 
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       {log.userEmail && (
                         <div>
-                          <span className="text-gray-600 dark:text-gray-400">{t('user')} </span>
-                          <span className="text-gray-900 dark:text-white">{log.userEmail}</span>
+                          <span className="text-[color:var(--ai-muted)]">{t('user')} </span>
+                          <span className="text-[color:var(--ai-foreground)]">{log.userEmail}</span>
                         </div>
                       )}
                       {log.ipAddress && (
                         <div>
-                          <span className="text-gray-600 dark:text-gray-400">IP: </span>
-                          <span className="text-gray-900 dark:text-white">{log.ipAddress}</span>
+                          <span className="text-[color:var(--ai-muted)]">IP: </span>
+                          <span className="text-[color:var(--ai-foreground)]">{log.ipAddress}</span>
                         </div>
                       )}
                       {log.resourceType && (
                         <div>
-                          <span className="text-gray-600 dark:text-gray-400">{t('resource')} </span>
-                          <span className="text-gray-900 dark:text-white">
+                          <span className="text-[color:var(--ai-muted)]">{t('resource')} </span>
+                          <span className="text-[color:var(--ai-foreground)]">
                             {log.resourceType}
                             {log.resourceId && `: ${log.resourceId.substring(0, 8)}`}
                           </span>
@@ -329,24 +329,24 @@ export default function AuditLogsPage() {
                       )}
                       {log.userRole && (
                         <div>
-                          <span className="text-gray-600 dark:text-gray-400">{t('role')} </span>
-                          <span className="text-gray-900 dark:text-white">{log.userRole}</span>
+                          <span className="text-[color:var(--ai-muted)]">{t('role')} </span>
+                          <span className="text-[color:var(--ai-foreground)]">{log.userRole}</span>
                         </div>
                       )}
                     </div>
 
                     {log.errorMessage && (
-                      <div className="mt-2 p-2 bg-red-50 dark:bg-red-900/20 rounded text-sm text-red-600 dark:text-red-400">
+                      <div className="mt-2 p-2 bg-[color:var(--ai-error)]/10 rounded text-sm text-[color:var(--ai-error)]">
                         {log.errorMessage}
                       </div>
                     )}
 
                     {log.details && Object.keys(log.details).length > 0 && (
                       <details className="mt-2">
-                        <summary className="cursor-pointer text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                        <summary className="cursor-pointer text-sm text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]">
                           View Details
                         </summary>
-                        <pre className="mt-2 p-2 bg-gray-100 dark:bg-gray-800 rounded text-xs overflow-auto">
+                        <pre className="mt-2 p-2 bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded text-xs overflow-auto">
                           {JSON.stringify(log.details, null, 2)}
                         </pre>
                       </details>
