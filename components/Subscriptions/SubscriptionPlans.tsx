@@ -37,10 +37,36 @@ export default function SubscriptionPlans() {
   // Check if user has an active subscription
   const hasActiveSubscription = subscriptions && subscriptions.length > 0;
 
+  // Debug: Log all products and their structure
+  useEffect(() => {
+    console.log('=== DEBUG: All Products ===');
+    console.log('Total products:', products?.length);
+    products?.forEach((p: any, index: number) => {
+      console.log(`Product ${index}:`, {
+        id: p.id,
+        name: p.name,
+        active: p.active,
+        metadata: p.metadata,
+        pricesCount: p.prices?.length,
+        prices: p.prices?.map((price: any) => ({
+          id: price.id,
+          active: price.active,
+          unit_amount: price.unit_amount,
+          currency: price.currency,
+          interval: price.interval,
+          recurring: price.recurring,
+          metadata: price.metadata,
+        }))
+      });
+    });
+  }, [products]);
+
   // Find subscription product from products
   const subscriptionProduct = products?.find((p: any) =>
     p.metadata?.type === 'subscription' || p.name?.toLowerCase().includes('subscription')
   );
+
+  console.log('=== DEBUG: Found Subscription Product ===', subscriptionProduct);
 
   // Get app name for filtering
   const appName = process.env.NEXT_PUBLIC_APP_NAME || 'cursuri';
@@ -60,6 +86,26 @@ export default function SubscriptionPlans() {
     p.metadata?.app === appName &&
     (p.metadata?.interval === 'year' || p.recurring?.interval === 'year')
   );
+
+  console.log('=== DEBUG: Found Prices ===', {
+    appName,
+    monthlyPrice: monthlyPrice ? {
+      id: monthlyPrice.id,
+      active: monthlyPrice.active,
+      unit_amount: monthlyPrice.unit_amount,
+      metadata: monthlyPrice.metadata,
+      interval: monthlyPrice.interval,
+      recurring: monthlyPrice.recurring,
+    } : null,
+    yearlyPrice: yearlyPrice ? {
+      id: yearlyPrice.id,
+      active: yearlyPrice.active,
+      unit_amount: yearlyPrice.unit_amount,
+      metadata: yearlyPrice.metadata,
+      interval: yearlyPrice.interval,
+      recurring: yearlyPrice.recurring,
+    } : null,
+  });
 
   // Helper function to format price
   const formatPrice = (price: any) => {

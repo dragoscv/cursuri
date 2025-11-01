@@ -29,10 +29,23 @@ export default function SubscriptionSection() {
   // Check if user has an active subscription
   const hasActiveSubscription = subscriptions && subscriptions.length > 0;
 
+  // Debug: Log products structure
+  console.log('=== SubscriptionSection DEBUG ===', {
+    productsCount: products?.length,
+    products: products?.map((p: any) => ({
+      id: p.id,
+      name: p.name,
+      metadata: p.metadata,
+      pricesCount: p.prices?.length,
+    }))
+  });
+
   // Find subscription product from products
   const subscriptionProduct = products?.find((p: any) =>
     p.metadata?.type === 'subscription' || p.name?.toLowerCase().includes('subscription')
   );
+
+  console.log('Found subscription product:', subscriptionProduct);
 
   // Get app name for filtering
   const appName = process.env.NEXT_PUBLIC_APP_NAME || 'cursuri';
@@ -52,6 +65,8 @@ export default function SubscriptionSection() {
     p.metadata?.app === appName &&
     (p.metadata?.interval === 'year' || p.recurring?.interval === 'year')
   );
+
+  console.log('Found prices:', { monthlyPrice, yearlyPrice, appName });
 
   // Helper function to format price
   const formatPrice = (price: any) => {
