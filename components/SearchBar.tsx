@@ -17,6 +17,7 @@ const SearchBar = React.memo(function SearchBar() {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  const searchModalRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -42,8 +43,8 @@ const SearchBar = React.memo(function SearchBar() {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        searchContainerRef.current &&
-        !searchContainerRef.current.contains(event.target as Node) &&
+        searchModalRef.current &&
+        !searchModalRef.current.contains(event.target as Node) &&
         isSearchOpen
       ) {
         setIsSearchOpen(false);
@@ -180,7 +181,10 @@ const SearchBar = React.memo(function SearchBar() {
           aria-modal="true"
           aria-labelledby="search-dialog-title"
         >
-          <div className="w-full max-w-2xl bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-2xl overflow-hidden">
+          <div
+            ref={searchModalRef}
+            className="w-full max-w-2xl bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] rounded-xl shadow-2xl overflow-hidden"
+          >
             <h2 id="search-dialog-title" className="sr-only">
               {t('search.placeholder')}
             </h2>
