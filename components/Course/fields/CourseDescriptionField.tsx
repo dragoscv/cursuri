@@ -2,13 +2,15 @@
 
 import Textarea from '@/components/ui/Textarea';
 import { CourseDescriptionFieldProps } from '@/types';
+import { useTranslations } from 'next-intl';
 
 export default function CourseDescriptionField({ value, onChange }: CourseDescriptionFieldProps) {
+    const t = useTranslations('courses.fields');
     return (
         <Textarea
-            label="Course Description"
+            label={t('description.label')}
             variant="bordered"
-            placeholder="Provide a detailed description of the course"
+            placeholder={t('description.placeholder')}
             value={value}
             onChange={onChange}
             className="mb-6 bg-[color:var(--ai-card-bg)]/40"

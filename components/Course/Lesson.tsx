@@ -28,6 +28,7 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
     const router = useRouter();
     const toast = useToast();
     const t = useTranslations('common.notifications');
+    const tLesson = useTranslations('courses.lesson');
 
     const context = useContext(AppContext) as AppContextProps;
     if (!context) {
@@ -251,7 +252,7 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
                                         {lesson.title || lesson.name}
                                     </h3>
                                     <span className="text-sm text-[color:var(--ai-muted)]">
-                                        {lesson.duration || "Tutorial"}
+                                        {lesson.duration || tLesson('tutorial')}
                                     </span>
                                 </div>
 
@@ -266,8 +267,8 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
 
                                 {/* Course progress indicator */}
                                 <div className="flex items-center justify-between text-xs text-[color:var(--ai-muted)]">
-                                    <span>Lesson {calculateProgress() / (100 / Object.keys(lessons[courseId] || {}).length)} of {Object.keys(lessons[courseId] || {}).length}</span>
-                                    <span>{Math.round(calculateProgress())}% of course completed</span>
+                                    <span>{tLesson('lessonCount', { current: Math.ceil(calculateProgress() / (100 / Object.keys(lessons[courseId] || {}).length)), total: Object.keys(lessons[courseId] || {}).length })}</span>
+                                    <span>{tLesson('courseProgress', { progress: Math.round(calculateProgress()) })}</span>
                                 </div>
                             </div>
                         </Card>
@@ -278,7 +279,7 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
                         <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-md rounded-xl">
                             <div className="p-6">
                                 <h2 className="text-xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-4">
-                                    Lesson Content
+                                    {tLesson('lessonContent')}
                                 </h2>
                                 <div
                                     className="prose dark:prose-invert max-w-none"
@@ -294,9 +295,9 @@ export default function Lesson({ lesson, onClose }: LessonProps) {
                 <div className="lg:col-span-1 space-y-8">
                     {/* Bookmark Button */}
                     <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-md rounded-xl overflow-hidden flex items-center justify-between px-6 py-4">
-                        <span className="font-medium text-[color:var(--ai-foreground)]">Bookmark this lesson</span>
+                        <span className="font-medium text-[color:var(--ai-foreground)]">{tLesson('bookmarkLesson')}</span>
                         <button
-                            aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark lesson'}
+                            aria-label={isBookmarked ? tLesson('removeBookmark') : tLesson('bookmarkLessonAction')}
                             onClick={handleBookmark}
                             className={`btn-icon ${isBookmarked ? 'text-[color:var(--ai-primary)]' : 'text-[color:var(--ai-muted)]'} transition-colors duration-200`}
                         >

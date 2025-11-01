@@ -2,6 +2,7 @@
 
 import React, { useContext, useState } from 'react';
 import { AppContext } from '@/components/AppContext';
+import { useToast } from '@/components/Toast/ToastContext';
 import { Card, CardBody } from '@heroui/react';
 import { Button, Input, Textarea, Switch } from '@/components/ui';
 import ThemeSelector from '@/components/Profile/ThemeSelector';
@@ -29,6 +30,7 @@ export default function ProfileSettings() {
   const t = useTranslations('common.notifications');
   const tProfile = useTranslations('profile.settingsPage');
   const context = useContext(AppContext);
+  const { showToast } = useToast();
   if (!context) throw new Error('AppContext not found');
   const { user, saveUserPreferences } = context;
   const [form, setForm] = useState({
@@ -53,24 +55,7 @@ export default function ProfileSettings() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const tLanguages = useTranslations('profile.settingsPage.languages');
-  const showToast = ({
-    type,
-    title,
-    message,
-  }: {
-    type: 'success' | 'error';
-    title: string;
-    message: string;
-  }) => {
-    // Replace with your preferred toast/notification system
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (window && (window as any).toast) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (window as any).toast[type](message, { title });
-    } else {
-      alert(`${title}: ${message}`);
-    }
-  };
+
   // Updated: handleChange supports checkbox and other input types
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;

@@ -2,6 +2,7 @@
 import React, { useContext, useMemo, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { AppContext } from './AppContext';
+import { useToast } from '@/components/Toast/ToastContext';
 import { Course } from '@/types';
 import Button from '@/components/ui/Button';
 import { useRouter } from 'next/navigation';
@@ -14,6 +15,7 @@ const RecommendedCoursesSection = React.memo(function RecommendedCoursesSection(
   const tCommon = useTranslations('common');
   const context = useContext(AppContext);
   const router = useRouter();
+  const { showToast } = useToast();
   const user = context?.user;
   const courses = context?.courses || {};
   const products = context?.products || [];
@@ -83,7 +85,12 @@ const RecommendedCoursesSection = React.memo(function RecommendedCoursesSection(
       });
     } else {
       navigator.clipboard.writeText(shareUrl);
-      alert('Course link copied to clipboard!');
+      showToast({
+        type: 'success',
+        title: 'Link Copied',
+        message: 'Course link copied to clipboard!',
+        duration: 3000,
+      });
     }
   };
 

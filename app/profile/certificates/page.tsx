@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useTranslations } from 'next-intl';
 import { AppContext } from '@/components/AppContext';
+import { useToast } from '@/components/Toast/ToastContext';
 import { firestoreDB } from '@/utils/firebase/firebase.config';
 import { collection, query, getDocs, orderBy } from 'firebase/firestore';
 import Card, { CardBody, CardHeader } from '@/components/ui/Card';
@@ -26,6 +27,7 @@ export default function CertificatesPage() {
   const [loading, setLoading] = useState(true);
   const t = useTranslations('profile');
   const tFilters = useTranslations('profile.certificatesPage.filters');
+  const { showToast } = useToast();
 
   const context = useContext(AppContext);
   if (!context) {
@@ -91,7 +93,12 @@ export default function CertificatesPage() {
       a.remove();
       window.URL.revokeObjectURL(url); // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
-      alert(t('certificatesPage.errors.couldNotDownload'));
+      showToast({
+        type: 'error',
+        title: 'Download Error',
+        message: t('certificatesPage.errors.couldNotDownload'),
+        duration: 5000,
+      });
     }
   };
 

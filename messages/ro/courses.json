@@ -46,6 +46,18 @@
     "weeks": "{count} săptămâni",
     "badges": null
   },
+  "course": {
+    "lessonsCount": "{count} {count, plural, one {lecție} other {lecții}}",
+    "defaultDuration": "10 ore",
+    "enrolled": "Înscris",
+    "progressPercentage": "{progress}% finalizat",
+    "addLesson": "Adaugă Lecție",
+    "completionTitle": "Curs Finalizat!",
+    "completionMessage": "Felicitări pentru finalizarea acestui curs!",
+    "downloadCertificate": "Descarcă Certificatul",
+    "downloadError": "Eroare la Descărcare",
+    "downloadErrorMessage": "Nu s-a putut descărca certificatul. Te rugăm să încerci din nou."
+  },
   "header": {
     "badge": "Curriculum AI",
     "title": "Cursuri AI de Ultimă Generație",
@@ -230,9 +242,18 @@
     "allLevels": "Toate Nivelurile"
   },
   "captions": {
-    "noContentAvailable": "Fără conținut disponibil",
+    "title": "Subtitrări și Transcriere",
+    "availableIn": "Disponibil în {count} lim{count, plural, one {bă} other {bi}}",
+    "generateDescription": "Generează subtitrări automate pentru videoclipul tău",
+    "noCaptionsYet": "Subtitrări Negenterate Încă",
+    "generateMessage": "Generează subtitrări și transcrieri automate pentru a face lecția ta mai accesibilă și ușor de căutat.",
+    "generateButton": "Generează Subtitrări și Transcriere",
     "processing": "Se procesează...",
-    "regenerateCaptions": "Regenerează Subtitrări"
+    "regenerateCaptions": "Regenerează Subtitrări",
+    "languageCaptions": "Subtitrări în {language}",
+    "downloadVTT": "Descarcă VTT",
+    "fullTranscription": "Transcriere Completă",
+    "noContentAvailable": "Fără conținut disponibil"
   },
   "courseMetadata": {
     "courseNotFound": "Curs Negăsit",
@@ -317,18 +338,86 @@
     "creating": "Se creează..."
   },
   "lessonResources": {
-    "title": "Resurse lecție",
-    "additionalResources": "Resurse suplimentare"
+    "title": "Resurse Suplimentare",
+    "additionalResources": "Resurse suplimentare",
+    "download": "Descarcă",
+    "view": "Vizualizează",
+    "offlineMode": "Mod Offline"
   },
   "lessonNotes": {
     "title": "Notițe lecție",
-    "yourNotes": "Notițele tale"
+    "yourNotes": "Notițele tale",
+    "placeholder": "Scrie notițele tale aici...",
+    "saveButton": "Salvează Notițele"
   },
   "lessonNavigation": {
     "title": "Navigare lecție",
     "lessonsInCourse": "Lecții în acest curs"
   },
   "courseAccessRequired": {
-    "title": "Acces la curs necesar"
+    "title": "Acces la curs necesar",
+    "message": "Trebuie să cumperi acest curs pentru a accesa lecțiile.",
+    "goToCourse": "Mergi la Pagina Cursului"
+  },
+  "fields": {
+    "name": {
+      "label": "Numele Cursului",
+      "placeholder": "Introdu numele cursului"
+    },
+    "description": {
+      "label": "Descrierea Cursului",
+      "placeholder": "Oferă o descriere detaliată a cursului"
+    },
+    "instructor": {
+      "label": "Numele Instructorului",
+      "placeholder": "Numele instructorului"
+    },
+    "image": {
+      "label": "Imaginea Cursului",
+      "preview": "Previzualizare curs",
+      "remove": "Șterge",
+      "upload": "Click pentru a încărca imaginea cursului",
+      "formats": "PNG, JPG, GIF până la 10MB"
+    },
+    "objectives": {
+      "label": "Ce Vei Învăța",
+      "placeholder": "Adaugă un obiectiv de învățare",
+      "empty": "Adaugă obiective de învățare pentru cursul tău",
+      "add": "Adaugă"
+    },
+    "requirements": {
+      "label": "Cerințele Cursului",
+      "placeholder": "Adaugă o cerință",
+      "empty": "Adaugă cerințe sau prerequisite pentru cursul tău",
+      "add": "Adaugă"
+    },
+    "prerequisites": {
+      "empty": "Adaugă cursuri prerequisite pe care studenții trebuie să le completeze mai întâi",
+      "select": "Selectează un curs prerequisit",
+      "add": "Adaugă"
+    },
+    "tags": {
+      "label": "Etichete",
+      "placeholder": "Adaugă o etichetă",
+      "empty": "Nicio etichetă adăugată încă",
+      "add": "Adaugă"
+    }
+  },
+  "lesson": {
+    "tutorial": "Tutorial",
+    "lessonCount": "Lecția {current} din {total}",
+    "courseProgress": "{progress}% din curs finalizat",
+    "lessonContent": "Conținut Lecție",
+    "bookmarkLesson": "Marchează această lecție",
+    "removeBookmark": "Elimină marcajul",
+    "bookmarkLessonAction": "Marchează lecția",
+    "errorInvalidParams": "Eroare la încărcarea lecției: Parametri invalizi"
+  },
+  "progress": {
+    "backToCourse": "Înapoi la Curs",
+    "lessonCount": "{count} {count, plural, one {lecție} other {lecții}}",
+    "allLevels": "Toate nivelurile",
+    "loading": "Se încarcă...",
+    "percentComplete": "{percent}% Finalizat"
   }
 }

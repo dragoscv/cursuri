@@ -45,6 +45,18 @@
         "beginner": "Beginner",
         "weeks": "{count} weeks"
     },
+    "course": {
+        "lessonsCount": "{count} {count, plural, one {lesson} other {lessons}}",
+        "defaultDuration": "10 hours",
+        "enrolled": "Enrolled",
+        "progressPercentage": "{progress}% completed",
+        "addLesson": "Add Lesson",
+        "completionTitle": "Course Completed!",
+        "completionMessage": "Congratulations on finishing this course!",
+        "downloadCertificate": "Download Certificate",
+        "downloadError": "Download Error",
+        "downloadErrorMessage": "Could not download certificate. Please try again."
+    },
     "badges": {
         "featured": "Featured",
         "new": "New",
@@ -244,9 +256,18 @@
         "allLevels": "All levels"
     },
     "captions": {
-        "noContentAvailable": "No content available",
+        "title": "Captions & Transcription",
+        "availableIn": "Available in {count} language{count, plural, one {} other {s}}",
+        "generateDescription": "Generate automatic captions for your video",
+        "noCaptionsYet": "No Captions Generated Yet",
+        "generateMessage": "Generate automatic captions and transcriptions to make your lesson more accessible and searchable.",
+        "generateButton": "Generate Captions & Transcription",
         "processing": "Processing...",
-        "regenerateCaptions": "Regenerate Captions"
+        "regenerateCaptions": "Regenerate Captions",
+        "languageCaptions": "{language} Captions",
+        "downloadVTT": "Download VTT",
+        "fullTranscription": "Full Transcription",
+        "noContentAvailable": "No content available"
     },
     "courseMetadata": {
         "courseNotFound": "Course Not Found",
@@ -313,18 +334,86 @@
         "creating": "Creating..."
     },
     "lessonResources": {
-        "title": "Lesson Resources",
-        "additionalResources": "Additional Resources"
+        "title": "Additional Resources",
+        "additionalResources": "Additional Resources",
+        "download": "Download",
+        "view": "View",
+        "offlineMode": "Offline Mode"
     },
     "lessonNotes": {
         "title": "Lesson Notes",
-        "yourNotes": "Your Notes"
+        "yourNotes": "Your Notes",
+        "placeholder": "Write your notes here...",
+        "saveButton": "Save Notes"
     },
     "lessonNavigation": {
         "title": "Lesson Navigation",
         "lessonsInCourse": "Lessons in this course"
     },
     "courseAccessRequired": {
-        "title": "Course Access Required"
+        "title": "Course Access Required",
+        "message": "You need to purchase this course to access the lessons.",
+        "goToCourse": "Go to Course Page"
+    },
+    "fields": {
+        "name": {
+            "label": "Course Name",
+            "placeholder": "Enter course name"
+        },
+        "description": {
+            "label": "Course Description",
+            "placeholder": "Provide a detailed description of the course"
+        },
+        "instructor": {
+            "label": "Instructor Name",
+            "placeholder": "Instructor name"
+        },
+        "image": {
+            "label": "Course Image",
+            "preview": "Course preview",
+            "remove": "Remove",
+            "upload": "Click to upload course image",
+            "formats": "PNG, JPG, GIF up to 10MB"
+        },
+        "objectives": {
+            "label": "What You'll Learn",
+            "placeholder": "Add a learning objective",
+            "empty": "Add learning objectives for your course",
+            "add": "Add"
+        },
+        "requirements": {
+            "label": "Course Requirements",
+            "placeholder": "Add a requirement",
+            "empty": "Add prerequisites or requirements for your course",
+            "add": "Add"
+        },
+        "prerequisites": {
+            "empty": "Add prerequisite courses that students should complete first",
+            "select": "Select a prerequisite course",
+            "add": "Add"
+        },
+        "tags": {
+            "label": "Tags",
+            "placeholder": "Add a tag",
+            "empty": "No tags added yet",
+            "add": "Add"
+        }
+    },
+    "lesson": {
+        "tutorial": "Tutorial",
+        "lessonCount": "Lesson {current} of {total}",
+        "courseProgress": "{progress}% of course completed",
+        "lessonContent": "Lesson Content",
+        "bookmarkLesson": "Bookmark this lesson",
+        "removeBookmark": "Remove bookmark",
+        "bookmarkLessonAction": "Bookmark lesson",
+        "errorInvalidParams": "Error loading lesson: Invalid parameters"
+    },
+    "progress": {
+        "backToCourse": "Back to Course",
+        "lessonCount": "{count} {count, plural, one {lesson} other {lessons}}",
+        "allLevels": "All levels",
+        "loading": "Loading...",
+        "percentComplete": "{percent}% Complete"
     }
 }

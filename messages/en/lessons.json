@@ -137,7 +137,12 @@
     "questionNumber": "Question {number}: {question}",
     "edit": "Edit",
     "delete": "Delete",
-    "correctAnswer": "Correct Answer"
+    "correctAnswer": "Correct Answer",
+    "uploadingFile": "Uploading {fileName}...",
+    "processing": "Processing...",
+    "uploadingProgress": "Uploading {progress}%",
+    "updateLesson": "Update Lesson",
+    "addLesson": "Add Lesson"
   },
   "detail": {
     "courseNotFound": "Course not found",
@@ -252,6 +257,14 @@
     "available": "Available Offline",
     "size": "Size",
     "downloadedOn": "Downloaded on"
+  },
+  "offlineButton": {
+    "removeFromStorage": "Remove from offline storage",
+    "downloadForOffline": "Download for offline viewing",
+    "downloading": "Downloading...",
+    "downloadProgress": "Download progress",
+    "availableOffline": "Available Offline",
+    "downloadLesson": "Download Lesson"
   },
   "status": {
     "offlineMode": "Offline Mode",

@@ -58,7 +58,16 @@
     "failedToDeleteMessage": "Eșec la ștergerea cursului. Vă rugăm încercați din nou.",
     "addNew": "Adaugă curs nou",
     "loadingLessons": "Se încarcă lecțiile...",
-    "noLessonsFound": "Nu s-au găsit lecții pentru acest curs"
+    "noLessonsFound": "Nu s-au găsit lecții pentru acest curs",
+    "backToCourses": "Înapoi la Cursuri",
+    "courseName": "Nume Curs",
+    "courseStatistics": "Statistici Curs",
+    "numberOfLessons": "Număr de Lecții",
+    "enrolledStudents": "Cursanți Înscriși",
+    "averageRating": "Rating Mediu",
+    "lessons": "Lecții",
+    "lessonName": "Nume Lecție",
+    "editLesson": "Editează Lecția"
   },
   "lessons": {
     "title": "Lecții",

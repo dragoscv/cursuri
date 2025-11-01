@@ -22,30 +22,51 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
     const context = useContext(AppContext);
     const [searchText, setSearchText] = useState(currentFilter);
     const [selectedCategory, setSelectedCategory] = useState(currentCategory || 'all');
-    const [isSelectOpen, setIsSelectOpen] = useState(false);// Extract unique categories from courses
+    const [isSelectOpen, setIsSelectOpen] = useState(false);
+
+    if (!context) {
+        throw new Error('CoursesFilter must be used within AppContext');
+    }
+
+    const { courses } = context;
+
+    // Extract unique categories from courses
     const categories = React.useMemo(() => {
-        if (!context || !context.courses) return [];
+        if (!courses || Object.keys(courses).length === 0) {
+            return [];
+        }
 
-        // Extract all tags from all courses
-        const allTags = Object.values(context.courses).flatMap((course: Course) =>
-            course.tags || []
-        );
+        // Extract all categories from all courses (from metadata.categories)
+        const allCategories = Object.values(courses).flatMap((course: Course) => {
+            // Categories can be in metadata.categories array or metadata.category string
+            if (course.metadata?.categories && Array.isArray(course.metadata.categories)) {
+                return course.metadata.categories;
+            } else if (course.metadata?.category) {
+                return [course.metadata.category];
+            }
+            return [];
+        });
 
-        // Count occurrences of each tag
-        const tagCounts = allTags.reduce((acc: { [key: string]: number }, tag: string) => {
-            acc[tag] = (acc[tag] || 0) + 1;
+        // If no categories found, warn in development
+        if (allCategories.length === 0 && process.env.NODE_ENV === 'development') {
+            console.warn('⚠️ CoursesFilter: No categories found in any course. Please add categories to your courses in the admin panel to enable category filtering.');
+        }
+
+        // Count occurrences of each category
+        const categoryCounts = allCategories.reduce((acc: { [key: string]: number }, category: string) => {
+            acc[category] = (acc[category] || 0) + 1;
             return acc;
         }, {});
 
         // Sort by count (descending) and convert to objects with key and label properties
-        return Object.entries(tagCounts)
+        return Object.entries(categoryCounts)
             .sort((a, b) => (b[1] as number) - (a[1] as number))
-            .map(([tag, count]) => ({
-                key: tag,
-                label: tag,
+            .map(([category, count]) => ({
+                key: category,
+                label: category,
                 count: count
             }));
-    }, [context]);
+    }, [courses]);
 
     // Handle search input change with debounce
     useEffect(() => {
@@ -142,7 +163,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
                                         <div className="flex justify-between items-center">
                                             <span>{category.label}</span>
                                             <span className="text-xs bg-[color:var(--ai-card-border)]/30 text-[color:var(--ai-muted)] rounded-full px-2 py-0.5">
-                                                {category.count}
+                                                {String(category.count)}
                                             </span>
                                         </div>
                                     </div>

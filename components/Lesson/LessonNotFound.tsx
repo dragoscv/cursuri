@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import { FiBook, FiArrowLeft, FiAlertTriangle } from '@/components/icons/FeatherIcons';
+import { useTranslations } from 'next-intl';
 
 interface LessonNotFoundProps {
     courseId?: string;
@@ -15,9 +16,11 @@ interface LessonNotFoundProps {
 
 const LessonNotFound: React.FC<LessonNotFoundProps> = ({
     courseId,
-    message = "The lesson you're looking for doesn't exist or you may not have access to it.",
+    message,
     backToCoursePage = true,
 }) => {
+    const t = useTranslations('lessons.detail');
+
     return (
         <div className="flex flex-col items-center justify-center min-h-[70vh] p-6">
             <div className="w-20 h-20 bg-[color:var(--ai-error)]/10 rounded-full flex items-center justify-center mb-6">
@@ -25,11 +28,11 @@ const LessonNotFound: React.FC<LessonNotFoundProps> = ({
             </div>
 
             <h1 className="text-2xl font-bold mb-4 text-[color:var(--ai-foreground)]">
-                Lesson Not Found
+                {t('lessonNotFound')}
             </h1>
 
             <p className="mb-6 text-center max-w-md text-[color:var(--ai-muted)]">
-                {message}
+                {message || t('lessonNotFoundDesc')}
             </p>
 
             <div className="flex flex-wrap gap-4">
@@ -40,7 +43,7 @@ const LessonNotFound: React.FC<LessonNotFoundProps> = ({
                             variant="solid"
                             startContent={<FiBook />}
                         >
-                            Return to Course
+                            {t('returnToCourse')}
                         </Button>
                     </Link>
                 )}
@@ -51,7 +54,7 @@ const LessonNotFound: React.FC<LessonNotFoundProps> = ({
                         variant="light"
                         startContent={<FiArrowLeft />}
                     >
-                        Browse Courses
+                        {t('browseCourses')}
                     </Button>
                 </Link>
             </div>

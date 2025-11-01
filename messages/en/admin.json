@@ -58,7 +58,16 @@
     "failedToDeleteMessage": "Failed to delete course. Please try again.",
     "addNew": "Add New Course",
     "loadingLessons": "Loading lessons...",
-    "noLessonsFound": "No lessons found for this course"
+    "noLessonsFound": "No lessons found for this course",
+    "backToCourses": "Back to Courses",
+    "courseName": "Course Name",
+    "courseStatistics": "Course Statistics",
+    "numberOfLessons": "Number of Lessons",
+    "enrolledStudents": "Enrolled Students",
+    "averageRating": "Average Rating",
+    "lessons": "Lessons",
+    "lessonName": "Lesson Name",
+    "editLesson": "Edit Lesson"
   },
   "lessons": {
     "title": "Lessons",

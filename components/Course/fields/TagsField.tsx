@@ -3,12 +3,14 @@ import Button from '@/components/ui/Button';
 import Chip from '@/components/ui/Chip';
 import { FiTag } from '../../icons/FeatherIconsExtended';
 import { TagsFieldProps } from '@/types';
+import { useTranslations } from 'next-intl';
 
 const TagsField = ({ tags, currentTag, onTagChange, onAddTag, onRemoveTag }: TagsFieldProps) => {
+  const t = useTranslations('courses.fields');
   return (
     <div className="mb-6">
       <label className="flex items-center gap-2 text-sm font-medium text-[color:var(--ai-foreground)] mb-3">
-        <FiTag className="text-[color:var(--ai-primary)]" /> Tags
+        <FiTag className="text-[color:var(--ai-primary)]" /> {t('tags.label')}
       </label>
       <div className="flex flex-wrap gap-2 mb-3 min-h-[40px] p-2 rounded-lg border border-[color:var(--ai-card-border)]/50">
         {tags.length > 0 ? tags.map((tag) => (
@@ -23,12 +25,12 @@ const TagsField = ({ tags, currentTag, onTagChange, onAddTag, onRemoveTag }: Tag
             {tag}
           </Chip>
         )) : (
-          <p className="text-sm text-[color:var(--ai-muted)] italic">No tags added yet</p>
+          <p className="text-sm text-[color:var(--ai-muted)] italic">{t('tags.empty')}</p>
         )}
       </div>
       <div className="flex gap-2">
         <Input
-          placeholder="Add a tag"
+          placeholder={t('tags.placeholder')}
           variant="bordered"
           value={currentTag}
           onChange={onTagChange}
@@ -41,7 +43,7 @@ const TagsField = ({ tags, currentTag, onTagChange, onAddTag, onRemoveTag }: Tag
           onPress={onAddTag}
           className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
         >
-          Add
+          {t('tags.add')}
         </Button>
       </div>
     </div>

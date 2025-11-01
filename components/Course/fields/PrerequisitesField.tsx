@@ -5,6 +5,7 @@ import { Course } from '@/types';
 import { Input, Chip } from '@heroui/react';
 import Button from '@/components/ui/Button';
 import { FiLink } from '../../icons/FeatherIcons';
+import { useTranslations } from 'next-intl';
 
 interface PrerequisitesFieldProps {
     coursePrerequisites: string[];
@@ -23,6 +24,7 @@ const PrerequisitesField: React.FC<PrerequisitesFieldProps> = ({
     selectedPrerequisiteId,
     setSelectedPrerequisiteId
 }) => {
+    const t = useTranslations('courses.fields');
     // Handle adding a prerequisite course
     const handleAddPrerequisite = () => {
         if (selectedPrerequisiteId && !coursePrerequisites.includes(selectedPrerequisiteId)) {
@@ -68,7 +70,7 @@ const PrerequisitesField: React.FC<PrerequisitesFieldProps> = ({
                     );
                 }) : (
                     <div className="flex items-center justify-center h-[100px] border border-dashed border-[color:var(--ai-card-border)] rounded-lg">
-                        <p className="text-sm text-[color:var(--ai-muted)] italic">Add prerequisite courses that students should complete first</p>
+                        <p className="text-sm text-[color:var(--ai-muted)] italic">{t('prerequisites.empty')}</p>
                     </div>
                 )}
             </div>
@@ -80,7 +82,7 @@ const PrerequisitesField: React.FC<PrerequisitesFieldProps> = ({
                 title="Select prerequisite course"
                 name="prerequisiteCourse"
             >
-                <option value="">Select a prerequisite course</option>
+                <option value="">{t('prerequisites.select')}</option>
                 {Object.values(courses)
                     .filter(course =>
                         // Don't show the current course
@@ -103,7 +105,7 @@ const PrerequisitesField: React.FC<PrerequisitesFieldProps> = ({
                     className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
                     isDisabled={!selectedPrerequisiteId}
                 >
-                    Add
+                    {t('prerequisites.add')}
                 </Button>
             </div>
         </div>

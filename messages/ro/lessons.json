@@ -137,7 +137,12 @@
     "questionNumber": "Întrebarea {number}: {question}",
     "edit": "Editează",
     "delete": "Șterge",
-    "correctAnswer": "Răspuns Corect"
+    "correctAnswer": "Răspuns Corect",
+    "uploadingFile": "Se încarcă {fileName}...",
+    "processing": "Se procesează...",
+    "uploadingProgress": "Se încarcă {progress}%",
+    "updateLesson": "Actualizează Lecția",
+    "addLesson": "Adaugă Lecția"
   },
   "detail": {
     "courseNotFound": "Curs negăsit",
@@ -244,6 +249,14 @@
     "available": "Disponibil Offline",
     "size": "Dimensiune",
     "downloadedOn": "Descărcat pe"
+  },
+  "offlineButton": {
+    "removeFromStorage": "Elimină din stocarea offline",
+    "downloadForOffline": "Descarcă pentru vizionare offline",
+    "downloading": "Se descarcă...",
+    "downloadProgress": "Progres descărcare",
+    "availableOffline": "Disponibil Offline",
+    "downloadLesson": "Descarcă Lecția"
   },
   "status": {
     "offlineMode": "Mod Offline",

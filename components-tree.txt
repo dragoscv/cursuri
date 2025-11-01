@@ -1,0 +1,529 @@
+Folder PATH listing for volume Development
+Volume serial number is 84E3-1D38
+E:\GITHUB\CURSURI\COMPONENTS
+ª   Admin.tsx
+ª   AppContext.tsx
+ª   AvailableCoursesSection.tsx
+ª   Breadcrumbs.tsx
+ª   CacheStatus.tsx
+ª   CallToActionSection.tsx
+ª   CookieConsent.tsx
+ª   Courses.tsx
+ª   ErrorPage.tsx
+ª   FeaturedCoursesSection.tsx
+ª   FeaturedReviews.tsx
+ª   FeaturedReviewsSection.tsx
+ª   Footer.tsx
+ª   Header.tsx
+ª   HeroSection.tsx
+ª   InstructorHighlightsSection.tsx
+ª   LanguageSwitcher.tsx
+ª   LearningPathSection.tsx
+ª   Login.tsx
+ª   Modal.tsx
+ª   OnboardingModal.tsx
+ª   Profile.tsx
+ª   RecommendedCoursesSection.tsx
+ª   SearchBar.tsx
+ª   SecurityInitializer.tsx
+ª   StatisticsSection.tsx
+ª   TechStackSection.tsx
+ª   WhyChooseUsSection.tsx
+ª   
++---Admin
+ª   ª   AdminAnalytics.tsx
+ª   ª   AdminAnalyticsSection.tsx
+ª   ª   AdminDashboard.tsx
+ª   ª   AdminDashboardTabs.tsx
+ª   ª   AdminGuard.tsx
+ª   ª   AdminHeader.tsx
+ª   ª   AdminLessonsSection.tsx
+ª   ª   AdminPageHeader.tsx
+ª   ª   AdminQuickActionsSection.tsx
+ª   ª   AdminRevenueSection.tsx
+ª   ª   AdminRoleManagement.tsx
+ª   ª   AdminSettings.tsx
+ª   ª   AdminSidebar.tsx
+ª   ª   AdminTabs.tsx
+ª   ª   AdminUsers.tsx
+ª   ª   BatchOperations.tsx
+ª   ª   CourseEngagement.tsx
+ª   ª   EnhancedUserManagement.tsx
+ª   ª   LessonsTable.tsx
+ª   ª   
+ª   +---Courses
+ª           AdminCoursesHeader.tsx
+ª           AdminCoursesView.tsx
+ª           CoursesGridView.tsx
+ª           CoursesListView.tsx
+ª           utils.ts
+ª           ViewToggle.tsx
+ª           
++---Analytics
+ª       PageViewTracker.tsx
+ª       
++---animations
+ª       ParallaxSection.tsx
+ª       ScrollAnimationWrapper.tsx
+ª       
++---Buttons
+ª       LoadingButton.tsx
+ª       
++---contexts
+ª   ª   AppProviders.tsx
+ª   ª   appReducer.ts
+ª   ª   SimpleProviders.tsx
+ª   ª   useModal.ts
+ª   ª   
+ª   +---hooks
+ª   ª       index.tsx
+ª   ª       
+ª   +---modules
+ª           adminContext.tsx
+ª           authContext.tsx
+ª           baseContext.tsx
+ª           cacheContext.tsx
+ª           coursesContext.tsx
+ª           index.tsx
+ª           lessonsContext.tsx
+ª           modalContext.tsx
+ª           ModalRenderer.tsx
+ª           productsContext.tsx
+ª           reviewsContext.tsx
+ª           themeContext.tsx
+ª           toastContext.tsx
+ª           userDataContext.tsx
+ª           
++---Course
+ª   ª   AddCourse.tsx
+ª   ª   AddCourseForm.tsx
+ª   ª   AddLesson.tsx
+ª   ª   CaptionsSection.tsx
+ª   ª   Course.tsx
+ª   ª   CourseContent.tsx
+ª   ª   CourseDetail.tsx
+ª   ª   CourseDetails.tsx
+ª   ª   CourseDetailView.tsx
+ª   ª   CourseEnrollment.tsx
+ª   ª   CourseHeader.tsx
+ª   ª   CourseOverview.tsx
+ª   ª   Lesson.tsx
+ª   ª   LessonsList.tsx
+ª   ª   Reviews.tsx
+ª   ª   
+ª   +---Access
+ª   ª       CourseAccessRequired.tsx
+ª   ª       
+ª   +---fields
+ª           CourseDescriptionField.tsx
+ª           CourseImageField.tsx
+ª           CourseNameField.tsx
+ª           InstructorNameField.tsx
+ª           ObjectivesField.tsx
+ª           PrerequisitesField.tsx
+ª           RequirementsField.tsx
+ª           TagsField.tsx
+ª           
++---Courses
+ª       CoursesFilter.tsx
+ª       CoursesHeader.tsx
+ª       CoursesList.tsx
+ª       CoursesPage.tsx
+ª       
++---FeaturedReviewsSection
+ª   ª   fallbackReviewData.ts
+ª   ª   index.tsx
+ª   ª   ReviewCard.tsx
+ª   ª   
+ª   +---hooks
+ª           useFeaturedReviews.tsx
+ª           
++---Header
+ª   ª   AdminActions.tsx
+ª   ª   AuthActions.tsx
+ª   ª   BottomNavigation.tsx
+ª   ª   MigratedHeader.tsx
+ª   ª   MobileMenu.tsx
+ª   ª   SocialIcons.tsx
+ª   ª   ThemeToggle.tsx
+ª   ª   UserProfileSection.tsx
+ª   ª   
+ª   +---MobileBreadcrumbs
+ª   ª       index.tsx
+ª   ª       
+ª   +---NavbarBrand
+ª   ª       index.tsx
+ª   ª       
+ª   +---NavbarLinks
+ª   ª       index.tsx
+ª   ª       
+ª   +---UserDropdown
+ª           index.tsx
+ª           
++---HeroSection
+ª   ª   index.tsx
+ª   ª   ParticlesAnimation.tsx
+ª   ª   TechIcons.tsx
+ª   ª   
+ª   +---hooks
+ª           useHeroStats.tsx
+ª           
++---Home
+ª       SubscriptionSection.tsx
+ª       
++---icons
+ª   ª   AdditionalIcons.tsx
+ª   ª   CircuitPattern.tsx
+ª   ª   CloseIcon.tsx
+ª   ª   DiscordIcon.tsx
+ª   ª   FeatherIcons.tsx
+ª   ª   FeatherIconsExtended.tsx
+ª   ª   GithubIcon.tsx
+ª   ª   GoogleIcon.tsx
+ª   ª   InstagramIcon.tsx
+ª   ª   NeuralNetworkIcon.tsx
+ª   ª   NextLogoIcon.tsx
+ª   ª   SearchIcon.tsx
+ª   ª   TikTokIcon.tsx
+ª   ª   VercelIcon.tsx
+ª   ª   WebsiteIcon.tsx
+ª   ª   
+ª   +---FeatherIcons
+ª   ª       FiDownload.tsx
+ª   ª       FiEdit.tsx
+ª   ª       FiEdit3.tsx
+ª   ª       FiExternalLink.tsx
+ª   ª       FiFileText.tsx
+ª   ª       FiLink.tsx
+ª   ª       FiMessageCircle.tsx
+ª   ª       FiSave.tsx
+ª   ª       index.ts
+ª   ª       
+ª   +---svg
+ª   ª       AlertIcon.tsx
+ª   ª       ArrowLeftIcon.tsx
+ª   ª       ArrowRightIcon.tsx
+ª   ª       AutoplayIcon.tsx
+ª   ª       AwardIcon.tsx
+ª   ª       BadgeFirstCourse.tsx
+ª   ª       BadgeFirstReview.tsx
+ª   ª       BadgeFiveCourses.tsx
+ª   ª       BadgeFiveLessons.tsx
+ª   ª       BadgeLoginStreak30.tsx
+ª   ª       BadgeLoginStreak7.tsx
+ª   ª       Badges.tsx
+ª   ª       BadgeTenLessons.tsx
+ª   ª       BadgeThreeCourses.tsx
+ª   ª       BarChartIcon.tsx
+ª   ª       BellIcon.tsx
+ª   ª       BookIcon.tsx
+ª   ª       CalendarIcon.tsx
+ª   ª       CaptionsIcon.tsx
+ª   ª       CartIcon.tsx
+ª   ª       CheckCircleIcon.tsx
+ª   ª       CheckIcon.tsx
+ª   ª       ChevronDownIcon.tsx
+ª   ª       ChevronRightIcon.tsx
+ª   ª       ClockIcon.tsx
+ª   ª       CompletedIcon.tsx
+ª   ª       CreditCardIcon.tsx
+ª   ª       DownloadIcon.tsx
+ª   ª       ErrorIcon.tsx
+ª   ª       ExitFullscreenIcon.tsx
+ª   ª       ExternalLinkIcon.tsx
+ª   ª       FilesIcon.tsx
+ª   ª       FileTextIcon.tsx
+ª   ª       FilterIcon.tsx
+ª   ª       ForwardIcon.tsx
+ª   ª       FullscreenIcon.tsx
+ª   ª       GlobeIcon.tsx
+ª   ª       GridIcon.tsx
+ª   ª       HomeIcon.tsx
+ª   ª       index.ts
+ª   ª       index.tsx
+ª   ª       InfoIcon.tsx
+ª   ª       LayersIcon.tsx
+ª   ª       LessonIcon.tsx
+ª   ª       LikeIcon.tsx
+ª   ª       ListIcon.tsx
+ª   ª       LoadingIcon.tsx
+ª   ª       LockIcon.tsx
+ª   ª       LogoutIcon.tsx
+ª   ª       MailIcon.tsx
+ª   ª       MessageIcon.tsx
+ª   ª       ModuleIcon.tsx
+ª   ª       MoneyIcon.tsx
+ª   ª       MuteIcon.tsx
+ª   ª       PauseIcon.tsx
+ª   ª       PlaybackSpeedIcon.tsx
+ª   ª       PlayIcon.tsx
+ª   ª       PlusIcon.tsx
+ª   ª       ProgressSavedIcon.tsx
+ª   ª       QuestionAnswerIcon.tsx
+ª   ª       ReplyIcon.tsx
+ª   ª       RewindIcon.tsx
+ª   ª       SaveIcon.tsx
+ª   ª       SearchIcon.tsx
+ª   ª       SettingsIcon.tsx
+ª   ª       StarIcon.tsx
+ª   ª       SuccessIcon.tsx
+ª   ª       TagIcon.tsx
+ª   ª       TrendingUpIcon.tsx
+ª   ª       UserIcon.tsx
+ª   ª       UsersIcon.tsx
+ª   ª       VolumeIcon.tsx
+ª   ª       
+ª   +---tech
+ª           AIMLIcon.tsx
+ª           AutomationIcon.tsx
+ª           BusinessIcon.tsx
+ª           ChatGPTIcon.tsx
+ª           ClaudeIcon.tsx
+ª           CloudIcon.tsx
+ª           ContentCreationIcon.tsx
+ª           CopilotIcon.tsx
+ª           CSSIcon.tsx
+ª           DataAnalysisIcon.tsx
+ª           ExpoIcon.tsx
+ª           FirebaseIcon.tsx
+ª           GeminiIcon.tsx
+ª           HTMLIcon.tsx
+ª           index.tsx
+ª           JavaScriptIcon.tsx
+ª           MarketingIcon.tsx
+ª           MidjourneIcon.tsx
+ª           MongoDBIcon.tsx
+ª           NextJsIcon.tsx
+ª           NodeJsIcon.tsx
+ª           NoSQLIcon.tsx
+ª           PromptEngineeringIcon.tsx
+ª           PythonIcon.tsx
+ª           ReactIcon.tsx
+ª           ReactNativeIcon.tsx
+ª           SecurityIcon.tsx
+ª           StableDiffusionIcon.tsx
+ª           StripeIcon.tsx
+ª           TailwindCssIcon.tsx
+ª           TypeScriptIcon.tsx
+ª           
++---layout
+ª   ª   Breadcrumbs.tsx
+ª   ª   CacheStatus.tsx
+ª   ª   CookieConsent.tsx
+ª   ª   ErrorPage.tsx
+ª   ª   Footer.tsx
+ª   ª   Header.tsx
+ª   ª   Login.tsx
+ª   ª   Modal.tsx
+ª   ª   OnboardingModal.tsx
+ª   ª   Profile.tsx
+ª   ª   SearchBar.tsx
+ª   ª   SecurityInitializer.tsx
+ª   ª   StructuredData.tsx
+ª   ª   
+ª   +---Header
+ª   ª   ª   AdminActions.tsx
+ª   ª   ª   AuthActions.tsx
+ª   ª   ª   BottomNavigation.tsx
+ª   ª   ª   MigratedHeader.tsx
+ª   ª   ª   SocialIcons.tsx
+ª   ª   ª   ThemeToggle.tsx
+ª   ª   ª   UserProfileSection.tsx
+ª   ª   ª   
+ª   ª   +---MobileBreadcrumbs
+ª   ª   ª       index.tsx
+ª   ª   ª       
+ª   ª   +---NavbarBrand
+ª   ª   ª       index.tsx
+ª   ª   ª       
+ª   ª   +---NavbarLinks
+ª   ª   ª       index.tsx
+ª   ª   ª       
+ª   ª   +---UserDropdown
+ª   ª           index.tsx
+ª   ª           
+ª   +---OnboardingModal
+ª   ª       MigratedOnboardingModal.tsx
+ª   ª       
+ª   +---Profile
+ª       ª   AchievementBadge.tsx
+ª       ª   AchievementsSection.tsx
+ª       ª   AppSettings.tsx
+ª       ª   CourseCard.tsx
+ª       ª   DashboardProgress.tsx
+ª       ª   EmptyState.tsx
+ª       ª   LearningPathSection.tsx
+ª       ª   OfflineContentSection.tsx
+ª       ª   PaymentHistorySection.tsx
+ª       ª   ProfileActionButtons.tsx
+ª       ª   ProfileCoursesFilter.tsx
+ª       ª   ProfileDashboard.tsx
+ª       ª   ProfileHeader.tsx
+ª       ª   ProfileSettingsSection.tsx
+ª       ª   ProfileSidebar.tsx
+ª       ª   RecentActivity.tsx
+ª       ª   StatsCard.tsx
+ª       ª   ThemeSelector.tsx
+ª       ª   
+ª       +---charts
+ª       ª       ProgressChart.tsx
+ª       ª       
+ª       +---hooks
+ª               useAchievements.ts
+ª               useLearningPath.ts
+ª               useOfflineContent.ts
+ª               usePaymentHistory.ts
+ª               useProfileStats.tsx
+ª               
++---Lesson
+ª   ª   ClientLessonWrapper.tsx
+ª   ª   index.tsx
+ª   ª   LessonContent.tsx
+ª   ª   LessonDetailComponent.tsx
+ª   ª   LessonForm.tsx
+ª   ª   LessonHeader.tsx
+ª   ª   LessonLoadingSkeleton.tsx
+ª   ª   LessonNotFound.tsx
+ª   ª   LessonViewer.tsx
+ª   ª   OfflineButton.tsx
+ª   ª   
+ª   +---hooks
+ª   ª       useVideoControls.tsx
+ª   ª       
+ª   +---Navigation
+ª   ª       LessonNavigation.tsx
+ª   ª       
+ª   +---Notes
+ª   ª       LessonNotes.tsx
+ª   ª       Notes.tsx
+ª   ª       
+ª   +---QA
+ª   ª       AnswerForm.tsx
+ª   ª       AnswersList.tsx
+ª   ª       AskQuestionForm.tsx
+ª   ª       QASection.tsx
+ª   ª       QuestionItem.tsx
+ª   ª       QuestionsList.tsx
+ª   ª       RichTextEditor.tsx
+ª   ª       
+ª   +---Resources
+ª   ª       LessonResources.tsx
+ª   ª       ResourcesList.tsx
+ª   ª       
+ª   +---Settings
+ª   ª       LessonSettings.tsx
+ª   ª       
+ª   +---styles
+ª   ª       LessonContent.module.css
+ª   ª       
+ª   +---Video
+ª       ª   VideoPlayer.tsx
+ª       ª   
+ª       +---styles
+ª               VideoPlayer.module.css
+ª               
++---Lessons
+ª       CourseProgressHeader.tsx
+ª       
++---OnboardingModal
+ª       MigratedOnboardingModal.tsx
+ª       
++---Policy
+ª       PolicyContent.tsx
+ª       PolicyPage.tsx
+ª       
++---Profile
+ª   ª   AchievementBadge.tsx
+ª   ª   AchievementsSection.tsx
+ª   ª   AppSettings.tsx
+ª   ª   CourseCard.tsx
+ª   ª   DashboardProgress.tsx
+ª   ª   EmptyState.tsx
+ª   ª   LearningPathSection.tsx
+ª   ª   OfflineContentSection.tsx
+ª   ª   PaymentHistorySection.tsx
+ª   ª   ProfileActionButtons.tsx
+ª   ª   ProfileCoursesFilter.tsx
+ª   ª   ProfileDashboard.tsx
+ª   ª   ProfileHeader.tsx
+ª   ª   ProfileSettingsSection.tsx
+ª   ª   ProfileSidebar.tsx
+ª   ª   RecentActivity.tsx
+ª   ª   StatsCard.tsx
+ª   ª   SubscriptionManagement.tsx
+ª   ª   ThemeSelector.tsx
+ª   ª   
+ª   +---charts
+ª   ª       ProgressChart.tsx
+ª   ª       
+ª   +---hooks
+ª           useAchievements.ts
+ª           useLearningPath.ts
+ª           useOfflineContent.ts
+ª           usePaymentHistory.ts
+ª           useProfileStats.tsx
+ª           
++---shared
+ª       DefaultAvatar.tsx
+ª       SectionSkeleton.tsx
+ª       SkipLink.tsx
+ª       
++---StatisticsSection
+ª       AnimatedParticles.tsx
+ª       index.tsx
+ª       StatCounter.tsx
+ª       statsData.ts
+ª       
++---Subscriptions
+ª       SubscriptionBenefits.tsx
+ª       SubscriptionFAQ.tsx
+ª       SubscriptionPlans.tsx
+ª       
++---TechStackSection
+ª       index.tsx
+ª       techData.ts
+ª       TechItem.tsx
+ª       
++---Toast
+ª       index.tsx
+ª       Toast.tsx
+ª       ToastContainer.tsx
+ª       ToastContext.tsx
+ª       
++---ui
+ª       Accordion.tsx
+ª       AppLoader.tsx
+ª       Avatar.tsx
+ª       Badge.tsx
+ª       Button.tsx
+ª       Card.tsx
+ª       Checkbox.tsx
+ª       Chip.tsx
+ª       CustomSelect.tsx
+ª       Divider.tsx
+ª       Dropdown.tsx
+ª       index.ts
+ª       Input.tsx
+ª       Modal.tsx
+ª       Navbar.tsx
+ª       OptimizedImage.tsx
+ª       PasswordStrengthMeter.tsx
+ª       Progress.tsx
+ª       Radio.tsx
+ª       RadioGroup.tsx
+ª       RatingStars.tsx
+ª       SectionHeader.tsx
+ª       Select.tsx
+ª       SelectItem.tsx
+ª       Spinner.tsx
+ª       Switch.tsx
+ª       Table.tsx
+ª       Tabs.tsx
+ª       Textarea.tsx
+ª       Tooltip.tsx
+ª       
++---WhyChooseUsSection
+        FeatureCard.tsx
+        featuresData.ts
+        index.tsx
+        

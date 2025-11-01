@@ -2,6 +2,7 @@
 
 import React from 'react';
 import dynamic from 'next/dynamic';
+import { useTranslations } from 'next-intl';
 
 // Import the actual component
 const LessonDetailImport = dynamic(() => import('./LessonDetailComponent'), {
@@ -27,10 +28,12 @@ interface LessonDetailProps {
 
 // Create a wrapper component
 const LessonDetail: React.FC<LessonDetailProps> = ({ params }) => {
+    const t = useTranslations('courses.lesson');
+
     // Ensure params are defined and not promises
     if (!params || typeof params.courseId !== 'string' || typeof params.lessonId !== 'string') {
         console.error("Invalid params passed to LessonDetail:", params);
-        return <div className="p-8 text-center">Error loading lesson: Invalid parameters</div>;
+        return <div className="p-8 text-center">{t('errorInvalidParams')}</div>;
     }
 
     return <LessonDetailImport params={params} />;

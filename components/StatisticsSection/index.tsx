@@ -2,12 +2,14 @@
 
 import React from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 import ScrollAnimationWrapper from '../animations/ScrollAnimationWrapper'
 import StatCounter from './StatCounter'
 import AnimatedParticles from './AnimatedParticles'
 import { statisticsData } from './statsData'
 
 export default function StatisticsSection() {
+    const t = useTranslations('home.statistics')
     const ref = React.useRef<HTMLElement>(null)
     const { scrollYProgress } = useScroll({
         target: ref,
@@ -54,7 +56,7 @@ export default function StatisticsSection() {
             <div className="container mx-auto px-4 relative z-10">
                 <ScrollAnimationWrapper>
                     <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-8">
-                        Our Impact in Numbers
+                        {t('title')}
                     </h2>
                 </ScrollAnimationWrapper>
 
@@ -68,8 +70,8 @@ export default function StatisticsSection() {
                     {statisticsData.map((stat, index) => (
                         <StatCounter
                             key={stat.label}
-                            value={stat.value}
-                            label={stat.label}
+                            value={t(`${stat.label}.value`)}
+                            label={t(`${stat.label}.label`)}
                             icon={stat.icon}
                             color={stat.color}
                             index={index}

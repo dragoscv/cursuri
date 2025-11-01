@@ -3,6 +3,7 @@ import Button from '@/components/ui/Button';
 import { FiArrowLeft } from '@/components/icons/FeatherIcons';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 interface CourseProgressHeaderProps {
     courseId: string;
@@ -21,6 +22,7 @@ export default function CourseProgressHeader({
     completedLessonsCount,
     isLoading
 }: CourseProgressHeaderProps) {
+    const t = useTranslations('courses.progress');
     const progressPercentage = (completedLessonsCount / (lessonCount || 1)) * 100;
 
     return (
@@ -31,7 +33,7 @@ export default function CourseProgressHeader({
                     startContent={<FiArrowLeft />}
                     className="mb-4"
                 >
-                    Back to Course
+                    {t('backToCourse')}
                 </Button>
             </Link>
 
@@ -42,7 +44,7 @@ export default function CourseProgressHeader({
                             {courseName}
                         </h1>
                         <p className="text-[color:var(--ai-foreground)]/80 dark:text-[color:var(--ai-foreground)]/70">
-                            {lessonCount} lessons • {difficulty || 'All levels'}
+                            {t('lessonCount', { count: lessonCount })} • {difficulty || t('allLevels')}
                         </p>
                     </div>
 
@@ -56,7 +58,7 @@ export default function CourseProgressHeader({
                                     />
                                 </div>
                                 <span className="text-sm font-medium text-[color:var(--ai-foreground)]/70 dark:text-[color:var(--ai-foreground)]/60">
-                                    Loading...
+                                    {t('loading')}
                                 </span>
                             </div>
                         </div>
@@ -70,7 +72,7 @@ export default function CourseProgressHeader({
                                     />
                                 </div>
                                 <span className="text-sm font-medium text-[color:var(--ai-primary)] dark:text-[color:var(--ai-primary)]/90">
-                                    {Math.round(progressPercentage)}% Complete
+                                    {t('percentComplete', { percent: Math.round(progressPercentage) })}
                                 </span>
                             </div>
                         </div>

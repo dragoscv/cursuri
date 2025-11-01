@@ -3,7 +3,7 @@
 import React, { useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { Lesson } from '@/types';
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@heroui/react';
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button as HeroButton } from '@heroui/react';
 import useVideoControls from '../hooks/useVideoControls';
 import {
   PlayIcon,
@@ -50,7 +50,8 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const videoContainerRef = useRef<HTMLDivElement>(null);
   const [isMuted, setIsMuted] = React.useState(false);
   const [captionsEnabled, setCaptionsEnabled] = React.useState(false);
-  const [selectedCaptionLanguage, setSelectedCaptionLanguage] = React.useState('en-US');
+  const [selectedCaptionLanguage, setSelectedCaptionLanguage] = React.useState<string>('off');
+  const [playbackSpeed, setPlaybackSpeed] = React.useState(1);
 
   const courseId = lesson?.courseId || '';
 
@@ -90,9 +91,10 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
     }
   };
 
-  // Handle captions toggle
-  const toggleCaptions = () => {
-    setCaptionsEnabled(!captionsEnabled);
+  // Handle caption language selection
+  const handleCaptionChange = (language: string) => {
+    setSelectedCaptionLanguage(language);
+    setCaptionsEnabled(language !== 'off');
 
     if (videoRef.current) {
       // Get text tracks from video element
@@ -100,7 +102,14 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
       // Set mode for all tracks
       for (let i = 0; i < tracks.length; i++) {
-        tracks[i].mode = captionsEnabled ? 'hidden' : 'showing';
+        const track = tracks[i];
+        if (language === 'off') {
+          track.mode = 'hidden';
+        } else if (track.language === language.split('-')[0] || track.srclang === language.split('-')[0]) {
+          track.mode = 'showing';
+        } else {
+          track.mode = 'hidden';
+        }
       }
     }
   };
@@ -123,17 +132,15 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
             track.srclang = language.split('-')[0];
             track.src = captionData.url;
 
-            // Set default language
-            if (language === selectedCaptionLanguage) {
-              track.default = true;
-            }
+            // Don't set any track as default since we start with captions off
+            track.mode = 'hidden';
 
             videoRef.current?.appendChild(track);
           }
         });
       }
     }
-  }, [lesson.captions, selectedCaptionLanguage]);
+  }, [lesson.captions]);
 
   if (!lesson.file) {
     return (
@@ -278,37 +285,58 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
           <div className="flex items-center gap-3">
             {' '}
-            {/* Captions Toggle */}
+            {/* Captions Dropdown */}
             {lesson.captions && Object.keys(lesson.captions).length > 0 && (
-              <Button
-                isIconOnly
-                variant={captionsEnabled ? 'primary' : 'light'}
-                size="sm"
-                onClick={toggleCaptions}
-                aria-label={captionsEnabled ? t('disableCaptions') : t('enableCaptions')}
-                className={captionsEnabled ? 'bg-[color:var(--ai-primary)]/20' : ''}
-              >
-                <CaptionsIcon />
-              </Button>
+              <Dropdown>
+                <DropdownTrigger>
+                  <HeroButton
+                    variant="light"
+                    size="sm"
+                    className={captionsEnabled ? 'text-white bg-[color:var(--ai-primary)]/20' : 'text-white'}
+                    startContent={<CaptionsIcon />}
+                    aria-label={t('selectCaptions')}
+                  >
+                    {selectedCaptionLanguage === 'off' ? 'Off' : selectedCaptionLanguage.toUpperCase()}
+                  </HeroButton>
+                </DropdownTrigger>
+                <DropdownMenu
+                  aria-label={t('selectCaptions')}
+                  className="bg-[color:var(--ai-background)]/90 backdrop-blur-md border border-[color:var(--ai-card-border)]/50 text-[color:var(--ai-foreground)]"
+                  selectedKeys={[selectedCaptionLanguage]}
+                  selectionMode="single"
+                  onAction={(key) => {
+                    handleCaptionChange(key.toString());
+                  }}
+                >
+                  <DropdownItem key="off">{t('captionsOff') || 'Off'}</DropdownItem>
+                  {Object.keys(lesson.captions).map((language) => (
+                    <DropdownItem key={language}>
+                      {language.toUpperCase()}
+                    </DropdownItem>
+                  ))}
+                </DropdownMenu>
+              </Dropdown>
             )}
             {/* Playback Speed */}{' '}
             <Dropdown>
               <DropdownTrigger>
-                <Button
+                <HeroButton
                   variant="light"
                   size="sm"
                   className="text-white"
                   startContent={<PlaybackSpeedIcon />}
                 >
-                  {videoRef.current?.playbackRate || 1}x
-                </Button>
+                  {playbackSpeed}x
+                </HeroButton>
               </DropdownTrigger>
               <DropdownMenu
                 aria-label={t('playbackSpeed')}
                 className="bg-[color:var(--ai-background)]/90 backdrop-blur-md border border-[color:var(--ai-card-border)]/50 text-[color:var(--ai-foreground)]"
                 onAction={(key) => {
+                  const speed = parseFloat(key.toString());
                   if (videoRef.current) {
-                    videoRef.current.playbackRate = parseFloat(key.toString());
+                    videoRef.current.playbackRate = speed;
+                    setPlaybackSpeed(speed);
                   }
                 }}
               >

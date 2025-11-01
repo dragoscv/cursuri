@@ -6,12 +6,15 @@ import { FiFileText } from '@/components/icons/FeatherIcons/FiFileText';
 import { FiLink } from '@/components/icons/FeatherIcons/FiLink';
 import { FiExternalLink } from '@/components/icons/FeatherIcons/FiExternalLink';
 import { LessonResource } from '@/types';
+import { useTranslations } from 'next-intl';
 
 interface LessonResourcesProps {
     resources: LessonResource[];
 }
 
 const LessonResources: React.FC<LessonResourcesProps> = ({ resources }) => {
+    const t = useTranslations('courses.lessonResources');
+
     const getResourceIcon = (type?: string) => {
         switch (type) {
             case 'pdf':
@@ -32,7 +35,7 @@ const LessonResources: React.FC<LessonResourcesProps> = ({ resources }) => {
                 <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 -m-5 mb-4 border-b border-[color:var(--ai-card-border)]">
                     <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
                         <FiFileText className="mr-2 text-[color:var(--ai-primary)]" />
-                        <span>Additional Resources</span>
+                        <span>{t('title')}</span>
                     </h3>
                 </div>                <div className="space-y-3">
                     {resources.map((resource, index) => (
@@ -64,7 +67,7 @@ const LessonResources: React.FC<LessonResourcesProps> = ({ resources }) => {
                                     className="bg-[color:var(--ai-primary)]/10 hover:bg-[color:var(--ai-primary)]/20 text-[color:var(--ai-primary)] transition-all duration-200"
                                     endContent={resource.type === 'pdf' ? <FiDownload size={14} /> : <FiExternalLink size={14} />}
                                 >
-                                    {resource.type === 'pdf' ? 'Download' : 'View'}
+                                    {resource.type === 'pdf' ? t('download') : t('view')}
                                 </Button>
                             </div>
                         </div>

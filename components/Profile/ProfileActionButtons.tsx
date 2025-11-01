@@ -2,12 +2,15 @@ import React from 'react';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import { FiBook } from '@/components/icons/FeatherIcons';
+import { useTranslations } from 'next-intl';
 
 interface ProfileActionButtonsProps {
     hasPaidCourses: boolean;
 }
 
 export default function ProfileActionButtons({ hasPaidCourses }: ProfileActionButtonsProps) {
+    const t = useTranslations('profile');
+
     return (
         <div className="mt-10 mb-6 text-center relative">
             {/* Decorative background elements */}
@@ -22,7 +25,7 @@ export default function ProfileActionButtons({ hasPaidCourses }: ProfileActionBu
                         startContent={<div className="bg-white/20 p-1 rounded-full"><FiBook size={18} /></div>}
                         size="lg"
                     >
-                        Continue Learning
+                        {t('continueLearning')}
                     </Button>
                 </Link>
             ) : (
@@ -33,7 +36,7 @@ export default function ProfileActionButtons({ hasPaidCourses }: ProfileActionBu
                         startContent={<div className="bg-white/20 p-1 rounded-full"><FiBook size={18} /></div>}
                         size="lg"
                     >
-                        Browse Courses
+                        {t('browseCourses')}
                     </Button>
                 </Link>)}
         </div>

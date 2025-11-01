@@ -2,6 +2,7 @@
 import React from 'react';
 import { useContext, useEffect, useState } from "react"
 import { AppContext } from "@/components/AppContext"
+import { useToast } from '@/components/Toast/ToastContext'
 import { useTranslations } from 'next-intl'
 import AddLesson from "./AddLesson"
 import Reviews from "./Reviews"
@@ -29,6 +30,7 @@ export default function Course({ courseId }: CourseProps) {
     const [lessonCount, setLessonCount] = useState(0)
     const [loadingPayment, setLoadingPayment] = useState(false)
     const router = useRouter()
+    const { showToast } = useToast()
     const t = useTranslations('courses');
 
     const context = useContext(AppContext) as AppContextProps
@@ -162,18 +164,18 @@ export default function Course({ courseId }: CourseProps) {
                                 {course?.difficulty || 'Beginner'}
                             </Chip>
                             <Chip color="default" variant="flat" size="sm">
-                                {lessonCount} lessons
+                                {t('course.lessonsCount', { count: lessonCount })}
                             </Chip>
                             <Chip color="default" variant="flat" size="sm">
-                                {course?.duration || '10 hours'}
+                                {course?.duration || t('course.defaultDuration')}
                             </Chip>
                             {hasAccess && (
                                 <Chip color="success" variant="solid" size="sm">
-                                    Enrolled
+                                    {t('course.enrolled')}
                                 </Chip>
                             )}
                             <Chip color="primary" variant="flat" size="sm">
-                                {courseProgress}% completed
+                                {t('course.progressPercentage', { progress: courseProgress })}
                             </Chip>
                         </div>
                     </div>
@@ -201,7 +203,7 @@ export default function Course({ courseId }: CourseProps) {
                                 </svg>
                             )}
                         >
-                            Add Lesson
+                            {t('course.addLesson')}
                         </Button>
                     )}
 
@@ -400,8 +402,8 @@ export default function Course({ courseId }: CourseProps) {
                                     </svg>
                                 </div>
                                 <div>
-                                    <h3 className="text-lg font-bold">Course Completed!</h3>
-                                    <p className="text-[color:var(--ai-muted)]">{t('actions.congratulationsFinish')}</p>
+                                    <h3 className="text-lg font-bold">{t('course.completionTitle')}</h3>
+                                    <p className="text-[color:var(--ai-muted)]">{t('course.completionMessage')}</p>
                                 </div>
                             </div>
                             <Button
@@ -429,7 +431,12 @@ export default function Course({ courseId }: CourseProps) {
                                         a.remove();
                                         window.URL.revokeObjectURL(url);
                                     } catch (err) {
-                                        alert('Could not download certificate. Please try again.');
+                                        showToast({
+                                            type: 'error',
+                                            title: t('course.downloadError'),
+                                            message: t('course.downloadErrorMessage'),
+                                            duration: 5000,
+                                        });
                                     }
                                 }}
                                 startContent={
@@ -450,7 +457,7 @@ export default function Course({ courseId }: CourseProps) {
                                     </svg>
                                 }
                             >
-                                Download Certificate
+                                {t('course.downloadCertificate')}
                             </Button>
                         </div>
                     </Card>

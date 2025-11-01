@@ -172,7 +172,12 @@ export default function AddCourse(props: AddCourseProps) {
         } catch (error) {
             setLoading(false);
             console.error("Error adding course:", error);
-            alert("Failed to add course. Please try again.");
+            showToast({
+                type: 'error',
+                title: 'Error Adding Course',
+                message: 'Failed to add course. Please try again.',
+                duration: 5000,
+            });
         }
     }, [
         products, courseName, courseDescription, coursePrice, repoUrl,

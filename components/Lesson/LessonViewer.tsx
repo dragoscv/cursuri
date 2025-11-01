@@ -4,6 +4,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { AppContext } from '@/components/AppContext';
+import { useToast } from '@/components/Toast/ToastContext';
 import LessonContent from '@/components/Lesson/LessonContent';
 import { Spinner } from '@heroui/react';
 import Button from '@/components/ui/Button';
@@ -18,6 +19,7 @@ export default function LessonViewer({ courseId, lessonId }: LessonViewerProps) 
     const t = useTranslations('lessons.viewer');
     const router = useRouter();
     const context = useContext(AppContext);
+    const { showToast } = useToast();
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [lessonData, setLessonData] = useState<LessonType | null>(null);
@@ -88,7 +90,12 @@ export default function LessonViewer({ courseId, lessonId }: LessonViewerProps) 
                                     if (data.success) {
                                         window.location.reload();
                                     } else {
-                                        alert(t('couldNotSync'));
+                                        showToast({
+                                            type: 'error',
+                                            title: 'Sync Error',
+                                            message: t('couldNotSync'),
+                                            duration: 5000,
+                                        });
                                     }
                                 });
                         }}

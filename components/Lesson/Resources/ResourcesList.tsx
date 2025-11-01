@@ -3,6 +3,7 @@
 import { Resource } from '@/types';
 import { Card } from '@heroui/react';
 import { FiFileText, FiExternalLink, FiDownload } from '@/components/icons/FeatherIcons';
+import { useTranslations } from 'next-intl';
 
 interface ResourcesListProps {
     resources: Resource[];
@@ -13,6 +14,8 @@ export default function ResourcesList({
     resources,
     isOfflineMode = false
 }: ResourcesListProps) {
+    const t = useTranslations('courses.lessonResources');
+
     if (!resources || resources.length === 0) {
         return null;
     }
@@ -35,10 +38,10 @@ export default function ResourcesList({
                 <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 -m-5 mb-4 border-b border-[color:var(--ai-card-border)]">
                     <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
                         <FiFileText className="mr-2 text-[color:var(--ai-primary)]" />
-                        <span>Lesson Resources</span>
+                        <span>{t('title')}</span>
                         {isOfflineMode && (
                             <span className="ml-2 text-xs px-2 py-0.5 bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] rounded-full">
-                                Offline Mode
+                                {t('offlineMode')}
                             </span>
                         )}
                     </h3>

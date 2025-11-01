@@ -167,7 +167,7 @@ export default function Admin() {
                                     >
                                         <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                                     </svg>
-                                    <span className="ml-2">Grid</span>
+                                    <span className="ml-2">{t('grid')}</span>
                                 </Button>{' '}
                                 <Button
                                     color={selectedView === 'list' ? 'primary' : 'default'}
@@ -192,7 +192,7 @@ export default function Admin() {
                                             clipRule="evenodd"
                                         />
                                     </svg>
-                                    <span className="ml-2">List</span>
+                                    <span className="ml-2">{t('list')}</span>
                                 </Button>
                             </div>{' '}
                             <Button
@@ -262,7 +262,7 @@ export default function Admin() {
                                                         }}
                                                         className="font-medium text-[color:var(--ai-danger)] bg-[color:var(--ai-danger)]/10 hover:bg-[color:var(--ai-danger)]/20"
                                                     >
-                                                        Delete
+                                                        {t('delete')}
                                                     </Button>
                                                     <Button
                                                         size="sm"
@@ -276,7 +276,7 @@ export default function Admin() {
                                                         }}
                                                         className="font-medium text-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10 hover:bg-[color:var(--ai-primary)]/20"
                                                     >
-                                                        Edit Course
+                                                        {t('editCourse')}
                                                     </Button>
                                                 </div>
                                             </div>
@@ -330,7 +330,7 @@ export default function Admin() {
                                         }}
                                         className="font-medium text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-border)]/20"
                                     >
-                                        Back to Courses
+                                        {t('backToCourses')}
                                     </Button>
                                 </div>
                             </div>
@@ -338,11 +338,11 @@ export default function Admin() {
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                                 <div className="lg:col-span-2">
                                     <Card className="p-4">
-                                        <h3 className="text-xl font-semibold mb-4">Course Details</h3>
+                                        <h3 className="text-xl font-semibold mb-4">{t('courseDetails')}</h3>
                                         <div className="space-y-4">
                                             <div>
                                                 <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-1">
-                                                    Course Name
+                                                    {t('courseName')}
                                                 </label>
                                                 <input
                                                     title="Course Name"
@@ -355,7 +355,7 @@ export default function Admin() {
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-1">
-                                                    Description
+                                                    {t('courseDescription')}
                                                 </label>
                                                 <textarea
                                                     title="Course Description"
@@ -368,7 +368,7 @@ export default function Admin() {
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-1">
-                                                    Status
+                                                    {t('status')}
                                                 </label>
                                                 <div className="flex items-center">
                                                     <Chip
@@ -381,7 +381,7 @@ export default function Admin() {
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-1">
-                                                    Price
+                                                    {t('price')}
                                                 </label>
                                                 <div className="text-lg font-medium">{formatPrice(selectedCourse)}</div>
                                             </div>
@@ -391,18 +391,18 @@ export default function Admin() {
 
                                 <div>
                                     <Card className="p-4">
-                                        <h3 className="text-xl font-semibold mb-4">Course Statistics</h3>
+                                        <h3 className="text-xl font-semibold mb-4">{t('courseStatistics')}</h3>
                                         <div className="space-y-4">
                                             <div>
                                                 <label className="text-sm text-[color:var(--ai-muted-foreground)]">
-                                                    Number of Lessons
+                                                    {t('numberOfLessons')}
                                                 </label>
                                                 <p className="text-2xl font-bold">{getLessonCount(selectedCourse.id)}</p>
                                             </div>
                                             <Divider />
                                             <div>
                                                 <label className="text-sm text-[color:var(--ai-muted-foreground)]">
-                                                    Enrolled Students
+                                                    {t('enrolledStudents')}
                                                 </label>
                                                 <p className="text-2xl font-bold">
                                                     {/* This would be fetched from a students collection */}0
@@ -411,7 +411,7 @@ export default function Admin() {
                                             <Divider />
                                             <div>
                                                 <label className="text-sm text-[color:var(--ai-muted-foreground)]">
-                                                    Average Rating
+                                                    {t('averageRating')}
                                                 </label>
                                                 <div className="flex items-center">
                                                     <span className="text-2xl font-bold mr-2">0</span>
@@ -435,7 +435,7 @@ export default function Admin() {
                             </div>
 
                             <Card className="p-4">
-                                <h3 className="text-xl font-semibold mb-4">Lessons</h3>
+                                <h3 className="text-xl font-semibold mb-4">{t('lessons')}</h3>
                                 <div className="overflow-hidden">
                                     {lessons[selectedCourse.id] &&
                                         Object.keys(lessons[selectedCourse.id]).length > 0 ? (
@@ -452,19 +452,19 @@ export default function Admin() {
                                                         scope="col"
                                                         className="px-6 py-3 text-left text-xs font-medium text-[color:var(--ai-muted-foreground)] uppercase tracking-wider"
                                                     >
-                                                        Lesson Name
+                                                        {t('lessonName')}
                                                     </th>
                                                     <th
                                                         scope="col"
                                                         className="px-6 py-3 text-left text-xs font-medium text-[color:var(--ai-muted-foreground)] uppercase tracking-wider"
                                                     >
-                                                        Status
+                                                        {t('status')}
                                                     </th>
                                                     <th
                                                         scope="col"
                                                         className="px-6 py-3 text-left text-xs font-medium text-[color:var(--ai-muted-foreground)] uppercase tracking-wider"
                                                     >
-                                                        Actions
+                                                        {t('actions')}
                                                     </th>
                                                 </tr>
                                             </thead>
@@ -508,7 +508,7 @@ export default function Admin() {
                                                                         onPress={() => handleEditLesson(lesson)}
                                                                         className="font-medium text-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10 hover:bg-[color:var(--ai-primary)]/20"
                                                                     >
-                                                                        Edit Lesson
+                                                                        {t('editLesson')}
                                                                     </Button>
                                                                 </div>
                                                             </td>
@@ -519,7 +519,7 @@ export default function Admin() {
                                     ) : (
                                         <div className="text-center py-8">
                                             <p className="text-[color:var(--ai-muted-foreground)] mb-4">
-                                                No lessons found for this course
+                                                {t('noLessonsFound')}
                                             </p>{' '}
                                             <Button
                                                 color="primary"
@@ -527,7 +527,7 @@ export default function Admin() {
                                                 size="sm"
                                                 className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium shadow-sm hover:shadow-md hover:shadow-[color:var(--ai-primary)]/20 transition-all"
                                             >
-                                                Add First Lesson
+                                                {t('addFirstLesson')}
                                             </Button>
                                         </div>
                                     )}

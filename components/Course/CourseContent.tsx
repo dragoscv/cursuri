@@ -56,7 +56,7 @@ const CourseContent: React.FC<CourseContentProps> = ({
   );
 
   const modules = course.modules || [];
-  const defaultModule = { id: 'default', title: 'Course Content' }; // Animation variants
+  const defaultModule = { id: 'default', title: t('courseContent') }; // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -428,17 +428,17 @@ const LessonItem: React.FC<LessonItemProps> = ({
         {!isAccessible ? (
           <span className="text-xs bg-[color:var(--ai-card-border)]/20 text-[color:var(--ai-muted)] px-2 py-1 rounded-full flex items-center">
             <FiLock className="h-3 w-3 mr-1" />
-            Locked
+            {t('locked')}
           </span>
         ) : isCompleted ? (
           <span className="text-xs bg-[color:var(--ai-success, #10b981)]/20 text-[color:var(--ai-success, #10b981)] px-3 py-1.5 rounded-full flex items-center gap-1 font-semibold border border-[color:var(--ai-success, #10b981)]/30 shadow-sm">
             <FiCheck className="h-3 w-3" />
-            Completed
+            {t('completed')}
           </span>
         ) : (
           <span className="text-xs bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] px-2 py-1 rounded-full flex items-center">
             <span className="w-2 h-2 bg-[color:var(--ai-primary)]/60 rounded-full mr-1.5"></span>
-            In Progress
+            {t('inProgress')}
           </span>
         )}
       </div>

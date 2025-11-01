@@ -1,6 +1,7 @@
 import React, { useState, useContext, useCallback, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { AppContext } from '@/components/AppContext';
+import { useToast } from '@/components/Toast/ToastContext';
 import { firestoreDB, firebaseStorage } from '@/utils/firebase/firebase.config';
 import {
   doc,
@@ -43,6 +44,7 @@ import RichTextEditor from '@/components/Lesson/QA/RichTextEditor';
 
 export default function LessonForm({ courseId, lessonId, onClose, onSave }: LessonFormProps) {
   const t = useTranslations('lessons.form');
+  const { showToast } = useToast();
   const [lessonName, setLessonName] = useState('');
   const [lessonDescription, setLessonDescription] = useState('');
   const [repoUrl, setRepoUrl] = useState('');
@@ -279,7 +281,12 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
     setLoading(true);
     setUploadProgress(0);
     if (!file && lessonType === 'video') {
-      alert('Please select a video file to upload');
+      showToast({
+        type: 'warning',
+        title: 'Video Required',
+        message: 'Please select a video file to upload',
+        duration: 4000,
+      });
       setLoading(false);
       return;
     }
@@ -477,7 +484,12 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
       setAdditionalFilesProgress({});
       setLoading(false);
       console.error('Error adding lesson:', error);
-      alert('Failed to add lesson. Please try again.');
+      showToast({
+        type: 'error',
+        title: 'Error Adding Lesson',
+        message: 'Failed to add lesson. Please try again.',
+        duration: 5000,
+      });
     }
   }, [
     lessonName,
@@ -707,7 +719,12 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
       setAdditionalFilesProgress({});
       setLoading(false);
       console.error('Error updating lesson:', error);
-      alert('Failed to update lesson. Please try again.');
+      showToast({
+        type: 'error',
+        title: 'Error Updating Lesson',
+        message: 'Failed to update lesson. Please try again.',
+        duration: 5000,
+      });
     }
   }, [
     lessonId,
@@ -871,7 +888,12 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
         explanation: '',
       });
     } else {
-      alert('A question must have a question text and at least two options.');
+      showToast({
+        type: 'warning',
+        title: 'Invalid Question',
+        message: 'A question must have a question text and at least two options.',
+        duration: 4000,
+      });
     }
   };
 
@@ -1716,22 +1738,22 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                                   <div
                                     key={oIndex}
                                     className={`p-3 rounded-lg flex items-center gap-2 ${question.correctOption === oIndex
-                                        ? 'bg-green-100 dark:bg-green-900/20 border border-green-200 dark:border-green-800/30'
-                                        : 'bg-[color:var(--ai-card-bg)]/50 border border-[color:var(--ai-card-border)]/30'
+                                      ? 'bg-green-100 dark:bg-green-900/20 border border-green-200 dark:border-green-800/30'
+                                      : 'bg-[color:var(--ai-card-bg)]/50 border border-[color:var(--ai-card-border)]/30'
                                       }`}
                                   >
                                     <div
                                       className={`w-8 h-8 rounded-full flex items-center justify-center ${question.correctOption === oIndex
-                                          ? 'bg-green-200 dark:bg-green-800/30 text-green-800 dark:text-green-300'
-                                          : 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]'
+                                        ? 'bg-green-200 dark:bg-green-800/30 text-green-800 dark:text-green-300'
+                                        : 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]'
                                         } font-medium`}
                                     >
                                       {String.fromCharCode(65 + oIndex)}
                                     </div>
                                     <span
                                       className={`${question.correctOption === oIndex
-                                          ? 'text-green-800 dark:text-green-300 font-medium'
-                                          : 'text-[color:var(--ai-foreground)]'
+                                        ? 'text-green-800 dark:text-green-300 font-medium'
+                                        : 'text-[color:var(--ai-foreground)]'
                                         }`}
                                     >
                                       {option}
@@ -1835,7 +1857,7 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-[color:var(--ai-primary)] rounded-full animate-pulse"></div>
               <span className="text-sm font-medium text-[color:var(--ai-foreground)]">
-                {uploadingFile ? `Uploading ${uploadingFile}...` : 'Processing...'}
+                {uploadingFile ? t('uploadingFile', { fileName: uploadingFile }) : t('processing')}
               </span>
             </div>
             <span className="text-sm font-semibold text-[color:var(--ai-primary)]">
@@ -1873,7 +1895,7 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
           className="px-6"
           isDisabled={loading}
         >
-          Cancel
+          {t('cancel')}
         </Button>
         <Button
           color="primary"
@@ -1883,10 +1905,10 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
           isDisabled={loading}
         >
           {loading && uploadProgress > 0
-            ? `Uploading ${Math.round(uploadProgress)}%`
+            ? t('uploadingProgress', { progress: Math.round(uploadProgress) })
             : editMode
-              ? 'Update Lesson'
-              : 'Add Lesson'}
+              ? t('updateLesson')
+              : t('addLesson')}
         </Button>
       </div>
     </motion.div>

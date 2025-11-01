@@ -3,13 +3,15 @@
 import Input from '@/components/ui/Input';
 import { FiUser } from '../../icons/FeatherIcons';
 import { InstructorNameFieldProps } from '@/types';
+import { useTranslations } from 'next-intl';
 
 export default function InstructorNameField({ value, onChange }: InstructorNameFieldProps) {
+    const t = useTranslations('courses.fields');
     return (
         <Input
-            label="Instructor Name"
+            label={t('instructor.label')}
             variant="bordered"
-            placeholder="Instructor name"
+            placeholder={t('instructor.placeholder')}
             value={value}
             onChange={onChange}
             startContent={<FiUser className="text-[color:var(--ai-muted)]" />}

@@ -34,27 +34,13 @@ export default async function GDPRPolicy() {
         <Paragraph>{sections.categories.intro}</Paragraph>
         <List
           items={[
-            <>
-              <strong>Identity Data:</strong> {sections.categories.identityData.split(': ')[1]}
-            </>,
-            <>
-              <strong>Contact Data:</strong> {sections.categories.contactData.split(': ')[1]}
-            </>,
-            <>
-              <strong>Financial Data:</strong> {sections.categories.financialData.split(': ')[1]}
-            </>,
-            <>
-              <strong>Technical Data:</strong> {sections.categories.technicalData.split(': ')[1]}
-            </>,
-            <>
-              <strong>Profile Data:</strong> {sections.categories.profileData.split(': ')[1]}
-            </>,
-            <>
-              <strong>Usage Data:</strong> {sections.categories.usageData.split(': ')[1]}
-            </>,
-            <>
-              <strong>Marketing Data:</strong> {sections.categories.marketingData.split(': ')[1]}
-            </>,
+            sections.categories.identityData,
+            sections.categories.contactData,
+            sections.categories.financialData,
+            sections.categories.technicalData,
+            sections.categories.profileData,
+            sections.categories.usageData,
+            sections.categories.marketingData,
           ]}
         />
       </Section>
@@ -63,17 +49,9 @@ export default async function GDPRPolicy() {
         <Paragraph>{sections.collection.intro}</Paragraph>
         <List
           items={[
-            <>
-              <strong>Direct interactions:</strong>{' '}
-              {sections.collection.directInteractions.split(': ')[1]}
-            </>,
-            <>
-              <strong>Automated technologies:</strong>{' '}
-              {sections.collection.automatedTechnologies.split(': ')[1]}
-            </>,
-            <>
-              <strong>Third parties:</strong> {sections.collection.thirdParties.split(': ')[1]}
-            </>,
+            sections.collection.directInteractions,
+            sections.collection.automatedTechnologies,
+            sections.collection.thirdParties,
           ]}
         />
       </Section>
@@ -82,20 +60,10 @@ export default async function GDPRPolicy() {
         <Paragraph>{sections.legalBasis.intro}</Paragraph>
         <List
           items={[
-            <>
-              <strong>Consent:</strong> {sections.legalBasis.consent.split(': ')[1]}
-            </>,
-            <>
-              <strong>Contract:</strong> {sections.legalBasis.contract.split(': ')[1]}
-            </>,
-            <>
-              <strong>Legal obligation:</strong>{' '}
-              {sections.legalBasis.legalObligation.split(': ')[1]}
-            </>,
-            <>
-              <strong>Legitimate interests:</strong>{' '}
-              {sections.legalBasis.legitimateInterests.split(': ')[1]}
-            </>,
+            sections.legalBasis.consent,
+            sections.legalBasis.contract,
+            sections.legalBasis.legalObligation,
+            sections.legalBasis.legitimateInterests,
           ]}
         />
       </Section>
@@ -114,15 +82,9 @@ export default async function GDPRPolicy() {
         <Paragraph>{sections.sharing.intro}</Paragraph>
         <List
           items={[
-            <>
-              <strong>Service providers:</strong> {sections.sharing.serviceProviders.split(': ')[1]}
-            </>,
-            <>
-              <strong>Business partners:</strong> {sections.sharing.businessPartners.split(': ')[1]}
-            </>,
-            <>
-              <strong>Legal authorities:</strong> {sections.sharing.legalAuthorities.split(': ')[1]}
-            </>,
+            sections.sharing.serviceProviders,
+            sections.sharing.businessPartners,
+            sections.sharing.legalAuthorities,
           ]}
         />
         <Paragraph>{sections.sharing.requirements}</Paragraph>
@@ -137,35 +99,14 @@ export default async function GDPRPolicy() {
         <Paragraph>{sections.rights.intro}</Paragraph>
         <List
           items={[
-            <>
-              <strong>Right to access:</strong> {sections.rights.access.split(': ')[1]}
-            </>,
-            <>
-              <strong>Right to rectification:</strong>{' '}
-              {sections.rights.rectification.split(': ')[1]}
-            </>,
-            <>
-              <strong>Right to erasure:</strong> {sections.rights.erasure.split(': ')[1]}
-            </>,
-            <>
-              <strong>Right to restrict processing:</strong>{' '}
-              {sections.rights.restrictProcessing.split(': ')[1]}
-            </>,
-            <>
-              <strong>Right to data portability:</strong>{' '}
-              {sections.rights.dataPortability.split(': ')[1]}
-            </>,
-            <>
-              <strong>Right to object:</strong> {sections.rights.object.split(': ')[1]}
-            </>,
-            <>
-              <strong>Rights related to automated decision-making:</strong>{' '}
-              {sections.rights.automatedDecisions.split(': ')[1]}
-            </>,
-            <>
-              <strong>Right to withdraw consent:</strong>{' '}
-              {sections.rights.withdrawConsent.split(': ')[1]}
-            </>,
+            sections.rights.access,
+            sections.rights.rectification,
+            sections.rights.erasure,
+            sections.rights.restrictProcessing,
+            sections.rights.dataPortability,
+            sections.rights.object,
+            sections.rights.automatedDecisions,
+            sections.rights.withdrawConsent,
           ]}
         />
         <Paragraph>{sections.rights.exercise}</Paragraph>

@@ -127,6 +127,12 @@ export async function trackVideoWatchTime(
     watchTimeSeconds: number
 ): Promise<void> {
     try {
+        // Validate courseId and lessonId
+        if (!courseId || !lessonId || courseId === 'lessons') {
+            console.warn('Invalid courseId or lessonId for tracking watch time:', { courseId, lessonId });
+            return;
+        }
+        
         const lessonRef = doc(firestoreDB, 'courses', courseId, 'lessons', lessonId);
         await updateDoc(lessonRef, {
             totalWatchTime: increment(watchTimeSeconds),

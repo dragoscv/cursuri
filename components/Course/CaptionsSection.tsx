@@ -51,16 +51,15 @@ const CaptionsSection: React.FC<CaptionsSectionProps> = ({
         </div>
         <div className="flex flex-col">
           <h2 className="text-lg font-semibold text-[color:var(--ai-foreground)]">
-            Captions & Transcription
+            {t('captions.title')}
           </h2>
           {captionsData && Object.keys(captionsData).length > 0 ? (
             <p className="text-[color:var(--ai-muted)] text-sm">
-              Available in {Object.keys(captionsData).length} language
-              {Object.keys(captionsData).length > 1 ? 's' : ''}
+              {t('captions.availableIn', { count: Object.keys(captionsData).length })}
             </p>
           ) : (
             <p className="text-[color:var(--ai-muted)] text-sm">
-              Generate automatic captions for your video
+              {t('captions.generateDescription')}
             </p>
           )}
         </div>
@@ -76,11 +75,10 @@ const CaptionsSection: React.FC<CaptionsSectionProps> = ({
               <FiFileText size={24} className="text-[color:var(--ai-primary)]" />
             </div>
             <h3 className="text-base font-medium text-[color:var(--ai-foreground)] mb-2">
-              No Captions Generated Yet
+              {t('captions.noCaptionsYet')}
             </h3>
             <p className="text-sm text-[color:var(--ai-muted)] text-center mb-6 max-w-md">
-              Generate automatic captions and transcriptions to make your lesson more accessible and
-              searchable.
+              {t('captions.generateMessage')}
             </p>
             <Button
               color="primary"
@@ -90,7 +88,7 @@ const CaptionsSection: React.FC<CaptionsSectionProps> = ({
               isDisabled={!hasFileUploaded || generatingCaptions}
               startContent={!generatingCaptions && <FiFileText size={16} />}
             >
-              {generatingCaptions ? 'Processing...' : 'Generate Captions & Transcription'}
+              {generatingCaptions ? t('captions.processing') : t('captions.generateButton')}
             </Button>
           </div>
         ) : (
@@ -116,7 +114,7 @@ const CaptionsSection: React.FC<CaptionsSectionProps> = ({
             <div className="bg-[color:var(--ai-card-bg)]/50 p-4 rounded-xl border border-[color:var(--ai-card-border)]/50 mb-6">
               <div className="flex justify-between items-center mb-3">
                 <h3 className="text-sm font-medium text-[color:var(--ai-foreground)]">
-                  {supportedLanguages[selectedCaptionLanguage] || selectedCaptionLanguage} Captions
+                  {t('captions.languageCaptions', { language: supportedLanguages[selectedCaptionLanguage] || selectedCaptionLanguage })}
                 </h3>
                 {captionsData[selectedCaptionLanguage]?.url && (
                   <Button
@@ -130,7 +128,7 @@ const CaptionsSection: React.FC<CaptionsSectionProps> = ({
                     rel="noopener noreferrer"
                     startContent={<FiFileText size={14} />}
                   >
-                    Download VTT
+                    {t('captions.downloadVTT')}
                   </Button>
                 )}
               </div>
@@ -146,7 +144,7 @@ const CaptionsSection: React.FC<CaptionsSectionProps> = ({
               <div>
                 <h3 className="text-sm font-medium text-[color:var(--ai-foreground)] mb-2 flex items-center">
                   <FiFileText size={14} className="text-[color:var(--ai-primary)] mr-2" />
-                  Full Transcription
+                  {t('captions.fullTranscription')}
                 </h3>
                 <div className="max-h-[200px] overflow-y-auto p-3 bg-[color:var(--ai-card-bg)]/80 rounded border border-[color:var(--ai-card-border)]/30 text-sm text-[color:var(--ai-foreground)]">
                   {transcriptionText}

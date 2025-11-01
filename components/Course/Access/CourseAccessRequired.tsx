@@ -20,11 +20,11 @@ export default function CourseAccessRequired({ courseId }: CourseAccessRequiredP
         </CardHeader>
         <CardBody className="text-center">
           <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mb-6">
-            You need to purchase this course to access the lessons.
+            {t('message')}
           </p>
           <Link href={`/courses/${courseId}`}>
             <Button color="primary" size="lg">
-              Go to Course Page
+              {t('goToCourse')}
             </Button>
           </Link>
         </CardBody>

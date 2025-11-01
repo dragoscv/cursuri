@@ -95,11 +95,33 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
         className = '',
         children,
         onClick,
+        onPress,
         ...rest
     } = props;
 
-    // Handle deprecated onClick by mapping it to onPress
-    const eventHandlers = onClick ? { onPress: onClick } : {};
+    // Only intercept event handling if we have an onClick to convert
+    // Otherwise, let everything pass through naturally for components like DropdownTrigger
+    let finalOnPress: HeroButtonProps['onPress'] | undefined;
+    
+    if (onClick && !onPress) {
+        // Convert onClick to onPress
+        finalOnPress = (e: any) => {
+            const syntheticEvent = {
+                ...e,
+                target: e?.target || e?.currentTarget || {},
+                currentTarget: e?.currentTarget || e?.target || {},
+                preventDefault: e?.preventDefault || (() => {}),
+                stopPropagation: e?.stopPropagation || (() => {}),
+                nativeEvent: e,
+            } as any;
+            onClick(syntheticEvent);
+        };
+    } else if (onPress) {
+        // Use the provided onPress
+        finalOnPress = onPress;
+    }
+    // If neither onClick nor onPress is provided, finalOnPress stays undefined
+    // and rest.onPress (if injected by DropdownTrigger) will be used via ...rest
 
     // Map our variant to HeroUI's variant
     const getHeroVariant = (): HeroButtonProps['variant'] => {
@@ -159,20 +181,27 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
     };
 
     // Pass through the HeroUI Button with our custom classes
+    // Only include onPress in props if we have one, otherwise let rest.onPress pass through
+    const buttonProps: HeroButtonProps = {
+        ref,
+        type: "button",
+        variant: getHeroVariant(),
+        size: getHeroSize(),
+        radius,
+        isDisabled: isLoading || rest.isDisabled,
+        startContent: isLoading ? null : startContent,
+        endContent: isLoading ? null : endContent,
+        className,
+        ...rest,
+    };
+    
+    // Only add onPress if we have a finalOnPress (for onClick conversion)
+    if (finalOnPress) {
+        buttonProps.onPress = finalOnPress;
+    }
+    
     return (
-        <HeroButton
-            ref={ref}
-            type="button"
-            variant={getHeroVariant()}
-            size={getHeroSize()}
-            radius={radius}
-            isDisabled={isLoading || rest.isDisabled}
-            startContent={isLoading ? null : startContent}
-            endContent={isLoading ? null : endContent}
-            className={className}
-            {...eventHandlers}
-            {...rest}
-        >
+        <HeroButton {...buttonProps}>
             {isLoading && loadingText ? loadingText : children}
         </HeroButton>
     );

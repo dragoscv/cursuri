@@ -7,6 +7,7 @@ import { FiDownload, FiCheck, FiWifiOff } from '../icons/FeatherIcons';
 import { useOfflineContent } from '@/components/Profile/hooks/useOfflineContent';
 import { Lesson, Course } from '@/types';
 import { AppContext } from '@/components/AppContext';
+import { useTranslations } from 'next-intl';
 
 interface OfflineButtonProps {
     lesson: Lesson;
@@ -15,6 +16,7 @@ interface OfflineButtonProps {
 }
 
 export default function OfflineButton({ lesson, course, className = '' }: OfflineButtonProps) {
+    const t = useTranslations('lessons.offlineButton');
     const {
         isDownloading,
         downloadProgress,
@@ -68,7 +70,7 @@ export default function OfflineButton({ lesson, course, className = '' }: Offlin
     const currentProgress = downloadProgress[lesson.id] || 0;
 
     return (
-        <Tooltip content={isAvailableOffline ? "Remove from offline storage" : "Download for offline viewing"}>
+        <Tooltip content={isAvailableOffline ? t('removeFromStorage') : t('downloadForOffline')}>
             <Button
                 color={isAvailableOffline ? "success" : "default"}
                 variant={isAvailableOffline ? "flat" : "bordered"}
@@ -79,11 +81,11 @@ export default function OfflineButton({ lesson, course, className = '' }: Offlin
             >
                 {isCurrentlyDownloading ? (
                     <>
-                        <span className="opacity-0">Downloading...</span>
+                        <span className="opacity-0">{t('downloading')}</span>
                         <div className="absolute inset-0 flex items-center justify-center">
                             <Progress
                                 value={currentProgress}
-                                aria-label="Download progress"
+                                aria-label={t('downloadProgress')}
                                 className="h-1 w-full absolute bottom-0 left-0"
                             />
                             <span className="text-xs">{currentProgress}%</span>
@@ -92,12 +94,12 @@ export default function OfflineButton({ lesson, course, className = '' }: Offlin
                 ) : isAvailableOffline ? (
                     <>
                         <FiCheck className="w-4 h-4 mr-2" />
-                        Available Offline
+                        {t('availableOffline')}
                     </>
                 ) : (
                     <>
                         <FiDownload className="w-4 h-4 mr-2" />
-                        Download Lesson
+                        {t('downloadLesson')}
                     </>
                 )}
             </Button>

@@ -3,6 +3,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { AppContext } from '@/components/AppContext';
+import { useToast } from '@/components/Toast/ToastContext';
 import { Card, CardBody, Chip, Input } from '@heroui/react';
 import Button from '@/components/ui/Button';
 import { motion } from 'framer-motion';
@@ -22,6 +23,7 @@ export default function PaymentHistory() {
   const t = useTranslations('payment');
   const tp = useTranslations('profile.paymentsPage');
   const context = useContext(AppContext);
+  const { showToast } = useToast();
   const { payments, loading, error, downloadInvoice } = usePaymentHistory();
 
   if (!context) {
@@ -267,7 +269,12 @@ export default function PaymentHistory() {
                               if (invoiceUrl) {
                                 window.open(invoiceUrl, '_blank');
                               } else {
-                                alert(tp('actions.invoiceError'));
+                                showToast({
+                                  type: 'error',
+                                  title: 'Invoice Error',
+                                  message: tp('actions.invoiceError'),
+                                  duration: 5000,
+                                });
                               }
                             }}
                           >

@@ -3,13 +3,15 @@
 import Input from '@/components/ui/Input';
 import { FiBook } from '../../icons/FeatherIcons';
 import { CourseNameFieldProps } from '@/types';
+import { useTranslations } from 'next-intl';
 
 export default function CourseNameField({ value, onChange }: CourseNameFieldProps) {
+    const t = useTranslations('courses.fields');
     return (
         <Input
-            label="Course Name"
+            label={t('name.label')}
             variant="bordered"
-            placeholder="Enter course name"
+            placeholder={t('name.placeholder')}
             value={value}
             onChange={onChange}
             isRequired

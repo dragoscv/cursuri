@@ -1906,7 +1906,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                     productData = { id: productSnapshot.id, ...(productSnapshot.data() as object) };
                     console.log('[AppContext] Successfully fetched product:', productData);
                   } else {
-                    console.warn('[AppContext] Product document does not exist');
+                    console.log('[AppContext] Product document does not exist:', sub.product.path);
                     productData = { id: sub.product.id, name: 'Unknown Product' };
                   }
                 } catch (productError) {
@@ -1933,7 +1933,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
                     priceData = { id: priceSnapshot.id, ...(priceSnapshot.data() as object) };
                     console.log('[AppContext] Successfully fetched price:', priceData);
                   } else {
-                    console.warn('[AppContext] Price document does not exist');
+                    console.log('[AppContext] Price document does not exist:', sub.price.path);
                     priceData = { id: sub.price.id };
                   }
                 } catch (priceError) {

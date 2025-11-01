@@ -159,12 +159,30 @@
   "cookieConsent": {
     "title": "Consimțământ Cookie-uri",
     "autoAcceptIn": "Acceptare automată în {seconds}s",
+    "autoAcceptCountdown": "Numărătoare inversă acceptare automată",
     "message": "Folosim cookie-uri pentru a îmbunătăți experiența ta. Continuând să vizitezi acest site, ești de acord cu utilizarea cookie-urilor noastre, cu",
     "privacyPolicy": "Politica de Confidențialitate",
     "termsConditions": "Termeni și Condiții",
     "gdprPolicy": "Politica GDPR",
     "decline": "Refuză",
     "acceptAll": "Acceptă Toate"
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Bun venit la Platforma Cursuri",
+      "description": "Călătoria ta cuprinzătoare de învățare începe aici. Explorează catalogul nostru extins de cursuri selectate profesional, concepute pentru a-ți îmbunătăți abilitățile și a-ți avansa cariera. Personalizează-ți profilul, stabilește obiective de învățare și urmărește-ți progresul pe măsură ce stăpânești noi tehnologii și concepte."
+    },
+    "personalized": {
+      "title": "Experiență de Învățare Personalizată",
+      "description": "Preia controlul asupra călătoriei tale educaționale cu sistemul nostru avansat de urmărire a progresului. Marchează lecțiile ca finalizate, monitorizează-ți realizările și primește recomandări personalizate bazate pe modelele tale de învățare. Tabloul tău de bord oferă perspective în timp real asupra dezvoltării abilităților și a etapelor de finalizare."
+    },
+    "community": {
+      "title": "Implică-te în Comunitatea Noastră",
+      "description": "Alătură-te miilor de cursanți din comunitatea noastră vibrantă. Împărtășește-ți experiențele prin recenzii ale cursurilor, participă la discuții, pune întrebări și colaborează cu colegii. Abordarea noastră bazată pe comunitate asigură că ai sprijinul și resursele necesare pentru a reuși în obiectivele tale de învățare."
+    },
+    "back": "Înapoi",
+    "next": "Următorul",
+    "getStarted": "Începe Acum"
   },
   "cacheStatus": {
     "title": "Stare Cache",
@@ -216,6 +234,8 @@
     "settings": "Setări",
     "quality": "Calitate",
     "captions": "Subtitrări",
+    "selectCaptions": "Selectează subtitrări",
+    "captionsOff": "Dezactivat",
     "enableCaptions": "Activează subtitrări",
     "disableCaptions": "Dezactivează subtitrări",
     "lessonCompleted": "Lecție finalizată",

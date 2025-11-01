@@ -1,5 +1,6 @@
 import React, { useContext, useCallback, memo, useMemo } from 'react';
 import { AppContext } from '../AppContext';
+import { useToast } from '@/components/Toast/ToastContext';
 import { Chip, Progress } from '@heroui/react';
 import Button from '@/components/ui/Button';
 import { motion } from 'framer-motion';
@@ -27,6 +28,7 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
   const t = useTranslations('common');
   const router = useRouter();
   const context = useContext(AppContext);
+  const { showToast } = useToast();
 
   if (!context) {
     throw new Error('CoursesList must be used within an AppContextProvider');
@@ -246,8 +248,12 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
       });
     } else {
       navigator.clipboard.writeText(shareUrl);
-      // Optionally show a toast/alert
-      alert(t('course.linkCopied'));
+      showToast({
+        type: 'success',
+        title: 'Link Copied',
+        message: t('course.linkCopied'),
+        duration: 3000,
+      });
     }
 
     // Track course share
