@@ -73,19 +73,45 @@ export default function SubscriptionPlans() {
 
   // Get monthly and yearly prices from the subscription product
   // Filter by metadata fields and ensure it's for the current app
-  const monthlyPrice = subscriptionProduct?.prices?.find((p: any) =>
-    p.active !== false &&
-    p.metadata?.type === 'subscription' &&
-    p.metadata?.app === appName &&
-    (p.metadata?.interval === 'month' || p.recurring?.interval === 'month')
-  );
+  const monthlyPrice = subscriptionProduct?.prices?.find((p: any) => {
+    const isActive = p.active !== false;
+    const hasSubType = p.metadata?.type === 'subscription';
+    const hasAppMatch = p.metadata?.app === appName;
+    const isMonthly = p.metadata?.interval === 'month' || p.recurring?.interval === 'month';
+    
+    console.log('Checking monthly price:', {
+      priceId: p.id,
+      isActive,
+      hasSubType,
+      hasAppMatch,
+      isMonthly,
+      metadata: p.metadata,
+      recurring: p.recurring,
+      interval: p.interval,
+    });
+    
+    return isActive && hasSubType && hasAppMatch && isMonthly;
+  });
 
-  const yearlyPrice = subscriptionProduct?.prices?.find((p: any) =>
-    p.active !== false &&
-    p.metadata?.type === 'subscription' &&
-    p.metadata?.app === appName &&
-    (p.metadata?.interval === 'year' || p.recurring?.interval === 'year')
-  );
+  const yearlyPrice = subscriptionProduct?.prices?.find((p: any) => {
+    const isActive = p.active !== false;
+    const hasSubType = p.metadata?.type === 'subscription';
+    const hasAppMatch = p.metadata?.app === appName;
+    const isYearly = p.metadata?.interval === 'year' || p.recurring?.interval === 'year';
+    
+    console.log('Checking yearly price:', {
+      priceId: p.id,
+      isActive,
+      hasSubType,
+      hasAppMatch,
+      isYearly,
+      metadata: p.metadata,
+      recurring: p.recurring,
+      interval: p.interval,
+    });
+    
+    return isActive && hasSubType && hasAppMatch && isYearly;
+  });
 
   console.log('=== DEBUG: Found Prices ===', {
     appName,
