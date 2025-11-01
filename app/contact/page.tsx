@@ -1,16 +1,127 @@
-import { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+'use client';
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('contact.metadata');
-  return {
-    title: t('title'),
-    description: t('description'),
+import React, { useContext, useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { firestoreDB } from '@/utils/firebase/firebase.config';
+import { AppContext } from '@/components/AppContext';
+import { useToast } from '@/components/Toast/ToastContext';
+import { GoogleReCaptchaProvider, useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import GithubIcon from '@/components/icons/GithubIcon';
+import TikTokIcon from '@/components/icons/TikTokIcon';
+import WebsiteIcon from '@/components/icons/WebsiteIcon';
+import { DiscordIcon } from '@/components/icons/DiscordIcon';
+
+function ContactForm() {
+  const t = useTranslations('contact');
+  const context = useContext(AppContext);
+  const { showToast } = useToast();
+  const { executeRecaptcha } = useGoogleReCaptcha();
+
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: '',
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const isUserAuthenticated = !!context?.user;
+  const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;  // Prefill user data if authenticated
+  useEffect(() => {
+    if (context?.user) {
+      setFormData(prev => ({
+        ...prev,
+        name: context.user?.displayName || prev.name,
+        email: context.user?.email || prev.email,
+      }));
+    }
+  }, [context?.user]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
-}
 
-export default async function ContactPage() {
-  const t = await getTranslations('contact');
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (isSubmitting) return;
+
+    // Validate fields
+    if (!formData.name || !formData.email || !formData.subject || !formData.message) {
+      showToast({
+        type: 'error',
+        message: t('form.errors.requiredFields'),
+        duration: 5000,
+      });
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      showToast({
+        type: 'error',
+        message: t('form.errors.invalidEmail'),
+        duration: 5000,
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Get reCAPTCHA token for anonymous users (v3 is invisible)
+      let recaptchaToken = '';
+      if (!isUserAuthenticated && executeRecaptcha) {
+        recaptchaToken = await executeRecaptcha('contact_form');
+      }
+
+      const contactMessageData: any = {
+        name: formData.name.trim(),
+        email: formData.email.trim().toLowerCase(),
+        subject: formData.subject.trim(),
+        message: formData.message.trim(),
+        status: 'new',
+        timestamp: serverTimestamp(),
+        createdAt: serverTimestamp(),
+      };
+
+      // Add userId if user is authenticated
+      if (context?.user) {
+        contactMessageData.userId = context.user.uid;
+      }
+
+      // Store in Firestore
+      const contactMessagesRef = collection(firestoreDB, 'contactMessages');
+      await addDoc(contactMessagesRef, contactMessageData);
+
+      // Show success toast
+      showToast({
+        type: 'success',
+        message: t('form.success'),
+        duration: 5000,
+      });
+
+      // Reset form (keep name and email if user is authenticated)
+      setFormData({
+        name: context?.user?.displayName || '',
+        email: context?.user?.email || '',
+        subject: '',
+        message: '',
+      });
+    } catch (error) {
+      console.error('Error submitting contact message:', error);
+      showToast({
+        type: 'error',
+        message: t('form.errors.submitFailed'),
+        duration: 5000,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[color:var(--ai-background)] pt-20 pb-16">
@@ -32,7 +143,7 @@ export default async function ContactPage() {
               {t('form.title')}
             </h2>
 
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label
                   htmlFor="name"
@@ -45,7 +156,9 @@ export default async function ContactPage() {
                   id="name"
                   name="name"
                   required
-                  className="w-full px-4 py-3 bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[color:var(--ai-primary)] focus:border-transparent text-[color:var(--ai-foreground)]"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[color:var(--ai-primary)] focus:border-transparent text-[color:var(--ai-foreground)] disabled:opacity-60"
                   placeholder={t('form.placeholders.name')}
                 />
               </div>
@@ -62,7 +175,9 @@ export default async function ContactPage() {
                   id="email"
                   name="email"
                   required
-                  className="w-full px-4 py-3 bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[color:var(--ai-primary)] focus:border-transparent text-[color:var(--ai-foreground)]"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[color:var(--ai-primary)] focus:border-transparent text-[color:var(--ai-foreground)] disabled:opacity-60"
                   placeholder={t('form.placeholders.email')}
                 />
               </div>
@@ -77,6 +192,9 @@ export default async function ContactPage() {
                 <select
                   id="subject"
                   name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  required
                   className="w-full px-4 py-3 bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[color:var(--ai-primary)] focus:border-transparent text-[color:var(--ai-foreground)]"
                 >
                   <option value="">{t('form.subjects.placeholder')}</option>
@@ -101,6 +219,8 @@ export default async function ContactPage() {
                   name="message"
                   rows={5}
                   required
+                  value={formData.message}
+                  onChange={handleChange}
                   className="w-full px-4 py-3 bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[color:var(--ai-primary)] focus:border-transparent text-[color:var(--ai-foreground)] resize-vertical"
                   placeholder={t('form.placeholders.message')}
                 />
@@ -108,9 +228,17 @@ export default async function ContactPage() {
 
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white py-3 px-6 rounded-lg font-medium hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-[color:var(--ai-primary)] focus:ring-offset-2"
+                disabled={isSubmitting}
+                className="w-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white py-3 px-6 rounded-lg font-medium hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-[color:var(--ai-primary)] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                {t('form.submitButton')}
+                {isSubmitting ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
+                    {t('form.submitting')}
+                  </>
+                ) : (
+                  t('form.submitButton')
+                )}
               </button>
             </form>
           </div>
@@ -212,25 +340,37 @@ export default async function ContactPage() {
                   href="https://github.com/dragoscv"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-12 h-12 bg-[color:var(--ai-primary)]/10 border border-[color:var(--ai-primary)]/20 rounded-lg flex items-center justify-center hover:bg-[color:var(--ai-primary)]/20 transition-colors"
+                  className="p-3 bg-[color:var(--ai-primary)]/10 border border-[color:var(--ai-primary)]/20 rounded-lg flex items-center justify-center hover:bg-[color:var(--ai-primary)]/20 transition-colors"
+                  aria-label="GitHub"
                 >
-                  <span className="text-[color:var(--ai-primary)] text-lg">🐙</span>
+                  <GithubIcon className="text-[color:var(--ai-primary)]" size={24} />
                 </a>
                 <a
-                  href="https://tiktok.com/@dragoscatalin.ro"
+                  href="https://discord.gg/SbqrU73MjB"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-12 h-12 bg-[color:var(--ai-primary)]/10 border border-[color:var(--ai-primary)]/20 rounded-lg flex items-center justify-center hover:bg-[color:var(--ai-primary)]/20 transition-colors"
+                  className="p-3 bg-[color:var(--ai-primary)]/10 border border-[color:var(--ai-primary)]/20 rounded-lg flex items-center justify-center hover:bg-[color:var(--ai-primary)]/20 transition-colors"
+                  aria-label="Discord"
                 >
-                  <span className="text-[color:var(--ai-primary)] text-lg">🎵</span>
+                  <DiscordIcon className="text-[color:var(--ai-primary)]" size={24} />
+                </a>
+                <a
+                  href="https://www.tiktok.com/@mantreb"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-3 bg-[color:var(--ai-primary)]/10 border border-[color:var(--ai-primary)]/20 rounded-lg flex items-center justify-center hover:bg-[color:var(--ai-primary)]/20 transition-colors"
+                  aria-label="TikTok"
+                >
+                  <TikTokIcon className="text-[color:var(--ai-primary)]" size={24} />
                 </a>
                 <a
                   href="https://dragoscatalin.ro"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-12 h-12 bg-[color:var(--ai-primary)]/10 border border-[color:var(--ai-primary)]/20 rounded-lg flex items-center justify-center hover:bg-[color:var(--ai-primary)]/20 transition-colors"
+                  className="p-3 bg-[color:var(--ai-primary)]/10 border border-[color:var(--ai-primary)]/20 rounded-lg flex items-center justify-center hover:bg-[color:var(--ai-primary)]/20 transition-colors"
+                  aria-label="Website"
                 >
-                  <span className="text-[color:var(--ai-primary)] text-lg">🌐</span>
+                  <WebsiteIcon className="text-[color:var(--ai-primary)]" size={24} />
                 </a>
               </div>
             </div>
@@ -238,5 +378,20 @@ export default async function ContactPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ContactPage() {
+  const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+
+  if (!recaptchaSiteKey) {
+    // If no reCAPTCHA key, render without provider
+    return <ContactForm />;
+  }
+
+  return (
+    <GoogleReCaptchaProvider reCaptchaKey={recaptchaSiteKey}>
+      <ContactForm />
+    </GoogleReCaptchaProvider>
   );
 }

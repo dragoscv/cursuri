@@ -215,5 +215,13 @@ service cloud.firestore {
     match /{path=**}/payments/{payment} {
       allow read: if hasAdminAccess();
     }
+    
+    // Contact messages collection
+    match /contactMessages/{messageId} {
+      // Allow anyone to create a contact message (simplified for debugging)
+      allow create: if true;
+      // Only admins can read, update, or delete contact messages
+      allow read, update, delete: if hasAdminAccess();
+    }
   }
 }

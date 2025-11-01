@@ -23,9 +23,7 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Select,
 } from '@heroui/react';
-import SelectItem from '@/components/ui/SelectItem';
 import { AppContext } from '@/components/AppContext';
 import { Course, UserProfile } from '@/types';
 
@@ -69,10 +67,10 @@ const AdminUsers: React.FC = () => {
 
   const filteredUsers = users
     ? Object.values(users).filter(
-        (user) =>
-          user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          user.displayName?.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+      (user) =>
+        user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.displayName?.toLowerCase().includes(searchTerm.toLowerCase())
+    )
     : [];
 
   const paginatedUsers = filteredUsers.slice((page - 1) * rowsPerPage, page * rowsPerPage);
@@ -133,7 +131,7 @@ const AdminUsers: React.FC = () => {
       <div className="text-center py-12">
         <h2 className="text-2xl font-bold text-[color:var(--ai-danger)] mb-4">{error}</h2>
         <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
-          {tCommon('pleaseTryAgain')}
+          {tCommon('notifications.error.genericError')}
         </p>
       </div>
     );
@@ -354,8 +352,8 @@ const AdminUsers: React.FC = () => {
                               ? typeof selectedUser.createdAt === 'object' &&
                                 'seconds' in selectedUser.createdAt
                                 ? new Date(
-                                    selectedUser.createdAt.seconds * 1000
-                                  ).toLocaleDateString()
+                                  selectedUser.createdAt.seconds * 1000
+                                ).toLocaleDateString()
                                 : new Date(selectedUser.createdAt).toLocaleDateString()
                               : 'Unknown'}
                           </p>
@@ -391,7 +389,7 @@ const AdminUsers: React.FC = () => {
                         </Button>
                       </div>
                       {selectedUser.enrollments &&
-                      Object.keys(selectedUser.enrollments).length > 0 ? (
+                        Object.keys(selectedUser.enrollments).length > 0 ? (
                         <div className="space-y-2">
                           {Object.entries(selectedUser.enrollments).map(
                             ([courseId, enrollment]) => {
@@ -411,8 +409,8 @@ const AdminUsers: React.FC = () => {
                                         ? typeof enrollment.enrolledAt === 'object' &&
                                           'seconds' in enrollment.enrolledAt
                                           ? new Date(
-                                              enrollment.enrolledAt.seconds * 1000
-                                            ).toLocaleDateString()
+                                            enrollment.enrolledAt.seconds * 1000
+                                          ).toLocaleDateString()
                                           : new Date(enrollment.enrolledAt).toLocaleDateString()
                                         : 'Unknown date'}
                                     </p>
@@ -472,7 +470,7 @@ const AdminUsers: React.FC = () => {
                       onPress={closeModal}
                       className="font-medium text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-border)]/20"
                     >
-                      {tCommon('close')}
+                      {tCommon('buttons.close')}
                     </Button>
                     <Button
                       color="primary"
@@ -578,7 +576,7 @@ const AdminUsers: React.FC = () => {
                           className="w-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium shadow-sm hover:shadow-md hover:shadow-[color:var(--ai-primary)]/20 transition-all"
                           onPress={closeAssignCourseModal}
                         >
-                          {tCommon('close')}
+                          {tCommon('buttons.close')}
                         </Button>
                       </div>
                     </div>
@@ -612,48 +610,18 @@ const AdminUsers: React.FC = () => {
                         <label className="block text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] mb-2">
                           {t('selectCourse')}
                         </label>
-                        <div className="relative">
-                          <Select
-                            placeholder={t('chooseACourse')}
-                            value={selectedCourseId}
-                            onChange={(e) => setSelectedCourseId(e.target.value)}
-                            className="w-full"
-                            variant="bordered"
-                            size="lg"
-                            labelPlacement="outside"
-                            classNames={{
-                              trigger:
-                                'h-12 bg-[color:var(--ai-card-bg)]/80 dark:bg-[color:var(--ai-card-border)]/50 backdrop-blur-sm border-primary-200 dark:border-[color:var(--ai-card-border)]',
-                              value:
-                                'text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]',
-                            }}
-                          >
-                            {Object.values(courses).map((course: Course) => (
-                              <SelectItem
-                                key={course.id}
-                                value={course.id}
-                                textValue={course.name}
-                                className="text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]"
-                              >
-                                {course.name}
-                              </SelectItem>
-                            ))}
-                          </Select>
-                          <div className="absolute right-3 top-3 pointer-events-none text-[color:var(--ai-muted-foreground)]">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-5 w-5"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          </div>
-                        </div>
+                        <select
+                          value={selectedCourseId}
+                          onChange={(e) => setSelectedCourseId(e.target.value)}
+                          className="w-full h-12 px-4 rounded-lg bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-border)] border border-primary-200 dark:border-[color:var(--ai-card-border)] text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)] focus:outline-none focus:ring-2 focus:ring-primary-500 appearance-none cursor-pointer"
+                        >
+                          <option value="">{t('chooseACourse')}</option>
+                          {Object.values(courses).map((course: Course) => (
+                            <option key={course.id} value={course.id}>
+                              {course.name}
+                            </option>
+                          ))}
+                        </select>
                         <p className="mt-2 text-xs text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
                           {t('courseImmediatelyAvailable')}
                         </p>
@@ -670,7 +638,7 @@ const AdminUsers: React.FC = () => {
                       onPress={closeAssignCourseModal}
                       className="font-medium text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-border)]/20"
                     >
-                      {tCommon('cancel')}
+                      {tCommon('buttons.cancel')}
                     </Button>
                     <Button
                       color="primary"

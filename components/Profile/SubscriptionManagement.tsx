@@ -241,11 +241,15 @@ export default function SubscriptionManagement() {
             {t('noActiveSubscription')}
           </h3>
           <p className="text-[color:var(--ai-muted)] mb-6">{t('subscribeToUnlock')}</p>
-          <Link href="/subscriptions">
-            <Button color="primary" size="lg" endContent={<FiArrowRight />}>
-              {t('viewPlans')}
-            </Button>
-          </Link>
+          <Button
+            as={Link}
+            href="/subscriptions"
+            color="primary"
+            size="lg"
+            endContent={<FiArrowRight />}
+          >
+            {t('viewPlans')}
+          </Button>
         </div>
       </Card>
     );

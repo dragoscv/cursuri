@@ -1020,8 +1020,9 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         // Get new users in the last 30 days
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        const thirtyDaysAgoTimestamp = Timestamp.fromDate(thirtyDaysAgo);
 
-        const newUsersQuery = query(usersRef, where('createdAt', '>=', thirtyDaysAgo));
+        const newUsersQuery = query(usersRef, where('createdAt', '>=', thirtyDaysAgoTimestamp));
         const newUsersSnapshot = await getDocs(newUsersQuery);
         const newUsers = newUsersSnapshot.size;
 
@@ -1036,14 +1037,50 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
         salesSnapshot.forEach((doc) => {
           const sale = doc.data();
-          if (sale.amount !== undefined) {
-            totalRevenue += sale.amount / 100; // Convert from cents to dollars
 
-            // Calculate monthly revenue
-            const date = new Date(sale.created);
+          // Log payment structure for debugging (first payment only)
+          if (totalRevenue === 0 && newSales === 0) {
+            console.log('Sample payment data:', sale);
+          }
+
+          if (sale.amount !== undefined && sale.amount !== null) {
+            const amount = typeof sale.amount === 'number' ? sale.amount : parseFloat(sale.amount);
+            totalRevenue += amount / 100; // Convert from bani to RON
+
+            // Calculate monthly revenue - try multiple date field options
+            let date: Date | null = null;
+
+            // Try different date field possibilities
+            if (sale.createdAt) {
+              if (typeof sale.createdAt.toDate === 'function') {
+                date = sale.createdAt.toDate();
+              } else if (typeof sale.createdAt === 'number') {
+                date = new Date(sale.createdAt * 1000);
+              } else if (sale.createdAt instanceof Date) {
+                date = sale.createdAt;
+              }
+            } else if (sale.created) {
+              if (typeof sale.created === 'number') {
+                date = new Date(sale.created * 1000);
+              } else if (typeof sale.created.toDate === 'function') {
+                date = sale.created.toDate();
+              }
+            } else if (sale.timestamp) {
+              if (typeof sale.timestamp.toDate === 'function') {
+                date = sale.timestamp.toDate();
+              } else if (typeof sale.timestamp === 'number') {
+                date = new Date(sale.timestamp * 1000);
+              }
+            }
+
+            // If still no date, use current date as fallback
+            if (!date || isNaN(date.getTime())) {
+              date = new Date();
+            }
+
             const monthYear = `${date.getMonth() + 1}/${date.getFullYear()}`;
 
-            monthlyRevenue[monthYear] = (monthlyRevenue[monthYear] || 0) + sale.amount / 100;
+            monthlyRevenue[monthYear] = (monthlyRevenue[monthYear] || 0) + amount / 100;
 
             // Check if sale is from last 30 days
             if (date >= thirtyDaysAgo) {
@@ -1061,9 +1098,18 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
         coursesSnapshot.forEach((doc) => {
           const courseData = doc.data();
+          // Get course name from multilingual field or fallback to name
+          let courseName = courseData.name || 'Unnamed Course';
+          if (courseData.title) {
+            // Try to get current locale name
+            const currentLocale = typeof window !== 'undefined' ?
+              (localStorage.getItem('locale') || 'en') : 'en';
+            courseName = courseData.title[currentLocale] || courseData.title.en || courseData.title.ro || courseName;
+          }
+
           const course = {
             courseId: doc.id,
-            courseName: courseData.name,
+            courseName,
             enrollments: 0,
           };
 
@@ -1073,8 +1119,9 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         // For each payment, find the course and increment its enrollments
         salesSnapshot.forEach((doc) => {
           const sale = doc.data();
-          if (sale.metadata && sale.metadata.courseId) {
-            const courseId = sale.metadata.courseId;
+          // Try to get courseId from metadata or root level
+          const courseId = sale.metadata?.courseId || sale.courseId;
+          if (courseId) {
             const course = popularCourses.find((c) => c.courseId === courseId);
             if (course) {
               course.enrollments++;

@@ -80,7 +80,20 @@
   "analytics": {
     "title": "Analytics & Insights",
     "pageDescription": "View detailed analytics and insights about your platform.",
-    "description": "Detailed analytics on course enrollments, user engagement, and platform performance."
+    "description": "Detailed analytics on course enrollments, user engagement, and platform performance.",
+    "revenueOverTime": "Revenue Over Time",
+    "totalRevenue": "Total Revenue",
+    "averagePerSale": "Average per Sale",
+    "salesLast30Days": "Sales (Last 30 Days)",
+    "revenueGrowth": "Revenue Growth (MoM)",
+    "noRevenueData": "No revenue data available",
+    "userGrowth": "User Growth",
+    "totalUsers": "Total Users",
+    "courseStatistics": "Course Statistics",
+    "activeCourses": "Active Courses",
+    "totalLessons": "Total Lessons",
+    "popularCourses": "Popular Courses",
+    "pleaseTryAgain": "Please try again later"
   },
   "batchOperations": {
     "actions": {
@@ -277,5 +290,36 @@
     "analytics": "Analytics",
     "courseEngagement": "Course Engagement",
     "settings": "Settings"
+  },
+  "messages": {
+    "title": "Contact Messages",
+    "description": "View and manage messages from the contact form",
+    "filters": {
+      "all": "All",
+      "new": "New",
+      "read": "Read",
+      "archived": "Archived"
+    },
+    "status": {
+      "new": "New",
+      "read": "Read",
+      "archived": "Archived"
+    },
+    "actions": {
+      "markRead": "Mark Read",
+      "markUnread": "Mark Unread",
+      "archive": "Archive",
+      "unarchive": "Unarchive",
+      "delete": "Delete"
+    },
+    "subject": "Subject",
+    "searchPlaceholder": "Search by name, email, subject, or message...",
+    "noMessages": "No messages found",
+    "noMessagesDescription": "Contact form messages will appear here",
+    "confirmDelete": "Are you sure you want to delete this message? This action cannot be undone.",
+    "statusUpdated": "Message status updated successfully",
+    "statusUpdateFailed": "Failed to update message status",
+    "messageDeleted": "Message deleted successfully",
+    "deleteFailed": "Failed to delete message"
   }
 }

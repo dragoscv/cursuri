@@ -5,6 +5,7 @@ import { FiClock, FiLayers, FiBarChart2 } from '@/components/icons/FeatherIcons'
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import Button from '@/components/ui/Button';
+import Image from 'next/image';
 
 interface CourseCardProps {
     course: {
@@ -16,11 +17,15 @@ interface CourseCardProps {
         totalLessons: number;
         duration?: string;
         recentLessonId?: string;
+        imageUrl?: string;
+        coverImage?: string;
+        accessType?: 'purchased' | 'subscription';
     };
 }
 
 export default function CourseCard({ course }: CourseCardProps) {
     const t = useTranslations('profile.courses');
+    const courseImage = course.imageUrl || course.coverImage;
 
     return (
         <motion.article
@@ -35,28 +40,48 @@ export default function CourseCard({ course }: CourseCardProps) {
                 <CardBody className="p-0">
                     {/* Course banner with progress overlay */}
                     <div className="relative">
-                        <div className="h-36 bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)] relative">
-                            {/* Pattern overlay */}
-                            <div className="absolute top-0 left-0 w-full h-full opacity-30 mix-blend-overlay">
-                                <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-                                    <defs>
-                                        <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
-                                            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5" />
-                                        </pattern>
-                                    </defs>
-                                    <rect width="100%" height="100%" fill="url(#grid)" />
-                                </svg>
-                            </div>
+                        {courseImage ? (
+                            <div className="h-36 relative overflow-hidden">
+                                <Image
+                                    src={courseImage}
+                                    alt={course.name}
+                                    fill
+                                    className="object-cover"
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                />
+                                {/* Dark overlay for better text contrast */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20"></div>
 
-                            {/* Decorative elements */}
-                            <div className="absolute right-4 top-4 w-8 h-8 rounded-full bg-white/10 animate-pulse" aria-hidden="true"></div>
-                            <div className="absolute right-10 top-8 w-4 h-4 rounded-full bg-white/20" style={{ animationDelay: "0.5s" }} aria-hidden="true"></div>
-
-                            {/* Course title */}
-                            <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/80 via-black/60 to-transparent">
-                                <h3 id={`course-title-${course.courseId}`} className="text-white font-bold text-xl line-clamp-1 drop-shadow-md">{course.name}</h3>
+                                {/* Course title */}
+                                <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/80 via-black/60 to-transparent">
+                                    <h3 id={`course-title-${course.courseId}`} className="text-white font-bold text-xl line-clamp-1 drop-shadow-md">{course.name}</h3>
+                                </div>
                             </div>
-                        </div>                        {/* Progress bar */}
+                        ) : (
+                            <div className="h-36 bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)] relative">
+                                {/* Pattern overlay */}
+                                <div className="absolute top-0 left-0 w-full h-full opacity-30 mix-blend-overlay">
+                                    <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                                        <defs>
+                                            <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                                                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5" />
+                                            </pattern>
+                                        </defs>
+                                        <rect width="100%" height="100%" fill="url(#grid)" />
+                                    </svg>
+                                </div>
+
+                                {/* Decorative elements */}
+                                <div className="absolute right-4 top-4 w-8 h-8 rounded-full bg-white/10 animate-pulse" aria-hidden="true"></div>
+                                <div className="absolute right-10 top-8 w-4 h-4 rounded-full bg-white/20" style={{ animationDelay: "0.5s" }} aria-hidden="true"></div>
+
+                                {/* Course title */}
+                                <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/80 via-black/60 to-transparent">
+                                    <h3 id={`course-title-${course.courseId}`} className="text-white font-bold text-xl line-clamp-1 drop-shadow-md">{course.name}</h3>
+                                </div>
+                            </div>
+                        )}
+                        {/* Progress bar */}
                         <div className="absolute bottom-0 left-0 right-0 h-2 bg-black/20">
                             <div
                                 className="h-full bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)]"
@@ -68,7 +93,7 @@ export default function CourseCard({ course }: CourseCardProps) {
                         </div>
 
                         {/* Status badge */}
-                        <div className="absolute top-4 left-4">
+                        <div className="absolute top-4 left-4 flex flex-col gap-2">
                             {course.status === 'completed' && (
                                 <Chip color="success" variant="flat" size="sm" radius="lg" className="backdrop-blur-md bg-[color:var(--ai-success)]/20 border border-[color:var(--ai-success)]/30 text-white font-medium shadow-lg">
                                     {t('status.completed')}
@@ -82,6 +107,11 @@ export default function CourseCard({ course }: CourseCardProps) {
                             {course.status === 'not-started' && (
                                 <Chip color="default" variant="flat" size="sm" radius="lg" className="backdrop-blur-md bg-white/20 border border-white/30 text-white font-medium shadow-lg">
                                     {t('status.notStarted')}
+                                </Chip>
+                            )}
+                            {course.accessType === 'subscription' && (
+                                <Chip color="warning" variant="flat" size="sm" radius="lg" className="backdrop-blur-md bg-amber-500/20 border border-amber-400/30 text-white font-medium shadow-lg">
+                                    {t('status.subscriptionAccess')}
                                 </Chip>
                             )}
                         </div>

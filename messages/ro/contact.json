@@ -29,7 +29,15 @@
       "feedback": "Feedback",
       "other": "Altele"
     },
-    "submitButton": "Trimite Mesajul"
+    "submitButton": "Trimite Mesajul",
+    "submitting": "Se trimite...",
+    "success": "Mesaj trimis cu succes! Îți vom răspunde în curând.",
+    "errors": {
+      "requiredFields": "Te rugăm să completezi toate câmpurile obligatorii",
+      "invalidEmail": "Te rugăm să introduci o adresă de email validă",
+      "recaptchaRequired": "Te rugăm să completezi verificarea reCAPTCHA",
+      "submitFailed": "Trimiterea mesajului a eșuat. Te rugăm să încerci din nou mai târziu."
+    }
   },
   "info": {
     "title": "Ia Legătura",

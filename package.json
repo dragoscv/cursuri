@@ -46,6 +46,7 @@
     "pdf-lib": "^1.17.1",
     "react": "^19",
     "react-dom": "^19.2.0",
+    "react-google-recaptcha-v3": "^1.11.0",
     "stripe": "^19.1.0",
     "uuid": "^13.0.0"
   },

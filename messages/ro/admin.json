@@ -83,8 +83,8 @@
     "noRevenueData": "Nu există date despre venituri",
     "totalRevenue": "Venituri Totale",
     "averagePerSale": "Medie Pe Vânzare",
-    "salesThisMonth": "Vânzări Luna Aceasta",
-    "revenueGrowth": "Creștere Venituri",
+    "salesLast30Days": "Vânzări (Ultimele 30 Zile)",
+    "revenueGrowth": "Creștere Venituri (MoM)",
     "userGrowth": "Creștere Utilizatori",
     "totalUsers": "Total Utilizatori",
     "courseStatistics": "Statistici Cursuri",
@@ -272,5 +272,36 @@
     "analytics": "Analiză",
     "courseEngagement": "Implicare în Cursuri",
     "settings": "Setări"
+  },
+  "messages": {
+    "title": "Mesaje de Contact",
+    "description": "Vizualizează și gestionează mesajele din formularul de contact",
+    "filters": {
+      "all": "Toate",
+      "new": "Noi",
+      "read": "Citite",
+      "archived": "Arhivate"
+    },
+    "status": {
+      "new": "Nou",
+      "read": "Citit",
+      "archived": "Arhivat"
+    },
+    "actions": {
+      "markRead": "Marchează ca Citit",
+      "markUnread": "Marchează ca Necitit",
+      "archive": "Arhivează",
+      "unarchive": "Dezarhivează",
+      "delete": "Șterge"
+    },
+    "subject": "Subiect",
+    "searchPlaceholder": "Caută după nume, email, subiect sau mesaj...",
+    "noMessages": "Nu s-au găsit mesaje",
+    "noMessagesDescription": "Mesajele din formularul de contact vor apărea aici",
+    "confirmDelete": "Sigur doriți să ștergeți acest mesaj? Această acțiune nu poate fi anulată.",
+    "statusUpdated": "Statusul mesajului a fost actualizat cu succes",
+    "statusUpdateFailed": "Eșec la actualizarea statusului mesajului",
+    "messageDeleted": "Mesaj șters cu succes",
+    "deleteFailed": "Eșec la ștergerea mesajului"
   }
 }

@@ -29,7 +29,15 @@
       "feedback": "Feedback",
       "other": "Other"
     },
-    "submitButton": "Send Message"
+    "submitButton": "Send Message",
+    "submitting": "Sending...",
+    "success": "Message sent successfully! We'll get back to you soon.",
+    "errors": {
+      "requiredFields": "Please fill in all required fields",
+      "invalidEmail": "Please enter a valid email address",
+      "recaptchaRequired": "Please complete the reCAPTCHA verification",
+      "submitFailed": "Failed to send message. Please try again later."
+    }
   },
   "info": {
     "title": "Get in Touch",

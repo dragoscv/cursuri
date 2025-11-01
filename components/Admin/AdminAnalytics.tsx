@@ -90,6 +90,19 @@ const AdminAnalytics: React.FC = () => {
     const maxRevenue = sortedMonthlyRevenue.length ?
         Math.max(...sortedMonthlyRevenue.map(item => item.amount)) : 0;
 
+    // Calculate total sales count (not just last 30 days)
+    const totalSales = adminAnalytics?.popularCourses?.reduce((sum, course) => sum + course.enrollments, 0) || 0;
+
+    // Calculate revenue growth percentage
+    let revenueGrowth = 0;
+    if (sortedMonthlyRevenue.length >= 2) {
+        const currentMonth = sortedMonthlyRevenue[sortedMonthlyRevenue.length - 1];
+        const previousMonth = sortedMonthlyRevenue[sortedMonthlyRevenue.length - 2];
+        if (previousMonth.amount > 0) {
+            revenueGrowth = ((currentMonth.amount - previousMonth.amount) / previousMonth.amount) * 100;
+        }
+    }
+
     return (
         <div className="space-y-8">
             <h1 className="text-3xl font-bold">{t('title')}</h1>
@@ -140,8 +153,8 @@ const AdminAnalytics: React.FC = () => {
                         <div className="text-center">
                             <h3 className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] text-sm mb-1">{t('averagePerSale')}</h3>
                             <p className="text-2xl font-bold">
-                                {adminAnalytics && adminAnalytics.totalRevenue && adminAnalytics.newSales ?
-                                    (adminAnalytics.totalRevenue / adminAnalytics.newSales).toLocaleString(locale, {
+                                {adminAnalytics && adminAnalytics.totalRevenue && totalSales > 0 ?
+                                    (adminAnalytics.totalRevenue / totalSales).toLocaleString(locale, {
                                         style: 'currency',
                                         currency: 'RON',
                                         maximumFractionDigits: 0
@@ -149,15 +162,16 @@ const AdminAnalytics: React.FC = () => {
                             </p>
                         </div>
                         <div className="text-center">
-                            <h3 className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] text-sm mb-1">{t('salesThisMonth')}</h3>
+                            <h3 className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] text-sm mb-1">{t('salesLast30Days')}</h3>
                             <p className="text-2xl font-bold">
                                 {adminAnalytics?.newSales || 0}
                             </p>
                         </div>
                         <div className="text-center">
                             <h3 className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] text-sm mb-1">{t('revenueGrowth')}</h3>
-                            <p className="text-2xl font-bold text-[color:var(--ai-success)]">
-                                +{sortedMonthlyRevenue.length > 1 ? '12%' : '0%'}
+                            <p className={`text-2xl font-bold ${revenueGrowth >= 0 ? 'text-[color:var(--ai-success)]' : 'text-[color:var(--ai-danger)]'
+                                }`}>
+                                {revenueGrowth >= 0 ? '+' : ''}{revenueGrowth.toFixed(1)}%
                             </p>
                         </div>
                     </div>

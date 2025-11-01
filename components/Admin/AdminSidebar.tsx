@@ -10,6 +10,7 @@ import {
   FiBookOpen,
   FiBarChart2,
   FiLogOut,
+  FiMail,
 } from '@/components/icons/FeatherIcons';
 import { signOut } from 'firebase/auth';
 import { firebaseAuth } from '@/utils/firebase/firebase.config';
@@ -35,6 +36,7 @@ const AdminSidebar: React.FC = () => {
     { label: 'Dashboard', href: '/admin', icon: FiHome },
     { label: 'Courses', href: '/admin/courses', icon: FiBookOpen },
     { label: 'Users', href: '/admin/users', icon: FiUsers },
+    { label: 'Messages', href: '/admin/messages', icon: FiMail },
     { label: 'Analytics', href: '/admin/analytics', icon: FiBarChart2 },
     { label: 'Settings', href: '/admin/settings', icon: FiSettings },
   ];
@@ -110,11 +112,10 @@ const AdminSidebar: React.FC = () => {
                                       flex md:flex-row flex-col items-center md:gap-3 gap-1 
                                       md:px-6 px-2 md:py-3.5 py-3 md:mx-2 mx-0 md:my-1 my-0 transition-all duration-200 
                                       md:rounded-lg rounded-md
-                                      ${
-                                        isActive
-                                          ? 'md:bg-gradient-to-r md:from-[color:var(--ai-primary)]/20 md:to-[color:var(--ai-secondary)]/10 text-[color:var(--ai-primary)] font-medium md:shadow-sm'
-                                          : 'hover:bg-[color:var(--ai-primary)]/5 text-[color:var(--ai-foreground)] md:hover:translate-x-1'
-                                      }
+                                      ${isActive
+                      ? 'md:bg-gradient-to-r md:from-[color:var(--ai-primary)]/20 md:to-[color:var(--ai-secondary)]/10 text-[color:var(--ai-primary)] font-medium md:shadow-sm'
+                      : 'hover:bg-[color:var(--ai-primary)]/5 text-[color:var(--ai-foreground)] md:hover:translate-x-1'
+                    }
                                     `}
                 >
                   <div

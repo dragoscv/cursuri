@@ -300,7 +300,8 @@
     "status": {
       "completed": "Finalizat",
       "inProgress": "În Progres",
-      "notStarted": "Neînceput"
+      "notStarted": "Neînceput",
+      "subscriptionAccess": "Abonament"
     },
     "details": {
       "defaultDuration": "10 ore",

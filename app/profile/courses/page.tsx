@@ -15,43 +15,116 @@ export default function ProfileCourses() {
     if (!context) {
         throw new Error('AppContext not found');
     }
-    const { user, courses, userPaidProducts, lessonProgress } = context;
+    const { user, courses, userPaidProducts, lessonProgress, subscriptions } = context;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [filteredCourses, setFilteredCourses] = useState<any[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState('all'); // all, in-progress, completed
 
     useEffect(() => {
-        if (!userPaidProducts || !courses) {
+        if (!courses) {
             setFilteredCourses([]);
             return;
-        } // Create enhanced course objects with progress info
+        }
+
+        // Check if user has an active subscription
+        const hasActiveSubscription = subscriptions && subscriptions.length > 0 &&
+            subscriptions.some(sub => sub.status === 'active' || sub.status === 'trialing');
+
+        // Create enhanced course objects with progress info
         // First, group purchases by courseId to avoid duplicates
         const courseMap = new Map();
 
-        userPaidProducts.forEach((product) => {
-            const courseId = product.metadata?.courseId;
-            if (!courseId) return;
+        // Add purchased courses
+        if (userPaidProducts) {
+            userPaidProducts.forEach((product) => {
+                const courseId = product.metadata?.courseId;
+                if (!courseId) return;
 
-            const course = courses[courseId];
-            if (!course) return;
+                const course = courses[courseId];
+                if (!course) return;
 
-            // If this course is already in our map, update only if this purchase is more recent
-            if (courseMap.has(courseId)) {
-                const existingEntry = courseMap.get(courseId);
-                const currentPurchaseDate = new Date(product.purchaseDate || Date.now());
+                // If this course is already in our map, update only if this purchase is more recent
+                if (courseMap.has(courseId)) {
+                    const existingEntry = courseMap.get(courseId);
+                    const currentPurchaseDate = new Date(product.purchaseDate || Date.now());
 
-                if (currentPurchaseDate > existingEntry.purchaseDate) {
+                    if (currentPurchaseDate > existingEntry.purchaseDate) {
+                        courseMap.set(courseId, {
+                            ...existingEntry,
+                            purchaseDate: currentPurchaseDate,
+                            accessType: 'purchased',
+                        });
+                    }
+                } else {
+                    // Calculate progress - use lessons for total count, lessonProgress for completed
+                    const courseLessons = context.lessons?.[courseId] || {};
+                    const totalCourseLessons = Object.keys(courseLessons).length;
+                    const completedLessonsCount = Object.values(lessonProgress[courseId] || {}).filter(
+                        (progress) => progress.isCompleted
+                    ).length;
+
+                    const progress =
+                        totalCourseLessons > 0
+                            ? Math.round((completedLessonsCount / totalCourseLessons) * 100)
+                            : 0;
+
+                    // Get the first incomplete lesson, or fall back to most recent if all completed
+                    let nextLessonId = '';
+
+                    // Sort lessons by order property to get the correct sequence
+                    const lessonEntries = Object.entries(courseLessons).sort((a, b) => {
+                        const orderA = a[1]?.order ?? 999999;
+                        const orderB = b[1]?.order ?? 999999;
+                        return orderA - orderB;
+                    });
+
+                    // Find the first incomplete lesson in the correct order
+                    for (const [lessonId, lesson] of lessonEntries) {
+                        const lessonProgressData = lessonProgress[courseId]?.[lessonId];
+                        if (!lessonProgressData || !lessonProgressData.isCompleted) {
+                            nextLessonId = lessonId;
+                            break;
+                        }
+                    }
+
+                    // If all lessons are completed or no progress exists, use the first lesson (by order)
+                    if (!nextLessonId && lessonEntries.length > 0) {
+                        nextLessonId = lessonEntries[0][0];
+                    }
+
                     courseMap.set(courseId, {
-                        ...existingEntry,
-                        purchaseDate: currentPurchaseDate,
+                        ...course,
+                        courseId,
+                        purchaseDate: new Date(product.purchaseDate || Date.now()),
+                        progress,
+                        completedLessons: completedLessonsCount,
+                        totalLessons: totalCourseLessons,
+                        recentLessonId: nextLessonId,
+                        status: progress === 100 ? 'completed' : progress > 0 ? 'in-progress' : 'not-started',
+                        accessType: 'purchased',
                     });
                 }
-            } else {
-                // Calculate progress - use lessons for total count, lessonProgress for completed
+            });
+        }
+
+        // Add courses started via subscription (if user has active subscription and lesson progress)
+        if (hasActiveSubscription && lessonProgress) {
+            Object.entries(lessonProgress).forEach(([courseId, courseLessonProgress]) => {
+                // Skip if already added as purchased course
+                if (courseMap.has(courseId)) return;
+
+                const course = courses[courseId];
+                if (!course) return;
+
+                // Check if user has actually started this course (has any lesson progress)
+                const hasProgress = Object.keys(courseLessonProgress).length > 0;
+                if (!hasProgress) return;
+
+                // Calculate progress
                 const courseLessons = context.lessons?.[courseId] || {};
                 const totalCourseLessons = Object.keys(courseLessons).length;
-                const completedLessonsCount = Object.values(lessonProgress[courseId] || {}).filter(
+                const completedLessonsCount = Object.values(courseLessonProgress).filter(
                     (progress) => progress.isCompleted
                 ).length;
 
@@ -60,42 +133,47 @@ export default function ProfileCourses() {
                         ? Math.round((completedLessonsCount / totalCourseLessons) * 100)
                         : 0;
 
-                // Get the first incomplete lesson, or fall back to most recent if all completed
+                // Get the first incomplete lesson
                 let nextLessonId = '';
-
-                // Sort lessons by order property to get the correct sequence
                 const lessonEntries = Object.entries(courseLessons).sort((a, b) => {
                     const orderA = a[1]?.order ?? 999999;
                     const orderB = b[1]?.order ?? 999999;
                     return orderA - orderB;
                 });
 
-                // Find the first incomplete lesson in the correct order
                 for (const [lessonId, lesson] of lessonEntries) {
-                    const lessonProgressData = lessonProgress[courseId]?.[lessonId];
+                    const lessonProgressData = courseLessonProgress[lessonId];
                     if (!lessonProgressData || !lessonProgressData.isCompleted) {
                         nextLessonId = lessonId;
                         break;
                     }
                 }
 
-                // If all lessons are completed or no progress exists, use the first lesson (by order)
                 if (!nextLessonId && lessonEntries.length > 0) {
                     nextLessonId = lessonEntries[0][0];
                 }
 
+                // Use the earliest lesson progress timestamp as "start date"
+                const progressTimestamps = Object.values(courseLessonProgress)
+                    .map(p => p.lastAccessedAt || p.startedAt || Date.now())
+                    .filter(ts => ts);
+                const earliestAccess = progressTimestamps.length > 0
+                    ? Math.min(...progressTimestamps)
+                    : Date.now();
+
                 courseMap.set(courseId, {
                     ...course,
                     courseId,
-                    purchaseDate: new Date(product.purchaseDate || Date.now()),
+                    purchaseDate: new Date(earliestAccess),
                     progress,
                     completedLessons: completedLessonsCount,
                     totalLessons: totalCourseLessons,
                     recentLessonId: nextLessonId,
                     status: progress === 100 ? 'completed' : progress > 0 ? 'in-progress' : 'not-started',
+                    accessType: 'subscription',
                 });
-            }
-        }); // Convert the Map back to an array
+            });
+        } // Convert the Map back to an array
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const enhancedCourses = Array.from(courseMap.values()) as any[];
 
@@ -126,7 +204,7 @@ export default function ProfileCourses() {
         });
 
         setFilteredCourses(filtered);
-    }, [userPaidProducts, courses, lessonProgress, searchTerm, filterStatus]);
+    }, [userPaidProducts, courses, lessonProgress, searchTerm, filterStatus, subscriptions, context.lessons]);
 
     if (!user) {
         return null;

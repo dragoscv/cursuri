@@ -841,6 +841,22 @@ export type BookmarkedLessons = Record<string, string[]>;
 // Wishlist courses: courseId[]
 export type WishlistCourses = string[];
 
+/**
+ * Contact Message interface for contact form submissions
+ */
+export interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  timestamp: Timestamp | Date | number;
+  status: 'new' | 'read' | 'archived';
+  userId?: string; // Optional: if user was authenticated
+  createdAt?: Timestamp | Date | number;
+  updatedAt?: Timestamp | Date | number;
+}
+
 // Caching-related types
 export type CacheStatus = 'idle' | 'loading' | 'success' | 'error';
 
