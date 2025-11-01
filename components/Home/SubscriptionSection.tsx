@@ -14,12 +14,6 @@ import Login from '@/components/Login';
 import LoadingButton from '@/components/Buttons/LoadingButton';
 import { useRouter } from 'next/navigation';
 
-// Stripe Price IDs from the created products
-const PRICE_IDS = {
-  monthly: 'price_1SO07cLG0nGypmDBXjef95ut',
-  yearly: 'price_1SO07cLG0nGypmDBTeHZEoRE',
-};
-
 export default function SubscriptionSection() {
   const t = useTranslations('subscription');
   const context = useContext(AppContext);
@@ -35,32 +29,40 @@ export default function SubscriptionSection() {
   // Check if user has an active subscription
   const hasActiveSubscription = subscriptions && subscriptions.length > 0;
 
-  // Helper function to find subscription prices from products
-  const getSubscriptionPrice = (priceId: string) => {
-    for (const product of products) {
-      if (product.prices) {
-        const price = product.prices.find((p: { id: string }) => p.id === priceId);
-        if (price) {
-          const amountValue = price.unit_amount ? price.unit_amount / 100 : 0;
-          const currency = price.currency?.toUpperCase() || 'USD';
+  // Find subscription product from products
+  const subscriptionProduct = products?.find((p: any) =>
+    p.metadata?.type === 'subscription' || p.name?.toLowerCase().includes('subscription')
+  );
 
-          // Format price using Intl.NumberFormat for proper locale formatting
-          const formatted = new Intl.NumberFormat('ro-RO', {
-            style: 'currency',
-            currency: currency,
-            minimumFractionDigits: amountValue % 1 === 0 ? 0 : 2,
-            maximumFractionDigits: 2,
-          }).format(amountValue);
+  // Get monthly and yearly prices from the subscription product
+  const monthlyPrice = subscriptionProduct?.prices?.find((p: any) =>
+    p.interval === 'month' && p.recurring?.interval === 'month'
+  );
 
-          return {
-            amount: amountValue.toString(),
-            currency,
-            formatted,
-          };
-        }
-      }
-    }
-    return null;
+  const yearlyPrice = subscriptionProduct?.prices?.find((p: any) =>
+    p.interval === 'year' && p.recurring?.interval === 'year'
+  );
+
+  // Helper function to format price
+  const formatPrice = (price: any) => {
+    if (!price || !price.unit_amount) return null;
+
+    const amountValue = price.unit_amount / 100;
+    const currency = price.currency?.toUpperCase() || 'USD';
+
+    // Format price using Intl.NumberFormat for proper locale formatting
+    const formatted = new Intl.NumberFormat('ro-RO', {
+      style: 'currency',
+      currency: currency,
+      minimumFractionDigits: amountValue % 1 === 0 ? 0 : 2,
+      maximumFractionDigits: 2,
+    }).format(amountValue);
+
+    return {
+      amount: amountValue,
+      currency,
+      formatted,
+    };
   };
 
   const handleSubscribe = async (priceId: string, planName: string) => {
@@ -95,8 +97,8 @@ export default function SubscriptionSection() {
     }
   };
 
-  const monthlyPrice = getSubscriptionPrice(PRICE_IDS.monthly);
-  const yearlyPrice = getSubscriptionPrice(PRICE_IDS.yearly);
+  const monthlyPriceInfo = formatPrice(monthlyPrice);
+  const yearlyPriceInfo = formatPrice(yearlyPrice);
 
   return (
     <section className="relative w-full py-20 overflow-hidden bg-gradient-to-br from-[color:var(--ai-background)] via-[color:var(--ai-card-bg)]/30 to-[color:var(--ai-background)]">
@@ -151,7 +153,7 @@ export default function SubscriptionSection() {
               <div className="mb-6">
                 <div className="flex items-baseline gap-2">
                   <span className="text-4xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">
-                    {monthlyPrice ? monthlyPrice.formatted : t('plans.proMonthly.price')}
+                    {monthlyPriceInfo ? monthlyPriceInfo.formatted : t('plans.proMonthly.price')}
                   </span>
                   <span className="text-[color:var(--ai-muted)]">/{t('plans.proMonthly.period')}</span>
                 </div>
@@ -198,7 +200,12 @@ export default function SubscriptionSection() {
                   radius="lg"
                   className="w-full font-medium px-5 py-2 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] border-none text-white"
                   endContent={<FiArrowRight />}
-                  onClick={() => handleSubscribe(PRICE_IDS.monthly, 'monthly')}
+                  onClick={() => {
+                    if (monthlyPrice?.id) {
+                      handleSubscribe(monthlyPrice.id, 'monthly');
+                    }
+                  }}
+                  disabled={!monthlyPrice?.id}
                 >
                   {t('plans.proMonthly.cta')}
                 </Button>
@@ -233,7 +240,7 @@ export default function SubscriptionSection() {
               <div className="mb-6">
                 <div className="flex items-baseline gap-2">
                   <span className="text-4xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">
-                    {yearlyPrice ? yearlyPrice.formatted : t('plans.proYearly.price')}
+                    {yearlyPriceInfo ? yearlyPriceInfo.formatted : t('plans.proYearly.price')}
                   </span>
                   <span className="text-[color:var(--ai-muted)]">/{t('plans.proYearly.period')}</span>
                 </div>
@@ -283,7 +290,12 @@ export default function SubscriptionSection() {
                   radius="lg"
                   className="w-full font-medium px-5 py-2 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 bg-gradient-to-r from-[color:var(--ai-accent)] to-[color:var(--ai-secondary)] border-none text-white"
                   endContent={<FiArrowRight />}
-                  onClick={() => handleSubscribe(PRICE_IDS.yearly, 'yearly')}
+                  onClick={() => {
+                    if (yearlyPrice?.id) {
+                      handleSubscribe(yearlyPrice.id, 'yearly');
+                    }
+                  }}
+                  disabled={!yearlyPrice?.id}
                 >
                   {t('plans.proYearly.cta')}
                 </Button>
