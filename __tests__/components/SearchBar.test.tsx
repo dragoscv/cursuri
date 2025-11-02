@@ -85,6 +85,7 @@ const createMockContext = (overrides = {}) => ({
   subscriptionsLoading: false,
   subscriptionsError: null,
   refreshSubscriptions: jest.fn(),
+  refreshCourses: jest.fn(),
   ...overrides
 });
 

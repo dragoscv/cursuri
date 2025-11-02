@@ -53,6 +53,7 @@ const mockCourse = {
 // Create a comprehensive mock for AppContext
 const createMockContext = (overrides: Partial<AppContextProps> = {}): AppContextProps => ({
     isDark: false,
+    refreshCourses: jest.fn().mockResolvedValue(undefined),
     toggleTheme: jest.fn(),
     colorScheme: 'modern-purple',
     setColorScheme: jest.fn(),

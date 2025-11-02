@@ -1,4 +1,5 @@
 import { StripeProduct } from "./stripe";
+import { FieldValue } from "firebase/firestore";
 
 // Interface for course data when creating or updating a course
 export interface CourseData {
@@ -30,6 +31,6 @@ export interface CourseData {
         allowPromoCodes: boolean;
         [key: string]: any;
     };
-    createdAt?: string;
-    updatedAt: string;
+    createdAt?: string | FieldValue;
+    updatedAt: string | FieldValue;
 }
