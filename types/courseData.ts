@@ -6,6 +6,7 @@ export interface CourseData {
     description: string;
     price: string;
     priceProduct?: StripeProduct | null;
+    priceProductId?: string | null;
     repoUrl: string;
     status: string;
     prerequisites: string[];

@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { AppContext } from "@/components/AppContext";
 import { useToast } from "@/components/Toast/ToastContext";
 import { firestoreDB, firebaseStorage } from "@/utils/firebase/firebase.config";
-import { doc, addDoc, collection, updateDoc } from "firebase/firestore";
+import { doc, addDoc, collection, updateDoc, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { motion } from "framer-motion";
 import { FiClock, FiLayers, FiFileText, FiLink } from "../icons/FeatherIcons";
@@ -66,7 +66,7 @@ export default function AddCourse(props: AddCourseProps) {
     if (!context) {
         throw new Error("You probably forgot to put <AppProvider>.");
     }
-    const { products, courses, user, refreshProducts } = context;
+    const { products, courses, user, refreshProducts, refreshCourses } = context;
     const { showToast } = useToast();
     const t = useTranslations('common.notifications');
     const tCourses = useTranslations('courses');
@@ -134,7 +134,7 @@ export default function AddCourse(props: AddCourseProps) {
                 name: courseName,
                 description: courseDescription,
                 price: coursePrice,
-                priceProduct: priceProduct,
+                priceProductId: priceProduct?.id || null,
                 repoUrl: repoUrl,
                 status: courseStatus,
                 prerequisites: coursePrerequisites,
@@ -155,8 +155,8 @@ export default function AddCourse(props: AddCourseProps) {
                     certificateEnabled: certificateEnabled,
                     allowPromoCodes: allowPromoCodes
                 },
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp()
             };            // If image is provided, upload it first
             if (courseImage) {
                 const storageRef = ref(firebaseStorage, `courses/${courseImage.name}_${Date.now()}`);
@@ -167,6 +167,10 @@ export default function AddCourse(props: AddCourseProps) {
 
             // Add the course to Firestore
             await addDoc(collection(firestoreDB, "courses"), courseData);
+
+            // Refresh courses list to show the new course
+            await refreshCourses();
+
             setLoading(false);
             onClose();
         } catch (error) {
@@ -183,7 +187,7 @@ export default function AddCourse(props: AddCourseProps) {
         products, courseName, courseDescription, coursePrice, repoUrl,
         courseImage, courseLevel, courseCategories, courseTags,
         courseRequirements, courseObjectives, coursePrerequisites, courseStatus, instructorName,
-        estimatedDuration, certificateEnabled, allowPromoCodes, onClose
+        estimatedDuration, certificateEnabled, allowPromoCodes, onClose, refreshCourses, showToast
     ]);
 
     const updateCourse = useCallback(async () => {
@@ -192,12 +196,14 @@ export default function AddCourse(props: AddCourseProps) {
         setLoading(true);
         try {
             const courseRef = doc(firestoreDB, `courses/${courseId}`);
-            const priceProduct = products.find((product: StripeProduct) => product.prices.find((price) => price.id === coursePrice));            // Prepare updated data            
+            const priceProduct = products.find((product: StripeProduct) => product.prices.find((price) => price.id === coursePrice));
+
+            // Prepare updated data            
             const updatedData: Partial<CourseData> = {
                 name: courseName,
                 description: courseDescription,
                 price: coursePrice,
-                priceProduct: priceProduct,
+                priceProductId: priceProduct?.id || null,
                 repoUrl: repoUrl,
                 status: courseStatus,
                 prerequisites: coursePrerequisites,
@@ -218,7 +224,7 @@ export default function AddCourse(props: AddCourseProps) {
                     certificateEnabled: certificateEnabled,
                     allowPromoCodes: allowPromoCodes
                 },
-                updatedAt: new Date().toISOString()
+                updatedAt: serverTimestamp()
             };
 
             // Only add instructor if it has a value (Firestore doesn't allow undefined)

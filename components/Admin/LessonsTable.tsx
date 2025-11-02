@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Lesson } from '@/types';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
@@ -24,6 +24,7 @@ interface LessonsTableProps {
   lessons: Lesson[];
   courseId: string;
   onEdit: (lessonId: string) => void;
+  onDelete?: (lessonId: string) => void;
   onReorder?: (lessons: Lesson[]) => void;
 }
 
@@ -32,9 +33,10 @@ interface SortableRowProps {
   index: number;
   courseId: string;
   onEdit: (lessonId: string) => void;
+  onDelete?: (lessonId: string) => void;
 }
 
-function SortableRow({ lesson, index, courseId, onEdit }: SortableRowProps) {
+function SortableRow({ lesson, index, courseId, onEdit, onDelete }: SortableRowProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: lesson.id,
   });
@@ -83,11 +85,10 @@ function SortableRow({ lesson, index, courseId, onEdit }: SortableRowProps) {
       <td className="px-4 py-3 text-[color:var(--ai-muted)]">{lesson.type}</td>
       <td className="px-4 py-3">
         <span
-          className={`inline-block px-2 py-1 rounded text-xs font-semibold ${
-            lesson.status === 'active'
+          className={`inline-block px-2 py-1 rounded text-xs font-semibold ${lesson.status === 'active'
               ? 'bg-[color:var(--ai-success)]/10 text-[color:var(--ai-success)]'
               : 'bg-[color:var(--ai-card-border)] text-[color:var(--ai-muted-foreground)]'
-          }`}
+            }`}
         >
           {lesson.status}
         </span>
@@ -96,32 +97,51 @@ function SortableRow({ lesson, index, courseId, onEdit }: SortableRowProps) {
         {lesson.duration ? lesson.duration + ' min' : '-'}
       </td>
       <td className="px-4 py-3 text-right">
-        <Button
-          size="sm"
-          variant="flat"
-          color="primary"
-          onPress={() => onEdit(lesson.id)}
-          aria-label={`Edit lesson ${lesson.name}`}
-        >
-          Edit
-        </Button>
-        <Link
-          href={`/courses/${courseId}/lessons/${lesson.id}`}
-          className="ml-2 text-xs text-[color:var(--ai-primary)] underline"
-        >
-          View
-        </Link>
+        <div className="flex items-center justify-end gap-2">
+          <Button
+            size="sm"
+            variant="flat"
+            color="primary"
+            onPress={() => onEdit(lesson.id)}
+            aria-label={`Edit lesson ${lesson.name}`}
+          >
+            Edit
+          </Button>
+          {onDelete && (
+            <Button
+              size="sm"
+              variant="flat"
+              color="danger"
+              onPress={() => onDelete(lesson.id)}
+              aria-label={`Delete lesson ${lesson.name}`}
+            >
+              Delete
+            </Button>
+          )}
+          <Link
+            href={`/courses/${courseId}/lessons/${lesson.id}`}
+            className="text-xs text-[color:var(--ai-primary)] underline"
+          >
+            View
+          </Link>
+        </div>
       </td>
     </tr>
   );
 }
 
-export default function LessonsTable({ lessons, courseId, onEdit, onReorder }: LessonsTableProps) {
+export default function LessonsTable({ lessons, courseId, onEdit, onDelete, onReorder }: LessonsTableProps) {
   // Filter out invalid lessons and sort by order
   const validLessons = lessons.filter((lesson) => lesson && lesson.id);
   const [items, setItems] = useState(
     [...validLessons].sort((a, b) => (a.order || 0) - (b.order || 0))
   );
+
+  // Sync internal state with lessons prop changes (e.g., after deletion)
+  useEffect(() => {
+    const sortedLessons = [...validLessons].sort((a, b) => (a.order || 0) - (b.order || 0));
+    setItems(sortedLessons);
+  }, [lessons]); // Re-sync when lessons prop changes
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -184,6 +204,7 @@ export default function LessonsTable({ lessons, courseId, onEdit, onReorder }: L
                   index={index}
                   courseId={courseId}
                   onEdit={onEdit}
+                  onDelete={onDelete}
                 />
               ))}
             </tbody>

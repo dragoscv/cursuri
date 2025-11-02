@@ -784,7 +784,22 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
         const videoElement = document.createElement('video');
         videoElement.preload = 'metadata';
 
+        // Flag to prevent multiple callbacks
+        let hasProcessed = false;
+
+        const cleanupVideoElement = () => {
+          // Remove event listeners to prevent memory leaks and multiple triggers
+          videoElement.onloadedmetadata = null;
+          videoElement.onerror = null;
+          // Clear the src and remove from memory
+          videoElement.src = '';
+          videoElement.remove();
+        };
+
         videoElement.onloadedmetadata = () => {
+          if (hasProcessed) return;
+          hasProcessed = true;
+
           // Get duration in minutes (rounded up)
           const durationInMinutes = Math.ceil(videoElement.duration / 60);
 
@@ -797,18 +812,19 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
           setDurationMinutes(durationInMinutes.toString());
 
           // Clean up the temporary video element (but not the preview URL)
-          videoElement.src = '';
-          videoElement.load();
+          cleanupVideoElement();
         };
 
         videoElement.onerror = (error) => {
+          if (hasProcessed) return;
+          hasProcessed = true;
+
           console.warn(
             'Could not extract video duration automatically. You can enter it manually.',
             error
           );
-          // Don't throw error - just let user enter duration manually
-          videoElement.src = '';
-          videoElement.load();
+          // Clean up without triggering another load
+          cleanupVideoElement();
         };
 
         // Use the same blob URL for metadata extraction
@@ -817,6 +833,7 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
           videoElement.src = videoUrl;
         } catch (err) {
           console.warn('Could not load video for duration extraction:', err);
+          cleanupVideoElement();
         }
       } else {
         const reader = new FileReader();

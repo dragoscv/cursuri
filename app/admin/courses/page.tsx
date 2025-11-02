@@ -25,7 +25,7 @@ export default function CoursesPage() {
     throw new Error('AppContext not found');
   }
 
-  const { courses, openModal, closeModal } = context;
+  const { courses, openModal, closeModal, refreshCourses } = context;
   const { showToast } = useToast();
 
   // Helper function to safely format price
@@ -45,6 +45,9 @@ export default function CoursesPage() {
     try {
       // Delete course from Firestore
       await deleteDoc(doc(firestoreDB, 'courses', courseId));
+
+      // Refresh courses list
+      await refreshCourses();
 
       showToast({
         type: 'success',

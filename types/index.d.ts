@@ -100,6 +100,7 @@ export interface AppContextProps {
   isAdmin: boolean;
   courses: Record<string, Course>;
   courseLoadingStates: Record<string, CacheStatus>;
+  refreshCourses: () => Promise<void>;
   lessons: Record<string, Record<string, Lesson>>;
   lessonLoadingStates: Record<string, Record<string, CacheStatus>>;
   getCourseLessons: (courseId: string, options?: CacheOptions) => Promise<Unsubscribe | void>;

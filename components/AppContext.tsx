@@ -2034,13 +2034,57 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.uid]); // Only re-run when user UID changes
 
+  // Refresh courses function
+  const refreshCourses = useCallback(async () => {
+    // Clear courses cache
+    const courseIds = Object.keys(state.courses);
+    courseIds.forEach((courseId) => {
+      clearCache(`course_${courseId}`);
+    });
+
+    // Clear all courses from state
+    dispatch({ type: 'CLEAR_CACHE' });
+
+    // Fetch courses again
+    try {
+      dispatch({
+        type: 'SET_COURSE_LOADING_STATE',
+        payload: { courseId: 'all', status: 'loading' },
+      });
+
+      const q = query(collection(firestoreDB, 'courses'), where('status', '==', 'active'));
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        data.id = doc.id;
+        dispatch({ type: 'SET_COURSES', payload: { courseId: doc.id, course: data } });
+        dispatch({
+          type: 'SET_COURSE_LOADING_STATE',
+          payload: { courseId: doc.id, status: 'success' },
+        });
+      });
+
+      dispatch({
+        type: 'SET_COURSE_LOADING_STATE',
+        payload: { courseId: 'all', status: 'success' },
+      });
+    } catch (error) {
+      console.error('Error refreshing courses:', error);
+      dispatch({
+        type: 'SET_COURSE_LOADING_STATE',
+        payload: { courseId: 'all', status: 'error' },
+      });
+    }
+  }, [state.courses, clearCache]);
+
   useEffect(() => {
     let mounted = true;
     const unsubscribes: Unsubscribe[] = [];
 
-    const fetchCourses = async () => {
+    const fetchCourses = async (force: boolean = false) => {
       // Check if courses are already fetched to avoid duplicate requests
-      if (Object.keys(state.courses).length > 0) {
+      if (!force && Object.keys(state.courses).length > 0) {
         return () => {
           unsubscribes.forEach((unsubscribe) => unsubscribe());
         };
@@ -2400,6 +2444,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         refreshSubscriptions,
         courses: state.courses,
         courseLoadingStates: state.courseLoadingStates,
+        refreshCourses,
         lessons: state.lessons,
         lessonLoadingStates: state.lessonLoadingStates,
         getCourseLessons,
