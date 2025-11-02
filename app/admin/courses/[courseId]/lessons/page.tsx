@@ -161,8 +161,14 @@ export default function AdminLessonsListPage() {
   const handleReorder = useCallback(
     async (reorderedLessons: any[]) => {
       try {
+        // Update the lessons with new order values
+        const lessonsWithNewOrder = reorderedLessons.map((lesson, index) => ({
+          ...lesson,
+          order: index,
+        }));
+
         // Optimistically update UI
-        setLessons(reorderedLessons);
+        setLessons(lessonsWithNewOrder);
 
         // Check authentication status
         const { getAuth } = await import('firebase/auth');
@@ -183,7 +189,7 @@ export default function AdminLessonsListPage() {
         }
 
         // Update order in Firestore using individual updates instead of batch
-        const updatePromises = reorderedLessons.map(async (lesson, index) => {
+        const updatePromises = lessonsWithNewOrder.map(async (lesson, index) => {
           const lessonRef = doc(db, `courses/${courseId}/lessons`, lesson.id);
           return updateDoc(lessonRef, { order: index });
         });

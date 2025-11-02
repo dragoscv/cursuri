@@ -86,8 +86,8 @@ function SortableRow({ lesson, index, courseId, onEdit, onDelete }: SortableRowP
       <td className="px-4 py-3">
         <span
           className={`inline-block px-2 py-1 rounded text-xs font-semibold ${lesson.status === 'active'
-              ? 'bg-[color:var(--ai-success)]/10 text-[color:var(--ai-success)]'
-              : 'bg-[color:var(--ai-card-border)] text-[color:var(--ai-muted-foreground)]'
+            ? 'bg-[color:var(--ai-success)]/10 text-[color:var(--ai-success)]'
+            : 'bg-[color:var(--ai-card-border)] text-[color:var(--ai-muted-foreground)]'
             }`}
         >
           {lesson.status}
@@ -131,17 +131,16 @@ function SortableRow({ lesson, index, courseId, onEdit, onDelete }: SortableRowP
 }
 
 export default function LessonsTable({ lessons, courseId, onEdit, onDelete, onReorder }: LessonsTableProps) {
-  // Filter out invalid lessons and sort by order
+  // Filter out invalid lessons
   const validLessons = lessons.filter((lesson) => lesson && lesson.id);
-  const [items, setItems] = useState(
-    [...validLessons].sort((a, b) => (a.order || 0) - (b.order || 0))
-  );
 
-  // Sync internal state with lessons prop changes (e.g., after deletion)
+  const [items, setItems] = useState<Lesson[]>([]);
+
+  // Sync internal state with lessons prop changes (e.g., after deletion or reorder)
   useEffect(() => {
     const sortedLessons = [...validLessons].sort((a, b) => (a.order || 0) - (b.order || 0));
     setItems(sortedLessons);
-  }, [lessons]); // Re-sync when lessons prop changes
+  }, [lessons]); // Re-sync when lessons array reference changes
 
   const sensors = useSensors(
     useSensor(PointerSensor),
