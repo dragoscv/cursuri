@@ -1,10 +1,12 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useContext, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Lesson } from '@/types';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button as HeroButton } from '@heroui/react';
+import { AppContext } from '@/components/AppContext';
 import useVideoControls from '../hooks/useVideoControls';
+import ResumeVideoModal from './ResumeVideoModal';
 import {
   PlayIcon,
   PauseIcon,
@@ -46,12 +48,17 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   setProgressSaved,
 }) => {
   const t = useTranslations('common.videoPlayer');
+  const context = useContext(AppContext);
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoContainerRef = useRef<HTMLDivElement>(null);
   const [isMuted, setIsMuted] = React.useState(false);
   const [captionsEnabled, setCaptionsEnabled] = React.useState(false);
   const [selectedCaptionLanguage, setSelectedCaptionLanguage] = React.useState<string>('off');
   const [playbackSpeed, setPlaybackSpeed] = React.useState(1);
+  const [showResumeModal, setShowResumeModal] = React.useState(false);
+  const [savedPosition, setSavedPosition] = React.useState<number>(0);
+  const [videoReady, setVideoReady] = React.useState(false);
+  const [hasShownModal, setHasShownModal] = React.useState(false);
 
   const courseId = lesson?.courseId || '';
 
@@ -114,6 +121,72 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
     }
   };
 
+  // Check for saved progress and show resume modal
+  useEffect(() => {
+    if (!context || !videoRef.current || !videoReady || hasShownModal) return;
+
+    const lessonProgress = context.lessonProgress?.[courseId]?.[lesson.id];
+    
+    if (lessonProgress && lessonProgress.lastPosition) {
+      const position = lessonProgress.lastPosition;
+      const duration = videoRef.current.duration;
+      
+      // Only show resume modal if:
+      // 1. Saved position is at least 3 seconds in
+      // 2. Saved position is more than 60 seconds before the end
+      // 3. Position is less than 95% of total duration
+      if (position > 3 && (duration - position) > 60 && position < duration * 0.95) {
+        setSavedPosition(position);
+        setShowResumeModal(true);
+        setHasShownModal(true);
+      }
+    }
+  }, [context, courseId, lesson.id, videoReady, hasShownModal]);
+
+  // Handle video metadata loaded
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handleLoadedMetadata = () => {
+      setVideoReady(true);
+    };
+
+    video.addEventListener('loadedmetadata', handleLoadedMetadata);
+    
+    return () => {
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+    };
+  }, []);
+
+  // Handle resume video
+  const handleResumeVideo = () => {
+    setShowResumeModal(false);
+    // Use setTimeout to ensure modal is closed and DOM is settled
+    setTimeout(() => {
+      if (videoRef.current && savedPosition > 0) {
+        videoRef.current.currentTime = savedPosition;
+        videoRef.current.play().catch((error) => {
+          console.error('Error playing video:', error);
+        });
+      }
+    }, 100);
+  };
+
+  // Handle start from beginning
+  const handleStartFromBeginning = () => {
+    setShowResumeModal(false);
+    // Use setTimeout to ensure modal is closed and DOM is settled
+    setTimeout(() => {
+      if (videoRef.current) {
+        videoRef.current.currentTime = 0;
+        videoRef.current.play().catch((error) => {
+          console.error('Error playing video:', error);
+        });
+      }
+    }, 100);
+  };
+
   // Initialize captions when the component mounts
   React.useEffect(() => {
     if (videoRef.current && lesson.captions) {
@@ -151,11 +224,24 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   }
 
   return (
-    <div
-      ref={videoContainerRef}
-      className="relative overflow-hidden rounded-3xl bg-black shadow-2xl group"
-      onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsHovering(true)}
+    <>
+      {/* Resume modal overlay */}
+      {showResumeModal && videoRef.current && (
+        <ResumeVideoModal
+          isOpen={showResumeModal}
+          savedPosition={savedPosition}
+          duration={videoRef.current.duration || 0}
+          onResume={handleResumeVideo}
+          onStartFromBeginning={handleStartFromBeginning}
+          formatTime={formatTime}
+        />
+      )}
+      
+      <div
+        ref={videoContainerRef}
+        className="relative overflow-hidden rounded-3xl bg-black shadow-2xl group"
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => {
         setIsHovering(false);
         if (isPlaying) {
@@ -387,7 +473,8 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
           <span>{t('shortcuts.muteKey')}</span>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

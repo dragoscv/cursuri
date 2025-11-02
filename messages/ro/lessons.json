@@ -274,5 +274,13 @@
   "knowledgeCheck": {
     "description": "Testează-ți înțelegerea conceptelor cheie acoperite în această lecție.",
     "startButton": "Începe Quiz-ul"
+  },
+  "resumeVideo": {
+    "title": "Reia Video-ul?",
+    "message": "Ai vizionat anterior o parte din acest video. Vrei să continui de unde ai rămas?",
+    "savedPosition": "Ultima vizionare",
+    "totalDuration": "Durată totală",
+    "resume": "Reia",
+    "startFromBeginning": "Începe de la Început"
   }
 }
