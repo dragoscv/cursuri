@@ -2058,6 +2058,17 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
       querySnapshot.forEach((doc) => {
         const data = doc.data();
         data.id = doc.id;
+
+        // Enrich course with priceProduct if price (priceId) exists
+        if (data.price && state.products && state.products.length > 0) {
+          const priceProduct = state.products.find((product: any) =>
+            product.prices?.find((price: any) => price.id === data.price)
+          );
+          if (priceProduct) {
+            data.priceProduct = priceProduct;
+          }
+        }
+
         dispatch({ type: 'SET_COURSES', payload: { courseId: doc.id, course: data } });
         dispatch({
           type: 'SET_COURSE_LOADING_STATE',
@@ -2076,7 +2087,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         payload: { courseId: 'all', status: 'error' },
       });
     }
-  }, [state.courses, clearCache]);
+  }, [state.courses, state.products, clearCache]);
 
   useEffect(() => {
     let mounted = true;
@@ -2105,6 +2116,17 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
           querySnapshot.forEach((doc) => {
             const data = doc.data();
             data.id = doc.id;
+
+            // Enrich course with priceProduct if price (priceId) exists
+            if (data.price && state.products && state.products.length > 0) {
+              const priceProduct = state.products.find((product: any) =>
+                product.prices?.find((price: any) => price.id === data.price)
+              );
+              if (priceProduct) {
+                data.priceProduct = priceProduct;
+              }
+            }
+
             dispatch({ type: 'SET_COURSES', payload: { courseId: doc.id, course: data } });
             dispatch({
               type: 'SET_COURSE_LOADING_STATE',

@@ -202,7 +202,7 @@ export default function AddCourse(props: AddCourseProps) {
             const updatedData: Partial<CourseData> = {
                 name: courseName,
                 description: courseDescription,
-                price: coursePrice,
+                price: coursePrice || "",
                 priceProductId: priceProduct?.id || null,
                 repoUrl: repoUrl,
                 status: courseStatus,
@@ -243,6 +243,10 @@ export default function AddCourse(props: AddCourseProps) {
 
             // Update the course in Firestore
             await updateDoc(courseRef, updatedData);
+
+            // Refresh courses list to show the updated data
+            await refreshCourses();
+
             setLoading(false);
             // Don't call onClose() to stay on the same page after editing
             // Show success toast to user
@@ -266,7 +270,7 @@ export default function AddCourse(props: AddCourseProps) {
         courseId, courseName, courseDescription, coursePrice, repoUrl, products,
         courseImage, courseLevel, courseCategories, courseTags,
         courseRequirements, courseObjectives, coursePrerequisites, courseStatus, instructorName,
-        estimatedDuration, certificateEnabled, allowPromoCodes, onClose
+        estimatedDuration, certificateEnabled, allowPromoCodes, onClose, refreshCourses, showToast, originalImageUrl
     ]);
 
     // Type definitions for input event handlers    // Define event types for form handling
