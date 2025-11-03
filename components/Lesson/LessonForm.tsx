@@ -279,6 +279,19 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
       }
     };
   }, [filePreview]);
+
+  // Helper function to sanitize filename for Firebase Storage
+  const sanitizeFilename = (filename: string): string => {
+    // Remove or replace problematic characters that can cause 412 errors
+    return filename
+      .normalize('NFD') // Normalize Unicode characters
+      .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+      .replace(/\s+/g, '_') // Replace spaces with underscores
+      .replace(/[^\w.-]/g, '_') // Replace non-word chars except dots and hyphens
+      .replace(/_{2,}/g, '_') // Replace multiple underscores with single
+      .substring(0, 200); // Limit filename length
+  };
+
   const addLesson = useCallback(async () => {
     setLoading(true);
     setUploadProgress(0);
@@ -299,7 +312,8 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
         try {
           setUploadingFile(file.name);
 
-          const storageRef = ref(firebaseStorage, `lessons/${courseId}/${file.name}_${Date.now()}`);
+          const sanitizedName = sanitizeFilename(file.name);
+          const storageRef = ref(firebaseStorage, `lessons/${courseId}/${sanitizedName}_${Date.now()}`);
 
           // Use uploadBytesResumable for progress tracking
           const uploadTask = uploadBytesResumable(storageRef, file);
@@ -355,9 +369,11 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
       for (let i = 0; i < additionalFiles.length; i++) {
         const addFile = additionalFiles[i];
         setUploadingFile(addFile.name);
+
+        const sanitizedName = sanitizeFilename(addFile.file.name);
         const fileRef = ref(
           firebaseStorage,
-          `lessons/${courseId}/resources/${addFile.file.name}_${Date.now()}`
+          `lessons/${courseId}/resources/${sanitizedName}_${Date.now()}`
         );
 
         const uploadTask = uploadBytesResumable(fileRef, addFile.file);
@@ -549,7 +565,8 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
         try {
           setUploadingFile(file.name);
 
-          const storageRef = ref(firebaseStorage, `lessons/${courseId}/${file.name}_${Date.now()}`);
+          const sanitizedName = sanitizeFilename(file.name);
+          const storageRef = ref(firebaseStorage, `lessons/${courseId}/${sanitizedName}_${Date.now()}`);
           const uploadTask = uploadBytesResumable(storageRef, file);
 
           const downloadURL = await new Promise<string>((resolve, reject) => {
@@ -608,9 +625,11 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
           // Only upload files that don't have URLs already
           if (addFile.file) {
             setUploadingFile(addFile.name);
+
+            const sanitizedName = sanitizeFilename(addFile.file.name);
             const fileRef = ref(
               firebaseStorage,
-              `lessons/${courseId}/resources/${addFile.file.name}_${Date.now()}`
+              `lessons/${courseId}/resources/${sanitizedName}_${Date.now()}`
             );
 
             const uploadTask = uploadBytesResumable(fileRef, addFile.file);

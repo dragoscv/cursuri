@@ -26,12 +26,8 @@ service firebase.storage {
     function isValidContentType() {
       return request.resource.contentType.matches('image/.*') || 
              request.resource.contentType.matches('video/.*') || 
-             request.resource.contentType.matches('application/pdf');
-    }
-
-    function isValidFileSize() {
-      // Limit file size to 50MB
-      return request.resource.size <= 50 * 1024 * 1024;
+             request.resource.contentType.matches('application/pdf') ||
+             request.resource.contentType.matches('application/.*');
     }
 
     // Public files (accessible to everyone)
@@ -49,7 +45,7 @@ service firebase.storage {
     // User-specific files
     match /users/{userId}/{allPaths=**} {
       allow read: if isOwner(userId) || hasAdminAccess();
-      allow write: if isOwner(userId) && isValidContentType() && isValidFileSize();
+      allow write: if isOwner(userId) && isValidContentType();
     }
 
     // Lesson content - accessible by course owners and admins
@@ -61,7 +57,7 @@ service firebase.storage {
     // Profile pictures and user uploads
     match /profiles/{userId}/{allPaths=**} {
       allow read: if true;
-      allow write: if isOwner(userId) && isValidContentType() && isValidFileSize();
+      allow write: if isOwner(userId) && isValidContentType();
     }
 
     // Admin-only area
