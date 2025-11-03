@@ -53,6 +53,8 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
   const [editMode, setEditMode] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
+  const [existingFileName, setExistingFileName] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const [lessonOrder, setLessonOrder] = useState<number>(0);
   const [durationMinutes, setDurationMinutes] = useState<number | string>('');
   const [isRequired, setIsRequired] = useState(true);
@@ -197,6 +199,22 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
           setPreviewEnabled(lesson.isFree === true);
           if (lesson.file) {
             setFilePreview(lesson.file);
+            // Extract filename from URL or use a generic name
+            try {
+              const url = new URL(lesson.file);
+              const pathname = decodeURIComponent(url.pathname);
+              // Extract filename from path like /v0/b/bucket/o/lessons%2FcourseId%2Ffilename
+              const match = pathname.match(/lessons[\/\%2F][^\/\%2F]+[\/\%2F]([^?]+)/);
+              if (match && match[1]) {
+                // Remove timestamp suffix if present (e.g., _1234567890)
+                const filename = match[1].replace(/_\d+(\.[^.]+)$/, '$1');
+                setExistingFileName(filename);
+              } else {
+                setExistingFileName('Video File');
+              }
+            } catch {
+              setExistingFileName('Video File');
+            }
           }
 
           // Load extended properties
@@ -788,6 +806,7 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
     if (e.target.files && e.target.files.length > 0) {
       const selectedFile = e.target.files[0];
       setFile(selectedFile);
+      setExistingFileName(null); // Clear existing filename when new file is uploaded
 
       // Clean up previous preview URL if it exists
       if (filePreview && filePreview.startsWith('blob:')) {
@@ -860,6 +879,58 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
           setFilePreview(reader.result as string);
         };
         reader.readAsDataURL(selectedFile);
+      }
+    }
+  };
+
+  // Handle drag and drop events
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      const droppedFile = files[0];
+
+      // Validate file type
+      const isVideo = droppedFile.type.startsWith('video/');
+      const acceptedTypes = lessonType === 'video'
+        ? isVideo
+        : droppedFile.type.includes('pdf') ||
+        droppedFile.type.includes('image') ||
+        droppedFile.type.includes('zip') ||
+        droppedFile.type.includes('document');
+
+      if (acceptedTypes) {
+        // Simulate file input change
+        const fileChangeEvent = {
+          target: {
+            files: [droppedFile]
+          }
+        } as any;
+        handleFileChange(fileChangeEvent);
+      } else {
+        showToast({
+          type: 'error',
+          title: 'Invalid File Type',
+          message: lessonType === 'video'
+            ? 'Please drop a video file'
+            : 'Please drop a valid file (PDF, image, ZIP, or document)',
+          duration: 4000,
+        });
       }
     }
   };
@@ -1260,18 +1331,45 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                   <label className="text-sm font-medium text-[color:var(--ai-foreground)] mb-2 flex items-center gap-2">
                     {t('file')}
                   </label>
-                  <div className="border-2 border-dashed border-[color:var(--ai-card-border)] rounded-xl p-4 text-center cursor-pointer hover:bg-[color:var(--ai-card-bg)]/50 transition-all hover:border-[color:var(--ai-primary)]/30 hover:shadow-lg mb-6">
+                  <div
+                    className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all mb-6 ${isDragging
+                        ? 'border-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10 shadow-xl'
+                        : 'border-[color:var(--ai-card-border)] hover:bg-[color:var(--ai-card-bg)]/50 hover:border-[color:var(--ai-primary)]/30 hover:shadow-lg'
+                      }`}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                  >
                     {filePreview ? (
                       <div className="relative group">
                         {lessonType === 'video' ? (
-                          <video
-                            src={filePreview}
-                            className="w-full h-48 object-contain rounded-lg shadow-md bg-black relative z-10"
-                            controls
-                            preload="metadata"
-                          >
-                            Your browser does not support the video tag.
-                          </video>
+                          <div>
+                            <video
+                              src={filePreview}
+                              className="w-full h-48 object-contain rounded-lg shadow-md bg-black relative z-10"
+                              controls
+                              preload="metadata"
+                            >
+                              Your browser does not support the video tag.
+                            </video>
+                            {file && (
+                              <div className="mt-3 px-4 py-2 bg-[color:var(--ai-card-bg)]/60 border border-[color:var(--ai-card-border)] rounded-lg">
+                                <p className="text-sm text-[color:var(--ai-muted)] flex items-center gap-2">
+                                  <FiVideo size={16} className="text-[color:var(--ai-primary)]" />
+                                  <span className="font-medium text-[color:var(--ai-foreground)]">{file.name}</span>
+                                  <span className="text-xs">({(file.size / (1024 * 1024)).toFixed(2)} MB)</span>
+                                </p>
+                              </div>
+                            )}
+                            {!file && existingFileName && (
+                              <div className="mt-3 px-4 py-2 bg-[color:var(--ai-card-bg)]/60 border border-[color:var(--ai-card-border)] rounded-lg">
+                                <p className="text-sm text-[color:var(--ai-muted)] flex items-center gap-2">
+                                  <FiVideo size={16} className="text-[color:var(--ai-primary)]" />
+                                  <span className="font-medium text-[color:var(--ai-foreground)]">{existingFileName}</span>
+                                </p>
+                              </div>
+                            )}
+                          </div>
                         ) : (
                           <img
                             src={filePreview}
@@ -1307,10 +1405,13 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                           )}
                         </div>
                         <p className="mt-3 text-sm font-medium text-[color:var(--ai-foreground)]">
-                          {t('clickToUploadFile')}
+                          {isDragging ? 'Drop file here' : t('clickToUploadFile')}
                         </p>
                         <p className="text-xs text-[color:var(--ai-muted)] mt-1">
-                          {lessonType === 'video' ? t('videoUpTo100MB') : t('filesUpTo50MB')}
+                          {isDragging
+                            ? 'Release to upload'
+                            : `${lessonType === 'video' ? t('videoUpTo100MB') : t('filesUpTo50MB')} • Or drag and drop`
+                          }
                         </p>{' '}
                         <input
                           type="file"

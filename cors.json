@@ -3,7 +3,8 @@
         "origin": [
             "https://studiai.ro",
             "https://www.studiai.ro",
-            "http://localhost:3000"
+            "http://localhost:3000",
+            "http://localhost:3001"
         ],
         "method": [
             "GET",
@@ -11,15 +12,21 @@
             "PUT",
             "DELETE",
             "HEAD",
-            "OPTIONS"
+            "OPTIONS",
+            "PATCH"
         ],
-        "maxAgeSeconds": 3600,
+        "maxAgeSeconds": 7200,
         "responseHeader": [
             "Content-Type",
             "Authorization",
             "Content-Length",
             "X-Requested-With",
-            "X-Firebase-Storage-Version"
+            "X-Firebase-Storage-Version",
+            "X-Goog-Upload-Status",
+            "X-Goog-Upload-URL",
+            "X-Goog-Upload-Command",
+            "X-Goog-Upload-Content-Type",
+            "X-Goog-Upload-Protocol"
         ]
     }
 ]
