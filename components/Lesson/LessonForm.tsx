@@ -905,8 +905,15 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
     if (files && files.length > 0) {
       const droppedFile = files[0];
 
-      // Validate file type
-      const isVideo = droppedFile.type.startsWith('video/');
+      // Validate file type - check both MIME type and extension
+      const fileName = droppedFile.name.toLowerCase();
+      const isVideo = droppedFile.type.startsWith('video/') ||
+        fileName.endsWith('.mkv') ||
+        fileName.endsWith('.mp4') ||
+        fileName.endsWith('.webm') ||
+        fileName.endsWith('.avi') ||
+        fileName.endsWith('.mov');
+
       const acceptedTypes = lessonType === 'video'
         ? isVideo
         : droppedFile.type.includes('pdf') ||
@@ -1333,8 +1340,8 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                   </label>
                   <div
                     className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all mb-6 ${isDragging
-                        ? 'border-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10 shadow-xl'
-                        : 'border-[color:var(--ai-card-border)] hover:bg-[color:var(--ai-card-bg)]/50 hover:border-[color:var(--ai-primary)]/30 hover:shadow-lg'
+                      ? 'border-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10 shadow-xl'
+                      : 'border-[color:var(--ai-card-border)] hover:bg-[color:var(--ai-card-bg)]/50 hover:border-[color:var(--ai-primary)]/30 hover:shadow-lg'
                       }`}
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
@@ -1419,7 +1426,7 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                           onChange={handleFileChange}
                           accept={
                             lessonType === 'video'
-                              ? 'video/*'
+                              ? 'video/*,.mkv,.mp4,.webm,.avi,.mov'
                               : 'application/pdf,image/*,application/zip,application/x-zip-compressed,application/vnd.openxmlformats-officedocument.*'
                           }
                           aria-label="Upload lesson file"
