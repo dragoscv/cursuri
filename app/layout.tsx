@@ -12,6 +12,8 @@ import PreloadLinks from './preload-links';
 import { constructMetadata } from '@/utils/metadata';
 // Security initialization import
 import '@/utils/security/initSecurityChecks';
+import { MetaPixel } from "@/components/MetaPixel";
+import { TikTokPixel } from "@/components/TikTokPixel";
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -35,6 +37,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className={`${inter.className} bg-[rgb(var(--background-start-rgb))]`}>
         {' '}
+        <MetaPixel />
+        <TikTokPixel />
         <Providers>
           {/* Analytics page view tracking */}
           <PageViewTracker />
