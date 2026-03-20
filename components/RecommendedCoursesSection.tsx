@@ -97,21 +97,23 @@ const RecommendedCoursesSection = React.memo(function RecommendedCoursesSection(
   if (!recommendedCourses.length) return null;
 
   return (
-    <section className="w-full py-16 bg-gradient-to-b from-[color:var(--ai-secondary)]/5 to-transparent">
-      <div className="container max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl font-bold text-center mb-8 text-[color:var(--ai-foreground)]">
-          {t('title')}
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <section className="w-full py-20 md:py-28">
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--ai-foreground)]">
+            {t('title')}
+          </h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {recommendedCourses.map((course, index) => {
             const { amount, currency } = getCoursePrice(course);
             return (
               <div
                 key={course.id}
-                className="flex flex-col rounded-xl bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] shadow-lg border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/50 transition-all duration-300 overflow-hidden"
+                className="group flex flex-col rounded-2xl bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/40 hover:shadow-xl hover:shadow-[color:var(--ai-primary)]/5 transition-all duration-300 overflow-hidden"
               >
                 <div
-                  className="relative h-44 w-full cursor-pointer overflow-hidden"
+                  className="relative h-48 w-full cursor-pointer overflow-hidden"
                   onClick={() => router.push(`/courses/${course.id}`)}
                 >
                   <Image
@@ -119,36 +121,37 @@ const RecommendedCoursesSection = React.memo(function RecommendedCoursesSection(
                     alt={course.name}
                     fill
                     priority={index < 3}
-                    className="object-cover transition-transform duration-500 hover:scale-105"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
                 </div>
                 <div className="flex flex-1 flex-col p-6">
                   <h3
-                    className="mb-2 text-xl font-bold text-[color:var(--ai-foreground)] cursor-pointer hover:text-[color:var(--ai-primary)] transition-colors"
+                    className="mb-2 text-lg font-semibold text-[color:var(--ai-foreground)] cursor-pointer hover:text-[color:var(--ai-primary)] transition-colors line-clamp-2"
                     onClick={() => router.push(`/courses/${course.id}`)}
                   >
                     {course.name}
                   </h3>
-                  <p className="mb-4 flex-1 text-sm text-[color:var(--ai-muted)] line-clamp-2">
+                  <p className="mb-4 flex-1 text-sm text-[color:var(--ai-muted)] line-clamp-2 leading-relaxed">
                     {course.description || ''}
                   </p>
                   {course.tags && course.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-4">
+                    <div className="flex flex-wrap gap-1.5 mb-4">
                       {course.tags.slice(0, 3).map((tag: string) => (
                         <span
                           key={tag}
-                          className="px-2 py-1 text-xs rounded-full bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]"
+                          className="px-2.5 py-1 text-xs font-medium rounded-lg bg-[color:var(--ai-primary)]/8 text-[color:var(--ai-primary)]"
                         >
                           {tag}
                         </span>
                       ))}
                     </div>
                   )}
-                  <div className="mt-auto flex items-center justify-between gap-2">
-                    <div className="text-xl font-bold text-[color:var(--ai-foreground)]">
+                  <div className="mt-auto flex items-center justify-between gap-2 pt-4 border-t border-[color:var(--ai-card-border)]">
+                    <div className="text-lg font-bold text-[color:var(--ai-foreground)]">
                       {course.isFree ? (
-                        <span className="text-[color:var(--ai-success)] dark:text-[color:var(--ai-success)]">
+                        <span className="text-[color:var(--ai-success)]">
                           {tCommon('status.free')}
                         </span>
                       ) : (
@@ -157,7 +160,12 @@ const RecommendedCoursesSection = React.memo(function RecommendedCoursesSection(
                         </span>
                       )}
                     </div>
-
+                    <button
+                      onClick={() => router.push(`/courses/${course.id}`)}
+                      className="text-sm font-medium text-[color:var(--ai-primary)] hover:underline"
+                    >
+                      {tCommon('viewDetails') || 'View details'} &rarr;
+                    </button>
                   </div>
                 </div>
               </div>

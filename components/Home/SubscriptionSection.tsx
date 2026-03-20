@@ -111,21 +111,26 @@ export default function SubscriptionSection() {
   const yearlyPriceInfo = formatPrice(yearlyPrice);
 
   return (
-    <section className="relative w-full py-20 overflow-hidden bg-gradient-to-br from-[color:var(--ai-background)] via-[color:var(--ai-card-bg)]/30 to-[color:var(--ai-background)]">
-      {/* Decorative background elements */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-[color:var(--ai-primary)]/5 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-[color:var(--ai-secondary)]/5 rounded-full blur-3xl"></div>
+    <section className="relative w-full py-20 md:py-28 overflow-hidden bg-[color:var(--ai-background)]">
+      {/* Subtle background */}
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-1/3 w-[500px] h-[500px] bg-[color:var(--ai-primary)]/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 right-1/3 w-[400px] h-[400px] bg-[color:var(--ai-secondary)]/5 rounded-full blur-[100px]" />
+      </div>
 
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container max-w-5xl mx-auto px-4 relative z-10">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="text-center mb-14"
         >
-          <h2 className="text-3xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)] bg-clip-text text-transparent">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-full bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] border border-[color:var(--ai-primary)]/20 mb-4">
+            {t('title')}
+          </span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-[color:var(--ai-foreground)]">
             {t('title')}
           </h2>
           <p className="text-lg text-[color:var(--ai-muted)] max-w-2xl mx-auto">
@@ -150,7 +155,7 @@ export default function SubscriptionSection() {
               </div>
             </div>
 
-            <Card className="p-8 h-full flex flex-col rounded-xl bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] backdrop-blur-sm transition-all duration-300 hover:shadow-2xl border-2 border-[color:var(--ai-primary)] shadow-xl scale-105">
+            <Card className="p-8 h-full flex flex-col rounded-2xl bg-[color:var(--ai-card-bg)] transition-all duration-300 hover:shadow-2xl border-2 border-[color:var(--ai-primary)] shadow-lg shadow-[color:var(--ai-primary)]/10">
               {/* Plan Header */}
               <div className="mb-6">
                 <h3 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-2">
@@ -237,7 +242,7 @@ export default function SubscriptionSection() {
               </div>
             </div>
 
-            <Card className="p-8 h-full flex flex-col rounded-xl bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] backdrop-blur-sm transition-all duration-300 hover:shadow-2xl border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/50 shadow-lg">
+            <Card className="p-8 h-full flex flex-col rounded-2xl bg-[color:var(--ai-card-bg)] transition-all duration-300 hover:shadow-xl border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/40 shadow-sm">
               {/* Plan Header */}
               <div className="mb-6">
                 <h3 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-2">

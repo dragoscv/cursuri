@@ -35,7 +35,7 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
   const handleTabChange = (key: React.Key) => {
     setSelectedTab(key as string);
     if (courseId) {
-      router.push(`/courses/${courseId}?tab=${key}`, { scroll: false });
+      router.push(`/courses/${courseId}?tab=${String(key)}`, { scroll: false });
     }
   };
 

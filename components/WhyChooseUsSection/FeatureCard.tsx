@@ -26,19 +26,13 @@ export default function FeatureCard({ featureKey, index }: FeatureCardProps) {
     };
     return (
         <motion.div
-            className="bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] backdrop-filter backdrop-blur-lg rounded-xl p-6 h-full border border-[color:var(--ai-card-border)] shadow-lg dark:shadow-[color:var(--ai-card-border)]/20"
+            className="bg-[color:var(--ai-card-bg)] rounded-2xl p-6 h-full border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/30 shadow-sm hover:shadow-lg transition-all duration-300"
             variants={itemVariants}
-            whileHover={{
-                y: -5,
-                boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)",
-            }}
-            style={{
-                '--hover-bg': 'rgba(var(--ai-primary-rgb), 0.07)'
-            } as React.CSSProperties}
+            whileHover={{ y: -4 }}
         >
-            <div className="text-3xl mb-4 text-[color:var(--ai-primary)]">{t(`${featureKey}.icon`)}</div>
-            <h3 className="text-xl font-bold text-[color:var(--ai-foreground)] mb-2">{t(`${featureKey}.title`)}</h3>
-            <p className="text-[color:var(--ai-muted)]">{t(`${featureKey}.description`)}</p>
+            <div className="text-3xl mb-4 p-3 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/5 w-fit">{t(`${featureKey}.icon`)}</div>
+            <h3 className="text-lg font-bold text-[color:var(--ai-foreground)] mb-2">{t(`${featureKey}.title`)}</h3>
+            <p className="text-sm text-[color:var(--ai-muted)] leading-relaxed">{t(`${featureKey}.description`)}</p>
         </motion.div>
     )
 }

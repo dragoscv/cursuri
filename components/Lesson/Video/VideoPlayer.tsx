@@ -278,10 +278,10 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
         {/* Custom Play Button Overlay */}
         {!isPlaying && (
           <div
-            className="absolute inset-0 flex items-center justify-center cursor-pointer bg-black/30 backdrop-blur-sm transition-opacity duration-300"
+            className="absolute inset-0 flex items-center justify-center cursor-pointer bg-black/30 transition-opacity duration-300"
             onClick={togglePlayPause}
           >
-            <div className="rounded-2xl bg-white/20 hover:bg-white/30 p-5 backdrop-blur-sm transition-all duration-300 transform hover:scale-110">
+            <div className="rounded-2xl bg-white/20 hover:bg-white/30 p-5 transition-all duration-300 transform hover:scale-110">
               <PlayIcon className="w-14 h-14 text-white" />
             </div>
           </div>

@@ -163,28 +163,10 @@ const FeaturedReviews = memo(function FeaturedReviews() {
   );
 
   return (
-    <section className="py-20 relative overflow-hidden" ref={ref}>
-      {/* Background elements */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute top-1/2 left-0 w-72 h-72 bg-[color:var(--ai-secondary)]/10 rounded-full filter blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[color:var(--ai-primary)]/10 rounded-full filter blur-3xl" />
-      </div>
-
-      {/* Animated grid lines */}
-      <div className="absolute inset-0 -z-10 opacity-5">
-        <div
-          className="h-full w-full border-[0.5px] border-[color:var(--ai-primary)]/50 [mask-image:linear-gradient(to_bottom,transparent,white,transparent)]"
-          style={{
-            backgroundSize: '30px 30px',
-            backgroundImage:
-              'linear-gradient(to right, rgb(var(--ai-primary-rgb) / 10%) 1px, transparent 1px), linear-gradient(to bottom, rgb(var(--ai-primary-rgb) / 10%) 1px, transparent 1px)',
-          }}
-        />
-      </div>
-
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section className="py-4 relative overflow-hidden" ref={ref}>
+      <div className="mx-auto max-w-7xl">
         <motion.div
-          className="text-center mb-16"
+          className="text-center mb-14"
           initial={{ opacity: 0, y: 20 }}
           animate={controls}
           variants={{
@@ -193,21 +175,18 @@ const FeaturedReviews = memo(function FeaturedReviews() {
           }}
           transition={{ duration: 0.6 }}
         >
-          <span className="inline-block py-1 px-3 rounded-full text-sm font-medium bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] border border-[color:var(--ai-primary)]/30 mb-4">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] border border-[color:var(--ai-primary)]/20 mb-4">
             {t('badge')}
           </span>
-          <h2 className="text-3xl font-bold tracking-tight text-[color:var(--ai-foreground)] sm:text-4xl mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-[color:var(--ai-foreground)] mb-4">
             {t('sectionTitle')}
           </h2>
-          <div className="max-w-2xl mx-auto">
-            <p className="text-lg text-[color:var(--ai-muted)] relative">
-              <span className="relative z-10">{t('sectionSubtitle')}</span>
-              <span className="absolute -z-10 bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-3 bg-[color:var(--ai-primary)]/20 rounded-full blur-sm"></span>
-            </p>
-          </div>
+          <p className="text-lg text-[color:var(--ai-muted)] max-w-2xl mx-auto">
+            {t('sectionSubtitle')}
+          </p>
         </motion.div>
         <motion.div
-          className="grid gap-8 md:grid-cols-3"
+          className="grid gap-6 md:grid-cols-3"
           variants={containerVariants}
           initial="hidden"
           animate={controls}
@@ -215,49 +194,17 @@ const FeaturedReviews = memo(function FeaturedReviews() {
           {displayReviews.map((review) => (
             <motion.div
               key={review.id}
-              className="relative rounded-2xl overflow-hidden group"
+              className="group rounded-2xl overflow-hidden"
               variants={cardVariants}
-              whileHover={{ y: -10, transition: { duration: 0.3 } }}
+              whileHover={{ y: -6, transition: { duration: 0.3 } }}
             >
-              {/* Gradient border animation */}
-              <div className="absolute -inset-[1px] bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)] rounded-2xl opacity-70 blur-[2px] group-hover:opacity-100 transition-opacity duration-300" />
-
-              <div className="relative rounded-2xl bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)]/90 backdrop-blur-sm p-6 h-full flex flex-col">
-                {/* Tech circuit pattern */}
-                <div className="absolute top-0 right-0 w-40 h-40 opacity-[0.03] dark:opacity-[0.05]">
-                  <svg
-                    width="100%"
-                    height="100%"
-                    viewBox="0 0 100 100"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M10,30 L30,30 L30,10 M70,10 L70,30 L90,30 M90,70 L70,70 L70,90 M30,90 L30,70 L10,70"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    />
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="20"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    />
-                    <path
-                      d="M50,30 L50,10 M70,50 L90,50 M50,70 L50,90 M30,50 L10,50"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    />
-                  </svg>
-                </div>
-                <div className="flex items-center space-x-1 mb-2">
+              <div className="rounded-2xl bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/30 hover:shadow-lg p-6 h-full flex flex-col transition-all duration-300">
+                {/* Stars */}
+                <div className="flex items-center space-x-1 mb-3">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <svg
                       key={i}
-                      className={`h-5 w-5 ${i < review.rating ? 'text-yellow-400' : 'text-[color:var(--ai-muted)] dark:text-[color:var(--ai-muted-foreground)]'}`}
+                      className={`h-4 w-4 ${i < review.rating ? 'text-amber-400' : 'text-[color:var(--ai-card-border)]'}`}
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -265,45 +212,50 @@ const FeaturedReviews = memo(function FeaturedReviews() {
                     </svg>
                   ))}
                 </div>
-                <div className="px-2 py-1 rounded-full text-xs font-medium bg-[color:var(--ai-primary)]/10 dark:bg-[color:var(--ai-primary)]/20 text-[color:var(--ai-primary)] w-fit mb-4">
+
+                {/* Course badge */}
+                <span className="inline-flex w-fit px-2.5 py-1 rounded-lg text-xs font-medium bg-[color:var(--ai-primary)]/8 text-[color:var(--ai-primary)] mb-4">
                   {review.courseType}
-                </div>{' '}
-                <blockquote className="flex-grow">
-                  <p className="text-lg font-medium text-[color:var(--ai-foreground)]">
+                </span>
+
+                {/* Quote */}
+                <blockquote className="flex-grow mb-6">
+                  <p className="text-base text-[color:var(--ai-foreground)] leading-relaxed">
                     &quot;{review.content}&quot;
                   </p>
                 </blockquote>
-                <div className="mt-6 flex items-center">
-                  <div className="flex-shrink-0 relative">
-                    {/* Glowing avatar effect */}
-                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] opacity-0 group-hover:opacity-70 blur-md transition-opacity duration-300" />
+
+                {/* Author */}
+                <div className="flex items-center pt-4 border-t border-[color:var(--ai-card-border)]">
+                  <div className="flex-shrink-0">
                     {review.author?.avatar ? (
                       <img
-                        className="relative h-12 w-12 rounded-full object-cover border-2 border-[color:var(--ai-primary)]/30"
+                        className="h-10 w-10 rounded-full object-cover border border-[color:var(--ai-card-border)]"
                         src={review.author.avatar}
                         alt={(review.author?.name || review.userName || 'User') as string}
                       />
                     ) : (
-                      <div className="relative border-2 border-[color:var(--ai-primary)]/30 rounded-full">
+                      <div className="border border-[color:var(--ai-card-border)] rounded-full">
                         <DefaultAvatar
                           name={review.author?.name || review.userName || 'User'}
-                          size={48}
+                          size={40}
                         />
                       </div>
                     )}
                   </div>
-                  <div className="ml-4">
-                    <div className="text-base font-medium text-[color:var(--ai-foreground)]">
+                  <div className="ml-3">
+                    <div className="text-sm font-semibold text-[color:var(--ai-foreground)]">
                       {review.author?.name || review.userName || 'Anonymous User'}
                     </div>
-                    <div className="text-sm text-[color:var(--ai-primary)] dark:text-[color:var(--ai-primary)]/80">
+                    <div className="text-xs text-[color:var(--ai-muted)]">
                       {review.author?.role || review.userRole || 'Course Participant'}
                     </div>
                   </div>
                 </div>
-                {/* Decorative elements */}
+
+                {/* Quote icon */}
                 <svg
-                  className="absolute top-6 right-6 h-10 w-10 text-[color:var(--ai-primary)]/20 dark:text-[color:var(--ai-primary)]/10"
+                  className="absolute top-6 right-6 h-8 w-8 text-[color:var(--ai-primary)]/10"
                   fill="currentColor"
                   viewBox="0 0 32 32"
                 >
@@ -327,7 +279,7 @@ const FeaturedReviews = memo(function FeaturedReviews() {
             variant="primary"
             size="lg"
             radius="full"
-            className="px-8 py-3 group bg-[color:var(--ai-primary)] hover:bg-gradient-to-r hover:from-[color:var(--ai-primary)] hover:to-[color:var(--ai-secondary)] font-medium"
+            className="px-8 py-3 group bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-semibold shadow-lg shadow-[color:var(--ai-primary)]/20 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
             endContent={
               <svg
                 className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1"

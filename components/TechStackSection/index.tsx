@@ -20,12 +20,12 @@ const TechStackSection = React.memo(function TechStackSection() {
             }
         }
     }), []); return (
-        <section className="relative w-full py-20 bg-[color:var(--section-light-bg)] dark:bg-[color:var(--section-dark-bg)]">
-            <div className="container mx-auto px-4">
+        <section className="relative w-full py-20 md:py-24 bg-[color:var(--section-light-bg)] dark:bg-[color:var(--section-dark-bg)]">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <ScrollAnimationWrapper>
-                    <div className="text-center mb-16">
+                    <div className="text-center mb-14">
                         <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[color:var(--ai-foreground)]">{t('title')}</h2>
-                        <p className="text-[color:var(--ai-muted)] max-w-2xl mx-auto">
+                        <p className="text-lg text-[color:var(--ai-muted)] max-w-2xl mx-auto">
                             {t('subtitle')}
                         </p>
                     </div>

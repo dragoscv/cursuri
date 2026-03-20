@@ -11,12 +11,14 @@ const AvailableCoursesSection = React.memo(function AvailableCoursesSection() {
     const [category, setCategory] = useState('all');
 
     return (
-        <section id="courses-section" className="relative w-full py-16 bg-[color:var(--ai-background)]">
+        <section id="courses-section" className="relative w-full py-20 md:py-28 bg-[color:var(--section-accent-bg)] dark:bg-[color:var(--section-dark-bg)]">
             <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 className="text-3xl font-bold text-[color:var(--ai-foreground)] mb-8 text-center">
-                    {t('title')}
-                </h2>
-                {/* Add filter UI */}
+                <div className="text-center mb-10">
+                    <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--ai-foreground)] mb-4">
+                        {t('title')}
+                    </h2>
+                </div>
+                {/* Filter UI */}
                 <CoursesFilter
                     onFilterChange={setFilter}
                     onCategoryChange={setCategory}

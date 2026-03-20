@@ -29,17 +29,16 @@ export default function TechItem({ techKey, Icon, color, index }: TechItemProps)
     return (
         <motion.div
             variants={itemVariants}
-            className="p-6 rounded-xl bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] shadow-md hover:shadow-lg dark:shadow-[color:var(--ai-card-border)]/10 transition-shadow border border-[color:var(--ai-card-border)]/30 dark:border-[color:var(--ai-card-border)]/30"
+            className="group p-6 rounded-2xl bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/30 shadow-sm hover:shadow-lg transition-all duration-300"
+            whileHover={{ y: -4 }}
         >
             <div className="flex items-center mb-4">
-                <div
-                    className="p-2 rounded-lg mr-4 bg-[color:var(--ai-primary)]/10"
-                >
-                    <Icon size={28} className="text-[color:var(--ai-primary)]" />
+                <div className="p-2.5 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/5 mr-4">
+                    <Icon size={24} className="text-[color:var(--ai-primary)]" />
                 </div>
-                <h3 className="text-xl font-bold text-[color:var(--ai-foreground)]">{t(`${techKey}.name`)}</h3>
+                <h3 className="text-lg font-bold text-[color:var(--ai-foreground)]">{t(`${techKey}.name`)}</h3>
             </div>
-            <p className="text-[color:var(--ai-muted)]">{t(`${techKey}.description`)}</p>
+            <p className="text-sm text-[color:var(--ai-muted)] leading-relaxed">{t(`${techKey}.description`)}</p>
         </motion.div>
     )
 }

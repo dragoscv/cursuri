@@ -103,97 +103,67 @@ const CallToActionSection = memo(function CallToActionSection() {
     }
   };
   return (
-    <section className="relative w-full py-24 overflow-hidden">
-      {/* Background with animated gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--ai-primary)]/90 via-[color:var(--ai-secondary)]/80 to-[color:var(--ai-accent)]/70" />
+    <section className="relative w-full py-20 md:py-28 overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)]" />
 
-      {/* Animated background elements */}
+      {/* Subtle overlay pattern */}
+      <div className="absolute inset-0 opacity-10" style={{
+        backgroundImage: 'radial-gradient(circle at 25% 25%, rgba(255,255,255,0.2) 1px, transparent 1px)',
+        backgroundSize: '40px 40px'
+      }} />
+
+      {/* Floating glow orbs */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Grid pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0 grid grid-cols-12 gap-2 transform -skew-y-12 scale-150">
-            {Array.from({ length: 50 }).map((_, i) => (
-              <div
-                key={i}
-                className="col-span-1 bg-white/10 dark:bg-white/5 h-8 animate-pulse"
-                style={{
-                  animationDelay: `${i * 0.1}s`,
-                  opacity: gridOpacities[i],
-                }}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Floating orbs with pre-calculated values */}
-        <div className="absolute inset-0">
-          {floatingOrbs.map((orb) => (
-            <motion.div
-              key={orb.key}
-              className="absolute rounded-full bg-white/10 blur-xl"
-              style={{
-                width: `${orb.width}px`,
-                height: `${orb.height}px`,
-                top: `${orb.top}%`,
-                left: `${orb.left}%`,
-              }}
-              animate={orb.animate}
-              transition={orb.transition}
-            />
-          ))}
-        </div>
+        <div className="absolute top-1/4 left-1/4 w-[300px] h-[300px] bg-white/10 rounded-full blur-[80px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-white/5 rounded-full blur-[100px]" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mx-auto text-center">
+      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center">
           <ScrollAnimationWrapper>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-6">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
               {t('title')}
             </h2>
           </ScrollAnimationWrapper>
 
           <ScrollAnimationWrapper delay={0.1}>
-            <p className="text-xl text-white/80 mb-8">{t('subtitle')}</p>
+            <p className="text-lg md:text-xl text-white/80 mb-10 max-w-2xl mx-auto">{t('subtitle')}</p>
           </ScrollAnimationWrapper>
 
           <ScrollAnimationWrapper delay={0.2}>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <motion.div {...buttonHoverProps}>
-                <Button
-                  color="primary"
-                  size="lg"
-                  radius="full"
-                  className="px-8 py-6 text-lg font-medium bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] hover:shadow-lg hover:shadow-[color:var(--ai-primary)]/30 transform transition-all duration-300"
-                  onClick={handleGetStarted}
-                >
-                  {t('button')}
-                </Button>
-              </motion.div>
+              <Button
+                color="primary"
+                size="lg"
+                radius="full"
+                className="px-10 py-6 text-base font-semibold bg-white text-[color:var(--ai-primary)] hover:bg-white/90 shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300"
+                onClick={handleGetStarted}
+              >
+                {t('button')}
+              </Button>
 
-              <motion.div {...buttonHoverProps}>
-                <Button
-                  variant="secondary"
-                  color="secondary"
-                  size="lg"
-                  radius="full"
-                  className="px-8 py-6 text-lg font-medium border-[color:var(--ai-secondary)]/50 text-white backdrop-blur-sm hover:bg-white/10 transform transition-all duration-300"
-                  onClick={() => {
-                    // Smooth scroll to courses section
-                    const coursesSection = document.getElementById('courses-section');
-                    coursesSection?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                >
-                  {t('button')}
-                </Button>
-              </motion.div>
+              <Button
+                variant="secondary"
+                color="secondary"
+                size="lg"
+                radius="full"
+                className="px-10 py-6 text-base font-semibold border-2 border-white/30 text-white hover:bg-white/10 hover:-translate-y-0.5 transition-all duration-300"
+                onClick={() => {
+                  const coursesSection = document.getElementById('courses-section');
+                  coursesSection?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
+                {t('button')}
+              </Button>
             </div>
           </ScrollAnimationWrapper>
 
           {/* Trust badges */}
           <ScrollAnimationWrapper delay={0.3}>
-            <div className="mt-12 flex flex-wrap justify-center items-center gap-8">
-              <div className="text-white/80 flex items-center">
-                <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <div className="mt-14 flex flex-wrap justify-center items-center gap-8">
+              <div className="text-white/80 flex items-center text-sm">
+                <svg className="w-5 h-5 mr-2 text-white/60" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
                     d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"

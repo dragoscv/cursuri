@@ -4,7 +4,6 @@ import React, { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import ScrollAnimationWrapper from '../animations/ScrollAnimationWrapper'
-import ParallaxSection from '../animations/ParallaxSection'
 import FeatureCard from './FeatureCard'
 import { features } from './featuresData'
 
@@ -22,56 +21,45 @@ const WhyChooseUsSection = React.memo(function WhyChooseUsSection() {
         }
     }), []);
     return (
-        <section className="relative w-full">
-            <ParallaxSection
-                className="py-24 relative w-full"
-                bgColor="bg-gradient-to-br from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)]"
-                speed={0.2}
-            >
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">                    <ScrollAnimationWrapper>
-                    <div className="text-center mb-16">
-                        <h2 className="text-4xl font-bold text-white mb-4">
+        <section className="relative w-full py-20 md:py-28 bg-[color:var(--ai-background)] overflow-hidden">
+            {/* Subtle background accents */}
+            <div className="absolute inset-0">
+                <div className="absolute top-1/3 right-0 w-[500px] h-[500px] bg-[color:var(--ai-primary)]/5 rounded-full blur-[120px]" />
+                <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[color:var(--ai-secondary)]/5 rounded-full blur-[100px]" />
+            </div>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <ScrollAnimationWrapper>
+                    <div className="text-center mb-14">
+                        <span className="inline-flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-full bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] border border-[color:var(--ai-primary)]/20 mb-4">
                             {t('title')}
-                        </h2>                        <p className="text-xl text-white/80 max-w-3xl mx-auto">
+                        </span>
+                        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[color:var(--ai-foreground)] mb-4">
+                            {t('title')}
+                        </h2>
+                        <p className="text-lg text-[color:var(--ai-muted)] max-w-2xl mx-auto">
                             {t('subtitle')}
                         </p>
                     </div>
                 </ScrollAnimationWrapper>
 
-                    <motion.div
-                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-                        variants={containerVariants}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, margin: "-100px" }}
-                    >
-                        {features.map((feature, index) => (
-                            <ScrollAnimationWrapper key={feature.key} delay={index * 0.1} className="h-full">
-                                <FeatureCard
-                                    featureKey={feature.key}
-                                    index={index}
-                                />
-                            </ScrollAnimationWrapper>
-                        ))}
-                    </motion.div>                    <div className="absolute inset-0 z-0 opacity-30 pointer-events-none overflow-hidden">
-                        <svg className="absolute right-0 top-0 h-full transform translate-x-1/2" width="404" height="784" fill="none" viewBox="0 0 404 784">
-                            <defs>
-                                <pattern id="pattern-circles" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                                    <circle cx="10" cy="10" r="2" fill="currentColor" fillOpacity="0.8" />
-                                </pattern>
-                            </defs>
-                            <rect width="404" height="784" fill="url(#pattern-circles)" className="text-white/20" />
-                        </svg>
-                        <svg className="absolute left-0 bottom-0 h-full transform -translate-x-1/2" width="404" height="784" fill="none" viewBox="0 0 404 784">
-                            <defs>
-                                <pattern id="pattern-circles-2" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                                    <circle cx="10" cy="10" r="2" fill="currentColor" fillOpacity="0.8" />
-                                </pattern>
-                            </defs>
-                            <rect width="404" height="784" fill="url(#pattern-circles-2)" className="text-white/20" />
-                        </svg>                </div>
-                </div>
-            </ParallaxSection>
+                <motion.div
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                    variants={containerVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-100px" }}
+                >
+                    {features.map((feature, index) => (
+                        <ScrollAnimationWrapper key={feature.key} delay={index * 0.1} className="h-full">
+                            <FeatureCard
+                                featureKey={feature.key}
+                                index={index}
+                            />
+                        </ScrollAnimationWrapper>
+                    ))}
+                </motion.div>
+            </div>
         </section>
     )
 });

@@ -333,107 +333,57 @@ const HeroSection = memo(function HeroSection() {
   };
 
   return (
-    <div className="relative w-full bg-gradient-to-br from-[color:var(--ai-primary)]/90 via-[color:var(--ai-secondary)]/80 to-[color:var(--ai-accent)]/70 overflow-hidden">
-      {/* Animated grid background */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0 grid grid-cols-12 gap-2 transform -skew-y-12 scale-150">
-          {Array.from({ length: 100 }).map((_, i) => (
-            <div
-              key={i}
-              className="col-span-1 bg-white/10 dark:bg-white/5 h-8 animate-pulse"
-              style={{
-                animationDelay: `${i * 0.1}s`,
-                opacity: gridOpacities[i],
-              }}
-            />
-          ))}
-        </div>
+    <section className="relative w-full min-h-[90vh] flex items-center overflow-hidden">
+      {/* Clean mesh gradient background */}
+      <div className="absolute inset-0 bg-[color:var(--ai-background)]">
+        <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--ai-primary)]/8 via-transparent to-[color:var(--ai-secondary)]/6" />
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[color:var(--ai-primary)]/10 rounded-full blur-[120px] -translate-y-1/3 translate-x-1/4" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[color:var(--ai-secondary)]/8 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/4" />
       </div>
 
-      {/* Code network nodes animation - replacing neural network */}
-      <div
-        className="absolute inset-0 flex items-center justify-center overflow-hidden opacity-30"
-        style={{
-          background: `radial-gradient(circle at center, rgba(var(--ai-secondary-rgb), 0.3) 0%, rgba(var(--ai-primary-rgb), 0.1) 70%)`,
-        }}
-      >
-        <svg width="100%" height="100%" viewBox="0 0 800 800" preserveAspectRatio="xMidYMid slice">
-          <defs>
-            <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="var(--ai-secondary)" />
-              <stop offset="100%" stopColor="var(--ai-primary)" />
-            </linearGradient>
-          </defs>
-          <g>
-            {/* Code node points */}
-            {nodePoints.map((point, i) => (
-              <circle
-                key={i}
-                cx={point.x}
-                cy={point.y}
-                r="4"
-                fill="url(#gradient1)"
-                className="animate-ping"
-                style={{ animationDelay: `${i * 0.2}s`, animationDuration: '3s' }}
-              />
-            ))}
-            {/* Connection lines between nodes */}
-            {connectionLines.map((line, i) => (
-              <line
-                key={`line-${i}`}
-                x1={line.x1}
-                y1={line.y1}
-                x2={line.x2}
-                y2={line.y2}
-                stroke="url(#gradient1)"
-                strokeWidth="0.5"
-                className="animate-pulse"
-                style={{ animationDelay: `${i * 0.05}s` }}
-              />
-            ))}
-            {/* Add code brackets for programming theme */}
-            <g opacity="0.6">
-              <path
-                d="M300,300 L250,350 L300,400"
-                stroke="url(#gradient1)"
-                fill="none"
-                strokeWidth="2"
-              />
-              <path
-                d="M500,300 L550,350 L500,400"
-                stroke="url(#gradient1)"
-                fill="none"
-                strokeWidth="2"
-              />
-            </g>
-          </g>
-        </svg>
-      </div>
+      {/* Subtle grid pattern */}
+      <div className="absolute inset-0 opacity-[0.03]" style={{
+        backgroundImage: 'linear-gradient(var(--ai-primary) 1px, transparent 1px), linear-gradient(90deg, var(--ai-primary) 1px, transparent 1px)',
+        backgroundSize: '60px 60px'
+      }} />
 
       {/* Floating particles container */}
       <div ref={particlesRef} className="absolute inset-0 pointer-events-none overflow-hidden" />
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-24 md:py-32">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight">
+      <div className="relative z-10 mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          {/* Left content */}
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {/* Badge */}
+            <motion.div variants={itemVariants} className="mb-6">
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] border border-[color:var(--ai-primary)]/20">
+                <span className="w-2 h-2 rounded-full bg-[color:var(--ai-primary)] animate-pulse" />
+                {t('projectBased')}
+              </span>
+            </motion.div>
+
+            <motion.h1 variants={itemVariants} className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-[color:var(--ai-foreground)] leading-[1.1]">
               <span className="block">{t('title.line1')}</span>
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-[color:var(--ai-secondary)] to-[color:var(--ai-primary)] pb-2">
+              <span className="block mt-2 bg-clip-text text-transparent bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)]">
                 {t('title.line2')}
               </span>
-            </h1>
+            </motion.h1>
 
-            <p className="mt-6 text-lg md:text-xl text-white/90">
+            <motion.p variants={itemVariants} className="mt-6 text-lg md:text-xl text-[color:var(--ai-muted)] leading-relaxed max-w-xl">
               {t('subtitle')}
-            </p>
+            </motion.p>
 
-            <div className="mt-8 flex flex-col sm:flex-row gap-4">
+            <motion.div variants={itemVariants} className="mt-10 flex flex-col sm:flex-row gap-4">
               <Button
                 color="primary"
                 variant="primary"
                 size="lg"
                 radius="full"
-                className="px-8 py-6 text-lg font-medium bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] hover:shadow-lg hover:shadow-[color:var(--ai-primary)]/30 transform hover:-translate-y-1 transition-all duration-300"
+                className="px-8 py-6 text-base font-semibold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white shadow-lg shadow-[color:var(--ai-primary)]/25 hover:shadow-xl hover:shadow-[color:var(--ai-primary)]/30 hover:-translate-y-0.5 transition-all duration-300"
                 onClick={() => router.push('/discord')}
               >
                 <div className="flex items-center gap-2">
@@ -447,157 +397,133 @@ const HeroSection = memo(function HeroSection() {
                 color="secondary"
                 size="lg"
                 radius="full"
-                className="px-8 py-6 text-lg font-medium border-white/50 text-white backdrop-blur-sm hover:bg-white/10 transform hover:-translate-y-1 transition-all duration-300"
+                className="px-8 py-6 text-base font-semibold border-2 border-[color:var(--ai-card-border)] text-[color:var(--ai-foreground)] hover:border-[color:var(--ai-primary)]/50 hover:bg-[color:var(--ai-primary)]/5 hover:-translate-y-0.5 transition-all duration-300"
                 onClick={() => router.push('/courses')}
               >
                 {t('exploreCourses')}
               </Button>
-            </div>
+            </motion.div>
 
-            <div className="mt-10">
-              <div className="flex items-center gap-3">
-                <div className="flex -space-x-2">
-                  {['Alex M.', 'Sarah K.', 'John D.', 'Maria P.', 'Chris L.'].map((name, i) => (
-                    <div
-                      key={i}
-                      className="inline-block h-8 w-8 rounded-full ring-2 ring-[color:var(--ai-primary)]/30 overflow-hidden transform hover:scale-110 hover:z-10 transition-all duration-300"
-                    >
-                      <DefaultAvatar name={name} size={32} className="" />
-                    </div>
-                  ))}
-                </div>
-                <div className="text-sm text-white/90 font-medium">
-                  <span className="text-[color:var(--ai-accent)] font-semibold">
-                    {stats.totalStudents}+
-                  </span>{' '}
-                  {t('learnersEnrolled')}
-                </div>
+            {/* Social proof */}
+            <motion.div variants={itemVariants} className="mt-10 flex items-center gap-4">
+              <div className="flex -space-x-3">
+                {['Alex M.', 'Sarah K.', 'John D.', 'Maria P.', 'Chris L.'].map((name, i) => (
+                  <div
+                    key={i}
+                    className="inline-block h-9 w-9 rounded-full ring-2 ring-[color:var(--ai-background)] overflow-hidden"
+                  >
+                    <DefaultAvatar name={name} size={36} className="" />
+                  </div>
+                ))}
               </div>
-            </div>
+              <div className="text-sm text-[color:var(--ai-muted)]">
+                <span className="font-bold text-[color:var(--ai-foreground)]">
+                  {stats.totalStudents}+
+                </span>{' '}
+                {t('learnersEnrolled')}
+              </div>
+            </motion.div>
 
-            {/* Tech badges/chips */}
-            <div className="mt-8 flex flex-wrap gap-2">
+            {/* Tech badges */}
+            <motion.div variants={itemVariants} className="mt-8 flex flex-wrap gap-2">
               {stats.topTechnologies.map((tech) => (
                 <span
                   key={tech}
-                  className="px-3 py-1 text-xs rounded-full bg-white/20 text-white/90 border border-white/30 backdrop-blur-sm flex items-center"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-[color:var(--ai-card-bg)] text-[color:var(--ai-muted)] border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/30 hover:text-[color:var(--ai-primary)] transition-colors duration-200"
                 >
                   {getTechIcon(tech)}
                   {tech}
                 </span>
               ))}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
-          <div
-            className="relative"
+          {/* Right visual */}
+          <motion.div
+            className="relative hidden lg:block"
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
           >
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-2xl blur-md opacity-75 animate-pulse" />
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-transparent to-[color:var(--ai-primary)]/10 dark:from-[color:var(--ai-card-bg)] dark:to-[color:var(--ai-primary)]/20 border border-[color:var(--ai-card-border)]">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.1),transparent)] opacity-20 dark:opacity-50" />{' '}
+            {/* Glow behind image */}
+            <div className="absolute -inset-4 bg-gradient-to-r from-[color:var(--ai-primary)]/20 to-[color:var(--ai-secondary)]/20 rounded-3xl blur-2xl" />
+
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-[color:var(--ai-card-border)]">
               <Image
                 src="https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80"
                 alt={t('imageAlt')}
-                className="w-full h-auto object-cover dark:mix-blend-lighten opacity-100"
+                className="w-full h-auto object-cover"
                 width={600}
                 height={400}
                 priority
                 fetchPriority="high"
-                sizes="(max-width: 768px) 100vw, 50vw"
+                sizes="50vw"
               />
-              {/* Futuristic overlay elements */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-[color:var(--ai-primary)]/40 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
-                <div className="absolute top-4 right-4 flex items-center gap-2 bg-black/30 backdrop-blur-md px-3 py-1.5 rounded-full text-xs text-[color:var(--ai-accent)] border border-[color:var(--ai-accent)]/30">
-                  <span className="inline-block h-2 w-2 rounded-full bg-[color:var(--ai-accent)] animate-pulse"></span>
-                  {t('projectBased')}
-                </div>
-
-                {/* Tech stack floating animation */}
-                {techNodes.slice(0, 3).map((tech, i) => (
-                  <div
-                    key={tech}
-                    className="absolute bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg px-2 py-1 text-xs text-white/90 flex items-center"
-                    style={{
-                      top: `${20 + i * 20}%`,
-                      left: `${10 + i * 25}%`,
-                      transform: 'translateY(-50%)',
-                      animation: `float-${i} 3s ease-in-out infinite alternate`,
-                    }}
-                  >
-                    <style jsx>{`
-                      @keyframes float-${i} {
-                        0% {
-                          transform: translate(0, 0);
-                        }
-                        100% {
-                          transform: translate(${5 * i}px, ${-5 * i}px);
-                        }
-                      }
-                    `}</style>
-                    {getTechIcon(tech)}
-                    {tech}
-                  </div>
-                ))}
-              </div>
+              {/* Floating tech nodes on image */}
+              {techNodes.slice(0, 3).map((tech, i) => (
+                <motion.div
+                  key={tech}
+                  className="absolute bg-white/90 dark:bg-[color:var(--ai-card-bg)]/90 backdrop-blur-md border border-[color:var(--ai-card-border)] rounded-xl px-3 py-2 text-xs font-medium text-[color:var(--ai-foreground)] flex items-center shadow-lg"
+                  style={{
+                    top: `${15 + i * 25}%`,
+                    left: i % 2 === 0 ? '8%' : '65%',
+                  }}
+                  animate={{ y: [0, -6, 0] }}
+                  transition={{ duration: 3 + i, repeat: Infinity, ease: 'easeInOut' }}
+                >
+                  {getTechIcon(tech)}
+                  {tech}
+                </motion.div>
+              ))}
             </div>
 
-            {/* Floating stats cards - updated with real data */}
-            <div className="absolute -bottom-6 -left-6 z-10 rounded-lg bg-white/10 backdrop-blur-md border border-[color:var(--ai-secondary)]/30 shadow-xl p-4 flex items-center gap-3 transform hover:scale-105 transition-transform duration-300">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]">
-                <svg
-                  className="h-6 w-6 text-[color:var(--ai-foreground-inverse)]"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                  />
+            {/* Stats card - bottom left */}
+            <motion.div
+              className="absolute -bottom-4 -left-4 z-10 rounded-xl bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] shadow-xl p-4 flex items-center gap-3"
+              animate={{ y: [0, -4, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]">
+                <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
               </div>
               <div>
-                <p className="text-sm font-medium text-white">
-                  {stats.totalCourses} {t('stats.coursesAvailable')}
-                </p>
-                <p className="text-xs text-white/80">{t('stats.projectBasedCurriculum')}</p>
+                <p className="text-sm font-semibold text-[color:var(--ai-foreground)]">{stats.totalCourses} {t('stats.coursesAvailable')}</p>
+                <p className="text-xs text-[color:var(--ai-muted)]">{t('stats.projectBasedCurriculum')}</p>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="absolute -top-6 -right-6 z-10 rounded-lg bg-white/10 backdrop-blur-md border border-[color:var(--ai-secondary)]/30 shadow-xl p-4 transform hover:scale-105 transition-transform duration-300">
-              <div className="text-center">
-                <p className="text-sm font-medium text-white/90">{t('stats.studentRating')}</p>
-                <div className="flex items-center justify-center mt-1">
-                  <svg
-                    className="h-5 w-5 text-[color:var(--ai-accent)]"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
+            {/* Rating card - top right */}
+            <motion.div
+              className="absolute -top-4 -right-4 z-10 rounded-xl bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] shadow-xl p-4 text-center"
+              animate={{ y: [0, -6, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+            >
+              <p className="text-xs font-medium text-[color:var(--ai-muted)]">{t('stats.studentRating')}</p>
+              <div className="flex items-center justify-center mt-1 gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <svg key={i} className="h-4 w-4 text-amber-400" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                   </svg>
-                </div>
-                <p className="mt-1 text-xl font-bold text-white">
-                  {stats.avgRating}
-                  <span className="text-sm text-white/70">/5</span>
-                </p>
-                <p className="text-xs text-white/70">
-                  {t('stats.reviews', { count: stats.totalReviews || 42 })}
-                </p>
+                ))}
               </div>
-            </div>
-          </div>
+              <p className="mt-1 text-2xl font-bold text-[color:var(--ai-foreground)]">
+                {stats.avgRating}<span className="text-sm text-[color:var(--ai-muted)]">/5</span>
+              </p>
+              <p className="text-xs text-[color:var(--ai-muted)]">{t('stats.reviews', { count: stats.totalReviews || 42 })}</p>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
 
       {/* Scroll indicator */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
-        <p className="text-white/80 text-sm mb-2">{t('scrollToExplore')}</p>
+        <p className="text-[color:var(--ai-muted)] text-sm mb-2">{t('scrollToExplore')}</p>
         <motion.div
-          className="w-8 h-12 rounded-full border-2 border-white/60 flex justify-center p-2"
+          className="w-7 h-11 rounded-full border-2 border-[color:var(--ai-primary)]/30 flex justify-center p-2"
           initial={{ opacity: 0.6 }}
           animate={{
             opacity: [0.6, 1, 0.6],
@@ -605,15 +531,15 @@ const HeroSection = memo(function HeroSection() {
           }}
         >
           <motion.div
-            className="w-1 h-2 bg-white/80 rounded-full"
+            className="w-1 h-2 bg-[color:var(--ai-primary)]/60 rounded-full"
             animate={{
-              y: [0, 15, 0],
+              y: [0, 12, 0],
               transition: { duration: 1.5, repeat: Infinity },
             }}
           />
         </motion.div>
       </div>
-    </div>
+    </section>
   );
 });
 

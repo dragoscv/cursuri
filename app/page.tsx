@@ -61,41 +61,48 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function Home() {
   return (
     <main className="relative flex flex-col items-center justify-start w-full">
-      {/* Hero section with animated background - Critical above-the-fold content */}
+      {/* Hero section - Critical above-the-fold content */}
       <HeroSection />
 
       {/* Recommended courses section - Critical above-the-fold content */}
       <RecommendedCoursesSection />
 
-      {/* Below-the-fold sections with progressive loading for better LCP */}
-      <Suspense fallback={<SectionSkeleton height="h-96" className="bg-gradient-to-b from-transparent to-[color:var(--ai-secondary)]/5" />}>
+      {/* Statistics section */}
+      <Suspense fallback={<SectionSkeleton height="h-96" />}>
         <StatisticsSection />
       </Suspense>
 
+      {/* Tech stack */}
       <Suspense fallback={<SectionSkeleton height="h-64" />}>
         <TechStackSection />
       </Suspense>
 
+      {/* Learning path */}
       <Suspense fallback={<SectionSkeleton height="h-96" />}>
         <LearningPathSection />
       </Suspense>
 
+      {/* Subscription plans */}
       <Suspense fallback={<SectionSkeleton height="h-96" />}>
         <SubscriptionSection />
       </Suspense>
 
+      {/* All courses */}
       <Suspense fallback={<SectionSkeleton height="h-96" />}>
         <AvailableCoursesSection />
       </Suspense>
 
+      {/* Why choose us */}
       <Suspense fallback={<SectionSkeleton height="h-96" />}>
         <WhyChooseUsSection />
       </Suspense>
 
+      {/* Reviews */}
       <Suspense fallback={<SectionSkeleton height="h-96" />}>
         <FeaturedReviewsSection />
       </Suspense>
 
+      {/* Call to action */}
       <Suspense fallback={<SectionSkeleton height="h-64" />}>
         <CallToActionSection />
       </Suspense>

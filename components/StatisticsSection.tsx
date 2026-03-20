@@ -255,54 +255,39 @@ const StatisticsSection = React.memo(function StatisticsSection() {
     return particles;
   }, []);
   return (
-    <section ref={ref} className="relative w-full overflow-hidden ">
-      <div className="relative overflow-hidden py-16 md:py-20">
-        {/* Simplified animated gradient background */}
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-br from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)]"
-          style={{
-            backgroundSize: '200% 200%',
-            y,
-            backgroundPosition: '0% 0%',
-          }}
-          animate={backgroundAnimateProps}
-          transition={backgroundTransitionProps}
-        />
-
-        {/* Subtle dot pattern overlay - reduced opacity */}
-        <div
-          className="absolute inset-0 bg-black/20 z-0"
-          style={{
-            backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px)',
-            backgroundSize: '20px 20px',
-          }}
-        ></div>
+    <section ref={ref} className="relative w-full overflow-hidden">
+      <div className="relative py-20 md:py-28 bg-[color:var(--ai-background)]">
+        {/* Subtle background accents */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-[color:var(--ai-primary)]/5 rounded-full blur-[100px]" />
+          <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-[color:var(--ai-secondary)]/5 rounded-full blur-[100px]" />
+        </div>
 
         {/* Main content container */}
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollAnimationWrapper>
-            <div className="text-center mb-8 md:mb-16">
-              <span className="inline-block px-3 py-1 text-sm font-medium rounded-full bg-white/10 text-white/90 backdrop-blur-sm mb-3">
+            <div className="text-center mb-12 md:mb-16">
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-full bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] border border-[color:var(--ai-primary)]/20 mb-4">
                 {t('badge')}
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold text-white">{t('title')}</h2>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[color:var(--ai-foreground)]">{t('title')}</h2>
             </div>
           </ScrollAnimationWrapper>
 
-          {/* Stats Grid - Redesigned for better mobile experience */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          {/* Stats Grid */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {stats.map((stat, index) => (
               <ScrollAnimationWrapper key={stat.label} delay={index * 0.1} className="h-full">
                 <motion.div
-                  className={`flex flex-col items-center justify-center p-4 md:p-6 rounded-2xl bg-gradient-to-br ${stat.color} bg-opacity-20 backdrop-filter backdrop-blur-md border border-white/10 h-full text-center shadow-lg transform transition-all duration-300`}
+                  className="flex flex-col items-center justify-center p-6 md:p-8 rounded-2xl bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] h-full text-center shadow-sm hover:shadow-lg hover:border-[color:var(--ai-primary)]/30 transition-all duration-300"
                   variants={counterVariants}
-                  whileHover={statCardHoverProps}
+                  whileHover={{ y: -4 }}
                 >
-                  <div className="text-2xl md:text-4xl mb-2 md:mb-3 bg-white/20 p-3 rounded-full">
+                  <div className="text-3xl md:text-4xl mb-3 p-3 rounded-2xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10">
                     {stat.icon}
                   </div>
                   <motion.div
-                    className="text-3xl md:text-5xl font-extrabold text-white mb-1 md:mb-2"
+                    className="text-3xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] mb-2"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -314,62 +299,20 @@ const StatisticsSection = React.memo(function StatisticsSection() {
                   >
                     {stat.value}
                   </motion.div>
-                  <div className="text-sm md:text-xl font-medium text-white/90">{stat.label}</div>
+                  <div className="text-sm md:text-base font-medium text-[color:var(--ai-muted)]">{stat.label}</div>
                 </motion.div>
               </ScrollAnimationWrapper>
             ))}
           </div>
 
-          {/* Mobile-friendly caption */}
-          <div className="mt-10 text-center">
+          {/* Description */}
+          <div className="mt-12 text-center">
             <ScrollAnimationWrapper delay={0.4}>
-              <p className="text-white/80 text-sm md:text-base max-w-2xl mx-auto">
+              <p className="text-[color:var(--ai-muted)] text-base md:text-lg max-w-2xl mx-auto">
                 {t('description')}
               </p>
             </ScrollAnimationWrapper>
           </div>
-        </div>
-
-        {/* Reduced number of floating particles for mobile - only shown on larger screens */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden z-0 hidden md:block">
-          {particles.slice(0, 10).map((particle) => (
-            <div
-              key={particle.key}
-              className="absolute rounded-full bg-white/15"
-              style={{
-                width: `${particle.width}px`,
-                height: `${particle.height}px`,
-                top: `${particle.top}%`,
-                left: `${particle.left}%`,
-                animation: `floating ${particle.duration}s ease-in-out infinite alternate`,
-                animationDelay: `${particle.delay}s`,
-              }}
-            />
-          ))}
-        </div>
-
-        {/* Strategic glow effects instead of random blurs */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-          {/* Top left glow */}
-          <div
-            className="absolute rounded-full bg-[color:var(--ai-primary)]/20 blur-3xl"
-            style={{
-              width: '20vw',
-              height: '20vw',
-              top: '10%',
-              left: '5%',
-            }}
-          />
-          {/* Bottom right glow */}
-          <div
-            className="absolute rounded-full bg-[color:var(--ai-secondary)]/20 blur-3xl"
-            style={{
-              width: '25vw',
-              height: '25vw',
-              bottom: '10%',
-              right: '5%',
-            }}
-          />{' '}
         </div>
       </div>
     </section>
