@@ -49,3 +49,13 @@ dist
 .build-temp
 .npm-cache
 .npm-tmp
+
+# SWC compiler cache
+.swc/
+
+# debug/temp output files
+*-error.txt
+*-output.txt
+*-tree.txt
+lint-output*.txt
+*.log

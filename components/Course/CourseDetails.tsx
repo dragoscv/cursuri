@@ -29,7 +29,7 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
   const router = useRouter();
   const searchParams = useSearchParams();
   const tabParam = searchParams.get('tab');
-  const [selectedTab, setSelectedTab] = React.useState(tabParam || 'overview');
+  const [selectedTab, setSelectedTab] = React.useState(tabParam || 'content');
 
   // Update URL when tab changes
   const handleTabChange = (key: React.Key) => {

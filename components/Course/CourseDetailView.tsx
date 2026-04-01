@@ -125,6 +125,20 @@ export default function CourseDetailView({
         <CourseHeader course={courseWithStats} />
       </motion.div>
 
+      {/* Compact course description */}
+      {course.description && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.15 }}
+          className="mt-6 bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-[color:var(--ai-accent)]/5 backdrop-blur-sm rounded-xl p-5 border border-[color:var(--ai-card-border)]/50 shadow-sm"
+        >
+          <p className="text-[color:var(--ai-muted)] leading-relaxed text-sm">
+            {course.fullDescription || course.description}
+          </p>
+        </motion.div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
         <motion.div
           className="lg:col-span-2"

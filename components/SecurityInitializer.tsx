@@ -69,7 +69,7 @@ export default function SecurityInitializer({ children }: SecurityInitializerPro
   }, []);
 
   if (!securityStatus.isValidated) {
-    return null; // Or a loading state if preferred
+    return <>{children}</>;
   }
 
   // In development mode, show a warning banner if security issues exist

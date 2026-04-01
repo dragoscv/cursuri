@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { motion } from 'framer-motion';
 import { Course } from '@/types';
 import { useTranslations } from 'next-intl';
-import { FiCheckCircle, FiTarget, FiCalendar, FiBookOpen, FiFileText, FiAward, FiUser, FiLink } from '../icons/FeatherIcons';
+import { FiCheckCircle, FiTarget, FiCalendar, FiFileText, FiLink } from '../icons/FeatherIcons';
 import { AppContext } from '../AppContext';
 
 // ...existing code...
@@ -59,32 +59,6 @@ const CourseOverview: React.FC<CourseOverviewProps> = ({ course }) => {
 
     return (
         <div className="space-y-6">
-            {/* Course Description */}
-            <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-                className="bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-[color:var(--ai-accent)]/5 backdrop-blur-sm rounded-xl p-5 border border-[color:var(--ai-card-border)]/50 shadow-sm"
-            >
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-3">
-                    <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] flex items-center gap-2">
-                        <FiBookOpen className="text-[color:var(--ai-primary)]" />
-                        {t('courseDescription')}
-                    </h3>
-
-                    {course.level && (
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]">
-                            <FiAward className="mr-1 h-3.5 w-3.5" />
-                            {course.level}
-                        </span>
-                    )}
-                </div>
-
-                <p className="text-[color:var(--ai-muted)] leading-relaxed">
-                    {course.fullDescription || course.description}
-                </p>
-            </motion.div>
-
             {/* What You'll Learn */}
             <motion.div
                 variants={containerVariants}

@@ -5,15 +5,51 @@ import { SimpleProviders } from '@/components/contexts/SimpleProviders';
 import SecurityInitializer from '@/components/SecurityInitializer';
 import { NextIntlClientProvider } from 'next-intl';
 import { useEffect, useState } from 'react';
-import AppLoader from '@/components/ui/AppLoader';
+
+const TRANSLATION_DOMAINS = [
+  'common',
+  'auth',
+  'courses',
+  'lessons',
+  'profile',
+  'admin',
+  'home',
+  'legal',
+  'about',
+  'contact',
+  'payment',
+  'subscription',
+] as const;
+
+function MinimalLoader() {
+  return (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[rgb(var(--background-start-rgb))]">
+      <div className="w-8 h-8 border-2 border-[color:var(--ai-primary)]/30 border-t-[color:var(--ai-primary)] rounded-full animate-spin" />
+    </div>
+  );
+}
+
+function loadTranslations(locale: string) {
+  return Promise.all(
+    TRANSLATION_DOMAINS.map((domain) =>
+      import(`../messages/${locale}/${domain}.json`)
+        .then((m) => ({ domain, messages: m.default }))
+        .catch(() => ({ domain, messages: {} }))
+    )
+  ).then((results) => {
+    const merged: Record<string, Record<string, string>> = {};
+    results.forEach(({ domain, messages: domainMessages }) => {
+      merged[domain] = domainMessages;
+    });
+    return merged;
+  });
+}
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [messages, setMessages] = useState<Record<string, Record<string, string>> | null>(null);
   const [locale, setLocale] = useState<string>('ro');
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Get locale from cookie
     const cookieLocale =
       document.cookie
         .split('; ')
@@ -23,83 +59,24 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     const validLocale = cookieLocale === 'en' ? 'en' : 'ro';
     setLocale(validLocale);
 
-    // Load all domain translation files and merge them
-    const domains = [
-      'common',
-      'auth',
-      'courses',
-      'lessons',
-      'profile',
-      'admin',
-      'home',
-      'legal',
-      'about',
-      'contact',
-      'payment',
-      'subscription',
-    ];
-    Promise.all(
-      domains.map((domain) =>
-        import(`../messages/${validLocale}/${domain}.json`)
-          .then((m) => ({ domain, messages: m.default }))
-          .catch(() => ({ domain, messages: {} }))
-      )
-    )
-      .then((results) => {
-        const mergedMessages: Record<string, Record<string, string>> = {};
-        results.forEach(({ domain, messages: domainMessages }) => {
-          mergedMessages[domain] = domainMessages;
-        });
-        setMessages(mergedMessages);
-      })
-      .catch(() => {
-        // Fallback to English if loading fails
-        const fallbackDomains = [
-          'common',
-          'auth',
-          'courses',
-          'lessons',
-          'profile',
-          'admin',
-          'home',
-          'legal',
-          'about',
-          'contact',
-          'payment',
-          'subscription',
-        ];
-        Promise.all(
-          fallbackDomains.map((domain) =>
-            import(`../messages/en/${domain}.json`)
-              .then((m) => ({ domain, messages: m.default }))
-              .catch(() => ({ domain, messages: {} }))
-          )
-        ).then((results) => {
-          const mergedMessages: Record<string, Record<string, string>> = {};
-          results.forEach(({ domain, messages: domainMessages }) => {
-            mergedMessages[domain] = domainMessages;
-          });
-          setMessages(mergedMessages);
-        });
-      });
+    loadTranslations(validLocale)
+      .catch(() => loadTranslations('en'))
+      .then(setMessages);
   }, []);
 
   if (!messages) {
-    return <AppLoader locale={locale} />;
+    return <MinimalLoader />;
   }
 
   return (
-    <>
-      {isLoading && <AppLoader onLoadingComplete={() => setIsLoading(false)} locale={locale} />}
-      <NextIntlClientProvider locale={locale} messages={messages}>
-        <HeroUIProvider>
-          <ToastProvider>
-            <SimpleProviders>
-              <SecurityInitializer>{children}</SecurityInitializer>
-            </SimpleProviders>
-          </ToastProvider>
-        </HeroUIProvider>
-      </NextIntlClientProvider>
-    </>
+    <NextIntlClientProvider locale={locale} messages={messages}>
+      <HeroUIProvider>
+        <ToastProvider>
+          <SimpleProviders>
+            <SecurityInitializer>{children}</SecurityInitializer>
+          </SimpleProviders>
+        </ToastProvider>
+      </HeroUIProvider>
+    </NextIntlClientProvider>
   );
 }
