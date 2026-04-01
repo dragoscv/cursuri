@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { FiLink } from './icons/FeatherIcons/FiLink';
 import { getCoursePrice as getUnifiedCoursePrice } from '@/utils/pricing';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const RecommendedCoursesSection = React.memo(function RecommendedCoursesSection() {
   const t = useTranslations('home.recommendedCourses');
@@ -113,26 +114,27 @@ const RecommendedCoursesSection = React.memo(function RecommendedCoursesSection(
                 className="group flex flex-col rounded-2xl bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/40 hover:shadow-xl hover:shadow-[color:var(--ai-primary)]/5 transition-all duration-300 overflow-hidden"
               >
                 <div
-                  className="relative h-48 w-full cursor-pointer overflow-hidden"
-                  onClick={() => router.push(`/courses/${course.id}`)}
+                  className="relative h-48 w-full overflow-hidden"
                 >
-                  <Image
-                    src={course.imageUrl || '/placeholder-course.svg'}
-                    alt={course.name}
-                    fill
-                    priority={index < 3}
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+                  <Link href={`/courses/${course.id}`} className="block h-full">
+                    <Image
+                      src={course.imageUrl || '/placeholder-course.svg'}
+                      alt={course.name}
+                      fill
+                      priority={index < 3}
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+                  </Link>
                 </div>
                 <div className="flex flex-1 flex-col p-6">
-                  <h3
-                    className="mb-2 text-lg font-semibold text-[color:var(--ai-foreground)] cursor-pointer hover:text-[color:var(--ai-primary)] transition-colors line-clamp-2"
-                    onClick={() => router.push(`/courses/${course.id}`)}
+                  <Link
+                    href={`/courses/${course.id}`}
+                    className="mb-2 text-lg font-semibold text-[color:var(--ai-foreground)] hover:text-[color:var(--ai-primary)] transition-colors line-clamp-2"
                   >
                     {course.name}
-                  </h3>
+                  </Link>
                   <p className="mb-4 flex-1 text-sm text-[color:var(--ai-muted)] line-clamp-2 leading-relaxed">
                     {course.description || ''}
                   </p>
@@ -160,12 +162,12 @@ const RecommendedCoursesSection = React.memo(function RecommendedCoursesSection(
                         </span>
                       )}
                     </div>
-                    <button
-                      onClick={() => router.push(`/courses/${course.id}`)}
+                    <Link
+                      href={`/courses/${course.id}`}
                       className="text-sm font-medium text-[color:var(--ai-primary)] hover:underline"
                     >
-                      {tCommon('viewDetails') || 'View details'} &rarr;
-                    </button>
+                      {tCommon('viewDetails')} &rarr;
+                    </Link>
                   </div>
                 </div>
               </div>
