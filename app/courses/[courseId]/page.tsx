@@ -122,16 +122,69 @@ export default async function Page({ params }: { params: { courseId: string } | 
           dangerouslySetInnerHTML={{ __html: breadcrumbStructuredData }}
         />
       )}
-      {/* SSR content for AI crawlers — CourseDetail is client-side and invisible to AI bots */}
+      {/* SSR content — visible to crawlers and users until CourseDetail hydrates */}
       {courseTitle && (
-        <section className="sr-only">
-          <h1>{courseTitle}</h1>
-          <p>{courseDescription}</p>
-          <p>Instructor: {courseInstructor}</p>
-          <p>Platform: StudiAI (studiai.ro) — Romanian AI development education</p>
-          <a href={`${SITE_URL}/courses/${canonicalSlug}`}>
-            Enroll in {courseTitle}
-          </a>
+        <section id="course-ssr-content" className="container mx-auto px-4 py-8 max-w-5xl">
+          <nav aria-label="Breadcrumb" className="text-sm text-[color:var(--ai-muted)] mb-4">
+            <a href="/" className="hover:text-[color:var(--ai-primary)]">Home</a>
+            <span className="mx-2">/</span>
+            <a href="/courses" className="hover:text-[color:var(--ai-primary)]">Courses</a>
+            <span className="mx-2">/</span>
+            <span className="text-[color:var(--ai-foreground)]">{courseTitle}</span>
+          </nav>
+          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-4">
+            {courseTitle}
+          </h1>
+          <p className="text-lg text-[color:var(--ai-muted)] mb-6 leading-relaxed">{courseDescription}</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-sm">
+            {courseInstructor && (
+              <div>
+                <span className="block text-[color:var(--ai-muted)]">Instructor</span>
+                <span className="font-medium text-[color:var(--ai-foreground)]">{courseInstructor}</span>
+              </div>
+            )}
+            {course?.level && (
+              <div>
+                <span className="block text-[color:var(--ai-muted)]">Level</span>
+                <span className="font-medium text-[color:var(--ai-foreground)] capitalize">{course.level}</span>
+              </div>
+            )}
+            {course?.duration && (
+              <div>
+                <span className="block text-[color:var(--ai-muted)]">Duration</span>
+                <span className="font-medium text-[color:var(--ai-foreground)]">{course.duration}</span>
+              </div>
+            )}
+            {course?.lessonsCount && (
+              <div>
+                <span className="block text-[color:var(--ai-muted)]">Lessons</span>
+                <span className="font-medium text-[color:var(--ai-foreground)]">{course.lessonsCount}</span>
+              </div>
+            )}
+          </div>
+          {course?.benefits && course.benefits.length > 0 && (
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold text-[color:var(--ai-foreground)] mb-2">What you will learn</h2>
+              <ul className="list-disc list-inside text-[color:var(--ai-muted)] space-y-1">
+                {course.benefits.map((benefit: string, i: number) => (
+                  <li key={i}>{benefit}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {course?.requirements && course.requirements.length > 0 && (
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold text-[color:var(--ai-foreground)] mb-2">Requirements</h2>
+              <ul className="list-disc list-inside text-[color:var(--ai-muted)] space-y-1">
+                {course.requirements.map((req: string, i: number) => (
+                  <li key={i}>{req}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <p className="text-[color:var(--ai-muted)]">
+            Platform: <a href={SITE_URL} className="text-[color:var(--ai-primary)] hover:underline">StudiAI</a> — Romanian AI development education
+          </p>
         </section>
       )}
       <CourseDetail courseId={courseDocId} />

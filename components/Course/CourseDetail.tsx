@@ -103,6 +103,14 @@ export default function CourseDetail({ courseId }: { courseId: string }) {
 
   const course = courses ? courses[courseId] : null;
 
+  // Hide SSR fallback content once client-side data is loaded
+  useEffect(() => {
+    if (course) {
+      const ssrContent = document.getElementById('course-ssr-content');
+      if (ssrContent) ssrContent.style.display = 'none';
+    }
+  }, [course]);
+
   // Get lessons for this course from context
   const courseLessons =
     lessons && courseId && lessons[courseId]
