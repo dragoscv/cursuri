@@ -5,6 +5,7 @@ import { FieldValue } from "firebase/firestore";
 export interface CourseData {
     name: string;
     description: string;
+    slug?: string;
     price: string;
     priceProduct?: StripeProduct | null;
     priceProductId?: string | null;

@@ -30,6 +30,17 @@ interface AddCourseProps {
     courseId?: string;
 }
 
+function generateSlug(text: string): string {
+    return text
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '') // Remove diacritics (ă→a, ț→t, etc.)
+        .replace(/[^a-z0-9\s-]/g, '')    // Remove non-alphanumeric chars
+        .replace(/\s+/g, '-')            // Spaces to hyphens
+        .replace(/-+/g, '-')             // Collapse multiple hyphens
+        .replace(/^-|-$/g, '');          // Trim leading/trailing hyphens
+}
+
 export default function AddCourse(props: AddCourseProps) {
     const { onClose, courseId } = props;
 
@@ -61,6 +72,8 @@ export default function AddCourse(props: AddCourseProps) {
     const [allowPromoCodes, setAllowPromoCodes] = useState(false);
     const [coursePrerequisites, setCoursePrerequisites] = useState<string[]>([]);
     const [selectedPrerequisiteId, setSelectedPrerequisiteId] = useState("");
+    const [courseSlug, setCourseSlug] = useState("");
+    const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
 
     const context = useContext(AppContext);
     if (!context) {
@@ -77,6 +90,8 @@ export default function AddCourse(props: AddCourseProps) {
             const course = courses[courseId];
             setCourseName(course.name || "");
             setCourseDescription(course.description || "");
+            setCourseSlug(course.slug || "");
+            if (course.slug) setSlugManuallyEdited(true);
             // Convert price to string if it's a number
             setCoursePrice(course.price ? String(course.price) : "");
             setRepoUrl(course.repoUrl || "");
@@ -133,6 +148,7 @@ export default function AddCourse(props: AddCourseProps) {
             const courseData: CourseData = {
                 name: courseName,
                 description: courseDescription,
+                slug: courseSlug || generateSlug(courseName),
                 price: coursePrice,
                 priceProductId: priceProduct?.id || null,
                 repoUrl: repoUrl,
@@ -184,7 +200,7 @@ export default function AddCourse(props: AddCourseProps) {
             });
         }
     }, [
-        products, courseName, courseDescription, coursePrice, repoUrl,
+        products, courseName, courseDescription, courseSlug, coursePrice, repoUrl,
         courseImage, courseLevel, courseCategories, courseTags,
         courseRequirements, courseObjectives, coursePrerequisites, courseStatus, instructorName,
         estimatedDuration, certificateEnabled, allowPromoCodes, onClose, refreshCourses, showToast
@@ -202,6 +218,7 @@ export default function AddCourse(props: AddCourseProps) {
             const updatedData: Partial<CourseData> = {
                 name: courseName,
                 description: courseDescription,
+                slug: courseSlug || generateSlug(courseName),
                 price: coursePrice || "",
                 priceProductId: priceProduct?.id || null,
                 repoUrl: repoUrl,
@@ -267,7 +284,7 @@ export default function AddCourse(props: AddCourseProps) {
             });
         }
     }, [
-        courseId, courseName, courseDescription, coursePrice, repoUrl, products,
+        courseId, courseName, courseDescription, courseSlug, coursePrice, repoUrl, products,
         courseImage, courseLevel, courseCategories, courseTags,
         courseRequirements, courseObjectives, coursePrerequisites, courseStatus, instructorName,
         estimatedDuration, certificateEnabled, allowPromoCodes, onClose, refreshCourses, showToast, originalImageUrl
@@ -457,8 +474,33 @@ export default function AddCourse(props: AddCourseProps) {
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                             <div>
                                 <div className="relative mb-6">
-                                    <CourseNameField value={courseName} onChange={(e) => setCourseName(e.target.value)} />
+                                    <CourseNameField value={courseName} onChange={(e) => {
+                                        const newName = e.target.value;
+                                        setCourseName(newName);
+                                        if (!slugManuallyEdited) {
+                                            setCourseSlug(generateSlug(newName));
+                                        }
+                                    }} />
                                     <div className="h-0.5 w-full bg-gradient-to-r from-[color:var(--ai-primary)]/50 to-[color:var(--ai-secondary)]/50 mt-1 rounded-full"></div>
+                                </div>
+
+                                <div className="relative mb-6">
+                                    <Input
+                                        label="URL Slug"
+                                        variant="bordered"
+                                        placeholder="e.g., ai-agents-build-everything"
+                                        value={courseSlug}
+                                        onChange={(e: InputChangeEvent) => {
+                                            setSlugManuallyEdited(true);
+                                            setCourseSlug(generateSlug(e.target.value));
+                                        }}
+                                        startContent={<FiLink className="text-[color:var(--ai-muted)]" />}
+                                        className="bg-[color:var(--ai-card-bg)]/40"
+                                        classNames={{
+                                            label: "text-[color:var(--ai-foreground)] font-medium"
+                                        }}
+                                        description={courseSlug ? `studiai.ro/courses/${courseSlug}` : 'Auto-generated from course name'}
+                                    />
                                 </div>
 
                                 <CourseDescriptionField value={courseDescription} onChange={(e) => setCourseDescription(e.target.value)} />
