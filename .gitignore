@@ -58,4 +58,7 @@ dist
 *-output.txt
 *-tree.txt
 lint-output*.txt
+
+# Internal planning docs
+COURSE_STRATEGY.md
 *.log

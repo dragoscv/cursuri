@@ -27,6 +27,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {  // Ge
       priority: 0.9,
     },
     {
+      url: `${siteConfig.url}/about`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    },
+    {
+      url: `${siteConfig.url}/contact`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    },
+    {
       url: `${siteConfig.url}/privacy-policy`,
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
@@ -43,6 +55,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {  // Ge
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
       priority: 0.5,
+    },
+    // AI discovery endpoints
+    {
+      url: `${siteConfig.url}/llms.txt`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    },
+    {
+      url: `${siteConfig.url}/llms-full.txt`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
     },
   ]
   // Generate course URLs

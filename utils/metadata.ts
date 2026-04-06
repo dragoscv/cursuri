@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 // Base URL for the website - update this with your actual domain in production
 export const siteConfig = {
     name: 'StudiAI',
-    description: 'Advance your career with expert-led online courses in programming, technology, and digital skills.',
+    description: 'Learn to build real-world software applications using AI agents like GitHub Copilot, Cursor AI, Claude, and ChatGPT. Hands-on courses in Romanian — no coding experience required.',
     url: process.env.NEXT_PUBLIC_SITE_URL || 'https://studiai.ro',
     ogImage: '/images/og-image.jpg',
     links: {
@@ -183,6 +183,19 @@ export function constructCourseMetadata(course: {
         'education',
         'technology course',
         'professional development',
+        'AI agents',
+        'AI-assisted development',
+        'learn to code with AI',
+        'build software with AI',
+        'GitHub Copilot',
+        'Cursor AI',
+        'Claude',
+        'ChatGPT',
+        'AI coding',
+        'no-code AI development',
+        'build apps with AI',
+        'studiai',
+        'studiai.ro',
     ];
 
     return constructMetadata({

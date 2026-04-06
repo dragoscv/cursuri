@@ -1,5 +1,5 @@
 /**
- * Structured data utilities for SEO
+ * Structured data utilities for SEO and AI discoverability (AEO/LLMO)
  */
 
 // Base URL for the website
@@ -9,6 +9,90 @@ const siteConfig = {
     url: process.env.NEXT_PUBLIC_SITE_URL || 'https://studiai.ro',
     ogImage: '/images/og-image.jpg',
 };
+
+/**
+ * Generate Organization structured data (JSON-LD)
+ * Used in root layout for site-wide AI/SEO discoverability
+ */
+export function generateOrganizationStructuredData(): string {
+    return JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'EducationalOrganization',
+        name: siteConfig.name,
+        url: siteConfig.url,
+        logo: `${siteConfig.url}/logo.svg`,
+        description: 'Romanian online education platform specializing in AI-powered development. Learn to build real-world applications using AI agents like GitHub Copilot, Cursor, Claude, and ChatGPT.',
+        sameAs: [
+            'https://discord.gg/studiai',
+        ],
+        address: {
+            '@type': 'PostalAddress',
+            addressCountry: 'RO',
+        },
+        areaServed: {
+            '@type': 'Country',
+            name: 'Romania',
+        },
+        knowsLanguage: ['ro', 'en'],
+        hasOfferCatalog: {
+            '@type': 'OfferCatalog',
+            name: 'AI Development Courses',
+            itemListElement: [
+                {
+                    '@type': 'Course',
+                    name: 'AI Agents - Build Everything with AI',
+                    url: `${siteConfig.url}/courses/oMC8PJGBVo94LGPQ4wuW`,
+                    description: 'Comprehensive course teaching how to use AI agents (GitHub Copilot, Cursor, Claude, ChatGPT) to build full-stack applications from scratch — no prior coding experience required.',
+                    provider: {
+                        '@type': 'EducationalOrganization',
+                        name: siteConfig.name,
+                        url: siteConfig.url,
+                    },
+                },
+            ],
+        },
+    });
+}
+
+/**
+ * Generate WebSite structured data with SearchAction (JSON-LD)
+ */
+export function generateWebSiteStructuredData(): string {
+    return JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: siteConfig.name,
+        url: siteConfig.url,
+        description: siteConfig.description,
+        inLanguage: ['ro', 'en'],
+        potentialAction: {
+            '@type': 'SearchAction',
+            target: {
+                '@type': 'EntryPoint',
+                urlTemplate: `${siteConfig.url}/courses?q={search_term_string}`,
+            },
+            'query-input': 'required name=search_term_string',
+        },
+    });
+}
+
+/**
+ * Generate FAQPage structured data (JSON-LD) for AI discoverability
+ */
+export function generateFAQStructuredData(faqs: Array<{ question: string; answer: string }>): string {
+    return JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqs.map((faq) => ({
+            '@type': 'Question',
+            name: faq.question,
+            acceptedAnswer: {
+                '@type': 'Answer',
+                text: faq.answer,
+            },
+        })),
+    });
+}
 
 /**
  * Generate breadcrumb structured data for a page (JSON-LD)

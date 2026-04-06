@@ -1,20 +1,37 @@
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
+import { constructMetadata } from '@/utils/metadata';
+import { generateOrganizationStructuredData } from '@/utils/structuredData';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('about.metadata');
-  return {
+  return constructMetadata({
     title: t('title'),
     description: t('description'),
-  };
+    keywords: [
+      'StudiAI',
+      'about StudiAI',
+      'AI education platform Romania',
+      'learn AI development',
+      'AI agents courses',
+      'Romanian tech education',
+      'build software with AI',
+    ],
+    canonical: 'https://studiai.ro/about',
+  });
 }
 
 export default async function AboutPage() {
   const t = await getTranslations('about');
+  const orgStructuredData = generateOrganizationStructuredData();
 
   return (
     <div className="min-h-screen bg-[color:var(--ai-background)] pt-20 pb-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: orgStructuredData }}
+      />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero Section */}
         <div className="text-center mb-16">

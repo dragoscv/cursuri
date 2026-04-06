@@ -14,6 +14,7 @@ import { constructMetadata } from '@/utils/metadata';
 import '@/utils/security/initSecurityChecks';
 import { MetaPixel } from "@/components/MetaPixel";
 import { TikTokPixel } from "@/components/TikTokPixel";
+import { generateOrganizationStructuredData, generateWebSiteStructuredData } from '@/utils/structuredData';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -34,6 +35,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://images.unsplash.com" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
         <PreloadLinks />
+        {/* Structured data for AI discoverability (AEO/LLMO) */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: generateOrganizationStructuredData() }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: generateWebSiteStructuredData() }}
+        />
       </head>
       <body className={`${inter.className} bg-[rgb(var(--background-start-rgb))]`}>
         {' '}
