@@ -76,6 +76,46 @@ export async function getCourseById(courseId: string): Promise<DocumentData | nu
 }
 
 /**
+ * Get a course by its slug field.
+ * Falls back to getCourseById if it looks like a Firebase document ID.
+ *
+ * @param slugOrId - Course slug (e.g. "ai-agents-build-everything") or document ID
+ * @returns Object with course data and whether it was resolved by slug
+ */
+export async function getCourseBySlugOrId(slugOrId: string): Promise<{ course: DocumentData | null; resolvedBySlug: boolean }> {
+    if (!slugOrId) {
+        return { course: null, resolvedBySlug: false };
+    }
+
+    // Firebase auto-generated IDs are 20 alphanumeric chars — try slug query first for anything else
+    const looksLikeFirebaseId = /^[a-zA-Z0-9]{20}$/.test(slugOrId);
+
+    if (!looksLikeFirebaseId) {
+        // Try slug lookup first
+        try {
+            const q = query(
+                collection(firestoreDB, 'courses'),
+                where('slug', '==', slugOrId)
+            );
+            const snapshot = await getDocs(q);
+            if (!snapshot.empty) {
+                const docSnap = snapshot.docs[0];
+                return {
+                    course: { id: docSnap.id, ...docSnap.data() },
+                    resolvedBySlug: true,
+                };
+            }
+        } catch (error) {
+            console.error(`Error querying course by slug "${slugOrId}":`, error);
+        }
+    }
+
+    // Fallback: try as document ID
+    const course = await getCourseById(slugOrId);
+    return { course, resolvedBySlug: false };
+}
+
+/**
  * Get all courses with active status
  * 
  * @returns Array of all active courses

@@ -131,11 +131,11 @@ const SearchBar = React.memo(function SearchBar() {
   }, [searchQuery]);
 
   // Handle course selection
-  const handleSelectCourse = (courseId: string) => {
+  const handleSelectCourse = (courseId: string, courseSlug?: string) => {
     setIsSearchOpen(false);
     setSearchQuery('');
     setSearchResults([]);
-    router.push(`/courses/${courseId}`);
+    router.push(`/courses/${courseSlug || courseId}`);
   };
 
   // Handle search button click with event propagation control
@@ -198,7 +198,7 @@ const SearchBar = React.memo(function SearchBar() {
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && searchResults.length > 0) {
                     // Select first result when Enter is pressed
-                    handleSelectCourse(searchResults[0].id);
+                    handleSelectCourse(searchResults[0].id, searchResults[0].slug);
                   }
                 }}
                 variant="bordered"
@@ -237,11 +237,11 @@ const SearchBar = React.memo(function SearchBar() {
                         key={course.id}
                         role="listitem"
                         className="p-3 hover:bg-[color:var(--ai-primary)]/10 rounded-lg cursor-pointer transition-colors focus-within:ring-2 focus-within:ring-ai-primary"
-                        onClick={() => handleSelectCourse(course.id)}
+                        onClick={() => handleSelectCourse(course.id, course.slug)}
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' || e.key === ' ') {
                             e.preventDefault();
-                            handleSelectCourse(course.id);
+                            handleSelectCourse(course.id, course.slug);
                           }
                         }}
                         tabIndex={0}

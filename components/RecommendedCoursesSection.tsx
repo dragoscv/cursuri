@@ -116,7 +116,7 @@ const RecommendedCoursesSection = React.memo(function RecommendedCoursesSection(
                 <div
                   className="relative h-48 w-full overflow-hidden"
                 >
-                  <Link href={`/courses/${course.id}`} className="block h-full">
+                  <Link href={`/courses/${course.slug || course.id}`} className="block h-full">
                     <Image
                       src={course.imageUrl || '/placeholder-course.svg'}
                       alt={course.name}
@@ -130,7 +130,7 @@ const RecommendedCoursesSection = React.memo(function RecommendedCoursesSection(
                 </div>
                 <div className="flex flex-1 flex-col p-6">
                   <Link
-                    href={`/courses/${course.id}`}
+                    href={`/courses/${course.slug || course.id}`}
                     className="mb-2 text-lg font-semibold text-[color:var(--ai-foreground)] hover:text-[color:var(--ai-primary)] transition-colors line-clamp-2"
                   >
                     {course.name}
@@ -163,7 +163,7 @@ const RecommendedCoursesSection = React.memo(function RecommendedCoursesSection(
                       )}
                     </div>
                     <Link
-                      href={`/courses/${course.id}`}
+                      href={`/courses/${course.slug || course.id}`}
                       className="text-sm font-medium text-[color:var(--ai-primary)] hover:underline"
                     >
                       {tCommon('viewDetails')} &rarr;

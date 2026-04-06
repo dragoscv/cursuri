@@ -7,7 +7,7 @@ import {
   generateLessonStructuredData,
   generateBreadcrumbStructuredData,
 } from '@/utils/structuredData';
-import { getCourseById, getLessonById, getCourseLessons } from '@/utils/firebase/server';
+import { getCourseById, getCourseBySlugOrId, getLessonById, getCourseLessons } from '@/utils/firebase/server';
 import { Course, Lesson, PageParams } from '@/types';
 import { safeToISOString } from '@/utils/timeHelpers';
 import LessonNotFound from '@/components/Lesson/LessonNotFound';
@@ -22,12 +22,14 @@ export async function generateMetadata({
   try {
     // Await params if it's a promise
     const resolvedParams = 'then' in params ? await params : params;
-    const courseId = String(resolvedParams.courseId);
+    const slugOrId = String(resolvedParams.courseId);
     const lessonId = String(resolvedParams.lessonId);
 
-    // Fetch course and lesson data
-    const course = (await getCourseById(courseId)) as Course;
-    const lesson = (await getLessonById(courseId, lessonId)) as Lesson;
+    // Resolve course by slug or ID
+    const { course: courseData } = await getCourseBySlugOrId(slugOrId);
+    const courseDocId = courseData?.id || slugOrId;
+    const course = courseData as Course;
+    const lesson = (await getLessonById(courseDocId, lessonId)) as Lesson;
 
     if (!course || !lesson) {
       return {
@@ -36,6 +38,7 @@ export async function generateMetadata({
       };
     }
 
+    const canonicalSlug = course.slug || slugOrId;
     const instructorName =
       typeof course.instructor === 'string'
         ? course.instructor
@@ -53,7 +56,7 @@ export async function generateMetadata({
         'learning',
         'education',
       ],
-      canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/courses/${courseId}/lessons/${lessonId}`,
+      canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/courses/${canonicalSlug}/lessons/${lessonId}`,
       type: 'lesson',
       publishedTime: undefined, // lesson.createdAt is not in the type
       modifiedTime: lesson.lastModified ? new Date(lesson.lastModified).toISOString() : undefined,
@@ -81,11 +84,15 @@ export default async function Page({ params }: PageParams<{ courseId: string; le
   try {
     // Await params if it's a promise
     const resolvedParams = 'then' in params ? await params : params;
-    const courseId = String(resolvedParams.courseId);
+    const slugOrId = String(resolvedParams.courseId);
     const lessonId = String(resolvedParams.lessonId);
 
+    // Resolve course by slug or ID
+    const { course: resolvedCourse } = await getCourseBySlugOrId(slugOrId);
+    const courseId = resolvedCourse?.id || slugOrId;
+
     // Get course data
-    const course = (await getCourseById(courseId)) as Course;
+    const course = resolvedCourse as Course;
 
     if (!course) {
       return <LessonNotFound courseId={courseId} lessonId={lessonId} courseExists={false} />;
@@ -137,7 +144,8 @@ export default async function Page({ params }: PageParams<{ courseId: string; le
     // At this point we have a lesson
     // Generate URLs for structured data
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cursuri.com';
-    const courseUrl = `${siteUrl}/courses/${courseId}`;
+    const canonicalSlug = course.slug || courseId;
+    const courseUrl = `${siteUrl}/courses/${canonicalSlug}`;
     const lessonUrl = `${courseUrl}/lessons/${lessonId}`;
 
     // Get instructor name
@@ -150,7 +158,7 @@ export default async function Page({ params }: PageParams<{ courseId: string; le
       title: course.name,
       description: course.description || '',
       instructorName,
-      slug: course.id,
+      slug: canonicalSlug,
       createdAt: safeToISOString(course.createdAt),
       updatedAt: safeToISOString(course.updatedAt),
     };

@@ -29,17 +29,20 @@ export default function LessonsPage(props: LessonsPageProps) {
   const [completedLessons, setCompletedLessons] = useState<Record<string, boolean>>({});
   const [isLoading, setIsLoading] = useState(true);
 
-  // Find the course and its associated lessons
-  const course = Object.values(courses || {}).find((c: Course) => c.id === courseId);
+  // Find the course and its associated lessons (support both slug and ID)
+  const course = Object.values(courses || {}).find(
+    (c: Course) => c.id === courseId || c.slug === courseId
+  );
+  const courseDocId = course?.id || courseId;
 
   // Get all lessons for this course and convert to array
-  const courseLessons = lessons[courseId] ? Object.values(lessons[courseId]) : [];
+  const courseLessons = lessons[courseDocId] ? Object.values(lessons[courseDocId]) : [];
 
   useEffect(() => {
     // Get completed lessons from lessonProgress in context
-    if (courseLessons && lessonProgress && lessonProgress[courseId]) {
+    if (courseLessons && lessonProgress && lessonProgress[courseDocId]) {
       const completed = courseLessons.reduce((result: Record<string, boolean>, lesson: Lesson) => {
-        const progress = lessonProgress[courseId]?.[lesson.id];
+        const progress = lessonProgress[courseDocId]?.[lesson.id];
         const isComplete = progress?.isCompleted === true;
 
         result[lesson.id] = isComplete;
@@ -52,12 +55,12 @@ export default function LessonsPage(props: LessonsPageProps) {
       setCompletedLessons({});
       setIsLoading(false);
     }
-  }, [courseLessons, lessonProgress, courseId]);
+  }, [courseLessons, lessonProgress, courseDocId]);
 
   // Check if the user has purchased this course
   const hasPurchased = userPurchases
     ? Object.values(userPurchases).some(
-      (purchase: UserPaidProduct) => purchase.metadata?.courseId === courseId
+      (purchase: UserPaidProduct) => purchase.metadata?.courseId === courseDocId
     )
     : false;
 
@@ -69,9 +72,12 @@ export default function LessonsPage(props: LessonsPageProps) {
     );
   }
 
+  // Use slug for URLs if available
+  const courseSlug = course.slug || courseDocId;
+
   // If the user hasn't purchased the course, redirect to the course page
   if (user && !hasPurchased && !course.isFree) {
-    return <CourseAccessRequired courseId={courseId} />;
+    return <CourseAccessRequired courseId={courseDocId} />;
   }
 
   return (
@@ -82,7 +88,7 @@ export default function LessonsPage(props: LessonsPageProps) {
       className="container mx-auto px-4 py-8"
     >
       <CourseProgressHeader
-        courseId={courseId}
+        courseId={courseSlug}
         courseName={course.name}
         difficulty={course.difficulty || 'All levels'}
         lessonCount={courseLessons?.length || 0}
@@ -94,7 +100,7 @@ export default function LessonsPage(props: LessonsPageProps) {
       <LessonsList
         lessons={courseLessons || []}
         course={course}
-        courseId={courseId}
+        courseId={courseDocId}
         completedLessons={completedLessons}
         userHasAccess={hasPurchased || course.isFree}
       />

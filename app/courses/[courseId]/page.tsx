@@ -1,9 +1,12 @@
 import React from 'react';
 import { Metadata } from 'next';
-import { getCourseById } from '@/utils/firebase/server';
+import { redirect } from 'next/navigation';
+import { getCourseBySlugOrId } from '@/utils/firebase/server';
 import { constructCourseMetadata } from '@/utils/metadata';
 import { generateCourseStructuredData, generateBreadcrumbStructuredData } from '@/utils/structuredData';
 import dynamic from 'next/dynamic';
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://studiai.ro';
 
 // Dynamic import for client component
 const CourseDetail = dynamic(() => import('@/components/Course/CourseDetail'), {
@@ -25,11 +28,10 @@ const CourseDetail = dynamic(() => import('@/components/Course/CourseDetail'), {
 // Generate metadata dynamically for each course
 export async function generateMetadata({ params }: { params: { courseId: string } | Promise<{ courseId: string }> }): Promise<Metadata> {
   try {
-    // Await params if they are a Promise
     const resolvedParams = 'then' in params ? await params : params;
-    const courseId = String(resolvedParams.courseId);
+    const slugOrId = String(resolvedParams.courseId);
 
-    const course = await getCourseById(courseId);
+    const { course } = await getCourseBySlugOrId(slugOrId);
     if (!course) {
       return {
         title: 'Course Not Found',
@@ -37,13 +39,16 @@ export async function generateMetadata({ params }: { params: { courseId: string 
       };
     }
 
+    // Use slug for canonical URL if available, otherwise use the param as-is
+    const canonicalSlug = course.slug || slugOrId;
+
     return constructCourseMetadata({
       title: course.title || course.name || 'Course',
       description: course.description || 'No description available',
       instructorName: course.instructorName || (typeof course.instructor === 'string' ? course.instructor : course.instructor?.name || 'Unknown Instructor'),
       updatedAt: course.updatedAt ? (typeof course.updatedAt === 'string' ? course.updatedAt : course.updatedAt.toString()) : undefined,
       createdAt: course.createdAt ? (typeof course.createdAt === 'string' ? course.createdAt : course.createdAt.toString()) : undefined,
-      slug: courseId,
+      slug: canonicalSlug,
       coverImage: course.coverImage || course.imageUrl
     });
   } catch (error) {
@@ -56,44 +61,51 @@ export async function generateMetadata({ params }: { params: { courseId: string 
 }
 
 export default async function Page({ params }: { params: { courseId: string } | Promise<{ courseId: string }> }) {
-  // Await params if they are a Promise
   const resolvedParams = 'then' in params ? await params : params;
-  const courseId = String(resolvedParams.courseId);
+  const slugOrId = String(resolvedParams.courseId);
 
-  // Fetch course data for structured data and SSR content
+  // Resolve course by slug or ID
+  const { course, resolvedBySlug } = await getCourseBySlugOrId(slugOrId);
+
+  // If accessed by ID but course has a slug, 301 redirect to the slug URL
+  if (course && !resolvedBySlug && course.slug && course.slug !== slugOrId) {
+    redirect(`/courses/${course.slug}`);
+  }
+
+  // Use the actual document ID for CourseDetail (it fetches by ID internally)
+  const courseDocId = course?.id || slugOrId;
+  const canonicalSlug = course?.slug || slugOrId;
+
+  // Build structured data and SSR content
   let courseStructuredData: string | null = null;
   let breadcrumbStructuredData: string | null = null;
   let courseTitle = '';
   let courseDescription = '';
   let courseInstructor = '';
-  try {
-    const course = await getCourseById(courseId);
-    if (course) {
-      courseTitle = course.title || course.name || 'Course';
-      courseDescription = course.description || 'No description available';
-      courseInstructor = course.instructorName || (typeof course.instructor === 'string' ? course.instructor : course.instructor?.name || 'StudiAI');
-      
-      courseStructuredData = generateCourseStructuredData({
-        title: courseTitle,
-        description: courseDescription,
-        instructorName: courseInstructor,
-        updatedAt: course.updatedAt ? (typeof course.updatedAt === 'string' ? course.updatedAt : course.updatedAt.toString()) : undefined,
-        createdAt: course.createdAt ? (typeof course.createdAt === 'string' ? course.createdAt : course.createdAt.toString()) : undefined,
-        slug: courseId,
-        coverImage: course.coverImage || course.imageUrl,
-        price: course.price,
-        rating: course.rating,
-        ratingCount: course.ratingCount,
-        lessons: course.lessons,
-      });
-      breadcrumbStructuredData = generateBreadcrumbStructuredData([
-        { name: 'Home', url: process.env.NEXT_PUBLIC_SITE_URL || 'https://studiai.ro', position: 1 },
-        { name: 'Courses', url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://studiai.ro'}/courses`, position: 2 },
-        { name: courseTitle, url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://studiai.ro'}/courses/${courseId}`, position: 3 },
-      ]);
-    }
-  } catch {
-    // Continue without structured data if fetch fails
+
+  if (course) {
+    courseTitle = course.title || course.name || 'Course';
+    courseDescription = course.description || 'No description available';
+    courseInstructor = course.instructorName || (typeof course.instructor === 'string' ? course.instructor : course.instructor?.name || 'StudiAI');
+
+    courseStructuredData = generateCourseStructuredData({
+      title: courseTitle,
+      description: courseDescription,
+      instructorName: courseInstructor,
+      updatedAt: course.updatedAt ? (typeof course.updatedAt === 'string' ? course.updatedAt : course.updatedAt.toString()) : undefined,
+      createdAt: course.createdAt ? (typeof course.createdAt === 'string' ? course.createdAt : course.createdAt.toString()) : undefined,
+      slug: canonicalSlug,
+      coverImage: course.coverImage || course.imageUrl,
+      price: course.price,
+      rating: course.rating,
+      ratingCount: course.ratingCount,
+      lessons: course.lessons,
+    });
+    breadcrumbStructuredData = generateBreadcrumbStructuredData([
+      { name: 'Home', url: SITE_URL, position: 1 },
+      { name: 'Courses', url: `${SITE_URL}/courses`, position: 2 },
+      { name: courseTitle, url: `${SITE_URL}/courses/${canonicalSlug}`, position: 3 },
+    ]);
   }
 
   return (
@@ -117,12 +129,12 @@ export default async function Page({ params }: { params: { courseId: string } | 
           <p>{courseDescription}</p>
           <p>Instructor: {courseInstructor}</p>
           <p>Platform: StudiAI (studiai.ro) — Romanian AI development education</p>
-          <a href={`${process.env.NEXT_PUBLIC_SITE_URL || 'https://studiai.ro'}/courses/${courseId}`}>
+          <a href={`${SITE_URL}/courses/${canonicalSlug}`}>
             Enroll in {courseTitle}
           </a>
         </section>
       )}
-      <CourseDetail courseId={courseId} />
+      <CourseDetail courseId={courseDocId} />
     </>
   );
 }

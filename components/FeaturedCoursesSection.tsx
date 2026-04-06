@@ -75,7 +75,7 @@ const FeaturedCoursesSection = React.memo(function FeaturedCoursesSection() {
               >
                 <div
                   className="relative h-48 w-full cursor-pointer overflow-hidden"
-                  onClick={() => router.push(`/courses/${course.id}`)}
+                  onClick={() => router.push(`/courses/${course.slug || course.id}`)}
                 >
                   <Image
                     src={course.imageUrl || '/placeholder-course.svg'}
@@ -101,7 +101,7 @@ const FeaturedCoursesSection = React.memo(function FeaturedCoursesSection() {
                 <div className="flex-1 flex flex-col p-6">
                   <h3
                     className="mb-2 text-lg font-semibold text-[color:var(--ai-foreground)] cursor-pointer hover:text-[color:var(--ai-primary)] transition-colors line-clamp-2"
-                    onClick={() => router.push(`/courses/${course.id}`)}
+                    onClick={() => router.push(`/courses/${course.slug || course.id}`)}
                   >
                     {course.name}
                   </h3>

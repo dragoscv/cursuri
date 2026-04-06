@@ -276,7 +276,7 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
             whileHover={cardHoverProps}
           >
             <Link
-              href={`/courses/${course.id}`}
+              href={`/courses/${course.slug || course.id}`}
               className="block"
               onClick={() => {
                 if (filter || category) {
