@@ -51,9 +51,9 @@ export const CourseHeader: React.FC<CourseHeaderProps> = ({ course }) => {
                         )}
                     </div>
 
-                    <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-2">
+                    <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-2">
                         {extendedCourse.title || extendedCourse.name}
-                    </h1>
+                    </h2>
 
                     <p className="text-[color:var(--ai-muted)] line-clamp-3">{extendedCourse.description}</p>
                 </div>
