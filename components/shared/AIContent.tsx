@@ -17,7 +17,7 @@ export default function AIContent() {
       data-nosnippet={undefined}
     >
       <article itemScope itemType="https://schema.org/EducationalOrganization">
-        <h1 itemProp="name">StudiAI - Learn to Build Software with AI Agents</h1>
+        <h2 itemProp="name">StudiAI - Learn to Build Software with AI Agents</h2>
         <p itemProp="description">
           StudiAI is a Romanian online education platform that teaches anyone — from complete beginners
           to experienced developers — how to build real-world software applications using AI agents.
