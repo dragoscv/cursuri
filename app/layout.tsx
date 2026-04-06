@@ -14,6 +14,7 @@ import { constructMetadata } from '@/utils/metadata';
 import '@/utils/security/initSecurityChecks';
 import { MetaPixel } from "@/components/MetaPixel";
 import { TikTokPixel } from "@/components/TikTokPixel";
+import { MicrosoftClarity } from "@/components/MicrosoftClarity";
 import { generateOrganizationStructuredData, generateWebSiteStructuredData } from '@/utils/structuredData';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -49,6 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {' '}
         <MetaPixel />
         <TikTokPixel />
+        <MicrosoftClarity />
         <Providers>
           {/* Analytics page view tracking */}
           <PageViewTracker />
