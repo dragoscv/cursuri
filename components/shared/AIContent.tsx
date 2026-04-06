@@ -13,12 +13,11 @@ const SITE_URL = siteConfig.url;
 export default function AIContent() {
   return (
     <section
-      aria-hidden="true"
       className="sr-only"
       data-nosnippet={undefined}
     >
       <article itemScope itemType="https://schema.org/EducationalOrganization">
-        <h2 itemProp="name">StudiAI - Learn to Build Software with AI Agents</h2>
+        <h1 itemProp="name">StudiAI - Learn to Build Software with AI Agents</h1>
         <p itemProp="description">
           StudiAI is a Romanian online education platform that teaches anyone — from complete beginners
           to experienced developers — how to build real-world software applications using AI agents.

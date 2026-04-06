@@ -124,7 +124,7 @@ export default async function Page({ params }: { params: { courseId: string } | 
       )}
       {/* SSR content for AI crawlers — CourseDetail is client-side and invisible to AI bots */}
       {courseTitle && (
-        <section aria-hidden="true" className="sr-only">
+        <section className="sr-only">
           <h1>{courseTitle}</h1>
           <p>{courseDescription}</p>
           <p>Instructor: {courseInstructor}</p>
