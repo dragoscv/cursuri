@@ -48,10 +48,12 @@ export default function Profile(props: any) {
                                             if (courses[key]?.id === userPaidProduct?.metadata?.courseId &&
                                                 courses[key]?.priceProduct?.prices?.length) {
                                                 const course = courses[key];
+                                                const prices = course.priceProduct?.prices;
+                                                if (!prices?.length) return null;
                                                 const matchedPrice = (typeof course.price === 'string' && course.price.startsWith('price_'))
-                                                    ? course.priceProduct.prices.find((p: any) => p.id === course.price)
+                                                    ? prices.find((p: any) => p.id === course.price)
                                                     : undefined;
-                                                const price = matchedPrice || course.priceProduct.prices[0];
+                                                const price = matchedPrice || prices[0];
                                                 return (price.unit_amount / 100).toLocaleString(locale, {
                                                     style: 'currency',
                                                     currency: price.currency?.toUpperCase() || 'RON',
