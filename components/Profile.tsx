@@ -46,10 +46,15 @@ export default function Profile(props: any) {
                                     <p className="text-lg font-medium text-[color:var(--ai-foreground)]">{
                                         Object.keys(courses).map((key: any) => {
                                             if (courses[key]?.id === userPaidProduct?.metadata?.courseId &&
-                                                courses[key]?.priceProduct?.prices?.[0]?.unit_amount) {
-                                                return (courses[key].priceProduct.prices[0].unit_amount / 100).toLocaleString(locale, {
+                                                courses[key]?.priceProduct?.prices?.length) {
+                                                const course = courses[key];
+                                                const matchedPrice = (typeof course.price === 'string' && course.price.startsWith('price_'))
+                                                    ? course.priceProduct.prices.find((p: any) => p.id === course.price)
+                                                    : undefined;
+                                                const price = matchedPrice || course.priceProduct.prices[0];
+                                                return (price.unit_amount / 100).toLocaleString(locale, {
                                                     style: 'currency',
-                                                    currency: 'RON',
+                                                    currency: price.currency?.toUpperCase() || 'RON',
                                                 })
                                             }
                                             return null;

@@ -30,13 +30,20 @@ export default function CoursesPage() {
 
   // Helper function to safely format price
   const formatPrice = (course: CourseWithPriceProduct): string => {
-    if (course.priceProduct?.prices?.[0]?.unit_amount !== undefined) {
-      const amount = course.priceProduct.prices[0].unit_amount / 100;
-      const currency = course.priceProduct.prices[0].currency || 'RON';
-      return amount.toLocaleString(locale, {
-        style: 'currency',
-        currency: currency,
-      });
+    if (course.priceProduct?.prices?.length) {
+      // Find the specific price matching course.price, fall back to first price
+      const matchedPrice = (typeof course.price === 'string' && course.price.startsWith('price_'))
+          ? course.priceProduct.prices.find(p => p.id === course.price)
+          : undefined;
+      const price = matchedPrice || course.priceProduct.prices[0];
+      if (price.unit_amount !== undefined) {
+        const amount = price.unit_amount / 100;
+        const currency = price.currency?.toUpperCase() || 'RON';
+        return amount.toLocaleString(locale, {
+          style: 'currency',
+          currency: currency,
+        });
+      }
     }
     return 'Price not available';
   }; // Delete course function

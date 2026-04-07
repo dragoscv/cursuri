@@ -32,24 +32,21 @@ export function getCoursePrice(course: any, products?: any[]): PriceInfo {
         return defaultPriceInfo;
     }
 
-    // Method 1: Try to find price using course.price ID (more specific)
-    if (course.price && products) {
-        const product = products.find((p: any) => p.id === course.priceProduct.id);
-        if (product?.prices) {
-            const specificPrice = product.prices.find((price: any) => price.id === course.price);
-            if (specificPrice?.unit_amount) {
-                const amount = specificPrice.unit_amount / 100;
-                const currency = specificPrice.currency?.toUpperCase() || 'RON';
-                return {
-                    amount,
-                    currency,
-                    priceId: specificPrice.id,
-                    formatted: new Intl.NumberFormat('ro-RO', {
-                        style: 'currency',
-                        currency: currency
-                    }).format(amount)
-                };
-            }
+    // Method 1: Try to find price using course.price ID directly from priceProduct
+    if (course.price && typeof course.price === 'string' && course.price.startsWith('price_')) {
+        const specificPrice = course.priceProduct.prices?.find((p: any) => p.id === course.price);
+        if (specificPrice?.unit_amount) {
+            const amount = specificPrice.unit_amount / 100;
+            const currency = specificPrice.currency?.toUpperCase() || 'RON';
+            return {
+                amount,
+                currency,
+                priceId: specificPrice.id,
+                formatted: new Intl.NumberFormat('ro-RO', {
+                    style: 'currency',
+                    currency: currency
+                }).format(amount)
+            };
         }
     }
 
