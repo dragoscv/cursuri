@@ -18,8 +18,11 @@
         "maxAgeSeconds": 7200,
         "responseHeader": [
             "Content-Type",
-            "Authorization",
             "Content-Length",
+            "Content-Range",
+            "Accept-Ranges",
+            "Range",
+            "Authorization",
             "X-Requested-With",
             "X-Firebase-Storage-Version",
             "X-Goog-Upload-Status",

@@ -59,6 +59,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const [savedPosition, setSavedPosition] = React.useState<number>(0);
   const [videoReady, setVideoReady] = React.useState(false);
   const [hasShownModal, setHasShownModal] = React.useState(false);
+  const [videoError, setVideoError] = React.useState<string | null>(null);
 
   const courseId = lesson?.courseId || '';
 
@@ -150,14 +151,47 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
     const handleLoadedMetadata = () => {
       setVideoReady(true);
+      setVideoError(null);
+    };
+
+    const handleError = () => {
+      const error = video.error;
+      const src = lesson.file || lesson.videoUrl || '';
+      const fileName = src.split('/').pop()?.split('?')[0]?.toLowerCase() || '';
+
+      // Detect unsupported format on Safari/macOS
+      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+      const isUnsupportedFormat = fileName.endsWith('.webm') || fileName.endsWith('.mkv') || fileName.endsWith('.avi');
+
+      if (isUnsupportedFormat && isSafari) {
+        setVideoError('This video format is not supported by your browser. Please try using Chrome or Firefox.');
+      } else if (error) {
+        switch (error.code) {
+          case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
+            setVideoError('This video format is not supported by your browser. Please try using Chrome or Firefox.');
+            break;
+          case MediaError.MEDIA_ERR_NETWORK:
+            setVideoError('A network error occurred while loading the video. Please check your connection and try again.');
+            break;
+          case MediaError.MEDIA_ERR_DECODE:
+            setVideoError('The video could not be decoded. Please try using a different browser.');
+            break;
+          default:
+            setVideoError('An error occurred while loading the video. Please try again.');
+        }
+      } else {
+        setVideoError('The video could not be loaded. Please try again.');
+      }
     };
 
     video.addEventListener('loadedmetadata', handleLoadedMetadata);
+    video.addEventListener('error', handleError);
 
     return () => {
       video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      video.removeEventListener('error', handleError);
     };
-  }, []);
+  }, [lesson.file, lesson.videoUrl]);
 
   // Handle resume video
   const handleResumeVideo = () => {
@@ -263,13 +297,37 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
           onPause={() => !isPlaying}
           onEnded={handleVideoEnded}
           playsInline
-          preload="metadata"
+          preload="auto"
           onClick={togglePlayPause}
           poster={lesson.thumbnail || lesson.thumbnailUrl || ''}
+          crossOrigin="anonymous"
         />
 
+        {/* Video Error Overlay */}
+        {videoError && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/90 z-10">
+            <div className="text-center px-6 max-w-md">
+              <svg className="mx-auto h-12 w-12 text-red-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+              </svg>
+              <p className="text-white text-sm mb-4">{videoError}</p>
+              <button
+                onClick={() => {
+                  setVideoError(null);
+                  if (videoRef.current) {
+                    videoRef.current.load();
+                  }
+                }}
+                className="px-4 py-2 text-sm bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors"
+              >
+                {t('retry') || 'Try Again'}
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Custom Play Button Overlay */}
-        {!isPlaying && (
+        {!isPlaying && !videoError && (
           <div
             className="absolute inset-0 flex items-center justify-center cursor-pointer bg-black/30 transition-opacity duration-300"
             onClick={togglePlayPause}
