@@ -190,10 +190,9 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   // Initialize captions when the component mounts
   React.useEffect(() => {
     if (videoRef.current && lesson.captions) {
-      // Clear existing tracks
-      while (videoRef.current.firstChild) {
-        videoRef.current.removeChild(videoRef.current.firstChild);
-      }
+      // Only remove existing track elements (not all children — removing React-managed nodes causes hydration crashes)
+      const existingTracks = videoRef.current.querySelectorAll('track');
+      existingTracks.forEach((track) => track.remove());
 
       // Add caption tracks for available languages
       if (lesson.captions && Object.keys(lesson.captions).length > 0) {
@@ -267,13 +266,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
           preload="metadata"
           onClick={togglePlayPause}
           poster={lesson.thumbnail || lesson.thumbnailUrl || ''}
-        >
-          {lesson.file || lesson.videoUrl ? null : (
-            <div className="absolute inset-0 flex items-center justify-center bg-black">
-              <p className="text-white text-center">No video available</p>
-            </div>
-          )}
-        </video>
+        />
 
         {/* Custom Play Button Overlay */}
         {!isPlaying && (
