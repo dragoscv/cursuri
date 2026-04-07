@@ -239,7 +239,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
       <div
         ref={videoContainerRef}
-        className="relative overflow-hidden rounded-3xl bg-black shadow-2xl group"
+        className={`relative overflow-hidden rounded-3xl bg-black shadow-2xl group ${isFullscreen ? 'flex items-center justify-center' : ''}`}
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => {
@@ -258,7 +258,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
         <video
           ref={videoRef}
           src={lesson.file || lesson.videoUrl || ''}
-          className="w-full aspect-video bg-black"
+          className={`bg-black object-contain ${isFullscreen ? 'w-full h-full' : 'w-full aspect-video'}`}
           onTimeUpdate={handleTimeUpdate}
           onPlay={() => isPlaying}
           onPause={() => !isPlaying}
