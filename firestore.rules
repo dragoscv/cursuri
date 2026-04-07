@@ -188,6 +188,7 @@ service cloud.firestore {
       }
       match /payments/{id} {
         allow read: if request.auth.uid == uid;
+        allow create: if hasAdminAccess();
       }
       match /invoices/{id} {
         allow read: if request.auth.uid == uid;
