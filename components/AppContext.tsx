@@ -893,20 +893,16 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         // Get the priceId from the course data
         const priceId = courseData.price;
 
-        if (!priceId) {
-          console.error('Price not found for course');
-          return false;
-        }
-
-        // Find the product that contains this price
-        const product = state.products.find(
-          (product: { prices?: { id: string }[] }) =>
-            product.prices && product.prices.some((price: { id: string }) => price.id === priceId)
-        );
-
-        if (!product) {
-          console.error('Product not found for course price');
-          return false;
+        // Find the product that contains this price (optional — not all courses have a Stripe price)
+        let productId = 'admin-granted';
+        if (priceId) {
+          const product = state.products.find(
+            (product: { prices?: { id: string }[] }) =>
+              product.prices && product.prices.some((price: { id: string }) => price.id === priceId)
+          );
+          if (product) {
+            productId = product.id;
+          }
         }
 
         // Create a payment document in the user's payments collection
@@ -915,7 +911,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
         await setDoc(paymentRef, {
           id: paymentId,
-          productId: product.id,
+          productId,
           status: 'succeeded',
           created: Date.now(),
           metadata: {
