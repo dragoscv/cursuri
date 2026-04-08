@@ -2106,7 +2106,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
       try {
         const q = query(collection(firestoreDB, 'courses'), where('status', '==', 'active'));
-        const querySnapshot = await getDocs(q);
+        const querySnapshot = await getDocsFromServer(q);
 
         // First set all courses in the state
         if (mounted) {
@@ -2176,6 +2176,30 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
       });
     };
   }, [getCourseLessons, state.courses, dispatch]);
+
+  // Re-enrich courses with priceProduct when products load after courses
+  useEffect(() => {
+    if (state.products.length === 0 || Object.keys(state.courses).length === 0) return;
+
+    // Only enrich courses that have a price but no priceProduct yet
+    const unenrichedCourses = Object.entries(state.courses).filter(
+      ([, course]: [string, any]) => course.price && !course.priceProduct
+    );
+
+    if (unenrichedCourses.length === 0) return;
+
+    unenrichedCourses.forEach(([courseId, course]: [string, any]) => {
+      const priceProduct = state.products.find((product: any) =>
+        product.prices?.find((price: any) => price.id === course.price)
+      );
+      if (priceProduct) {
+        dispatch({
+          type: 'SET_COURSES',
+          payload: { courseId, course: { ...course, priceProduct } },
+        });
+      }
+    });
+  }, [state.products]); // Only re-run when products change, not courses
 
   useEffect(() => {
     if (user) {
