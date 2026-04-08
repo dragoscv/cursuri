@@ -10,6 +10,7 @@ import {
   doc,
   collection,
   getDocs,
+  getDocsFromServer,
   query,
   where,
   onSnapshot,
@@ -2049,7 +2050,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
       });
 
       const q = query(collection(firestoreDB, 'courses'), where('status', '==', 'active'));
-      const querySnapshot = await getDocs(q);
+      const querySnapshot = await getDocsFromServer(q);
 
       querySnapshot.forEach((doc) => {
         const data = doc.data();

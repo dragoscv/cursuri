@@ -84,7 +84,13 @@ export default function AddCourse(props: AddCourseProps) {
     const t = useTranslations('common.notifications');
     const tCourses = useTranslations('courses');
 
+    // Track whether form has been initialized to prevent resetting on courses state changes
+    const [formInitialized, setFormInitialized] = useState(false);
+
     useEffect(() => {
+        // Only populate form once from course data — subsequent courses state changes should not reset the form
+        if (formInitialized) return;
+
         // If courseId is provided, we're in edit mode
         if (courseId && courses[courseId]) {
             const course = courses[courseId];
@@ -138,8 +144,10 @@ export default function AddCourse(props: AddCourseProps) {
                 setCertificateEnabled(course.metadata.certificateEnabled || false);
                 setAllowPromoCodes(course.metadata.allowPromoCodes || false);
             }
+
+            setFormInitialized(true);
         }
-    }, [courseId, courses]); const addCourse = useCallback(async () => {
+    }, [courseId, courses, formInitialized]); const addCourse = useCallback(async () => {
         setLoading(true);
         try {
             const priceProduct = products.find(
