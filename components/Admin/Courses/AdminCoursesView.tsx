@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { CourseWithPriceProduct } from '@/types';
 import AdminCoursesHeader from './AdminCoursesHeader';
 import ViewToggle from './ViewToggle';
@@ -8,6 +8,7 @@ import CoursesGridView from './CoursesGridView';
 import CoursesListView from './CoursesListView';
 import { formatCoursePrice } from './utils';
 import { useRouter } from 'next/navigation';
+import { AppContext } from '@/components/AppContext';
 
 interface AdminCoursesViewProps {
     courses: Record<string, CourseWithPriceProduct>;
@@ -27,6 +28,8 @@ export default function AdminCoursesView({
     const [view, setView] = useState<"grid" | "list">("grid");
     const router = useRouter();
     const [isMounted, setIsMounted] = useState(false);
+    const context = useContext(AppContext);
+    const products = context?.products;
 
     useEffect(() => {
         setIsMounted(true);
@@ -58,7 +61,7 @@ export default function AdminCoursesView({
             {view === "grid" ? (
                 <CoursesGridView
                     courses={courses}
-                    formatPrice={formatCoursePrice}
+                    formatPrice={(course) => formatCoursePrice(course, undefined, products)}
                     onViewCourse={onViewCourse}
                     onEditCourse={onEditCourse}
                     onManageLessons={handleManageLessons}
@@ -66,7 +69,7 @@ export default function AdminCoursesView({
             ) : (
                 <CoursesListView
                     courses={courses}
-                    formatPrice={formatCoursePrice}
+                    formatPrice={(course) => formatCoursePrice(course, undefined, products)}
                     onViewCourse={onViewCourse}
                     onEditCourse={onEditCourse}
                     onManageLessons={handleManageLessons}

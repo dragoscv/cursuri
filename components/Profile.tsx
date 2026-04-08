@@ -1,6 +1,7 @@
 import { useContext } from "react"
 import { useLocale } from 'next-intl'
 import { AppContext } from "@/components/AppContext"
+import { getCoursePrice } from '@/utils/pricing'
 
 export default function Profile(props: any) {
     const locale = useLocale();
@@ -8,7 +9,7 @@ export default function Profile(props: any) {
     if (!context) {
         throw new Error("You probably forgot to put <AppProvider>.")
     }
-    const { userPaidProducts, courses } = context
+    const { userPaidProducts, courses, products } = context
 
     return (
         <>
@@ -45,19 +46,14 @@ export default function Profile(props: any) {
                                     }</h2>
                                     <p className="text-lg font-medium text-[color:var(--ai-foreground)]">{
                                         Object.keys(courses).map((key: any) => {
-                                            if (courses[key]?.id === userPaidProduct?.metadata?.courseId &&
-                                                courses[key]?.priceProduct?.prices?.length) {
-                                                const course = courses[key];
-                                                const prices = course.priceProduct?.prices;
-                                                if (!prices?.length) return null;
-                                                const matchedPrice = (typeof course.price === 'string' && course.price.startsWith('price_'))
-                                                    ? prices.find((p: any) => p.id === course.price)
-                                                    : undefined;
-                                                const price = matchedPrice || prices[0];
-                                                return (price.unit_amount / 100).toLocaleString(locale, {
-                                                    style: 'currency',
-                                                    currency: price.currency?.toUpperCase() || 'RON',
-                                                })
+                                            if (courses[key]?.id === userPaidProduct?.metadata?.courseId) {
+                                                const priceInfo = getCoursePrice(courses[key], products);
+                                                if (priceInfo.amount > 0) {
+                                                    return priceInfo.amount.toLocaleString(locale, {
+                                                        style: 'currency',
+                                                        currency: priceInfo.currency,
+                                                    })
+                                                }
                                             }
                                             return null;
                                         }).filter(Boolean)

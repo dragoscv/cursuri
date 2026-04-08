@@ -27,70 +27,66 @@ export function getCoursePrice(course: any, products?: any[]): PriceInfo {
         return { ...defaultPriceInfo, formatted: 'Free' };
     }
 
-    // Check if we have price product information
-    if (!course?.priceProduct) {
-        return defaultPriceInfo;
-    }
+    const priceId = course?.price;
+    const isStripePriceId = typeof priceId === 'string' && priceId.startsWith('price_');
 
-    // Method 1: Try to find price using course.price ID directly from priceProduct
-    if (course.price && typeof course.price === 'string' && course.price.startsWith('price_')) {
-        const specificPrice = course.priceProduct.prices?.find((p: any) => p.id === course.price);
-        if (specificPrice?.unit_amount) {
-            const amount = specificPrice.unit_amount / 100;
-            const currency = specificPrice.currency?.toUpperCase() || 'RON';
-            return {
-                amount,
-                currency,
-                priceId: specificPrice.id,
-                formatted: new Intl.NumberFormat('ro-RO', {
-                    style: 'currency',
-                    currency: currency
-                }).format(amount)
-            };
-        }
-    }
-
-    // Method 2: Use first available price from priceProduct (fallback)
-    if (course.priceProduct.prices?.[0]?.unit_amount) {
-        const price = course.priceProduct.prices[0];
-        const amount = price.unit_amount / 100;
-        const currency = price.currency?.toUpperCase() || 'RON';
+    // Helper: format a resolved price object into PriceInfo
+    const formatPriceInfo = (p: any): PriceInfo => {
+        const amount = p.unit_amount / 100;
+        const currency = p.currency?.toUpperCase() || 'RON';
         return {
             amount,
             currency,
-            priceId: price.id,
-            formatted: new Intl.NumberFormat('ro-RO', {
-                style: 'currency',
-                currency: currency
-            }).format(amount)
+            priceId: p.id,
+            formatted: new Intl.NumberFormat('ro-RO', { style: 'currency', currency }).format(amount)
         };
+    };
+
+    // Helper: search all products for a specific price ID
+    const findPriceInProducts = (id: string): any | undefined => {
+        if (!products?.length) return undefined;
+        for (const product of products) {
+            const found = product.prices?.find((p: any) => p.id === id);
+            if (found) return found;
+        }
+        return undefined;
+    };
+
+    // Method 1: Match course.price to the exact Stripe price (most reliable)
+    if (isStripePriceId) {
+        // Try from enriched priceProduct first
+        const fromEnriched = course?.priceProduct?.prices?.find((p: any) => p.id === priceId);
+        if (fromEnriched?.unit_amount != null) return formatPriceInfo(fromEnriched);
+
+        // Fall back to searching the raw products array
+        const fromProducts = findPriceInProducts(priceId);
+        if (fromProducts?.unit_amount != null) return formatPriceInfo(fromProducts);
     }
 
-    // Method 3: Check if course has a direct price property (legacy support)
-    if (typeof course.price === 'number' && course.price > 0) {
+    // Method 2: Use first available price from enriched priceProduct
+    if (course?.priceProduct?.prices?.[0]?.unit_amount != null) {
+        return formatPriceInfo(course.priceProduct.prices[0]);
+    }
+
+    // Method 3: Direct numeric price (legacy)
+    if (typeof course?.price === 'number' && course.price > 0) {
         return {
             amount: course.price,
             currency: 'RON',
             priceId: '',
-            formatted: new Intl.NumberFormat('ro-RO', {
-                style: 'currency',
-                currency: 'RON'
-            }).format(course.price)
+            formatted: new Intl.NumberFormat('ro-RO', { style: 'currency', currency: 'RON' }).format(course.price)
         };
     }
 
-    // Method 4: Check if course has a direct price string (legacy support)  
-    if (typeof course.price === 'string' && course.price !== '' && !course.price.startsWith('price_')) {
+    // Method 4: Direct numeric string price (legacy)
+    if (typeof course?.price === 'string' && course.price !== '' && !course.price.startsWith('price_')) {
         const numericPrice = parseFloat(course.price);
         if (!isNaN(numericPrice) && numericPrice > 0) {
             return {
                 amount: numericPrice,
                 currency: 'RON',
                 priceId: '',
-                formatted: new Intl.NumberFormat('ro-RO', {
-                    style: 'currency',
-                    currency: 'RON'
-                }).format(numericPrice)
+                formatted: new Intl.NumberFormat('ro-RO', { style: 'currency', currency: 'RON' }).format(numericPrice)
             };
         }
     }

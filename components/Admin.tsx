@@ -7,6 +7,7 @@ import Button from '@/components/ui/Button';
 import { useRouter } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { Lesson, CourseWithPriceProduct } from '@/types';
+import { getCoursePrice } from '@/utils/pricing';
 
 // Import Admin Components
 import AdminDashboard from './Admin/AdminDashboard';
@@ -37,7 +38,7 @@ export default function Admin() {
     if (!context) {
         throw new Error('You probably forgot to put <AppProvider>.');
     }
-    const { courses, lessons, isAdmin, getCourseLessons, user, userProfile } = context;
+    const { courses, lessons, isAdmin, getCourseLessons, user, userProfile, products } = context;
 
     const router = useRouter(); // Add a console log to debug admin status
     useEffect(() => {
@@ -100,20 +101,12 @@ export default function Admin() {
 
     // Helper function to safely format price
     const formatPrice = (course: CourseWithPriceProduct): string => {
-        if (course.priceProduct?.prices?.length) {
-            // Find the specific price matching course.price, fall back to first price
-            const matchedPrice = (typeof course.price === 'string' && course.price.startsWith('price_'))
-                ? course.priceProduct.prices.find(p => p.id === course.price)
-                : undefined;
-            const price = matchedPrice || course.priceProduct.prices[0];
-            if (price.unit_amount !== undefined) {
-                const amount = price.unit_amount / 100;
-                const currency = price.currency?.toUpperCase() || 'RON';
-                return amount.toLocaleString(locale, {
-                    style: 'currency',
-                    currency: currency,
-                });
-            }
+        const priceInfo = getCoursePrice(course, products);
+        if (priceInfo.amount > 0) {
+            return priceInfo.amount.toLocaleString(locale, {
+                style: 'currency',
+                currency: priceInfo.currency,
+            });
         }
         return 'Price not available';
     };

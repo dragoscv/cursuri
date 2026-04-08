@@ -13,6 +13,7 @@ import Link from 'next/link';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { firestoreDB } from '@/utils/firebase/firebase.config';
 import { useToast } from '@/components/Toast/ToastContext';
+import { getCoursePrice } from '@/utils/pricing';
 
 export default function CoursesPage() {
   const locale = useLocale();
@@ -25,25 +26,17 @@ export default function CoursesPage() {
     throw new Error('AppContext not found');
   }
 
-  const { courses, openModal, closeModal, refreshCourses } = context;
+  const { courses, products, openModal, closeModal, refreshCourses } = context;
   const { showToast } = useToast();
 
   // Helper function to safely format price
   const formatPrice = (course: CourseWithPriceProduct): string => {
-    if (course.priceProduct?.prices?.length) {
-      // Find the specific price matching course.price, fall back to first price
-      const matchedPrice = (typeof course.price === 'string' && course.price.startsWith('price_'))
-          ? course.priceProduct.prices.find(p => p.id === course.price)
-          : undefined;
-      const price = matchedPrice || course.priceProduct.prices[0];
-      if (price.unit_amount !== undefined) {
-        const amount = price.unit_amount / 100;
-        const currency = price.currency?.toUpperCase() || 'RON';
-        return amount.toLocaleString(locale, {
-          style: 'currency',
-          currency: currency,
-        });
-      }
+    const priceInfo = getCoursePrice(course, products);
+    if (priceInfo.amount > 0) {
+      return priceInfo.amount.toLocaleString(locale, {
+        style: 'currency',
+        currency: priceInfo.currency,
+      });
     }
     return 'Price not available';
   }; // Delete course function
