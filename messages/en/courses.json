@@ -415,5 +415,14 @@
         "allLevels": "All levels",
         "loading": "Loading...",
         "percentComplete": "{percent}% Complete"
+    },
+    "subscriptionBanner": {
+        "badge": "Recommended",
+        "title": "Access all courses with a single subscription",
+        "description": "Save money and get unlimited access to all our courses, including future ones. One subscription, all the knowledge.",
+        "benefit1": "Access to all courses",
+        "benefit2": "New courses included automatically",
+        "benefit3": "Save compared to buying individually",
+        "cta": "View Subscriptions"
     }
 }

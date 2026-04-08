@@ -419,5 +419,14 @@
     "allLevels": "Toate nivelurile",
     "loading": "Se încarcă...",
     "percentComplete": "{percent}% Finalizat"
+  },
+  "subscriptionBanner": {
+    "badge": "Recomandat",
+    "title": "Accesează toate cursurile cu un singur abonament",
+    "description": "Economisește bani și obține acces nelimitat la toate cursurile noastre, inclusiv cele viitoare. Un singur abonament, toate cunoștințele.",
+    "benefit1": "Acces la toate cursurile",
+    "benefit2": "Cursuri noi incluse automat",
+    "benefit3": "Economie față de cumpărarea individuală",
+    "cta": "Vezi Abonamentele"
   }
 }
