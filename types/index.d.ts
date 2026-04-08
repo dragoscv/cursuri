@@ -305,6 +305,10 @@ export interface Course {
   reviewCount?: number;
   /** Optional custom slug identifier */
   slug?: string;
+  /** Display order for sorting courses (lower = first) */
+  displayOrder?: number;
+  /** Badges/labels shown on the course card (e.g., "most-popular", "recommended") */
+  badges?: string[];
   /** Tags or categories for the course. */
   tags?: string[];
   /** Benefits of taking the course */

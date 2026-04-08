@@ -18,6 +18,8 @@ export interface CourseData {
     duration?: string;
     instructor?: string | { name: string; photoUrl?: string; bio?: string; title?: string; };
     tags?: string[];
+    displayOrder?: number;
+    badges?: string[];
     imageUrl?: string;
     metadata: {
         level: string;

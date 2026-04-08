@@ -71,6 +71,14 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
       result = result.filter((course: any) => course.tags && course.tags.includes(category));
     }
 
+    // Sort by displayOrder, then by name
+    result.sort((a: any, b: any) => {
+      const orderA = a.displayOrder ?? 999;
+      const orderB = b.displayOrder ?? 999;
+      if (orderA !== orderB) return orderA - orderB;
+      return (a.name || '').localeCompare(b.name || '');
+    });
+
     return result;
   }, [courses, filter, category]);
 
@@ -262,8 +270,8 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
         const isLoading = loadingPayment && loadingCourseId === course.id;
         const totalDuration = getCourseTotalDuration(course.id);
 
-        // Mark top 3 as most popular
-        const showPopularBadge = idx < 3;
+        // Use badges from course data
+        const badges: string[] = (course as any).badges || [];
 
         return (
           <motion.div
@@ -296,15 +304,29 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
                     {course.difficulty || t('difficulty.intermediate')}
                   </Chip>
                 </div>
-                {/* Most Popular badge */}
-                {showPopularBadge && (
-                  <div className="absolute top-4 right-4 z-20">
-                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-yellow-400/90 text-xs font-semibold text-yellow-900 shadow">
-                      <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" />
-                      </svg>
-                      {t('status.mostPopular')}
-                    </span>
+                {/* Course badges */}
+                {badges.length > 0 && (
+                  <div className="absolute top-4 right-4 z-20 flex flex-col gap-1">
+                    {badges.map((badge: string) => {
+                      const badgeConfig: Record<string, { bg: string; text: string; icon: string }> = {
+                        'Cel Mai Popular': { bg: 'bg-yellow-400/90', text: 'text-yellow-900', icon: '⭐' },
+                        'Cel Mai Recomandat': { bg: 'bg-green-400/90', text: 'text-green-900', icon: '✅' },
+                        'Nou': { bg: 'bg-blue-400/90', text: 'text-blue-900', icon: '🆕' },
+                        'Best Seller': { bg: 'bg-orange-400/90', text: 'text-orange-900', icon: '🔥' },
+                        'Gratuit': { bg: 'bg-gray-400/90', text: 'text-gray-900', icon: '🎁' },
+                        'Ofertă Limitată': { bg: 'bg-red-400/90', text: 'text-red-900', icon: '⏰' },
+                      };
+                      const config = badgeConfig[badge] || { bg: 'bg-purple-400/90', text: 'text-purple-900', icon: '🏷️' };
+                      return (
+                        <span
+                          key={badge}
+                          className={`inline-flex items-center gap-1 px-2 py-1 rounded-full ${config.bg} text-xs font-semibold ${config.text} shadow`}
+                        >
+                          <span className="text-xs">{config.icon}</span>
+                          {badge}
+                        </span>
+                      );
+                    })}
                   </div>
                 )}
 

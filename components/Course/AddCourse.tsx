@@ -73,6 +73,7 @@ export default function AddCourse(props: AddCourseProps) {
     const [coursePrerequisites, setCoursePrerequisites] = useState<string[]>([]);
     const [selectedPrerequisiteId, setSelectedPrerequisiteId] = useState("");
     const [courseSlug, setCourseSlug] = useState("");
+    const [courseBadges, setCourseBadges] = useState<string[]>([]);
     const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
 
     const context = useContext(AppContext);
@@ -113,6 +114,7 @@ export default function AddCourse(props: AddCourseProps) {
             // Set values from course properties
             setCourseLevel(course.level || "beginner");
             setCourseTags(course.tags || []);
+            setCourseBadges((course as any).badges || []);
             setCourseRequirements(course.requirements || []);
             // Set course objectives (benefits in the Course type)
             setCourseObjectives(course.benefits || []);            // Set prerequisites if they exist
@@ -168,6 +170,7 @@ export default function AddCourse(props: AddCourseProps) {
                 duration: estimatedDuration,
                 instructor: instructorName ? { name: instructorName } : "",
                 tags: courseTags,
+                badges: courseBadges,
                 metadata: {
                     level: courseLevel,
                     categories: courseCategories,
@@ -209,7 +212,7 @@ export default function AddCourse(props: AddCourseProps) {
         }
     }, [
         products, courseName, courseDescription, courseSlug, coursePrice, repoUrl,
-        courseImage, courseLevel, courseCategories, courseTags,
+        courseImage, courseLevel, courseCategories, courseTags, courseBadges,
         courseRequirements, courseObjectives, coursePrerequisites, courseStatus, instructorName,
         estimatedDuration, certificateEnabled, allowPromoCodes, onClose, refreshCourses, showToast
     ]);
@@ -236,6 +239,7 @@ export default function AddCourse(props: AddCourseProps) {
                 level: courseLevel,
                 duration: estimatedDuration,
                 tags: courseTags,
+                badges: courseBadges,
                 requirements: courseRequirements,
                 benefits: courseObjectives,
                 metadata: {
@@ -293,7 +297,7 @@ export default function AddCourse(props: AddCourseProps) {
         }
     }, [
         courseId, courseName, courseDescription, courseSlug, coursePrice, repoUrl, products,
-        courseImage, courseLevel, courseCategories, courseTags,
+        courseImage, courseLevel, courseCategories, courseTags, courseBadges,
         courseRequirements, courseObjectives, coursePrerequisites, courseStatus, instructorName,
         estimatedDuration, certificateEnabled, allowPromoCodes, onClose, refreshCourses, showToast, originalImageUrl
     ]);
@@ -861,6 +865,40 @@ export default function AddCourse(props: AddCourseProps) {
                                         >
                                             {tCourses('addCourse.add')}
                                         </Button>
+                                    </div>
+                                </div>
+
+                                <div className="mb-6">
+                                    <label className="flex items-center gap-2 text-sm font-medium text-[color:var(--ai-foreground)] mb-3">
+                                        <FiTag className="text-[color:var(--ai-primary)]" /> Etichete Card (Badges)
+                                    </label>
+                                    <p className="text-xs text-[color:var(--ai-muted)] mb-2">Selectează badge-urile afișate pe cardul cursului</p>
+                                    <div className="flex flex-wrap gap-2 p-3 rounded-lg border border-[color:var(--ai-card-border)]/50">
+                                        {[
+                                            { value: 'Cel Mai Popular', color: 'warning' as const, icon: '⭐' },
+                                            { value: 'Cel Mai Recomandat', color: 'success' as const, icon: '✅' },
+                                            { value: 'Nou', color: 'primary' as const, icon: '🆕' },
+                                            { value: 'Best Seller', color: 'secondary' as const, icon: '🔥' },
+                                            { value: 'Gratuit', color: 'default' as const, icon: '🎁' },
+                                            { value: 'Ofertă Limitată', color: 'danger' as const, icon: '⏰' },
+                                        ].map(({ value, color, icon }) => (
+                                            <Chip
+                                                key={value}
+                                                variant={courseBadges.includes(value) ? 'solid' : 'bordered'}
+                                                color={color}
+                                                className={`cursor-pointer transition-all ${courseBadges.includes(value) ? 'shadow-md scale-105' : 'opacity-60 hover:opacity-100'}`}
+                                                startContent={<span className="text-xs">{icon}</span>}
+                                                onClick={() => {
+                                                    if (courseBadges.includes(value)) {
+                                                        setCourseBadges(courseBadges.filter(b => b !== value));
+                                                    } else {
+                                                        setCourseBadges([...courseBadges, value]);
+                                                    }
+                                                }}
+                                            >
+                                                {value}
+                                            </Chip>
+                                        ))}
                                     </div>
                                 </div>
 

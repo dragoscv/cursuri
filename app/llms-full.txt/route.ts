@@ -15,8 +15,8 @@ export async function GET() {
     const title = (course.title || course.name || 'Untitled Course') as string;
     const description = (course.description || 'No description available') as string;
     const slug = (course.slug || course.id) as string;
-    const instructor = (course.instructorName || 
-      (typeof course.instructor === 'string' ? course.instructor : 
+    const instructor = (course.instructorName ||
+      (typeof course.instructor === 'string' ? course.instructor :
         (course.instructor as Record<string, string>)?.name || 'StudiAI')) as string;
 
     return `### ${title}

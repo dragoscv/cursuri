@@ -36,9 +36,12 @@ const FeaturedCoursesSection = React.memo(function FeaturedCoursesSection() {
   // Sort by enrollments (popularity) or rating if available
   const featuredCourses = useMemo(() => {
     const courseArr = Object.values(courses) as Course[];
-    // Prefer courses with most enrollments, fallback to rating, then random
+    // Sort by displayOrder first, then by enrollments/rating
     return courseArr
       .sort((a, b) => {
+        const orderA = (a as any).displayOrder ?? 999;
+        const orderB = (b as any).displayOrder ?? 999;
+        if (orderA !== orderB) return orderA - orderB;
         const aEnroll = a.reviews?.length || 0;
         const bEnroll = b.reviews?.length || 0;
         if (bEnroll !== aEnroll) return bEnroll - aEnroll;
