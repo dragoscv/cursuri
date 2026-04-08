@@ -16,13 +16,6 @@ export default function CoursesPage() {
         <div className="container mx-auto px-4 py-8">
             <CoursesHeader />
 
-            <CoursesFilter
-                onFilterChange={setFilter}
-                onCategoryChange={setCategory}
-                currentFilter={filter}
-                currentCategory={category}
-            />
-
             {/* Subscription recommendation banner */}
             <div className="mb-8 relative overflow-hidden rounded-2xl border border-[color:var(--ai-primary)]/20 bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-card-bg)] to-[color:var(--ai-secondary)]/5">
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[color:var(--ai-primary)]/10 via-transparent to-transparent pointer-events-none" />
@@ -84,6 +77,13 @@ export default function CoursesPage() {
                     </div>
                 </div>
             </div>
+
+            <CoursesFilter
+                onFilterChange={setFilter}
+                onCategoryChange={setCategory}
+                currentFilter={filter}
+                currentCategory={category}
+            />
 
             <CoursesList filter={filter} category={category} />
         </div>
