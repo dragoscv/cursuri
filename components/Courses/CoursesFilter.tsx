@@ -1,237 +1,199 @@
-import React, { useContext, useState, useEffect } from 'react';
+'use client';
+
+import React, { useContext, useState, useEffect, useMemo } from 'react';
 import { AppContext } from '../AppContext';
-import { Input, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@heroui/react';
-import Button from '@/components/ui/Button';
+import { Input } from '@heroui/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Course } from '../../types';
 import { useTranslations } from 'next-intl';
+import { FiX, FiSearch, FiFilter } from '@/components/icons/FeatherIcons';
 
 interface CoursesFilterProps {
-    onFilterChange: (filter: string) => void;
-    onCategoryChange: (category: string) => void;
-    currentFilter: string;
-    currentCategory: string;
+  onFilterChange: (filter: string) => void;
+  onCategoryChange: (category: string) => void;
+  currentFilter: string;
+  currentCategory: string;
 }
 
 export const CoursesFilter: React.FC<CoursesFilterProps> = ({
-    onFilterChange,
-    onCategoryChange,
-    currentFilter,
-    currentCategory
+  onFilterChange,
+  onCategoryChange,
+  currentFilter,
+  currentCategory,
 }) => {
-    const t = useTranslations('courses.filter');
-    const context = useContext(AppContext);
-    const [searchText, setSearchText] = useState(currentFilter);
-    const [selectedCategory, setSelectedCategory] = useState(currentCategory || 'all');
-    const [isSelectOpen, setIsSelectOpen] = useState(false);
+  const t = useTranslations('courses.filter');
+  const context = useContext(AppContext);
+  const [searchText, setSearchText] = useState(currentFilter);
+  const [selectedCategory, setSelectedCategory] = useState(currentCategory || 'all');
 
-    if (!context) {
-        throw new Error('CoursesFilter must be used within AppContext');
-    }
+  if (!context) {
+    throw new Error('CoursesFilter must be used within AppContext');
+  }
 
-    const { courses } = context;
+  const { courses } = context;
 
-    // Extract unique categories from courses
-    const categories = React.useMemo(() => {
-        if (!courses || Object.keys(courses).length === 0) {
-            return [];
-        }
+  const categories = useMemo(() => {
+    if (!courses || Object.keys(courses).length === 0) return [];
+    const allCategories = Object.values(courses).flatMap((course: Course) => {
+      if (course.metadata?.categories && Array.isArray(course.metadata.categories)) {
+        return course.metadata.categories;
+      }
+      if (course.metadata?.category) return [course.metadata.category];
+      return [];
+    });
+    const counts = allCategories.reduce((acc: Record<string, number>, c: string) => {
+      acc[c] = (acc[c] || 0) + 1;
+      return acc;
+    }, {});
+    return Object.entries(counts)
+      .sort((a, b) => (b[1] as number) - (a[1] as number))
+      .map(([key, count]) => ({ key, label: key, count }));
+  }, [courses]);
 
-        // Extract all categories from all courses (from metadata.categories)
-        const allCategories = Object.values(courses).flatMap((course: Course) => {
-            // Categories can be in metadata.categories array or metadata.category string
-            if (course.metadata?.categories && Array.isArray(course.metadata.categories)) {
-                return course.metadata.categories;
-            } else if (course.metadata?.category) {
-                return [course.metadata.category];
-            }
-            return [];
-        });
+  // Debounce search
+  useEffect(() => {
+    const timer = setTimeout(() => onFilterChange(searchText), 300);
+    return () => clearTimeout(timer);
+  }, [searchText, onFilterChange]);
 
-        // If no categories found, warn in development
-        if (allCategories.length === 0 && process.env.NODE_ENV === 'development') {
-            console.warn('⚠️ CoursesFilter: No categories found in any course. Please add categories to your courses in the admin panel to enable category filtering.');
-        }
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    onCategoryChange(category);
+  };
 
-        // Count occurrences of each category
-        const categoryCounts = allCategories.reduce((acc: { [key: string]: number }, category: string) => {
-            acc[category] = (acc[category] || 0) + 1;
-            return acc;
-        }, {});
+  const hasActive = currentFilter || (currentCategory && currentCategory !== 'all');
 
-        // Sort by count (descending) and convert to objects with key and label properties
-        return Object.entries(categoryCounts)
-            .sort((a, b) => (b[1] as number) - (a[1] as number))
-            .map(([category, count]) => ({
-                key: category,
-                label: category,
-                count: count
-            }));
-    }, [courses]);
+  const allChips = useMemo(
+    () => [{ key: 'all', label: t('allCategories'), count: undefined as number | undefined }, ...categories],
+    [categories, t]
+  );
 
-    // Handle search input change with debounce
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            onFilterChange(searchText);
-        }, 300);
-
-        return () => clearTimeout(timer);
-    }, [searchText, onFilterChange]);
-
-    // Handle category selection
-    const handleCategoryChange = (category: string) => {
-        setSelectedCategory(category);
-        onCategoryChange(category);
-    };
-
-    return (
-        <div className="mb-8 bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] rounded-xl p-4 border border-[color:var(--ai-card-border)] shadow-xl">
-            <div className="flex flex-col md:flex-row gap-4">
-                {/* Search input */}
-                <div className="flex-1">
-                    <Input
-                        placeholder={t('searchPlaceholder')}
-                        value={searchText}
-                        onChange={(e) => setSearchText(e.target.value)}
-                        startContent={
-                            <svg className="w-5 h-5 text-[color:var(--ai-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                        }
-                        type="search"
-                        size="lg"
-                        className="w-full"
-                    />
-                </div>                {/* Category custom select dropdown */}
-                <div className="md:w-60 relative">
-                    <div
-                        onClick={() => setIsSelectOpen(!isSelectOpen)}
-                        className="w-full cursor-pointer bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-lg px-4 py-2.5 text-left flex items-center justify-between hover:border-[color:var(--ai-primary)]/50 transition-colors duration-200"
-                    >
-                        <span className="block truncate">
-                            {selectedCategory === 'all' ? t('allCategories') : selectedCategory}
-                        </span>
-                        <span className="pointer-events-none">
-                            <svg
-                                className={`w-5 h-5 text-[color:var(--ai-muted)] transition-transform duration-200 ${isSelectOpen ? 'rotate-180 transform' : ''}`}
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </span>
-                    </div>
-
-                    {isSelectOpen && (
-                        <>
-                            {/* Backdrop for clicking outside */}
-                            <div
-                                className="fixed inset-0 z-10"
-                                onClick={() => setIsSelectOpen(false)}
-                            ></div>
-
-                            {/* Dropdown options */}
-                            <div
-                                className="absolute z-20 mt-1 w-full bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-lg shadow-lg max-h-60 overflow-y-auto"
-                                style={{
-                                    transformOrigin: 'top center',
-                                    animation: 'scaleIn 0.15s ease-out forwards'
-                                }}
-                            >
-                                <div
-                                    className={`px-4 py-2.5 cursor-pointer hover:bg-[color:var(--ai-primary)]/5 ${selectedCategory === 'all' ? 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]' : 'text-[color:var(--ai-foreground)]'
-                                        }`}
-                                    onClick={() => {
-                                        handleCategoryChange('all');
-                                        setIsSelectOpen(false);
-                                    }}
-                                >
-                                    {t('allCategories')}
-                                </div>
-
-                                {categories.map((category) => (
-                                    <div
-                                        key={category.key}
-                                        className={`px-4 py-2.5 cursor-pointer hover:bg-[color:var(--ai-primary)]/5 ${selectedCategory === category.label ? 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]' : 'text-[color:var(--ai-foreground)]'
-                                            }`}
-                                        onClick={() => {
-                                            handleCategoryChange(category.label);
-                                            setIsSelectOpen(false);
-                                        }}
-                                    >
-                                        <div className="flex justify-between items-center">
-                                            <span>{category.label}</span>
-                                            <span className="text-xs bg-[color:var(--ai-card-border)]/30 text-[color:var(--ai-muted)] rounded-full px-2 py-0.5">
-                                                {String(category.count)}
-                                            </span>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </>
-                    )}
-                </div>
-            </div>
-
-            {/* Selected filters display */}
-            {(currentFilter || currentCategory !== 'all') && (
-                <div className="mt-4 flex flex-wrap gap-2 items-center">
-                    <span className="text-sm text-[color:var(--ai-muted)]">{t('activeFilters')}</span>                    {currentFilter && (
-                        <div className="inline-flex items-center gap-1 bg-[color:var(--ai-primary)]/10 dark:bg-[color:var(--ai-primary)]/20 text-[color:var(--ai-primary)] px-3 py-1 rounded-full text-sm">
-                            <span>&quot;{currentFilter}&quot;</span>
-                            <button
-                                title={t('clearSearchFilter')}
-                                aria-label={t('clearSearchFilter')} onClick={() => {
-                                    setSearchText('');
-                                    onFilterChange('');
-                                }}
-                                className="text-[color:var(--ai-primary)] hover:text-[color:var(--ai-primary)]/80 ml-1 cursor-pointer"
-                            >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-                    )}
-
-                    {currentCategory !== 'all' && (
-                        <div className="inline-flex items-center gap-1 bg-[color:var(--ai-primary)]/10 dark:bg-[color:var(--ai-primary)]/20 text-[color:var(--ai-primary)] px-3 py-1 rounded-full text-sm">
-                            <span>{currentCategory}</span>
-                            <button
-                                title={t('clearCategoryFilter')}
-                                aria-label={t('clearCategoryFilter')} onClick={() => {
-                                    setSelectedCategory('all');
-                                    onCategoryChange('all');
-                                }}
-                                className="text-[color:var(--ai-primary)] hover:text-[color:var(--ai-primary)]/80 ml-1 cursor-pointer"
-                            >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-                    )}
-
-                    {(currentFilter || currentCategory !== 'all') && (
-                        <button
-                            title={t('clearAll')}
-                            aria-label={t('clearAll')}
-                            onClick={() => {
-                                setSearchText('');
-                                setSelectedCategory('all');
-                                onFilterChange('');
-                                onCategoryChange('all');
-                            }}
-                            className="text-sm text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] underline cursor-pointer"
-                        >
-                            {t('clearAll')}
-                        </button>
-                    )}
-                </div>
-            )}
+  return (
+    <div className="mb-8 rounded-2xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/80 backdrop-blur-xl p-4 md:p-5 shadow-sm">
+      <div className="flex flex-col gap-4">
+        {/* Search */}
+        <div className="flex items-center gap-3">
+          <div className="grid place-items-center w-10 h-10 rounded-xl bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] shrink-0">
+            <FiSearch className="w-5 h-5" />
+          </div>
+          <Input
+            placeholder={t('searchPlaceholder')}
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            type="search"
+            size="lg"
+            variant="bordered"
+            className="flex-1"
+            classNames={{
+              inputWrapper:
+                'bg-transparent border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/50',
+            }}
+          />
         </div>
-    );
+
+        {/* Category chips */}
+        <div className="flex items-start gap-3">
+          <div className="hidden md:grid place-items-center w-10 h-10 rounded-xl bg-[color:var(--ai-secondary)]/10 text-[color:var(--ai-secondary)] shrink-0">
+            <FiFilter className="w-5 h-5" />
+          </div>
+          <div className="flex-1 flex flex-wrap gap-2 min-h-[40px]">
+            <AnimatePresence initial={false}>
+              {allChips.map((c) => {
+                const active =
+                  c.key === 'all' ? !selectedCategory || selectedCategory === 'all' : selectedCategory === c.label;
+                return (
+                  <motion.button
+                    key={c.key}
+                    type="button"
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    onClick={() => handleCategoryChange(c.key === 'all' ? 'all' : c.label)}
+                    className={`relative inline-flex items-center gap-2 px-3.5 h-9 rounded-full text-sm font-medium transition-colors border ${
+                      active
+                        ? 'text-white border-transparent'
+                        : 'text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)] border-[color:var(--ai-card-border)] bg-[color:var(--ai-background)]/40'
+                    }`}
+                  >
+                    {active && (
+                      <motion.span
+                        layoutId="courses-cat-active"
+                        className="absolute inset-0 -z-0 rounded-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] shadow-sm"
+                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                      />
+                    )}
+                    <span className="relative z-10">{c.label}</span>
+                    {c.count !== undefined && (
+                      <span
+                        className={`relative z-10 text-[10px] font-semibold px-1.5 h-4 rounded-full inline-flex items-center ${
+                          active ? 'bg-white/25 text-white' : 'bg-[color:var(--ai-card-border)]/60 text-[color:var(--ai-muted)]'
+                        }`}
+                      >
+                        {String(c.count)}
+                      </span>
+                    )}
+                  </motion.button>
+                );
+              })}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* Active filters strip */}
+        {hasActive && (
+          <div className="pt-2 border-t border-[color:var(--ai-card-border)]/60 flex flex-wrap items-center gap-2">
+            <span className="text-xs uppercase tracking-wider font-semibold text-[color:var(--ai-muted)]">
+              {t('activeFilters')}
+            </span>
+            {currentFilter && (
+              <span className="inline-flex items-center gap-1.5 px-2.5 h-7 rounded-full text-xs bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]">
+                &quot;{currentFilter}&quot;
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchText('');
+                    onFilterChange('');
+                  }}
+                  className="opacity-70 hover:opacity-100"
+                  aria-label={t('clearSearchFilter')}
+                >
+                  <FiX className="w-3.5 h-3.5" />
+                </button>
+              </span>
+            )}
+            {currentCategory && currentCategory !== 'all' && (
+              <span className="inline-flex items-center gap-1.5 px-2.5 h-7 rounded-full text-xs bg-[color:var(--ai-secondary)]/10 text-[color:var(--ai-secondary)]">
+                {currentCategory}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedCategory('all');
+                    onCategoryChange('all');
+                  }}
+                  className="opacity-70 hover:opacity-100"
+                  aria-label={t('clearCategoryFilter')}
+                >
+                  <FiX className="w-3.5 h-3.5" />
+                </button>
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={() => {
+                setSearchText('');
+                setSelectedCategory('all');
+                onFilterChange('');
+                onCategoryChange('all');
+              }}
+              className="ml-auto text-xs text-[color:var(--ai-muted)] hover:text-[color:var(--ai-danger)] underline-offset-4 hover:underline"
+            >
+              {t('clearAll')}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default CoursesFilter;

@@ -1,19 +1,18 @@
 'use client';
 
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { Card, Chip, Avatar } from '@heroui/react';
-import Button from '@/components/ui/Button';
+import { Chip } from '@heroui/react';
+import { motion } from 'framer-motion';
 import {
-    FiHome,
-    FiSettings,
-    FiCreditCard,
-    FiBookOpen,
-    FiUser,
-    FiLogOut,
-    FiAward,
-    FiFileText,
+  FiHome,
+  FiSettings,
+  FiCreditCard,
+  FiBookOpen,
+  FiAward,
+  FiFileText,
+  FiLogOut,
 } from '@/components/icons/FeatherIcons';
 import { signOut } from 'firebase/auth';
 import { firebaseAuth } from '@/utils/firebase/firebase.config';
@@ -21,177 +20,193 @@ import { AppContext } from '@/components/AppContext';
 import { useRouter, usePathname } from 'next/navigation';
 import DefaultAvatar from '@/components/shared/DefaultAvatar';
 
-// Calculate overall progress across all courses
 const calculateOverallProgress = (
-    userPaidProducts: any[],
-    lessonProgress: any,
-    lessons: any,
-    courses: any
+  userPaidProducts: any[],
+  lessonProgress: any,
+  lessons: any
 ) => {
-    if (!userPaidProducts || !lessonProgress) return 0;
-
-    let completedLessons = 0;
-    let totalLessons = 0;
-
-    // Only consider products with courseId (exclude subscription payments)
-    userPaidProducts
-        .filter(product => product.metadata?.courseId)
-        .forEach((product) => {
-            const courseId = product.metadata.courseId;
-            if (courseId) {
-                // Get total lessons from lessons collection if available, otherwise use lessonProgress
-                const courseLessonsData = lessons?.[courseId] || {};
-                const courseLessonsFromProgress = lessonProgress[courseId] || {};
-
-                // Use lessons collection for accurate total count
-                const courseLessonsCount =
-                    Object.keys(courseLessonsData).length > 0
-                        ? Object.keys(courseLessonsData).length
-                        : Object.keys(courseLessonsFromProgress).length;
-
-                totalLessons += courseLessonsCount;
-
-                // Count completed lessons from progress
-                if (courseLessonsFromProgress) {
-                    Object.values(courseLessonsFromProgress).forEach((progress) => {
-                        if ((progress as any).isCompleted) {
-                            completedLessons++;
-                        }
-                    });
-                }
-            }
-        });
-
-    return totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+  if (!userPaidProducts || !lessonProgress) return 0;
+  let completed = 0;
+  let total = 0;
+  userPaidProducts
+    .filter((p) => p.metadata?.courseId)
+    .forEach((p) => {
+      const courseId = p.metadata.courseId;
+      const lessonsData = lessons?.[courseId] || {};
+      const progressData = lessonProgress[courseId] || {};
+      const count =
+        Object.keys(lessonsData).length > 0
+          ? Object.keys(lessonsData).length
+          : Object.keys(progressData).length;
+      total += count;
+      Object.values(progressData).forEach((p2: any) => {
+        if (p2.isCompleted) completed += 1;
+      });
+    });
+  return total > 0 ? Math.round((completed / total) * 100) : 0;
 };
 
 const ProfileSidebar: React.FC = () => {
-    const router = useRouter();
-    const pathname = usePathname();
-    const context = useContext(AppContext);
-    const t = useTranslations('profile');
+  const router = useRouter();
+  const pathname = usePathname();
+  const context = useContext(AppContext);
+  const t = useTranslations('profile');
 
-    if (!context) {
-        throw new Error('AppContext not found');
-    }
+  if (!context) {
+    throw new Error('AppContext not found');
+  }
 
-    const { user, isDark, lessonProgress, userPaidProducts, toggleTheme, lessons, courses, userProfile } = context;
+  const { user, lessonProgress, userPaidProducts, lessons, userProfile } = context;
+  if (!user) return null;
 
-    if (!user) return null;
+  const enrolledCount = useMemo(
+    () => userPaidProducts?.filter((p) => p.metadata?.courseId).length || 0,
+    [userPaidProducts]
+  );
 
-    // Count enrolled courses - only count products with courseId metadata
-    // Subscription payments don't have courseId and shouldn't be counted as individual courses
-    const enrolledCoursesCount = userPaidProducts?.filter(product => product.metadata?.courseId).length || 0;
+  const overallProgress = useMemo(
+    () => calculateOverallProgress(userPaidProducts || [], lessonProgress, lessons),
+    [userPaidProducts, lessonProgress, lessons]
+  );
 
-    // Navigation items
-    const navItems = [
-        { label: t('nav.dashboard'), href: '/profile', icon: FiHome },
-        { label: t('nav.myCourses'), href: '/profile/courses', icon: FiBookOpen },
-        { label: t('nav.certificates'), href: '/profile/certificates', icon: FiAward },
-        { label: t('nav.subscription'), href: '/profile/subscriptions', icon: FiCreditCard },
-        { label: t('nav.paymentHistory'), href: '/profile/payments', icon: FiFileText },
-        { label: t('nav.settings'), href: '/profile/settings', icon: FiSettings },
-    ];
+  const navItems = useMemo(
+    () => [
+      { label: t('nav.dashboard'), href: '/profile', icon: FiHome },
+      { label: t('nav.myCourses'), href: '/profile/courses', icon: FiBookOpen, badge: enrolledCount || undefined },
+      { label: t('nav.certificates'), href: '/profile/certificates', icon: FiAward },
+      { label: t('nav.subscription'), href: '/profile/subscriptions', icon: FiCreditCard },
+      { label: t('nav.paymentHistory'), href: '/profile/payments', icon: FiFileText },
+      { label: t('nav.settings'), href: '/profile/settings', icon: FiSettings },
+    ],
+    [t, enrolledCount]
+  );
 
-    // Handle sign out
-    const handleSignOut = async () => {
-        await signOut(firebaseAuth);
-        router.push('/');
-    };
-    return (
-        <div className="sticky top-20 lg:top-24">
-            {/* Profile Card */}
-            <Card className="mb-6 overflow-hidden border border-[color:var(--ai-card-border)] shadow-lg rounded-xl">
-                <div className="relative bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] h-24">
-                    {/* Circuit pattern overlay */}
-                    <div className="absolute top-0 left-0 w-full h-full opacity-20">
-                        <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
-                            <defs>
-                                <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
-                                    <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5" />
-                                </pattern>
-                            </defs>
-                            <rect width="100%" height="100%" fill="url(#grid)" />
-                        </svg>
-                    </div>{' '}
-                    {/* Decorative elements */}
-                    <div className="absolute top-4 right-4 h-3 w-3 rounded-full bg-white/30 animate-pulse"></div>
-                    <div className="absolute top-6 right-8 h-2 w-2 rounded-full bg-white/20 animate-pulse animate-delay-1000"></div>
-                </div>
+  const handleSignOut = async () => {
+    await signOut(firebaseAuth);
+    router.push('/');
+  };
 
-                <div className="relative px-6 pt-0 pb-6">
-                    <div className="-mt-12 flex justify-center">
-                        {user?.photoURL ? (
-                            <div className="border-4 border-white dark:border-[color:var(--ai-background)] rounded-full shadow-lg overflow-hidden">
-                                <img
-                                    src={user.photoURL}
-                                    alt={user?.displayName || user?.email || t('defaultUserName')}
-                                    className="w-24 h-24 object-cover"
-                                />
-                            </div>
-                        ) : (
-                            <div className="border-4 border-white dark:border-[color:var(--ai-background)] rounded-full shadow-lg">
-                                <DefaultAvatar
-                                    name={user?.displayName || user?.email || t('defaultUserName')}
-                                    size={96}
-                                />
-                            </div>
-                        )}
-                    </div>
+  const displayName =
+    user?.displayName || userProfile?.displayName || user?.email?.split('@')[0] || t('defaultUserName');
 
-                    <div className="mt-3 text-center">
-                        <h2 className="text-lg font-bold text-[color:var(--ai-foreground)] truncate">
-                            {user?.displayName || userProfile?.displayName || user?.email?.split('@')[0]}
-                        </h2>
-                        <p className="text-sm text-[color:var(--ai-muted)] mb-3 truncate">{user?.email}</p>
-
-                        <div className="flex justify-center space-x-2 mb-3">
-                            <Chip color="primary" variant="flat" size="sm">
-                                {enrolledCoursesCount}{' '}
-                                {enrolledCoursesCount === 1 ? t('courseCount.singular') : t('courseCount.plural')}
-                            </Chip>
-                            <Chip color="success" variant="flat" size="sm">
-                                {calculateOverallProgress(userPaidProducts || [], lessonProgress, lessons, courses)}% Complete
-                            </Chip>
-                        </div>
-                    </div>
-                </div>
-            </Card>
-            {/* Navigation */}
-            <Card className="overflow-hidden border border-[color:var(--ai-card-border)] shadow-md rounded-xl">
-                <nav className="flex flex-col py-1">
-                    {navItems.map((item) => {
-                        const isActive = item.href === '/profile'
-                            ? pathname === '/profile'
-                            : pathname?.startsWith(item.href) ?? false;
-                        return (
-                            <Link key={item.href} href={item.href} className="block">
-                                <div
-                                    className={`
-                                      flex items-center gap-3 px-4 py-2.5 md:px-6 md:py-3.5 mx-2 my-1 transition-all duration-200 rounded-lg
-                                      ${isActive
-                                            ? 'bg-gradient-to-r from-[color:var(--ai-primary)]/20 to-[color:var(--ai-secondary)]/10 text-[color:var(--ai-primary)] font-medium shadow-sm'
-                                            : 'hover:bg-[color:var(--ai-primary)]/5 text-[color:var(--ai-foreground)] hover:translate-x-1'
-                                        }
-                                    `}
-                                >
-                                    <div
-                                        className={`p-1.5 rounded-full ${isActive ? 'bg-[color:var(--ai-primary)]/10' : ''}`}
-                                    >
-                                        <item.icon className="w-4 h-4" />
-                                    </div>
-                                    <span className="text-sm md:text-base">{item.label}</span>
-                                    {isActive && (
-                                        <div className="ml-auto w-1.5 h-5 bg-gradient-to-b from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-full"></div>
-                                    )}
-                                </div>
-                            </Link>
-                        );
-                    })}
-                </nav>
-            </Card>{' '}
+  return (
+    <aside className="lg:sticky lg:top-24 space-y-4">
+      {/* Identity card */}
+      <div className="relative overflow-hidden rounded-2xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/80 backdrop-blur-xl shadow-sm">
+        {/* Banner */}
+        <div className="relative h-20 bg-gradient-to-br from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)]">
+          <div
+            aria-hidden
+            className="absolute inset-0 opacity-25"
+            style={{
+              backgroundImage:
+                'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.4) 0px, transparent 8px), radial-gradient(circle at 80% 30%, rgba(255,255,255,0.3) 0px, transparent 6px)',
+              backgroundSize: '40px 40px',
+            }}
+          />
         </div>
-    );
+
+        <div className="px-4 pb-4 -mt-10">
+          <div className="flex items-end gap-3">
+            <div className="ring-4 ring-[color:var(--ai-card-bg)] rounded-full overflow-hidden shadow-md shrink-0">
+              {user?.photoURL ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={user.photoURL}
+                  alt={displayName}
+                  className="w-16 h-16 object-cover"
+                />
+              ) : (
+                <DefaultAvatar name={displayName} size={64} />
+              )}
+            </div>
+            <div className="min-w-0 pb-1">
+              <h2 className="text-sm font-semibold text-[color:var(--ai-foreground)] truncate">
+                {displayName}
+              </h2>
+              <p className="text-xs text-[color:var(--ai-muted)] truncate">{user?.email}</p>
+            </div>
+          </div>
+
+          <div className="mt-3 flex items-center gap-2 flex-wrap">
+            <Chip color="primary" variant="flat" size="sm">
+              {enrolledCount}{' '}
+              {enrolledCount === 1 ? t('courseCount.singular') : t('courseCount.plural')}
+            </Chip>
+            <Chip color="success" variant="flat" size="sm">
+              {overallProgress}% complete
+            </Chip>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <nav className="rounded-2xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/80 backdrop-blur-xl p-2 shadow-sm">
+        <ul className="space-y-0.5">
+          {navItems.map((item) => {
+            const isActive =
+              item.href === '/profile' ? pathname === '/profile' : pathname?.startsWith(item.href);
+            const Icon = item.icon;
+            return (
+              <li key={item.href}>
+                <Link href={item.href} className="block">
+                  <div
+                    className={`relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
+                      isActive
+                        ? 'text-[color:var(--ai-foreground)] bg-[color:var(--ai-primary)]/10'
+                        : 'text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-bg)]'
+                    }`}
+                  >
+                    {isActive && (
+                      <motion.span
+                        layoutId="profile-nav-active"
+                        className="absolute left-0 top-1.5 bottom-1.5 w-0.5 rounded-full bg-gradient-to-b from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
+                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                      />
+                    )}
+                    <span
+                      className={`grid place-items-center w-8 h-8 rounded-lg ${
+                        isActive
+                          ? 'bg-gradient-to-br from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white shadow-sm'
+                          : 'bg-[color:var(--ai-card-border)]/40 text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)]'
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                    </span>
+                    <span className="text-sm font-medium flex-1">{item.label}</span>
+                    {item.badge !== undefined && (
+                      <span
+                        className={`text-[10px] px-1.5 h-4 rounded-full inline-flex items-center font-semibold ${
+                          isActive
+                            ? 'bg-[color:var(--ai-primary)]/20 text-[color:var(--ai-primary)]'
+                            : 'bg-[color:var(--ai-card-border)] text-[color:var(--ai-muted)]'
+                        }`}
+                      >
+                        {item.badge}
+                      </span>
+                    )}
+                  </div>
+                </Link>
+              </li>
+            );
+          })}
+
+          <li className="pt-1 mt-1 border-t border-[color:var(--ai-card-border)]/60">
+            <button
+              type="button"
+              onClick={handleSignOut}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[color:var(--ai-muted)] hover:text-[color:var(--ai-danger)] hover:bg-[color:var(--ai-danger)]/5 transition-colors"
+            >
+              <span className="grid place-items-center w-8 h-8 rounded-lg bg-[color:var(--ai-card-border)]/40">
+                <FiLogOut className="w-4 h-4" />
+              </span>
+              <span className="text-sm font-medium">{t('nav.logout') ?? 'Sign out'}</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+  );
 };
 
 export default ProfileSidebar;

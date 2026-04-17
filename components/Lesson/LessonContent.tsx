@@ -16,9 +16,10 @@ import LessonNavigation from './Navigation/LessonNavigation';
 import OfflineButton from './OfflineButton';
 import { sanitizeRich } from '@/utils/security/htmlSanitizer';
 import { useOfflineContent } from '../Profile/hooks/useOfflineContent';
-import { FiWifi, FiWifiOff, FiFileText } from '@/components/icons/FeatherIcons';
+import { FiWifi, FiWifiOff, FiFileText, FiCheckCircle, FiBookOpen } from '@/components/icons/FeatherIcons';
 import { logLessonCompletion, logVideoProgress, logCourseCompletion } from '@/utils/analytics';
 import { incrementLessonCompletions, trackVideoWatchTime, incrementCourseCompletions, incrementUserCompletedCourses } from '@/utils/statistics';
+import { GradientCard, ProgressRing } from '@/components/user-shell';
 
 interface LessonContentProps {
   lesson: Lesson;
@@ -234,118 +235,92 @@ function LessonContent({
 
   // Get the list of lessons for the navigation component
   const navigationLessons = getCourseLessons();
+  const completedLessonsCount = navigationLessons.filter((l) => l.isCompleted).length;
   return (
     <div className="flex flex-col w-full max-w-7xl mx-auto px-4 py-6 animate-in fade-in duration-500">
-      <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-[color:var(--ai-accent)]/10 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-[color:var(--ai-card-border)]/50 shadow-xl">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-2">
-              {lesson.name}
-            </h1>
-            {lesson.description && (
-              <p className="text-[color:var(--ai-muted)] max-w-2xl">{lesson.description}</p>
+      {/* Modern lesson hero */}
+      <GradientCard className="mb-6 p-0 overflow-hidden" flush>
+        <div className="relative">
+          <div
+            aria-hidden
+            className="absolute inset-0 pointer-events-none opacity-70"
+            style={{
+              background:
+                'radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--ai-primary) 18%, transparent) 0%, transparent 55%), radial-gradient(circle at 100% 100%, color-mix(in srgb, var(--ai-secondary) 18%, transparent) 0%, transparent 55%)',
+            }}
+          />
+          <div className="relative p-5 md:p-7">
+            {course && (
+              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[color:var(--ai-muted)] mb-3">
+                <FiBookOpen className="w-3.5 h-3.5" />
+                <span className="truncate max-w-xs">{course.name}</span>
+              </div>
             )}
-          </div>
+            <div className="flex flex-col md:flex-row gap-6 items-start">
+              <div className="min-w-0 flex-1">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">
+                  {lesson.name}
+                </h1>
+                {lesson.description && (
+                  <p className="text-[color:var(--ai-muted)] mt-3 max-w-2xl leading-relaxed">
+                    {lesson.description}
+                  </p>
+                )}
 
-          <div className="flex flex-col items-end gap-2">
-            {' '}
-            {/* Offline status indicator */}
-            {!isOnline && (
-              <Badge color="danger" variant="flat" className="mb-1 flex items-center gap-1">
-                <FiWifiOff size={12} />
-                {t('status.offlineMode')}
-              </Badge>
-            )}
-            {/* Download for offline button */}
-            {course && <OfflineButton lesson={lesson} course={course} className="mb-2" />}
-            {/* Course Progress Indicator */}
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-sm text-[color:var(--ai-muted)]">{t('courseProgress')}</span>
-              <span className="font-semibold text-[color:var(--ai-primary)]">
-                {Math.round(progressPercentage)}%
-              </span>
-            </div>{' '}
-            <div className={styles.progressContainer}>
-              <div className={styles.progressBar} style={{ width: `${progressPercentage}%` }}></div>
+                {/* Status chips */}
+                <div className="flex flex-wrap items-center gap-2 mt-4">
+                  {isCompleted && (
+                    <Chip
+                      color="success"
+                      variant="flat"
+                      size="sm"
+                      startContent={<FiCheckCircle className="w-3.5 h-3.5" />}
+                    >
+                      {t('status.completed')}
+                    </Chip>
+                  )}
+                  {!isOnline && (
+                    <Chip
+                      color="danger"
+                      variant="flat"
+                      size="sm"
+                      startContent={<FiWifiOff className="w-3.5 h-3.5" />}
+                    >
+                      {t('status.offlineMode')}
+                    </Chip>
+                  )}
+                  {progressSaved && (
+                    <Chip color="primary" variant="flat" size="sm" className="animate-pulse">
+                      {t('status.progressSaved')}
+                    </Chip>
+                  )}
+                  {autoPlayNext && (
+                    <Chip color="warning" variant="flat" size="sm">
+                      {t('status.autoplayNext')}
+                    </Chip>
+                  )}
+                  {course && <OfflineButton lesson={lesson} course={course} />}
+                </div>
+              </div>
+
+              {/* Progress ring */}
+              <div className="shrink-0 flex items-center gap-4 self-stretch md:self-start rounded-2xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/70 backdrop-blur-sm p-4">
+                <ProgressRing value={Math.round(progressPercentage)} size={84} strokeWidth={9} tone="primary" />
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider font-semibold text-[color:var(--ai-muted)]">
+                    {t('courseProgress')}
+                  </p>
+                  <p className="text-lg font-bold text-[color:var(--ai-foreground)]">
+                    {completedLessonsCount}
+                    <span className="text-sm text-[color:var(--ai-muted)] font-normal"> / {navigationLessons.length}</span>
+                  </p>
+                  <p className="text-xs text-[color:var(--ai-muted)]">lessons done</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-
-        {/* Status indicators */}
-        <div className="flex flex-wrap items-center gap-2">
-          {isCompleted && (
-            <Chip
-              color="success"
-              variant="flat"
-              className="transition-all duration-300"
-              startContent={
-                <svg
-                  className="w-3.5 h-3.5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clipRule="evenodd"
-                  ></path>
-                </svg>
-              }
-            >
-              {t('status.completed')}
-            </Chip>
-          )}
-
-          {progressSaved && (
-            <Chip
-              color="primary"
-              variant="flat"
-              className="animate-pulse"
-              startContent={
-                <svg
-                  className="w-3.5 h-3.5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z"
-                    clipRule="evenodd"
-                  ></path>
-                </svg>
-              }
-            >
-              {t('status.progressSaved')}
-            </Chip>
-          )}
-
-          {autoPlayNext && (
-            <Chip
-              color="warning"
-              variant="flat"
-              startContent={
-                <svg
-                  className="w-3.5 h-3.5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
-                  <path
-                    fillRule="evenodd"
-                    d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
-                    clipRule="evenodd"
-                  ></path>
-                </svg>
-              }
-            >
-              {t('status.autoplayNext')}
-            </Chip>
-          )}
-        </div>
-      </div>{' '}
+      </GradientCard>
       {/* Main content grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 px-1">
         {/* Main Content Column */}

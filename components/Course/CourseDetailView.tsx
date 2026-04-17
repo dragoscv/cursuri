@@ -116,61 +116,69 @@ export default function CourseDetailView({
   }, [courseId, course, context?.user]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <CourseHeader course={courseWithStats} />
-      </motion.div>
+    <div className="relative">
+      {/* Ambient backdrop */}
+      <div aria-hidden className="pointer-events-none fixed inset-x-0 top-0 h-[420px] -z-10 overflow-hidden">
+        <div className="absolute -top-32 left-1/4 w-[480px] h-[480px] bg-[color:var(--ai-primary)]/8 rounded-full blur-3xl" />
+        <div className="absolute -top-10 right-1/4 w-[360px] h-[360px] bg-[color:var(--ai-secondary)]/8 rounded-full blur-3xl" />
+      </div>
 
-      {/* Compact course description */}
-      {course.description && (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.15 }}
-          className="mt-6 bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-[color:var(--ai-accent)]/5 backdrop-blur-sm rounded-xl p-5 border border-[color:var(--ai-card-border)]/50 shadow-sm"
+          transition={{ duration: 0.5 }}
         >
-          <p className="text-[color:var(--ai-muted)] leading-relaxed text-sm">
-            {course.fullDescription || course.description}
-          </p>
-        </motion.div>
-      )}
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
-        <motion.div
-          className="lg:col-span-2"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <CourseDetails
-            course={course}
-            courseId={courseId}
-            lessons={courseLessons}
-            hasAccess={hasAccess}
-            completedLessons={completedLessons}
-          />
+          <CourseHeader course={courseWithStats} />
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] p-6 rounded-xl shadow-lg border border-[color:var(--ai-card-border)] dark:border-[color:var(--ai-card-border)]"
-        >
-          <CourseEnrollment
-            course={courseWithStats}
-            isPurchased={isPurchased}
-            hasActiveSubscription={hasActiveSubscription}
-            completedLessons={completedLessons}
-            progressPercentage={progressPercentage}
-            totalLessons={courseLessons.length}
-            courseLessons={courseLessons}
-          />
-        </motion.div>
+        {/* Full description */}
+        {course.fullDescription && course.fullDescription !== course.description && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.15 }}
+            className="mt-6 rounded-2xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/70 backdrop-blur-sm p-6 shadow-sm"
+          >
+            <p className="text-[color:var(--ai-muted)] leading-relaxed">
+              {course.fullDescription}
+            </p>
+          </motion.div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+          <motion.div
+            className="lg:col-span-2 min-w-0"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <CourseDetails
+              course={course}
+              courseId={courseId}
+              lessons={courseLessons}
+              hasAccess={hasAccess}
+              completedLessons={completedLessons}
+            />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="lg:sticky lg:top-24 self-start rounded-2xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/80 backdrop-blur-xl p-6 shadow-lg"
+          >
+            <CourseEnrollment
+              course={courseWithStats}
+              isPurchased={isPurchased}
+              hasActiveSubscription={hasActiveSubscription}
+              completedLessons={completedLessons}
+              progressPercentage={progressPercentage}
+              totalLessons={courseLessons.length}
+              courseLessons={courseLessons}
+            />
+          </motion.div>
+        </div>
       </div>
     </div>
   );
