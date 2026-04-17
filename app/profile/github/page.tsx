@@ -3,7 +3,7 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
-import { Button, Chip, Spinner } from '@heroui/react';
+import { Chip, Spinner } from '@heroui/react';
 import { createCheckoutSession } from 'firewand';
 
 import { AppContext } from '@/components/AppContext';
@@ -19,6 +19,7 @@ import {
 } from 'firebase/firestore';
 import { stripePayments } from '@/utils/firebase/stripe';
 import { GradientCard, MetricCard, SectionShell } from '@/components/user-shell';
+import { AppButton } from '@/components/shared/ui';
 import { useToast } from '@/components/Toast/ToastContext';
 
 interface GitHubAccountDoc {
@@ -31,7 +32,7 @@ interface GitHubAccountDoc {
   subscriptionId?: string;
 }
 
-const GITHUB_PRICE_ID = 'price_1SO07cLG0nGypmDBXjef95ut';
+const GITHUB_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_GITHUB_PRICE_ID || '';
 
 function GitHubMark({ className = '' }: { className?: string }) {
   return (
@@ -115,6 +116,15 @@ export default function GitHubAccountsPage() {
   }, [subscriptions]);
 
   const handlePurchase = async () => {
+    if (!GITHUB_PRICE_ID) {
+      showToast({
+        type: 'error',
+        message:
+          'GitHub subscription is not configured. Please contact support (NEXT_PUBLIC_STRIPE_GITHUB_PRICE_ID is missing).',
+        duration: 6000,
+      });
+      return;
+    }
     setPurchasing(true);
     try {
       const payments = stripePayments(firebaseApp);
@@ -127,11 +137,12 @@ export default function GitHubAccountsPage() {
       });
       window.location.assign(session.url);
     } catch (err) {
+      const message = err instanceof Error ? err.message : 'Could not start checkout.';
       console.error('Failed to start checkout', err);
       showToast({
         type: 'error',
-        message: 'Could not start checkout. Please try again.',
-        duration: 4000,
+        message,
+        duration: 5000,
       });
       setPurchasing(false);
     }
@@ -198,22 +209,22 @@ export default function GitHubAccountsPage() {
             <p className="mt-1 text-xs text-[color:var(--ai-muted)]">
               {t('buy.description')}
             </p>
-            <Button
-              color="primary"
+            <AppButton
+              variant="primary"
               size="md"
-              className="mt-4 w-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium shadow-md shadow-[color:var(--ai-primary)]/25"
+              fullWidth
+              className="mt-4"
               isLoading={purchasing}
+              loadingText={t('buy.loading')}
               onPress={handlePurchase}
               startContent={
-                !purchasing ? (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
-                    <path d="M12 5v14M5 12h14" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                ) : null
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
+                  <path d="M12 5v14M5 12h14" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               }
             >
-              {purchasing ? t('buy.loading') : t('buy.cta')}
-            </Button>
+              {t('buy.cta')}
+            </AppButton>
           </div>
         </div>
       </GradientCard>
@@ -335,15 +346,15 @@ function AccountCard({
               {isActive ? '● ' : '○ '}
               {isActive ? t('account.active') : t('account.suspended')}
             </Chip>
-            <Button
-              size="sm"
+            <AppButton
               variant="flat"
               color="primary"
+              size="sm"
               onPress={() => onCopyAll(account)}
               startContent={<CopyIcon className="w-3.5 h-3.5" />}
             >
               {copiedField === `all-${account.id}` ? t('account.copied') : t('account.copyAll')}
-            </Button>
+            </AppButton>
           </div>
         </div>
 
@@ -488,15 +499,16 @@ function EmptyState({ onPurchase, purchasing, t }: EmptyStateProps) {
       <p className="mt-1 text-sm text-[color:var(--ai-muted)] max-w-md mx-auto">
         {t('empty.description')}
       </p>
-      <Button
-        color="primary"
+      <AppButton
+        variant="primary"
         size="lg"
-        className="mt-6 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium shadow-md shadow-[color:var(--ai-primary)]/25"
+        className="mt-6"
         isLoading={purchasing}
+        loadingText={t('buy.loading')}
         onPress={onPurchase}
       >
-        {purchasing ? t('buy.loading') : t('empty.cta')}
-      </Button>
+        {t('empty.cta')}
+      </AppButton>
     </div>
   );
 }

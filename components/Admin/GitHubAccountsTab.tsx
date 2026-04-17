@@ -448,12 +448,18 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
   };
 
   const handlePurchaseSubscription = async () => {
+    const priceId = process.env.NEXT_PUBLIC_STRIPE_GITHUB_PRICE_ID;
+    if (!priceId) {
+      setError(
+        'GitHub subscription price is not configured (set NEXT_PUBLIC_STRIPE_GITHUB_PRICE_ID).'
+      );
+      return;
+    }
     setPurchaseLoading(true);
     try {
       const payments = stripePayments(firebaseApp);
-      // Use monthly price ID from the subscription product
       const session = await createCheckoutSession(payments, {
-        price: 'price_1SO07cLG0nGypmDBXjef95ut',
+        price: priceId,
         allow_promotion_codes: true,
         mode: 'subscription',
         success_url: `${window.location.origin}/admin?tab=users&githubCreated=true&userId=${user.id}`,
@@ -461,7 +467,8 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
       });
       window.location.assign(session.url);
     } catch (err) {
-      setError('Failed to start subscription checkout');
+      const message = err instanceof Error ? err.message : 'Failed to start subscription checkout';
+      setError(message);
       console.error(err);
     } finally {
       setPurchaseLoading(false);
