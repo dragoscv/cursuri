@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { AppContext } from '@/components/AppContext';
 import AdminGuard from '@/components/Admin/AdminGuard';
 import AdminPageHeader from '@/components/Admin/AdminPageHeader';
+import { ConfirmDialog, DataToolbar, EmptyState } from '@/components/Admin/shell';
 import { CourseWithPriceProduct } from '@/types';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -14,6 +15,8 @@ import { doc, deleteDoc, writeBatch } from 'firebase/firestore';
 import { firestoreDB } from '@/utils/firebase/firebase.config';
 import { useToast } from '@/components/Toast/ToastContext';
 import { getCoursePrice } from '@/utils/pricing';
+import { Select, SelectItem } from '@heroui/react';
+import { FiBookOpen, FiTrash2, FiPlus } from '@/components/icons/FeatherIcons';
 import {
   DndContext,
   closestCenter,
@@ -183,12 +186,19 @@ export default function CoursesPage() {
     throw new Error('AppContext not found');
   }
 
-  const { courses, products, openModal, closeModal, refreshCourses } = context;
+  const { courses, products, refreshCourses } = context;
   const { showToast } = useToast();
 
   // Ordered courses array for DnD
   const [orderedCourses, setOrderedCourses] = useState<CourseWithPriceProduct[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Filters
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'draft'>('all');
+
+  // Confirm dialog
+  const [pendingDelete, setPendingDelete] = useState<CourseWithPriceProduct | null>(null);
 
   useEffect(() => {
     const sorted = Object.values(courses).sort((a, b) => {
@@ -243,20 +253,15 @@ export default function CoursesPage() {
   const handleDeleteCourse = async (courseId: string, courseName: string) => {
     setDeletingCourse(courseId);
     try {
-      // Delete course from Firestore
       await deleteDoc(doc(firestoreDB, 'courses', courseId));
-
-      // Refresh courses list
       await refreshCourses();
-
       showToast({
         type: 'success',
         title: t('courseDeleted'),
         message: t('courseDeletedMessage', { courseName }),
         duration: 5000,
       });
-
-      closeModal('delete-course');
+      setPendingDelete(null);
     } catch (error) {
       console.error('Error deleting course:', error);
       showToast({
@@ -270,40 +275,8 @@ export default function CoursesPage() {
     }
   };
 
-  // Confirm delete modal
   const handleConfirmDelete = (course: CourseWithPriceProduct) => {
-    openModal({
-      id: 'delete-course',
-      isOpen: true,
-      modalHeader: t('confirmDelete'),
-      modalBody: (
-        <div className="p-4">
-          <p className="mb-4">{t('confirmDeleteMessage', { courseName: course.name })}</p>
-          <p className="text-sm text-[color:var(--ai-muted)] mb-4">{t('confirmDeleteWarning')}</p>
-          <div className="flex justify-end gap-2">
-            <Button
-              variant="bordered"
-              onClick={() => closeModal('delete-course')}
-              isDisabled={deletingCourse === course.id}
-              className="bg-[color:var(--ai-card-bg)]/80 border border-[color:var(--ai-card-border)]/50 text-[color:var(--ai-foreground)] rounded-full hover:bg-[color:var(--ai-card-border)]/20 transition-colors"
-            >
-              {t('cancel')}
-            </Button>
-            <Button
-              variant="primary"
-              onClick={() => handleDeleteCourse(course.id!, course.name)}
-              isDisabled={deletingCourse === course.id}
-              className="bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-full shadow-sm hover:shadow-md hover:shadow-red-500/20 transition-all"
-            >
-              {deletingCourse === course.id ? t('deleting') : t('delete')}
-            </Button>
-          </div>
-        </div>
-      ),
-      headerDisabled: false,
-      footerDisabled: true,
-      onClose: () => closeModal('delete-course'),
-    });
+    setPendingDelete(course);
   };
 
   const containerVariants = {

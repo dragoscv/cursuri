@@ -12,6 +12,12 @@ import {
   TableRow,
   TableCell,
   Select,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Input,
 } from '@heroui/react';
 import SelectItem from '@/components/ui/SelectItem';
 import { firebaseAuth, firebaseApp } from '@/utils/firebase/firebase.config';
@@ -24,6 +30,17 @@ import type { EnrichedSubscription } from '@/types/stripe';
 interface GitHubAccountsTabProps {
   user: UserProfile;
   subscriptions?: EnrichedSubscription[];
+}
+
+interface AvailableAzureUser {
+  azureUserId: string;
+  userPrincipalName: string;
+  displayName: string;
+  mailNickname: string;
+  accountEnabled: boolean;
+  derivedGithubUsername: string;
+  alreadyLinked: boolean;
+  linkedToUserId?: string;
 }
 
 // Funny progress steps for account creation
@@ -151,6 +168,18 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [purchaseLoading, setPurchaseLoading] = useState(false);
+
+  // Link existing account modal state
+  const [linkModalOpen, setLinkModalOpen] = useState(false);
+  const [availableUsers, setAvailableUsers] = useState<AvailableAzureUser[]>([]);
+  const [availableLoading, setAvailableLoading] = useState(false);
+  const [availableError, setAvailableError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [linkingAzureId, setLinkingAzureId] = useState<string | null>(null);
+  const [showLinked, setShowLinked] = useState(false);
+
+  // Unlink confirmation
+  const [unlinkingId, setUnlinkingId] = useState<string | null>(null);
 
   // Creation progress state
   const [isCreating, setIsCreating] = useState(false);
@@ -323,6 +352,83 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
     }
   };
 
+  const fetchAvailableUsers = useCallback(async () => {
+    setAvailableLoading(true);
+    setAvailableError(null);
+    try {
+      const res = await apiCall('/api/admin/github-accounts/available');
+      const data = await res.json();
+      if (data.success) {
+        setAvailableUsers(data.users);
+      } else {
+        setAvailableError(data.error || 'Failed to load available accounts');
+      }
+    } catch (err) {
+      setAvailableError('Network error loading available accounts');
+      console.error(err);
+    } finally {
+      setAvailableLoading(false);
+    }
+  }, []);
+
+  const handleOpenLinkModal = () => {
+    setLinkModalOpen(true);
+    setSearchQuery('');
+    setShowLinked(false);
+    fetchAvailableUsers();
+  };
+
+  const handleLinkExisting = async (azureUserId: string) => {
+    setLinkingAzureId(azureUserId);
+    setError(null);
+    try {
+      const res = await apiCall('/api/admin/github-accounts', 'POST', {
+        mode: 'link',
+        userId: user.id,
+        azureUserId,
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSuccessMessage(`Linked account: ${data.account.githubUsername}`);
+        setLinkModalOpen(false);
+        await fetchAccounts();
+      } else {
+        setAvailableError(data.error || 'Failed to link account');
+      }
+    } catch (err) {
+      setAvailableError('Network error linking account');
+      console.error(err);
+    } finally {
+      setLinkingAzureId(null);
+    }
+  };
+
+  const handleUnlink = async (accountId: string) => {
+    if (!confirm('Detach this account from the user? The Azure account will NOT be deleted and can be re-linked later.')) {
+      return;
+    }
+    setUnlinkingId(accountId);
+    setError(null);
+    try {
+      const res = await apiCall('/api/admin/github-accounts', 'DELETE', {
+        accountId,
+        userId: user.id,
+      });
+      const data = await res.json();
+      if (data.success) {
+        setAccounts((prev) => prev.filter((a) => a.id !== accountId));
+        setSuccessMessage('Account unlinked');
+      } else {
+        setError(data.error || 'Failed to unlink account');
+      }
+    } catch (err) {
+      setError('Network error unlinking account');
+      console.error(err);
+    } finally {
+      setUnlinkingId(null);
+    }
+  };
+
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -343,9 +449,20 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-wrap justify-between items-center gap-2">
         <h3 className="text-lg font-semibold">GitHub Accounts</h3>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <Button
+            color="default"
+            size="sm"
+            variant="flat"
+            onPress={handleOpenLinkModal}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clipRule="evenodd" />
+            </svg>
+            Link Existing
+          </Button>
           <Button
             color="secondary"
             size="sm"
@@ -491,15 +608,27 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
                   )}
                 </TableCell>
                 <TableCell>
-                  <Button
-                    size="sm"
-                    color={account.isActive ? 'warning' : 'success'}
-                    variant="flat"
-                    isLoading={togglingId === account.id}
-                    onPress={() => handleToggle(account.id, account.isActive)}
-                  >
-                    {account.isActive ? 'Disable' : 'Enable'}
-                  </Button>
+                  <div className="flex gap-1">
+                    <Button
+                      size="sm"
+                      color={account.isActive ? 'warning' : 'success'}
+                      variant="flat"
+                      isLoading={togglingId === account.id}
+                      onPress={() => handleToggle(account.id, account.isActive)}
+                    >
+                      {account.isActive ? 'Disable' : 'Enable'}
+                    </Button>
+                    <Button
+                      size="sm"
+                      color="danger"
+                      variant="light"
+                      isLoading={unlinkingId === account.id}
+                      onPress={() => handleUnlink(account.id)}
+                      title="Detach from this user (does not delete the Azure account)"
+                    >
+                      Unlink
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
@@ -546,6 +675,138 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
           ))}
         </div>
       )}
+
+      {/* Link Existing Account Modal */}
+      <Modal
+        isOpen={linkModalOpen}
+        onClose={() => setLinkModalOpen(false)}
+        size="3xl"
+        scrollBehavior="inside"
+        backdrop="blur"
+      >
+        <ModalContent>
+          {(onClose) => {
+            const filtered = availableUsers.filter((u) => {
+              if (!showLinked && u.alreadyLinked) return false;
+              if (!searchQuery) return true;
+              const q = searchQuery.toLowerCase();
+              return (
+                u.userPrincipalName.toLowerCase().includes(q) ||
+                u.displayName?.toLowerCase().includes(q) ||
+                u.derivedGithubUsername.toLowerCase().includes(q)
+              );
+            });
+
+            return (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  <h3 className="text-lg font-bold">Link Existing Account</h3>
+                  <p className="text-xs text-[color:var(--ai-muted-foreground)] font-normal">
+                    Choose an Azure AD account on <code>studiai.ro</code> to attach to this user.
+                    Subscription linking is optional and can be done later.
+                  </p>
+                </ModalHeader>
+                <ModalBody>
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <Input
+                      size="sm"
+                      placeholder="Search by name, email, or GitHub username..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      startContent={
+                        <svg className="h-4 w-4 text-[color:var(--ai-muted-foreground)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      }
+                      className="flex-1"
+                    />
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant={showLinked ? 'solid' : 'flat'}
+                        color={showLinked ? 'primary' : 'default'}
+                        onPress={() => setShowLinked((v) => !v)}
+                      >
+                        {showLinked ? 'Showing all' : 'Show linked'}
+                      </Button>
+                      <Button size="sm" variant="flat" onPress={fetchAvailableUsers} isLoading={availableLoading}>
+                        Refresh
+                      </Button>
+                    </div>
+                  </div>
+
+                  {availableError && (
+                    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400">
+                      {availableError}
+                    </div>
+                  )}
+
+                  {availableLoading ? (
+                    <div className="flex justify-center py-12">
+                      <Spinner size="lg" color="primary" />
+                    </div>
+                  ) : filtered.length === 0 ? (
+                    <div className="text-center py-12 text-[color:var(--ai-muted-foreground)]">
+                      <div className="text-5xl mb-2">🔍</div>
+                      <p>No accounts found</p>
+                      {!showLinked && availableUsers.some((u) => u.alreadyLinked) && (
+                        <p className="text-xs mt-1">Try toggling &quot;Show linked&quot; to see linked accounts.</p>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="space-y-2 max-h-[50vh] overflow-y-auto">
+                      {filtered.map((u) => (
+                        <div
+                          key={u.azureUserId}
+                          className={`flex items-center justify-between gap-3 p-3 rounded-lg border transition-colors ${
+                            u.alreadyLinked
+                              ? 'bg-gray-50 dark:bg-gray-900/40 border-gray-200 dark:border-gray-800 opacity-70'
+                              : 'bg-[color:var(--ai-card-bg)]/60 border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]'
+                          }`}
+                        >
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <p className="font-medium truncate">{u.displayName || u.mailNickname}</p>
+                              {!u.accountEnabled && (
+                                <Chip size="sm" color="danger" variant="flat">Disabled</Chip>
+                              )}
+                              {u.alreadyLinked && (
+                                <Chip size="sm" color="warning" variant="flat">Already linked</Chip>
+                              )}
+                            </div>
+                            <p className="text-xs font-mono text-[color:var(--ai-muted-foreground)] truncate">
+                              {u.userPrincipalName}
+                            </p>
+                            <p className="text-xs text-[color:var(--ai-muted-foreground)] truncate">
+                              GitHub: <span className="font-mono">{u.derivedGithubUsername}</span>
+                              {u.alreadyLinked && u.linkedToUserId && (
+                                <span> · linked to user <code>{u.linkedToUserId.slice(0, 8)}…</code></span>
+                              )}
+                            </p>
+                          </div>
+                          <Button
+                            size="sm"
+                            color="primary"
+                            variant="flat"
+                            isDisabled={u.alreadyLinked}
+                            isLoading={linkingAzureId === u.azureUserId}
+                            onPress={() => handleLinkExisting(u.azureUserId)}
+                          >
+                            Link
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </ModalBody>
+                <ModalFooter>
+                  <Button variant="light" onPress={onClose}>Close</Button>
+                </ModalFooter>
+              </>
+            );
+          }}
+        </ModalContent>
+      </Modal>
     </div>
   );
 }

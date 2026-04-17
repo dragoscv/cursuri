@@ -6,6 +6,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CookieConsent from '@/components/CookieConsent';
 import BottomNavigation from '@/components/Header/BottomNavigation';
+import HideOnAdmin, { ContentArea } from '@/components/shared/HideOnAdmin';
 import SkipLink from '@/components/shared/SkipLink';
 import PageViewTracker from '@/components/Analytics/PageViewTracker';
 import PreloadLinks from './preload-links';
@@ -58,22 +59,30 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {/* Skip link for keyboard accessibility */}
           <SkipLink />
 
-          {/* Fixed header at the top */}
-          <Header />
+          {/* Fixed header at the top (hidden inside the admin panel) */}
+          <HideOnAdmin>
+            <Header />
+          </HideOnAdmin>
 
           {/* Main content area that starts below the header */}
-          <div className="pt-8 bg-[rgb(var(--background-start-rgb))] min-h-screen">
+          <ContentArea className="bg-[rgb(var(--background-start-rgb))] min-h-screen">
             <main id="main-content" className="flex-grow pb-16 md:pb-0" tabIndex={-1} role="main">
               {children}
             </main>
-            <Footer />
-          </div>
+            <HideOnAdmin>
+              <Footer />
+            </HideOnAdmin>
+          </ContentArea>
 
-          {/* Mobile Bottom Navigation */}
-          <BottomNavigation />
+          {/* Mobile Bottom Navigation (hidden in admin) */}
+          <HideOnAdmin>
+            <BottomNavigation />
+          </HideOnAdmin>
 
           {/* Cookie consent banner */}
-          <CookieConsent />
+          <HideOnAdmin>
+            <CookieConsent />
+          </HideOnAdmin>
         </Providers>
       </body>
     </html>

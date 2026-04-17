@@ -21,6 +21,7 @@ import { firestoreDB } from '@/utils/firebase/firebase.config';
 import { ContactMessage } from '@/types';
 import { FiMail, FiTrash2, FiFilter, FiUser, FiClock, FiCheck, FiX } from '@/components/icons/FeatherIcons';
 import { useRouter } from 'next/navigation';
+import { PageHeader } from '@/components/Admin/shell';
 
 export default function AdminMessagesPage() {
     const t = useTranslations('admin.messages');
@@ -163,17 +164,17 @@ export default function AdminMessagesPage() {
     }
 
     return (
-        <div className="p-6">
-            {/* Header */}
-            <div className="mb-6">
-                <h1 className="text-3xl font-bold text-[color:var(--ai-foreground)] mb-2">
-                    {t('title')}
-                </h1>
-                <p className="text-[color:var(--ai-muted)]">{t('description')}</p>
-            </div>
+        <div className="space-y-5">
+            <PageHeader
+                eyebrow="Inbox"
+                title={t('title')}
+                description={t('description')}
+                icon={<FiMail size={20} />}
+                tone="primary"
+            />
 
             {/* Filters */}
-            <Card className="mb-6 border border-[color:var(--ai-card-border)]">
+            <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/70 backdrop-blur-sm">
                 <CardBody className="p-4">
                     <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
                         {/* Status Filter Buttons */}

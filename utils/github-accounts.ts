@@ -262,3 +262,204 @@ export async function createGitHubAccount(params: {
     };
   }
 }
+
+export interface AzureUserSummary {
+  azureUserId: string;
+  userPrincipalName: string;
+  displayName: string;
+  mailNickname: string;
+  accountEnabled: boolean;
+  derivedGithubUsername: string;
+  alreadyLinked: boolean;
+  linkedToUserId?: string;
+}
+
+/**
+ * List all Azure AD users on the studiai.ro domain along with whether they
+ * are already linked to a Firebase user. Used by the admin UI to attach
+ * existing accounts.
+ */
+export async function listAvailableAzureUsers(): Promise<{
+  success: boolean;
+  users?: AzureUserSummary[];
+  error?: string;
+}> {
+  try {
+    const token = await getGraphToken();
+    const db = getFirestore();
+
+    // 1. Fetch all linked accounts across all users (collection group query)
+    const linkedSnapshot = await db.collectionGroup('githubAccounts').get();
+    const linkedByAzureId = new Map<string, string>();
+    linkedSnapshot.forEach((doc) => {
+      const data = doc.data();
+      if (data.azureUserId) {
+        // doc.ref.parent.parent.id => userId
+        const parentDoc = doc.ref.parent.parent;
+        linkedByAzureId.set(data.azureUserId, parentDoc?.id || '');
+      }
+    });
+
+    // 2. Fetch Azure users on the studiai.ro domain (paginated)
+    const select = 'id,userPrincipalName,displayName,mailNickname,accountEnabled';
+    const filter = `endsWith(userPrincipalName,'@${DOMAIN}')`;
+    let url = `https://graph.microsoft.com/v1.0/users?$select=${select}&$filter=${encodeURIComponent(filter)}&$top=999&$count=true`;
+
+    const azureUsers: Array<{
+      id: string;
+      userPrincipalName: string;
+      displayName: string;
+      mailNickname: string;
+      accountEnabled: boolean;
+    }> = [];
+
+    // Graph requires ConsistencyLevel: eventual when using $filter with endsWith + $count
+    let safetyCounter = 0;
+    while (url && safetyCounter < 20) {
+      safetyCounter++;
+      const res = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          ConsistencyLevel: 'eventual',
+        },
+      });
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(`Graph users query failed: ${errText}`);
+      }
+      const data = await res.json();
+      if (Array.isArray(data.value)) {
+        azureUsers.push(...data.value);
+      }
+      url = data['@odata.nextLink'] || '';
+    }
+
+    const summaries: AzureUserSummary[] = azureUsers.map((u) => {
+      const mailNickname = u.mailNickname || u.userPrincipalName.split('@')[0];
+      const linkedTo = linkedByAzureId.get(u.id);
+      return {
+        azureUserId: u.id,
+        userPrincipalName: u.userPrincipalName,
+        displayName: u.displayName,
+        mailNickname,
+        accountEnabled: u.accountEnabled,
+        derivedGithubUsername: `${mailNickname}_metu`,
+        alreadyLinked: !!linkedTo,
+        linkedToUserId: linkedTo || undefined,
+      };
+    });
+
+    // Sort: unlinked first, then by displayName
+    summaries.sort((a, b) => {
+      if (a.alreadyLinked !== b.alreadyLinked) return a.alreadyLinked ? 1 : -1;
+      return (a.displayName || '').localeCompare(b.displayName || '');
+    });
+
+    return { success: true, users: summaries };
+  } catch (error) {
+    console.error('Error listing Azure users:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to list Azure users',
+    };
+  }
+}
+
+/**
+ * Link an EXISTING Azure AD account to a Firebase user without creating
+ * anything in Azure. The account is added to the user's githubAccounts
+ * subcollection in Firestore. Optionally attach a subscription.
+ */
+export async function linkExistingGitHubAccount(params: {
+  userId: string;
+  azureUserId: string;
+  createdBy: string;
+  subscriptionId?: string;
+}): Promise<CreateAccountResult> {
+  const { userId, azureUserId, createdBy, subscriptionId } = params;
+
+  try {
+    const token = await getGraphToken();
+    const db = getFirestore();
+
+    // 1. Make sure this Azure user isn't already linked to any user
+    const dupeSnapshot = await db
+      .collectionGroup('githubAccounts')
+      .where('azureUserId', '==', azureUserId)
+      .limit(1)
+      .get();
+
+    if (!dupeSnapshot.empty) {
+      const owner = dupeSnapshot.docs[0].ref.parent.parent?.id;
+      return {
+        success: false,
+        error: `This account is already linked${owner ? ` to user ${owner}` : ''}`,
+      };
+    }
+
+    // 2. Fetch details from Graph
+    const res = await graphRequest(
+      token,
+      `https://graph.microsoft.com/v1.0/users/${azureUserId}?$select=id,userPrincipalName,displayName,mailNickname,accountEnabled`
+    );
+    if (!res.ok) {
+      const err = await res.text();
+      return { success: false, error: 'Azure user not found', details: err };
+    }
+    const azureUser = await res.json();
+    const mailNickname: string =
+      azureUser.mailNickname || (azureUser.userPrincipalName as string).split('@')[0];
+    const githubUsername = `${mailNickname}_metu`;
+
+    // 3. Determine next account number for this Firebase user
+    const existingSnapshot = await db
+      .collection('users')
+      .doc(userId)
+      .collection('githubAccounts')
+      .orderBy('accountNumber', 'desc')
+      .limit(1)
+      .get();
+    const nextAccountNumber = existingSnapshot.empty
+      ? 1
+      : (existingSnapshot.docs[0].data().accountNumber || 0) + 1;
+
+    // 4. Store in Firestore
+    const accountData = {
+      userId,
+      azureUserId,
+      userPrincipalName: azureUser.userPrincipalName,
+      displayName: azureUser.displayName,
+      githubUsername,
+      accountNumber: nextAccountNumber,
+      isActive: !!azureUser.accountEnabled,
+      defaultPassword: DEFAULT_PASSWORD,
+      subscriptionId: subscriptionId || null,
+      createdAt: new Date(),
+      createdBy,
+      linkedFromExisting: true,
+    };
+
+    const docRef = await db
+      .collection('users')
+      .doc(userId)
+      .collection('githubAccounts')
+      .add(accountData);
+
+    return {
+      success: true,
+      account: {
+        id: docRef.id,
+        ...accountData,
+        subscriptionId: subscriptionId || undefined,
+        provisionStatus: 'linked',
+      },
+    };
+  } catch (error) {
+    console.error('Error linking existing GitHub account:', error);
+    return {
+      success: false,
+      error: 'Failed to link existing account',
+      details: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}

@@ -1,80 +1,40 @@
 'use client';
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { AppContext } from '@/components/AppContext';
-import { motion } from 'framer-motion';
-import AdminSidebar from '@/components/Admin/AdminSidebar';
 import { useTranslations } from 'next-intl';
+
+import { AppContext } from '@/components/AppContext';
+import { AdminShell } from '@/components/Admin/shell';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const context = useContext(AppContext);
   const t = useTranslations('common');
 
-  // Safe access to context
   const authLoading = context?.authLoading ?? true;
   const isAdmin = context?.isAdmin || false;
   const user = context?.user || null;
 
-  // Redirect non-admin users once auth is loaded
   useEffect(() => {
-    if (!authLoading) {
-      // If user is not authenticated, redirect to home
-      if (!user) {
-        router.push('/');
-        return;
-      }
-
-      // If user is authenticated but not admin, redirect to home
-      if (!isAdmin) {
-        router.push('/');
-        return;
-      }
+    if (!authLoading && (!user || !isAdmin)) {
+      router.push('/');
     }
   }, [authLoading, user, isAdmin, router]);
 
-  // Content to show based on authentication state
-  const adminLayout = (
-    <div className="min-h-screen bg-[color:var(--ai-background)] pt-8 md:pt-16 pb-6 md:pb-12">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 md:py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-8">
-          {/* Admin Sidebar */}
-          <div className="lg:col-span-3">
-            <AdminSidebar />
+  if (authLoading || !user || !isAdmin) {
+    return (
+      <div className="min-h-screen bg-[color:var(--ai-background)] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative h-12 w-12">
+            <div className="absolute inset-0 rounded-full border-2 border-[color:var(--ai-card-border)]" />
+            <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-[color:var(--ai-primary)] animate-spin" />
           </div>
-
-          {/* Main Content */}
-          <div className="lg:col-span-9">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              {children}
-            </motion.div>
-          </div>
+          <div className="text-sm text-[color:var(--ai-muted)] animate-pulse">{t('loading')}</div>
         </div>
       </div>
-    </div>
-  );
-
-  const loadingView = (
-    <div className="min-h-screen bg-[color:var(--ai-background)] pt-16 pb-12 flex items-center justify-center">
-      <div className="animate-pulse text-[color:var(--ai-primary)] text-lg">{t('loading')}</div>
-    </div>
-  );
-
-  // Show loading while checking authentication
-  if (authLoading) {
-    return loadingView;
+    );
   }
 
-  // If not authenticated or not admin, show loading briefly while redirect happens
-  if (!user || !isAdmin) {
-    return loadingView;
-  }
-
-  // User is authenticated and is admin - show admin layout
-  return adminLayout;
+  return <AdminShell>{children}</AdminShell>;
 }

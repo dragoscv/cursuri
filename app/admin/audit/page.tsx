@@ -15,6 +15,7 @@ import {
   SelectItem,
 } from '@heroui/react';
 import { motion } from 'framer-motion';
+import { PageHeader, IconShield } from '@/components/Admin/shell';
 
 interface AuditLog {
   id: string;
@@ -145,19 +146,16 @@ export default function AuditLogsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[color:var(--section-light-bg)] to-[color:var(--section-accent-bg)] dark:from-[color:var(--section-dark-bg)] dark:to-[color:var(--ai-background)] py-8 px-4">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <h1 className="text-4xl font-bold text-[color:var(--ai-foreground)] mb-2">{t('title')}</h1>
-          <p className="text-[color:var(--ai-muted)]">
-            Monitor and review system activity, security events, and admin actions
-          </p>
-        </motion.div>
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Security"
+        title={t('title')}
+        description="Monitor and review system activity, security events, and admin actions"
+        icon={<IconShield size={20} />}
+        tone="danger"
+      />
+
+      <div className="max-w-[1400px] mx-auto w-full">
 
         {/* Statistics Cards */}
         {statistics && (
