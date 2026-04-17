@@ -93,7 +93,116 @@
     "popularCourses": "Cursuri Populare",
     "failedToLoad": "Eșec la încărcarea datelor de analiză",
     "pleaseTryAgain": "Vă rugăm să încercați din nou mai târziu",
-    "description": "Analiză detaliată a înscrierilor la cursuri, implicării utilizatorilor și performanței platformei."
+    "description": "Analiză detaliată a înscrierilor la cursuri, implicării utilizatorilor şi performanţei platformei.",
+    "insights": {
+      "title": "Perspective de performanță",
+      "description": "Indicatori derivati care rezumă starea actuală a platformei.",
+      "arpu": "Venit mediu / utilizator",
+      "arpuHint": "Venit total împărțit la numărul total de utilizatori.",
+      "conversion": "Rata utilizator → cumpărător",
+      "conversionHint": "Procentul utilizatorilor înregistrați care au efectuat cel puțin o achiziție.",
+      "avgMonthlyRevenue": "Venit lunar mediu",
+      "avgMonthlyRevenueHint": "Media veniturilor lunare în toate lunile observate.",
+      "topShare": "Cota cursului de top",
+      "topShareHint": "Procentul înscrierilor deținut de cel mai bine vândut curs."
+    }
+  },
+  "subscriptions": {
+    "title": "Abonamente",
+    "description": "Gestionează produsele și prețurile Stripe într-un singur loc.",
+    "stats": {
+      "totalProducts": "Total produse",
+      "activeProducts": "Produse active",
+      "subscriptionPlans": "Planuri recurente",
+      "activePrices": "Prețuri active"
+    },
+    "catalog": {
+      "title": "Catalog produse",
+      "description": "Fiecare produs este sincronizat live cu Stripe. Marchează un plan ca recomandat sau principal pentru a-l evidenția în storefront."
+    },
+    "filter": {
+      "all": "Toate",
+      "active": "Active",
+      "archived": "Arhivate"
+    },
+    "badges": {
+      "main": "Principal",
+      "featured": "Recomandat"
+    },
+    "status": {
+      "active": "Activ",
+      "archived": "Arhivat"
+    },
+    "table": {
+      "product": "Produs",
+      "status": "Stare",
+      "prices": "Prețuri",
+      "noPrices": "Fără prețuri"
+    },
+    "actions": {
+      "newProduct": "Produs nou",
+      "addPrice": "Adaugă preț",
+      "edit": "Editează",
+      "archive": "Arhivează",
+      "cancel": "Anulează",
+      "activePrice": "Activ",
+      "inactivePrice": "Inactiv"
+    },
+    "empty": {
+      "title": "Nu există produse",
+      "description": "Creează primul produs pentru a putea începe încasările."
+    },
+    "confirm": {
+      "archiveTitle": "Arhivezi produsul?",
+      "archiveBody": "Acest lucru va dezactiva \"{name}\" și toate prețurile asociate în Stripe. Abonamentele existente continuă, dar nu se pot crea altele noi."
+    }
+  },
+  "subscriptionAnalytics": {
+    "title": "Analiză abonamente",
+    "description": "MRR, ARR, rata de churn și distribuția planurilor din Stripe.",
+    "errorTitle": "Eroare la încărcarea datelor",
+    "kpis": {
+      "mrr": "MRR",
+      "arr": "ARR",
+      "activeSubscribers": "Abonați activi",
+      "churnRate": "Churn (30z)"
+    },
+    "status": {
+      "title": "Stare abonamente",
+      "description": "Starea curentă a fiecărui abonament din contul tău.",
+      "active": "Active",
+      "trialing": "În trial",
+      "pastDue": "Restante",
+      "canceled": "Anulate",
+      "incomplete": "Incomplete",
+      "cancelingSoon": "Se încheie curând"
+    },
+    "cohort": {
+      "title": "Înscrieri vs anulări",
+      "description": "Cohortă lunară de abonamente noi vs anulate.",
+      "signups": "Înscrieri noi",
+      "cancellations": "Anulări",
+      "empty": "Nu există încă activitate."
+    },
+    "plans": {
+      "title": "Distribuție planuri",
+      "description": "Cum contribuie fiecare preț la MRR.",
+      "plan": "Plan",
+      "price": "Preț",
+      "subs": "Abonați",
+      "mrrContrib": "Contribuție MRR",
+      "empty": "Nu există abonamente active de afișat."
+    },
+    "recent": {
+      "title": "Abonamente recente",
+      "description": "Ultimele 10 abonamente după data creării.",
+      "customer": "Client",
+      "plan": "Plan",
+      "status": "Stare",
+      "amount": "Sumă",
+      "created": "Creat",
+      "empty": "Nu există abonamente."
+    }
   },
   "users": {
     "title": "Gestionare Utilizatori",

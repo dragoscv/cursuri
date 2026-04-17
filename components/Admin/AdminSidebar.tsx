@@ -11,6 +11,8 @@ import {
   FiBarChart2,
   FiLogOut,
   FiMail,
+  FiCreditCard,
+  FiTrendingUp,
 } from '@/components/icons/FeatherIcons';
 import { signOut } from 'firebase/auth';
 import { firebaseAuth } from '@/utils/firebase/firebase.config';
@@ -35,9 +37,11 @@ const AdminSidebar: React.FC = () => {
   const navItems = [
     { label: 'Dashboard', href: '/admin', icon: FiHome },
     { label: 'Courses', href: '/admin/courses', icon: FiBookOpen },
+    { label: 'Subscriptions', href: '/admin/subscriptions', icon: FiCreditCard },
     { label: 'Users', href: '/admin/users', icon: FiUsers },
     { label: 'Messages', href: '/admin/messages', icon: FiMail },
     { label: 'Analytics', href: '/admin/analytics', icon: FiBarChart2 },
+    { label: 'Subs Analytics', href: '/admin/subscriptions/analytics', icon: FiTrendingUp },
     { label: 'Settings', href: '/admin/settings', icon: FiSettings },
   ];
 

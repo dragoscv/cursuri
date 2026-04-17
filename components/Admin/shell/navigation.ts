@@ -6,6 +6,8 @@ import {
     FiBarChart2,
     FiSettings,
     FiFileText,
+    FiCreditCard,
+    FiTrendingUp,
 } from '@/components/icons/FeatherIcons';
 
 export interface AdminNavItem {
@@ -48,6 +50,13 @@ export const ADMIN_NAV: AdminNavGroup[] = [
                 icon: FiBarChart2,
                 keywords: ['stats', 'metrics', 'revenue', 'growth'],
             },
+            {
+                id: 'subs-analytics',
+                label: 'Subscription Analytics',
+                href: '/admin/subscriptions/analytics',
+                icon: FiTrendingUp,
+                keywords: ['mrr', 'arr', 'churn', 'subscriptions', 'recurring'],
+            },
         ],
     },
     {
@@ -60,6 +69,13 @@ export const ADMIN_NAV: AdminNavGroup[] = [
                 href: '/admin/courses',
                 icon: FiBookOpen,
                 keywords: ['lessons', 'content', 'curriculum'],
+            },
+            {
+                id: 'subscriptions',
+                label: 'Subscriptions',
+                href: '/admin/subscriptions',
+                icon: FiCreditCard,
+                keywords: ['plans', 'pricing', 'stripe', 'products', 'billing'],
             },
             {
                 id: 'users',

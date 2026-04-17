@@ -93,7 +93,116 @@
     "activeCourses": "Active Courses",
     "totalLessons": "Total Lessons",
     "popularCourses": "Popular Courses",
-    "pleaseTryAgain": "Please try again later"
+    "pleaseTryAgain": "Please try again later",
+    "insights": {
+      "title": "Performance Insights",
+      "description": "Derived metrics that summarize how the platform is performing right now.",
+      "arpu": "Avg revenue per user",
+      "arpuHint": "Total revenue divided by total users.",
+      "conversion": "User → buyer rate",
+      "conversionHint": "Share of registered users who completed at least one purchase.",
+      "avgMonthlyRevenue": "Avg monthly revenue",
+      "avgMonthlyRevenueHint": "Mean of monthly revenue across all observed months.",
+      "topShare": "Top course share",
+      "topShareHint": "Share of total enrollments held by the best-selling course."
+    }
+  },
+  "subscriptions": {
+    "title": "Subscriptions",
+    "description": "Manage your Stripe products & pricing in one place.",
+    "stats": {
+      "totalProducts": "Total products",
+      "activeProducts": "Active products",
+      "subscriptionPlans": "Recurring plans",
+      "activePrices": "Active prices"
+    },
+    "catalog": {
+      "title": "Product catalog",
+      "description": "Every product is synced live with Stripe. Mark a plan as featured or main to highlight it on the storefront."
+    },
+    "filter": {
+      "all": "All",
+      "active": "Active",
+      "archived": "Archived"
+    },
+    "badges": {
+      "main": "Main",
+      "featured": "Featured"
+    },
+    "status": {
+      "active": "Active",
+      "archived": "Archived"
+    },
+    "table": {
+      "product": "Product",
+      "status": "Status",
+      "prices": "Prices",
+      "noPrices": "No prices yet"
+    },
+    "actions": {
+      "newProduct": "New product",
+      "addPrice": "Add price",
+      "edit": "Edit",
+      "archive": "Archive",
+      "cancel": "Cancel",
+      "activePrice": "Active",
+      "inactivePrice": "Inactive"
+    },
+    "empty": {
+      "title": "No products yet",
+      "description": "Create your first subscription product to start charging customers."
+    },
+    "confirm": {
+      "archiveTitle": "Archive product?",
+      "archiveBody": "This will deactivate \"{name}\" and all its prices in Stripe. Existing subscriptions keep running, but no new ones can be created."
+    }
+  },
+  "subscriptionAnalytics": {
+    "title": "Subscription Analytics",
+    "description": "MRR, ARR, churn and plan distribution from Stripe.",
+    "errorTitle": "Failed to load analytics",
+    "kpis": {
+      "mrr": "MRR",
+      "arr": "ARR",
+      "activeSubscribers": "Active subscribers",
+      "churnRate": "Churn (30d)"
+    },
+    "status": {
+      "title": "Subscription status",
+      "description": "Current state of every subscription in your account.",
+      "active": "Active",
+      "trialing": "Trialing",
+      "pastDue": "Past due",
+      "canceled": "Canceled",
+      "incomplete": "Incomplete",
+      "cancelingSoon": "Ending soon"
+    },
+    "cohort": {
+      "title": "Signups vs cancellations",
+      "description": "Monthly cohort of new vs canceled subscriptions.",
+      "signups": "New signups",
+      "cancellations": "Cancellations",
+      "empty": "No subscription activity yet."
+    },
+    "plans": {
+      "title": "Plan breakdown",
+      "description": "How each price contributes to MRR.",
+      "plan": "Plan",
+      "price": "Price",
+      "subs": "Subs",
+      "mrrContrib": "MRR contribution",
+      "empty": "No active subscriptions to break down yet."
+    },
+    "recent": {
+      "title": "Recent subscriptions",
+      "description": "Last 10 subscriptions by creation date.",
+      "customer": "Customer",
+      "plan": "Plan",
+      "status": "Status",
+      "amount": "Amount",
+      "created": "Created",
+      "empty": "No subscriptions yet."
+    }
   },
   "batchOperations": {
     "actions": {

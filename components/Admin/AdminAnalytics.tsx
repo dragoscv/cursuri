@@ -300,8 +300,73 @@ const AdminAnalytics: React.FC = () => {
                     </div>
                 )}
             </SectionCard>
+
+            {/* Performance insights */}
+            <SectionCard title={t('insights.title')} description={t('insights.description')}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <InsightTile
+                        label={t('insights.arpu')}
+                        value={
+                            adminAnalytics && adminAnalytics.totalUsers > 0
+                                ? fmtCurrency(adminAnalytics.totalRevenue / adminAnalytics.totalUsers)
+                                : fmtCurrency(0)
+                        }
+                        hint={t('insights.arpuHint')}
+                    />
+                    <InsightTile
+                        label={t('insights.conversion')}
+                        value={
+                            adminAnalytics && adminAnalytics.totalUsers > 0
+                                ? `${((totalSales / adminAnalytics.totalUsers) * 100).toFixed(1)}%`
+                                : '0%'
+                        }
+                        hint={t('insights.conversionHint')}
+                    />
+                    <InsightTile
+                        label={t('insights.avgMonthlyRevenue')}
+                        value={fmtCurrency(
+                            sortedMonthlyRevenue.length
+                                ? sortedMonthlyRevenue.reduce((s, r) => s + r.amount, 0) /
+                                sortedMonthlyRevenue.length
+                                : 0
+                        )}
+                        hint={t('insights.avgMonthlyRevenueHint')}
+                    />
+                    <InsightTile
+                        label={t('insights.topShare')}
+                        value={
+                            adminAnalytics?.popularCourses && adminAnalytics.popularCourses.length > 0 && totalSales > 0
+                                ? `${((adminAnalytics.popularCourses[0].enrollments / totalSales) * 100).toFixed(1)}%`
+                                : '—'
+                        }
+                        hint={
+                            adminAnalytics?.popularCourses?.[0]?.courseName
+                                ? `${t('insights.topShareHint')} · ${adminAnalytics.popularCourses[0].courseName}`
+                                : t('insights.topShareHint')
+                        }
+                    />
+                </div>
+            </SectionCard>
         </div>
     );
 };
+
+const InsightTile: React.FC<{ label: string; value: string; hint?: string }> = ({
+    label,
+    value,
+    hint,
+}) => (
+    <div className="rounded-xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/40 p-4">
+        <div className="text-[11px] uppercase tracking-wider text-[color:var(--ai-muted)] font-medium">
+            {label}
+        </div>
+        <div className="mt-1.5 text-2xl font-bold text-[color:var(--ai-foreground)] tabular-nums">
+            {value}
+        </div>
+        {hint && (
+            <div className="mt-1 text-[11px] text-[color:var(--ai-muted)] line-clamp-2">{hint}</div>
+        )}
+    </div>
+);
 
 export default AdminAnalytics;
