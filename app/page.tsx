@@ -63,6 +63,14 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function Home() {
   const faqStructuredData = generateFAQStructuredData([
     {
+      question: 'Do StudiAI subscriptions include GitHub Copilot?',
+      answer: 'Yes. Every paid StudiAI subscription auto-provisions a personal GitHub account with GitHub Copilot enabled. After checkout you find your credentials in Profile → GitHub on studiai.ro. Sign into VS Code (Insiders recommended) and Copilot is ready: chat, inline edits, multi-file changes, and agent mode.',
+    },
+    {
+      question: 'How do I activate GitHub Copilot after subscribing on StudiAI?',
+      answer: 'Three steps: (1) Install VS Code Insiders from code.visualstudio.com/insiders. (2) Open Profile → GitHub on StudiAI to copy your provisioned GitHub account credentials. (3) Sign into VS Code with that account. We also publish a step-by-step lesson on installing and configuring OpenCode — a Claude-grade coding agent that uses your Copilot subscription — inside the AI Agents course.',
+    },
+    {
       question: 'Can I learn to build software without coding experience using AI?',
       answer: 'Yes! StudiAI offers a comprehensive AI Agents course that teaches complete beginners how to build full-stack web applications using AI coding assistants like GitHub Copilot, Cursor, Claude, and ChatGPT. No prior programming experience is required — AI agents handle the complexity while you learn.',
     },

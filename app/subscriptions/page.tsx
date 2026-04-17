@@ -4,6 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import SubscriptionPlans from '@/components/Subscriptions/SubscriptionPlans';
 import SubscriptionBenefits from '@/components/Subscriptions/SubscriptionBenefits';
 import SubscriptionFAQ from '@/components/Subscriptions/SubscriptionFAQ';
+import CopilotPerksCard from '@/components/shared/CopilotPerksCard';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('subscription');
@@ -43,6 +44,11 @@ export default async function SubscriptionsPage() {
             </p>
           </div>
         </div>
+      </div>
+
+      {/* Copilot hero card - the headline benefit */}
+      <div className="container mx-auto px-4 -mt-8 md:-mt-12 mb-12 md:mb-16 relative z-10">
+        <CopilotPerksCard variant="hero" />
       </div>
 
       {/* Pricing Plans */}

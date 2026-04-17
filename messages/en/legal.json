@@ -62,6 +62,12 @@
         "courseUpdates": {
           "title": "Course Updates",
           "content": "We strive to keep our course content up-to-date. We reserve the right to modify, update, or remove course content at any time without notice."
+        },
+        "githubCopilot": {
+          "title": "GitHub Copilot Account",
+          "content": "As part of every paid subscription, we automatically provision a personal GitHub account with GitHub Copilot enabled. The credentials for this account are made available to you in your StudiAI profile under Profile → GitHub immediately after purchase. The Copilot subscription is licensed to that account for the duration of your active StudiAI subscription.",
+          "usage": "You agree to use the provisioned GitHub account in accordance with GitHub's Terms of Service and Acceptable Use Policies. The account is intended for personal, non-commercial coding assistance use within tools such as Visual Studio Code (Insiders recommended) and OpenCode. You are responsible for safeguarding the credentials and for any activity that occurs under the account.",
+          "termination": "If your StudiAI subscription is canceled, expires, refunded, or terminated for cause, the associated GitHub Copilot license may be revoked and the provisioned GitHub account may be suspended or reclaimed. We make no guarantee that data you store on the provisioned GitHub account will remain accessible after subscription termination; you are encouraged to back up any work you wish to keep."
         }
       },
       "userGeneratedContent": {

@@ -1,6 +1,46 @@
 {
-  "title": "Unlock Your AI Potential",
-  "subtitle": "Get unlimited access to all AI courses and master the tools shaping the future",
+  "title": "GitHub Copilot included with every subscription",
+  "subtitle": "Get a personal GitHub account with Copilot, unlimited access to all AI courses, and the workflow used by 10x developers.",
+  "copilot": {
+    "eyebrow": "INCLUDED IN EVERY PLAN",
+    "headline": "GitHub Copilot, on us.",
+    "lead": "Every paid subscription auto-provisions a personal GitHub account with Copilot enabled. Use it inside VS Code (we recommend the Insiders build for the latest features) and pair it with OpenCode for a Claude-grade coding agent right in your editor.",
+    "footnote": "Your account is ready in seconds after checkout. Find credentials anytime under Profile → GitHub.",
+    "perks": {
+      "account": {
+        "title": "Personal GitHub account, auto-provisioned",
+        "description": "We create the account, enable Copilot on it, and hand you the credentials — zero setup on your side."
+      },
+      "vscode": {
+        "title": "Works in VS Code (Insiders recommended)",
+        "description": "Sign in once and Copilot follows you everywhere: chat, inline edits, code reviews, agent mode."
+      },
+      "opencode": {
+        "title": "Pairs with OpenCode for full agentic flow",
+        "description": "OpenCode brings a Claude-style coding agent directly into your terminal and editor, powered by your Copilot subscription."
+      }
+    },
+    "cta": {
+      "viewPlans": "View plans",
+      "openLesson": "OpenCode setup lesson",
+      "downloadInsiders": "Download VS Code Insiders"
+    },
+    "success": {
+      "title": "Welcome to Copilot",
+      "description": "Your GitHub account is being provisioned and Copilot is being enabled. Grab your credentials and start coding with AI in minutes.",
+      "viewAccount": "View my GitHub account",
+      "setupGuide": "Setup guide"
+    },
+    "setup": {
+      "title": "Set up Copilot in 3 steps",
+      "description": "Follow our walkthrough to install OpenCode and connect your Copilot account.",
+      "step1": "Install VS Code Insiders — we recommend it for the latest Copilot features.",
+      "step2": "Sign in with the GitHub account shown on this page (copy the credentials).",
+      "step3": "Install OpenCode and follow the lesson to wire it up to your Copilot subscription.",
+      "openLesson": "Open the OpenCode lesson",
+      "downloadInsiders": "Get VS Code Insiders"
+    }
+  },
   "plans": {
     "free": {
       "name": "Free",
@@ -22,6 +62,7 @@
       "period": "per month",
       "description": "Perfect for mastering AI tools",
       "features": {
+        "copilot": "GitHub Copilot account included (Pro tier)",
         "unlimitedAccess": "Unlimited access to all AI courses",
         "allCourses": "Learn ChatGPT, automation, and AI workflows",
         "prioritySupport": "Priority support from AI practitioners",
@@ -39,6 +80,7 @@
       "period": "per year",
       "description": "Best value - become an AI expert",
       "features": {
+        "copilot": "GitHub Copilot account included (Pro tier)",
         "everything": "Everything in AI Learner Monthly",
         "twoMonthsFree": "2 months free",
         "prioritySupport": "Priority email support",
@@ -75,6 +117,14 @@
   "faq": {
     "title": "Frequently Asked Questions",
     "subtitle": "Everything you need to know about our subscriptions",
+    "whatIsCopilot": {
+      "question": "What is GitHub Copilot and how do I use it?",
+      "answer": "GitHub Copilot is an AI pair-programmer built into VS Code. Every paid subscription auto-provisions a personal GitHub account with Copilot enabled. After checkout, your credentials appear under Profile → GitHub. Sign into VS Code (we recommend the Insiders build) and Copilot is ready: chat, inline suggestions, multi-file edits, agent mode — the lot."
+    },
+    "howToActivate": {
+      "question": "How do I activate Copilot after subscribing?",
+      "answer": "Three steps: (1) Install VS Code Insiders. (2) Open Profile → GitHub on StudiAI to copy your provisioned account credentials. (3) Sign into VS Code with that account. We also publish a step-by-step lesson on installing and configuring OpenCode — a Claude-grade coding agent that uses your Copilot subscription — inside the AI Agents course."
+    },
     "cancelAnytime": {
       "question": "Can I cancel anytime?",
       "answer": "Yes, you can cancel your subscription at any time. You'll continue to have access until the end of your current billing period."

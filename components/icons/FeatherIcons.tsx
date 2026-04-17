@@ -96,6 +96,47 @@ export const FiDownload: React.FC<IconProps> = ({ className = '', size = 24, col
     );
 };
 
+export const FiZap: React.FC<IconProps> = ({ className = '', size = 24, color = 'currentColor', ...props }) => {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width={size}
+            height={size}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke={color}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className={`feather feather-zap ${className}`}
+            {...props}
+        >
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </svg>
+    );
+};
+
+export const FiCode: React.FC<IconProps> = ({ className = '', size = 24, color = 'currentColor', ...props }) => {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width={size}
+            height={size}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke={color}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className={`feather feather-code ${className}`}
+            {...props}
+        >
+            <polyline points="16 18 22 12 16 6"></polyline>
+            <polyline points="8 6 2 12 8 18"></polyline>
+        </svg>
+    );
+};
+
 export const FiAward: React.FC<IconProps> = ({ className = '', size = 24, color = 'currentColor', ...props }) => {
     return (
         <svg

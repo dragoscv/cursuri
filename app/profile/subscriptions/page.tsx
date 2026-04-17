@@ -1,13 +1,24 @@
 'use client';
 
-import React, { useContext } from 'react';
+import React, { useContext, Suspense } from 'react';
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 import { Card, CardBody } from '@heroui/react';
 import { FiCreditCard } from '@/components/icons/FeatherIcons';
 import SubscriptionManagement from '@/components/Profile/SubscriptionManagement';
 import { AppContext } from '@/components/AppContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import CopilotPerksCard from '@/components/shared/CopilotPerksCard';
+
+function SuccessBanner() {
+    const params = useSearchParams();
+    if (params.get('status') !== 'success') return null;
+    return (
+        <div className="mb-6">
+            <CopilotPerksCard variant="success" />
+        </div>
+    );
+}
 
 export default function SubscriptionPage() {
     const t = useTranslations('profile.subscriptionPage');
@@ -46,6 +57,10 @@ export default function SubscriptionPage() {
                     </h1>
                     <p className="text-[color:var(--ai-muted)]">{t('description')}</p>
                 </motion.div>
+
+                <Suspense fallback={null}>
+                    <SuccessBanner />
+                </Suspense>
 
                 {/* Subscription Management Card */}
                 <motion.div

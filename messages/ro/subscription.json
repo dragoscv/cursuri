@@ -1,6 +1,46 @@
 {
-  "title": "Desfășoară-ți Potențialul AI",
-  "subtitle": "Obține acces nelimitat la toate cursurile AI și stăpânește instrumentele care modelează viitorul",
+  "title": "GitHub Copilot inclus la fiecare abonament",
+  "subtitle": "Primești un cont GitHub personal cu Copilot, acces nelimitat la toate cursurile AI și fluxul de lucru folosit de dezvoltatorii 10x.",
+  "copilot": {
+    "eyebrow": "INCLUS ÎN ORICE PLAN",
+    "headline": "GitHub Copilot, din partea noastră.",
+    "lead": "Fiecare abonament plătit îți creează automat un cont GitHub personal cu Copilot activat. Folosește-l în VS Code (recomandăm versiunea Insiders pentru cele mai noi funcționalități) și împerechează-l cu OpenCode pentru un agent de coding nivel Claude direct în editor.",
+    "footnote": "Contul tău e gata în câteva secunde după plată. Găsești datele oricând în Profil → GitHub.",
+    "perks": {
+      "account": {
+        "title": "Cont GitHub personal, creat automat",
+        "description": "Creăm contul, activăm Copilot pe el și îți dăm credentialele — zero configurare din partea ta."
+      },
+      "vscode": {
+        "title": "Funcționează în VS Code (Insiders recomandat)",
+        "description": "Loghezi-te o dată și Copilot te însotșește peste tot: chat, editări inline, code review, agent mode."
+      },
+      "opencode": {
+        "title": "Compatibil cu OpenCode pentru flux agentic complet",
+        "description": "OpenCode aduce un agent de coding stil Claude direct în terminal și editor, alimentat de abonamentul tău Copilot."
+      }
+    },
+    "cta": {
+      "viewPlans": "Vezi planurile",
+      "openLesson": "Lecție configurare OpenCode",
+      "downloadInsiders": "Descarcă VS Code Insiders"
+    },
+    "success": {
+      "title": "Bun venit în Copilot",
+      "description": "Contul tău GitHub se pregătește și Copilot se activează. Ia-ți datele și începe să codezi cu AI în câteva minute.",
+      "viewAccount": "Vezi contul meu GitHub",
+      "setupGuide": "Ghid de configurare"
+    },
+    "setup": {
+      "title": "Configurează Copilot în 3 pași",
+      "description": "Urmează ghidul nostru pentru a instala OpenCode și a conecta contul Copilot.",
+      "step1": "Instalează VS Code Insiders — îți recomandăm varianta asta pentru cele mai noi funcționalități Copilot.",
+      "step2": "Loghezi-te cu contul GitHub afișat pe această pagină (copiază datele).",
+      "step3": "Instalează OpenCode și urmează lecția pentru a-l conecta la abonamentul tău Copilot.",
+      "openLesson": "Deschide lecția OpenCode",
+      "downloadInsiders": "Ia VS Code Insiders"
+    }
+  },
   "plans": {
     "free": {
       "name": "Gratuit",
@@ -22,6 +62,7 @@
       "period": "pe lună",
       "description": "Perfect pentru stăpânirea instrumentelor AI",
       "features": {
+        "copilot": "Cont GitHub Copilot inclus (nivel Pro)",
         "unlimitedAccess": "Acces nelimitat la toate cursurile AI",
         "allCourses": "Învață ChatGPT, automatizare și fluxuri AI",
         "prioritySupport": "Suport prioritar de la practicieni AI",
@@ -39,6 +80,7 @@
       "period": "pe an",
       "description": "Cea mai bună valoare - devino expert AI",
       "features": {
+        "copilot": "Cont GitHub Copilot inclus (nivel Pro)",
         "everything": "Tot din Cursanț AI Lunar",
         "twoMonthsFree": "2 luni gratuite",
         "prioritySupport": "Suport email prioritar",
@@ -75,6 +117,14 @@
   "faq": {
     "title": "Întrebări Frecvente",
     "subtitle": "Tot ce trebuie să știi despre abonamentele noastre",
+    "whatIsCopilot": {
+      "question": "Ce e GitHub Copilot și cum îl folosesc?",
+      "answer": "GitHub Copilot e un partener AI de programare integrat în VS Code. Fiecare abonament plătit îți creează automat un cont GitHub personal cu Copilot activat. După plată, datele apar în Profil → GitHub. Loghezi-te în VS Code (recomandăm varianta Insiders) și Copilot e gata: chat, sugestii inline, editări multi-fișier, agent mode — tot tacâmul."
+    },
+    "howToActivate": {
+      "question": "Cum activez Copilot după abonare?",
+      "answer": "Trei pași: (1) Instalează VS Code Insiders. (2) Deschide Profil → GitHub pe StudiAI și copiază datele contului provizionat. (3) Loghezi-te în VS Code cu acel cont. Avem și o lecție pas-cu-pas despre instalarea și configurarea OpenCode — un agent de coding nivel Claude care folosește abonamentul tău Copilot — în cursul AI Agents."
+    },
     "cancelAnytime": {
       "question": "Pot anula oricând?",
       "answer": "Da, poți anula abonamentul oricând. Vei continua să ai acces până la sfârșitul perioadei de facturare curente."

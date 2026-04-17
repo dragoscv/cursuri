@@ -21,6 +21,7 @@ import { stripePayments } from '@/utils/firebase/stripe';
 import { GradientCard, MetricCard, SectionShell } from '@/components/user-shell';
 import { AppButton } from '@/components/shared/ui';
 import { useToast } from '@/components/Toast/ToastContext';
+import CopilotPerksCard from '@/components/shared/CopilotPerksCard';
 
 interface GitHubAccountDoc {
   id: string;
@@ -235,6 +236,9 @@ export default function GitHubAccountsPage() {
         <MetricCard label={t('stats.active')} value={stats.active} tone="success" />
         <MetricCard label={t('stats.suspended')} value={stats.suspended} tone="warning" />
       </div>
+
+      {/* Copilot setup guide - lesson + VS Code Insiders */}
+      <CopilotPerksCard variant="setup" />
 
       {/* Accounts list */}
       <SectionShell title={t('pageTitle')} eyebrow={t('stats.total')}>

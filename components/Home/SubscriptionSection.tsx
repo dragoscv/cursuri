@@ -13,6 +13,7 @@ import { firebaseApp } from '@/utils/firebase/firebase.config';
 import Login from '@/components/Login';
 import LoadingButton from '@/components/Buttons/LoadingButton';
 import { useRouter } from 'next/navigation';
+import CopilotPerksCard from '@/components/shared/CopilotPerksCard';
 
 export default function SubscriptionSection() {
   const t = useTranslations('subscription');
@@ -137,6 +138,11 @@ export default function SubscriptionSection() {
             {t('subtitle')}
           </p>
         </motion.div>
+
+        {/* GitHub Copilot benefit banner - the headline value prop */}
+        <div className="max-w-5xl mx-auto mb-12">
+          <CopilotPerksCard variant="banner" ctaHref="/subscriptions" />
+        </div>
 
         {/* Pricing Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">

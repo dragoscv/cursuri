@@ -12,6 +12,14 @@ export default function SubscriptionFAQ() {
 
   const faqs = [
     {
+      question: t('whatIsCopilot.question'),
+      answer: t('whatIsCopilot.answer'),
+    },
+    {
+      question: t('howToActivate.question'),
+      answer: t('howToActivate.answer'),
+    },
+    {
       question: t('cancelAnytime.question'),
       answer: t('cancelAnytime.answer'),
     },

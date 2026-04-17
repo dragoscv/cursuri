@@ -62,6 +62,12 @@
         "courseUpdates": {
           "title": "Actualizări ale Cursurilor",
           "content": "Ne străduim să menținem conținutul cursurilor la zi. Ne rezervăm dreptul de a modifica, actualiza sau elimina conținutul cursurilor în orice moment, fără notificare prealabilă."
+        },
+        "githubCopilot": {
+          "title": "Cont GitHub Copilot",
+          "content": "Ca parte a fiecărui abonament plătit, creăm automat un cont GitHub personal cu GitHub Copilot activat. Datele de acces pentru acest cont devin disponibile în profilul tău StudiAI la Profil → GitHub imediat după achiziție. Abonamentul Copilot este licențiat pentru acest cont pe durata abonamentului tău StudiAI activ.",
+          "usage": "Te angajezi să folosești contul GitHub provizionat în conformitate cu Termenii și Condițiile GitHub și cu politicile lor de utilizare acceptabilă. Contul este destinat utilizării personale, non-comerciale, pentru asistență la programare în instrumente precum Visual Studio Code (recomandăm Insiders) și OpenCode. Ești responsabil pentru protejarea credentialelor și pentru orice activitate desfășurată sub acest cont.",
+          "termination": "Dacă abonamentul tău StudiAI este anulat, expirat, rambursat sau încetat pentru motive justificate, licența GitHub Copilot asociată poate fi revocată, iar contul GitHub provizionat poate fi suspendat sau revendicat. Nu garantăm că datele stocate pe contul GitHub provizionat vor rămâne accesibile după încetarea abonamentului; îți recomandăm să faci backup la orice lucrare pe care vrei să o păstrezi."
         }
       },
       "userGeneratedContent": {

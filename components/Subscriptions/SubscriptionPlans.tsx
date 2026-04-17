@@ -189,6 +189,7 @@ export default function SubscriptionPlans() {
       period: t('plans.proMonthly.period'),
       description: t('plans.proMonthly.description'),
       features: [
+        t('plans.proMonthly.features.copilot'),
         t('plans.proMonthly.features.unlimitedAccess'),
         t('plans.proMonthly.features.allCourses'),
         t('plans.proMonthly.features.prioritySupport'),
@@ -227,6 +228,7 @@ export default function SubscriptionPlans() {
         return '';
       })(),
       features: [
+        t('plans.proYearly.features.copilot'),
         t('plans.proYearly.features.everything'),
         t('plans.proYearly.features.twoMonthsFree'),
         t('plans.proYearly.features.prioritySupport'),

@@ -76,6 +76,12 @@ export default async function TermsConditions() {
         <Subsection title={t('sections.coursesAndSubscriptions.courseUpdates.title')}>
           <Paragraph>{t('sections.coursesAndSubscriptions.courseUpdates.content')}</Paragraph>
         </Subsection>
+
+        <Subsection title={t('sections.coursesAndSubscriptions.githubCopilot.title')}>
+          <Paragraph>{t('sections.coursesAndSubscriptions.githubCopilot.content')}</Paragraph>
+          <Paragraph>{t('sections.coursesAndSubscriptions.githubCopilot.usage')}</Paragraph>
+          <Paragraph>{t('sections.coursesAndSubscriptions.githubCopilot.termination')}</Paragraph>
+        </Subsection>
       </Section>
 
       <Section title={t('sections.userGeneratedContent.title')}>
