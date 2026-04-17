@@ -1,21 +1,34 @@
-'use client'
+'use client';
 
-import React, { useContext, useEffect, useState } from 'react';
-import { Card, CardBody, CardHeader, Spinner, Divider } from '@heroui/react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
+import { motion } from 'framer-motion';
 import { AppContext } from '@/components/AppContext';
+import { SectionCard, StatCard, EmptyState } from '@/components/Admin/shell';
+import {
+    FiBookOpen,
+    FiUsers,
+    FiTarget,
+    FiCalendar,
+    FiBook,
+    FiAward,
+} from '@/components/icons/FeatherIcons';
+
+const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 const AdminAnalytics: React.FC = () => {
     const t = useTranslations('admin.analytics');
     const locale = useLocale();
     const context = useContext(AppContext);
     if (!context) {
-        throw new Error("AdminAnalytics must be used within an AppProvider");
+        throw new Error('AdminAnalytics must be used within an AppProvider');
     }
 
     const { adminAnalytics, getAdminAnalytics } = context;
     const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null); useEffect(() => {
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
         let mounted = true;
 
         const fetchAnalytics = async () => {
@@ -24,15 +37,11 @@ const AdminAnalytics: React.FC = () => {
                 if (getAdminAnalytics && mounted) {
                     await getAdminAnalytics();
                 }
-            } catch (error) {
-                console.error('Error fetching analytics:', error);
-                if (mounted) {
-                    setError('Failed to load analytics data');
-                }
+            } catch (err) {
+                console.error('Error fetching analytics:', err);
+                if (mounted) setError('Failed to load analytics data');
             } finally {
-                if (mounted) {
-                    setLoading(false);
-                }
+                if (mounted) setLoading(false);
             }
         };
 
@@ -42,269 +51,257 @@ const AdminAnalytics: React.FC = () => {
             setLoading(false);
         }
 
-        return () => { mounted = false; };
+        return () => {
+            mounted = false;
+        };
     }, [getAdminAnalytics, adminAnalytics]);
+
+    const sortedMonthlyRevenue = useMemo(() => {
+        if (!adminAnalytics?.monthlyRevenue) return [];
+        return Object.entries(adminAnalytics.monthlyRevenue)
+            .map(([monthYear, amount]) => {
+                const [month, year] = monthYear.split('/').map((n) => parseInt(n, 10));
+                return {
+                    monthYear,
+                    month,
+                    year,
+                    amount,
+                    label: `${MONTH_LABELS[month - 1]} ${year}`,
+                };
+            })
+            .sort((a, b) => (a.year !== b.year ? a.year - b.year : a.month - b.month));
+    }, [adminAnalytics?.monthlyRevenue]);
+
+    const maxRevenue = useMemo(
+        () => (sortedMonthlyRevenue.length ? Math.max(...sortedMonthlyRevenue.map((r) => r.amount)) : 0),
+        [sortedMonthlyRevenue]
+    );
+
+    const totalSales =
+        adminAnalytics?.popularCourses?.reduce((sum, c) => sum + c.enrollments, 0) || 0;
+
+    const revenueGrowth = useMemo(() => {
+        if (sortedMonthlyRevenue.length < 2) return 0;
+        const cur = sortedMonthlyRevenue[sortedMonthlyRevenue.length - 1];
+        const prev = sortedMonthlyRevenue[sortedMonthlyRevenue.length - 2];
+        if (prev.amount <= 0) return 0;
+        return ((cur.amount - prev.amount) / prev.amount) * 100;
+    }, [sortedMonthlyRevenue]);
+
+    const fmtCurrency = (n: number, opts?: Intl.NumberFormatOptions) =>
+        n.toLocaleString(locale, { style: 'currency', currency: 'RON', ...opts });
 
     if (loading) {
         return (
-            <div className="flex justify-center items-center h-64">
-                <Spinner size="lg" color="primary" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                    <StatCard key={i} label="Loading…" value="—" loading />
+                ))}
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="text-center py-12">
-                <h2 className="text-2xl font-bold text-[color:var(--ai-danger)] mb-4">{error}</h2>
-                <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">{t('pleaseTryAgain')}</p>
-            </div>
+            <EmptyState
+                icon={<FiTarget size={20} />}
+                title={error}
+                description={t('pleaseTryAgain')}
+            />
         );
     }
 
-    // Format month names for display
-    const getMonthName = (monthNum: number) => {
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        return months[monthNum - 1];
-    };
-
-    // Sort and format revenue data
-    const sortedMonthlyRevenue = adminAnalytics?.monthlyRevenue ?
-        Object.entries(adminAnalytics.monthlyRevenue)
-            .map(([monthYear, amount]) => {
-                const [month, year] = monthYear.split('/').map(num => parseInt(num));
-                return {
-                    monthYear,
-                    month,
-                    year,
-                    amount,
-                    label: `${getMonthName(month)} ${year}`
-                };
-            })
-            .sort((a, b) => {
-                if (a.year !== b.year) return a.year - b.year;
-                return a.month - b.month;
-            }) : [];
-
-    // Get max revenue for chart scaling
-    const maxRevenue = sortedMonthlyRevenue.length ?
-        Math.max(...sortedMonthlyRevenue.map(item => item.amount)) : 0;
-
-    // Calculate total sales count (not just last 30 days)
-    const totalSales = adminAnalytics?.popularCourses?.reduce((sum, course) => sum + course.enrollments, 0) || 0;
-
-    // Calculate revenue growth percentage
-    let revenueGrowth = 0;
-    if (sortedMonthlyRevenue.length >= 2) {
-        const currentMonth = sortedMonthlyRevenue[sortedMonthlyRevenue.length - 1];
-        const previousMonth = sortedMonthlyRevenue[sortedMonthlyRevenue.length - 2];
-        if (previousMonth.amount > 0) {
-            revenueGrowth = ((currentMonth.amount - previousMonth.amount) / previousMonth.amount) * 100;
-        }
-    }
-
     return (
-        <div className="space-y-8">
-            <h1 className="text-3xl font-bold">{t('title')}</h1>
-
-            {/* Revenue Chart */}
-            <Card className="shadow-md">
-                <CardHeader className="pb-0">
-                    <h2 className="text-xl font-semibold">{t('revenueOverTime')}</h2>
-                </CardHeader>
-                <CardBody>
-                    {sortedMonthlyRevenue.length > 0 ? (
-                        <div className="h-64 flex items-end space-x-2">
-                            {sortedMonthlyRevenue.map((item) => {
-                                const heightPercentage = maxRevenue > 0 ? (item.amount / maxRevenue) * 100 : 0;
-
-                                return (
-                                    <div key={item.monthYear} className="flex flex-col items-center flex-1">
-                                        <div
-                                            className="w-full bg-primary-500 rounded-t"
-                                            style={{ height: `${heightPercentage}%` }}
-                                            title={`${item.amount.toLocaleString(locale, { style: 'currency', currency: 'RON' })}`}
-                                        ></div>
-                                        <div className="mt-2 text-xs text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] transform -rotate-45 origin-top-left">
-                                            {item.label}
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    ) : (
-                        <div className="h-64 flex items-center justify-center">
-                            <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">{t('noRevenueData')}</p>
-                        </div>
-                    )}
-
-                    <Divider className="my-6" />
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div className="text-center">
-                            <h3 className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] text-sm mb-1">{t('totalRevenue')}</h3>
-                            <p className="text-2xl font-bold">
-                                {(adminAnalytics?.totalRevenue || 0).toLocaleString(locale, {
-                                    style: 'currency',
-                                    currency: 'RON'
-                                })}
-                            </p>
-                        </div>
-                        <div className="text-center">
-                            <h3 className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] text-sm mb-1">{t('averagePerSale')}</h3>
-                            <p className="text-2xl font-bold">
-                                {adminAnalytics && adminAnalytics.totalRevenue && totalSales > 0 ?
-                                    (adminAnalytics.totalRevenue / totalSales).toLocaleString(locale, {
-                                        style: 'currency',
-                                        currency: 'RON',
-                                        maximumFractionDigits: 0
-                                    }) : '0 RON'}
-                            </p>
-                        </div>
-                        <div className="text-center">
-                            <h3 className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] text-sm mb-1">{t('salesLast30Days')}</h3>
-                            <p className="text-2xl font-bold">
-                                {adminAnalytics?.newSales || 0}
-                            </p>
-                        </div>
-                        <div className="text-center">
-                            <h3 className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] text-sm mb-1">{t('revenueGrowth')}</h3>
-                            <p className={`text-2xl font-bold ${revenueGrowth >= 0 ? 'text-[color:var(--ai-success)]' : 'text-[color:var(--ai-danger)]'
-                                }`}>
-                                {revenueGrowth >= 0 ? '+' : ''}{revenueGrowth.toFixed(1)}%
-                            </p>
-                        </div>
-                    </div>
-                </CardBody>
-            </Card>
-
-            {/* User Growth and Course Statistics */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="shadow-md">
-                    <CardHeader>
-                        <h2 className="text-xl font-semibold">{t('userGrowth')}</h2>
-                    </CardHeader>
-                    <CardBody>
-                        <div className="h-52 flex items-center justify-center">
-                            <div className="text-center">
-                                <div className="text-2xl sm:text-3xl lg:text-4xl font-bold">{adminAnalytics?.totalUsers || 0}</div>
-                                <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mt-2">{t('totalUsers')}</p>
-                                <div className="mt-4 flex items-center justify-center">
-                                    <svg className="h-5 w-5 text-[color:var(--ai-success)] mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                                    </svg>
-                                    <span className="text-[color:var(--ai-success)] dark:text-[color:var(--ai-success)] font-medium">
-                                        +{adminAnalytics?.newUsers || 0} in the last 30 days
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </CardBody>
-                </Card>
-
-                <Card className="shadow-md">
-                    <CardHeader>
-                        <h2 className="text-xl font-semibold">{t('courseStatistics')}</h2>
-                    </CardHeader>
-                    <CardBody>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="text-center p-4 bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-lg">
-                                <div className="text-3xl font-bold">{adminAnalytics?.totalCourses || 0}</div>
-                                <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mt-2">{t('activeCourses')}</p>
-                            </div>
-                            <div className="text-center p-4 bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-lg">
-                                <div className="text-3xl font-bold">{adminAnalytics?.totalLessons || 0}</div>
-                                <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mt-2">{t('totalLessons')}</p>
-                            </div>
-                            <div className="text-center p-4 bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-lg col-span-2">
-                                <div className="text-3xl font-bold">
-                                    {adminAnalytics && adminAnalytics.totalCourses > 0 ?
-                                        (adminAnalytics.totalLessons / adminAnalytics.totalCourses).toFixed(1) : 0}
-                                </div>
-                                <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mt-2">Avg. Lessons per Course</p>
-                            </div>
-                        </div>
-                    </CardBody>
-                </Card>
+        <div className="space-y-6">
+            {/* KPI strip */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <StatCard
+                    label={t('totalRevenue')}
+                    value={fmtCurrency(adminAnalytics?.totalRevenue || 0)}
+                    icon={<FiAward size={16} />}
+                    tone="primary"
+                />
+                <StatCard
+                    label={t('averagePerSale')}
+                    value={
+                        adminAnalytics && adminAnalytics.totalRevenue && totalSales > 0
+                            ? fmtCurrency(adminAnalytics.totalRevenue / totalSales, { maximumFractionDigits: 0 })
+                            : '0 RON'
+                    }
+                    icon={<FiTarget size={16} />}
+                />
+                <StatCard
+                    label={t('salesLast30Days')}
+                    value={adminAnalytics?.newSales || 0}
+                    icon={<FiCalendar size={16} />}
+                    tone="success"
+                />
+                <StatCard
+                    label={t('revenueGrowth')}
+                    value={`${revenueGrowth >= 0 ? '+' : ''}${revenueGrowth.toFixed(1)}%`}
+                    tone={revenueGrowth >= 0 ? 'success' : 'danger'}
+                    trend={revenueGrowth}
+                />
             </div>
 
-            {/* Popular Courses List */}
-            <Card className="shadow-md">
-                <CardHeader>
-                    <h2 className="text-xl font-semibold">{t('popularCourses')}</h2>
-                </CardHeader>
-                <CardBody>
-                    {adminAnalytics?.popularCourses && adminAnalytics.popularCourses.length > 0 ? (
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-[color:var(--ai-card-border)]">
-                                <thead className="bg-[color:var(--ai-card-bg)] border-b border-[color:var(--ai-card-border)]">
-                                    <tr>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] uppercase tracking-wider">
-                                            Rank
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] uppercase tracking-wider">
-                                            Course Name
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] uppercase tracking-wider">
-                                            Enrollments
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] uppercase tracking-wider">
-                                            % of Total
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-[color:var(--ai-card-bg)] divide-y divide-[color:var(--ai-card-border)]">
-                                    {adminAnalytics.popularCourses.map((course, index) => {
-                                        const totalEnrollments = adminAnalytics.popularCourses.reduce(
-                                            (sum, c) => sum + c.enrollments, 0
-                                        );
-                                        const percentage = totalEnrollments > 0 ?
-                                            (course.enrollments / totalEnrollments) * 100 : 0;
+            {/* Revenue chart */}
+            <SectionCard
+                title={t('revenueOverTime')}
+                description="Monthly revenue trend across the platform."
+            >
+                {sortedMonthlyRevenue.length > 0 ? (
+                    <div className="h-64 flex items-end gap-2">
+                        {sortedMonthlyRevenue.map((item, i) => {
+                            const heightPct = maxRevenue > 0 ? (item.amount / maxRevenue) * 100 : 0;
+                            return (
+                                <div
+                                    key={item.monthYear}
+                                    className="flex flex-col items-center flex-1 min-w-0 group"
+                                    title={fmtCurrency(item.amount)}
+                                >
+                                    <div className="w-full h-full flex items-end">
+                                        <motion.div
+                                            initial={{ scaleY: 0 }}
+                                            animate={{ scaleY: 1 }}
+                                            transition={{ delay: i * 0.04, type: 'spring' as const, stiffness: 120, damping: 18 }}
+                                            style={{ height: `${heightPct}%`, transformOrigin: 'bottom' }}
+                                            className="w-full rounded-t-lg bg-gradient-to-t from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] group-hover:opacity-90 transition-opacity"
+                                        />
+                                    </div>
+                                    <div className="mt-2 text-[10px] text-[color:var(--ai-muted)] truncate w-full text-center">
+                                        {item.label}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                ) : (
+                    <div className="h-64 flex items-center justify-center text-sm text-[color:var(--ai-muted)]">
+                        {t('noRevenueData')}
+                    </div>
+                )}
+            </SectionCard>
 
-                                        return (
-                                            <tr key={course.courseId} className="hover:bg-[color:var(--ai-card-bg)] dark:hover:bg-[color:var(--ai-card-border)]">
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="flex items-center">
-                                                        <div className="h-8 w-8 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400 flex items-center justify-center font-semibold">
-                                                            {index + 1}
-                                                        </div>
+            {/* User growth + Course statistics */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <SectionCard title={t('userGrowth')}>
+                    <div className="flex flex-col items-center justify-center py-6">
+                        <div className="text-4xl font-bold text-[color:var(--ai-foreground)]">
+                            {(adminAnalytics?.totalUsers || 0).toLocaleString(locale)}
+                        </div>
+                        <p className="mt-1 text-sm text-[color:var(--ai-muted)]">{t('totalUsers')}</p>
+                        <div className="mt-4 inline-flex items-center gap-1.5 px-3 h-7 rounded-full bg-[color:var(--ai-success)]/10 text-[color:var(--ai-success)] text-xs font-medium">
+                            <FiUsers size={12} />
+                            +{adminAnalytics?.newUsers || 0} new in 30d
+                        </div>
+                    </div>
+                </SectionCard>
+
+                <SectionCard title={t('courseStatistics')}>
+                    <div className="grid grid-cols-2 gap-3">
+                        <div className="rounded-xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/40 p-4 text-center">
+                            <FiBookOpen className="mx-auto text-[color:var(--ai-primary)]" size={18} />
+                            <div className="mt-2 text-2xl font-bold text-[color:var(--ai-foreground)]">
+                                {adminAnalytics?.totalCourses || 0}
+                            </div>
+                            <p className="text-xs text-[color:var(--ai-muted)] mt-1">{t('activeCourses')}</p>
+                        </div>
+                        <div className="rounded-xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/40 p-4 text-center">
+                            <FiBook className="mx-auto text-[color:var(--ai-secondary)]" size={18} />
+                            <div className="mt-2 text-2xl font-bold text-[color:var(--ai-foreground)]">
+                                {adminAnalytics?.totalLessons || 0}
+                            </div>
+                            <p className="text-xs text-[color:var(--ai-muted)] mt-1">{t('totalLessons')}</p>
+                        </div>
+                        <div className="col-span-2 rounded-xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/40 p-4 text-center">
+                            <div className="text-2xl font-bold text-[color:var(--ai-foreground)]">
+                                {adminAnalytics && adminAnalytics.totalCourses > 0
+                                    ? (adminAnalytics.totalLessons / adminAnalytics.totalCourses).toFixed(1)
+                                    : 0}
+                            </div>
+                            <p className="text-xs text-[color:var(--ai-muted)] mt-1">Avg. lessons per course</p>
+                        </div>
+                    </div>
+                </SectionCard>
+            </div>
+
+            {/* Popular courses */}
+            <SectionCard
+                title={t('popularCourses')}
+                description="Top courses ranked by total enrollments."
+                flush
+            >
+                {adminAnalytics?.popularCourses && adminAnalytics.popularCourses.length > 0 ? (
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full text-sm">
+                            <thead>
+                                <tr className="text-left text-[11px] uppercase tracking-wider text-[color:var(--ai-muted)] border-b border-[color:var(--ai-card-border)]">
+                                    <th className="px-5 py-3 w-12">#</th>
+                                    <th className="px-5 py-3">Course</th>
+                                    <th className="px-5 py-3 w-32">Enrollments</th>
+                                    <th className="px-5 py-3 w-48">Share</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-[color:var(--ai-card-border)]/60">
+                                {adminAnalytics.popularCourses.map((course, index) => {
+                                    const totalEnrollments = adminAnalytics.popularCourses.reduce(
+                                        (sum, c) => sum + c.enrollments,
+                                        0
+                                    );
+                                    const percentage =
+                                        totalEnrollments > 0 ? (course.enrollments / totalEnrollments) * 100 : 0;
+                                    return (
+                                        <motion.tr
+                                            key={course.courseId}
+                                            initial={{ opacity: 0, y: 6 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: index * 0.03 }}
+                                            className="hover:bg-[color:var(--ai-card-bg)]/40 transition-colors"
+                                        >
+                                            <td className="px-5 py-3">
+                                                <div className="h-7 w-7 rounded-full flex items-center justify-center text-xs font-semibold bg-gradient-to-br from-[color:var(--ai-primary)]/20 to-[color:var(--ai-secondary)]/20 text-[color:var(--ai-primary)]">
+                                                    {index + 1}
+                                                </div>
+                                            </td>
+                                            <td className="px-5 py-3 font-medium text-[color:var(--ai-foreground)]">
+                                                {course.courseName}
+                                            </td>
+                                            <td className="px-5 py-3 text-[color:var(--ai-muted)]">
+                                                {course.enrollments}
+                                            </td>
+                                            <td className="px-5 py-3">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="relative h-1.5 flex-1 rounded-full bg-[color:var(--ai-card-border)]/50 overflow-hidden">
+                                                        <motion.div
+                                                            initial={{ width: 0 }}
+                                                            animate={{ width: `${percentage}%` }}
+                                                            transition={{ duration: 0.6, delay: index * 0.04 }}
+                                                            className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
+                                                        />
                                                     </div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="text-sm font-medium text-[color:var(--ai-foreground)] dark:text-[color:var(--ai-foreground)]">
-                                                        {course.courseName}
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">
-                                                    {course.enrollments}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="relative w-24 h-4 bg-[color:var(--ai-card-border)] rounded-full overflow-hidden">
-                                                        <div
-                                                            className="absolute top-0 left-0 h-full bg-primary-500"
-                                                            style={{ width: `${percentage}%` }}
-                                                        ></div>
-                                                    </div>
-                                                    <div className="text-xs text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mt-1">
+                                                    <span className="text-xs text-[color:var(--ai-muted)] tabular-nums w-10 text-right">
                                                         {percentage.toFixed(1)}%
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>
-                    ) : (
-                        <div className="text-center py-8">
-                            <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">No course enrollment data available</p>
-                        </div>
-                    )}
-                </CardBody>
-            </Card>
+                                                    </span>
+                                                </div>
+                                            </td>
+                                        </motion.tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <div className="px-5 py-8">
+                        <EmptyState
+                            icon={<FiBookOpen size={20} />}
+                            title="No enrollment data"
+                            description="Course enrollments will appear here once available."
+                        />
+                    </div>
+                )}
+            </SectionCard>
         </div>
     );
 };
 
 export default AdminAnalytics;
-

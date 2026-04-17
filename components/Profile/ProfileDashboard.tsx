@@ -119,7 +119,7 @@ export default function ProfileDashboard() {
             <LearningPathSection />
             <PaymentHistorySection />
 
-            
+
             {/* <ProfileSettingsSection
                 isDark={userPreferences?.isDark ?? false}
                 emailNotifications={userPreferences?.emailNotifications ?? true}

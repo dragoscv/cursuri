@@ -1,21 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuth } from '@/components/contexts/modules/authContext';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { Chip, Button, Select, SelectItem } from '@heroui/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Card,
-  CardBody,
-  CardHeader,
-  Divider,
-  Chip,
-  Button,
-  Select,
-  SelectItem,
-} from '@heroui/react';
-import { motion } from 'framer-motion';
-import { PageHeader, IconShield } from '@/components/Admin/shell';
+  PageHeader,
+  IconShield,
+  IconActivity,
+  StatCard,
+  SectionCard,
+  EmptyState,
+  DataToolbar,
+} from '@/components/Admin/shell';
+import { FiDownload, FiX, FiCheckCircle } from '@/components/icons/FeatherIcons';
 
 interface AuditLog {
   id: string;
@@ -43,6 +43,30 @@ interface AuditStatistics {
   topUsers: Array<{ userId: string; count: number }>;
 }
 
+const CATEGORY_OPTIONS = [
+  { key: 'all', label: 'All categories' },
+  { key: 'authentication', label: 'Authentication' },
+  { key: 'admin_action', label: 'Admin Actions' },
+  { key: 'course_management', label: 'Course Management' },
+  { key: 'user_management', label: 'User Management' },
+  { key: 'payment', label: 'Payment' },
+  { key: 'security', label: 'Security' },
+];
+
+const SEVERITY_OPTIONS = [
+  { key: 'all', label: 'All severities' },
+  { key: 'info', label: 'Info' },
+  { key: 'warning', label: 'Warning' },
+  { key: 'critical', label: 'Critical' },
+];
+
+const TIME_RANGE_OPTIONS = [
+  { key: '1h', label: 'Last Hour' },
+  { key: '24h', label: 'Last 24 Hours' },
+  { key: '7d', label: 'Last 7 Days' },
+  { key: '30d', label: 'Last 30 Days' },
+];
+
 export default function AuditLogsPage() {
   const { user, isAdmin } = useAuth();
   const router = useRouter();
@@ -53,27 +77,12 @@ export default function AuditLogsPage() {
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [severityFilter, setSeverityFilter] = useState<string>('all');
   const [timeRange, setTimeRange] = useState<string>('24h');
+  const [search, setSearch] = useState('');
 
-  useEffect(() => {
-    if (!user) {
-      router.push('/');
-      return;
-    }
-
-    if (!isAdmin) {
-      router.push('/');
-      return;
-    }
-
-    loadAuditLogs();
-    loadStatistics();
-  }, [user, isAdmin, router, categoryFilter, severityFilter, timeRange]);
-
-  const loadAuditLogs = async () => {
+  const loadAuditLogs = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
-
       if (categoryFilter !== 'all') params.append('category', categoryFilter);
       if (severityFilter !== 'all') params.append('severity', severityFilter);
       params.append('timeRange', timeRange);
@@ -88,9 +97,9 @@ export default function AuditLogsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [categoryFilter, severityFilter, timeRange]);
 
-  const loadStatistics = async () => {
+  const loadStatistics = useCallback(async () => {
     try {
       const params = new URLSearchParams({ timeRange });
       const response = await fetch(`/api/admin/audit-logs/statistics?${params.toString()}`);
@@ -101,9 +110,22 @@ export default function AuditLogsPage() {
     } catch (error) {
       console.error('Error loading statistics:', error);
     }
-  };
+  }, [timeRange]);
 
-  const getSeverityColor = (severity: string) => {
+  useEffect(() => {
+    if (!user) {
+      router.push('/');
+      return;
+    }
+    if (!isAdmin) {
+      router.push('/');
+      return;
+    }
+    loadAuditLogs();
+    loadStatistics();
+  }, [user, isAdmin, router, loadAuditLogs, loadStatistics]);
+
+  const getSeverityColor = (severity: string): 'danger' | 'warning' | 'success' | 'default' => {
     switch (severity) {
       case 'critical':
         return 'danger';
@@ -116,8 +138,10 @@ export default function AuditLogsPage() {
     }
   };
 
-  const getCategoryColor = (category: string) => {
-    const colors: Record<string, any> = {
+  const getCategoryColor = (
+    category: string
+  ): 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'default' => {
+    const map: Record<string, 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'default'> = {
       authentication: 'primary',
       admin_action: 'secondary',
       course_management: 'success',
@@ -127,11 +151,11 @@ export default function AuditLogsPage() {
       api_access: 'default',
       data_modification: 'primary',
     };
-    return colors[category] || 'default';
+    return map[category] || 'default';
   };
 
-  const formatTimestamp = (timestamp: string) => {
-    return new Date(timestamp).toLocaleString('en-US', {
+  const formatTimestamp = (timestamp: string) =>
+    new Date(timestamp).toLocaleString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -139,7 +163,60 @@ export default function AuditLogsPage() {
       minute: '2-digit',
       second: '2-digit',
     });
-  };
+
+  // Client-side search across loaded logs
+  const filteredLogs = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    if (!term) return logs;
+    return logs.filter((log) =>
+      [log.action, log.userEmail, log.ipAddress, log.resourceType, log.errorMessage]
+        .filter(Boolean)
+        .some((v) => String(v).toLowerCase().includes(term))
+    );
+  }, [logs, search]);
+
+  const handleExportCSV = useCallback(() => {
+    if (!filteredLogs.length) return;
+    const headers = [
+      'Timestamp',
+      'Severity',
+      'Category',
+      'Action',
+      'Success',
+      'User Email',
+      'User Role',
+      'IP Address',
+      'Resource Type',
+      'Resource ID',
+      'Error Message',
+    ];
+    const rows = filteredLogs.map((log) => [
+      log.timestamp,
+      log.severity,
+      log.category,
+      log.action,
+      log.success ? 'true' : 'false',
+      log.userEmail || '',
+      log.userRole || '',
+      log.ipAddress || '',
+      log.resourceType || '',
+      log.resourceId || '',
+      log.errorMessage || '',
+    ]);
+    const escape = (v: string) => `"${v.replace(/"/g, '""')}"`;
+    const csv = [headers.map(escape).join(','), ...rows.map((r) => r.map((c) => escape(String(c))).join(','))].join(
+      '\n'
+    );
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `audit-logs-${timeRange}-${Date.now()}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, [filteredLogs, timeRange]);
 
   if (!user || !isAdmin) {
     return null;
@@ -151,210 +228,231 @@ export default function AuditLogsPage() {
         eyebrow="Security"
         title={t('title')}
         description="Monitor and review system activity, security events, and admin actions"
-        icon={<IconShield size={20} />}
+        icon={<IconShield className="w-5 h-5" />}
         tone="danger"
+        actions={
+          <button
+            type="button"
+            onClick={handleExportCSV}
+            disabled={!filteredLogs.length}
+            className="inline-flex items-center gap-2 px-3 h-9 text-sm font-medium rounded-lg border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/70 hover:bg-[color:var(--ai-card-bg)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <FiDownload size={14} />
+            Export CSV
+          </button>
+        }
       />
 
-      <div className="max-w-[1400px] mx-auto w-full">
+      {/* KPI strip */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <StatCard
+          label={t('totalLogs')}
+          value={statistics?.totalLogs ?? 0}
+          icon={<IconActivity className="w-4 h-4" />}
+          loading={!statistics}
+        />
+        <StatCard
+          label={t('failedActions')}
+          value={statistics?.failedActions ?? 0}
+          tone="danger"
+          icon={<FiX size={14} />}
+          loading={!statistics}
+        />
+        <StatCard
+          label={t('criticalEvents')}
+          value={statistics?.bySeverity?.critical ?? 0}
+          tone="danger"
+          loading={!statistics}
+        />
+        <StatCard
+          label={t('warnings')}
+          value={statistics?.bySeverity?.warning ?? 0}
+          tone="warning"
+          loading={!statistics}
+        />
+      </div>
 
-        {/* Statistics Cards */}
-        {statistics && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8"
+      {/* Filters */}
+      <DataToolbar
+        search={search}
+        onSearchChange={setSearch}
+        searchPlaceholder="Search action, email, IP, resource…"
+        filters={
+          <>
+            <Select
+              aria-label="Time range"
+              size="sm"
+              variant="flat"
+              className="min-w-[150px]"
+              selectedKeys={[timeRange]}
+              onSelectionChange={(keys) => setTimeRange(Array.from(keys)[0] as string)}
+            >
+              {TIME_RANGE_OPTIONS.map((opt) => (
+                <SelectItem key={opt.key}>{opt.label}</SelectItem>
+              ))}
+            </Select>
+            <Select
+              aria-label="Category"
+              size="sm"
+              variant="flat"
+              className="min-w-[170px]"
+              selectedKeys={[categoryFilter]}
+              onSelectionChange={(keys) => setCategoryFilter(Array.from(keys)[0] as string)}
+            >
+              {CATEGORY_OPTIONS.map((opt) => (
+                <SelectItem key={opt.key}>{opt.label}</SelectItem>
+              ))}
+            </Select>
+            <Select
+              aria-label="Severity"
+              size="sm"
+              variant="flat"
+              className="min-w-[150px]"
+              selectedKeys={[severityFilter]}
+              onSelectionChange={(keys) => setSeverityFilter(Array.from(keys)[0] as string)}
+            >
+              {SEVERITY_OPTIONS.map((opt) => (
+                <SelectItem key={opt.key}>{opt.label}</SelectItem>
+              ))}
+            </Select>
+          </>
+        }
+        actions={
+          <Button
+            size="sm"
+            variant="flat"
+            onClick={() => {
+              loadAuditLogs();
+              loadStatistics();
+            }}
+            isLoading={loading}
           >
-            <Card>
-              <CardBody className="text-center">
-                <p className="text-sm text-[color:var(--ai-muted)]">{t('totalLogs')}</p>
-                <p className="text-3xl font-bold text-[color:var(--ai-foreground)]">
-                  {statistics.totalLogs}
-                </p>
-              </CardBody>
-            </Card>
+            Refresh
+          </Button>
+        }
+      />
 
-            <Card>
-              <CardBody className="text-center">
-                <p className="text-sm text-[color:var(--ai-muted)]">{t('failedActions')}</p>
-                <p className="text-3xl font-bold text-[color:var(--ai-error)]">
-                  {statistics.failedActions}
-                </p>
-              </CardBody>
-            </Card>
+      {/* Audit log entries */}
+      <SectionCard
+        title={t('recentActivity')}
+        description={`Showing ${filteredLogs.length} ${filteredLogs.length === 1 ? 'event' : 'events'}`}
+      >
+        {loading ? (
+          <div className="space-y-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-20 rounded-xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/40 animate-pulse"
+              />
+            ))}
+          </div>
+        ) : filteredLogs.length === 0 ? (
+          <EmptyState
+            icon={<IconActivity className="w-5 h-5" />}
+            title={t('noLogsFound')}
+            description="Try adjusting filters or expanding the time range."
+          />
+        ) : (
+          <div className="space-y-3">
+            <AnimatePresence initial={false}>
+              {filteredLogs.map((log, index) => (
+                <motion.div
+                  key={log.id || index}
+                  layout
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ delay: Math.min(index * 0.02, 0.2) }}
+                  className={`rounded-xl border p-4 transition-colors ${!log.success
+                      ? 'border-[color:var(--ai-danger)]/40 bg-[color:var(--ai-danger)]/5'
+                      : 'border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/40 hover:bg-[color:var(--ai-card-bg)]/70'
+                    }`}
+                >
+                  <div className="flex items-start justify-between gap-3 mb-2 flex-wrap">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Chip color={getSeverityColor(log.severity)} size="sm" variant="flat">
+                        {log.severity.toUpperCase()}
+                      </Chip>
+                      <Chip color={getCategoryColor(log.category)} size="sm" variant="flat">
+                        {log.category.replace(/_/g, ' ').toUpperCase()}
+                      </Chip>
+                      {log.success ? (
+                        <Chip
+                          size="sm"
+                          variant="flat"
+                          color="success"
+                          startContent={<FiCheckCircle size={12} />}
+                        >
+                          OK
+                        </Chip>
+                      ) : (
+                        <Chip size="sm" variant="flat" color="danger" startContent={<FiX size={12} />}>
+                          FAILED
+                        </Chip>
+                      )}
+                    </div>
+                    <span className="text-xs text-[color:var(--ai-muted)] font-mono">
+                      {formatTimestamp(log.timestamp)}
+                    </span>
+                  </div>
 
-            <Card>
-              <CardBody className="text-center">
-                <p className="text-sm text-[color:var(--ai-muted)]">{t('criticalEvents')}</p>
-                <p className="text-3xl font-bold text-[color:var(--ai-warning)]">
-                  {statistics.bySeverity.critical || 0}
-                </p>
-              </CardBody>
-            </Card>
+                  <h3 className="font-semibold text-[color:var(--ai-foreground)] mb-2 text-sm">
+                    {log.action}
+                  </h3>
 
-            <Card>
-              <CardBody className="text-center">
-                <p className="text-sm text-[color:var(--ai-muted)]">{t('warnings')}</p>
-                <p className="text-3xl font-bold text-[color:var(--ai-warning)]">
-                  {statistics.bySeverity.warning || 0}
-                </p>
-              </CardBody>
-            </Card>
-          </motion.div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
+                    {log.userEmail && (
+                      <Detail label={t('user')} value={log.userEmail} mono />
+                    )}
+                    {log.ipAddress && <Detail label="IP" value={log.ipAddress} mono />}
+                    {log.resourceType && (
+                      <Detail
+                        label={t('resource')}
+                        value={`${log.resourceType}${log.resourceId ? `: ${log.resourceId.substring(0, 8)}` : ''
+                          }`}
+                        mono
+                      />
+                    )}
+                    {log.userRole && <Detail label={t('role')} value={log.userRole} />}
+                  </div>
+
+                  {log.errorMessage && (
+                    <div className="mt-3 px-3 py-2 rounded-lg bg-[color:var(--ai-danger)]/10 border border-[color:var(--ai-danger)]/30 text-xs text-[color:var(--ai-danger)]">
+                      {log.errorMessage}
+                    </div>
+                  )}
+
+                  {log.details && Object.keys(log.details).length > 0 && (
+                    <details className="mt-3 group">
+                      <summary className="cursor-pointer text-xs text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)] inline-flex items-center gap-1 select-none">
+                        <span className="transition-transform group-open:rotate-90">›</span>
+                        View raw details
+                      </summary>
+                      <pre className="mt-2 p-3 bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] rounded-lg text-[11px] overflow-auto leading-relaxed max-h-72">
+                        {JSON.stringify(log.details, null, 2)}
+                      </pre>
+                    </details>
+                  )}
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
         )}
+      </SectionCard>
+    </div>
+  );
+}
 
-        {/* Filters */}
-        <Card className="mb-8">
-          <CardBody>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <Select
-                label="Time Range"
-                selectedKeys={[timeRange]}
-                onSelectionChange={(keys) => setTimeRange(Array.from(keys)[0] as string)}
-              >
-                <SelectItem key="1h">Last Hour</SelectItem>
-                <SelectItem key="24h">Last 24 Hours</SelectItem>
-                <SelectItem key="7d">Last 7 Days</SelectItem>
-                <SelectItem key="30d">Last 30 Days</SelectItem>
-              </Select>
-
-              <Select
-                label="Category"
-                selectedKeys={[categoryFilter]}
-                onSelectionChange={(keys) => setCategoryFilter(Array.from(keys)[0] as string)}
-              >
-                <SelectItem key="all">All Categories</SelectItem>
-                <SelectItem key="authentication">Authentication</SelectItem>
-                <SelectItem key="admin_action">Admin Actions</SelectItem>
-                <SelectItem key="course_management">Course Management</SelectItem>
-                <SelectItem key="user_management">User Management</SelectItem>
-                <SelectItem key="payment">Payment</SelectItem>
-                <SelectItem key="security">Security</SelectItem>
-              </Select>
-
-              <Select
-                label="Severity"
-                selectedKeys={[severityFilter]}
-                onSelectionChange={(keys) => setSeverityFilter(Array.from(keys)[0] as string)}
-              >
-                <SelectItem key="all">All Severities</SelectItem>
-                <SelectItem key="info">Info</SelectItem>
-                <SelectItem key="warning">Warning</SelectItem>
-                <SelectItem key="critical">Critical</SelectItem>
-              </Select>
-
-              <Button
-                color="primary"
-                onClick={() => {
-                  loadAuditLogs();
-                  loadStatistics();
-                }}
-              >
-                Refresh
-              </Button>
-            </div>
-          </CardBody>
-        </Card>
-
-        {/* Audit Logs List */}
-        <Card>
-          <CardHeader>
-            <h2 className="text-2xl font-bold">{t('recentActivity')}</h2>
-          </CardHeader>
-          <Divider />
-          <CardBody>
-            {loading ? (
-              <div className="text-center py-8">
-                <p className="text-[color:var(--ai-muted)]">{t('loading')}</p>
-              </div>
-            ) : logs.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-[color:var(--ai-muted)]">{t('noLogsFound')}</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {logs.map((log, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="border border-[color:var(--ai-card-border)] rounded-lg p-4"
-                  >
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <Chip color={getSeverityColor(log.severity)} size="sm" variant="flat">
-                          {log.severity.toUpperCase()}
-                        </Chip>
-                        <Chip color={getCategoryColor(log.category)} size="sm" variant="flat">
-                          {log.category.replace('_', ' ').toUpperCase()}
-                        </Chip>
-                        {!log.success && (
-                          <Chip color="danger" size="sm" variant="flat">
-                            FAILED
-                          </Chip>
-                        )}
-                      </div>
-                      <span className="text-sm text-[color:var(--ai-muted)]">
-                        {formatTimestamp(log.timestamp)}
-                      </span>
-                    </div>
-
-                    <h3 className="font-semibold text-[color:var(--ai-foreground)] mb-2">
-                      {log.action}
-                    </h3>
-
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      {log.userEmail && (
-                        <div>
-                          <span className="text-[color:var(--ai-muted)]">{t('user')} </span>
-                          <span className="text-[color:var(--ai-foreground)]">{log.userEmail}</span>
-                        </div>
-                      )}
-                      {log.ipAddress && (
-                        <div>
-                          <span className="text-[color:var(--ai-muted)]">IP: </span>
-                          <span className="text-[color:var(--ai-foreground)]">{log.ipAddress}</span>
-                        </div>
-                      )}
-                      {log.resourceType && (
-                        <div>
-                          <span className="text-[color:var(--ai-muted)]">{t('resource')} </span>
-                          <span className="text-[color:var(--ai-foreground)]">
-                            {log.resourceType}
-                            {log.resourceId && `: ${log.resourceId.substring(0, 8)}`}
-                          </span>
-                        </div>
-                      )}
-                      {log.userRole && (
-                        <div>
-                          <span className="text-[color:var(--ai-muted)]">{t('role')} </span>
-                          <span className="text-[color:var(--ai-foreground)]">{log.userRole}</span>
-                        </div>
-                      )}
-                    </div>
-
-                    {log.errorMessage && (
-                      <div className="mt-2 p-2 bg-[color:var(--ai-error)]/10 rounded text-sm text-[color:var(--ai-error)]">
-                        {log.errorMessage}
-                      </div>
-                    )}
-
-                    {log.details && Object.keys(log.details).length > 0 && (
-                      <details className="mt-2">
-                        <summary className="cursor-pointer text-sm text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]">
-                          View Details
-                        </summary>
-                        <pre className="mt-2 p-2 bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded text-xs overflow-auto">
-                          {JSON.stringify(log.details, null, 2)}
-                        </pre>
-                      </details>
-                    )}
-                  </motion.div>
-                ))}
-              </div>
-            )}
-          </CardBody>
-        </Card>
+function Detail({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
+  return (
+    <div className="min-w-0">
+      <div className="text-[10px] uppercase tracking-wider text-[color:var(--ai-muted)]">
+        {label}
+      </div>
+      <div
+        className={`text-[color:var(--ai-foreground)] truncate ${mono ? 'font-mono text-[11px]' : ''}`}
+      >
+        {value}
       </div>
     </div>
   );

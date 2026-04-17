@@ -97,33 +97,30 @@ function CreationProgress({ currentStep, isDone, error }: { currentStep: number;
             return (
               <div
                 key={index}
-                className={`flex items-center gap-3 transition-all duration-500 ${
-                  isActive
-                    ? 'scale-[1.02] opacity-100'
-                    : isCompleted
-                      ? 'opacity-70 scale-100'
-                      : 'opacity-30 scale-95'
-                }`}
+                className={`flex items-center gap-3 transition-all duration-500 ${isActive
+                  ? 'scale-[1.02] opacity-100'
+                  : isCompleted
+                    ? 'opacity-70 scale-100'
+                    : 'opacity-30 scale-95'
+                  }`}
               >
                 <div
-                  className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all duration-500 ${
-                    isCompleted
-                      ? 'bg-green-500/20 text-green-600 dark:text-green-400'
-                      : isActive
-                        ? 'bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 ring-2 ring-indigo-400/50 animate-pulse'
-                        : 'bg-gray-200/50 dark:bg-gray-700/30 text-gray-400'
-                  }`}
+                  className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all duration-500 ${isCompleted
+                    ? 'bg-green-500/20 text-green-600 dark:text-green-400'
+                    : isActive
+                      ? 'bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 ring-2 ring-indigo-400/50 animate-pulse'
+                      : 'bg-gray-200/50 dark:bg-gray-700/30 text-gray-400'
+                    }`}
                 >
                   {isCompleted ? '✓' : step.emoji}
                 </div>
                 <span
-                  className={`text-sm font-medium transition-colors duration-300 ${
-                    isActive
-                      ? 'text-indigo-700 dark:text-indigo-300'
-                      : isCompleted
-                        ? 'text-green-700 dark:text-green-400 line-through'
-                        : 'text-gray-400 dark:text-gray-600'
-                  }`}
+                  className={`text-sm font-medium transition-colors duration-300 ${isActive
+                    ? 'text-indigo-700 dark:text-indigo-300'
+                    : isCompleted
+                      ? 'text-green-700 dark:text-green-400 line-through'
+                      : 'text-gray-400 dark:text-gray-600'
+                    }`}
                 >
                   {step.text}
                 </span>
@@ -138,13 +135,12 @@ function CreationProgress({ currentStep, isDone, error }: { currentStep: number;
         {/* Progress bar */}
         <div className="mt-4 h-2 bg-gray-200/50 dark:bg-gray-700/30 rounded-full overflow-hidden">
           <div
-            className={`h-full rounded-full transition-all duration-700 ease-out ${
-              error
-                ? 'bg-red-500'
-                : isDone
-                  ? 'bg-gradient-to-r from-green-400 to-emerald-500'
-                  : 'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500'
-            }`}
+            className={`h-full rounded-full transition-all duration-700 ease-out ${error
+              ? 'bg-red-500'
+              : isDone
+                ? 'bg-gradient-to-r from-green-400 to-emerald-500'
+                : 'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500'
+              }`}
             style={{
               width: isDone ? '100%' : error ? `${((currentStep + 1) / CREATION_STEPS.length) * 100}%` : `${((currentStep + 0.5) / CREATION_STEPS.length) * 100}%`,
             }}
@@ -177,6 +173,9 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
   const [searchQuery, setSearchQuery] = useState('');
   const [linkingAzureId, setLinkingAzureId] = useState<string | null>(null);
   const [showLinked, setShowLinked] = useState(false);
+
+  // Create confirmation modal state
+  const [createConfirmOpen, setCreateConfirmOpen] = useState(false);
 
   // Unlink confirmation
   const [unlinkingId, setUnlinkingId] = useState<string | null>(null);
@@ -219,7 +218,8 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
   }, []);
 
   const handleCreate = async () => {
-    // Reset and start progress
+    // Close confirmation modal and start progress
+    setCreateConfirmOpen(false);
     setIsCreating(true);
     setCreationStep(0);
     setCreationDone(false);
@@ -448,19 +448,29 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap justify-between items-center gap-2">
-        <h3 className="text-lg font-semibold">GitHub Accounts</h3>
+    <div className="space-y-5">
+      {/* Section header */}
+      <div className="flex flex-wrap justify-between items-start gap-3">
+        <div>
+          <h3 className="text-xl font-bold flex items-center gap-2">
+            <span>🐙</span> GitHub Accounts
+          </h3>
+          <p className="text-sm text-[color:var(--ai-muted-foreground)] mt-0.5">
+            Provision new accounts or attach existing ones from Azure AD.
+          </p>
+        </div>
         <div className="flex flex-wrap gap-2">
           <Button
-            color="default"
+            color="primary"
             size="sm"
-            variant="flat"
+            variant="bordered"
             onPress={handleOpenLinkModal}
+            startContent={
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clipRule="evenodd" />
+              </svg>
+            }
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clipRule="evenodd" />
-            </svg>
             Link Existing
           </Button>
           <Button
@@ -469,24 +479,28 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
             variant="flat"
             onPress={handlePurchaseSubscription}
             isLoading={purchaseLoading}
+            startContent={
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
+                <path fillRule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clipRule="evenodd" />
+              </svg>
+            }
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
-              <path fillRule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clipRule="evenodd" />
-            </svg>
             Purchase Subscription
           </Button>
           <Button
             color="primary"
             size="sm"
-            onPress={handleCreate}
+            onPress={() => setCreateConfirmOpen(true)}
             isDisabled={isCreating && !creationDone && !creationError}
             className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium"
+            startContent={
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+              </svg>
+            }
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-            </svg>
-            Create Account {accounts.length > 0 ? `(#${accounts.length + 1})` : ''}
+            Create New {accounts.length > 0 ? `(#${accounts.length + 1})` : ''}
           </Button>
         </div>
       </div>
@@ -676,6 +690,68 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
         </div>
       )}
 
+      {/* Create Account Confirmation Modal */}
+      <Modal
+        isOpen={createConfirmOpen}
+        onClose={() => setCreateConfirmOpen(false)}
+        size="md"
+        backdrop="blur"
+      >
+        <ModalContent>
+          {(onClose) => {
+            const baseUsername = user.email.split('@')[0].replace(/[^a-zA-Z0-9._-]/g, '').toLowerCase();
+            const nextNumber = accounts.length + 1;
+            const suffix = nextNumber > 1 ? String(nextNumber).padStart(2, '0') : '';
+            const newAccount = `${baseUsername}${suffix}@studiai.ro`;
+            const newGithub = `${baseUsername}${suffix}_metu`;
+
+            return (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  <h3 className="text-lg font-bold flex items-center gap-2">
+                    <span>✨</span> Create New GitHub Account
+                  </h3>
+                </ModalHeader>
+                <ModalBody>
+                  <p className="text-sm text-[color:var(--ai-foreground)]">
+                    A brand-new account will be provisioned for <strong>{user.displayName || user.email}</strong>.
+                  </p>
+                  <div className="bg-[color:var(--ai-card-bg)]/60 border border-[color:var(--ai-card-border)] rounded-lg p-3 space-y-1.5 text-sm">
+                    <div className="flex justify-between gap-2">
+                      <span className="text-[color:var(--ai-muted-foreground)]">Account #</span>
+                      <code className="font-mono">{nextNumber}</code>
+                    </div>
+                    <div className="flex justify-between gap-2">
+                      <span className="text-[color:var(--ai-muted-foreground)]">Email</span>
+                      <code className="font-mono text-[color:var(--ai-primary)] truncate">{newAccount}</code>
+                    </div>
+                    <div className="flex justify-between gap-2">
+                      <span className="text-[color:var(--ai-muted-foreground)]">GitHub username</span>
+                      <code className="font-mono text-[color:var(--ai-primary)] truncate">{newGithub}</code>
+                    </div>
+                  </div>
+                  <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3 text-xs text-amber-800 dark:text-amber-300">
+                    💡 If you already created the account manually in Azure AD, use <strong>Link Existing</strong> instead to avoid duplicates.
+                  </div>
+                </ModalBody>
+                <ModalFooter>
+                  <Button variant="light" onPress={onClose}>
+                    Cancel
+                  </Button>
+                  <Button
+                    color="primary"
+                    onPress={handleCreate}
+                    className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium"
+                  >
+                    Yes, Create Account
+                  </Button>
+                </ModalFooter>
+              </>
+            );
+          }}
+        </ModalContent>
+      </Modal>
+
       {/* Link Existing Account Modal */}
       <Modal
         isOpen={linkModalOpen}
@@ -758,11 +834,10 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
                       {filtered.map((u) => (
                         <div
                           key={u.azureUserId}
-                          className={`flex items-center justify-between gap-3 p-3 rounded-lg border transition-colors ${
-                            u.alreadyLinked
-                              ? 'bg-gray-50 dark:bg-gray-900/40 border-gray-200 dark:border-gray-800 opacity-70'
-                              : 'bg-[color:var(--ai-card-bg)]/60 border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]'
-                          }`}
+                          className={`flex items-center justify-between gap-3 p-3 rounded-lg border transition-colors ${u.alreadyLinked
+                            ? 'bg-gray-50 dark:bg-gray-900/40 border-gray-200 dark:border-gray-800 opacity-70'
+                            : 'bg-[color:var(--ai-card-bg)]/60 border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]'
+                            }`}
                         >
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2 flex-wrap">

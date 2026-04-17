@@ -38,6 +38,16 @@ export async function proxy(request: NextRequest) {
   // Apply additional security headers
   addSecurityHeaders(response.headers);
 
+  // Harden admin routes: never cache, never index. Auth/role enforcement remains in AdminGuard
+  // (Firebase Auth uses IndexedDB tokens client-side, so a proxy-level token check is not feasible
+  // without introducing Firebase session cookies).
+  if (request.nextUrl.pathname.startsWith('/admin')) {
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Referrer-Policy', 'no-referrer');
+  }
+
   // For API routes, perform additional validation
   if (request.nextUrl.pathname.startsWith('/api')) {
     // Check environment variables are properly configured
