@@ -40,6 +40,7 @@ import {
   Timestamp,
   getDocs,
 } from 'firebase/firestore';
+import GitHubAccountsTab from './GitHubAccountsTab';
 
 // Enhanced user management with a more detailed view and activity logs
 const EnhancedUserManagement: React.FC = () => {
@@ -594,6 +595,7 @@ const EnhancedUserManagement: React.FC = () => {
                     >
                       <Tab key="profile" title="Profile" />
                       <Tab key="enrollments" title="Enrollments" />
+                      <Tab key="github" title="GitHub Accounts" />
                       <Tab key="notes" title={t('userManagement.tabs.adminNotes')} />
                       <Tab key="activity" title={t('userManagement.tabs.activityLog')} />
                       <Tab key="permissions" title="Permissions" />
@@ -891,6 +893,11 @@ const EnhancedUserManagement: React.FC = () => {
                           </div>
                         )}
                       </div>
+                    )}
+
+                    {/* GitHub Accounts Tab */}
+                    {selectedTab === 'github' && (
+                      <GitHubAccountsTab user={selectedUser} />
                     )}
 
                     {/* Admin Notes Tab */}

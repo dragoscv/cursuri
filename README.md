@@ -1,4 +1,4 @@
-# Cursuri - Online Course Platform
+# StudiAI - Online Course Platform
 
 An interactive online course platform built with Next.js, TypeScript, Firebase, and Stripe integration. This application allows users to browse, purchase, and engage with educational courses.
 

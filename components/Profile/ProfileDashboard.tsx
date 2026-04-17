@@ -13,6 +13,7 @@ import PaymentHistorySection from './PaymentHistorySection';
 import LearningPathSection from './LearningPathSection';
 import ProfileSettingsSection from './ProfileSettingsSection';
 import OfflineContentSection from './OfflineContentSection';
+import GitHubAccountsCard from './GitHubAccountsCard';
 import useAchievements from './hooks/useAchievements';
 import { useTranslations } from 'next-intl';
 
@@ -109,6 +110,9 @@ export default function ProfileDashboard() {
 
             {/* Recent Activity */}
             <RecentActivity activities={recentActivity} />
+
+            {/* GitHub Accounts */}
+            <GitHubAccountsCard />
 
             {/* New Sections */}
             <AchievementsSection />
