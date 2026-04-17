@@ -64,7 +64,7 @@ export default function Home() {
   const faqStructuredData = generateFAQStructuredData([
     {
       question: 'Do StudiAI subscriptions include GitHub Copilot?',
-      answer: 'Yes. Every paid StudiAI subscription auto-provisions a personal GitHub account with GitHub Copilot enabled. After checkout you find your credentials in Profile → GitHub on studiai.ro. Sign into VS Code (Insiders recommended) and Copilot is ready: chat, inline edits, multi-file changes, and agent mode.',
+      answer: 'Yes. Every paid StudiAI subscription auto-provisions a personal GitHub account with unlimited GitHub Copilot Pro enabled — unrestricted access to all the latest frontier models including Claude Opus 4.7, GPT-5, and Gemini 2.5 Pro, plus every new model on day one. After checkout you find your credentials in Profile → GitHub on studiai.ro. Sign into VS Code (Insiders recommended) and Copilot is ready: chat, inline edits, multi-file changes, and agent mode.',
     },
     {
       question: 'How do I activate GitHub Copilot after subscribing on StudiAI?',

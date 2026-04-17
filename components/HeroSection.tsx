@@ -7,6 +7,7 @@ import Login from './Login';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import {
   ChatGPTIcon,
@@ -357,12 +358,22 @@ const HeroSection = memo(function HeroSection() {
             initial="hidden"
             animate="visible"
           >
-            {/* Badge */}
+            {/* Copilot announcement badge - clickable */}
             <motion.div variants={itemVariants} className="mb-6">
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] border border-[color:var(--ai-primary)]/20">
-                <span className="w-2 h-2 rounded-full bg-[color:var(--ai-primary)] animate-pulse" />
-                {t('projectBased')}
-              </span>
+              <Link
+                href="/subscriptions"
+                className="group inline-flex items-center gap-2 pl-1 pr-4 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-[color:var(--ai-primary)]/15 via-[color:var(--ai-secondary)]/15 to-[color:var(--ai-accent)]/15 text-[color:var(--ai-foreground)] border border-[color:var(--ai-primary)]/30 hover:border-[color:var(--ai-primary)]/60 transition-all"
+              >
+                <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[color:var(--ai-primary)] text-white">
+                  {t('copilotBadge.eyebrow')}
+                </span>
+                <CopilotIcon size={16} />
+                <span className="hidden sm:inline">{t('copilotBadge.label')}</span>
+                <span className="sm:hidden">GitHub Copilot Pro included</span>
+                <span className="text-[color:var(--ai-primary)] font-semibold group-hover:translate-x-0.5 transition-transform">
+                  {t('copilotBadge.cta')} →
+                </span>
+              </Link>
             </motion.div>
 
             <motion.h1 variants={itemVariants} className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-[color:var(--ai-foreground)] leading-[1.1]">
@@ -423,17 +434,45 @@ const HeroSection = memo(function HeroSection() {
               </div>
             </motion.div>
 
-            {/* Tech badges */}
-            <motion.div variants={itemVariants} className="mt-8 flex flex-wrap gap-2">
-              {stats.topTechnologies.map((tech) => (
-                <span
-                  key={tech}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-[color:var(--ai-card-bg)] text-[color:var(--ai-muted)] border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/30 hover:text-[color:var(--ai-primary)] transition-colors duration-200"
-                >
-                  {getTechIcon(tech)}
-                  {tech}
-                </span>
-              ))}
+            {/* Copilot models ribbon - the headline subscription perk */}
+            <motion.div variants={itemVariants} className="mt-8">
+              <Link
+                href="/subscriptions"
+                className="group block relative overflow-hidden rounded-2xl border border-[color:var(--ai-card-border)] bg-gradient-to-br from-[#0d1117] via-[#161b22] to-[#1f2937] p-5 hover:border-[color:var(--ai-primary)]/50 transition-all"
+              >
+                <div
+                  aria-hidden
+                  className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-gradient-to-br from-violet-500/25 via-indigo-500/15 to-transparent blur-3xl"
+                />
+                <div className="relative flex flex-col sm:flex-row sm:items-center gap-4">
+                  <div className="flex-shrink-0 flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center">
+                      <CopilotIcon size={22} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-white leading-tight">
+                        {t('copilotRibbon.title')}
+                      </p>
+                      <p className="text-xs text-white/70 mt-0.5 max-w-md">
+                        {t('copilotRibbon.description')}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex-1 flex flex-wrap gap-1.5">
+                    {(t.raw('copilotRibbon.models') as string[]).map((model) => (
+                      <span
+                        key={model}
+                        className="inline-flex items-center px-2.5 py-1 text-[11px] font-medium rounded-md bg-white/10 text-white/90 border border-white/10"
+                      >
+                        {model}
+                      </span>
+                    ))}
+                  </div>
+                  <span className="flex-shrink-0 inline-flex items-center gap-1.5 px-3 h-9 rounded-lg bg-white text-[#0d1117] text-xs font-bold group-hover:translate-x-0.5 transition-transform">
+                    {t('copilotRibbon.cta')} →
+                  </span>
+                </div>
+              </Link>
             </motion.div>
           </motion.div>
 

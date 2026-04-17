@@ -3,22 +3,26 @@
   "subtitle": "Get a personal GitHub account with Copilot, unlimited access to all AI courses, and the workflow used by 10x developers.",
   "copilot": {
     "eyebrow": "INCLUDED IN EVERY PLAN",
-    "headline": "GitHub Copilot, on us.",
-    "lead": "Every paid subscription auto-provisions a personal GitHub account with Copilot enabled. Use it inside VS Code (we recommend the Insiders build for the latest features) and pair it with OpenCode for a Claude-grade coding agent right in your editor.",
+    "headline": "GitHub Copilot Pro — unlimited, on us.",
+    "lead": "Every paid subscription auto-provisions a personal GitHub account with Copilot Pro enabled — unlimited access to all the latest frontier models: Claude Opus 4.7, GPT, Gemini and more. Use it inside VS Code (we recommend Insiders for the latest features) and pair it with OpenCode for a Claude-grade coding agent right in your editor.",
     "footnote": "Your account is ready in seconds after checkout. Find credentials anytime under Profile → GitHub.",
     "perks": {
       "account": {
-        "title": "Personal GitHub account, auto-provisioned",
-        "description": "We create the account, enable Copilot on it, and hand you the credentials — zero setup on your side."
+        "title": "Unlimited Copilot Pro account",
+        "description": "Personal GitHub account auto-provisioned with unlimited, unrestricted Copilot Pro access — zero setup on your side."
       },
       "vscode": {
-        "title": "Works in VS Code (Insiders recommended)",
-        "description": "Sign in once and Copilot follows you everywhere: chat, inline edits, code reviews, agent mode."
+        "title": "All frontier models: Claude Opus 4.7, GPT, Gemini",
+        "description": "Switch between Claude Opus 4.7, GPT, Gemini and every new model the day it ships — chat, inline edits, agent mode in VS Code Insiders."
       },
       "opencode": {
         "title": "Pairs with OpenCode for full agentic flow",
-        "description": "OpenCode brings a Claude-style coding agent directly into your terminal and editor, powered by your Copilot subscription."
+        "description": "OpenCode brings a Claude-style coding agent directly into your terminal and editor, powered by your unlimited Copilot subscription."
       }
+    },
+    "models": {
+      "label": "Unlimited access to:",
+      "items": ["Claude Opus 4.7", "GPT-5", "Gemini 2.5 Pro", "+ every new model on day one"]
     },
     "cta": {
       "viewPlans": "View plans",
@@ -62,7 +66,7 @@
       "period": "per month",
       "description": "Perfect for mastering AI tools",
       "features": {
-        "copilot": "GitHub Copilot account included (Pro tier)",
+        "copilot": "Unlimited GitHub Copilot Pro — Claude Opus 4.7, GPT, Gemini",
         "unlimitedAccess": "Unlimited access to all AI courses",
         "allCourses": "Learn ChatGPT, automation, and AI workflows",
         "prioritySupport": "Priority support from AI practitioners",
@@ -80,7 +84,7 @@
       "period": "per year",
       "description": "Best value - become an AI expert",
       "features": {
-        "copilot": "GitHub Copilot account included (Pro tier)",
+        "copilot": "Unlimited GitHub Copilot Pro — Claude Opus 4.7, GPT, Gemini",
         "everything": "Everything in AI Learner Monthly",
         "twoMonthsFree": "2 months free",
         "prioritySupport": "Priority email support",
@@ -118,8 +122,8 @@
     "title": "Frequently Asked Questions",
     "subtitle": "Everything you need to know about our subscriptions",
     "whatIsCopilot": {
-      "question": "What is GitHub Copilot and how do I use it?",
-      "answer": "GitHub Copilot is an AI pair-programmer built into VS Code. Every paid subscription auto-provisions a personal GitHub account with Copilot enabled. After checkout, your credentials appear under Profile → GitHub. Sign into VS Code (we recommend the Insiders build) and Copilot is ready: chat, inline suggestions, multi-file edits, agent mode — the lot."
+      "question": "What is GitHub Copilot Pro and which models do I get?",
+      "answer": "GitHub Copilot Pro is an AI pair-programmer built into VS Code. Every paid subscription auto-provisions a personal GitHub account with Copilot Pro enabled — unlimited, unrestricted access to all the latest frontier models including Claude Opus 4.7, GPT-5, Gemini 2.5 Pro, and every new model on day one. After checkout, your credentials appear under Profile → GitHub. Sign into VS Code (we recommend the Insiders build) and Copilot is ready: chat, inline suggestions, multi-file edits, agent mode — the lot."
     },
     "howToActivate": {
       "question": "How do I activate Copilot after subscribing?",

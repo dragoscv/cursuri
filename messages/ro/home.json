@@ -9,12 +9,23 @@
       "line1": "Stăpânește Viitorul AI",
       "line2": "Transformă Ideile în Realitate"
     },
-    "subtitle": "Învață să folosești instrumente AI, prompt engineering și automatizare pentru a rezolva probleme reale. Nu este necesară programare - doar creativitate și îndrumare corectă.",
+    "subtitle": "Învață să folosești instrumente AI, prompt engineering și automatizare pentru a rezolva probleme reale — plus primești GitHub Copilot Pro nelimitat cu fiecare abonament: Claude Opus 4.7, GPT, Gemini și orice model nou în ziua lansării.",
     "getStarted": "Începe să Înveți",
     "exploreCourses": "Explorează Cursurile AI",
     "joinDiscord": "Alătură-te Discord",
     "learnersEnrolled": "pasionați de AI învață deja",
     "projectBased": "Proiecte Susținute de AI",
+    "copilotBadge": {
+      "eyebrow": "NOU",
+      "label": "Fiecare abonament include GitHub Copilot Pro nelimitat",
+      "cta": "Vezi planurile"
+    },
+    "copilotRibbon": {
+      "title": "Copilot Pro nelimitat inclus",
+      "description": "Fiecare plan plătit livrează un cont GitHub personal cu Copilot Pro nerestricționat — chat, agent mode, toate modelele de vârf.",
+      "models": ["Claude Opus 4.7", "GPT-5", "Gemini 2.5 Pro", "+ orice model nou"],
+      "cta": "Deblochează Copilot"
+    },
     "stats": {
       "studentRating": "Satisfacția Cursanților",
       "reviews": "din {count} recenzii",

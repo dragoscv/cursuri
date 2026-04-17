@@ -3,22 +3,26 @@
   "subtitle": "Primești un cont GitHub personal cu Copilot, acces nelimitat la toate cursurile AI și fluxul de lucru folosit de dezvoltatorii 10x.",
   "copilot": {
     "eyebrow": "INCLUS ÎN ORICE PLAN",
-    "headline": "GitHub Copilot, din partea noastră.",
-    "lead": "Fiecare abonament plătit îți creează automat un cont GitHub personal cu Copilot activat. Folosește-l în VS Code (recomandăm versiunea Insiders pentru cele mai noi funcționalități) și împerechează-l cu OpenCode pentru un agent de coding nivel Claude direct în editor.",
+    "headline": "GitHub Copilot Pro — nelimitat, din partea noastră.",
+    "lead": "Fiecare abonament plătit îți creează automat un cont GitHub personal cu Copilot Pro activat — acces nelimitat la toate modelele AI de vârf: Claude Opus 4.7, GPT, Gemini și altele. Folosește-l în VS Code (recomandăm Insiders pentru cele mai noi funcționalități) și împerechează-l cu OpenCode pentru un agent de coding nivel Claude direct în editor.",
     "footnote": "Contul tău e gata în câteva secunde după plată. Găsești datele oricând în Profil → GitHub.",
     "perks": {
       "account": {
-        "title": "Cont GitHub personal, creat automat",
-        "description": "Creăm contul, activăm Copilot pe el și îți dăm credentialele — zero configurare din partea ta."
+        "title": "Cont Copilot Pro nelimitat",
+        "description": "Cont GitHub personal creat automat, cu acces nelimitat și nerestricționat la Copilot Pro — zero configurare din partea ta."
       },
       "vscode": {
-        "title": "Funcționează în VS Code (Insiders recomandat)",
-        "description": "Loghezi-te o dată și Copilot te însotșește peste tot: chat, editări inline, code review, agent mode."
+        "title": "Toate modelele de vârf: Claude Opus 4.7, GPT, Gemini",
+        "description": "Comută între Claude Opus 4.7, GPT, Gemini și orice model nou în ziua lansării — chat, editări inline, agent mode în VS Code Insiders."
       },
       "opencode": {
         "title": "Compatibil cu OpenCode pentru flux agentic complet",
-        "description": "OpenCode aduce un agent de coding stil Claude direct în terminal și editor, alimentat de abonamentul tău Copilot."
+        "description": "OpenCode aduce un agent de coding stil Claude direct în terminal și editor, alimentat de abonamentul tău Copilot nelimitat."
       }
+    },
+    "models": {
+      "label": "Acces nelimitat la:",
+      "items": ["Claude Opus 4.7", "GPT-5", "Gemini 2.5 Pro", "+ orice model nou în ziua lansării"]
     },
     "cta": {
       "viewPlans": "Vezi planurile",
@@ -62,7 +66,7 @@
       "period": "pe lună",
       "description": "Perfect pentru stăpânirea instrumentelor AI",
       "features": {
-        "copilot": "Cont GitHub Copilot inclus (nivel Pro)",
+        "copilot": "GitHub Copilot Pro nelimitat — Claude Opus 4.7, GPT, Gemini",
         "unlimitedAccess": "Acces nelimitat la toate cursurile AI",
         "allCourses": "Învață ChatGPT, automatizare și fluxuri AI",
         "prioritySupport": "Suport prioritar de la practicieni AI",
@@ -80,7 +84,7 @@
       "period": "pe an",
       "description": "Cea mai bună valoare - devino expert AI",
       "features": {
-        "copilot": "Cont GitHub Copilot inclus (nivel Pro)",
+        "copilot": "GitHub Copilot Pro nelimitat — Claude Opus 4.7, GPT, Gemini",
         "everything": "Tot din Cursanț AI Lunar",
         "twoMonthsFree": "2 luni gratuite",
         "prioritySupport": "Suport email prioritar",
@@ -118,8 +122,8 @@
     "title": "Întrebări Frecvente",
     "subtitle": "Tot ce trebuie să știi despre abonamentele noastre",
     "whatIsCopilot": {
-      "question": "Ce e GitHub Copilot și cum îl folosesc?",
-      "answer": "GitHub Copilot e un partener AI de programare integrat în VS Code. Fiecare abonament plătit îți creează automat un cont GitHub personal cu Copilot activat. După plată, datele apar în Profil → GitHub. Loghezi-te în VS Code (recomandăm varianta Insiders) și Copilot e gata: chat, sugestii inline, editări multi-fișier, agent mode — tot tacâmul."
+      "question": "Ce e GitHub Copilot Pro și ce modele primesc?",
+      "answer": "GitHub Copilot Pro e un partener AI de programare integrat în VS Code. Fiecare abonament plătit îți creează automat un cont GitHub personal cu Copilot Pro activat — acces nelimitat și nerestricționat la toate modelele AI de vârf, inclusiv Claude Opus 4.7, GPT-5, Gemini 2.5 Pro și orice model nou în ziua lansării. După plată, datele apar în Profil → GitHub. Loghezi-te în VS Code (recomandăm varianta Insiders) și Copilot e gata: chat, sugestii inline, editări multi-fișier, agent mode — tot tacâmul."
     },
     "howToActivate": {
       "question": "Cum activez Copilot după abonare?",

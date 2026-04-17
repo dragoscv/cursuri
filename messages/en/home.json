@@ -9,12 +9,23 @@
       "line1": "Master the Future of AI",
       "line2": "Transform Ideas into Reality"
     },
-    "subtitle": "Learn how to leverage AI tools, prompt engineering, and automation to solve real problems. No coding required - just creativity and the right guidance.",
+    "subtitle": "Learn how to leverage AI tools, prompt engineering, and automation to solve real problems — plus get unlimited GitHub Copilot Pro with every subscription: Claude Opus 4.7, GPT, Gemini and every new model on day one.",
     "getStarted": "Start Learning",
     "exploreCourses": "Explore AI Courses",
     "joinDiscord": "Join Discord",
     "learnersEnrolled": "AI enthusiasts already learning",
     "projectBased": "AI-Powered Projects",
+    "copilotBadge": {
+      "eyebrow": "NEW",
+      "label": "Every subscription includes unlimited GitHub Copilot Pro",
+      "cta": "See plans"
+    },
+    "copilotRibbon": {
+      "title": "Unlimited Copilot Pro included",
+      "description": "Every paid plan ships a personal GitHub account with unrestricted Copilot Pro — chat, agent mode, all frontier models.",
+      "models": ["Claude Opus 4.7", "GPT-5", "Gemini 2.5 Pro", "+ every new model"],
+      "cta": "Unlock Copilot"
+    },
     "stats": {
       "studentRating": "Learner Satisfaction",
       "reviews": "from {count} reviews",
