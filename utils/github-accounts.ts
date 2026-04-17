@@ -590,3 +590,481 @@ export async function retryAddAccountToOrg(params: {
   });
   return { ...result, githubUsername };
 }
+
+// ============================================================================
+// Health check + repair
+// ============================================================================
+
+export type CheckStatus = 'ok' | 'missing' | 'pending' | 'error' | 'skipped';
+
+export interface HealthCheck {
+  id: string;
+  label: string;
+  status: CheckStatus;
+  detail?: string;
+  /** Can this step be automatically repaired by the repair endpoint? */
+  repairable: boolean;
+}
+
+export interface AccountHealth {
+  accountId: string;
+  githubUsername: string;
+  userPrincipalName: string;
+  checks: HealthCheck[];
+  /** Overall: 'ok' if all checks ok/skipped, otherwise 'needs_repair' */
+  overall: 'ok' | 'needs_repair';
+}
+
+async function fetchAccountDoc(userId: string, accountId: string) {
+  const db = getFirestore();
+  const ref = db
+    .collection('users')
+    .doc(userId)
+    .collection('githubAccounts')
+    .doc(accountId);
+  const snap = await ref.get();
+  if (!snap.exists) return null;
+  return { ref, data: snap.data() as Record<string, unknown> };
+}
+
+/**
+ * Inspect a provisioned account and report the status of each step:
+ * 1. Azure AD user exists and is enabled
+ * 2. User is assigned the `User` role on the GitHub EMU service principal
+ * 3. User is visible in the GitHub enterprise (SCIM completed)
+ * 4. User is an active member of the studiai-students org
+ */
+export async function checkAccountHealth(params: {
+  userId: string;
+  accountId: string;
+}): Promise<{ success: boolean; health?: AccountHealth; error?: string }> {
+  const doc = await fetchAccountDoc(params.userId, params.accountId);
+  if (!doc) return { success: false, error: 'Account not found' };
+
+  const azureUserId = doc.data.azureUserId as string | undefined;
+  const githubUsername = doc.data.githubUsername as string | undefined;
+  const upn = doc.data.userPrincipalName as string | undefined;
+
+  if (!azureUserId || !githubUsername || !upn) {
+    return { success: false, error: 'Account document is missing required fields' };
+  }
+
+  const checks: HealthCheck[] = [];
+
+  // 1. Azure AD user
+  let token: string;
+  try {
+    token = await getGraphToken();
+  } catch (e) {
+    return {
+      success: false,
+      error: `Failed to get Graph token: ${e instanceof Error ? e.message : 'unknown'}`,
+    };
+  }
+
+  let azureOk = false;
+  let azureEnabled = false;
+  try {
+    const res = await graphRequest(
+      token,
+      `https://graph.microsoft.com/v1.0/users/${azureUserId}?$select=id,accountEnabled,userPrincipalName`
+    );
+    if (res.ok) {
+      const body = await res.json();
+      azureOk = true;
+      azureEnabled = !!body.accountEnabled;
+      checks.push({
+        id: 'azure-user',
+        label: 'Azure AD user exists',
+        status: azureEnabled ? 'ok' : 'error',
+        detail: azureEnabled ? `${body.userPrincipalName} (enabled)` : 'Account is disabled',
+        repairable: false,
+      });
+    } else {
+      checks.push({
+        id: 'azure-user',
+        label: 'Azure AD user exists',
+        status: 'missing',
+        detail: `Graph returned ${res.status}`,
+        repairable: false,
+      });
+    }
+  } catch (e) {
+    checks.push({
+      id: 'azure-user',
+      label: 'Azure AD user exists',
+      status: 'error',
+      detail: e instanceof Error ? e.message : 'Unknown error',
+      repairable: false,
+    });
+  }
+
+  // 2. App role assignment on the GitHub EMU service principal
+  let appRoleOk = false;
+  if (azureOk) {
+    try {
+      const res = await graphRequest(
+        token,
+        `https://graph.microsoft.com/v1.0/users/${azureUserId}/appRoleAssignments`
+      );
+      if (res.ok) {
+        const body = await res.json();
+        const hasAssignment = (body.value || []).some(
+          (a: { resourceId?: string }) => a.resourceId === GITHUB_EMU_SP_ID
+        );
+        appRoleOk = hasAssignment;
+        checks.push({
+          id: 'emu-assignment',
+          label: 'Assigned to GitHub EMU application',
+          status: hasAssignment ? 'ok' : 'missing',
+          detail: hasAssignment ? 'User role granted' : 'Not assigned',
+          repairable: true,
+        });
+      } else {
+        checks.push({
+          id: 'emu-assignment',
+          label: 'Assigned to GitHub EMU application',
+          status: 'error',
+          detail: `Graph returned ${res.status}`,
+          repairable: true,
+        });
+      }
+    } catch (e) {
+      checks.push({
+        id: 'emu-assignment',
+        label: 'Assigned to GitHub EMU application',
+        status: 'error',
+        detail: e instanceof Error ? e.message : 'Unknown error',
+        repairable: true,
+      });
+    }
+  } else {
+    checks.push({
+      id: 'emu-assignment',
+      label: 'Assigned to GitHub EMU application',
+      status: 'skipped',
+      detail: 'Azure user check failed',
+      repairable: false,
+    });
+  }
+
+  // 3 + 4. GitHub visibility + org membership (single call)
+  const ghToken = process.env.GITHUB_ENTERPRISE_TOKEN;
+  if (!ghToken) {
+    checks.push({
+      id: 'github-visible',
+      label: 'Visible in GitHub enterprise',
+      status: 'skipped',
+      detail: 'GITHUB_ENTERPRISE_TOKEN not configured',
+      repairable: false,
+    });
+    checks.push({
+      id: 'org-membership',
+      label: `Member of ${GITHUB_ORG_SLUG}`,
+      status: 'skipped',
+      detail: 'GITHUB_ENTERPRISE_TOKEN not configured',
+      repairable: false,
+    });
+  } else {
+    try {
+      const res = await fetch(
+        `${GITHUB_API_BASE}/orgs/${GITHUB_ORG_SLUG}/memberships/${encodeURIComponent(githubUsername)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${ghToken}`,
+            Accept: 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28',
+          },
+        }
+      );
+
+      if (res.ok) {
+        const body = await res.json();
+        const state = body.state as string | undefined; // 'active' | 'pending'
+        checks.push({
+          id: 'github-visible',
+          label: 'Visible in GitHub enterprise',
+          status: 'ok',
+          detail: `Found as @${githubUsername}`,
+          repairable: false,
+        });
+        checks.push({
+          id: 'org-membership',
+          label: `Member of ${GITHUB_ORG_SLUG}`,
+          status: state === 'active' ? 'ok' : 'pending',
+          detail: state === 'active' ? `Role: ${body.role || 'member'}` : `State: ${state || 'pending'}`,
+          repairable: state !== 'active',
+        });
+      } else if (res.status === 404) {
+        // 404 means either user doesn't exist OR isn't in org
+        // Try a user lookup to distinguish
+        const userRes = await fetch(
+          `${GITHUB_API_BASE}/users/${encodeURIComponent(githubUsername)}`,
+          {
+            headers: {
+              Authorization: `Bearer ${ghToken}`,
+              Accept: 'application/vnd.github+json',
+              'X-GitHub-Api-Version': '2022-11-28',
+            },
+          }
+        );
+        if (userRes.ok) {
+          // User exists, just not in org
+          checks.push({
+            id: 'github-visible',
+            label: 'Visible in GitHub enterprise',
+            status: 'ok',
+            detail: `Found as @${githubUsername}`,
+            repairable: false,
+          });
+          checks.push({
+            id: 'org-membership',
+            label: `Member of ${GITHUB_ORG_SLUG}`,
+            status: 'missing',
+            detail: 'Not a member yet',
+            repairable: true,
+          });
+        } else {
+          checks.push({
+            id: 'github-visible',
+            label: 'Visible in GitHub enterprise',
+            status: 'pending',
+            detail: 'SCIM has not pushed the user yet',
+            repairable: true,
+          });
+          checks.push({
+            id: 'org-membership',
+            label: `Member of ${GITHUB_ORG_SLUG}`,
+            status: 'pending',
+            detail: 'Waiting for SCIM sync',
+            repairable: true,
+          });
+        }
+      } else {
+        const txt = await res.text();
+        checks.push({
+          id: 'github-visible',
+          label: 'Visible in GitHub enterprise',
+          status: 'error',
+          detail: `GitHub returned ${res.status}: ${txt.slice(0, 120)}`,
+          repairable: false,
+        });
+        checks.push({
+          id: 'org-membership',
+          label: `Member of ${GITHUB_ORG_SLUG}`,
+          status: 'error',
+          detail: `GitHub returned ${res.status}`,
+          repairable: true,
+        });
+      }
+    } catch (e) {
+      checks.push({
+        id: 'github-visible',
+        label: 'Visible in GitHub enterprise',
+        status: 'error',
+        detail: e instanceof Error ? e.message : 'Unknown error',
+        repairable: false,
+      });
+      checks.push({
+        id: 'org-membership',
+        label: `Member of ${GITHUB_ORG_SLUG}`,
+        status: 'error',
+        detail: e instanceof Error ? e.message : 'Unknown error',
+        repairable: true,
+      });
+    }
+  }
+
+  const overall = checks.every((c) => c.status === 'ok' || c.status === 'skipped')
+    ? 'ok'
+    : 'needs_repair';
+
+  // Persist the latest org membership status on the Firestore doc
+  const orgCheck = checks.find((c) => c.id === 'org-membership');
+  if (orgCheck && orgCheck.status !== 'skipped') {
+    const mappedStatus: OrgMembershipStatus =
+      orgCheck.status === 'ok'
+        ? 'added'
+        : orgCheck.status === 'pending'
+          ? 'pending'
+          : 'failed';
+    await doc.ref.update({
+      orgMembershipStatus: mappedStatus,
+      orgMembershipError: orgCheck.status === 'ok' ? null : orgCheck.detail || null,
+      orgMembershipLastAttempt: new Date(),
+    });
+  }
+  // Mirror app-role status flag too for quick UI display
+  const emuCheck = checks.find((c) => c.id === 'emu-assignment');
+  if (emuCheck && emuCheck.status !== 'skipped') {
+    await doc.ref.update({
+      appRoleAssigned: emuCheck.status === 'ok',
+    });
+  }
+
+  return {
+    success: true,
+    health: {
+      accountId: params.accountId,
+      githubUsername,
+      userPrincipalName: upn,
+      checks,
+      overall,
+    },
+  };
+}
+
+export interface RepairStepResult {
+  id: string;
+  label: string;
+  ran: boolean;
+  status: CheckStatus;
+  detail?: string;
+}
+
+/**
+ * Runs any missing/failed steps for a provisioned account:
+ * - Re-assign to the EMU app if missing
+ * - Trigger SCIM provisionOnDemand
+ * - Add to the studiai-students org
+ * Returns a fresh health check after the repair attempt.
+ */
+export async function repairAccount(params: {
+  userId: string;
+  accountId: string;
+}): Promise<{
+  success: boolean;
+  steps?: RepairStepResult[];
+  health?: AccountHealth;
+  error?: string;
+}> {
+  const initial = await checkAccountHealth(params);
+  if (!initial.success || !initial.health) {
+    return { success: false, error: initial.error || 'Initial health check failed' };
+  }
+
+  const doc = await fetchAccountDoc(params.userId, params.accountId);
+  if (!doc) return { success: false, error: 'Account not found' };
+  const azureUserId = doc.data.azureUserId as string;
+  const githubUsername = doc.data.githubUsername as string;
+
+  const steps: RepairStepResult[] = [];
+  let token: string;
+  try {
+    token = await getGraphToken();
+  } catch (e) {
+    return {
+      success: false,
+      error: `Failed to get Graph token: ${e instanceof Error ? e.message : 'unknown'}`,
+    };
+  }
+
+  const emuCheck = initial.health.checks.find((c) => c.id === 'emu-assignment');
+  const ghCheck = initial.health.checks.find((c) => c.id === 'github-visible');
+  const orgCheck = initial.health.checks.find((c) => c.id === 'org-membership');
+
+  // Step 1: re-assign EMU app role if missing
+  if (emuCheck && emuCheck.status !== 'ok' && emuCheck.repairable) {
+    try {
+      const res = await graphRequest(
+        token,
+        `https://graph.microsoft.com/v1.0/servicePrincipals/${GITHUB_EMU_SP_ID}/appRoleAssignedTo`,
+        'POST',
+        {
+          principalId: azureUserId,
+          resourceId: GITHUB_EMU_SP_ID,
+          appRoleId: GITHUB_EMU_USER_ROLE_ID,
+        }
+      );
+      steps.push({
+        id: 'emu-assignment',
+        label: 'Assign to GitHub EMU application',
+        ran: true,
+        status: res.ok ? 'ok' : 'error',
+        detail: res.ok ? 'Role granted' : `Graph returned ${res.status}`,
+      });
+    } catch (e) {
+      steps.push({
+        id: 'emu-assignment',
+        label: 'Assign to GitHub EMU application',
+        ran: true,
+        status: 'error',
+        detail: e instanceof Error ? e.message : 'Unknown error',
+      });
+    }
+  }
+
+  // Step 2: trigger SCIM provisioning if GitHub user not yet visible
+  if (ghCheck && ghCheck.status !== 'ok') {
+    try {
+      const res = await graphRequest(
+        token,
+        `https://graph.microsoft.com/v1.0/servicePrincipals/${GITHUB_EMU_SP_ID}/synchronization/jobs/${GITHUB_EMU_SYNC_JOB_ID}/provisionOnDemand`,
+        'POST',
+        {
+          parameters: [
+            {
+              ruleId: 'usr',
+              subjects: [{ objectId: azureUserId, objectTypeName: 'User' }],
+            },
+          ],
+        }
+      );
+      steps.push({
+        id: 'provision-on-demand',
+        label: 'Trigger SCIM provisioning',
+        ran: true,
+        status: res.ok ? 'ok' : 'error',
+        detail: res.ok
+          ? 'Provisioning triggered — GitHub sync should complete in seconds'
+          : `Graph returned ${res.status}`,
+      });
+      // Give SCIM a moment before re-attempting org membership
+      if (res.ok) await new Promise((r) => setTimeout(r, 4000));
+    } catch (e) {
+      steps.push({
+        id: 'provision-on-demand',
+        label: 'Trigger SCIM provisioning',
+        ran: true,
+        status: 'error',
+        detail: e instanceof Error ? e.message : 'Unknown error',
+      });
+    }
+  }
+
+  // Step 3: add to org if not already an active member
+  if (orgCheck && orgCheck.status !== 'ok' && orgCheck.repairable) {
+    const result = await addUserToGitHubOrg(githubUsername);
+    await doc.ref.update({
+      orgMembershipStatus: result.status,
+      orgMembershipError: result.error || null,
+      orgMembershipLastAttempt: new Date(),
+    });
+    steps.push({
+      id: 'org-membership',
+      label: `Add to ${GITHUB_ORG_SLUG}`,
+      ran: true,
+      status:
+        result.status === 'added'
+          ? 'ok'
+          : result.status === 'pending'
+            ? 'pending'
+            : result.status === 'skipped'
+              ? 'skipped'
+              : 'error',
+      detail:
+        result.status === 'added'
+          ? 'Added successfully'
+          : result.error || `Status: ${result.status}`,
+    });
+  }
+
+  // Re-check to return the current state
+  const final = await checkAccountHealth(params);
+
+  return {
+    success: true,
+    steps,
+    health: final.health,
+  };
+}

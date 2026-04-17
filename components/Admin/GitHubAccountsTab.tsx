@@ -43,6 +43,32 @@ interface AvailableAzureUser {
   linkedToUserId?: string;
 }
 
+type CheckStatus = 'ok' | 'missing' | 'pending' | 'error' | 'skipped';
+
+interface HealthCheck {
+  id: string;
+  label: string;
+  status: CheckStatus;
+  detail?: string;
+  repairable: boolean;
+}
+
+interface AccountHealth {
+  accountId: string;
+  githubUsername: string;
+  userPrincipalName: string;
+  checks: HealthCheck[];
+  overall: 'ok' | 'needs_repair';
+}
+
+interface RepairStepResult {
+  id: string;
+  label: string;
+  ran: boolean;
+  status: CheckStatus;
+  detail?: string;
+}
+
 // Funny progress steps for account creation
 const CREATION_STEPS = [
   { emoji: '🧙‍♂️', text: 'Summoning the account wizard...' },
@@ -156,6 +182,39 @@ function CreationProgress({ currentStep, isDone, error }: { currentStep: number;
   );
 }
 
+function StatusIcon({ status }: { status: CheckStatus }) {
+  const base = 'flex-none inline-flex items-center justify-center h-5 w-5 rounded-full text-xs font-bold';
+  switch (status) {
+    case 'ok':
+      return <span className={`${base} bg-green-500/20 text-green-600 dark:text-green-400`}>✓</span>;
+    case 'pending':
+      return <span className={`${base} bg-amber-500/20 text-amber-600 dark:text-amber-400`}>…</span>;
+    case 'missing':
+      return <span className={`${base} bg-red-500/20 text-red-600 dark:text-red-400`}>✗</span>;
+    case 'error':
+      return <span className={`${base} bg-red-500/20 text-red-600 dark:text-red-400`}>!</span>;
+    case 'skipped':
+    default:
+      return <span className={`${base} bg-gray-400/20 text-gray-500`}>–</span>;
+  }
+}
+
+function StatusChip({ status }: { status: CheckStatus }) {
+  const config: Record<CheckStatus, { color: 'success' | 'warning' | 'danger' | 'default'; label: string }> = {
+    ok: { color: 'success', label: 'OK' },
+    pending: { color: 'warning', label: 'Pending' },
+    missing: { color: 'danger', label: 'Missing' },
+    error: { color: 'danger', label: 'Error' },
+    skipped: { color: 'default', label: 'Skipped' },
+  };
+  const { color, label } = config[status];
+  return (
+    <Chip color={color} size="sm" variant="flat">
+      {label}
+    </Chip>
+  );
+}
+
 function OrgMembershipCell({
   account,
   retryingId,
@@ -237,6 +296,15 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
 
   // Retry org membership
   const [retryingOrgId, setRetryingOrgId] = useState<string | null>(null);
+
+  // Health modal
+  const [healthOpen, setHealthOpen] = useState(false);
+  const [healthAccount, setHealthAccount] = useState<GitHubAccount | null>(null);
+  const [healthLoading, setHealthLoading] = useState(false);
+  const [healthData, setHealthData] = useState<AccountHealth | null>(null);
+  const [repairRunning, setRepairRunning] = useState(false);
+  const [repairSteps, setRepairSteps] = useState<RepairStepResult[] | null>(null);
+  const [healthError, setHealthError] = useState<string | null>(null);
 
   // Creation progress state
   const [isCreating, setIsCreating] = useState(false);
@@ -522,6 +590,66 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
     }
   };
 
+  const runHealthCheck = useCallback(
+    async (accountId: string) => {
+      setHealthLoading(true);
+      setHealthError(null);
+      try {
+        const res = await apiCall('/api/admin/github-accounts/health', 'POST', {
+          userId: user.id,
+          accountId,
+        });
+        const data = await res.json();
+        if (data.success) {
+          setHealthData(data.health);
+        } else {
+          setHealthError(data.error || 'Failed to run health check');
+        }
+      } catch (err) {
+        setHealthError('Network error running health check');
+        console.error(err);
+      } finally {
+        setHealthLoading(false);
+      }
+    },
+    [user.id]
+  );
+
+  const handleOpenHealth = (account: GitHubAccount) => {
+    setHealthAccount(account);
+    setHealthData(null);
+    setRepairSteps(null);
+    setHealthError(null);
+    setHealthOpen(true);
+    runHealthCheck(account.id);
+  };
+
+  const handleRepair = async () => {
+    if (!healthAccount) return;
+    setRepairRunning(true);
+    setHealthError(null);
+    setRepairSteps(null);
+    try {
+      const res = await apiCall('/api/admin/github-accounts/repair', 'POST', {
+        userId: user.id,
+        accountId: healthAccount.id,
+      });
+      const data = await res.json();
+      if (data.success) {
+        setRepairSteps(data.steps || []);
+        setHealthData(data.health || null);
+        await fetchAccounts();
+      } else {
+        setHealthError(data.error || 'Repair failed');
+      }
+    } catch (err) {
+      setHealthError('Network error running repair');
+      console.error(err);
+    } finally {
+      setRepairRunning(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-32">
@@ -725,6 +853,15 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
                     </Button>
                     <Button
                       size="sm"
+                      color="primary"
+                      variant="light"
+                      onPress={() => handleOpenHealth(account)}
+                      title="Check provisioning health and fix anything missing"
+                    >
+                      🩺 Health
+                    </Button>
+                    <Button
+                      size="sm"
                       color="danger"
                       variant="light"
                       isLoading={unlinkingId === account.id}
@@ -780,6 +917,125 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
           ))}
         </div>
       )}
+
+      {/* Health Modal */}
+      <Modal
+        isOpen={healthOpen}
+        onClose={() => setHealthOpen(false)}
+        size="2xl"
+        backdrop="blur"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                <h3 className="text-lg font-bold flex items-center gap-2">
+                  <span>🩺</span> Provisioning Health
+                </h3>
+                {healthAccount && (
+                  <p className="text-xs text-[color:var(--ai-muted-foreground)] font-mono">
+                    {healthAccount.userPrincipalName} · @{healthAccount.githubUsername}
+                  </p>
+                )}
+              </ModalHeader>
+              <ModalBody>
+                {healthError && (
+                  <div className="p-3 rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30 text-sm text-red-700 dark:text-red-300">
+                    {healthError}
+                  </div>
+                )}
+
+                {healthLoading && !healthData ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Spinner size="sm" />
+                    <span className="ml-2 text-sm text-[color:var(--ai-muted-foreground)]">
+                      Running checks...
+                    </span>
+                  </div>
+                ) : healthData ? (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 pb-2">
+                      <Chip
+                        color={healthData.overall === 'ok' ? 'success' : 'warning'}
+                        size="sm"
+                        variant="flat"
+                      >
+                        {healthData.overall === 'ok' ? '✓ All good' : '⚠ Needs repair'}
+                      </Chip>
+                      {healthLoading && <Spinner size="sm" />}
+                    </div>
+                    <ul className="space-y-2">
+                      {healthData.checks.map((check) => (
+                        <li
+                          key={check.id}
+                          className="flex items-start gap-3 p-3 rounded-lg border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/40"
+                        >
+                          <StatusIcon status={check.status} />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-medium text-sm">{check.label}</span>
+                              <StatusChip status={check.status} />
+                            </div>
+                            {check.detail && (
+                              <p className="text-xs text-[color:var(--ai-muted-foreground)] mt-1 break-words">
+                                {check.detail}
+                              </p>
+                            )}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+
+                {repairSteps && repairSteps.length > 0 && (
+                  <div className="pt-2 border-t border-[color:var(--ai-card-border)]">
+                    <p className="text-xs font-semibold text-[color:var(--ai-muted-foreground)] mb-2 uppercase tracking-wide">
+                      Last repair run
+                    </p>
+                    <ul className="space-y-1.5">
+                      {repairSteps.map((step) => (
+                        <li key={step.id} className="flex items-start gap-2 text-sm">
+                          <StatusIcon status={step.status} />
+                          <div className="flex-1">
+                            <span className="font-medium">{step.label}</span>
+                            {step.detail && (
+                              <span className="text-xs text-[color:var(--ai-muted-foreground)] ml-2">
+                                — {step.detail}
+                              </span>
+                            )}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </ModalBody>
+              <ModalFooter>
+                <Button variant="light" onPress={onClose}>
+                  Close
+                </Button>
+                <Button
+                  variant="flat"
+                  onPress={() => healthAccount && runHealthCheck(healthAccount.id)}
+                  isDisabled={healthLoading || repairRunning}
+                >
+                  Re-check
+                </Button>
+                <Button
+                  color="primary"
+                  onPress={handleRepair}
+                  isLoading={repairRunning}
+                  isDisabled={!healthData || healthData.overall === 'ok'}
+                  className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium"
+                >
+                  {healthData?.overall === 'ok' ? 'All good ✓' : '🔧 Repair missing steps'}
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
 
       {/* Create Account Confirmation Modal */}
       <Modal
