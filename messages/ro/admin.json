@@ -201,7 +201,33 @@
       "status": "Stare",
       "amount": "Sumă",
       "created": "Creat",
+      "actions": "Acțiuni",
+      "endingSoon": "se încheie",
       "empty": "Nu există abonamente."
+    },
+    "actions": {
+      "resume": "Reia",
+      "cancelAtEnd": "Anulează la final perioadă",
+      "cancelNow": "Anulează imediat",
+      "cancel": "Anulează",
+      "confirmCta": "Confirmă",
+      "applying": "Se aplică…",
+      "reasonLabel": "Notă internă (opțional)",
+      "reasonPlaceholder": "De ce faci această acțiune? Stocată în audit log.",
+      "confirm": {
+        "cancel_at_period_end": {
+          "title": "Anulezi la sfârșitul perioadei?",
+          "body": "Abonamentul rămâne activ până la sfârșitul perioadei curente, apoi se oprește. Clientul are acces până atunci."
+        },
+        "cancel_now": {
+          "title": "Anulezi imediat?",
+          "body": "Această acțiune oprește facturarea acum. Stripe va calcula proporțional timpul nefolosit ca un credit pe următoarea factură. Nu se poate reveni."
+        },
+        "resume": {
+          "title": "Reiei abonamentul?",
+          "body": "Acest lucru elimină anularea programată. Abonamentul se va reînnoi normal la următorul ciclu de facturare."
+        }
+      }
     }
   },
   "users": {

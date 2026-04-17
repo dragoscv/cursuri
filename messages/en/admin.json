@@ -201,7 +201,33 @@
       "status": "Status",
       "amount": "Amount",
       "created": "Created",
+      "actions": "Actions",
+      "endingSoon": "ending",
       "empty": "No subscriptions yet."
+    },
+    "actions": {
+      "resume": "Resume",
+      "cancelAtEnd": "Cancel at period end",
+      "cancelNow": "Cancel immediately",
+      "cancel": "Cancel",
+      "confirmCta": "Confirm",
+      "applying": "Applying…",
+      "reasonLabel": "Internal note (optional)",
+      "reasonPlaceholder": "Why are you doing this? Stored in audit log.",
+      "confirm": {
+        "cancel_at_period_end": {
+          "title": "Cancel at period end?",
+          "body": "The subscription will keep working until the current billing period ends, then stop renewing. The customer keeps access until then."
+        },
+        "cancel_now": {
+          "title": "Cancel immediately?",
+          "body": "This stops billing right now. Stripe will prorate any unused time as a credit on the customer’s next invoice. This cannot be undone."
+        },
+        "resume": {
+          "title": "Resume subscription?",
+          "body": "This clears the scheduled cancellation. The subscription will renew normally on its next billing cycle."
+        }
+      }
     }
   },
   "batchOperations": {

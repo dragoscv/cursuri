@@ -37,10 +37,17 @@ export default function SubscriptionPlans() {
   // Check if user has an active subscription
   const hasActiveSubscription = subscriptions && subscriptions.length > 0;
 
-  // Find subscription product from products
-  const subscriptionProduct = products?.find((p: any) =>
-    p.metadata?.type === 'subscription' || p.name?.toLowerCase().includes('subscription')
-  );
+  // Find subscription product. Selection priority:
+  //   1. metadata.mainPlan === 'true'  (admin-set "main" subscription)
+  //   2. metadata.featured === 'true'  (admin-flagged featured)
+  //   3. metadata.type === 'subscription'
+  //   4. product name includes "subscription" (legacy heuristic)
+  const subscriptionProduct =
+    products?.find((p: any) => p.metadata?.mainPlan === 'true') ||
+    products?.find((p: any) => p.metadata?.featured === 'true') ||
+    products?.find((p: any) =>
+      p.metadata?.type === 'subscription' || p.name?.toLowerCase().includes('subscription')
+    );
 
   // Get app name for filtering
   const appName = process.env.NEXT_PUBLIC_APP_NAME || 'cursuri';

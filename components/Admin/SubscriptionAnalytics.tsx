@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { motion } from 'framer-motion';
 import { firebaseAuth } from '@/utils/firebase/firebase.config';
 import { SectionCard, StatCard, EmptyState } from '@/components/Admin/shell';
+import { AppButton, AppModal } from '@/components/shared/ui';
 import {
     FiTrendingUp,
     FiTrendingDown,
@@ -12,6 +13,9 @@ import {
     FiTarget,
     FiCalendar,
     FiAward,
+    FiX,
+    FiCheck,
+    FiArchive,
 } from '@/components/icons/FeatherIcons';
 
 interface PlanBreakdown {
@@ -81,12 +85,49 @@ async function fetchAnalytics(): Promise<AnalyticsResponse> {
     return data as AnalyticsResponse;
 }
 
+type SubAction = 'cancel_at_period_end' | 'cancel_now' | 'resume';
+
+async function patchSubscription(id: string, action: SubAction, reason?: string) {
+    const token = await firebaseAuth.currentUser?.getIdToken();
+    const res = await fetch(`/api/admin/subscriptions/${id}`, {
+        method: 'PATCH',
+        headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ action, reason }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data?.error || 'Action failed');
+    return data;
+}
+
 const SubscriptionAnalytics: React.FC = () => {
     const t = useTranslations('admin.subscriptionAnalytics');
     const locale = useLocale();
     const [data, setData] = useState<AnalyticsResponse | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [pendingAction, setPendingAction] = useState<{
+        sub: RecentSub;
+        action: SubAction;
+    } | null>(null);
+    const [actionReason, setActionReason] = useState('');
+    const [actionLoading, setActionLoading] = useState(false);
+    const [actionError, setActionError] = useState<string | null>(null);
+
+    const reload = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const d = await fetchAnalytics();
+            setData(d);
+        } catch (e: any) {
+            setError(e.message || 'Failed');
+        } finally {
+            setLoading(false);
+        }
+    }, []);
 
     useEffect(() => {
         let mounted = true;
@@ -104,6 +145,36 @@ const SubscriptionAnalytics: React.FC = () => {
             mounted = false;
         };
     }, []);
+
+    const openAction = (sub: RecentSub, action: SubAction) => {
+        setPendingAction({ sub, action });
+        setActionReason('');
+        setActionError(null);
+    };
+
+    const closeAction = () => {
+        if (actionLoading) return;
+        setPendingAction(null);
+    };
+
+    const confirmAction = async () => {
+        if (!pendingAction) return;
+        setActionLoading(true);
+        setActionError(null);
+        try {
+            await patchSubscription(
+                pendingAction.sub.id,
+                pendingAction.action,
+                actionReason || undefined
+            );
+            setPendingAction(null);
+            await reload();
+        } catch (e: any) {
+            setActionError(e.message || 'Action failed');
+        } finally {
+            setActionLoading(false);
+        }
+    };
 
     const fmtCurrency = (n: number, currency = 'RON') =>
         new Intl.NumberFormat(locale, {
@@ -358,11 +429,21 @@ const SubscriptionAnalytics: React.FC = () => {
                                     <th className="px-5 py-3">{t('recent.status')}</th>
                                     <th className="px-5 py-3 text-right">{t('recent.amount')}</th>
                                     <th className="px-5 py-3 text-right">{t('recent.created')}</th>
+                                    <th className="px-5 py-3 text-right">{t('recent.actions')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-[color:var(--ai-card-border)]/60">
                                 {data.recent.map((sub, i) => {
                                     const colorCls = STATUS_COLORS[sub.status] || STATUS_COLORS.incomplete;
+                                    const canCancel =
+                                        (sub.status === 'active' || sub.status === 'trialing' || sub.status === 'past_due') &&
+                                        !sub.cancel_at_period_end;
+                                    const canResume =
+                                        sub.cancel_at_period_end &&
+                                        (sub.status === 'active' || sub.status === 'trialing');
+                                    const canCancelNow =
+                                        sub.status !== 'canceled' &&
+                                        sub.status !== 'incomplete_expired';
                                     return (
                                         <motion.tr
                                             key={sub.id}
@@ -387,7 +468,7 @@ const SubscriptionAnalytics: React.FC = () => {
                                                     {sub.status}
                                                 </span>
                                                 {sub.cancel_at_period_end && (
-                                                    <span className="ml-1.5 text-[10px] text-amber-500">⚠ ending</span>
+                                                    <span className="ml-1.5 text-[10px] text-amber-500">⚠ {t('recent.endingSoon')}</span>
                                                 )}
                                             </td>
                                             <td className="px-5 py-3 text-right tabular-nums text-[color:var(--ai-foreground)]">
@@ -395,6 +476,44 @@ const SubscriptionAnalytics: React.FC = () => {
                                             </td>
                                             <td className="px-5 py-3 text-right text-xs text-[color:var(--ai-muted)] tabular-nums">
                                                 {new Date(sub.created * 1000).toLocaleDateString(locale)}
+                                            </td>
+                                            <td className="px-5 py-3">
+                                                <div className="flex items-center justify-end gap-1">
+                                                    {canResume && (
+                                                        <AppButton
+                                                            variant="flat"
+                                                            color="success"
+                                                            size="xs"
+                                                            startContent={<FiCheck size={12} />}
+                                                            onPress={() => openAction(sub, 'resume')}
+                                                        >
+                                                            {t('actions.resume')}
+                                                        </AppButton>
+                                                    )}
+                                                    {canCancel && (
+                                                        <AppButton
+                                                            variant="flat"
+                                                            color="warning"
+                                                            size="xs"
+                                                            startContent={<FiArchive size={12} />}
+                                                            onPress={() => openAction(sub, 'cancel_at_period_end')}
+                                                        >
+                                                            {t('actions.cancelAtEnd')}
+                                                        </AppButton>
+                                                    )}
+                                                    {canCancelNow && (
+                                                        <AppButton
+                                                            variant="light"
+                                                            color="danger"
+                                                            size="xs"
+                                                            isIconOnly
+                                                            onPress={() => openAction(sub, 'cancel_now')}
+                                                            title={t('actions.cancelNow')}
+                                                        >
+                                                            <FiX size={14} />
+                                                        </AppButton>
+                                                    )}
+                                                </div>
                                             </td>
                                         </motion.tr>
                                     );
@@ -404,6 +523,87 @@ const SubscriptionAnalytics: React.FC = () => {
                     </div>
                 )}
             </SectionCard>
+
+            {/* Action confirm modal */}
+            <AppModal
+                isOpen={!!pendingAction}
+                onClose={closeAction}
+                size="md"
+                tone={
+                    pendingAction?.action === 'resume'
+                        ? 'success'
+                        : pendingAction?.action === 'cancel_now'
+                            ? 'danger'
+                            : 'warning'
+                }
+                title={
+                    pendingAction
+                        ? t(`actions.confirm.${pendingAction.action}.title`)
+                        : ''
+                }
+                subtitle={
+                    pendingAction?.sub.customerEmail || pendingAction?.sub.id
+                }
+                icon={
+                    pendingAction?.action === 'resume' ? (
+                        <FiCheck size={20} />
+                    ) : pendingAction?.action === 'cancel_now' ? (
+                        <FiX size={20} />
+                    ) : (
+                        <FiArchive size={20} />
+                    )
+                }
+                footer={
+                    <div className="flex items-center gap-2">
+                        <AppButton
+                            variant="light"
+                            onPress={closeAction}
+                            isDisabled={actionLoading}
+                        >
+                            {t('actions.cancel')}
+                        </AppButton>
+                        <AppButton
+                            variant={
+                                pendingAction?.action === 'resume'
+                                    ? 'success'
+                                    : pendingAction?.action === 'cancel_now'
+                                        ? 'danger'
+                                        : 'primary'
+                            }
+                            onPress={confirmAction}
+                            isLoading={actionLoading}
+                            loadingText={t('actions.applying')}
+                        >
+                            {t('actions.confirmCta')}
+                        </AppButton>
+                    </div>
+                }
+            >
+                {pendingAction && (
+                    <div className="space-y-3">
+                        <p className="text-sm text-[color:var(--ai-foreground)]">
+                            {t(`actions.confirm.${pendingAction.action}.body`)}
+                        </p>
+                        {actionError && (
+                            <div className="rounded-lg border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+                                {actionError}
+                            </div>
+                        )}
+                        <label className="block">
+                            <span className="block text-xs font-medium text-[color:var(--ai-muted)] mb-1">
+                                {t('actions.reasonLabel')}
+                            </span>
+                            <textarea
+                                value={actionReason}
+                                onChange={(e) => setActionReason(e.target.value)}
+                                rows={2}
+                                placeholder={t('actions.reasonPlaceholder')}
+                                className="w-full rounded-lg border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/40 px-3 py-2 text-sm text-[color:var(--ai-foreground)] focus:outline-none focus:ring-2 focus:ring-[color:var(--ai-primary)]/40 resize-y"
+                            />
+                        </label>
+                    </div>
+                )}
+            </AppModal>
         </div>
     );
 };
