@@ -6,7 +6,8 @@
     "certificates": "Certificates",
     "subscription": "Subscription",
     "paymentHistory": "Payment History",
-    "settings": "Settings"
+    "settings": "Settings",
+    "logout": "Sign out"
   },
   "defaultUserName": "User",
   "courseCount": {

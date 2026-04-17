@@ -94,7 +94,7 @@ const ProfileSidebar: React.FC = () => {
       {/* Identity card */}
       <div className="relative overflow-hidden rounded-2xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/80 backdrop-blur-xl shadow-sm">
         {/* Banner */}
-        <div className="relative h-20 bg-gradient-to-br from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)]">
+        <div className="relative h-16 bg-gradient-to-br from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)]">
           <div
             aria-hidden
             className="absolute inset-0 opacity-25"
@@ -106,35 +106,33 @@ const ProfileSidebar: React.FC = () => {
           />
         </div>
 
-        <div className="px-4 pb-4 -mt-10">
-          <div className="flex items-end gap-3">
-            <div className="ring-4 ring-[color:var(--ai-card-bg)] rounded-full overflow-hidden shadow-md shrink-0">
-              {user?.photoURL ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={user.photoURL}
-                  alt={displayName}
-                  className="w-16 h-16 object-cover"
-                />
-              ) : (
-                <DefaultAvatar name={displayName} size={64} />
-              )}
-            </div>
-            <div className="min-w-0 pb-1">
-              <h2 className="text-sm font-semibold text-[color:var(--ai-foreground)] truncate">
-                {displayName}
-              </h2>
-              <p className="text-xs text-[color:var(--ai-muted)] truncate">{user?.email}</p>
-            </div>
+        <div className="px-4 pt-0 pb-4 -mt-9 flex flex-col items-center text-center">
+          <div className="ring-4 ring-[color:var(--ai-card-bg)] rounded-full overflow-hidden shadow-md shrink-0">
+            {user?.photoURL ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={user.photoURL}
+                alt={displayName}
+                className="w-[72px] h-[72px] object-cover"
+              />
+            ) : (
+              <DefaultAvatar name={displayName} size={72} />
+            )}
           </div>
+          <h2 className="mt-3 text-sm font-semibold text-[color:var(--ai-foreground)] max-w-full truncate">
+            {displayName}
+          </h2>
+          <p className="text-xs text-[color:var(--ai-muted)] max-w-full truncate">
+            {user?.email}
+          </p>
 
-          <div className="mt-3 flex items-center gap-2 flex-wrap">
+          <div className="mt-3 flex items-center justify-center gap-2 flex-wrap">
             <Chip color="primary" variant="flat" size="sm">
               {enrolledCount}{' '}
               {enrolledCount === 1 ? t('courseCount.singular') : t('courseCount.plural')}
             </Chip>
             <Chip color="success" variant="flat" size="sm">
-              {overallProgress}% complete
+              {overallProgress}%
             </Chip>
           </div>
         </div>

@@ -50,7 +50,8 @@ const CREATION_STEPS = [
   { emoji: '🏗️', text: 'Building a tiny digital house for the user...' },
   { emoji: '🔑', text: 'Forging the secret key in Mount Code...' },
   { emoji: '🤝', text: 'Convincing GitHub to open the gates...' },
-  { emoji: '🚀', text: 'Launching the user into the code-verse...' },
+  { emoji: '�', text: 'Inviting the octocat to studiai-students...' },
+  { emoji: '�🚀', text: 'Launching the user into the code-verse...' },
   { emoji: '🎉', text: 'Sprinkling magic dust... almost there!' },
 ];
 
@@ -155,6 +156,60 @@ function CreationProgress({ currentStep, isDone, error }: { currentStep: number;
   );
 }
 
+function OrgMembershipCell({
+  account,
+  retryingId,
+  onRetry,
+}: {
+  account: GitHubAccount;
+  retryingId: string | null;
+  onRetry: () => void;
+}) {
+  const status = account.orgMembershipStatus;
+  const isRetrying = retryingId === account.id;
+
+  if (status === 'added') {
+    return (
+      <Chip color="success" size="sm" variant="flat" title="Member of studiai-students">
+        ✓ In org
+      </Chip>
+    );
+  }
+
+  const label =
+    status === 'pending'
+      ? 'Pending'
+      : status === 'failed'
+        ? 'Failed'
+        : status === 'skipped'
+          ? 'Skipped'
+          : 'Unknown';
+  const color = status === 'pending' ? 'warning' : status === 'failed' ? 'danger' : 'default';
+
+  return (
+    <div className="flex items-center gap-1">
+      <Chip
+        color={color}
+        size="sm"
+        variant="flat"
+        title={account.orgMembershipError || 'Not a member of the organization'}
+      >
+        {label}
+      </Chip>
+      <Button
+        size="sm"
+        variant="light"
+        color="primary"
+        isLoading={isRetrying}
+        onPress={onRetry}
+        title="Retry adding to studiai-students"
+      >
+        Retry
+      </Button>
+    </div>
+  );
+}
+
 export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccountsTabProps) {
   const [accounts, setAccounts] = useState<GitHubAccount[]>([]);
   const [loading, setLoading] = useState(true);
@@ -179,6 +234,9 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
 
   // Unlink confirmation
   const [unlinkingId, setUnlinkingId] = useState<string | null>(null);
+
+  // Retry org membership
+  const [retryingOrgId, setRetryingOrgId] = useState<string | null>(null);
 
   // Creation progress state
   const [isCreating, setIsCreating] = useState(false);
@@ -439,6 +497,31 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
     }
   };
 
+  const handleRetryOrg = async (accountId: string) => {
+    setRetryingOrgId(accountId);
+    setError(null);
+    try {
+      const res = await apiCall('/api/admin/github-accounts/add-to-org', 'POST', {
+        userId: user.id,
+        accountId,
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSuccessMessage(`Added ${data.githubUsername || 'user'} to the organization`);
+      } else if (data.status === 'pending') {
+        setError('GitHub does not see the user yet — SCIM may still be syncing. Try again in a minute.');
+      } else {
+        setError(data.error || 'Failed to add user to organization');
+      }
+      await fetchAccounts();
+    } catch (err) {
+      setError('Network error adding user to organization');
+      console.error(err);
+    } finally {
+      setRetryingOrgId(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-32">
@@ -557,6 +640,7 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
             <TableColumn>ACCOUNT</TableColumn>
             <TableColumn>GITHUB USER</TableColumn>
             <TableColumn>STATUS</TableColumn>
+            <TableColumn>ORG</TableColumn>
             <TableColumn>SUBSCRIPTION</TableColumn>
             <TableColumn>ACTIONS</TableColumn>
           </TableHeader>
@@ -585,6 +669,13 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
                   <Chip color={account.isActive ? 'success' : 'danger'} size="sm" variant="flat">
                     {account.isActive ? 'Active' : 'Disabled'}
                   </Chip>
+                </TableCell>
+                <TableCell>
+                  <OrgMembershipCell
+                    account={account}
+                    retryingId={retryingOrgId}
+                    onRetry={() => handleRetryOrg(account.id)}
+                  />
                 </TableCell>
                 <TableCell>
                   {account.subscriptionId ? (

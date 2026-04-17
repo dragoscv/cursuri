@@ -6,7 +6,8 @@
     "certificates": "Certificate",
     "subscription": "Abonament",
     "paymentHistory": "Istoric Plăți",
-    "settings": "Setări"
+    "settings": "Setări",
+    "logout": "Deconectare"
   },
   "defaultUserName": "Utilizator",
   "courseCount": {

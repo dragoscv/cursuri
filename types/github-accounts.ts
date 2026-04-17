@@ -27,6 +27,12 @@ export interface GitHubAccount {
   updatedAt?: Timestamp | Date;
   /** Admin who created this account */
   createdBy: string;
+  /** GitHub org membership status */
+  orgMembershipStatus?: 'added' | 'pending' | 'failed' | 'skipped';
+  /** Last error from org membership attempt (if any) */
+  orgMembershipError?: string;
+  /** When last attempt to add to org was made */
+  orgMembershipLastAttempt?: Timestamp | Date;
 }
 
 export interface CreateGitHubAccountRequest {

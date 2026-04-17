@@ -9,7 +9,75 @@ const GITHUB_EMU_SYNC_JOB_ID =
 const DOMAIN = 'studiai.ro';
 const DEFAULT_PASSWORD = 'Studiai123#';
 
-export { DOMAIN, DEFAULT_PASSWORD };
+// GitHub Enterprise Managed Users constants
+const GITHUB_ORG_SLUG = process.env.GITHUB_ORG_SLUG || 'studiai-students';
+const GITHUB_API_BASE = 'https://api.github.com';
+
+export { DOMAIN, DEFAULT_PASSWORD, GITHUB_ORG_SLUG };
+
+export type OrgMembershipStatus = 'added' | 'pending' | 'failed' | 'skipped';
+
+export interface OrgMembershipResult {
+  status: OrgMembershipStatus;
+  error?: string;
+}
+
+/**
+ * Add a GitHub EMU user (by login, e.g. `foo_metu`) to the studiai-students
+ * organization as a member. Idempotent — GitHub returns 200 if already a
+ * member. If the user does not yet exist in GitHub (SCIM still in flight),
+ * returns status `pending` so the admin UI can retry later.
+ */
+export async function addUserToGitHubOrg(
+  githubUsername: string,
+  options: { role?: 'member' | 'admin' } = {}
+): Promise<OrgMembershipResult> {
+  const token = process.env.GITHUB_ENTERPRISE_TOKEN;
+  if (!token) {
+    return {
+      status: 'skipped',
+      error: 'GITHUB_ENTERPRISE_TOKEN not configured',
+    };
+  }
+
+  const { role = 'member' } = options;
+  const url = `${GITHUB_API_BASE}/orgs/${GITHUB_ORG_SLUG}/memberships/${encodeURIComponent(githubUsername)}`;
+
+  try {
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ role }),
+    });
+
+    if (res.ok) {
+      return { status: 'added' };
+    }
+
+    const errText = await res.text();
+    // 404 => user not found in enterprise yet (SCIM may still be syncing)
+    if (res.status === 404) {
+      return {
+        status: 'pending',
+        error: `User not yet visible in GitHub (${res.status}): ${errText}`,
+      };
+    }
+    return {
+      status: 'failed',
+      error: `GitHub API ${res.status}: ${errText}`,
+    };
+  } catch (error) {
+    return {
+      status: 'failed',
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
 
 export async function getGraphToken(): Promise<string> {
   const clientId = process.env.AZURE_CLIENT_ID;
@@ -104,6 +172,8 @@ export interface CreateAccountResult {
     defaultPassword: string;
     subscriptionId?: string;
     provisionStatus: string;
+    orgMembershipStatus?: OrgMembershipStatus;
+    orgMembershipError?: string;
     createdAt: Date;
     createdBy: string;
   };
@@ -223,6 +293,18 @@ export async function createGitHubAccount(params: {
       console.error('Provision on demand response:', await provisionRes.text());
     }
 
+    // 6b. Wait briefly for SCIM to create the GitHub user, then add to org
+    // GitHub EMU provisioning is typically fast (~2-5s). We wait a short moment
+    // to reduce the chance of a 404 "user not found" response.
+    await new Promise((r) => setTimeout(r, 4000));
+    const orgResult = await addUserToGitHubOrg(githubUsername);
+    if (orgResult.status !== 'added') {
+      console.warn(
+        `Org membership for ${githubUsername} => ${orgResult.status}:`,
+        orgResult.error
+      );
+    }
+
     // 7. Store in Firestore
     const accountData = {
       userId,
@@ -236,6 +318,9 @@ export async function createGitHubAccount(params: {
       subscriptionId: subscriptionId || null,
       createdAt: new Date(),
       createdBy,
+      orgMembershipStatus: orgResult.status,
+      orgMembershipError: orgResult.error || null,
+      orgMembershipLastAttempt: new Date(),
     };
 
     const docRef = await db
@@ -251,6 +336,8 @@ export async function createGitHubAccount(params: {
         ...accountData,
         subscriptionId: subscriptionId || undefined,
         provisionStatus,
+        orgMembershipStatus: orgResult.status,
+        orgMembershipError: orgResult.error,
       },
     };
   } catch (error) {
@@ -445,6 +532,14 @@ export async function linkExistingGitHubAccount(params: {
       .collection('githubAccounts')
       .add(accountData);
 
+    // 5. Ensure user is a member of the GitHub org (idempotent)
+    const orgResult = await addUserToGitHubOrg(githubUsername);
+    await docRef.update({
+      orgMembershipStatus: orgResult.status,
+      orgMembershipError: orgResult.error || null,
+      orgMembershipLastAttempt: new Date(),
+    });
+
     return {
       success: true,
       account: {
@@ -452,6 +547,8 @@ export async function linkExistingGitHubAccount(params: {
         ...accountData,
         subscriptionId: subscriptionId || undefined,
         provisionStatus: 'linked',
+        orgMembershipStatus: orgResult.status,
+        orgMembershipError: orgResult.error,
       },
     };
   } catch (error) {
@@ -462,4 +559,34 @@ export async function linkExistingGitHubAccount(params: {
       details: error instanceof Error ? error.message : 'Unknown error',
     };
   }
+}
+
+/**
+ * Retry adding a previously-created account to the GitHub org. Used when the
+ * initial attempt landed in `pending` or `failed` (typically because SCIM
+ * hadn't propagated yet). Updates the Firestore doc with the new status.
+ */
+export async function retryAddAccountToOrg(params: {
+  userId: string;
+  accountId: string;
+}): Promise<OrgMembershipResult & { githubUsername?: string }> {
+  const { userId, accountId } = params;
+  const db = getFirestore();
+  const ref = db.collection('users').doc(userId).collection('githubAccounts').doc(accountId);
+  const snap = await ref.get();
+  if (!snap.exists) {
+    return { status: 'failed', error: 'Account not found' };
+  }
+  const data = snap.data() as { githubUsername?: string } | undefined;
+  const githubUsername = data?.githubUsername;
+  if (!githubUsername) {
+    return { status: 'failed', error: 'Account has no githubUsername' };
+  }
+  const result = await addUserToGitHubOrg(githubUsername);
+  await ref.update({
+    orgMembershipStatus: result.status,
+    orgMembershipError: result.error || null,
+    orgMembershipLastAttempt: new Date(),
+  });
+  return { ...result, githubUsername };
 }
