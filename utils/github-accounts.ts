@@ -4,7 +4,8 @@ import { getFirestore } from 'firebase-admin/firestore';
 const TENANT_ID = '980e9d61-8481-4105-a825-98d1f1c1b8f2';
 const GITHUB_EMU_SP_ID = '8b916d21-3395-47af-a6d9-69d525ef9db9';
 const GITHUB_EMU_USER_ROLE_ID = '27d9891d-2c17-4f45-a262-781a0e55c80a';
-const GITHUB_EMU_SYNC_JOB_ID =
+// Fallback sync job ID — getSyncJobId() will look up the real one at runtime
+const GITHUB_EMU_SYNC_JOB_ID_FALLBACK =
   'gitHubEnterpriseManagedUserOidc.980e9d6184814105a82598d1f1c1b8f2';
 const DOMAIN = 'studiai.ro';
 const DEFAULT_PASSWORD = 'Studiai123#';
@@ -132,6 +133,40 @@ export async function graphRequest(
 export function deriveUsername(email: string): string {
   const localPart = email.split('@')[0];
   return localPart.replace(/[^a-zA-Z0-9._-]/g, '').toLowerCase();
+}
+
+/**
+ * Look up the active synchronization job ID for the GitHub EMU service
+ * principal. The ID looks like `gitHubEnterpriseManagedUserOidc.{tenantId}`
+ * but can vary; fetching it dynamically avoids 404/401 errors when the job
+ * has been recreated (which changes its ID).
+ */
+let cachedSyncJobId: string | null = null;
+export async function getSyncJobId(token: string): Promise<string> {
+  if (cachedSyncJobId) return cachedSyncJobId;
+  try {
+    const res = await graphRequest(
+      token,
+      `https://graph.microsoft.com/v1.0/servicePrincipals/${GITHUB_EMU_SP_ID}/synchronization/jobs`
+    );
+    if (res.ok) {
+      const body = await res.json();
+      const jobs: Array<{ id: string; status?: { code?: string } }> = body.value || [];
+      // Prefer an active/healthy job, otherwise the first one
+      const active = jobs.find((j) => j.status?.code !== 'NotConfigured') || jobs[0];
+      if (active?.id) {
+        cachedSyncJobId = active.id;
+        return active.id;
+      }
+    } else {
+      console.warn(
+        `Failed to list sync jobs (${res.status}); falling back to hardcoded ID`
+      );
+    }
+  } catch (e) {
+    console.warn('Error fetching sync job ID:', e);
+  }
+  return GITHUB_EMU_SYNC_JOB_ID_FALLBACK;
 }
 
 export async function setAzureAccountEnabled(
@@ -273,10 +308,11 @@ export async function createGitHubAccount(params: {
       console.error('Failed to assign to GitHub app:', err);
     }
 
-    // 6. Trigger provisioning
+    // 6. Trigger provisioning (use dynamically-resolved sync job ID)
+    const syncJobId = await getSyncJobId(token);
     const provisionRes = await graphRequest(
       token,
-      `https://graph.microsoft.com/v1.0/servicePrincipals/${GITHUB_EMU_SP_ID}/synchronization/jobs/${GITHUB_EMU_SYNC_JOB_ID}/provisionOnDemand`,
+      `https://graph.microsoft.com/v1.0/servicePrincipals/${GITHUB_EMU_SP_ID}/synchronization/jobs/${syncJobId}/provisionOnDemand`,
       'POST',
       {
         parameters: [
@@ -997,9 +1033,10 @@ export async function repairAccount(params: {
   // Step 2: trigger SCIM provisioning if GitHub user not yet visible
   if (ghCheck && ghCheck.status !== 'ok') {
     try {
+      const syncJobId = await getSyncJobId(token);
       const res = await graphRequest(
         token,
-        `https://graph.microsoft.com/v1.0/servicePrincipals/${GITHUB_EMU_SP_ID}/synchronization/jobs/${GITHUB_EMU_SYNC_JOB_ID}/provisionOnDemand`,
+        `https://graph.microsoft.com/v1.0/servicePrincipals/${GITHUB_EMU_SP_ID}/synchronization/jobs/${syncJobId}/provisionOnDemand`,
         'POST',
         {
           parameters: [
@@ -1010,17 +1047,27 @@ export async function repairAccount(params: {
           ],
         }
       );
+      let detail: string;
+      if (res.ok) {
+        detail = `Provisioning triggered (job: ${syncJobId}) — GitHub sync should complete in seconds`;
+      } else {
+        const errText = await res.text().catch(() => '');
+        detail = `Graph returned ${res.status} (job: ${syncJobId})${errText ? ': ' + errText.slice(0, 200) : ''}`;
+        // 401/403 usually means missing Synchronization.ReadWrite.All — fall back to waiting for the scheduled SCIM sync (~40 min)
+        if (res.status === 401 || res.status === 403) {
+          detail +=
+            '. The app registration may be missing the Synchronization.ReadWrite.All permission. Azure will sync automatically every ~40 minutes.';
+        }
+      }
       steps.push({
         id: 'provision-on-demand',
         label: 'Trigger SCIM provisioning',
         ran: true,
         status: res.ok ? 'ok' : 'error',
-        detail: res.ok
-          ? 'Provisioning triggered — GitHub sync should complete in seconds'
-          : `Graph returned ${res.status}`,
+        detail,
       });
       // Give SCIM a moment before re-attempting org membership
-      if (res.ok) await new Promise((r) => setTimeout(r, 4000));
+      if (res.ok) await new Promise((r) => setTimeout(r, 5000));
     } catch (e) {
       steps.push({
         id: 'provision-on-demand',
@@ -1032,9 +1079,17 @@ export async function repairAccount(params: {
     }
   }
 
-  // Step 3: add to org if not already an active member
+  // Step 3: add to org if not already an active member.
+  // Poll a few times in case SCIM hasn't propagated yet.
   if (orgCheck && orgCheck.status !== 'ok' && orgCheck.repairable) {
-    const result = await addUserToGitHubOrg(githubUsername);
+    let result = await addUserToGitHubOrg(githubUsername);
+    let attempts = 1;
+    const maxAttempts = 4;
+    while (result.status === 'pending' && attempts < maxAttempts) {
+      await new Promise((r) => setTimeout(r, 4000));
+      result = await addUserToGitHubOrg(githubUsername);
+      attempts++;
+    }
     await doc.ref.update({
       orgMembershipStatus: result.status,
       orgMembershipError: result.error || null,
@@ -1054,8 +1109,10 @@ export async function repairAccount(params: {
               : 'error',
       detail:
         result.status === 'added'
-          ? 'Added successfully'
-          : result.error || `Status: ${result.status}`,
+          ? `Added successfully${attempts > 1 ? ` (after ${attempts} attempts)` : ''}`
+          : result.status === 'pending'
+            ? `Still pending after ${attempts} attempts — SCIM may take up to 40 minutes when on-demand sync is unavailable. Try again later.`
+            : result.error || `Status: ${result.status}`,
     });
   }
 
