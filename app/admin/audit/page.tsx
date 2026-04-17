@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useAuth } from '@/components/contexts/modules/authContext';
+import { useState, useEffect, useMemo, useCallback, useContext } from 'react';
+import { AppContext } from '@/components/AppContext';
+import type { AppContextProps } from '@/types';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Chip, Button, Select, SelectItem } from '@heroui/react';
@@ -68,7 +69,7 @@ const TIME_RANGE_OPTIONS = [
 ];
 
 export default function AuditLogsPage() {
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin } = useContext(AppContext) as AppContextProps;
   const router = useRouter();
   const t = useTranslations('admin.auditLogs');
   const [logs, setLogs] = useState<AuditLog[]>([]);
