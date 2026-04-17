@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef, useMemo, useContext, memo } from 'react';
 import Button from '@/components/ui/Button';
-// import { useAuth, useCourses, useReviews, useModal, useProducts } from '@/components/contexts/modules'
 import { AppContext } from '@/components/AppContext';
 import Login from './Login';
 import { motion } from 'framer-motion';
