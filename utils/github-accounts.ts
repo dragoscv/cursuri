@@ -169,6 +169,110 @@ export async function getSyncJobId(token: string): Promise<string> {
   return GITHUB_EMU_SYNC_JOB_ID_FALLBACK;
 }
 
+/**
+ * Look up the synchronization rule ID for User objects in the EMU job's
+ * schema. The rule ID is required by provisionOnDemand and varies per
+ * connector — hardcoded values like 'usr' will fail with 400
+ * RequestParameterInvalid when the schema uses GUIDs or different keys.
+ */
+const cachedRuleIdByJob = new Map<string, string>();
+export async function getUserRuleId(token: string, syncJobId: string): Promise<string | null> {
+  const cached = cachedRuleIdByJob.get(syncJobId);
+  if (cached) return cached;
+  try {
+    const res = await graphRequest(
+      token,
+      `https://graph.microsoft.com/v1.0/servicePrincipals/${GITHUB_EMU_SP_ID}/synchronization/jobs/${syncJobId}/schema`
+    );
+    if (!res.ok) {
+      console.warn(`Failed to fetch sync schema (${res.status})`);
+      return null;
+    }
+    const body = await res.json();
+    type Rule = {
+      id?: string;
+      name?: string;
+      sourceDirectoryName?: string;
+      targetDirectoryName?: string;
+      objectMappings?: Array<{
+        sourceObjectName?: string;
+        targetObjectName?: string;
+        name?: string;
+      }>;
+    };
+    const rules: Rule[] = body.synchronizationRules || [];
+    // Find the rule that maps Users (Azure AD → SCIM User)
+    for (const rule of rules) {
+      const userMapping = (rule.objectMappings || []).find(
+        (m) =>
+          (m.sourceObjectName || '').toLowerCase() === 'user' ||
+          (m.targetObjectName || '').toLowerCase() === 'user'
+      );
+      if (userMapping && rule.id) {
+        cachedRuleIdByJob.set(syncJobId, rule.id);
+        return rule.id;
+      }
+    }
+    // Fallback: first rule with an id
+    const first = rules.find((r) => r.id);
+    if (first?.id) {
+      cachedRuleIdByJob.set(syncJobId, first.id);
+      return first.id;
+    }
+  } catch (e) {
+    console.warn('Error fetching sync schema:', e);
+  }
+  return null;
+}
+
+/**
+ * Trigger SCIM provisioning for one user. Resolves the sync job + rule ID
+ * dynamically from the schema so the call works regardless of how the
+ * EMU connector was set up. Returns the raw Graph Response.
+ */
+export async function provisionUserOnDemand(
+  token: string,
+  azureUserId: string
+): Promise<{ ok: boolean; status: number; detail: string; syncJobId: string }> {
+  const syncJobId = await getSyncJobId(token);
+  const ruleId = await getUserRuleId(token, syncJobId);
+
+  // Build the body: include ruleId only if we successfully resolved one,
+  // since some connector versions accept a body without it.
+  const subject = { objectId: azureUserId, objectTypeName: 'User' };
+  const body: Record<string, unknown> = {
+    parameters: [ruleId ? { ruleId, subjects: [subject] } : { subjects: [subject] }],
+  };
+
+  const res = await graphRequest(
+    token,
+    `https://graph.microsoft.com/v1.0/servicePrincipals/${GITHUB_EMU_SP_ID}/synchronization/jobs/${syncJobId}/provisionOnDemand`,
+    'POST',
+    body
+  );
+
+  if (res.ok) {
+    return {
+      ok: true,
+      status: res.status,
+      detail: `Provisioning triggered (job: ${syncJobId}${ruleId ? `, rule: ${ruleId}` : ''})`,
+      syncJobId,
+    };
+  }
+
+  const errText = await res.text().catch(() => '');
+  let detail = `Graph returned ${res.status} (job: ${syncJobId}${ruleId ? `, rule: ${ruleId}` : ', no rule resolved'})`;
+  if (errText) detail += `: ${errText.slice(0, 280)}`;
+  if (res.status === 401 || res.status === 403) {
+    detail +=
+      '. The app registration may be missing the Synchronization.ReadWrite.All permission. Azure will sync automatically every ~40 minutes.';
+  } else if (res.status === 400) {
+    detail +=
+      '. The rule ID could not be auto-resolved. Open Entra ID → Enterprise Apps → GitHub EMU → Provisioning → "Provision on demand" once manually so Azure caches the schema, then retry.';
+  }
+  return { ok: false, status: res.status, detail, syncJobId };
+}
+
 export async function setAzureAccountEnabled(
   azureUserId: string,
   enabled: boolean
@@ -308,25 +412,11 @@ export async function createGitHubAccount(params: {
       console.error('Failed to assign to GitHub app:', err);
     }
 
-    // 6. Trigger provisioning (use dynamically-resolved sync job ID)
-    const syncJobId = await getSyncJobId(token);
-    const provisionRes = await graphRequest(
-      token,
-      `https://graph.microsoft.com/v1.0/servicePrincipals/${GITHUB_EMU_SP_ID}/synchronization/jobs/${syncJobId}/provisionOnDemand`,
-      'POST',
-      {
-        parameters: [
-          {
-            ruleId: 'usr',
-            subjects: [{ objectId: azureUserId, objectTypeName: 'User' }],
-          },
-        ],
-      }
-    );
-
-    const provisionStatus = provisionRes.ok ? 'provisioned' : 'pending';
-    if (!provisionRes.ok) {
-      console.error('Provision on demand response:', await provisionRes.text());
+    // 6. Trigger provisioning (resolves sync job + rule ID dynamically)
+    const provisionResult = await provisionUserOnDemand(token, azureUserId);
+    const provisionStatus = provisionResult.ok ? 'provisioned' : 'pending';
+    if (!provisionResult.ok) {
+      console.error('Provision on demand failed:', provisionResult.detail);
     }
 
     // 6b. Wait briefly for SCIM to create the GitHub user, then add to org
@@ -1033,41 +1123,16 @@ export async function repairAccount(params: {
   // Step 2: trigger SCIM provisioning if GitHub user not yet visible
   if (ghCheck && ghCheck.status !== 'ok') {
     try {
-      const syncJobId = await getSyncJobId(token);
-      const res = await graphRequest(
-        token,
-        `https://graph.microsoft.com/v1.0/servicePrincipals/${GITHUB_EMU_SP_ID}/synchronization/jobs/${syncJobId}/provisionOnDemand`,
-        'POST',
-        {
-          parameters: [
-            {
-              ruleId: 'usr',
-              subjects: [{ objectId: azureUserId, objectTypeName: 'User' }],
-            },
-          ],
-        }
-      );
-      let detail: string;
-      if (res.ok) {
-        detail = `Provisioning triggered (job: ${syncJobId}) — GitHub sync should complete in seconds`;
-      } else {
-        const errText = await res.text().catch(() => '');
-        detail = `Graph returned ${res.status} (job: ${syncJobId})${errText ? ': ' + errText.slice(0, 200) : ''}`;
-        // 401/403 usually means missing Synchronization.ReadWrite.All — fall back to waiting for the scheduled SCIM sync (~40 min)
-        if (res.status === 401 || res.status === 403) {
-          detail +=
-            '. The app registration may be missing the Synchronization.ReadWrite.All permission. Azure will sync automatically every ~40 minutes.';
-        }
-      }
+      const result = await provisionUserOnDemand(token, azureUserId);
       steps.push({
         id: 'provision-on-demand',
         label: 'Trigger SCIM provisioning',
         ran: true,
-        status: res.ok ? 'ok' : 'error',
-        detail,
+        status: result.ok ? 'ok' : 'error',
+        detail: result.detail,
       });
       // Give SCIM a moment before re-attempting org membership
-      if (res.ok) await new Promise((r) => setTimeout(r, 5000));
+      if (result.ok) await new Promise((r) => setTimeout(r, 5000));
     } catch (e) {
       steps.push({
         id: 'provision-on-demand',
