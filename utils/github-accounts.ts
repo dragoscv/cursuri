@@ -252,10 +252,52 @@ export async function provisionUserOnDemand(
   );
 
   if (res.ok) {
+    // provisionOnDemand returns 200 with a body describing each step:
+    // { value: [{ provisioningSteps: [{ name, type, status, description, details }] }] }
+    // A 200 does NOT mean the user was actually written to GitHub — it means Azure
+    // executed the rule. We need to inspect provisioningSteps to know if anything
+    // was actually exported, skipped (out of scope), or failed.
+    let summary = '';
+    let actuallyProvisioned = true;
+    try {
+      const body = await res.json();
+      type Step = {
+        name?: string;
+        type?: string;
+        status?: string;
+        description?: string;
+        details?: Record<string, unknown>;
+      };
+      const entries: Array<{ provisioningSteps?: Step[] }> = body?.value || [];
+      const steps = entries.flatMap((e) => e.provisioningSteps || []);
+      const failed = steps.filter((s) => s?.status && s.status !== 'success' && s.status !== 'skipped');
+      const exportSteps = steps.filter((s) => (s.type || '').toLowerCase().includes('export'));
+      const exportSucceeded = exportSteps.some((s) => s.status === 'success');
+      const allSkipped = steps.length > 0 && steps.every((s) => s.status === 'skipped');
+
+      if (failed.length > 0) {
+        actuallyProvisioned = false;
+        summary = ` — Azure rejected: ${failed
+          .map((s) => `${s.name || s.type}: ${s.description || s.status}`)
+          .slice(0, 3)
+          .join('; ')}`;
+      } else if (allSkipped) {
+        actuallyProvisioned = false;
+        summary =
+          ` — All steps skipped (user is likely out of scope). Open Entra ID → Enterprise Apps → GitHub EMU → Provisioning and check the scope: it must include this user (assignment + any scoping filters).`;
+      } else if (exportSteps.length > 0 && !exportSucceeded) {
+        actuallyProvisioned = false;
+        summary = ` — Export step status: ${exportSteps.map((s) => s.status).join(', ')}`;
+      } else {
+        summary = ` — ${steps.length} step(s) executed`;
+      }
+    } catch {
+      // ignore JSON parse errors, treat as opaque success
+    }
     return {
-      ok: true,
+      ok: actuallyProvisioned,
       status: res.status,
-      detail: `Provisioning triggered (job: ${syncJobId}${ruleId ? `, rule: ${ruleId}` : ''})`,
+      detail: `Provisioning ${actuallyProvisioned ? 'triggered' : 'rejected'} (job: ${syncJobId}${ruleId ? `, rule: ${ruleId}` : ''})${summary}`,
       syncJobId,
     };
   }
@@ -1131,8 +1173,9 @@ export async function repairAccount(params: {
         status: result.ok ? 'ok' : 'error',
         detail: result.detail,
       });
-      // Give SCIM a moment before re-attempting org membership
-      if (result.ok) await new Promise((r) => setTimeout(r, 5000));
+      // Give SCIM time to push to GitHub. EMU SCIM exports usually
+      // complete in 5-15s but can take up to 60s under load.
+      if (result.ok) await new Promise((r) => setTimeout(r, 10000));
     } catch (e) {
       steps.push({
         id: 'provision-on-demand',
@@ -1145,13 +1188,13 @@ export async function repairAccount(params: {
   }
 
   // Step 3: add to org if not already an active member.
-  // Poll a few times in case SCIM hasn't propagated yet.
+  // Poll up to ~40s for SCIM propagation.
   if (orgCheck && orgCheck.status !== 'ok' && orgCheck.repairable) {
     let result = await addUserToGitHubOrg(githubUsername);
     let attempts = 1;
-    const maxAttempts = 4;
+    const maxAttempts = 8;
     while (result.status === 'pending' && attempts < maxAttempts) {
-      await new Promise((r) => setTimeout(r, 4000));
+      await new Promise((r) => setTimeout(r, 5000));
       result = await addUserToGitHubOrg(githubUsername);
       attempts++;
     }
