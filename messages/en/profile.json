@@ -4,12 +4,54 @@
     "dashboard": "Dashboard",
     "myCourses": "My Courses",
     "certificates": "Certificates",
+    "githubAccounts": "GitHub Accounts",
     "subscription": "Subscription",
     "paymentHistory": "Payment History",
     "settings": "Settings",
     "logout": "Sign out"
   },
   "defaultUserName": "User",
+  "github": {
+    "pageTitle": "GitHub Accounts",
+    "pageSubtitle": "Your provisioned GitHub accounts and Microsoft credentials.",
+    "stats": {
+      "total": "Total accounts",
+      "active": "Active",
+      "suspended": "Suspended"
+    },
+    "buy": {
+      "title": "Need another account?",
+      "description": "Purchase a new subscription and a fresh GitHub + Microsoft account will be provisioned automatically.",
+      "cta": "Buy a new account",
+      "loading": "Starting checkout..."
+    },
+    "empty": {
+      "title": "No GitHub account yet",
+      "description": "Buy a subscription to get an instantly provisioned GitHub + Microsoft account.",
+      "cta": "Get my first account"
+    },
+    "account": {
+      "label": "Account #{n}",
+      "active": "Active",
+      "suspended": "Suspended",
+      "renewsOn": "Renews on {date}",
+      "endsOn": "Access ends on {date}",
+      "cancelsOn": "Cancels on {date}",
+      "noSubscription": "No subscription linked",
+      "githubUser": "GitHub username",
+      "microsoftUser": "Microsoft account",
+      "password": "Password",
+      "passwordHint": "You will be asked to change it on first login",
+      "copy": "Copy",
+      "copyAll": "Copy all credentials",
+      "copied": "Copied!",
+      "hints": [
+        "On GitHub, sign in with the GitHub username only \u2014 no password needed.",
+        "The password is required only for the Microsoft account.",
+        "Use VS Code Insiders for the best experience."
+      ]
+    }
+  },
   "courseCount": {
     "singular": "Course",
     "plural": "Courses"

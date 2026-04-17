@@ -4,12 +4,54 @@
     "dashboard": "Tablou de Bord",
     "myCourses": "Cursurile Mele",
     "certificates": "Certificate",
+    "githubAccounts": "Conturi GitHub",
     "subscription": "Abonament",
     "paymentHistory": "Istoric Plăți",
     "settings": "Setări",
     "logout": "Deconectare"
   },
   "defaultUserName": "Utilizator",
+  "github": {
+    "pageTitle": "Conturi GitHub",
+    "pageSubtitle": "Conturile tale GitHub provizionate și credentialele Microsoft.",
+    "stats": {
+      "total": "Conturi totale",
+      "active": "Active",
+      "suspended": "Suspendate"
+    },
+    "buy": {
+      "title": "Ai nevoie de încă un cont?",
+      "description": "Cumpără un abonament nou și un cont GitHub + Microsoft va fi creat automat.",
+      "cta": "Cumpără un cont nou",
+      "loading": "Se pornește checkout-ul..."
+    },
+    "empty": {
+      "title": "Încă nu ai un cont GitHub",
+      "description": "Cumpără un abonament pentru a primi instant un cont GitHub + Microsoft provizionat.",
+      "cta": "Obține primul meu cont"
+    },
+    "account": {
+      "label": "Contul #{n}",
+      "active": "Activ",
+      "suspended": "Suspendat",
+      "renewsOn": "Se reînnoiește pe {date}",
+      "endsOn": "Accesul se încheie pe {date}",
+      "cancelsOn": "Se anulează pe {date}",
+      "noSubscription": "Niciun abonament asociat",
+      "githubUser": "Utilizator GitHub",
+      "microsoftUser": "Cont Microsoft",
+      "password": "Parolă",
+      "passwordHint": "Ți se va cere să o schimbi la prima conectare",
+      "copy": "Copiază",
+      "copyAll": "Copiază toate credentialele",
+      "copied": "Copiat!",
+      "hints": [
+        "Pe GitHub, autentifică-te doar cu utilizatorul GitHub — nu este nevoie de parolă.",
+        "Parola este necesară doar pentru contul Microsoft.",
+        "Folosește VS Code Insiders pentru cea mai bună experiență."
+      ]
+    }
+  },
   "courseCount": {
     "singular": "Curs",
     "plural": "Cursuri"

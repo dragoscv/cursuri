@@ -23,7 +23,6 @@ import {
 } from '@/components/user-shell';
 import DashboardProgress from './DashboardProgress';
 import RecentActivity from './RecentActivity';
-import GitHubAccountsCard from './GitHubAccountsCard';
 import AchievementsSection from './AchievementsSection';
 import LearningPathSection from './LearningPathSection';
 import PaymentHistorySection from './PaymentHistorySection';
@@ -230,8 +229,7 @@ export default function ProfileDashboard() {
       <RecentActivity activities={stats.recentActivity} />
 
       {/* Side cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <GitHubAccountsCard />
+      <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
         <AchievementsSection />
       </div>
 
