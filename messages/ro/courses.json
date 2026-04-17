@@ -421,12 +421,12 @@
     "percentComplete": "{percent}% Finalizat"
   },
   "subscriptionBanner": {
-    "badge": "Recomandat",
-    "title": "Accesează toate cursurile cu un singur abonament",
-    "description": "Economisește bani și obține acces nelimitat la toate cursurile noastre, inclusiv cele viitoare. Un singur abonament, toate cunoștințele.",
-    "benefit1": "Acces la toate cursurile",
-    "benefit2": "Cursuri noi incluse automat",
-    "benefit3": "Economie față de cumpărarea individuală",
-    "cta": "Vezi Abonamentele"
+    "badge": "Include GitHub Copilot Pro",
+    "title": "Toate cursurile + GitHub Copilot Pro nelimitat — un singur abonament",
+    "description": "Acces nelimitat la fiecare curs PLUS un cont GitHub personal cu Copilot Pro: Claude Opus 4.7, GPT, Gemini și orice model nou în ziua lansării.",
+    "benefit1": "Copilot Pro nelimitat — toate modelele de vârf",
+    "benefit2": "Toate cursurile actuale și viitoare incluse",
+    "benefit3": "Provizionat automat în câteva secunde după plată",
+    "cta": "Deblochează Copilot + Cursuri"
   }
 }

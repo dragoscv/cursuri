@@ -4,7 +4,7 @@
   "copilot": {
     "eyebrow": "INCLUDED IN EVERY PLAN",
     "headline": "GitHub Copilot Pro — unlimited, on us.",
-    "lead": "Every paid subscription auto-provisions a personal GitHub account with Copilot Pro enabled — unlimited access to all the latest frontier models: Claude Opus 4.7, GPT, Gemini and more. Use it inside VS Code (we recommend Insiders for the latest features) and pair it with OpenCode for a Claude-grade coding agent right in your editor.",
+    "lead": "Every paid subscription auto-provisions a personal GitHub account with Copilot Pro enabled — unlimited access to all the latest frontier models: Claude Opus 4.7, GPT, Gemini and more. Use it inside VS Code (we recommend Insiders for the latest features) and pair it with OpenClaw for a Claude-grade coding agent right in your editor.",
     "footnote": "Your account is ready in seconds after checkout. Find credentials anytime under Profile → GitHub.",
     "perks": {
       "account": {
@@ -16,8 +16,8 @@
         "description": "Switch between Claude Opus 4.7, GPT, Gemini and every new model the day it ships — chat, inline edits, agent mode in VS Code Insiders."
       },
       "opencode": {
-        "title": "Pairs with OpenCode for full agentic flow",
-        "description": "OpenCode brings a Claude-style coding agent directly into your terminal and editor, powered by your unlimited Copilot subscription."
+        "title": "Pairs with OpenClaw for full agentic flow",
+        "description": "OpenClaw brings a Claude-style coding agent directly into your terminal and editor, powered by your unlimited Copilot subscription."
       }
     },
     "models": {
@@ -26,7 +26,7 @@
     },
     "cta": {
       "viewPlans": "View plans",
-      "openLesson": "OpenCode setup lesson",
+      "openLesson": "OpenClaw setup lesson",
       "downloadInsiders": "Download VS Code Insiders"
     },
     "success": {
@@ -37,11 +37,11 @@
     },
     "setup": {
       "title": "Set up Copilot in 3 steps",
-      "description": "Follow our walkthrough to install OpenCode and connect your Copilot account.",
+      "description": "Follow our walkthrough to install OpenClaw and connect your Copilot account.",
       "step1": "Install VS Code Insiders — we recommend it for the latest Copilot features.",
       "step2": "Sign in with the GitHub account shown on this page (copy the credentials).",
-      "step3": "Install OpenCode and follow the lesson to wire it up to your Copilot subscription.",
-      "openLesson": "Open the OpenCode lesson",
+      "step3": "Install OpenClaw and follow the lesson to wire it up to your Copilot subscription.",
+      "openLesson": "Open the OpenClaw lesson",
       "downloadInsiders": "Get VS Code Insiders"
     }
   },
@@ -127,7 +127,7 @@
     },
     "howToActivate": {
       "question": "How do I activate Copilot after subscribing?",
-      "answer": "Three steps: (1) Install VS Code Insiders. (2) Open Profile → GitHub on StudiAI to copy your provisioned account credentials. (3) Sign into VS Code with that account. We also publish a step-by-step lesson on installing and configuring OpenCode — a Claude-grade coding agent that uses your Copilot subscription — inside the AI Agents course."
+      "answer": "Three steps: (1) Install VS Code Insiders. (2) Open Profile → GitHub on StudiAI to copy your provisioned account credentials. (3) Sign into VS Code with that account. We also publish a step-by-step lesson on installing and configuring OpenClaw — a Claude-grade coding agent that uses your Copilot subscription — inside the AI Agents course."
     },
     "cancelAnytime": {
       "question": "Can I cancel anytime?",

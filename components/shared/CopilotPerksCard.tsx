@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import { FiCheck, FiArrowRight, FiZap, FiCode, FiDownload } from '@/components/icons/FeatherIcons';
 
 /**
- * Canonical link to the OpenCode setup & configuration lesson.
+ * Canonical link to the OpenClaw setup & configuration lesson.
  * Always rendered as a relative `next/link` so client-side navigation works.
  */
 export const OPENCODE_LESSON_HREF =
@@ -70,23 +70,23 @@ const CopilotPerksCard: React.FC<Props> = ({
                     aria-hidden
                     className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-gradient-to-br from-violet-500/20 via-indigo-500/15 to-transparent blur-3xl"
                 />
-                <div className="relative flex flex-col md:flex-row items-start md:items-center gap-5 md:gap-8">
-                    <div className="flex items-center gap-3 flex-shrink-0">
-                        <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center">
+                <div className="relative flex flex-col lg:flex-row lg:items-center gap-5 lg:gap-8">
+                    <div className="flex items-center gap-3 lg:flex-shrink-0 lg:max-w-xs">
+                        <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
                             <GitHubMark className="w-7 h-7 text-white" />
                         </div>
-                        <div className="flex flex-col">
+                        <div className="flex flex-col min-w-0">
                             <span className="text-[10px] uppercase tracking-[0.2em] text-violet-300 font-semibold">
                                 {t('eyebrow')}
                             </span>
-                            <span className="text-lg md:text-xl font-bold leading-tight">
+                            <span className="text-base md:text-lg font-bold leading-tight">
                                 {t('headline')}
                             </span>
                         </div>
                     </div>
-                    <ul className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                    <ul className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm min-w-0">
                         {perks.map((p, i) => (
-                            <li key={i} className="flex items-start gap-2 text-white/90">
+                            <li key={i} className="flex items-start gap-2 text-white/90 min-w-0">
                                 <span className="mt-0.5 flex-shrink-0 text-violet-300">{p.icon}</span>
                                 <span className="leading-snug">{p.title}</span>
                             </li>
@@ -95,7 +95,7 @@ const CopilotPerksCard: React.FC<Props> = ({
                     {ctaHref && (
                         <Link
                             href={ctaHref}
-                            className="flex-shrink-0 inline-flex items-center gap-2 px-4 h-10 rounded-lg bg-white text-[#0d1117] text-sm font-semibold hover:bg-white/90 transition-colors"
+                            className="lg:flex-shrink-0 inline-flex items-center justify-center gap-2 px-4 h-10 rounded-lg bg-white text-[#0d1117] text-sm font-semibold hover:bg-white/90 transition-colors w-full sm:w-auto"
                         >
                             {t('cta.viewPlans')}
                             <FiArrowRight size={14} />

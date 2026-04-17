@@ -26,7 +26,7 @@ export const ContentArea: React.FC<{ children: React.ReactNode; className?: stri
 }) => {
     const pathname = usePathname() || '';
     const onAdmin = isAdminPath(pathname);
-    return <div className={`${onAdmin ? '' : 'pt-8'} ${className}`}>{children}</div>;
+    return <div className={`${onAdmin ? '' : 'pt-20 md:pt-24'} ${className}`}>{children}</div>;
 };
 
 export default HideOnAdmin;

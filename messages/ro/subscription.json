@@ -4,7 +4,7 @@
   "copilot": {
     "eyebrow": "INCLUS ÎN ORICE PLAN",
     "headline": "GitHub Copilot Pro — nelimitat, din partea noastră.",
-    "lead": "Fiecare abonament plătit îți creează automat un cont GitHub personal cu Copilot Pro activat — acces nelimitat la toate modelele AI de vârf: Claude Opus 4.7, GPT, Gemini și altele. Folosește-l în VS Code (recomandăm Insiders pentru cele mai noi funcționalități) și împerechează-l cu OpenCode pentru un agent de coding nivel Claude direct în editor.",
+    "lead": "Fiecare abonament plătit îți creează automat un cont GitHub personal cu Copilot Pro activat — acces nelimitat la toate modelele AI de vârf: Claude Opus 4.7, GPT, Gemini și altele. Folosește-l în VS Code (recomandăm Insiders pentru cele mai noi funcționalități) și împerechează-l cu OpenClaw pentru un agent de coding nivel Claude direct în editor.",
     "footnote": "Contul tău e gata în câteva secunde după plată. Găsești datele oricând în Profil → GitHub.",
     "perks": {
       "account": {
@@ -16,8 +16,8 @@
         "description": "Comută între Claude Opus 4.7, GPT, Gemini și orice model nou în ziua lansării — chat, editări inline, agent mode în VS Code Insiders."
       },
       "opencode": {
-        "title": "Compatibil cu OpenCode pentru flux agentic complet",
-        "description": "OpenCode aduce un agent de coding stil Claude direct în terminal și editor, alimentat de abonamentul tău Copilot nelimitat."
+        "title": "Compatibil cu OpenClaw pentru flux agentic complet",
+        "description": "OpenClaw aduce un agent de coding stil Claude direct în terminal și editor, alimentat de abonamentul tău Copilot nelimitat."
       }
     },
     "models": {
@@ -26,7 +26,7 @@
     },
     "cta": {
       "viewPlans": "Vezi planurile",
-      "openLesson": "Lecție configurare OpenCode",
+      "openLesson": "Lecție configurare OpenClaw",
       "downloadInsiders": "Descarcă VS Code Insiders"
     },
     "success": {
@@ -37,11 +37,11 @@
     },
     "setup": {
       "title": "Configurează Copilot în 3 pași",
-      "description": "Urmează ghidul nostru pentru a instala OpenCode și a conecta contul Copilot.",
+      "description": "Urmează ghidul nostru pentru a instala OpenClaw și a conecta contul Copilot.",
       "step1": "Instalează VS Code Insiders — îți recomandăm varianta asta pentru cele mai noi funcționalități Copilot.",
       "step2": "Loghezi-te cu contul GitHub afișat pe această pagină (copiază datele).",
-      "step3": "Instalează OpenCode și urmează lecția pentru a-l conecta la abonamentul tău Copilot.",
-      "openLesson": "Deschide lecția OpenCode",
+      "step3": "Instalează OpenClaw și urmează lecția pentru a-l conecta la abonamentul tău Copilot.",
+      "openLesson": "Deschide lecția OpenClaw",
       "downloadInsiders": "Ia VS Code Insiders"
     }
   },
@@ -127,7 +127,7 @@
     },
     "howToActivate": {
       "question": "Cum activez Copilot după abonare?",
-      "answer": "Trei pași: (1) Instalează VS Code Insiders. (2) Deschide Profil → GitHub pe StudiAI și copiază datele contului provizionat. (3) Loghezi-te în VS Code cu acel cont. Avem și o lecție pas-cu-pas despre instalarea și configurarea OpenCode — un agent de coding nivel Claude care folosește abonamentul tău Copilot — în cursul AI Agents."
+      "answer": "Trei pași: (1) Instalează VS Code Insiders. (2) Deschide Profil → GitHub pe StudiAI și copiază datele contului provizionat. (3) Loghezi-te în VS Code cu acel cont. Avem și o lecție pas-cu-pas despre instalarea și configurarea OpenClaw — un agent de coding nivel Claude care folosește abonamentul tău Copilot — în cursul AI Agents."
     },
     "cancelAnytime": {
       "question": "Pot anula oricând?",

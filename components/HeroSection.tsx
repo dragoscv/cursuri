@@ -444,33 +444,33 @@ const HeroSection = memo(function HeroSection() {
                   aria-hidden
                   className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-gradient-to-br from-violet-500/25 via-indigo-500/15 to-transparent blur-3xl"
                 />
-                <div className="relative flex flex-col sm:flex-row sm:items-center gap-4">
-                  <div className="flex-shrink-0 flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center">
+                <div className="relative flex flex-col gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
                       <CopilotIcon size={22} />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <p className="text-sm font-bold text-white leading-tight">
                         {t('copilotRibbon.title')}
                       </p>
-                      <p className="text-xs text-white/70 mt-0.5 max-w-md">
+                      <p className="text-xs text-white/70 mt-0.5">
                         {t('copilotRibbon.description')}
                       </p>
                     </div>
                   </div>
-                  <div className="flex-1 flex flex-wrap gap-1.5">
+                  <div className="flex flex-wrap items-center gap-1.5">
                     {(t.raw('copilotRibbon.models') as string[]).map((model) => (
                       <span
                         key={model}
-                        className="inline-flex items-center px-2.5 py-1 text-[11px] font-medium rounded-md bg-white/10 text-white/90 border border-white/10"
+                        className="inline-flex items-center px-2.5 py-1 text-[11px] font-medium rounded-md bg-white/10 text-white/90 border border-white/10 whitespace-nowrap"
                       >
                         {model}
                       </span>
                     ))}
+                    <span className="ml-auto inline-flex items-center gap-1.5 px-3 h-8 rounded-lg bg-white text-[#0d1117] text-xs font-bold group-hover:translate-x-0.5 transition-transform">
+                      {t('copilotRibbon.cta')} →
+                    </span>
                   </div>
-                  <span className="flex-shrink-0 inline-flex items-center gap-1.5 px-3 h-9 rounded-lg bg-white text-[#0d1117] text-xs font-bold group-hover:translate-x-0.5 transition-transform">
-                    {t('copilotRibbon.cta')} →
-                  </span>
                 </div>
               </Link>
             </motion.div>

@@ -417,12 +417,12 @@
         "percentComplete": "{percent}% Complete"
     },
     "subscriptionBanner": {
-        "badge": "Recommended",
-        "title": "Access all courses with a single subscription",
-        "description": "Save money and get unlimited access to all our courses, including future ones. One subscription, all the knowledge.",
-        "benefit1": "Access to all courses",
-        "benefit2": "New courses included automatically",
-        "benefit3": "Save compared to buying individually",
-        "cta": "View Subscriptions"
+        "badge": "Includes GitHub Copilot Pro",
+        "title": "All courses + unlimited GitHub Copilot Pro — one subscription",
+        "description": "Get unlimited access to every course AND a personal GitHub account with Copilot Pro: Claude Opus 4.7, GPT, Gemini and every new frontier model on day one.",
+        "benefit1": "Unlimited Copilot Pro — all frontier models",
+        "benefit2": "All current and future courses included",
+        "benefit3": "Auto-provisioned in seconds after checkout",
+        "cta": "Unlock Copilot + Courses"
     }
 }

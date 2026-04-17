@@ -68,7 +68,7 @@ export default function Home() {
     },
     {
       question: 'How do I activate GitHub Copilot after subscribing on StudiAI?',
-      answer: 'Three steps: (1) Install VS Code Insiders from code.visualstudio.com/insiders. (2) Open Profile → GitHub on StudiAI to copy your provisioned GitHub account credentials. (3) Sign into VS Code with that account. We also publish a step-by-step lesson on installing and configuring OpenCode — a Claude-grade coding agent that uses your Copilot subscription — inside the AI Agents course.',
+      answer: 'Three steps: (1) Install VS Code Insiders from code.visualstudio.com/insiders. (2) Open Profile → GitHub on StudiAI to copy your provisioned GitHub account credentials. (3) Sign into VS Code with that account. We also publish a step-by-step lesson on installing and configuring OpenClaw — a Claude-grade coding agent that uses your Copilot subscription — inside the AI Agents course.',
     },
     {
       question: 'Can I learn to build software without coding experience using AI?',
