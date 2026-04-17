@@ -7,18 +7,7 @@ import {
   CardBody,
   CardHeader,
   Button,
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
   Chip,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   useDisclosure,
   Select,
   SelectItem,
@@ -32,6 +21,7 @@ import {
 } from '../../utils/firebase/adminAuth';
 import { UserProfile } from '../../types/index.d';
 import { motion } from 'framer-motion';
+import { AppModal, DataTable, type DataTableColumn } from '@/components/shared/ui';
 
 interface AdminRoleManagementProps {
   className?: string;
@@ -145,109 +135,92 @@ export default function AdminRoleManagement({ className }: AdminRoleManagementPr
             </Button>
           </CardHeader>
           <CardBody>
-            <Table aria-label="Admin users table">
-              <TableHeader>
-                <TableColumn>USER</TableColumn>
-                <TableColumn>EMAIL</TableColumn>
-                <TableColumn>ROLE</TableColumn>
-                <TableColumn>STATUS</TableColumn>
-                <TableColumn>ACTIONS</TableColumn>
-              </TableHeader>
-              <TableBody isLoading={loading} loadingContent="Loading admin users...">
-                {' '}
-                {adminUsers.map((adminUser) => (
-                  <TableRow key={adminUser.id}>
-                    <TableCell>
-                      <div>
-                        <p className="font-semibold">{adminUser.displayName || 'No name'}</p>
-                        <p className="text-sm text-[color:var(--ai-muted-foreground)]">
-                          Created:{' '}
-                          {adminUser.createdAt instanceof Date
-                            ? adminUser.createdAt.toLocaleDateString()
-                            : new Date(adminUser.createdAt.seconds * 1000).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </TableCell>
-                    <TableCell>{adminUser.email}</TableCell>
-                    <TableCell>
-                      <Chip color={getRoleColor(adminUser.role)} variant="flat">
-                        {getRoleText(adminUser.role)}
-                      </Chip>
-                    </TableCell>
-                    <TableCell>
-                      <Chip color={adminUser.isActive ? 'success' : 'danger'} variant="flat">
-                        {adminUser.isActive ? 'Active' : 'Inactive'}
-                      </Chip>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="flat"
-                          color="warning"
-                          onPress={() => openRoleChangeModal(adminUser)}
-                          isDisabled={adminUser.id === user?.uid} // Can't change own role
-                        >
-                          Change Role
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-
-            {adminUsers.length === 0 && !loading && (
-              <div className="text-center py-8">
-                <p className="text-[color:var(--ai-muted-foreground)]">No admin users found.</p>
-              </div>
-            )}
+            <DataTable<UserProfile>
+              data={adminUsers}
+              rowKey={(u) => u.id}
+              isLoading={loading}
+              loadingRows={4}
+              columns={[
+                {
+                  key: 'user',
+                  header: 'User',
+                  cell: (u) => (
+                    <div>
+                      <p className="font-semibold text-[color:var(--ai-foreground)]">
+                        {u.displayName || 'No name'}
+                      </p>
+                      <p className="text-xs text-[color:var(--ai-muted)]">
+                        Created:{' '}
+                        {u.createdAt instanceof Date
+                          ? u.createdAt.toLocaleDateString()
+                          : new Date((u.createdAt as any).seconds * 1000).toLocaleDateString()}
+                      </p>
+                    </div>
+                  ),
+                  sortAccessor: (u) => u.displayName || '',
+                },
+                {
+                  key: 'email',
+                  header: 'Email',
+                  responsiveFrom: 'md',
+                  cell: (u) => <span className="text-sm">{u.email}</span>,
+                  sortAccessor: (u) => u.email || '',
+                },
+                {
+                  key: 'role',
+                  header: 'Role',
+                  cell: (u) => (
+                    <Chip color={getRoleColor(u.role)} variant="flat" size="sm">
+                      {getRoleText(u.role)}
+                    </Chip>
+                  ),
+                  sortAccessor: (u) => u.role,
+                },
+                {
+                  key: 'status',
+                  header: 'Status',
+                  cell: (u) => (
+                    <Chip color={u.isActive ? 'success' : 'danger'} variant="flat" size="sm">
+                      {u.isActive ? 'Active' : 'Inactive'}
+                    </Chip>
+                  ),
+                },
+                {
+                  key: 'actions',
+                  header: 'Actions',
+                  align: 'right',
+                  cell: (u) => (
+                    <Button
+                      size="sm"
+                      variant="flat"
+                      color="warning"
+                      onPress={() => openRoleChangeModal(u)}
+                      isDisabled={u.id === user?.uid}
+                    >
+                      Change role
+                    </Button>
+                  ),
+                },
+              ] as DataTableColumn<UserProfile>[]}
+              emptyState={
+                <p className="text-[color:var(--ai-muted)]">No admin users found.</p>
+              }
+            />
           </CardBody>
         </Card>
       </motion.div>
 
       {/* Role Change Modal */}
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalContent>
-          <ModalHeader>Change User Role</ModalHeader>
-          <ModalBody>
-            {selectedUser && (
-              <div className="space-y-4">
-                <div>
-                  <p>
-                    <strong>User:</strong> {selectedUser.displayName || 'No name'}
-                  </p>
-                  <p>
-                    <strong>Email:</strong> {selectedUser.email}
-                  </p>
-                  <p>
-                    <strong>Current Role:</strong> {getRoleText(selectedUser.role)}
-                  </p>
-                </div>
-                <Select
-                  label="New Role"
-                  placeholder="Select a role"
-                  selectedKeys={[newRole]}
-                  onSelectionChange={(keys) => {
-                    const selected = Array.from(keys)[0] as UserRole;
-                    setNewRole(selected);
-                  }}
-                >
-                  <SelectItem key={UserRole.USER}>User</SelectItem>
-                  <SelectItem key={UserRole.ADMIN}>Admin</SelectItem>
-                  <SelectItem key={UserRole.SUPER_ADMIN}>Super Admin</SelectItem>
-                </Select>
-
-                <div className="bg-warning-50 p-3 rounded-lg">
-                  <p className="text-sm text-warning-700">
-                    <strong>Warning:</strong> Changing user roles will affect their permissions
-                    immediately. Make sure you understand the implications of this change.
-                  </p>
-                </div>
-              </div>
-            )}
-          </ModalBody>
-          <ModalFooter>
+      <AppModal
+        isOpen={isOpen}
+        onClose={onClose}
+        size="md"
+        tone="warning"
+        icon={<span className="text-xl">🛡️</span>}
+        title="Change user role"
+        subtitle={selectedUser?.email}
+        footer={
+          <>
             <Button color="danger" variant="light" onPress={onClose}>
               Cancel
             </Button>
@@ -256,11 +229,48 @@ export default function AdminRoleManagement({ className }: AdminRoleManagementPr
               onPress={handleRoleChange}
               isDisabled={!newRole || newRole === selectedUser?.role}
             >
-              Update Role
+              Update role
             </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          </>
+        }
+      >
+        {selectedUser && (
+          <div className="space-y-4">
+            <div className="rounded-xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-background)]/50 p-3 text-sm space-y-1">
+              <p>
+                <span className="text-[color:var(--ai-muted)]">User:</span>{' '}
+                <strong>{selectedUser.displayName || 'No name'}</strong>
+              </p>
+              <p>
+                <span className="text-[color:var(--ai-muted)]">Email:</span>{' '}
+                {selectedUser.email}
+              </p>
+              <p>
+                <span className="text-[color:var(--ai-muted)]">Current role:</span>{' '}
+                <Chip color={getRoleColor(selectedUser.role)} size="sm" variant="flat">
+                  {getRoleText(selectedUser.role)}
+                </Chip>
+              </p>
+            </div>
+            <Select
+              label="New role"
+              placeholder="Select a role"
+              selectedKeys={[newRole]}
+              onSelectionChange={(keys) => {
+                const selected = Array.from(keys)[0] as UserRole;
+                setNewRole(selected);
+              }}
+            >
+              <SelectItem key={UserRole.USER}>User</SelectItem>
+              <SelectItem key={UserRole.ADMIN}>Admin</SelectItem>
+              <SelectItem key={UserRole.SUPER_ADMIN}>Super Admin</SelectItem>
+            </Select>
+            <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2.5 text-xs text-amber-300">
+              ⚠ Changing user roles will affect their permissions immediately. Make sure you understand the implications.
+            </div>
+          </div>
+        )}
+      </AppModal>
     </>
   );
 }

@@ -2,9 +2,10 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Card, CardBody, CardHeader, Spinner, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination } from '@heroui/react';
+import { Card, CardBody, CardHeader, Spinner, Pagination } from '@heroui/react';
 import Button from '@/components/ui/Button';
 import { AppContext } from '@/components/AppContext';
+import { DataTable, type DataTableColumn } from '@/components/shared/ui';
 import { collection, getFirestore, query } from 'firebase/firestore';
 import { firebaseApp } from '@/utils/firebase/firebase.config';
 
@@ -196,71 +197,96 @@ const CourseEngagement: React.FC = () => {
                     <h2 className="text-xl font-semibold">{t('courseEngagementMetrics')}</h2>
                 </CardHeader>
                 <CardBody>
-                    <Table aria-label="Course engagement metrics table">
-                        <TableHeader>
-                            <TableColumn>{t('tableCourse')}</TableColumn>
-                            <TableColumn>{t('tableStudents')}</TableColumn>
-                            <TableColumn>{t('tableCompletionRate')}</TableColumn>
-                            <TableColumn>{t('tableAvgTime')}</TableColumn>
-                            <TableColumn>{t('tableViews')}</TableColumn>
-                            <TableColumn>{t('tableEngagement')}</TableColumn>
-                        </TableHeader>
-                        <TableBody>
-                            {paginatedData.length > 0 ? (
-                                paginatedData.map((course) => (
-                                    <TableRow key={course.courseId} className="cursor-pointer hover:bg-[color:var(--ai-card-bg)] hover:border-[color:var(--ai-card-border)]">
-                                        <TableCell>
-                                            <div className="font-medium">{course.courseName}</div>
-                                        </TableCell>
-                                        <TableCell>{course.totalStudents}</TableCell>
-                                        <TableCell>
-                                            <div className="flex items-center">
-                                                <span className="mr-2">{course.completionRate.toFixed(1)}%</span>
-                                                <div className="w-24 h-2 bg-[color:var(--ai-card-border)] rounded-full overflow-hidden">
-                                                    <div
-                                                        className="h-full bg-[color:var(--ai-success)]/100 rounded-full"
-                                                        style={{ width: `${course.completionRate}%` }}
-                                                    ></div>
-                                                </div>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>{formatTime(course.averageTime)}</TableCell>
-                                        <TableCell>{course.totalViews.toLocaleString()}</TableCell>
-                                        <TableCell>
+                    <DataTable<CourseEngagementData>
+                        data={paginatedData}
+                        rowKey={(c) => c.courseId}
+                        columns={[
+                            {
+                                key: 'course',
+                                header: t('tableCourse'),
+                                cell: (course) => (
+                                    <div className="font-medium text-[color:var(--ai-foreground)]">{course.courseName}</div>
+                                ),
+                                sortAccessor: (c) => c.courseName,
+                            },
+                            {
+                                key: 'students',
+                                header: t('tableStudents'),
+                                cell: (course) => course.totalStudents,
+                                sortAccessor: (c) => c.totalStudents,
+                            },
+                            {
+                                key: 'completion',
+                                header: t('tableCompletionRate'),
+                                cell: (course) => (
+                                    <div className="flex items-center gap-2">
+                                        <span className="tabular-nums">{course.completionRate.toFixed(1)}%</span>
+                                        <div className="w-24 h-2 bg-[color:var(--ai-card-border)] rounded-full overflow-hidden">
+                                            <div
+                                                className="h-full bg-[color:var(--ai-success)]/100 rounded-full transition-all"
+                                                style={{ width: `${course.completionRate}%` }}
+                                            />
+                                        </div>
+                                    </div>
+                                ),
+                                sortAccessor: (c) => c.completionRate,
+                            },
+                            {
+                                key: 'time',
+                                header: t('tableAvgTime'),
+                                responsiveFrom: 'md',
+                                cell: (course) => formatTime(course.averageTime),
+                                sortAccessor: (c) => c.averageTime,
+                            },
+                            {
+                                key: 'views',
+                                header: t('tableViews'),
+                                responsiveFrom: 'md',
+                                cell: (course) => course.totalViews.toLocaleString(),
+                                sortAccessor: (c) => c.totalViews,
+                            },
+                            {
+                                key: 'engagement',
+                                header: t('tableEngagement'),
+                                responsiveFrom: 'lg',
+                                cell: (course) => {
+                                    const total = course.totalStudents || 1;
+                                    const done = course.progressData?.completeCount || 0;
+                                    const wip = course.progressData?.inProgressCount || 0;
+                                    const not = course.progressData?.notStartedCount || 0;
+                                    return (
+                                        <div className="min-w-[160px]">
                                             <div className="w-full h-6 flex rounded-full overflow-hidden">
                                                 <div
-                                                    className="h-full bg-[color:var(--ai-success)]/100"
-                                                    style={{ width: `${(course.progressData?.completeCount || 0) / course.totalStudents * 100}%` }}
-                                                    title={`Completed: ${course.progressData?.completeCount || 0} students`}
-                                                ></div>
+                                                    className="h-full bg-[color:var(--ai-success)]/100 transition-all"
+                                                    style={{ width: `${(done / total) * 100}%` }}
+                                                    title={`Completed: ${done} students`}
+                                                />
                                                 <div
-                                                    className="h-full bg-yellow-500"
-                                                    style={{ width: `${(course.progressData?.inProgressCount || 0) / course.totalStudents * 100}%` }}
-                                                    title={`In Progress: ${course.progressData?.inProgressCount || 0} students`}
-                                                ></div>
+                                                    className="h-full bg-yellow-500 transition-all"
+                                                    style={{ width: `${(wip / total) * 100}%` }}
+                                                    title={`In Progress: ${wip} students`}
+                                                />
                                                 <div
-                                                    className="h-full bg-[color:var(--ai-muted-foreground)]"
-                                                    style={{ width: `${(course.progressData?.notStartedCount || 0) / course.totalStudents * 100}%` }}
-                                                    title={`Not Started: ${course.progressData?.notStartedCount || 0} students`}
-                                                ></div>
+                                                    className="h-full bg-[color:var(--ai-muted)]/40 transition-all"
+                                                    style={{ width: `${(not / total) * 100}%` }}
+                                                    title={`Not Started: ${not} students`}
+                                                />
                                             </div>
-                                            <div className="flex justify-between text-xs text-[color:var(--ai-muted-foreground)] mt-1">
+                                            <div className="flex justify-between text-[10px] text-[color:var(--ai-muted)] mt-1">
                                                 <span>{t('completed')}</span>
                                                 <span>{t('inProgress')}</span>
                                                 <span>{t('notStarted')}</span>
                                             </div>
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                            ) : (
-                                <TableRow>
-                                    <TableCell colSpan={6} className="text-center py-8">
-                                        <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)]">{t('noCoursesFound')}</p>
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
+                                        </div>
+                                    );
+                                },
+                            },
+                        ] as DataTableColumn<CourseEngagementData>[]}
+                        emptyState={
+                            <p className="text-[color:var(--ai-muted)]">{t('noCoursesFound')}</p>
+                        }
+                    />
 
                     {totalPages > 1 && (
                         <div className="flex justify-center mt-6">

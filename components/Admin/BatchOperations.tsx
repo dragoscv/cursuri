@@ -10,16 +10,12 @@ import {
   Checkbox,
   Pagination,
   Button,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   Chip,
   Select,
 } from '@heroui/react';
 import SelectItem from '@/components/ui/SelectItem';
 import { AppContext } from '@/components/AppContext';
+import { AppModal } from '@/components/shared/ui';
 import { getFirestore, doc, writeBatch } from 'firebase/firestore';
 import { firebaseApp } from '@/utils/firebase/firebase.config';
 import { Lesson } from '@/types';
@@ -471,23 +467,31 @@ const BatchOperations: React.FC = () => {
       </Card>
 
       {/* Confirmation modal for delete action */}
-      <Modal isOpen={confirmationOpen} onClose={() => setConfirmationOpen(false)}>
-        <ModalContent>
-          <ModalHeader>Confirm Deletion</ModalHeader>
-          <ModalBody>
-            Are you sure you want to delete {selectedItems.length} {contentType}(s)? This action
-            cannot be undone.
-          </ModalBody>
-          <ModalFooter>
-            <Button color="danger" onPress={handleBatchOperation} isLoading={loading}>
-              Delete
-            </Button>
+      <AppModal
+        isOpen={confirmationOpen}
+        onClose={() => setConfirmationOpen(false)}
+        size="md"
+        tone="danger"
+        icon={<span className="text-xl">⚠️</span>}
+        title="Confirm deletion"
+        footer={
+          <>
             <Button color="default" variant="flat" onPress={() => setConfirmationOpen(false)}>
               Cancel
             </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+            <Button color="danger" onPress={handleBatchOperation} isLoading={loading}>
+              Delete
+            </Button>
+          </>
+        }
+      >
+        <p className="text-sm text-[color:var(--ai-foreground)]">
+          Are you sure you want to delete <strong>{selectedItems.length}</strong> {contentType}(s)?
+        </p>
+        <p className="mt-2 text-xs text-[color:var(--ai-muted)]">
+          This action cannot be undone.
+        </p>
+      </AppModal>
     </div>
   );
 };

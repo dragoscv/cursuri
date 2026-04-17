@@ -8,21 +8,17 @@ import {
   Button,
   Chip,
   Pagination,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   Select,
   SelectItem,
   Tooltip,
 } from '@heroui/react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 import { AppContext } from '@/components/AppContext';
 import { Course, UserProfile } from '@/types';
 import { useToast } from '@/components/Toast/ToastContext';
 import { DataToolbar, EmptyState } from '@/components/Admin/shell';
+import { AppModal } from '@/components/shared/ui';
 import {
   FiUsers,
   FiCheckCircle,
@@ -505,65 +501,52 @@ const AdminUsers: React.FC = () => {
       </div>
 
       {/* Assign course modal */}
-      <Modal
+      <AppModal
         isOpen={assignFor !== null || assignBulk}
         onClose={closeAssign}
         size="md"
-        backdrop="blur"
-        placement="center"
+        tone="primary"
+        icon={<FiBookOpen size={18} />}
+        title={t('assignCourse')}
+        subtitle={
+          assignBulk
+            ? `${selected.size} user${selected.size === 1 ? '' : 's'} selected`
+            : assignFor?.email
+        }
+        footer={
+          <>
+            <Button variant="flat" onPress={closeAssign} isDisabled={assignLoading}>
+              {tCommon('buttons.cancel')}
+            </Button>
+            <Button
+              color="primary"
+              onPress={handleAssign}
+              isLoading={assignLoading}
+              isDisabled={!assignCourseId}
+              className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white"
+            >
+              {t('assignCourse')}
+            </Button>
+          </>
+        }
       >
-        <ModalContent>
-          {() => (
-            <>
-              <ModalHeader className="flex items-center gap-3">
-                <div className="h-10 w-10 grid place-items-center rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white shadow-md">
-                  <FiBookOpen size={18} />
-                </div>
-                <div className="min-w-0">
-                  <div className="text-base font-semibold">{t('assignCourse')}</div>
-                  <div className="text-xs text-[color:var(--ai-muted)] truncate">
-                    {assignBulk
-                      ? `${selected.size} user${selected.size === 1 ? '' : 's'} selected`
-                      : assignFor?.email}
-                  </div>
-                </div>
-              </ModalHeader>
-              <ModalBody>
-                <p className="text-sm text-[color:var(--ai-muted)] mb-3">{t('grantCourseAccess')}</p>
-                <Select
-                  label={t('selectCourse')}
-                  placeholder={t('chooseACourse')}
-                  selectedKeys={assignCourseId ? [assignCourseId] : []}
-                  onSelectionChange={(keys) =>
-                    setAssignCourseId(Array.from(keys)[0] as string)
-                  }
-                >
-                  {Object.values(courses ?? {}).map((c: Course) => (
-                    <SelectItem key={c.id}>{c.name}</SelectItem>
-                  ))}
-                </Select>
-                <p className="mt-2 text-xs text-[color:var(--ai-muted)]">
-                  {t('courseImmediatelyAvailable')}
-                </p>
-              </ModalBody>
-              <ModalFooter>
-                <Button variant="flat" onPress={closeAssign} isDisabled={assignLoading}>
-                  {tCommon('buttons.cancel')}
-                </Button>
-                <Button
-                  color="primary"
-                  onPress={handleAssign}
-                  isLoading={assignLoading}
-                  isDisabled={!assignCourseId}
-                  className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white"
-                >
-                  {t('assignCourse')}
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+        <p className="text-sm text-[color:var(--ai-muted)] mb-3">{t('grantCourseAccess')}</p>
+        <Select
+          label={t('selectCourse')}
+          placeholder={t('chooseACourse')}
+          selectedKeys={assignCourseId ? [assignCourseId] : []}
+          onSelectionChange={(keys) =>
+            setAssignCourseId(Array.from(keys)[0] as string)
+          }
+        >
+          {Object.values(courses ?? {}).map((c: Course) => (
+            <SelectItem key={c.id}>{c.name}</SelectItem>
+          ))}
+        </Select>
+        <p className="mt-2 text-xs text-[color:var(--ai-muted)]">
+          {t('courseImmediatelyAvailable')}
+        </p>
+      </AppModal>
     </div>
   );
 };

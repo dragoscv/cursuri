@@ -1,14 +1,8 @@
 'use client';
 
 import React from 'react';
-import {
-    Modal,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Button,
-} from '@heroui/react';
+import { Button } from '@heroui/react';
+import { AppModal, type AppModalTone } from '@/components/shared/ui';
 
 interface Props {
     isOpen: boolean;
@@ -35,51 +29,36 @@ const ConfirmDialog: React.FC<Props> = ({
     loading = false,
     icon,
 }) => {
+    const modalTone: AppModalTone = tone;
     return (
-        <Modal isOpen={isOpen} onClose={onClose} backdrop="blur" placement="center" size="md">
-            <ModalContent>
-                {(close) => (
-                    <>
-                        <ModalHeader className="flex items-center gap-3">
-                            {icon && (
-                                <div
-                                    className={[
-                                        'h-10 w-10 grid place-items-center rounded-xl',
-                                        tone === 'danger' && 'bg-rose-500/10 text-rose-500',
-                                        tone === 'warning' && 'bg-amber-500/10 text-amber-500',
-                                        tone === 'primary' && 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]',
-                                    ]
-                                        .filter(Boolean)
-                                        .join(' ')}
-                                >
-                                    {icon}
-                                </div>
-                            )}
-                            <span>{title}</span>
-                        </ModalHeader>
-                        <ModalBody>
-                            {description && (
-                                <p className="text-sm text-[color:var(--ai-muted)] leading-relaxed">{description}</p>
-                            )}
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button variant="flat" onPress={close} isDisabled={loading}>
-                                {cancelLabel}
-                            </Button>
-                            <Button
-                                color={tone === 'primary' ? 'primary' : tone === 'warning' ? 'warning' : 'danger'}
-                                onPress={async () => {
-                                    await onConfirm();
-                                }}
-                                isLoading={loading}
-                            >
-                                {confirmLabel}
-                            </Button>
-                        </ModalFooter>
-                    </>
-                )}
-            </ModalContent>
-        </Modal>
+        <AppModal
+            isOpen={isOpen}
+            onClose={onClose}
+            size="md"
+            tone={modalTone}
+            icon={icon}
+            title={title}
+            footer={
+                <>
+                    <Button variant="flat" onPress={onClose} isDisabled={loading}>
+                        {cancelLabel}
+                    </Button>
+                    <Button
+                        color={tone === 'primary' ? 'primary' : tone === 'warning' ? 'warning' : 'danger'}
+                        onPress={async () => {
+                            await onConfirm();
+                        }}
+                        isLoading={loading}
+                    >
+                        {confirmLabel}
+                    </Button>
+                </>
+            }
+        >
+            {description && (
+                <p className="text-sm text-[color:var(--ai-muted)] leading-relaxed">{description}</p>
+            )}
+        </AppModal>
     );
 };
 

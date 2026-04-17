@@ -5,21 +5,11 @@ import {
   Button,
   Chip,
   Spinner,
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
   Select,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   Input,
 } from '@heroui/react';
 import SelectItem from '@/components/ui/SelectItem';
+import { AppModal, DataTable, type DataTableColumn } from '@/components/shared/ui';
 import { firebaseAuth, firebaseApp } from '@/utils/firebase/firebase.config';
 import { createCheckoutSession } from 'firewand';
 import { stripePayments } from '@/utils/firebase/stripe';
@@ -761,134 +751,160 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
         </div>
       )}
 
-      {accounts.length > 0 ? (
-        <Table aria-label="GitHub accounts table">
-          <TableHeader>
-            <TableColumn>#</TableColumn>
-            <TableColumn>ACCOUNT</TableColumn>
-            <TableColumn>GITHUB USER</TableColumn>
-            <TableColumn>STATUS</TableColumn>
-            <TableColumn>ORG</TableColumn>
-            <TableColumn>SUBSCRIPTION</TableColumn>
-            <TableColumn>ACTIONS</TableColumn>
-          </TableHeader>
-          <TableBody>
-            {accounts.map((account) => (
-              <TableRow key={account.id}>
-                <TableCell>{account.accountNumber}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-1">
-                    <span className="text-sm font-mono">{account.userPrincipalName}</span>
-                    <button
-                      onClick={() => copyToClipboard(account.userPrincipalName)}
-                      className="text-[color:var(--ai-muted-foreground)] hover:text-[color:var(--ai-primary)] p-1"
-                      title="Copy"
-                    >
-                      <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                      </svg>
-                    </button>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <span className="text-sm font-mono">{account.githubUsername}</span>
-                </TableCell>
-                <TableCell>
-                  <Chip color={account.isActive ? 'success' : 'danger'} size="sm" variant="flat">
-                    {account.isActive ? 'Active' : 'Disabled'}
-                  </Chip>
-                </TableCell>
-                <TableCell>
-                  <OrgMembershipCell
-                    account={account}
-                    retryingId={retryingOrgId}
-                    onRetry={() => handleRetryOrg(account.id)}
-                  />
-                </TableCell>
-                <TableCell>
-                  {account.subscriptionId ? (
-                    <Chip color="primary" size="sm" variant="flat">
-                      Linked
-                    </Chip>
-                  ) : (
-                    <div className="flex items-center gap-1">
-                      <Select
-                        size="sm"
-                        placeholder="Link..."
-                        className="w-32"
-                        value={selectedSubscription}
-                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                          setSelectedSubscription(e.target.value)
-                        }
-                      >
-                        {(subscriptions || []).map((sub) => (
-                          <SelectItem key={sub.id} value={sub.id} textValue={sub.id}>
-                            {sub.product?.name || sub.id.slice(-8)}
-                          </SelectItem>
-                        ))}
-                      </Select>
-                      <Button
-                        size="sm"
-                        color="primary"
-                        variant="flat"
-                        isLoading={linkingId === account.id}
-                        onPress={() => handleLinkSubscription(account.id)}
-                        isDisabled={!selectedSubscription}
-                      >
-                        Link
-                      </Button>
-                    </div>
-                  )}
-                </TableCell>
-                <TableCell>
-                  <div className="flex gap-1">
-                    <Button
-                      size="sm"
-                      color={account.isActive ? 'warning' : 'success'}
-                      variant="flat"
-                      isLoading={togglingId === account.id}
-                      onPress={() => handleToggle(account.id, account.isActive)}
-                    >
-                      {account.isActive ? 'Disable' : 'Enable'}
-                    </Button>
-                    <Button
-                      size="sm"
-                      color="primary"
-                      variant="light"
-                      onPress={() => handleOpenHealth(account)}
-                      title="Check provisioning health and fix anything missing"
-                    >
-                      🩺 Health
-                    </Button>
-                    <Button
-                      size="sm"
-                      color="danger"
-                      variant="light"
-                      isLoading={unlinkingId === account.id}
-                      onPress={() => handleUnlink(account.id)}
-                      title="Detach from this user (does not delete the Azure account)"
-                    >
-                      Unlink
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      ) : (
-        <div className="text-center py-8 bg-[color:var(--ai-card-bg)]/80 dark:bg-[color:var(--ai-card-border)]/50 rounded-xl border border-dashed border-primary-200 dark:border-[color:var(--ai-card-border)] backdrop-blur-sm">
-          <svg className="mx-auto h-12 w-12 text-[color:var(--ai-muted-foreground)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-          </svg>
-          <p className="mt-2 text-[color:var(--ai-muted-foreground)]">
-            No GitHub accounts created yet
-          </p>
-          <p className="mt-1 text-sm text-[color:var(--ai-muted-foreground)]">
-            Click &quot;Create Account&quot; to provision a new GitHub account for this user
-          </p>
-        </div>
-      )}
+      <DataTable<GitHubAccount>
+        data={accounts}
+        rowKey={(a) => a.id}
+        columns={[
+          {
+            key: 'num',
+            header: '#',
+            width: '56px',
+            align: 'center',
+            cell: (a) => (
+              <span className="inline-grid place-items-center w-7 h-7 rounded-md bg-[color:var(--ai-card-border)]/50 text-[color:var(--ai-muted)] text-xs font-semibold">
+                {a.accountNumber}
+              </span>
+            ),
+            sortAccessor: (a) => a.accountNumber,
+          },
+          {
+            key: 'account',
+            header: 'Account',
+            cell: (a) => (
+              <div className="flex items-center gap-1.5 min-w-0">
+                <span className="text-sm font-mono truncate">{a.userPrincipalName}</span>
+                <button
+                  onClick={() => copyToClipboard(a.userPrincipalName)}
+                  className="opacity-0 group-hover:opacity-100 text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] p-1 transition"
+                  title="Copy"
+                >
+                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                </button>
+              </div>
+            ),
+            sortAccessor: (a) => a.userPrincipalName,
+          },
+          {
+            key: 'github',
+            header: 'GitHub user',
+            responsiveFrom: 'md',
+            cell: (a) => <span className="text-sm font-mono">{a.githubUsername}</span>,
+            sortAccessor: (a) => a.githubUsername,
+          },
+          {
+            key: 'status',
+            header: 'Status',
+            width: '100px',
+            cell: (a) => (
+              <Chip color={a.isActive ? 'success' : 'danger'} size="sm" variant="flat">
+                {a.isActive ? 'Active' : 'Disabled'}
+              </Chip>
+            ),
+            sortAccessor: (a) => (a.isActive ? 1 : 0),
+          },
+          {
+            key: 'org',
+            header: 'Org',
+            responsiveFrom: 'lg',
+            cell: (a) => (
+              <OrgMembershipCell
+                account={a}
+                retryingId={retryingOrgId}
+                onRetry={() => handleRetryOrg(a.id)}
+              />
+            ),
+          },
+          {
+            key: 'sub',
+            header: 'Subscription',
+            responsiveFrom: 'lg',
+            cell: (a) =>
+              a.subscriptionId ? (
+                <Chip color="primary" size="sm" variant="flat">Linked</Chip>
+              ) : (
+                <div className="flex items-center gap-1">
+                  <Select
+                    size="sm"
+                    placeholder="Link..."
+                    className="w-32"
+                    value={selectedSubscription}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                      setSelectedSubscription(e.target.value)
+                    }
+                  >
+                    {(subscriptions || []).map((sub) => (
+                      <SelectItem key={sub.id} value={sub.id} textValue={sub.id}>
+                        {sub.product?.name || sub.id.slice(-8)}
+                      </SelectItem>
+                    ))}
+                  </Select>
+                  <Button
+                    size="sm"
+                    color="primary"
+                    variant="flat"
+                    isLoading={linkingId === a.id}
+                    onPress={() => handleLinkSubscription(a.id)}
+                    isDisabled={!selectedSubscription}
+                  >
+                    Link
+                  </Button>
+                </div>
+              ),
+          },
+          {
+            key: 'actions',
+            header: 'Actions',
+            align: 'right',
+            cell: (a) => (
+              <div className="flex justify-end gap-1">
+                <Button
+                  size="sm"
+                  color={a.isActive ? 'warning' : 'success'}
+                  variant="flat"
+                  isLoading={togglingId === a.id}
+                  onPress={() => handleToggle(a.id, a.isActive)}
+                >
+                  {a.isActive ? 'Disable' : 'Enable'}
+                </Button>
+                <Button
+                  size="sm"
+                  color="primary"
+                  variant="light"
+                  onPress={() => handleOpenHealth(a)}
+                  title="Check provisioning health and fix anything missing"
+                >
+                  🩺 Health
+                </Button>
+                <Button
+                  size="sm"
+                  color="danger"
+                  variant="light"
+                  isLoading={unlinkingId === a.id}
+                  onPress={() => handleUnlink(a.id)}
+                  title="Detach from this user (does not delete the Azure account)"
+                >
+                  Unlink
+                </Button>
+              </div>
+            ),
+          },
+        ]}
+        emptyState={
+          <div className="text-center py-4">
+            <svg className="mx-auto h-12 w-12 text-[color:var(--ai-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            <p className="mt-2 text-[color:var(--ai-foreground)] font-medium">
+              No GitHub accounts created yet
+            </p>
+            <p className="mt-1 text-sm text-[color:var(--ai-muted)]">
+              Click <strong>Create New</strong> to provision a new GitHub account for this user
+            </p>
+          </div>
+        }
+      />
 
       {/* Quick copy section for all accounts */}
       {accounts.length > 0 && (
@@ -919,316 +935,310 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
       )}
 
       {/* Health Modal */}
-      <Modal
+      <AppModal
         isOpen={healthOpen}
         onClose={() => setHealthOpen(false)}
         size="2xl"
-        backdrop="blur"
+        tone={
+          healthData?.overall === 'ok'
+            ? 'success'
+            : healthData?.overall === 'needs_repair'
+              ? 'warning'
+              : 'primary'
+        }
+        icon={<span className="text-xl">🩺</span>}
+        title="Provisioning Health"
+        subtitle={
+          healthAccount && (
+            <span className="font-mono">
+              {healthAccount.userPrincipalName} · @{healthAccount.githubUsername}
+            </span>
+          )
+        }
+        footer={
+          <>
+            <Button variant="light" onPress={() => setHealthOpen(false)}>
+              Close
+            </Button>
+            <Button
+              variant="flat"
+              onPress={() => healthAccount && runHealthCheck(healthAccount.id)}
+              isDisabled={healthLoading || repairRunning}
+            >
+              Re-check
+            </Button>
+            <Button
+              color="primary"
+              onPress={handleRepair}
+              isLoading={repairRunning}
+              isDisabled={!healthData || healthData.overall === 'ok'}
+              className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium"
+            >
+              {healthData?.overall === 'ok' ? 'All good ✓' : '🔧 Repair missing steps'}
+            </Button>
+          </>
+        }
       >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                <h3 className="text-lg font-bold flex items-center gap-2">
-                  <span>🩺</span> Provisioning Health
-                </h3>
-                {healthAccount && (
-                  <p className="text-xs text-[color:var(--ai-muted-foreground)] font-mono">
-                    {healthAccount.userPrincipalName} · @{healthAccount.githubUsername}
-                  </p>
-                )}
-              </ModalHeader>
-              <ModalBody>
-                {healthError && (
-                  <div className="p-3 rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30 text-sm text-red-700 dark:text-red-300">
-                    {healthError}
-                  </div>
-                )}
+        {healthError && (
+          <div className="mb-4 p-3 rounded-lg border border-rose-500/30 bg-rose-500/10 text-sm text-rose-300">
+            {healthError}
+          </div>
+        )}
 
-                {healthLoading && !healthData ? (
-                  <div className="flex items-center justify-center py-8">
-                    <Spinner size="sm" />
-                    <span className="ml-2 text-sm text-[color:var(--ai-muted-foreground)]">
-                      Running checks...
-                    </span>
-                  </div>
-                ) : healthData ? (
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 pb-2">
-                      <Chip
-                        color={healthData.overall === 'ok' ? 'success' : 'warning'}
-                        size="sm"
-                        variant="flat"
-                      >
-                        {healthData.overall === 'ok' ? '✓ All good' : '⚠ Needs repair'}
-                      </Chip>
-                      {healthLoading && <Spinner size="sm" />}
-                    </div>
-                    <ul className="space-y-2">
-                      {healthData.checks.map((check) => (
-                        <li
-                          key={check.id}
-                          className="flex items-start gap-3 p-3 rounded-lg border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/40"
-                        >
-                          <StatusIcon status={check.status} />
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <span className="font-medium text-sm">{check.label}</span>
-                              <StatusChip status={check.status} />
-                            </div>
-                            {check.detail && (
-                              <p className="text-xs text-[color:var(--ai-muted-foreground)] mt-1 break-words">
-                                {check.detail}
-                              </p>
-                            )}
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : null}
-
-                {repairSteps && repairSteps.length > 0 && (
-                  <div className="pt-2 border-t border-[color:var(--ai-card-border)]">
-                    <p className="text-xs font-semibold text-[color:var(--ai-muted-foreground)] mb-2 uppercase tracking-wide">
-                      Last repair run
-                    </p>
-                    <ul className="space-y-1.5">
-                      {repairSteps.map((step) => (
-                        <li key={step.id} className="flex items-start gap-2 text-sm">
-                          <StatusIcon status={step.status} />
-                          <div className="flex-1">
-                            <span className="font-medium">{step.label}</span>
-                            {step.detail && (
-                              <span className="text-xs text-[color:var(--ai-muted-foreground)] ml-2">
-                                — {step.detail}
-                              </span>
-                            )}
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </ModalBody>
-              <ModalFooter>
-                <Button variant="light" onPress={onClose}>
-                  Close
-                </Button>
-                <Button
-                  variant="flat"
-                  onPress={() => healthAccount && runHealthCheck(healthAccount.id)}
-                  isDisabled={healthLoading || repairRunning}
+        {healthLoading && !healthData ? (
+          <div className="flex items-center justify-center py-10">
+            <Spinner size="sm" />
+            <span className="ml-2 text-sm text-[color:var(--ai-muted)]">Running checks...</span>
+          </div>
+        ) : healthData ? (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Chip
+                color={healthData.overall === 'ok' ? 'success' : 'warning'}
+                size="sm"
+                variant="flat"
+              >
+                {healthData.overall === 'ok' ? '✓ All good' : '⚠ Needs repair'}
+              </Chip>
+              {healthLoading && <Spinner size="sm" />}
+            </div>
+            <ul className="space-y-2">
+              {healthData.checks.map((check) => (
+                <li
+                  key={check.id}
+                  className="flex items-start gap-3 p-3 rounded-xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-background)]/50"
                 >
-                  Re-check
+                  <StatusIcon status={check.status} />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-medium text-sm text-[color:var(--ai-foreground)]">
+                        {check.label}
+                      </span>
+                      <StatusChip status={check.status} />
+                    </div>
+                    {check.detail && (
+                      <p className="text-xs text-[color:var(--ai-muted)] mt-1 break-words">
+                        {check.detail}
+                      </p>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+
+        {repairSteps && repairSteps.length > 0 && (
+          <div className="mt-5 pt-4 border-t border-[color:var(--ai-card-border)]">
+            <p className="text-[10px] font-semibold text-[color:var(--ai-muted)] mb-2 uppercase tracking-[0.14em]">
+              Last repair run
+            </p>
+            <ul className="space-y-1.5">
+              {repairSteps.map((step) => (
+                <li key={step.id} className="flex items-start gap-2 text-sm">
+                  <StatusIcon status={step.status} />
+                  <div className="flex-1">
+                    <span className="font-medium text-[color:var(--ai-foreground)]">
+                      {step.label}
+                    </span>
+                    {step.detail && (
+                      <span className="text-xs text-[color:var(--ai-muted)] ml-2">
+                        — {step.detail}
+                      </span>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </AppModal>
+
+      {/* Create Account Confirmation Modal */}
+      {(() => {
+        const baseUsername = user.email.split('@')[0].replace(/[^a-zA-Z0-9._-]/g, '').toLowerCase();
+        const nextNumber = accounts.length + 1;
+        const suffix = nextNumber > 1 ? String(nextNumber).padStart(2, '0') : '';
+        const newAccount = `${baseUsername}${suffix}@studiai.ro`;
+        const newGithub = `${baseUsername}${suffix}_metu`;
+        return (
+          <AppModal
+            isOpen={createConfirmOpen}
+            onClose={() => setCreateConfirmOpen(false)}
+            size="md"
+            tone="primary"
+            icon={<span className="text-xl">✨</span>}
+            title="Create new GitHub account"
+            subtitle={`A brand-new account will be provisioned for ${user.displayName || user.email}`}
+            footer={
+              <>
+                <Button variant="light" onPress={() => setCreateConfirmOpen(false)}>
+                  Cancel
                 </Button>
                 <Button
                   color="primary"
-                  onPress={handleRepair}
-                  isLoading={repairRunning}
-                  isDisabled={!healthData || healthData.overall === 'ok'}
+                  onPress={handleCreate}
                   className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium"
                 >
-                  {healthData?.overall === 'ok' ? 'All good ✓' : '🔧 Repair missing steps'}
+                  Yes, create account
                 </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
-
-      {/* Create Account Confirmation Modal */}
-      <Modal
-        isOpen={createConfirmOpen}
-        onClose={() => setCreateConfirmOpen(false)}
-        size="md"
-        backdrop="blur"
-      >
-        <ModalContent>
-          {(onClose) => {
-            const baseUsername = user.email.split('@')[0].replace(/[^a-zA-Z0-9._-]/g, '').toLowerCase();
-            const nextNumber = accounts.length + 1;
-            const suffix = nextNumber > 1 ? String(nextNumber).padStart(2, '0') : '';
-            const newAccount = `${baseUsername}${suffix}@studiai.ro`;
-            const newGithub = `${baseUsername}${suffix}_metu`;
-
-            return (
-              <>
-                <ModalHeader className="flex flex-col gap-1">
-                  <h3 className="text-lg font-bold flex items-center gap-2">
-                    <span>✨</span> Create New GitHub Account
-                  </h3>
-                </ModalHeader>
-                <ModalBody>
-                  <p className="text-sm text-[color:var(--ai-foreground)]">
-                    A brand-new account will be provisioned for <strong>{user.displayName || user.email}</strong>.
-                  </p>
-                  <div className="bg-[color:var(--ai-card-bg)]/60 border border-[color:var(--ai-card-border)] rounded-lg p-3 space-y-1.5 text-sm">
-                    <div className="flex justify-between gap-2">
-                      <span className="text-[color:var(--ai-muted-foreground)]">Account #</span>
-                      <code className="font-mono">{nextNumber}</code>
-                    </div>
-                    <div className="flex justify-between gap-2">
-                      <span className="text-[color:var(--ai-muted-foreground)]">Email</span>
-                      <code className="font-mono text-[color:var(--ai-primary)] truncate">{newAccount}</code>
-                    </div>
-                    <div className="flex justify-between gap-2">
-                      <span className="text-[color:var(--ai-muted-foreground)]">GitHub username</span>
-                      <code className="font-mono text-[color:var(--ai-primary)] truncate">{newGithub}</code>
-                    </div>
-                  </div>
-                  <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3 text-xs text-amber-800 dark:text-amber-300">
-                    💡 If you already created the account manually in Azure AD, use <strong>Link Existing</strong> instead to avoid duplicates.
-                  </div>
-                </ModalBody>
-                <ModalFooter>
-                  <Button variant="light" onPress={onClose}>
-                    Cancel
-                  </Button>
-                  <Button
-                    color="primary"
-                    onPress={handleCreate}
-                    className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium"
-                  >
-                    Yes, Create Account
-                  </Button>
-                </ModalFooter>
               </>
-            );
-          }}
-        </ModalContent>
-      </Modal>
+            }
+          >
+            <div className="rounded-xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-background)]/60 p-4 space-y-2 text-sm">
+              <div className="flex justify-between gap-2">
+                <span className="text-[color:var(--ai-muted)]">Account #</span>
+                <code className="font-mono text-[color:var(--ai-foreground)]">{nextNumber}</code>
+              </div>
+              <div className="flex justify-between gap-2">
+                <span className="text-[color:var(--ai-muted)]">Email</span>
+                <code className="font-mono text-[color:var(--ai-primary)] truncate">{newAccount}</code>
+              </div>
+              <div className="flex justify-between gap-2">
+                <span className="text-[color:var(--ai-muted)]">GitHub username</span>
+                <code className="font-mono text-[color:var(--ai-primary)] truncate">{newGithub}</code>
+              </div>
+            </div>
+            <div className="mt-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2.5 text-xs text-amber-300">
+              💡 If you already created the account manually in Azure AD, use <strong>Link Existing</strong> instead to avoid duplicates.
+            </div>
+          </AppModal>
+        );
+      })()}
 
       {/* Link Existing Account Modal */}
-      <Modal
-        isOpen={linkModalOpen}
-        onClose={() => setLinkModalOpen(false)}
-        size="3xl"
-        scrollBehavior="inside"
-        backdrop="blur"
-      >
-        <ModalContent>
-          {(onClose) => {
-            const filtered = availableUsers.filter((u) => {
-              if (!showLinked && u.alreadyLinked) return false;
-              if (!searchQuery) return true;
-              const q = searchQuery.toLowerCase();
-              return (
-                u.userPrincipalName.toLowerCase().includes(q) ||
-                u.displayName?.toLowerCase().includes(q) ||
-                u.derivedGithubUsername.toLowerCase().includes(q)
-              );
-            });
-
-            return (
+      {(() => {
+        const filtered = availableUsers.filter((u) => {
+          if (!showLinked && u.alreadyLinked) return false;
+          if (!searchQuery) return true;
+          const q = searchQuery.toLowerCase();
+          return (
+            u.userPrincipalName.toLowerCase().includes(q) ||
+            u.displayName?.toLowerCase().includes(q) ||
+            u.derivedGithubUsername.toLowerCase().includes(q)
+          );
+        });
+        return (
+          <AppModal
+            isOpen={linkModalOpen}
+            onClose={() => setLinkModalOpen(false)}
+            size="3xl"
+            tone="primary"
+            icon={<span className="text-xl">🔗</span>}
+            title="Link existing account"
+            subtitle={
               <>
-                <ModalHeader className="flex flex-col gap-1">
-                  <h3 className="text-lg font-bold">Link Existing Account</h3>
-                  <p className="text-xs text-[color:var(--ai-muted-foreground)] font-normal">
-                    Choose an Azure AD account on <code>studiai.ro</code> to attach to this user.
-                    Subscription linking is optional and can be done later.
-                  </p>
-                </ModalHeader>
-                <ModalBody>
-                  <div className="flex flex-col sm:flex-row gap-2">
-                    <Input
-                      size="sm"
-                      placeholder="Search by name, email, or GitHub username..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      startContent={
-                        <svg className="h-4 w-4 text-[color:var(--ai-muted-foreground)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                      }
-                      className="flex-1"
-                    />
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        variant={showLinked ? 'solid' : 'flat'}
-                        color={showLinked ? 'primary' : 'default'}
-                        onPress={() => setShowLinked((v) => !v)}
-                      >
-                        {showLinked ? 'Showing all' : 'Show linked'}
-                      </Button>
-                      <Button size="sm" variant="flat" onPress={fetchAvailableUsers} isLoading={availableLoading}>
-                        Refresh
-                      </Button>
-                    </div>
-                  </div>
-
-                  {availableError && (
-                    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400">
-                      {availableError}
-                    </div>
-                  )}
-
-                  {availableLoading ? (
-                    <div className="flex justify-center py-12">
-                      <Spinner size="lg" color="primary" />
-                    </div>
-                  ) : filtered.length === 0 ? (
-                    <div className="text-center py-12 text-[color:var(--ai-muted-foreground)]">
-                      <div className="text-5xl mb-2">🔍</div>
-                      <p>No accounts found</p>
-                      {!showLinked && availableUsers.some((u) => u.alreadyLinked) && (
-                        <p className="text-xs mt-1">Try toggling &quot;Show linked&quot; to see linked accounts.</p>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="space-y-2 max-h-[50vh] overflow-y-auto">
-                      {filtered.map((u) => (
-                        <div
-                          key={u.azureUserId}
-                          className={`flex items-center justify-between gap-3 p-3 rounded-lg border transition-colors ${u.alreadyLinked
-                            ? 'bg-gray-50 dark:bg-gray-900/40 border-gray-200 dark:border-gray-800 opacity-70'
-                            : 'bg-[color:var(--ai-card-bg)]/60 border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]'
-                            }`}
-                        >
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <p className="font-medium truncate">{u.displayName || u.mailNickname}</p>
-                              {!u.accountEnabled && (
-                                <Chip size="sm" color="danger" variant="flat">Disabled</Chip>
-                              )}
-                              {u.alreadyLinked && (
-                                <Chip size="sm" color="warning" variant="flat">Already linked</Chip>
-                              )}
-                            </div>
-                            <p className="text-xs font-mono text-[color:var(--ai-muted-foreground)] truncate">
-                              {u.userPrincipalName}
-                            </p>
-                            <p className="text-xs text-[color:var(--ai-muted-foreground)] truncate">
-                              GitHub: <span className="font-mono">{u.derivedGithubUsername}</span>
-                              {u.alreadyLinked && u.linkedToUserId && (
-                                <span> · linked to user <code>{u.linkedToUserId.slice(0, 8)}…</code></span>
-                              )}
-                            </p>
-                          </div>
-                          <Button
-                            size="sm"
-                            color="primary"
-                            variant="flat"
-                            isDisabled={u.alreadyLinked}
-                            isLoading={linkingAzureId === u.azureUserId}
-                            onPress={() => handleLinkExisting(u.azureUserId)}
-                          >
-                            Link
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </ModalBody>
-                <ModalFooter>
-                  <Button variant="light" onPress={onClose}>Close</Button>
-                </ModalFooter>
+                Choose an Azure AD account on <code>studiai.ro</code> to attach to this user.
               </>
-            );
-          }}
-        </ModalContent>
-      </Modal>
+            }
+            footer={
+              <Button variant="light" onPress={() => setLinkModalOpen(false)}>
+                Close
+              </Button>
+            }
+          >
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Input
+                size="sm"
+                placeholder="Search by name, email, or GitHub username..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                startContent={
+                  <svg className="h-4 w-4 text-[color:var(--ai-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                }
+                className="flex-1"
+              />
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant={showLinked ? 'solid' : 'flat'}
+                  color={showLinked ? 'primary' : 'default'}
+                  onPress={() => setShowLinked((v) => !v)}
+                >
+                  {showLinked ? 'Showing all' : 'Show linked'}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="flat"
+                  onPress={fetchAvailableUsers}
+                  isLoading={availableLoading}
+                >
+                  Refresh
+                </Button>
+              </div>
+            </div>
+
+            {availableError && (
+              <div className="mt-3 rounded-lg border border-rose-500/30 bg-rose-500/10 px-3 py-2.5 text-sm text-rose-300">
+                {availableError}
+              </div>
+            )}
+
+            {availableLoading ? (
+              <div className="flex justify-center py-12">
+                <Spinner size="lg" color="primary" />
+              </div>
+            ) : filtered.length === 0 ? (
+              <div className="text-center py-12 text-[color:var(--ai-muted)]">
+                <div className="text-5xl mb-2">🔍</div>
+                <p>No accounts found</p>
+                {!showLinked && availableUsers.some((u) => u.alreadyLinked) && (
+                  <p className="text-xs mt-1">
+                    Try toggling <strong>Show linked</strong> to see linked accounts.
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className="mt-3 space-y-2 max-h-[55vh] overflow-y-auto pr-1">
+                {filtered.map((u) => (
+                  <div
+                    key={u.azureUserId}
+                    className={`flex items-center justify-between gap-3 p-3 rounded-xl border transition-colors ${u.alreadyLinked
+                      ? 'bg-[color:var(--ai-card-border)]/30 border-[color:var(--ai-card-border)] opacity-70'
+                      : 'bg-[color:var(--ai-background)]/50 border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/50 hover:bg-[color:var(--ai-primary)]/[0.04]'
+                      }`}
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="font-medium truncate text-[color:var(--ai-foreground)]">
+                          {u.displayName || u.mailNickname}
+                        </p>
+                        {!u.accountEnabled && (
+                          <Chip size="sm" color="danger" variant="flat">Disabled</Chip>
+                        )}
+                        {u.alreadyLinked && (
+                          <Chip size="sm" color="warning" variant="flat">Already linked</Chip>
+                        )}
+                      </div>
+                      <p className="text-xs font-mono text-[color:var(--ai-muted)] truncate">
+                        {u.userPrincipalName}
+                      </p>
+                      <p className="text-xs text-[color:var(--ai-muted)] truncate">
+                        GitHub: <span className="font-mono">{u.derivedGithubUsername}</span>
+                        {u.alreadyLinked && u.linkedToUserId && (
+                          <span> · linked to user <code>{u.linkedToUserId.slice(0, 8)}…</code></span>
+                        )}
+                      </p>
+                    </div>
+                    <Button
+                      size="sm"
+                      color="primary"
+                      variant="flat"
+                      isDisabled={u.alreadyLinked}
+                      isLoading={linkingAzureId === u.azureUserId}
+                      onPress={() => handleLinkExisting(u.azureUserId)}
+                    >
+                      Link
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </AppModal>
+        );
+      })()}
     </div>
   );
 }
