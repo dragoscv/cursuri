@@ -175,57 +175,30 @@ export default function GitHubAccountsPage() {
     <div className="space-y-6">
       {/* Hero */}
       <GradientCard className="p-0 overflow-hidden" flush>
-        <div className="relative grid grid-cols-1 md:grid-cols-12">
-          <div className="md:col-span-8 p-6 md:p-8 relative">
-            <div
-              aria-hidden
-              className="absolute inset-0 opacity-50 pointer-events-none"
-              style={{
-                background:
-                  'radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--ai-primary) 18%, transparent) 0%, transparent 55%), radial-gradient(circle at 100% 100%, color-mix(in srgb, var(--ai-secondary) 18%, transparent) 0%, transparent 55%)',
-              }}
-            />
-            <div className="relative flex items-start gap-4">
-              <div className="grid place-items-center w-12 h-12 rounded-2xl bg-[color:var(--ai-foreground)]/8 text-[color:var(--ai-foreground)]">
-                <GitHubMark className="w-6 h-6" />
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-wider text-[color:var(--ai-muted)] font-semibold">
-                  {t('pageTitle')}
-                </p>
-                <h1 className="text-2xl md:text-3xl font-bold text-[color:var(--ai-foreground)]">
-                  {t('pageTitle')}
-                </h1>
-                <p className="mt-2 text-sm md:text-base text-[color:var(--ai-muted)] max-w-xl">
-                  {t('pageSubtitle')}
-                </p>
-              </div>
+        <div className="relative p-6 md:p-8">
+          <div
+            aria-hidden
+            className="absolute inset-0 opacity-50 pointer-events-none"
+            style={{
+              background:
+                'radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--ai-primary) 18%, transparent) 0%, transparent 55%), radial-gradient(circle at 100% 100%, color-mix(in srgb, var(--ai-secondary) 18%, transparent) 0%, transparent 55%)',
+            }}
+          />
+          <div className="relative flex items-start gap-4">
+            <div className="grid place-items-center w-12 h-12 rounded-2xl bg-[color:var(--ai-foreground)]/8 text-[color:var(--ai-foreground)] flex-shrink-0">
+              <GitHubMark className="w-6 h-6" />
             </div>
-          </div>
-
-          <div className="md:col-span-4 relative border-t md:border-t-0 md:border-l border-[color:var(--ai-card-border)] p-6 md:p-8 bg-gradient-to-br from-[color:var(--ai-primary)]/5 to-transparent">
-            <p className="text-sm font-semibold text-[color:var(--ai-foreground)]">
-              {t('buy.title')}
-            </p>
-            <p className="mt-1 text-xs text-[color:var(--ai-muted)]">
-              {t('buy.description')}
-            </p>
-            <AppButton
-              variant="primary"
-              size="md"
-              fullWidth
-              className="mt-4"
-              isLoading={purchasing}
-              loadingText={t('buy.loading')}
-              onPress={handlePurchase}
-              startContent={
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
-                  <path d="M12 5v14M5 12h14" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              }
-            >
-              {t('buy.cta')}
-            </AppButton>
+            <div className="min-w-0">
+              <p className="text-xs uppercase tracking-wider text-[color:var(--ai-muted)] font-semibold">
+                {t('pageTitle')}
+              </p>
+              <h1 className="text-2xl md:text-3xl font-bold text-[color:var(--ai-foreground)]">
+                {t('pageTitle')}
+              </h1>
+              <p className="mt-2 text-sm md:text-base text-[color:var(--ai-muted)] max-w-xl">
+                {t('pageSubtitle')}
+              </p>
+            </div>
           </div>
         </div>
       </GradientCard>
@@ -241,7 +214,27 @@ export default function GitHubAccountsPage() {
       <CopilotPerksCard variant="setup" />
 
       {/* Accounts list */}
-      <SectionShell title={t('pageTitle')} eyebrow={t('stats.total')}>
+      <SectionShell
+        title={t('pageTitle')}
+        eyebrow={t('stats.total')}
+        description={t('buy.description')}
+        actions={
+          <AppButton
+            variant="primary"
+            size="md"
+            isLoading={purchasing}
+            loadingText={t('buy.loading')}
+            onPress={handlePurchase}
+            startContent={
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
+                <path d="M12 5v14M5 12h14" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            }
+          >
+            {t('buy.cta')}
+          </AppButton>
+        }
+      >
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <Spinner size="lg" color="primary" />
