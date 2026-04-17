@@ -2,6 +2,7 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import {
   Avatar,
   Button,
@@ -35,6 +36,7 @@ const AdminUsers: React.FC = () => {
     throw new Error('AdminUsers must be used within an AppProvider');
   }
 
+  const router = useRouter();
   const { users, getAllUsers, courses, assignCourseToUser } = context;
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -101,7 +103,7 @@ const AdminUsers: React.FC = () => {
   };
 
   const handleRowClick = (user: UserProfile) => {
-    setSelectedUser(user);
+    router.push(`/admin/users/${user.id}`);
   };
 
   const closeModal = () => {

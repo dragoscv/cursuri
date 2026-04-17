@@ -2,6 +2,7 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import {
   Avatar,
   Button,
@@ -54,6 +55,7 @@ const EnhancedUserManagement: React.FC = () => {
   }
 
   const { users, getAllUsers, courses } = context as AppContextProps;
+  const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -227,9 +229,7 @@ const EnhancedUserManagement: React.FC = () => {
   };
 
   const handleRowClick = (user: UserProfile) => {
-    setSelectedUser(user);
-    setSelectedTab('profile');
-    loadUserNotes(user.id);
+    router.push(`/admin/users/${user.id}`);
   };
 
   const closeModal = () => {

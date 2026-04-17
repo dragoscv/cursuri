@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useContext, useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import {
   Button,
   Chip,
