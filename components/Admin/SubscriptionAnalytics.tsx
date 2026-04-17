@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import Link from 'next/link';
 import { useTranslations, useLocale } from 'next-intl';
 import { motion } from 'framer-motion';
 import { firebaseAuth } from '@/utils/firebase/firebase.config';
@@ -16,6 +17,7 @@ import {
     FiX,
     FiCheck,
     FiArchive,
+    FiExternalLink,
 } from '@/components/icons/FeatherIcons';
 
 interface PlanBreakdown {
@@ -33,6 +35,8 @@ interface RecentSub {
     id: string;
     status: string;
     customerEmail: string | null;
+    customerId: string | null;
+    firebaseUserId: string | null;
     productName: string;
     interval: string | null;
     unit_amount: number;
@@ -452,8 +456,26 @@ const SubscriptionAnalytics: React.FC = () => {
                                             transition={{ delay: i * 0.03 }}
                                             className="hover:bg-[color:var(--ai-card-bg)]/40 transition-colors"
                                         >
-                                            <td className="px-5 py-3 text-[color:var(--ai-foreground)] truncate max-w-[220px]">
-                                                {sub.customerEmail || sub.id}
+                                            <td className="px-5 py-3 text-[color:var(--ai-foreground)] truncate max-w-[260px]">
+                                                {sub.firebaseUserId ? (
+                                                    <Link
+                                                        href={`/admin/users/${sub.firebaseUserId}`}
+                                                        className="group inline-flex items-center gap-1.5 text-[color:var(--ai-primary)] hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ai-primary)]/40 rounded"
+                                                        title={t('recent.openUser')}
+                                                    >
+                                                        <span className="truncate">
+                                                            {sub.customerEmail || sub.customerId || sub.id}
+                                                        </span>
+                                                        <FiExternalLink
+                                                            size={11}
+                                                            className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                                                        />
+                                                    </Link>
+                                                ) : (
+                                                    <span className="truncate" title={sub.customerId || ''}>
+                                                        {sub.customerEmail || sub.customerId || sub.id}
+                                                    </span>
+                                                )}
                                             </td>
                                             <td className="px-5 py-3 text-[color:var(--ai-foreground)]">
                                                 {sub.productName}

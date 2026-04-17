@@ -559,6 +559,9 @@ const SubscriptionsManager: React.FC = () => {
     const [priceModalOpen, setPriceModalOpen] = useState(false);
     const [activePriceProduct, setActivePriceProduct] = useState<ProductRow | null>(null);
     const [confirmArchive, setConfirmArchive] = useState<ProductRow | null>(null);
+    const [confirmPriceToggle, setConfirmPriceToggle] = useState<
+        { productId: string; price: PriceRow } | null
+    >(null);
     const [actionLoading, setActionLoading] = useState<string | null>(null);
     const [filter, setFilter] = useState<'all' | 'active' | 'archived'>('all');
 
@@ -601,6 +604,7 @@ const SubscriptionsManager: React.FC = () => {
         setActionLoading(`price:${priceId}`);
         try {
             await api(`/api/stripe/products/${productId}/prices/${priceId}`, 'PATCH', { active });
+            setConfirmPriceToggle(null);
             await reload();
         } catch (e: any) {
             setError(e.message || 'Failed to toggle price');
@@ -701,13 +705,15 @@ const SubscriptionsManager: React.FC = () => {
                                     )}
                                     <button
                                         type="button"
-                                        onClick={() => togglePrice(p.id, pr.id, !pr.active)}
+                                        onClick={() =>
+                                            setConfirmPriceToggle({ productId: p.id, price: pr })
+                                        }
                                         disabled={actionLoading === `price:${pr.id}`}
                                         className={`ml-auto inline-flex items-center gap-1 px-1.5 h-5 rounded-full border text-[10px] font-medium transition-colors ${pr.active
                                             ? 'border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10'
                                             : 'border-[color:var(--ai-card-border)] text-[color:var(--ai-muted)] hover:bg-[color:var(--ai-card-bg)]/60'
                                             }`}
-                                        title={pr.active ? 'Deactivate price' : 'Activate price'}
+                                        title={pr.active ? t('actions.deactivatePrice') : t('actions.activatePrice')}
                                     >
                                         {pr.active ? <FiCheck size={10} /> : <FiX size={10} />}
                                         {pr.active ? t('actions.activePrice') : t('actions.inactivePrice')}
@@ -825,6 +831,19 @@ const SubscriptionsManager: React.FC = () => {
                             icon={<FiBookOpen size={20} />}
                             title={t('empty.title')}
                             description={t('empty.description')}
+                            action={
+                                <AppButton
+                                    variant="primary"
+                                    size="sm"
+                                    startContent={<FiPlus size={14} />}
+                                    onPress={() => {
+                                        setEditing(null);
+                                        setEditorOpen(true);
+                                    }}
+                                >
+                                    {t('actions.newProduct')}
+                                </AppButton>
+                            }
                         />
                     }
                 />
@@ -869,6 +888,83 @@ const SubscriptionsManager: React.FC = () => {
                         ? t('confirm.archiveBody', { name: confirmArchive.name })
                         : ''}
                 </p>
+            </AppModal>
+
+            <AppModal
+                isOpen={!!confirmPriceToggle}
+                onClose={() => {
+                    if (!actionLoading?.startsWith('price:')) setConfirmPriceToggle(null);
+                }}
+                title={
+                    confirmPriceToggle?.price.active
+                        ? t('confirm.deactivatePriceTitle')
+                        : t('confirm.activatePriceTitle')
+                }
+                tone={confirmPriceToggle?.price.active ? 'warning' : 'success'}
+                size="sm"
+                icon={
+                    confirmPriceToggle?.price.active ? (
+                        <FiX size={20} />
+                    ) : (
+                        <FiCheck size={20} />
+                    )
+                }
+                footer={
+                    <div className="flex items-center gap-2">
+                        <AppButton
+                            variant="light"
+                            onPress={() => setConfirmPriceToggle(null)}
+                            isDisabled={actionLoading?.startsWith('price:')}
+                        >
+                            {t('actions.cancel')}
+                        </AppButton>
+                        <AppButton
+                            variant={confirmPriceToggle?.price.active ? 'warning' : 'success'}
+                            isLoading={actionLoading?.startsWith('price:')}
+                            onPress={() =>
+                                confirmPriceToggle &&
+                                togglePrice(
+                                    confirmPriceToggle.productId,
+                                    confirmPriceToggle.price.id,
+                                    !confirmPriceToggle.price.active
+                                )
+                            }
+                        >
+                            {confirmPriceToggle?.price.active
+                                ? t('actions.deactivatePrice')
+                                : t('actions.activatePrice')}
+                        </AppButton>
+                    </div>
+                }
+            >
+                {confirmPriceToggle && (
+                    <div className="space-y-2 text-sm text-[color:var(--ai-muted)]">
+                        <p>
+                            {confirmPriceToggle.price.active
+                                ? t('confirm.deactivatePriceBody', {
+                                    amount: formatMoney(
+                                        confirmPriceToggle.price.unit_amount,
+                                        confirmPriceToggle.price.currency,
+                                        locale
+                                    ),
+                                    interval: intervalLabel(confirmPriceToggle.price),
+                                })
+                                : t('confirm.activatePriceBody', {
+                                    amount: formatMoney(
+                                        confirmPriceToggle.price.unit_amount,
+                                        confirmPriceToggle.price.currency,
+                                        locale
+                                    ),
+                                    interval: intervalLabel(confirmPriceToggle.price),
+                                })}
+                        </p>
+                        {confirmPriceToggle.price.active && (
+                            <p className="text-xs text-amber-600 dark:text-amber-400">
+                                {t('confirm.deactivatePriceWarning')}
+                            </p>
+                        )}
+                    </div>
+                )}
             </AppModal>
         </div>
     );

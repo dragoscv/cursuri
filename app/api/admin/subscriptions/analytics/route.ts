@@ -23,6 +23,8 @@ interface RecentSub {
     id: string;
     status: string;
     customerEmail: string | null;
+    customerId: string | null;
+    firebaseUserId: string | null;
     productName: string;
     interval: string | null;
     unit_amount: number;
@@ -207,6 +209,19 @@ export async function GET(request: NextRequest) {
                     typeof customer === 'object' && customer && 'email' in customer
                         ? customer.email
                         : null;
+                const customerId =
+                    typeof customer === 'object' && customer
+                        ? customer.id
+                        : typeof customer === 'string'
+                            ? customer
+                            : null;
+                // The Stripe-Firebase extension stamps customer.metadata.firebaseUID
+                // when it provisions the Stripe customer, so we can deep-link to the
+                // admin user detail page directly.
+                const firebaseUserId =
+                    typeof customer === 'object' && customer && 'metadata' in customer
+                        ? customer.metadata?.firebaseUID || null
+                        : null;
                 // current_period_end was removed from Subscription root in newer API
                 // versions and lives on subscription_items now.
                 const firstItemAny = sub.items.data[0] as unknown as {
@@ -216,6 +231,8 @@ export async function GET(request: NextRequest) {
                     id: sub.id,
                     status: sub.status,
                     customerEmail,
+                    customerId,
+                    firebaseUserId,
                     productName: product?.name || 'Unknown',
                     interval: price?.recurring?.interval || null,
                     unit_amount: price?.unit_amount || 0,

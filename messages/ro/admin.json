@@ -146,7 +146,9 @@
       "archive": "Arhivează",
       "cancel": "Anulează",
       "activePrice": "Activ",
-      "inactivePrice": "Inactiv"
+      "inactivePrice": "Inactiv",
+      "activatePrice": "Activează prețul",
+      "deactivatePrice": "Dezactivează prețul"
     },
     "empty": {
       "title": "Nu există produse",
@@ -154,12 +156,18 @@
     },
     "confirm": {
       "archiveTitle": "Arhivezi produsul?",
-      "archiveBody": "Acest lucru va dezactiva \"{name}\" și toate prețurile asociate în Stripe. Abonamentele existente continuă, dar nu se pot crea altele noi."
+      "archiveBody": "Acest lucru va dezactiva \"{name}\" și toate prețurile asociate în Stripe. Abonamentele existente continuă, dar nu se pot crea altele noi.",
+      "activatePriceTitle": "Activezi acest preț?",
+      "activatePriceBody": "Clienții vor putea să se aboneze la {amount} {interval}.",
+      "deactivatePriceTitle": "Dezactivezi acest preț?",
+      "deactivatePriceBody": "Clienții noi nu se vor mai putea abona la {amount} {interval}. Abonamentele existente pe acest preț continuă să ruleze.",
+      "deactivatePriceWarning": "Poți reactiva prețul mai târziu dacă e nevoie."
     }
   },
   "subscriptionAnalytics": {
     "title": "Analiză abonamente",
     "description": "MRR, ARR, rata de churn și distribuția planurilor din Stripe.",
+    "manageProducts": "Gestionează produse",
     "errorTitle": "Eroare la încărcarea datelor",
     "kpis": {
       "mrr": "MRR",
@@ -203,6 +211,7 @@
       "created": "Creat",
       "actions": "Acțiuni",
       "endingSoon": "se încheie",
+      "openUser": "Deschide profilul utilizatorului",
       "empty": "Nu există abonamente."
     },
     "actions": {

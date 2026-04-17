@@ -146,7 +146,9 @@
       "archive": "Archive",
       "cancel": "Cancel",
       "activePrice": "Active",
-      "inactivePrice": "Inactive"
+      "inactivePrice": "Inactive",
+      "activatePrice": "Activate price",
+      "deactivatePrice": "Deactivate price"
     },
     "empty": {
       "title": "No products yet",
@@ -154,12 +156,18 @@
     },
     "confirm": {
       "archiveTitle": "Archive product?",
-      "archiveBody": "This will deactivate \"{name}\" and all its prices in Stripe. Existing subscriptions keep running, but no new ones can be created."
+      "archiveBody": "This will deactivate \"{name}\" and all its prices in Stripe. Existing subscriptions keep running, but no new ones can be created.",
+      "activatePriceTitle": "Activate this price?",
+      "activatePriceBody": "Customers will be able to subscribe at {amount} {interval}.",
+      "deactivatePriceTitle": "Deactivate this price?",
+      "deactivatePriceBody": "New customers won’t be able to subscribe at {amount} {interval}. Existing subscriptions on this price keep running.",
+      "deactivatePriceWarning": "You can re-activate the price later if needed."
     }
   },
   "subscriptionAnalytics": {
     "title": "Subscription Analytics",
     "description": "MRR, ARR, churn and plan distribution from Stripe.",
+    "manageProducts": "Manage products",
     "errorTitle": "Failed to load analytics",
     "kpis": {
       "mrr": "MRR",
@@ -203,6 +211,7 @@
       "created": "Created",
       "actions": "Actions",
       "endingSoon": "ending",
+      "openUser": "Open user profile",
       "empty": "No subscriptions yet."
     },
     "actions": {
