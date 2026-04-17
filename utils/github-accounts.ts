@@ -24,15 +24,83 @@ export interface OrgMembershipResult {
 }
 
 /**
+ * GitHub usernames cannot contain '.' so SCIM transforms it. Generate the
+ * candidate logins to try (most likely first). The "_metu" suffix is the
+ * EMU enterprise short code.
+ */
+export function deriveGithubUsernameCandidates(mailNickname: string): string[] {
+  const lower = mailNickname.toLowerCase();
+  const variants = new Set<string>();
+  // Most likely: dots and underscores stripped, hyphens kept
+  variants.add(lower.replace(/[._]+/g, '') + '_metu');
+  // Dots → hyphens (some orgs use this)
+  variants.add(lower.replace(/\./g, '-') + '_metu');
+  // Dots removed only
+  variants.add(lower.replace(/\./g, '') + '_metu');
+  // As-is (only matches if no special chars)
+  variants.add(lower + '_metu');
+  return Array.from(variants);
+}
+
+/**
+ * Look up which GitHub username actually exists for a given mailNickname.
+ * Tries each candidate via GET /users/{login} and returns the first hit.
+ */
+export async function resolveGithubUsername(
+  mailNickname: string,
+  storedUsername?: string
+): Promise<{ username: string | null; tried: string[] }> {
+  const token = process.env.GITHUB_ENTERPRISE_TOKEN;
+  if (!token) return { username: storedUsername || null, tried: [] };
+
+  const candidates = [
+    ...(storedUsername ? [storedUsername] : []),
+    ...deriveGithubUsernameCandidates(mailNickname),
+  ];
+  // Dedupe while preserving order
+  const seen = new Set<string>();
+  const ordered = candidates.filter((c) => {
+    if (seen.has(c)) return false;
+    seen.add(c);
+    return true;
+  });
+
+  for (const candidate of ordered) {
+    try {
+      const res = await fetch(
+        `${GITHUB_API_BASE}/users/${encodeURIComponent(candidate)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28',
+          },
+        }
+      );
+      if (res.ok) {
+        return { username: candidate, tried: ordered };
+      }
+    } catch {
+      // ignore
+    }
+  }
+  return { username: null, tried: ordered };
+}
+
+/**
  * Add a GitHub EMU user (by login, e.g. `foo_metu`) to the studiai-students
  * organization as a member. Idempotent — GitHub returns 200 if already a
  * member. If the user does not yet exist in GitHub (SCIM still in flight),
  * returns status `pending` so the admin UI can retry later.
+ *
+ * If the first attempt 404s, tries common username variants (since GitHub
+ * strips dots from logins, the SCIM-generated login may differ from the
+ * one we derived).
  */
 export async function addUserToGitHubOrg(
   githubUsername: string,
-  options: { role?: 'member' | 'admin' } = {}
-): Promise<OrgMembershipResult> {
+  options: { role?: 'member' | 'admin'; mailNickname?: string } = {}
+): Promise<OrgMembershipResult & { resolvedUsername?: string }> {
   const token = process.env.GITHUB_ENTERPRISE_TOKEN;
   if (!token) {
     return {
@@ -41,43 +109,56 @@ export async function addUserToGitHubOrg(
     };
   }
 
-  const { role = 'member' } = options;
-  const url = `${GITHUB_API_BASE}/orgs/${GITHUB_ORG_SLUG}/memberships/${encodeURIComponent(githubUsername)}`;
+  const { role = 'member', mailNickname } = options;
 
-  try {
-    const res = await fetch(url, {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: 'application/vnd.github+json',
-        'X-GitHub-Api-Version': '2022-11-28',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ role }),
-    });
+  // Build the list of usernames to try
+  const candidates = mailNickname
+    ? [
+        githubUsername,
+        ...deriveGithubUsernameCandidates(mailNickname).filter((c) => c !== githubUsername),
+      ]
+    : [githubUsername];
 
-    if (res.ok) {
-      return { status: 'added' };
+  let lastError: string | undefined;
+  let lastStatus = 0;
+
+  for (const candidate of candidates) {
+    const url = `${GITHUB_API_BASE}/orgs/${GITHUB_ORG_SLUG}/memberships/${encodeURIComponent(candidate)}`;
+    try {
+      const res = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ role }),
+      });
+
+      if (res.ok) {
+        return { status: 'added', resolvedUsername: candidate };
+      }
+
+      const errText = await res.text();
+      lastStatus = res.status;
+      lastError = `GitHub API ${res.status} for "${candidate}": ${errText.slice(0, 200)}`;
+
+      // Only continue trying variants on 404 (user not found)
+      if (res.status !== 404) {
+        return { status: 'failed', error: lastError };
+      }
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : 'Unknown error';
+      lastStatus = 0;
     }
-
-    const errText = await res.text();
-    // 404 => user not found in enterprise yet (SCIM may still be syncing)
-    if (res.status === 404) {
-      return {
-        status: 'pending',
-        error: `User not yet visible in GitHub (${res.status}): ${errText}`,
-      };
-    }
-    return {
-      status: 'failed',
-      error: `GitHub API ${res.status}: ${errText}`,
-    };
-  } catch (error) {
-    return {
-      status: 'failed',
-      error: error instanceof Error ? error.message : 'Unknown error',
-    };
   }
+
+  // All candidates 404'd — user is not yet in GitHub at any of the variants
+  return {
+    status: lastStatus === 404 ? 'pending' : 'failed',
+    error: `Tried ${candidates.length} username variant(s) [${candidates.join(', ')}]: ${lastError || 'all 404'}`,
+  };
 }
 
 export async function getGraphToken(): Promise<string> {
@@ -465,13 +546,14 @@ export async function createGitHubAccount(params: {
     // GitHub EMU provisioning is typically fast (~2-5s). We wait a short moment
     // to reduce the chance of a 404 "user not found" response.
     await new Promise((r) => setTimeout(r, 4000));
-    const orgResult = await addUserToGitHubOrg(githubUsername);
+    const orgResult = await addUserToGitHubOrg(githubUsername, { mailNickname });
     if (orgResult.status !== 'added') {
       console.warn(
         `Org membership for ${githubUsername} => ${orgResult.status}:`,
         orgResult.error
       );
     }
+    const finalGithubUsername = orgResult.resolvedUsername || githubUsername;
 
     // 7. Store in Firestore
     const accountData = {
@@ -479,7 +561,7 @@ export async function createGitHubAccount(params: {
       azureUserId,
       userPrincipalName: upn,
       displayName: azureDisplayName,
-      githubUsername,
+      githubUsername: finalGithubUsername,
       accountNumber: nextAccountNumber,
       isActive: true,
       defaultPassword: DEFAULT_PASSWORD,
@@ -701,12 +783,16 @@ export async function linkExistingGitHubAccount(params: {
       .add(accountData);
 
     // 5. Ensure user is a member of the GitHub org (idempotent)
-    const orgResult = await addUserToGitHubOrg(githubUsername);
-    await docRef.update({
+    const orgResult = await addUserToGitHubOrg(githubUsername, { mailNickname });
+    const updates: Record<string, unknown> = {
       orgMembershipStatus: orgResult.status,
       orgMembershipError: orgResult.error || null,
       orgMembershipLastAttempt: new Date(),
-    });
+    };
+    if (orgResult.resolvedUsername && orgResult.resolvedUsername !== githubUsername) {
+      updates.githubUsername = orgResult.resolvedUsername;
+    }
+    await docRef.update(updates);
 
     return {
       success: true,
@@ -745,18 +831,25 @@ export async function retryAddAccountToOrg(params: {
   if (!snap.exists) {
     return { status: 'failed', error: 'Account not found' };
   }
-  const data = snap.data() as { githubUsername?: string } | undefined;
+  const data = snap.data() as
+    | { githubUsername?: string; userPrincipalName?: string }
+    | undefined;
   const githubUsername = data?.githubUsername;
   if (!githubUsername) {
     return { status: 'failed', error: 'Account has no githubUsername' };
   }
-  const result = await addUserToGitHubOrg(githubUsername);
-  await ref.update({
+  const mailNickname = data?.userPrincipalName?.split('@')[0];
+  const result = await addUserToGitHubOrg(githubUsername, { mailNickname });
+  const updates: Record<string, unknown> = {
     orgMembershipStatus: result.status,
     orgMembershipError: result.error || null,
     orgMembershipLastAttempt: new Date(),
-  });
-  return { ...result, githubUsername };
+  };
+  if (result.resolvedUsername && result.resolvedUsername !== githubUsername) {
+    updates.githubUsername = result.resolvedUsername;
+  }
+  await ref.update(updates);
+  return { ...result, githubUsername: result.resolvedUsername || githubUsername };
 }
 
 // ============================================================================
@@ -916,7 +1009,9 @@ export async function checkAccountHealth(params: {
     });
   }
 
-  // 3 + 4. GitHub visibility + org membership (single call)
+  // 3 + 4. GitHub visibility + org membership
+  // First resolve the actual GitHub login since SCIM may have transformed
+  // the derived username (e.g. dots are stripped from GitHub logins).
   const ghToken = process.env.GITHUB_ENTERPRISE_TOKEN;
   if (!ghToken) {
     checks.push({
@@ -934,40 +1029,34 @@ export async function checkAccountHealth(params: {
       repairable: false,
     });
   } else {
-    try {
-      const res = await fetch(
-        `${GITHUB_API_BASE}/orgs/${GITHUB_ORG_SLUG}/memberships/${encodeURIComponent(githubUsername)}`,
-        {
-          headers: {
-            Authorization: `Bearer ${ghToken}`,
-            Accept: 'application/vnd.github+json',
-            'X-GitHub-Api-Version': '2022-11-28',
-          },
-        }
-      );
+    const upn2 = doc.data.userPrincipalName as string | undefined;
+    const mailNickname2 = upn2 ? upn2.split('@')[0] : '';
+    const resolved = await resolveGithubUsername(mailNickname2, githubUsername);
+    const effectiveUsername = resolved.username;
 
-      if (res.ok) {
-        const body = await res.json();
-        const state = body.state as string | undefined; // 'active' | 'pending'
-        checks.push({
-          id: 'github-visible',
-          label: 'Visible in GitHub enterprise',
-          status: 'ok',
-          detail: `Found as @${githubUsername}`,
-          repairable: false,
-        });
-        checks.push({
-          id: 'org-membership',
-          label: `Member of ${GITHUB_ORG_SLUG}`,
-          status: state === 'active' ? 'ok' : 'pending',
-          detail: state === 'active' ? `Role: ${body.role || 'member'}` : `State: ${state || 'pending'}`,
-          repairable: state !== 'active',
-        });
-      } else if (res.status === 404) {
-        // 404 means either user doesn't exist OR isn't in org
-        // Try a user lookup to distinguish
-        const userRes = await fetch(
-          `${GITHUB_API_BASE}/users/${encodeURIComponent(githubUsername)}`,
+    if (!effectiveUsername) {
+      checks.push({
+        id: 'github-visible',
+        label: 'Visible in GitHub enterprise',
+        status: 'pending',
+        detail: `SCIM has not pushed the user yet (tried: ${resolved.tried.join(', ')})`,
+        repairable: true,
+      });
+      checks.push({
+        id: 'org-membership',
+        label: `Member of ${GITHUB_ORG_SLUG}`,
+        status: 'pending',
+        detail: 'Waiting for SCIM sync',
+        repairable: true,
+      });
+    } else {
+      // If we found a different username than what's stored, persist it
+      if (effectiveUsername !== githubUsername) {
+        await doc.ref.update({ githubUsername: effectiveUsername });
+      }
+      try {
+        const res = await fetch(
+          `${GITHUB_API_BASE}/orgs/${GITHUB_ORG_SLUG}/memberships/${encodeURIComponent(effectiveUsername)}`,
           {
             headers: {
               Authorization: `Bearer ${ghToken}`,
@@ -976,15 +1065,29 @@ export async function checkAccountHealth(params: {
             },
           }
         );
-        if (userRes.ok) {
-          // User exists, just not in org
+
+        checks.push({
+          id: 'github-visible',
+          label: 'Visible in GitHub enterprise',
+          status: 'ok',
+          detail: `Found as @${effectiveUsername}`,
+          repairable: false,
+        });
+
+        if (res.ok) {
+          const body = await res.json();
+          const state = body.state as string | undefined; // 'active' | 'pending'
           checks.push({
-            id: 'github-visible',
-            label: 'Visible in GitHub enterprise',
-            status: 'ok',
-            detail: `Found as @${githubUsername}`,
-            repairable: false,
+            id: 'org-membership',
+            label: `Member of ${GITHUB_ORG_SLUG}`,
+            status: state === 'active' ? 'ok' : 'pending',
+            detail:
+              state === 'active'
+                ? `Role: ${body.role || 'member'}`
+                : `State: ${state || 'pending'}`,
+            repairable: state !== 'active',
           });
+        } else if (res.status === 404) {
           checks.push({
             id: 'org-membership',
             label: `Member of ${GITHUB_ORG_SLUG}`,
@@ -993,53 +1096,24 @@ export async function checkAccountHealth(params: {
             repairable: true,
           });
         } else {
-          checks.push({
-            id: 'github-visible',
-            label: 'Visible in GitHub enterprise',
-            status: 'pending',
-            detail: 'SCIM has not pushed the user yet',
-            repairable: true,
-          });
+          const txt = await res.text();
           checks.push({
             id: 'org-membership',
             label: `Member of ${GITHUB_ORG_SLUG}`,
-            status: 'pending',
-            detail: 'Waiting for SCIM sync',
+            status: 'error',
+            detail: `GitHub returned ${res.status}: ${txt.slice(0, 200)}`,
             repairable: true,
           });
         }
-      } else {
-        const txt = await res.text();
-        checks.push({
-          id: 'github-visible',
-          label: 'Visible in GitHub enterprise',
-          status: 'error',
-          detail: `GitHub returned ${res.status}: ${txt.slice(0, 120)}`,
-          repairable: false,
-        });
+      } catch (e) {
         checks.push({
           id: 'org-membership',
           label: `Member of ${GITHUB_ORG_SLUG}`,
           status: 'error',
-          detail: `GitHub returned ${res.status}`,
+          detail: e instanceof Error ? e.message : 'Unknown error',
           repairable: true,
         });
       }
-    } catch (e) {
-      checks.push({
-        id: 'github-visible',
-        label: 'Visible in GitHub enterprise',
-        status: 'error',
-        detail: e instanceof Error ? e.message : 'Unknown error',
-        repairable: false,
-      });
-      checks.push({
-        id: 'org-membership',
-        label: `Member of ${GITHUB_ORG_SLUG}`,
-        status: 'error',
-        detail: e instanceof Error ? e.message : 'Unknown error',
-        repairable: true,
-      });
     }
   }
 
@@ -1115,6 +1189,8 @@ export async function repairAccount(params: {
   if (!doc) return { success: false, error: 'Account not found' };
   const azureUserId = doc.data.azureUserId as string;
   const githubUsername = doc.data.githubUsername as string;
+  const upn = doc.data.userPrincipalName as string | undefined;
+  const mailNickname = upn ? upn.split('@')[0] : undefined;
 
   const steps: RepairStepResult[] = [];
   let token: string;
@@ -1190,19 +1266,23 @@ export async function repairAccount(params: {
   // Step 3: add to org if not already an active member.
   // Poll up to ~40s for SCIM propagation.
   if (orgCheck && orgCheck.status !== 'ok' && orgCheck.repairable) {
-    let result = await addUserToGitHubOrg(githubUsername);
+    let result = await addUserToGitHubOrg(githubUsername, { mailNickname });
     let attempts = 1;
     const maxAttempts = 8;
     while (result.status === 'pending' && attempts < maxAttempts) {
       await new Promise((r) => setTimeout(r, 5000));
-      result = await addUserToGitHubOrg(githubUsername);
+      result = await addUserToGitHubOrg(githubUsername, { mailNickname });
       attempts++;
     }
-    await doc.ref.update({
+    const updates: Record<string, unknown> = {
       orgMembershipStatus: result.status,
       orgMembershipError: result.error || null,
       orgMembershipLastAttempt: new Date(),
-    });
+    };
+    if (result.resolvedUsername && result.resolvedUsername !== githubUsername) {
+      updates.githubUsername = result.resolvedUsername;
+    }
+    await doc.ref.update(updates);
     steps.push({
       id: 'org-membership',
       label: `Add to ${GITHUB_ORG_SLUG}`,
