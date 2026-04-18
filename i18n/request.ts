@@ -26,7 +26,7 @@ export default getRequestConfig(async () => {
     const validLocale = locale === 'en' ? 'en' : 'ro';
 
     // Load all domain translation files and merge them
-    const domains = ['common', 'auth', 'courses', 'lessons', 'profile', 'admin', 'home', 'legal', 'about', 'contact', 'subscription', 'meetings'];
+    const domains = ['common', 'auth', 'courses', 'lessons', 'profile', 'admin', 'home', 'legal', 'about', 'contact', 'payment', 'subscription', 'meetings', 'onboarding'];
     const messages: Record<string, any> = {};
 
     for (const domain of domains) {

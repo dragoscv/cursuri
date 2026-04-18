@@ -19,6 +19,8 @@ const TRANSLATION_DOMAINS = [
   'contact',
   'payment',
   'subscription',
+  'meetings',
+  'onboarding',
 ] as const;
 
 function MinimalLoader() {
