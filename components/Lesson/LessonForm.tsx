@@ -1,4 +1,4 @@
-import React, { useState, useContext, useCallback, useEffect } from 'react';
+import React, { useState, useContext, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { AppContext } from '@/components/AppContext';
 import { useToast } from '@/components/Toast/ToastContext';
@@ -8,18 +8,16 @@ import {
   addDoc,
   collection,
   updateDoc,
+  deleteDoc,
   getDoc,
   getDocs,
-  query,
-  where,
 } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
+import { ref, getDownloadURL, uploadBytesResumable, deleteObject } from 'firebase/storage';
 import { motion } from 'framer-motion';
 import { FiBook } from '../icons/FeatherIcons';
 import {
   FiVideo,
   FiFileText,
-  FiCode,
   FiHelpCircle,
   FiLink,
   FiTag,
@@ -28,7 +26,7 @@ import {
   FiCheckSquare,
   FiTarget,
 } from '../icons/AdditionalIcons';
-import { LessonFormProps, CourseModule, LessonType } from '@/types';
+import { LessonFormProps, CourseModule } from '@/types';
 import Card, { CardBody, CardHeader } from '@/components/ui/Card';
 import Textarea from '@/components/ui/Textarea';
 import Input from '@/components/ui/Input';
@@ -36,40 +34,105 @@ import Button from '@/components/ui/Button';
 import Select, { SelectItem } from '@/components/ui/Select';
 import Switch from '@/components/ui/Switch';
 import Chip from '@/components/ui/Chip';
-import Tooltip from '@/components/ui/Tooltip';
 import { Tabs, Tab } from '@heroui/react';
 import Accordion, { AccordionItem } from '../ui/Accordion';
 import Checkbox from '@/components/ui/Checkbox';
 import RichTextEditor from '@/components/Lesson/QA/RichTextEditor';
 
+// Hoisted so it isn't re-declared on every render
+interface QuizQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  correctOption: number;
+  explanation: string;
+}
+
+interface ExistingAdditionalFile {
+  url: string;
+  name: string;
+  description?: string;
+  path?: string;
+}
+
+interface PendingAdditionalFile {
+  file: File;
+  name: string;
+  description?: string;
+}
+
+type FormErrors = {
+  lessonName?: string;
+  lessonOrder?: string;
+  durationMinutes?: string;
+  embedUrl?: string;
+  repoUrl?: string;
+  file?: string;
+  quiz?: string;
+};
+
+// Maps each error key to the tab that owns the field, used for the
+// per-tab error indicator dots in the UI.
+const ERROR_TAB_MAP: Record<keyof FormErrors, string> = {
+  lessonName: 'basic',
+  lessonOrder: 'basic',
+  durationMinutes: 'basic',
+  file: 'media',
+  embedUrl: 'media',
+  repoUrl: 'resources',
+  quiz: 'quiz',
+};
+
+const isValidUrl = (value: string): boolean => {
+  try {
+    const u = new URL(value);
+    return u.protocol === 'http:' || u.protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
+
 export default function LessonForm({ courseId, lessonId, onClose, onSave }: LessonFormProps) {
   const t = useTranslations('lessons.form');
   const { showToast } = useToast();
+
+  // ----- Basic info -----
   const [lessonName, setLessonName] = useState('');
   const [lessonDescription, setLessonDescription] = useState('');
-  const [lessonContent, setLessonContent] = useState(''); // New field for rich text content
-  const [repoUrl, setRepoUrl] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [editMode, setEditMode] = useState(false);
+  const [lessonContent, setLessonContent] = useState('');
+  const [lessonOrder, setLessonOrder] = useState<number>(0);
+  const [durationMinutes, setDurationMinutes] = useState<number | string>('');
+  const [lessonType, setLessonType] = useState('video');
+  const [lessonStatus, setLessonStatus] = useState('active');
+  const [moduleId, setModuleId] = useState<string>('');
+  const [modules, setModules] = useState<CourseModule[]>([]);
+  const [isFree, setIsFree] = useState(false);
+  const [lessonTags, setLessonTags] = useState<string[]>([]);
+  const [currentTag, setCurrentTag] = useState('');
+
+  // ----- Media tab -----
   const [file, setFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [existingFileName, setExistingFileName] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [lessonOrder, setLessonOrder] = useState<number>(0);
-  const [durationMinutes, setDurationMinutes] = useState<number | string>('');
-  const [isRequired, setIsRequired] = useState(true);
-  const [lessonType, setLessonType] = useState('video');
-  const [lessonStatus, setLessonStatus] = useState('active');
+  const [embedUrl, setEmbedUrl] = useState('');
+  const [embedType, setEmbedType] = useState<'youtube' | 'codepen' | 'github' | 'other'>('youtube');
+  const [transcription, setTranscription] = useState('');
+
+  // ----- Resources tab -----
+  const [repoUrl, setRepoUrl] = useState('');
   const [lessonResources, setLessonResources] = useState<string[]>([]);
   const [currentResource, setCurrentResource] = useState('');
-  const [lessonTags, setLessonTags] = useState<string[]>([]);
-  const [currentTag, setCurrentTag] = useState('');
-  const [previewEnabled, setPreviewEnabled] = useState(true);
+  const [learningObjectives, setLearningObjectives] = useState<string[]>([]);
+  const [currentObjective, setCurrentObjective] = useState('');
+  const [existingAdditionalFiles, setExistingAdditionalFiles] = useState<ExistingAdditionalFile[]>(
+    []
+  );
+  const [additionalFiles, setAdditionalFiles] = useState<PendingAdditionalFile[]>([]);
+  const [currentAdditionalFile, setCurrentAdditionalFile] = useState<File | null>(null);
+  const [currentFileDescription, setCurrentFileDescription] = useState('');
 
-  // New state variables for enhanced features
-  const [activeTab, setActiveTab] = useState('basic');
-  const [moduleId, setModuleId] = useState<string>('');
-  const [modules, setModules] = useState<CourseModule[]>([]);
+  // ----- Quiz tab -----
   const [hasQuiz, setHasQuiz] = useState(false);
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion>({
@@ -79,18 +142,6 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
     correctOption: 0,
     explanation: '',
   });
-  const [learningObjectives, setLearningObjectives] = useState<string[]>([]);
-  const [currentObjective, setCurrentObjective] = useState('');
-  const [embedUrl, setEmbedUrl] = useState('');
-  const [embedType, setEmbedType] = useState<'youtube' | 'codepen' | 'github' | 'other'>('youtube');
-  const [transcription, setTranscription] = useState('');
-  const [additionalFiles, setAdditionalFiles] = useState<
-    { file: File; name: string; description?: string }[]
-  >([]);
-  const [currentAdditionalFile, setCurrentAdditionalFile] = useState<File | null>(null);
-  const [currentFileDescription, setCurrentFileDescription] = useState('');
-  const [seoKeywords, setSeoKeywords] = useState<string[]>([]);
-  const [currentKeyword, setCurrentKeyword] = useState('');
   const [completionCriteria, setCompletionCriteria] = useState<{
     watchPercentage: number;
     requireQuiz: boolean;
@@ -100,26 +151,28 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
     requireQuiz: false,
     requireExercise: false,
   });
+
+  // ----- SEO tab -----
+  const [seoKeywords, setSeoKeywords] = useState<string[]>([]);
+  const [currentKeyword, setCurrentKeyword] = useState('');
+
+  // ----- Form-wide -----
+  const [activeTab, setActiveTab] = useState('basic');
+  const [loading, setLoading] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [submitAttempted, setSubmitAttempted] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [uploadingFile, setUploadingFile] = useState<string>('');
   const [additionalFilesProgress, setAdditionalFilesProgress] = useState<{ [key: string]: number }>(
     {}
   );
-
-  // Interface for quiz questions
-  interface QuizQuestion {
-    id: string;
-    question: string;
-    options: string[];
-    correctOption: number;
-    explanation: string;
-  }
+  const formTopRef = useRef<HTMLDivElement>(null);
 
   const context = useContext(AppContext);
   if (!context) {
     throw new Error('You probably forgot to put <AppProvider>.');
   }
-  const { lessons } = context;
   useEffect(() => {
     // Fetch course modules
     const fetchModules = async () => {
@@ -185,18 +238,23 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
 
           setLessonName(lesson.name || '');
           setLessonDescription(lesson.description || '');
-          setLessonContent(lesson.content || ''); // Load content
+          setLessonContent(lesson.content || '');
           setRepoUrl(lesson.repoUrl || '');
           setLessonOrder(lesson.order || 0);
-          setDurationMinutes(lesson.duration ? parseInt(lesson.duration, 10) || '' : '');
-          setIsRequired(lesson.isFree !== true);
+          setDurationMinutes(
+            typeof lesson.duration === 'number'
+              ? lesson.duration
+              : lesson.duration
+                ? parseInt(String(lesson.duration), 10) || ''
+                : ''
+          );
+          setIsFree(lesson.isFree === true);
           setLessonType(lesson.type?.toString() || 'video');
           setLessonStatus(lesson.status || 'active');
           setLessonResources(
             lesson.resources?.map((r: any) => (typeof r === 'string' ? r : r.url)) || []
           );
           setLessonTags(lesson.tags || []);
-          setPreviewEnabled(lesson.isFree === true);
           if (lesson.file) {
             setFilePreview(lesson.file);
             // Extract filename from URL or use a generic name
@@ -274,9 +332,20 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
             );
           }
 
-          // Load additional files if any
-          if (lesson.additionalFiles) {
-            setAdditionalFiles(lesson.additionalFiles || []);
+          // Load additional files if any. Existing files come back with `url`,
+          // `name`, optional `description`/`path`. They are kept separate from
+          // `additionalFiles` (which holds *new* files staged for upload).
+          if (Array.isArray(lesson.additionalFiles)) {
+            setExistingAdditionalFiles(
+              lesson.additionalFiles
+                .filter((f: any) => f && (f.url || f.path))
+                .map((f: any) => ({
+                  url: f.url || '',
+                  name: f.name || 'file',
+                  description: f.description || '',
+                  path: f.path,
+                }))
+            );
           }
         } catch (error) {
           console.error('Error loading lesson data:', error);
@@ -310,19 +379,106 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
       .substring(0, 200); // Limit filename length
   };
 
+  /**
+   * Validate the form. Returns the new errors object and the first tab that
+   * has an error so the UI can switch to it. The video file is only required
+   * for new video lessons that don't already have one stored.
+   */
+  const validateForm = useCallback((): {
+    errors: FormErrors;
+    firstErrorTab: string | null;
+  } => {
+    const next: FormErrors = {};
+
+    if (!lessonName.trim()) {
+      next.lessonName = t('validationNameRequired');
+    } else if (lessonName.trim().length < 3) {
+      next.lessonName = t('validationNameMinLength');
+    }
+
+    if (Number.isNaN(Number(lessonOrder)) || Number(lessonOrder) < 0) {
+      next.lessonOrder = t('validationOrderInvalid');
+    }
+
+    if (durationMinutes !== '' && (Number(durationMinutes) < 0 || Number.isNaN(Number(durationMinutes)))) {
+      next.durationMinutes = t('validationDurationInvalid');
+    }
+
+    if (lessonType === 'video' && !file && !filePreview) {
+      next.file = t('validationVideoRequired');
+    }
+
+    if (embedUrl && !isValidUrl(embedUrl)) {
+      next.embedUrl = t('validationUrlInvalid');
+    }
+
+    if (repoUrl && !isValidUrl(repoUrl)) {
+      next.repoUrl = t('validationUrlInvalid');
+    }
+
+    if (hasQuiz && quizQuestions.length === 0) {
+      next.quiz = t('validationQuizMinQuestions');
+    }
+
+    let firstErrorTab: string | null = null;
+    for (const key of Object.keys(next) as Array<keyof FormErrors>) {
+      const tabKey = ERROR_TAB_MAP[key];
+      if (tabKey) {
+        firstErrorTab = tabKey;
+        break;
+      }
+    }
+
+    return { errors: next, firstErrorTab };
+  }, [
+    lessonName,
+    lessonOrder,
+    durationMinutes,
+    lessonType,
+    file,
+    filePreview,
+    embedUrl,
+    repoUrl,
+    hasQuiz,
+    quizQuestions.length,
+    t,
+  ]);
+
+  // Tabs that currently contain at least one error (for the dot indicator)
+  const errorTabs = useMemo(() => {
+    const set = new Set<string>();
+    (Object.keys(errors) as Array<keyof FormErrors>).forEach((key) => {
+      if (errors[key]) set.add(ERROR_TAB_MAP[key]);
+    });
+    return set;
+  }, [errors]);
+
+  // Re-validate live after the user has attempted a submit so error
+  // indicators clear as fields are fixed.
+  useEffect(() => {
+    if (!submitAttempted) return;
+    const { errors: next } = validateForm();
+    setErrors(next);
+  }, [submitAttempted, validateForm]);
+
   const addLesson = useCallback(async () => {
-    setLoading(true);
-    setUploadProgress(0);
-    if (!file && lessonType === 'video') {
+    setSubmitAttempted(true);
+    const { errors: validation, firstErrorTab } = validateForm();
+    if (Object.keys(validation).length > 0) {
+      setErrors(validation);
+      if (firstErrorTab) setActiveTab(firstErrorTab);
+      formTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       showToast({
         type: 'warning',
-        title: 'Video Required',
-        message: 'Please select a video file to upload',
+        title: t('validationFailedTitle'),
+        message: t('validationFailedMessage'),
         duration: 4000,
       });
-      setLoading(false);
       return;
     }
+    setErrors({});
+    setLoading(true);
+    setUploadProgress(0);
     try {
       // Upload main lesson file if provided
       let downloadURL = '';
@@ -431,12 +587,11 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
         status: lessonStatus,
         order: Number(lessonOrder),
         duration: durationMinutes ? Number(durationMinutes) : 0,
-        isFree: !isRequired,
+        isFree: isFree,
         type: lessonType,
         resources: lessonResources,
         additionalFiles: additionalFilesData,
         tags: lessonTags,
-        previewEnabled: previewEnabled,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -538,11 +693,10 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
     lessonStatus,
     lessonOrder,
     durationMinutes,
-    isRequired,
+    isFree,
     lessonType,
     lessonResources,
     lessonTags,
-    previewEnabled,
     onClose,
     moduleId,
     hasQuiz,
@@ -554,10 +708,28 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
     additionalFiles,
     seoKeywords,
     completionCriteria,
+    validateForm,
+    showToast,
+    t,
   ]);
 
   const updateLesson = useCallback(async () => {
     if (!lessonId) return;
+    setSubmitAttempted(true);
+    const { errors: validation, firstErrorTab } = validateForm();
+    if (Object.keys(validation).length > 0) {
+      setErrors(validation);
+      if (firstErrorTab) setActiveTab(firstErrorTab);
+      formTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      showToast({
+        type: 'warning',
+        title: t('validationFailedTitle'),
+        message: t('validationFailedMessage'),
+        duration: 4000,
+      });
+      return;
+    }
+    setErrors({});
     setLoading(true);
     setUploadProgress(0);
     try {
@@ -570,11 +742,10 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
         status: lessonStatus,
         order: Number(lessonOrder),
         duration: durationMinutes ? Number(durationMinutes) : 0,
-        isFree: !isRequired,
+        isFree: isFree,
         type: lessonType,
         resources: lessonResources,
         tags: lessonTags,
-        previewEnabled: previewEnabled,
         updatedAt: new Date().toISOString(),
       };
 
@@ -635,51 +806,60 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
         }
       }
 
-      // Upload additional files if any new ones were added
-      if (additionalFiles.length > 0) {
-        const additionalFilesData = [];
-        for (let i = 0; i < additionalFiles.length; i++) {
-          const addFile = additionalFiles[i];
-          // Only upload files that don't have URLs already
-          if (addFile.file) {
-            setUploadingFile(addFile.name);
+      // Persist additional files. We always rewrite the array so that
+      // existing files removed by the user actually disappear from
+      // Firestore. Existing files (already uploaded) are kept by their
+      // metadata; new ones are uploaded now.
+      const mergedAdditionalFilesData: Array<{
+        name: string;
+        url: string;
+        description?: string;
+        path?: string;
+      }> = existingAdditionalFiles.map((f) => ({
+        name: f.name,
+        url: f.url,
+        description: f.description,
+        path: f.path,
+      }));
 
-            const sanitizedName = sanitizeFilename(addFile.file.name);
-            const fileRef = ref(
-              firebaseStorage,
-              `lessons/${courseId}/resources/${sanitizedName}_${Date.now()}`
-            );
+      for (let i = 0; i < additionalFiles.length; i++) {
+        const addFile = additionalFiles[i];
+        if (!addFile.file) continue;
+        setUploadingFile(addFile.name);
 
-            const uploadTask = uploadBytesResumable(fileRef, addFile.file);
+        const sanitizedName = sanitizeFilename(addFile.file.name);
+        const storagePath = `lessons/${courseId}/resources/${sanitizedName}_${Date.now()}`;
+        const fileRef = ref(firebaseStorage, storagePath);
 
-            const fileUrl = await new Promise<string>((resolve, reject) => {
-              uploadTask.on(
-                'state_changed',
-                (snapshot) => {
-                  const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                  setAdditionalFilesProgress((prev) => ({ ...prev, [addFile.name]: progress }));
-                },
-                (error) => {
-                  console.error('Additional file upload error:', error);
-                  reject(error);
-                },
-                async () => {
-                  const url = await getDownloadURL(uploadTask.snapshot.ref);
-                  resolve(url);
-                }
-              );
-            });
+        const uploadTask = uploadBytesResumable(fileRef, addFile.file);
 
-            additionalFilesData.push({
-              name: addFile.name,
-              url: fileUrl,
-              description: addFile.description,
-            });
-            setUploadingFile('');
-          }
-        }
-        updatedData.additionalFiles = additionalFilesData;
+        const fileUrl = await new Promise<string>((resolve, reject) => {
+          uploadTask.on(
+            'state_changed',
+            (snapshot) => {
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              setAdditionalFilesProgress((prev) => ({ ...prev, [addFile.name]: progress }));
+            },
+            (error) => {
+              console.error('Additional file upload error:', error);
+              reject(error);
+            },
+            async () => {
+              const url = await getDownloadURL(uploadTask.snapshot.ref);
+              resolve(url);
+            }
+          );
+        });
+
+        mergedAdditionalFilesData.push({
+          name: addFile.name,
+          url: fileUrl,
+          description: addFile.description,
+          path: storagePath,
+        });
+        setUploadingFile('');
       }
+      updatedData.additionalFiles = mergedAdditionalFilesData;
 
       // Add module ID if selected
       if (moduleId) {
@@ -717,22 +897,18 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
       const lessonRef = doc(firestoreDB, `courses/${courseId}/lessons/${lessonId}`);
       await updateDoc(lessonRef, updatedData);
 
-      // Update quiz questions if the lesson has a quiz
+      // Sync quiz questions. We delete the previous questions before
+      // re-adding the current ones so the collection doesn't accumulate
+      // orphan documents (the previous code only marked them as
+      // `deleted: true`, leaving them in queries).
+      const questionsRef = collection(
+        firestoreDB,
+        `courses/${courseId}/lessons/${lessonId}/quizQuestions`
+      );
+      const existingQuestionsSnap = await getDocs(questionsRef);
+      await Promise.all(existingQuestionsSnap.docs.map((d) => deleteDoc(d.ref)));
+
       if (hasQuiz && quizQuestions.length > 0) {
-        // First delete existing questions
-        const questionsRef = collection(
-          firestoreDB,
-          `courses/${courseId}/lessons/${lessonId}/quizQuestions`
-        );
-        const existingQuestions = await getDocs(questionsRef);
-
-        existingQuestions.forEach(async (doc) => {
-          await updateDoc(doc.ref, {
-            deleted: true,
-          });
-        });
-
-        // Add the new questions
         for (const question of quizQuestions) {
           await addDoc(questionsRef, {
             question: question.question,
@@ -773,17 +949,16 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
     courseId,
     lessonName,
     lessonDescription,
-    lessonContent, // Add to dependencies
+    lessonContent,
     repoUrl,
     file,
     lessonStatus,
     lessonOrder,
     durationMinutes,
-    isRequired,
+    isFree,
     lessonType,
     lessonResources,
     lessonTags,
-    previewEnabled,
     onClose,
     moduleId,
     hasQuiz,
@@ -793,9 +968,15 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
     embedType,
     transcription,
     additionalFiles,
+    existingAdditionalFiles,
     seoKeywords,
     completionCriteria,
-  ]); // Type definitions for input event handlers
+    validateForm,
+    showToast,
+    t,
+  ]);
+
+  // Type definitions for input event handlers
   type InputChangeEvent = React.ChangeEvent<HTMLInputElement>;
   type TextareaChangeEvent = React.ChangeEvent<HTMLTextAreaElement>;
   type SelectChangeEvent = React.ChangeEvent<HTMLSelectElement>;
@@ -971,11 +1152,26 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
     }
   };
 
-  // Remove an additional file
+  // Remove a *new* (not-yet-uploaded) additional file
   const handleRemoveAdditionalFile = (index: number) => {
     const newFiles = [...additionalFiles];
     newFiles.splice(index, 1);
     setAdditionalFiles(newFiles);
+  };
+
+  // Remove a previously-uploaded additional file. We also try to delete it
+  // from Storage; failure there is non-fatal (the file may already be gone
+  // or be referenced by a different document).
+  const handleRemoveExistingAdditionalFile = async (index: number) => {
+    const removed = existingAdditionalFiles[index];
+    setExistingAdditionalFiles((prev) => prev.filter((_, i) => i !== index));
+    if (removed?.path) {
+      try {
+        await deleteObject(ref(firebaseStorage, removed.path));
+      } catch (err) {
+        console.warn('Failed to delete existing additional file from storage:', err);
+      }
+    }
   };
 
   // Handle quiz question changes
@@ -1101,12 +1297,31 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
       handleAddKeyword();
     }
   };
+
+  // Render a tab title with an optional red dot showing the tab has at
+  // least one validation error.
+  const renderTabTitle = (label: string, hasError: boolean) => (
+    <span className="inline-flex items-center gap-2">
+      <span>{label}</span>
+      {hasError && (
+        <span
+          className="w-2 h-2 rounded-full bg-red-500"
+          aria-label={t('tabHasErrors')}
+          title={t('tabHasErrors')}
+        />
+      )}
+    </span>
+  );
+
+  const errorCount = Object.keys(errors).length;
+
   return (
     <motion.div
+      ref={formTopRef}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="w-full max-w-4xl mx-auto"
+      className="w-full max-w-4xl mx-auto pb-32"
     >
       <div className="relative mb-8">
         <div className="absolute inset-0 bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-[color:var(--ai-accent)]/10 rounded-xl blur-xl"></div>
@@ -1137,7 +1352,7 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
         onSelectionChange={(key: React.Key) => setActiveTab(String(key))}
         className="mb-8"
       >
-        <Tab key="basic" title={t('basicInfo')}>
+        <Tab key="basic" title={renderTabTitle(t('basicInfo'), errorTabs.has('basic'))}>
           <Card className="shadow-xl border border-[color:var(--ai-card-border)] overflow-hidden mb-8 hover:shadow-[color:var(--ai-primary)]/5 transition-all rounded-xl">
             <CardHeader className="flex gap-3 px-6 py-4 border-b border-[color:var(--ai-card-border)]/60 bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-transparent">
               <FiBook className="text-[color:var(--ai-primary)]" size={20} />
@@ -1159,6 +1374,8 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                       value={lessonName}
                       onChange={(e: InputChangeEvent) => setLessonName(e.target.value)}
                       isRequired
+                      isInvalid={!!errors.lessonName}
+                      errorMessage={errors.lessonName}
                       startContent={<FiBook className="text-[color:var(--ai-muted)]" />}
                       className="bg-[color:var(--ai-card-bg)]/40"
                       classNames={{
@@ -1226,6 +1443,8 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                         onChange={(e: InputChangeEvent) =>
                           setLessonOrder(parseInt(e.target.value) || 0)
                         }
+                        isInvalid={!!errors.lessonOrder}
+                        errorMessage={errors.lessonOrder}
                         className="w-full"
                         classNames={{
                           label: 'text-[color:var(--ai-foreground)] font-medium',
@@ -1244,6 +1463,8 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                         onChange={(e: InputChangeEvent) =>
                           setDurationMinutes(parseInt(e.target.value) || '')
                         }
+                        isInvalid={!!errors.durationMinutes}
+                        errorMessage={errors.durationMinutes}
                         className="w-full"
                         classNames={{
                           label: 'text-[color:var(--ai-foreground)] font-medium',
@@ -1309,6 +1530,8 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                         placeholder={t('githubRepoUrl')}
                         value={repoUrl}
                         onChange={(e: InputChangeEvent) => setRepoUrl(e.target.value)}
+                        isInvalid={!!errors.repoUrl}
+                        errorMessage={errors.repoUrl}
                         className="w-full"
                         classNames={{
                           label: 'text-[color:var(--ai-foreground)] font-medium',
@@ -1320,16 +1543,11 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                   <div className="flex items-center gap-4 mb-6">
                     <div className="flex-1">
                       <Switch
-                        isSelected={!isRequired}
-                        onValueChange={(val) => setIsRequired(!val)}
+                        isSelected={isFree}
+                        onValueChange={setIsFree}
                         color="primary"
                       >
                         {t('freePreviewLesson')}
-                      </Switch>
-                    </div>
-                    <div className="flex-1">
-                      <Switch isSelected={hasQuiz} onValueChange={setHasQuiz} color="primary">
-                        {t('hasQuiz')}
                       </Switch>
                     </div>
                   </div>
@@ -1435,6 +1653,11 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                       </label>
                     )}
                   </div>
+                  {errors.file && (
+                    <p className="mt-2 mb-4 text-sm font-medium text-red-600 dark:text-red-400">
+                      {errors.file}
+                    </p>
+                  )}
 
                   <div className="mb-6">
                     <label className="block text-[color:var(--ai-foreground)] font-medium mb-2">
@@ -1519,7 +1742,7 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
           </Card>
         </Tab>
 
-        <Tab key="content" title={t('additionalContent')}>
+        <Tab key="content" title={renderTabTitle(t('additionalContent'), errorTabs.has('media') || errorTabs.has('resources'))}>
           <Card className="shadow-xl border border-[color:var(--ai-card-border)] overflow-hidden mb-8 hover:shadow-[color:var(--ai-primary)]/5 transition-all rounded-xl">
             <CardHeader className="flex gap-3 px-6 py-4 border-b border-[color:var(--ai-card-border)]/60 bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-transparent">
               <FiLayers className="text-[color:var(--ai-primary)]" size={20} />
@@ -1571,6 +1794,8 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                       }
                       value={embedUrl}
                       onChange={(e: InputChangeEvent) => setEmbedUrl(e.target.value)}
+                      isInvalid={!!errors.embedUrl}
+                      errorMessage={errors.embedUrl}
                       startContent={<FiLink size={18} className="text-[color:var(--ai-muted)]" />}
                     />
                   </div>
@@ -1712,6 +1937,46 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                       )}
 
                       <div className="space-y-2 mt-4">
+                        {existingAdditionalFiles.length > 0 && (
+                          <p className="text-xs uppercase tracking-wider text-[color:var(--ai-muted)] font-semibold mt-2">
+                            {t('existingFiles')}
+                          </p>
+                        )}
+                        {existingAdditionalFiles.map((existing, index) => (
+                          <div
+                            key={`existing-${index}`}
+                            className="flex items-center justify-between p-3 bg-[color:var(--ai-success)]/5 rounded-lg border border-[color:var(--ai-success)]/20"
+                          >
+                            <div className="truncate flex-1 min-w-0">
+                              <a
+                                href={existing.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="font-medium text-[color:var(--ai-primary)] hover:underline truncate inline-block max-w-full"
+                              >
+                                {existing.name}
+                              </a>
+                              {existing.description && (
+                                <p className="text-xs text-[color:var(--ai-muted)] truncate">
+                                  {existing.description}
+                                </p>
+                              )}
+                            </div>
+                            <Button
+                              color="danger"
+                              variant="light"
+                              size="sm"
+                              onPress={() => handleRemoveExistingAdditionalFile(index)}
+                            >
+                              {t('remove')}
+                            </Button>
+                          </div>
+                        ))}
+                        {additionalFiles.length > 0 && (
+                          <p className="text-xs uppercase tracking-wider text-[color:var(--ai-muted)] font-semibold mt-2">
+                            {t('newFilesPendingUpload')}
+                          </p>
+                        )}
                         {additionalFiles.map((file, index) => (
                           <div
                             key={index}
@@ -1759,7 +2024,7 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
           </Card>
         </Tab>
 
-        <Tab key="quiz" title={t('quizAssessment')}>
+        <Tab key="quiz" title={renderTabTitle(t('quizAssessment'), errorTabs.has('quiz'))}>
           <Card className="shadow-xl border border-[color:var(--ai-card-border)] overflow-hidden mb-8 hover:shadow-[color:var(--ai-primary)]/5 transition-all rounded-xl">
             <CardHeader className="flex gap-3 px-6 py-4 border-b border-[color:var(--ai-card-border)]/60 bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-transparent">
               <FiHelpCircle className="text-[color:var(--ai-primary)]" size={20} />
@@ -1771,23 +2036,29 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
               </div>
             </CardHeader>
             <CardBody className="p-6 overflow-visible">
+              <div className="mb-6 flex items-center justify-between gap-4 p-4 rounded-lg bg-[color:var(--ai-card-bg)]/50 border border-[color:var(--ai-card-border)]/50">
+                <div>
+                  <p className="font-medium text-[color:var(--ai-foreground)]">{t('hasQuiz')}</p>
+                  <p className="text-sm text-[color:var(--ai-muted)]">
+                    {t('hasQuizDescription')}
+                  </p>
+                </div>
+                <Switch isSelected={hasQuiz} onValueChange={setHasQuiz} color="primary" />
+              </div>
+              {errors.quiz && (
+                <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800/30 text-sm text-red-700 dark:text-red-300">
+                  {errors.quiz}
+                </div>
+              )}
               {!hasQuiz ? (
                 <div className="p-8 text-center">
                   <FiHelpCircle size={48} className="text-[color:var(--ai-muted)] mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-[color:var(--ai-foreground)] mb-2">
                     {t('quizDisabled')}
                   </h3>
-                  <p className="text-[color:var(--ai-muted)] mb-4">{t('enableQuizMessage')}</p>
-                  <Button
-                    color="primary"
-                    variant="flat"
-                    onPress={() => {
-                      setHasQuiz(true);
-                      setActiveTab('basic');
-                    }}
-                  >
-                    {t('enableQuiz')}
-                  </Button>
+                  <p className="text-[color:var(--ai-muted)] mb-4">
+                    {t('enableQuizInlineMessage')}
+                  </p>
                 </div>
               ) : (
                 <div>
@@ -1949,67 +2220,71 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                     </div>
                   </div>
 
-                  <div className="mt-8">
-                    <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-4">
-                      Completion Criteria
-                    </h3>
+                </div>
+              )}
 
-                    <div className="bg-[color:var(--ai-card-bg)]/50 rounded-lg border border-[color:var(--ai-card-border)]/50 p-4">
-                      <div className="space-y-4">
-                        <div>
-                          <label className="block text-[color:var(--ai-foreground)] font-medium mb-2">
-                            Required video watch percentage ({completionCriteria.watchPercentage}%)
-                          </label>{' '}
-                          <input
-                            type="range"
-                            min="50"
-                            max="100"
-                            step="5"
-                            value={completionCriteria.watchPercentage}
-                            onChange={(e) =>
-                              setCompletionCriteria({
-                                ...completionCriteria,
-                                watchPercentage: parseInt(e.target.value),
-                              })
-                            }
-                            className="w-full h-2 bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-border)] rounded-lg appearance-none cursor-pointer"
-                            aria-label="Video watch percentage"
-                            title="Set required video watch percentage for completion"
-                          />
-                        </div>
+              {/* Completion criteria is always visible — lessons may require
+                  a watch percentage even when no quiz is configured. */}
+              <div className="mt-8">
+                <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-4">
+                  {t('completionCriteria')}
+                </h3>
 
-                        <div className="flex items-center gap-8">
-                          <Switch
-                            isSelected={completionCriteria.requireQuiz}
-                            onValueChange={(val) =>
-                              setCompletionCriteria({
-                                ...completionCriteria,
-                                requireQuiz: val,
-                              })
-                            }
-                            color="primary"
-                          >
-                            Require quiz completion
-                          </Switch>
+                <div className="bg-[color:var(--ai-card-bg)]/50 rounded-lg border border-[color:var(--ai-card-border)]/50 p-4">
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-[color:var(--ai-foreground)] font-medium mb-2">
+                        {t('watchPercentageLabel', { percentage: completionCriteria.watchPercentage })}
+                      </label>
+                      <input
+                        type="range"
+                        min="50"
+                        max="100"
+                        step="5"
+                        value={completionCriteria.watchPercentage}
+                        onChange={(e) =>
+                          setCompletionCriteria({
+                            ...completionCriteria,
+                            watchPercentage: parseInt(e.target.value),
+                          })
+                        }
+                        className="w-full h-2 bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-border)] rounded-lg appearance-none cursor-pointer"
+                        aria-label={t('watchPercentageAria')}
+                        title={t('watchPercentageTitle')}
+                      />
+                    </div>
 
-                          <Switch
-                            isSelected={completionCriteria.requireExercise}
-                            onValueChange={(val) =>
-                              setCompletionCriteria({
-                                ...completionCriteria,
-                                requireExercise: val,
-                              })
-                            }
-                            color="primary"
-                          >
-                            Require exercise submission
-                          </Switch>
-                        </div>
-                      </div>
+                    <div className="flex items-center gap-8 flex-wrap">
+                      <Switch
+                        isSelected={completionCriteria.requireQuiz}
+                        onValueChange={(val) =>
+                          setCompletionCriteria({
+                            ...completionCriteria,
+                            requireQuiz: val,
+                          })
+                        }
+                        color="primary"
+                        isDisabled={!hasQuiz}
+                      >
+                        {t('requireQuizCompletion')}
+                      </Switch>
+
+                      <Switch
+                        isSelected={completionCriteria.requireExercise}
+                        onValueChange={(val) =>
+                          setCompletionCriteria({
+                            ...completionCriteria,
+                            requireExercise: val,
+                          })
+                        }
+                        color="primary"
+                      >
+                        {t('requireExerciseSubmission')}
+                      </Switch>
                     </div>
                   </div>
                 </div>
-              )}
+              </div>
             </CardBody>
           </Card>
         </Tab>
@@ -2052,29 +2327,42 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
         </div>
       )}
 
-      <div className="flex justify-end gap-4 mt-8">
-        <Button
-          color="default"
-          variant="flat"
-          onPress={onClose}
-          className="px-6"
-          isDisabled={loading}
-        >
-          {t('cancel')}
-        </Button>
-        <Button
-          color="primary"
-          isLoading={loading}
-          onPress={editMode ? updateLesson : addLesson}
-          className="px-8"
-          isDisabled={loading}
-        >
-          {loading && uploadProgress > 0
-            ? t('uploadingProgress', { progress: Math.round(uploadProgress) })
-            : editMode
-              ? t('updateLesson')
-              : t('addLesson')}
-        </Button>
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-[color:var(--ai-card-bg)]/95 backdrop-blur-md border-t border-[color:var(--ai-card-border)] shadow-2xl">
+        <div className="max-w-4xl mx-auto px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          {errorCount > 0 ? (
+            <p className="text-sm text-red-600 dark:text-red-400 font-medium">
+              {t('errorSummary', { count: errorCount })}
+            </p>
+          ) : (
+            <p className="text-sm text-[color:var(--ai-muted)]">
+              {editMode ? t('readyToUpdate') : t('readyToCreate')}
+            </p>
+          )}
+          <div className="flex gap-3 justify-end">
+            <Button
+              color="default"
+              variant="flat"
+              onPress={onClose}
+              className="px-6"
+              isDisabled={loading}
+            >
+              {t('cancel')}
+            </Button>
+            <Button
+              color="primary"
+              isLoading={loading}
+              onPress={editMode ? updateLesson : addLesson}
+              className="px-8"
+              isDisabled={loading}
+            >
+              {loading && uploadProgress > 0
+                ? t('uploadingProgress', { progress: Math.round(uploadProgress) })
+                : editMode
+                  ? t('updateLesson')
+                  : t('addLesson')}
+            </Button>
+          </div>
+        </div>
       </div>
     </motion.div>
   );

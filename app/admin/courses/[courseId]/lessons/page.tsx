@@ -1,6 +1,5 @@
 'use client';
-import React, { useContext, useCallback, useEffect, useState } from 'react';
-import { AppContext } from '@/components/AppContext';
+import React, { useCallback, useEffect, useState } from 'react';
 import LessonsTable from '@/components/Admin/LessonsTable';
 import { useParams, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
