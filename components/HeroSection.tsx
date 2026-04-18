@@ -444,30 +444,37 @@ const HeroSection = memo(function HeroSection() {
                   aria-hidden
                   className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-gradient-to-br from-violet-500/25 via-indigo-500/15 to-transparent blur-3xl"
                 />
-                <div className="relative flex flex-col gap-4">
-                  <div className="flex items-center gap-3">
+                <div className="relative flex flex-col gap-4 min-w-0">
+                  {/* Row 1: icon + headline */}
+                  <div className="flex items-start gap-3 min-w-0">
                     <div className="w-11 h-11 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
                       <CopilotIcon size={22} />
                     </div>
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <p className="text-sm font-bold text-white leading-tight">
                         {t('copilotRibbon.title')}
                       </p>
-                      <p className="text-xs text-white/70 mt-0.5">
+                      <p className="text-xs text-white/70 mt-0.5 break-words">
                         {t('copilotRibbon.description')}
                       </p>
                     </div>
                   </div>
-                  <div className="flex flex-wrap items-center gap-1.5">
+
+                  {/* Row 2: model chips - full width, wraps cleanly */}
+                  <div className="flex flex-wrap gap-1.5 min-w-0">
                     {(t.raw('copilotRibbon.models') as string[]).map((model) => (
                       <span
                         key={model}
-                        className="inline-flex items-center px-2.5 py-1 text-[11px] font-medium rounded-md bg-white/10 text-white/90 border border-white/10 whitespace-nowrap"
+                        className="inline-flex items-center px-2.5 py-1 text-[11px] font-medium rounded-md bg-white/10 text-white/90 border border-white/10 whitespace-nowrap max-w-full"
                       >
                         {model}
                       </span>
                     ))}
-                    <span className="ml-auto inline-flex items-center gap-1.5 px-3 h-8 rounded-lg bg-white text-[#0d1117] text-xs font-bold group-hover:translate-x-0.5 transition-transform">
+                  </div>
+
+                  {/* Row 3: CTA - own row, never competes with chips */}
+                  <div className="flex justify-end">
+                    <span className="inline-flex items-center gap-1.5 px-3 h-8 rounded-lg bg-white text-[#0d1117] text-xs font-bold group-hover:translate-x-0.5 transition-transform">
                       {t('copilotRibbon.cta')} →
                     </span>
                   </div>
