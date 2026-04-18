@@ -213,6 +213,21 @@ service cloud.firestore {
         allow read: if true;
       }
     }
+
+    // Meetings feature: paid 1-on-1 calls.
+    // Public-readable config (admin-managed) for the booking page to compute slots.
+    match /meetingsConfig/{docId} {
+      allow read: if true;
+      allow write: if hasAdminAccess();
+    }
+
+    // Booked meetings: user can read their own; admins read all.
+    // Writes (create/update/delete) only via server APIs (never directly from client).
+    match /meetings/{meetingId} {
+      allow read: if request.auth != null && (resource.data.userId == request.auth.uid || hasAdminAccess());
+      allow list: if hasAdminAccess();
+      allow create, update, delete: if false;
+    }
     
     // Allow collection group query access for admins
     match /{path=**}/payments/{paymentId} {

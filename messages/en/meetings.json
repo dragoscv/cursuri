@@ -1,0 +1,191 @@
+{
+  "nav": {
+    "label": "Book a Call",
+    "shortLabel": "Book a Call"
+  },
+  "landing": {
+    "eyebrow": "1-on-1 Mentorship",
+    "title": "Book a Private Call With Me",
+    "subtitle": "Stuck on a problem, planning your next AI build, or want a focused mentor session? Pay for my time and let's solve it together — live, on Google Meet.",
+    "rate": "{amount} / hour",
+    "ctaPrimary": "Pick a time",
+    "ctaSecondary": "Sign in to book",
+    "currentlyUnavailable": {
+      "title": "Booking is currently paused",
+      "description": "I'm not opening new slots right now. Drop me a DM on socials — texts are always free."
+    },
+    "freeText": {
+      "badge": "Always free",
+      "title": "DMs and questions are forever free",
+      "description": "I believe information should be free. Send me a text on any of my socials and I will reply when I have time. Texts cost you nothing — they never will. What costs is my synchronous attention: when you book my calendar, I drop everything else for that hour and focus 100% on your problem. That's the part you pay for."
+    },
+    "howItWorks": {
+      "title": "How it works",
+      "step1Title": "Sign in & subscribe",
+      "step1Description": "An active subscription is required to access live calls.",
+      "step2Title": "Pick a time",
+      "step2Description": "Choose a date, duration and slot from the live availability calendar.",
+      "step3Title": "Pay securely",
+      "step3Description": "Stripe Checkout — pay exactly for the time you book, by the hour.",
+      "step4Title": "Join the call",
+      "step4Description": "I add a Google Meet link to your booking. You'll see it in your profile."
+    },
+    "subscriptionRequired": {
+      "title": "Subscribe to unlock 1-on-1 calls",
+      "description": "Live mentorship is part of the subscriber-only perks.",
+      "cta": "See plans"
+    }
+  },
+  "booking": {
+    "title": "Schedule your call",
+    "step1Title": "Pick a duration",
+    "step2Title": "Pick a date",
+    "step3Title": "Pick a time",
+    "step4Title": "Tell me what we'll cover",
+    "durationMinutes": "{minutes} min",
+    "estimatedPrice": "Estimated price",
+    "topicLabel": "Topic / agenda",
+    "topicPlaceholder": "What do you want to talk about? (e.g. \"review my Next.js architecture\", \"plan my AI feature\")",
+    "notesLabel": "Additional notes (optional)",
+    "notesPlaceholder": "Anything I should prepare or look at beforehand?",
+    "timezoneLabel": "Your timezone",
+    "noSlots": "No available slots for this date. Try another day.",
+    "loadingSlots": "Loading available times...",
+    "confirm": "Continue to payment",
+    "back": "Back",
+    "next": "Next",
+    "totalLabel": "Total",
+    "errors": {
+      "topic_required": "Please describe the topic of the call.",
+      "no_slot": "Please pick a time slot.",
+      "feature_disabled": "Booking is currently disabled.",
+      "subscription_required": "An active subscription is required to book a call.",
+      "slot_taken": "That slot was just booked. Please pick another.",
+      "duration_too_short": "Duration is below the minimum.",
+      "duration_too_long": "Duration exceeds the maximum.",
+      "too_soon": "That slot is too close to now. Pick a later time.",
+      "too_far": "That slot is too far in the future.",
+      "blackout_date": "That date is unavailable.",
+      "day_disabled": "That day of the week is not available.",
+      "before_window": "That time is before the daily start time.",
+      "after_window": "That time would extend beyond the daily end time.",
+      "duration_not_aligned": "Duration must be a multiple of {step} minutes.",
+      "checkout_failed": "Could not start checkout. Please try again."
+    }
+  },
+  "myMeetings": {
+    "title": "My Meetings",
+    "subtitle": "Your booked 1-on-1 calls and Google Meet links.",
+    "empty": {
+      "title": "No meetings yet",
+      "description": "Book a private call to get started.",
+      "cta": "Book a call"
+    },
+    "stats": {
+      "upcoming": "Upcoming",
+      "completed": "Completed",
+      "totalSpent": "Total spent"
+    },
+    "card": {
+      "duration": "{minutes} min",
+      "joinLink": "Join Google Meet",
+      "linkPending": "Meet link will appear here once added by host",
+      "topic": "Topic",
+      "paid": "Paid",
+      "pendingPayment": "Payment pending",
+      "cancelled": "Cancelled",
+      "completed": "Completed",
+      "noShow": "No-show",
+      "confirmed": "Confirmed"
+    }
+  },
+  "admin": {
+    "nav": "Meetings",
+    "list": {
+      "title": "Meetings",
+      "description": "All scheduled 1-on-1 calls.",
+      "filter": {
+        "all": "All",
+        "confirmed": "Confirmed",
+        "pending_payment": "Pending payment",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "no_show": "No-show"
+      },
+      "empty": "No meetings yet.",
+      "settings": "Settings",
+      "addLink": "Add Meet link",
+      "editLink": "Edit Meet link",
+      "linkPlaceholder": "https://meet.google.com/...",
+      "saveLink": "Save link",
+      "markCompleted": "Mark completed",
+      "markNoShow": "Mark no-show",
+      "cancel": "Cancel",
+      "cancelConfirm": "Cancel this meeting? The user will need a manual refund via Stripe.",
+      "user": "User",
+      "when": "When",
+      "duration": "Duration",
+      "topic": "Topic",
+      "status": "Status",
+      "amount": "Amount",
+      "actions": "Actions"
+    },
+    "settings": {
+      "title": "Meetings Settings",
+      "description": "Configure pricing, availability and booking constraints.",
+      "save": "Save changes",
+      "saving": "Saving...",
+      "saved": "Settings saved",
+      "saveFailed": "Failed to save settings",
+      "syncStripe": "Stripe product synced",
+      "sections": {
+        "general": "General",
+        "pricing": "Pricing",
+        "duration": "Duration constraints",
+        "leadTime": "Lead time",
+        "weekly": "Weekly availability",
+        "blackout": "Blackout dates"
+      },
+      "fields": {
+        "enabled": "Enable booking",
+        "enabledHint": "Master switch. When off, the public page shows \"currently unavailable\".",
+        "requiresActiveSubscription": "Require active subscription",
+        "requiresActiveSubscriptionHint": "Only paying subscribers can complete checkout.",
+        "timezone": "Your timezone",
+        "publicNote": "Public note (optional)",
+        "publicNoteHint": "Shown on the booking page (e.g. \"I usually reply within 24h\").",
+        "hourlyRate": "Hourly rate",
+        "currency": "Currency",
+        "minDuration": "Minimum duration (minutes)",
+        "maxDuration": "Maximum duration (minutes)",
+        "durationStep": "Duration step (minutes)",
+        "buffer": "Buffer between meetings (minutes)",
+        "minLead": "Minimum lead time (hours)",
+        "minLeadHint": "Earliest a user can book from \"now\". e.g. 12 = no bookings within 12h.",
+        "maxLead": "Maximum lead time (hours)",
+        "maxLeadHint": "Latest a user can book ahead. e.g. 168 = 7 days.",
+        "windowStart": "Start",
+        "windowEnd": "End",
+        "blackoutDates": "Blocked dates",
+        "blackoutDatesHint": "ISO YYYY-MM-DD, comma-separated.",
+        "addBlackout": "Add date",
+        "removeBlackout": "Remove"
+      },
+      "weekdays": {
+        "0": "Sunday",
+        "1": "Monday",
+        "2": "Tuesday",
+        "3": "Wednesday",
+        "4": "Thursday",
+        "5": "Friday",
+        "6": "Saturday"
+      }
+    }
+  },
+  "checkout": {
+    "successTitle": "Payment received — meeting confirmed",
+    "successDescription": "I'll add the Google Meet link shortly. You'll see it on your meetings page and receive an email.",
+    "cancelledTitle": "Checkout cancelled",
+    "cancelledDescription": "No worries — your slot was released. Try again whenever you're ready."
+  }
+}

@@ -160,6 +160,13 @@ export default function MobileMenu() {
                 </div>
               </Link>
             </DropdownItem>
+            <DropdownItem key="book-a-call" textValue="Book a Call" className="p-0">
+              <Link href="/book-a-call" className="block w-full">
+                <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors">
+                  {t('nav.bookACall')}
+                </div>
+              </Link>
+            </DropdownItem>
             <DropdownItem key="discord" textValue="Discord" className="p-0">
               <Link href="/discord" className="block w-full">
                 <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors flex items-center gap-2">

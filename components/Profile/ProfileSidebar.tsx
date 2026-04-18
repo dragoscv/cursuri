@@ -13,6 +13,7 @@ import {
   FiAward,
   FiFileText,
   FiLogOut,
+  FiCalendar,
 } from '@/components/icons/FeatherIcons';
 import { signOut } from 'firebase/auth';
 import { firebaseAuth } from '@/utils/firebase/firebase.config';
@@ -82,6 +83,7 @@ const ProfileSidebar: React.FC = () => {
       { label: t('nav.certificates'), href: '/profile/certificates', icon: FiAward },
       { label: t('nav.githubAccounts'), href: '/profile/github', icon: GitHubIcon },
       { label: t('nav.subscription'), href: '/profile/subscriptions', icon: FiCreditCard },
+      { label: t('nav.meetings'), href: '/profile/meetings', icon: FiCalendar },
       { label: t('nav.paymentHistory'), href: '/profile/payments', icon: FiFileText },
       { label: t('nav.settings'), href: '/profile/settings', icon: FiSettings },
     ],

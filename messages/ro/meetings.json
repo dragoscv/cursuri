@@ -1,0 +1,191 @@
+{
+  "nav": {
+    "label": "Programează o discuție",
+    "shortLabel": "Programează"
+  },
+  "landing": {
+    "eyebrow": "Mentorat 1-la-1",
+    "title": "Programează o discuție privată cu mine",
+    "subtitle": "Te-ai blocat la o problemă, plănuiești următorul tău proiect AI sau vrei o sesiune focusată de mentorat? Plătește pentru timpul meu și o rezolvăm împreună — live, pe Google Meet.",
+    "rate": "{amount} / oră",
+    "ctaPrimary": "Alege un interval",
+    "ctaSecondary": "Autentifică-te ca să rezervi",
+    "currentlyUnavailable": {
+      "title": "Rezervările sunt temporar oprite",
+      "description": "Momentan nu deschid sloturi noi. Trimite-mi un DM pe rețelele sociale — textele sunt mereu gratuite."
+    },
+    "freeText": {
+      "badge": "Întotdeauna gratuit",
+      "title": "DM-urile și întrebările sunt pentru totdeauna gratuite",
+      "description": "Cred că informația trebuie să fie liberă. Trimite-mi un text pe oricare dintre rețelele mele sociale și voi răspunde când am timp. Textele nu te costă nimic — nu te vor costa niciodată. Ce costă este atenția mea sincronă: când îmi rezervi calendarul, las totul deoparte pentru ora aceea și mă concentrez 100% pe problema ta. Pentru asta plătești."
+    },
+    "howItWorks": {
+      "title": "Cum funcționează",
+      "step1Title": "Autentifică-te și abonează-te",
+      "step1Description": "Un abonament activ este necesar pentru sesiunile live.",
+      "step2Title": "Alege un interval",
+      "step2Description": "Selectează data, durata și slotul din calendarul de disponibilitate live.",
+      "step3Title": "Plătește în siguranță",
+      "step3Description": "Stripe Checkout — plătești exact pentru timpul rezervat, la oră.",
+      "step4Title": "Intră în call",
+      "step4Description": "Adaug link-ul Google Meet la rezervarea ta. Îl vezi în profilul tău."
+    },
+    "subscriptionRequired": {
+      "title": "Abonează-te ca să deblochezi sesiuni 1-la-1",
+      "description": "Mentoratul live este parte din avantajele exclusive abonaților.",
+      "cta": "Vezi planurile"
+    }
+  },
+  "booking": {
+    "title": "Programează discuția",
+    "step1Title": "Alege durata",
+    "step2Title": "Alege data",
+    "step3Title": "Alege ora",
+    "step4Title": "Spune-mi despre ce vorbim",
+    "durationMinutes": "{minutes} min",
+    "estimatedPrice": "Preț estimat",
+    "topicLabel": "Subiect / agendă",
+    "topicPlaceholder": "Despre ce vrei să vorbim? (ex.: \"review la arhitectura mea Next.js\", \"plănuiesc o funcționalitate AI\")",
+    "notesLabel": "Note suplimentare (opțional)",
+    "notesPlaceholder": "Vrei să pregătesc sau să mă uit la ceva înainte?",
+    "timezoneLabel": "Fusul tău orar",
+    "noSlots": "Nu există sloturi disponibile pentru această zi. Încearcă altă zi.",
+    "loadingSlots": "Se încarcă orele disponibile...",
+    "confirm": "Continuă spre plată",
+    "back": "Înapoi",
+    "next": "Mai departe",
+    "totalLabel": "Total",
+    "errors": {
+      "topic_required": "Te rog descrie subiectul discuției.",
+      "no_slot": "Te rog alege un interval orar.",
+      "feature_disabled": "Rezervările sunt momentan dezactivate.",
+      "subscription_required": "Un abonament activ este necesar pentru a rezerva o discuție.",
+      "slot_taken": "Slotul a fost rezervat între timp. Alege altul.",
+      "duration_too_short": "Durata este sub minimul permis.",
+      "duration_too_long": "Durata depășește maximul permis.",
+      "too_soon": "Slotul este prea aproape de momentul actual. Alege mai târziu.",
+      "too_far": "Slotul este prea departe în viitor.",
+      "blackout_date": "Această zi este indisponibilă.",
+      "day_disabled": "Această zi a săptămânii nu este disponibilă.",
+      "before_window": "Ora este înainte de programul zilnic.",
+      "after_window": "Ora ar depăși programul zilnic.",
+      "duration_not_aligned": "Durata trebuie să fie multiplu de {step} minute.",
+      "checkout_failed": "Nu am putut porni plata. Încearcă din nou."
+    }
+  },
+  "myMeetings": {
+    "title": "Discuțiile mele",
+    "subtitle": "Discuțiile tale 1-la-1 rezervate și link-urile Google Meet.",
+    "empty": {
+      "title": "Nicio discuție încă",
+      "description": "Rezervă o discuție privată ca să începi.",
+      "cta": "Programează o discuție"
+    },
+    "stats": {
+      "upcoming": "Viitoare",
+      "completed": "Finalizate",
+      "totalSpent": "Total cheltuit"
+    },
+    "card": {
+      "duration": "{minutes} min",
+      "joinLink": "Intră pe Google Meet",
+      "linkPending": "Link-ul Meet va apărea aici după ce este adăugat",
+      "topic": "Subiect",
+      "paid": "Plătit",
+      "pendingPayment": "Plată în așteptare",
+      "cancelled": "Anulată",
+      "completed": "Finalizată",
+      "noShow": "Neprezentat",
+      "confirmed": "Confirmată"
+    }
+  },
+  "admin": {
+    "nav": "Discuții",
+    "list": {
+      "title": "Discuții programate",
+      "description": "Toate discuțiile 1-la-1 programate.",
+      "filter": {
+        "all": "Toate",
+        "confirmed": "Confirmate",
+        "pending_payment": "Plată în așteptare",
+        "completed": "Finalizate",
+        "cancelled": "Anulate",
+        "no_show": "Neprezentați"
+      },
+      "empty": "Nicio discuție încă.",
+      "settings": "Setări",
+      "addLink": "Adaugă link Meet",
+      "editLink": "Editează link Meet",
+      "linkPlaceholder": "https://meet.google.com/...",
+      "saveLink": "Salvează link",
+      "markCompleted": "Marchează finalizată",
+      "markNoShow": "Marchează neprezentat",
+      "cancel": "Anulează",
+      "cancelConfirm": "Anulezi această discuție? Utilizatorul va avea nevoie de refund manual via Stripe.",
+      "user": "Utilizator",
+      "when": "Când",
+      "duration": "Durată",
+      "topic": "Subiect",
+      "status": "Status",
+      "amount": "Sumă",
+      "actions": "Acțiuni"
+    },
+    "settings": {
+      "title": "Setări Discuții",
+      "description": "Configurează prețurile, disponibilitatea și constrângerile de rezervare.",
+      "save": "Salvează modificările",
+      "saving": "Se salvează...",
+      "saved": "Setările au fost salvate",
+      "saveFailed": "Nu am putut salva setările",
+      "syncStripe": "Produs Stripe sincronizat",
+      "sections": {
+        "general": "General",
+        "pricing": "Preț",
+        "duration": "Constrângeri durată",
+        "leadTime": "Termen de rezervare",
+        "weekly": "Disponibilitate săptămânală",
+        "blackout": "Zile blocate"
+      },
+      "fields": {
+        "enabled": "Activează rezervările",
+        "enabledHint": "Comutator principal. Când e oprit, pagina publică afișează \"momentan indisponibil\".",
+        "requiresActiveSubscription": "Necesită abonament activ",
+        "requiresActiveSubscriptionHint": "Doar abonații pot finaliza plata.",
+        "timezone": "Fusul tău orar",
+        "publicNote": "Notă publică (opțional)",
+        "publicNoteHint": "Afișată pe pagina de rezervare (ex.: \"răspund de obicei în 24h\").",
+        "hourlyRate": "Tarif orar",
+        "currency": "Monedă",
+        "minDuration": "Durată minimă (minute)",
+        "maxDuration": "Durată maximă (minute)",
+        "durationStep": "Pas durată (minute)",
+        "buffer": "Pauză între discuții (minute)",
+        "minLead": "Termen minim (ore)",
+        "minLeadHint": "Cel mai apropiat moment în care se poate rezerva. Ex.: 12 = nu se rezervă în următoarele 12h.",
+        "maxLead": "Termen maxim (ore)",
+        "maxLeadHint": "Cel mai îndepărtat moment în care se poate rezerva. Ex.: 168 = 7 zile.",
+        "windowStart": "Început",
+        "windowEnd": "Sfârșit",
+        "blackoutDates": "Zile blocate",
+        "blackoutDatesHint": "ISO YYYY-MM-DD, separate prin virgulă.",
+        "addBlackout": "Adaugă zi",
+        "removeBlackout": "Elimină"
+      },
+      "weekdays": {
+        "0": "Duminică",
+        "1": "Luni",
+        "2": "Marți",
+        "3": "Miercuri",
+        "4": "Joi",
+        "5": "Vineri",
+        "6": "Sâmbătă"
+      }
+    }
+  },
+  "checkout": {
+    "successTitle": "Plată primită — discuție confirmată",
+    "successDescription": "Voi adăuga link-ul Google Meet în scurt timp. Îl vei vedea pe pagina ta de discuții și vei primi un email.",
+    "cancelledTitle": "Plată anulată",
+    "cancelledDescription": "Niciun stres — slotul a fost eliberat. Încearcă din nou când ești gata."
+  }
+}

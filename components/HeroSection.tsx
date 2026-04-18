@@ -414,6 +414,18 @@ const HeroSection = memo(function HeroSection() {
               </Button>
             </motion.div>
 
+            {/* Subtle 1-on-1 mentor call link */}
+            <motion.div variants={itemVariants} className="mt-4">
+              <Link
+                href="/book-a-call"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition-colors group"
+              >
+                <span aria-hidden className="w-1.5 h-1.5 rounded-full bg-[color:var(--ai-primary)] animate-pulse" />
+                {t('bookACall')}
+                <span className="group-hover:translate-x-0.5 transition-transform">→</span>
+              </Link>
+            </motion.div>
+
             {/* Social proof */}
             <motion.div variants={itemVariants} className="mt-10 flex items-center gap-4">
               <div className="flex -space-x-3">

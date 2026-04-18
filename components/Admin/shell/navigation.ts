@@ -8,6 +8,7 @@ import {
     FiFileText,
     FiCreditCard,
     FiTrendingUp,
+    FiCalendar,
 } from '@/components/icons/FeatherIcons';
 
 export interface AdminNavItem {
@@ -90,6 +91,13 @@ export const ADMIN_NAV: AdminNavGroup[] = [
                 href: '/admin/messages',
                 icon: FiMail,
                 keywords: ['inbox', 'contact', 'support'],
+            },
+            {
+                id: 'meetings',
+                label: 'Meetings',
+                href: '/admin/meetings',
+                icon: FiCalendar,
+                keywords: ['calls', 'schedule', 'booking', '1-on-1', 'mentorship', 'video'],
             },
         ],
     },
