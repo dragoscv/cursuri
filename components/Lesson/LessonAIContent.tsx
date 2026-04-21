@@ -1,0 +1,130 @@
+'use client';
+
+import React from 'react';
+import Card from '@/components/ui/Card';
+import { Lesson } from '@/types';
+import { FiFileText, FiCheckCircle } from '@/components/icons/FeatherIcons';
+
+interface LessonAIContentProps {
+  lesson: Lesson;
+}
+
+const FiVolume2: React.FC<{ size?: number; className?: string }> = ({ size = 18, className = '' }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    aria-hidden="true"
+  >
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+  </svg>
+);
+
+const LessonAIContent: React.FC<LessonAIContentProps> = ({ lesson }) => {
+  const summary = lesson.summary?.trim();
+  const keyPoints = (lesson.keyPoints || []).filter(Boolean);
+  const audioUrl = lesson.audioUrl;
+  const transcription = lesson.transcription?.trim();
+
+  if (!summary && !keyPoints.length && !audioUrl && !transcription) return null;
+
+  return (
+    <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/60 backdrop-blur-sm shadow-xl overflow-hidden rounded-2xl">
+      <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent px-5 sm:px-6 py-3 border-b border-[color:var(--ai-card-border)] flex items-center gap-2">
+        <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white text-xs font-bold">
+          AI
+        </span>
+        <h3 className="font-semibold text-[color:var(--ai-foreground)]">Lesson briefing</h3>
+      </div>
+
+      <div className="p-5 sm:p-6 space-y-6">
+        {/* Audio */}
+        {audioUrl && (
+          <div className="rounded-xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-background)]/40 p-4">
+            <div className="flex items-center justify-between gap-3 mb-2">
+              <div className="text-sm font-medium text-[color:var(--ai-foreground)] inline-flex items-center gap-2">
+                <FiVolume2 size={16} className="text-[color:var(--ai-primary)]" />
+                Listen to the audio
+              </div>
+              <a
+                href={audioUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                download
+                className="text-xs font-medium text-[color:var(--ai-primary)] hover:underline"
+              >
+                Download MP3
+              </a>
+            </div>
+            <audio src={audioUrl} controls preload="none" className="w-full" />
+          </div>
+        )}
+
+        {/* Summary */}
+        {summary && (
+          <div>
+            <h4 className="text-sm font-semibold uppercase tracking-wider text-[color:var(--ai-muted)] mb-2">
+              In short
+            </h4>
+            <p className="text-[color:var(--ai-foreground)] leading-relaxed whitespace-pre-line">
+              {summary}
+            </p>
+          </div>
+        )}
+
+        {/* Key points */}
+        {keyPoints.length > 0 && (
+          <div>
+            <h4 className="text-sm font-semibold uppercase tracking-wider text-[color:var(--ai-muted)] mb-3">
+              What you&apos;ll learn
+            </h4>
+            <ul className="space-y-2">
+              {keyPoints.map((p, i) => (
+                <li
+                  key={i}
+                  className="flex items-start gap-2 text-[color:var(--ai-text-secondary)] leading-relaxed"
+                >
+                  <FiCheckCircle
+                    size={18}
+                    className="mt-0.5 flex-shrink-0 text-[color:var(--ai-primary)]"
+                  />
+                  <span>{p}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Transcript (collapsible) */}
+        {transcription && (
+          <details className="group rounded-xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-background)]/30">
+            <summary className="cursor-pointer list-none flex items-center justify-between gap-2 px-4 py-3 text-sm font-medium text-[color:var(--ai-foreground)]">
+              <span className="inline-flex items-center gap-2">
+                <FiFileText size={16} className="text-[color:var(--ai-primary)]" />
+                Read the full transcript
+              </span>
+              <span className="text-xs text-[color:var(--ai-muted)] group-open:rotate-180 transition-transform">
+                ▾
+              </span>
+            </summary>
+            <div className="px-4 pb-4">
+              <div className="max-h-96 overflow-y-auto pr-2 text-sm text-[color:var(--ai-text-secondary)] whitespace-pre-line leading-relaxed">
+                {transcription}
+              </div>
+            </div>
+          </details>
+        )}
+      </div>
+    </Card>
+  );
+};
+
+export default LessonAIContent;

@@ -389,6 +389,18 @@ export interface Lesson {
   title?: string; // Some components use title instead of name
   repoUrl?: string; // Repository URL for lesson materials
   transcription?: string; // Transcription of lesson content
+  // ----- AI-generated assets -----
+  audioUrl?: string; // Extracted audio track (Firebase Storage public URL)
+  audioFileName?: string;
+  audioDurationSeconds?: number;
+  summary?: string; // Short paragraph summary
+  keyPoints?: string[]; // Bullet list of key takeaways
+  transcriptionLanguage?: string;
+  aiContentGeneratedAt?: number; // epoch ms
+  aiProcessingStatus?: 'idle' | 'processing' | 'completed' | 'failed';
+  aiProcessingError?: string;
+  captionsProcessing?: boolean;
+  captionsGenerated?: boolean;
 }
 
 /**

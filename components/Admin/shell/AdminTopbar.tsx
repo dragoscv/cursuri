@@ -51,6 +51,32 @@ const AdminTopbar: React.FC = () => {
                     <AdminBreadcrumbs />
                 </div>
 
+                {/* Back to App (same tab) */}
+                <Tooltip content="Back to studiai.ro" placement="bottom">
+                    <Link
+                        href="/"
+                        className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/70 text-xs font-medium text-[color:var(--ai-foreground)] hover:border-[color:var(--ai-primary)]/50 hover:text-[color:var(--ai-primary)] hover:bg-[color:var(--ai-primary)]/5 transition"
+                        aria-label="Back to app"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            aria-hidden="true"
+                        >
+                            <path d="M19 12H5" />
+                            <path d="M12 19l-7-7 7-7" />
+                        </svg>
+                        Back to app
+                    </Link>
+                </Tooltip>
+
                 {/* Search trigger (desktop) */}
                 <button
                     type="button"

@@ -38,6 +38,7 @@ import { Tabs, Tab } from '@heroui/react';
 import Accordion, { AccordionItem } from '../ui/Accordion';
 import Checkbox from '@/components/ui/Checkbox';
 import RichTextEditor from '@/components/Lesson/QA/RichTextEditor';
+import LessonAIProcessor from '@/components/Lesson/LessonAIProcessor';
 
 // Hoisted so it isn't re-declared on every render
 interface QuizQuestion {
@@ -2016,6 +2017,14 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                       onChange={(e: TextareaChangeEvent) => setTranscription(e.target.value)}
                       minRows={5}
                       className="w-full"
+                    />
+                  </div>
+
+                  <div className="mb-6">
+                    <LessonAIProcessor
+                      courseId={courseId}
+                      lessonId={lessonId}
+                      videoUrl={filePreview || undefined}
                     />
                   </div>
                 </div>

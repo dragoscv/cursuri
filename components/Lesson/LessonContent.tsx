@@ -13,6 +13,7 @@ import ResourcesList from './Resources/ResourcesList';
 import Notes from './Notes/Notes';
 import QASection from './QA/QASection';
 import LessonNavigation from './Navigation/LessonNavigation';
+import LessonAIContent from './LessonAIContent';
 import OfflineButton from './OfflineButton';
 import { sanitizeRich } from '@/utils/security/htmlSanitizer';
 import { useOfflineContent } from '../Profile/hooks/useOfflineContent';
@@ -363,6 +364,8 @@ function LessonContent({
               />
             </Card>
           )}
+          {/* AI-generated audio + summary + transcript */}
+          <LessonAIContent lesson={lesson} />
           {/* Lesson Content */}
           {(lesson.content) && (
             <Card

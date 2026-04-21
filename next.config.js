@@ -32,7 +32,16 @@ const nextConfig = {
     // This avoids duplication and makes it easier to maintain
 
     // Exclude jsdom and dompurify from server bundling to avoid version conflicts
-    serverExternalPackages: ['jsdom', 'dompurify', 'isomorphic-dompurify'],
+    serverExternalPackages: [
+        'jsdom',
+        'dompurify',
+        'isomorphic-dompurify',
+        'fluent-ffmpeg',
+        'ffmpeg-static',
+        '@ffmpeg-installer/ffmpeg',
+        'microsoft-cognitiveservices-speech-sdk',
+        'firebase-admin',
+    ],
 
     // Webpack configuration to fix Windows temp directory permission issues
     webpack: (config, { isServer }) => {
