@@ -166,7 +166,6 @@ export async function POST(req: NextRequest) {
 
   const ext = (videoUrl.split('?')[0].split('.').pop() || 'mp4').toLowerCase().slice(0, 4);
   const videoPath = path.join(tempDir, `source.${ext}`);
-  const wavPath = path.join(tempDir, 'audio.wav');
   const mp3Path = path.join(tempDir, 'audio.mp3');
 
   // Throttled progress writer so we never spam Firestore from inner loops.
@@ -226,13 +225,13 @@ export async function POST(req: NextRequest) {
 
     const videoBytes = totalBytes || (await fs.promises.stat(videoPath)).size;
 
-    // 2) Single ffmpeg pass producing BOTH the MP3 (for playback/download) and
-    //    the 16kHz mono WAV (for Azure Speech). Decoding the source video once
-    //    is roughly 2× faster than running ffmpeg twice for huge inputs.
+    // 2) Single ffmpeg pass extracting an MP3 audio track. The Fast
+    //    Transcription REST API accepts MP3 directly, so we no longer need a
+    //    second WAV output — that alone halves the ffmpeg CPU work.
     await setStage(
       'extracting_audio',
       18,
-      `Extracting audio from ${(videoBytes / (1024 * 1024)).toFixed(1)} MB video (single pass, multithreaded)…`
+      `Extracting MP3 audio from ${(videoBytes / (1024 * 1024)).toFixed(1)} MB video (multithreaded)…`
     );
     const ffmpegMod = await import('fluent-ffmpeg');
     const ffmpeg = (ffmpegMod as { default?: typeof ffmpegMod }).default || ffmpegMod;
@@ -251,21 +250,11 @@ export async function POST(req: NextRequest) {
 
     await new Promise<void>((resolve, reject) => {
       const cmd = ffmpeg(videoPath)
-        // -threads 0 → ffmpeg picks an optimal worker count for the host.
         .inputOptions(['-threads', '0'])
-        // Output 1: WAV for Azure Speech (16kHz, mono, 16-bit PCM)
-        .output(wavPath)
-        .audioCodec('pcm_s16le')
-        .audioChannels(1)
-        .audioFrequency(16000)
         .noVideo()
-        .format('wav')
-        // Output 2: MP3 for the public lesson page
-        .output(mp3Path)
         .audioCodec('libmp3lame')
         .audioBitrate('96k')
         .audioChannels(1)
-        .noVideo()
         .format('mp3')
         .on('codecData', (data: { duration?: string }) => {
           // duration string like "00:48:13.45" → seconds
@@ -289,28 +278,39 @@ export async function POST(req: NextRequest) {
         })
         .on('end', () => resolve())
         .on('error', (err: Error) => reject(new Error(`ffmpeg failed: ${err.message}`)));
-      cmd.run();
+      cmd.save(mp3Path);
     });
 
-    // 3) Transcribe with Azure Speech (streamed PushStream + live partial hook)
+    // 3) Transcribe with Azure Fast Transcription (REST). Synchronous, up to
+    //    ~40× real-time. We send the MP3 we just produced (small, ~30 MB/h).
+    const mp3Bytes = (await fs.promises.stat(mp3Path)).size;
     await setStage(
       'transcribing',
-      35,
-      `Transcribing with Azure Speech (${language})… this is the longest step.`
+      40,
+      `Sending ${(mp3Bytes / (1024 * 1024)).toFixed(1)} MB MP3 to Azure Fast Transcription (${language})…`
     );
-    const { transcribeWavFile } = await import('@/utils/azure/speech');
-    const transcription = await transcribeWavFile(wavPath, language, {
-      onProgress: ({ chars, phrases }) => {
-        // Map a soft estimate based on phrase count onto 35..70.
-        const overall = Math.min(70, 35 + Math.min(35, phrases * 0.8));
-        void writeProgressThrottled(
-          'transcribing',
-          overall,
-          `Transcribing… ${phrases.toLocaleString()} segments, ${chars.toLocaleString()} chars`,
-          2500
-        );
-      },
-    });
+    // Tick a soft progress while the single HTTP call is in flight so the
+    // bar doesn't look frozen. Capped at 68% so the real completion still
+    // visibly bumps the bar.
+    const transcribeStartedAt = Date.now();
+    const transcribeTicker = setInterval(() => {
+      const seconds = Math.round((Date.now() - transcribeStartedAt) / 1000);
+      // Slowly creep from 40 → 68 over ~3 minutes.
+      const creep = Math.min(28, seconds / 6);
+      void writeProgressThrottled(
+        'transcribing',
+        40 + creep,
+        `Azure Fast Transcription is processing the audio… (${seconds}s)`,
+        2000
+      );
+    }, 2000);
+    let transcription;
+    try {
+      const { transcribeAudioFile } = await import('@/utils/azure/speech');
+      transcription = await transcribeAudioFile(mp3Path, language);
+    } finally {
+      clearInterval(transcribeTicker);
+    }
 
     // 4) Summarize with Azure OpenAI
     await setStage(
