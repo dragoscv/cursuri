@@ -32,7 +32,7 @@ const AdminTopbar: React.FC = () => {
         <header
             className={[
                 'sticky top-0 z-30 h-16',
-                'bg-[color:var(--ai-background)]/80 backdrop-blur-xl',
+                'bg-[color:var(--ai-background)] supports-[backdrop-filter]:bg-[color:var(--ai-background)]/95 supports-[backdrop-filter]:backdrop-blur-xl',
                 'border-b border-[color:var(--ai-card-border)]',
             ].join(' ')}
         >

@@ -65,7 +65,7 @@ const ShellInner: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -4 }}
                             transition={{ duration: 0.25 }}
-                            className="mx-auto w-full max-w-[1400px]"
+                            className="w-full"
                         >
                             {children}
                         </motion.div>

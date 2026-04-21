@@ -1323,7 +1323,7 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="w-full max-w-4xl mx-auto pb-32"
+      className="w-full pb-32"
     >
       <div className="relative mb-8">
         <div className="absolute inset-0 bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-[color:var(--ai-accent)]/10 rounded-xl blur-xl"></div>
@@ -1741,10 +1741,11 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                         <Chip
                           key={index}
                           onClose={() => handleRemoveObjective(objective)}
-                          startContent={<FiCheckSquare size={16} />}
+                          startContent={<FiCheckSquare size={16} className="flex-shrink-0" />}
                           variant="flat"
                           color="primary"
-                          className="bg-[color:var(--ai-primary)]/10"
+                          className="bg-[color:var(--ai-primary)]/10 max-w-full h-auto py-1.5"
+                          classNames={{ content: 'whitespace-normal break-words' }}
                         >
                           {objective}
                         </Chip>
@@ -2423,7 +2424,7 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
       )}
 
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-[color:var(--ai-card-bg)]/95 backdrop-blur-md border-t border-[color:var(--ai-card-border)] shadow-2xl">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           {errorCount > 0 ? (
             <p className="text-sm text-red-600 dark:text-red-400 font-medium">
               {t('errorSummary', { count: errorCount })}
