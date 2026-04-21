@@ -67,14 +67,30 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Initialize Firebase Admin once.
+  // Resolve the storage bucket name once. The admin SDK may already be
+  // initialized elsewhere (e.g. by requireAdmin) WITHOUT storageBucket, in
+  // which case getStorage().bucket() would throw. We always pass the bucket
+  // name explicitly to be safe.
+  const storageBucketName = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
+  if (!storageBucketName) {
+    console.error('[ai-process] missing NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET');
+    return NextResponse.json(
+      { error: 'Server is missing NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET.' },
+      { status: 503 }
+    );
+  }
+
   if (!getApps().length) {
     const projectId = process.env.FIREBASE_PROJECT_ID;
     const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
     const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
-    const storageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
 
-    if (!projectId || !clientEmail || !privateKey || !storageBucket) {
+    if (!projectId || !clientEmail || !privateKey) {
+      console.error('[ai-process] firebase admin credentials missing', {
+        hasProjectId: !!projectId,
+        hasClientEmail: !!clientEmail,
+        hasPrivateKey: !!privateKey,
+      });
       return NextResponse.json(
         { error: 'Firebase Admin credentials are not fully configured on the server.' },
         { status: 503 }
@@ -83,12 +99,14 @@ export async function POST(req: NextRequest) {
 
     initializeApp({
       credential: cert({ projectId, clientEmail, privateKey }),
-      storageBucket,
+      storageBucket: storageBucketName,
     });
+    console.log('[ai-process] firebase-admin initialized with bucket', storageBucketName);
   }
 
   const db = getFirestore();
-  const bucket = getStorage().bucket();
+  const bucket = getStorage().bucket(storageBucketName);
+  console.log('[ai-process] start', { courseId, lessonId, language, bucket: bucket.name });
   const lessonRef = db.doc(`courses/${courseId}/lessons/${lessonId}`);
 
   const lessonSnap = await lessonRef.get();
@@ -131,6 +149,7 @@ export async function POST(req: NextRequest) {
     progress: number,
     message: string
   ) => {
+    console.log(`[ai-process] stage=${stage} progress=${progress}% — ${message}`);
     try {
       await lessonRef.update({
         aiProcessingStage: stage,
@@ -310,7 +329,8 @@ export async function POST(req: NextRequest) {
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
-    console.error('[ai-process] failed:', err);
+    const stack = err instanceof Error ? err.stack : undefined;
+    console.error('[ai-process] failed:', { message, stack, courseId, lessonId });
     try {
       await lessonRef.update({
         aiProcessingStatus: 'failed',
@@ -319,8 +339,8 @@ export async function POST(req: NextRequest) {
         aiProcessingError: message.slice(0, 500),
         captionsProcessing: false,
       });
-    } catch {
-      /* ignore */
+    } catch (writeErr) {
+      console.error('[ai-process] failed to record failure on lesson:', writeErr);
     }
     return NextResponse.json({ error: message }, { status: 500 });
   } finally {
