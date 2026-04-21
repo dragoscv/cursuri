@@ -39,6 +39,7 @@ import Accordion, { AccordionItem } from '../ui/Accordion';
 import Checkbox from '@/components/ui/Checkbox';
 import RichTextEditor from '@/components/Lesson/QA/RichTextEditor';
 import LessonAIProcessor from '@/components/Lesson/LessonAIProcessor';
+import AIFillButton from '@/components/Lesson/AIFillButton';
 
 // Hoisted so it isn't re-declared on every render
 interface QuizQuestion {
@@ -1378,6 +1379,16 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                       isInvalid={!!errors.lessonName}
                       errorMessage={errors.lessonName}
                       startContent={<FiBook className="text-[color:var(--ai-muted)]" />}
+                      endContent={
+                        <AIFillButton
+                          courseId={courseId}
+                          lessonId={lessonId}
+                          field="name"
+                          currentValue={lessonName}
+                          disabled={!transcription}
+                          onFill={(v) => setLessonName(typeof v === 'string' ? v : v.join(' '))}
+                        />
+                      }
                       className="bg-[color:var(--ai-card-bg)]/40"
                       classNames={{
                         label: 'text-[color:var(--ai-foreground)] font-medium',
@@ -1386,9 +1397,22 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                     <div className="h-0.5 w-full bg-gradient-to-r from-[color:var(--ai-primary)]/50 to-[color:var(--ai-secondary)]/50 mt-1 rounded-full"></div>
                   </div>
                   <div className="mb-6">
-                    <label className="block text-[color:var(--ai-foreground)] font-medium mb-2">
-                      {t('lessonDescription')}
-                    </label>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-[color:var(--ai-foreground)] font-medium">
+                        {t('lessonDescription')}
+                      </label>
+                      <AIFillButton
+                        variant="badge"
+                        courseId={courseId}
+                        lessonId={lessonId}
+                        field="description"
+                        currentValue={lessonDescription}
+                        disabled={!transcription}
+                        onFill={(v) =>
+                          setLessonDescription(typeof v === 'string' ? v : v.join('\n'))
+                        }
+                      />
+                    </div>
                     <RichTextEditor
                       value={lessonDescription}
                       onChange={(_text, html) => setLessonDescription(html)}
@@ -1398,9 +1422,20 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                   </div>
 
                   <div className="mb-6">
-                    <label className="block text-[color:var(--ai-foreground)] font-medium mb-2">
-                      {t('lessonContent')}
-                    </label>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-[color:var(--ai-foreground)] font-medium">
+                        {t('lessonContent')}
+                      </label>
+                      <AIFillButton
+                        variant="badge"
+                        courseId={courseId}
+                        lessonId={lessonId}
+                        field="content"
+                        currentValue={lessonContent}
+                        disabled={!transcription}
+                        onFill={(v) => setLessonContent(typeof v === 'string' ? v : v.join('\n'))}
+                      />
+                    </div>
                     <RichTextEditor
                       value={lessonContent}
                       onChange={(_text, html) => setLessonContent(html)}
@@ -1661,9 +1696,25 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                   )}
 
                   <div className="mb-6">
-                    <label className="block text-[color:var(--ai-foreground)] font-medium mb-2">
-                      {t('learningObjectives')}
-                    </label>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-[color:var(--ai-foreground)] font-medium">
+                        {t('learningObjectives')}
+                      </label>
+                      <AIFillButton
+                        variant="badge"
+                        courseId={courseId}
+                        lessonId={lessonId}
+                        field="objectives"
+                        currentValue={learningObjectives.join('\n')}
+                        disabled={!transcription}
+                        onFill={(v) => {
+                          const arr = Array.isArray(v) ? v : [v];
+                          // De-duplicate against existing objectives.
+                          const merged = Array.from(new Set([...learningObjectives, ...arr]));
+                          setLearningObjectives(merged);
+                        }}
+                      />
+                    </div>
                     <div className="flex mb-2">
                       <Input
                         placeholder={t('addLearningObjective')}
@@ -1702,9 +1753,24 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                   </div>
 
                   <div className="mb-6">
-                    <label className="block text-[color:var(--ai-foreground)] font-medium mb-2">
-                      {t('tags')}
-                    </label>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-[color:var(--ai-foreground)] font-medium">
+                        {t('tags')}
+                      </label>
+                      <AIFillButton
+                        variant="badge"
+                        courseId={courseId}
+                        lessonId={lessonId}
+                        field="tags"
+                        currentValue={lessonTags.join(', ')}
+                        disabled={!transcription}
+                        onFill={(v) => {
+                          const arr = Array.isArray(v) ? v : [v];
+                          const merged = Array.from(new Set([...lessonTags, ...arr]));
+                          setLessonTags(merged);
+                        }}
+                      />
+                    </div>
                     <div className="flex mb-2">
                       <Input
                         placeholder={t('addTag')}
@@ -1854,9 +1920,24 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                   </div>
 
                   <div className="mb-6">
-                    <label className="block text-[color:var(--ai-foreground)] font-medium mb-2">
-                      {t('seoKeywords')}
-                    </label>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-[color:var(--ai-foreground)] font-medium">
+                        {t('seoKeywords')}
+                      </label>
+                      <AIFillButton
+                        variant="badge"
+                        courseId={courseId}
+                        lessonId={lessonId}
+                        field="keywords"
+                        currentValue={seoKeywords.join(', ')}
+                        disabled={!transcription}
+                        onFill={(v) => {
+                          const arr = Array.isArray(v) ? v : [v];
+                          const merged = Array.from(new Set([...seoKeywords, ...arr]));
+                          setSeoKeywords(merged);
+                        }}
+                      />
+                    </div>
                     <div className="flex mb-2">
                       <Input
                         placeholder={t('addSeoKeyword')}
