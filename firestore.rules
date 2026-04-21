@@ -188,6 +188,12 @@ service cloud.firestore {
       allow read: if hasAdminAccess(); // Only admins can read audit logs
       allow write: if false; // Client writes not allowed, only server-side via Admin SDK
     }
+
+    // AI processing jobs - admin-only read; writes happen server-side via Admin SDK
+    match /aiJobs/{jobId} {
+      allow read: if hasAdminAccess();
+      allow write: if false;
+    }
     
     match /customers/{uid} {
       allow read, write: if request.auth.uid == uid;

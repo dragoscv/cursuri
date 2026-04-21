@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { doc, onSnapshot, query, collection, where, orderBy, limit } from 'firebase/firestore';
 import { firebaseAuth, firestoreDB } from '@/utils/firebase/firebase.config';
 import { useToast } from '@/components/Toast/ToastContext';
 import Button from '@/components/ui/Button';
@@ -35,12 +35,24 @@ interface LessonAiSnapshot {
     summary?: string;
     keyPoints?: string[];
     aiContentGeneratedAt?: number;
-    aiProcessingStatus?: 'idle' | 'processing' | 'completed' | 'failed';
-    aiProcessingStage?: AiStage;
-    aiProcessingProgress?: number;
-    aiProcessingMessage?: string;
-    aiProcessingError?: string | null;
+    aiProcessingStatus?: 'idle' | 'processing' | 'completed' | 'failed' | 'cancelled';
     captions?: Record<string, { url?: string }>;
+    currentAiJobId?: string;
+}
+
+interface AiJobSnapshot {
+    jobId: string;
+    status: 'queued' | 'processing' | 'completed' | 'failed' | 'cancelled';
+    stage?: AiStage;
+    progress?: number;
+    message?: string;
+    error?: string | null;
+    audioUrl?: string;
+    transcript?: string;
+    transcriptionLanguage?: string;
+    summary?: string;
+    keyPoints?: string[];
+    audioDurationSeconds?: number | null;
 }
 
 const LANGUAGES = [
@@ -70,15 +82,18 @@ const LessonAIProcessor: React.FC<LessonAIProcessorProps> = ({
     const [submitting, setSubmitting] = useState(false);
     const [cancelling, setCancelling] = useState(false);
     const [snap, setSnap] = useState<LessonAiSnapshot>({});
+    const [job, setJob] = useState<AiJobSnapshot | null>(null);
     const [modalOpen, setModalOpen] = useState(false);
-    const previousStatusRef = useRef<string | undefined>(undefined);
+    const previousJobStatusRef = useRef<string | undefined>(undefined);
     const modalOpenRef = useRef(false);
 
     useEffect(() => {
         modalOpenRef.current = modalOpen;
     }, [modalOpen]);
 
-    // Live-subscribe to lesson document so the panel updates as the route writes back.
+    // Subscribe to the lesson document — we mostly need `currentAiJobId` and
+    // the persisted result fields (transcription, summary, audioUrl) used to
+    // render the "previously generated" state.
     useEffect(() => {
         if (!courseId || !lessonId) return;
         const ref = doc(firestoreDB, `courses/${courseId}/lessons/${lessonId}`);
@@ -95,56 +110,98 @@ const LessonAIProcessor: React.FC<LessonAIProcessorProps> = ({
                 keyPoints: d.keyPoints,
                 aiContentGeneratedAt: d.aiContentGeneratedAt,
                 aiProcessingStatus: d.aiProcessingStatus,
-                aiProcessingStage: d.aiProcessingStage,
-                aiProcessingProgress: d.aiProcessingProgress,
-                aiProcessingMessage: d.aiProcessingMessage,
-                aiProcessingError: d.aiProcessingError,
                 captions: d.captions,
+                currentAiJobId: d.currentAiJobId,
             });
             if (d.transcriptionLanguage) setLanguage(d.transcriptionLanguage);
+        });
+        return () => unsub();
+    }, [courseId, lessonId]);
 
-            // Auto-open the modal if generation is in progress when we mount
-            // (e.g., page refresh mid-run).
-            if (d.aiProcessingStatus === 'processing' && !modalOpenRef.current) {
-                setModalOpen(true);
+    // Subscribe to the active job (if any) OR to the most recent terminal
+    // job for this lesson so we can show its result/error without storing
+    // the jobId in the lesson doc forever.
+    useEffect(() => {
+        if (!lessonId) return;
+        // If the lesson points at a specific in-flight job, track that doc
+        // directly. Otherwise fall back to the most recent job for the
+        // lesson so post-completion state stays available.
+        if (snap.currentAiJobId) {
+            const jobRef = doc(firestoreDB, `aiJobs/${snap.currentAiJobId}`);
+            const unsub = onSnapshot(jobRef, (s) => {
+                if (!s.exists()) {
+                    setJob(null);
+                    return;
+                }
+                setJob({ jobId: s.id, ...(s.data() as Omit<AiJobSnapshot, 'jobId'>) });
+            });
+            return () => unsub();
+        }
+
+        const q = query(
+            collection(firestoreDB, 'aiJobs'),
+            where('lessonId', '==', lessonId),
+            orderBy('createdAt', 'desc'),
+            limit(1)
+        );
+        const unsub = onSnapshot(q, (qs) => {
+            const docSnap = qs.docs[0];
+            if (!docSnap) {
+                setJob(null);
+                return;
             }
+            setJob({ jobId: docSnap.id, ...(docSnap.data() as Omit<AiJobSnapshot, 'jobId'>) });
+        });
+        return () => unsub();
+    }, [lessonId, snap.currentAiJobId]);
 
-            // Toast on transitions to completed/failed when the modal is closed.
-            const prev = previousStatusRef.current;
-            if (
-                prev === 'processing' &&
-                d.aiProcessingStatus === 'completed' &&
-                !modalOpenRef.current
-            ) {
+    // Auto-open the modal if a job is running when we mount/refresh.
+    useEffect(() => {
+        if (!job) return;
+        if (
+            (job.status === 'queued' || job.status === 'processing') &&
+            !modalOpenRef.current
+        ) {
+            setModalOpen(true);
+        }
+        // Toast on transition to terminal state when the modal is closed.
+        const prev = previousJobStatusRef.current;
+        if (prev && prev !== job.status && !modalOpenRef.current) {
+            if (job.status === 'completed') {
                 showToast({
                     type: 'success',
                     title: 'AI assets generated',
                     message: 'Audio, captions and summary saved on the lesson.',
                     duration: 5000,
                 });
-            } else if (
-                prev === 'processing' &&
-                d.aiProcessingStatus === 'failed' &&
-                !modalOpenRef.current
-            ) {
+            } else if (job.status === 'failed') {
                 showToast({
                     type: 'error',
                     title: 'AI generation failed',
-                    message: d.aiProcessingError || 'Unknown error',
+                    message: job.error || job.message || 'Unknown error',
                     duration: 6000,
                 });
+            } else if (job.status === 'cancelled') {
+                showToast({
+                    type: 'info',
+                    title: 'AI generation cancelled',
+                    message: 'The job was cancelled.',
+                    duration: 4000,
+                });
             }
-            previousStatusRef.current = d.aiProcessingStatus;
-            // Reset cancelling flag once the job is no longer processing.
-            if (d.aiProcessingStatus !== 'processing') {
-                setCancelling(false);
-            }
-        });
-        return () => unsub();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [courseId, lessonId]);
+        }
+        previousJobStatusRef.current = job.status;
+        if (job.status !== 'processing' && job.status !== 'queued') {
+            setCancelling(false);
+        }
+    }, [job, showToast]);
 
-    const status = snap.aiProcessingStatus || 'idle';
+    const status: 'idle' | 'processing' | 'completed' | 'failed' = (() => {
+        if (job?.status === 'queued' || job?.status === 'processing') return 'processing';
+        if (job?.status === 'failed' || job?.status === 'cancelled') return 'failed';
+        if (job?.status === 'completed' || snap.aiContentGeneratedAt) return 'completed';
+        return 'idle';
+    })();
     const isProcessing = status === 'processing' || submitting;
 
     const generatedAt = useMemo(() => {
@@ -194,30 +251,33 @@ const LessonAIProcessor: React.FC<LessonAIProcessorProps> = ({
                 },
                 body: JSON.stringify({ courseId, lessonId, videoUrl, language }),
             });
-            // The Firestore snapshot listener drives all UI updates from here on;
-            // we only surface a toast if the HTTP call itself fails before the
-            // route had a chance to write a 'failed' status.
             if (!res.ok) {
                 const data = (await res.json().catch(() => ({}))) as { error?: string };
                 showToast({
                     type: 'error',
-                    title: 'Generation failed',
+                    title: 'Could not enqueue job',
                     message: data.error || `HTTP ${res.status}`,
                     duration: 6000,
+                });
+            } else {
+                showToast({
+                    type: 'success',
+                    title: 'Job queued',
+                    message:
+                        'You can close this dialog and navigate freely — progress is in the AI Jobs tray.',
+                    duration: 4000,
                 });
             }
         } catch (err) {
             const msg = err instanceof Error ? err.message : 'Unexpected error';
-            showToast({ type: 'error', title: 'Generation failed', message: msg, duration: 6000 });
+            showToast({ type: 'error', title: 'Could not enqueue job', message: msg, duration: 6000 });
         } finally {
             setSubmitting(false);
         }
     };
 
-    const captionLanguages = snap.captions ? Object.keys(snap.captions) : [];
-
     const handleCancel = async () => {
-        if (!lessonId || cancelling) return;
+        if (!job?.jobId || cancelling) return;
         setCancelling(true);
         try {
             const token = await firebaseAuth.currentUser?.getIdToken();
@@ -232,7 +292,7 @@ const LessonAIProcessor: React.FC<LessonAIProcessorProps> = ({
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ courseId, lessonId }),
+                body: JSON.stringify({ jobId: job.jobId }),
             });
             if (!res.ok) {
                 const data = (await res.json().catch(() => ({}))) as { error?: string };
@@ -258,18 +318,20 @@ const LessonAIProcessor: React.FC<LessonAIProcessorProps> = ({
         }
     };
 
+    const captionLanguages = snap.captions ? Object.keys(snap.captions) : [];
+
     const modalState: AiProgressState = {
         status,
-        stage: snap.aiProcessingStage,
-        progress: snap.aiProcessingProgress,
-        message: snap.aiProcessingMessage,
-        error: snap.aiProcessingError ?? null,
-        transcription: snap.transcription,
-        transcriptionLanguage: snap.transcriptionLanguage,
-        summary: snap.summary,
-        keyPoints: snap.keyPoints,
-        audioUrl: snap.audioUrl,
-        audioDurationSeconds: snap.audioDurationSeconds,
+        stage: job?.stage,
+        progress: job?.progress,
+        message: job?.message,
+        error: job?.error ?? null,
+        transcription: job?.transcript ?? snap.transcription,
+        transcriptionLanguage: job?.transcriptionLanguage ?? snap.transcriptionLanguage,
+        summary: job?.summary ?? snap.summary,
+        keyPoints: job?.keyPoints ?? snap.keyPoints,
+        audioUrl: job?.audioUrl ?? snap.audioUrl,
+        audioDurationSeconds: job?.audioDurationSeconds ?? snap.audioDurationSeconds,
         captions: snap.captions,
     };
 
@@ -285,9 +347,9 @@ const LessonAIProcessor: React.FC<LessonAIProcessorProps> = ({
                     </h3>
                     <p className="text-xs text-[color:var(--ai-muted)] mt-1 max-w-prose">
                         Extracts an MP3 audio track from the uploaded video, transcribes it with Azure
-                        Speech, generates WEBVTT captions, and summarizes it via Azure OpenAI. All
-                        artifacts are saved on the lesson and displayed to learners on the public lesson
-                        page.
+                        Speech, generates WEBVTT captions, and summarizes it via Azure OpenAI. Jobs run
+                        on the server — you can close this dialog and navigate freely; the global AI
+                        Jobs tray (top bar) shows progress for every running job.
                     </p>
                 </div>
 
@@ -297,13 +359,14 @@ const LessonAIProcessor: React.FC<LessonAIProcessorProps> = ({
                             label=""
                             aria-label="Transcription language"
                             selectedKeys={[language]}
-                            onSelectionChange={(key: any) => {
-                                // Our custom Select returns a single string key.
-                                // (HeroUI returns a Set; tolerate both.)
+                            onSelectionChange={(key: unknown) => {
                                 let k: string | undefined;
                                 if (typeof key === 'string') {
                                     k = key;
-                                } else if (key && typeof (key as Iterable<string>)[Symbol.iterator] === 'function') {
+                                } else if (
+                                    key &&
+                                    typeof (key as Iterable<string>)[Symbol.iterator] === 'function'
+                                ) {
                                     k = Array.from(key as Iterable<string>)[0];
                                 }
                                 if (k) setLanguage(k);
@@ -343,7 +406,7 @@ const LessonAIProcessor: React.FC<LessonAIProcessorProps> = ({
                         className="inline-flex items-center gap-2 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 px-3 py-1 font-medium hover:bg-amber-500/20 transition cursor-pointer"
                     >
                         <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
-                        Processing… ({snap.aiProcessingProgress ?? 0}%) · click for details
+                        Processing… ({job?.progress ?? 0}%) · click for details
                     </button>
                 )}
                 {status === 'completed' && (
@@ -363,7 +426,7 @@ const LessonAIProcessor: React.FC<LessonAIProcessorProps> = ({
                         className="inline-flex items-center gap-2 rounded-full bg-red-500/10 text-red-600 dark:text-red-400 px-3 py-1 font-medium hover:bg-red-500/20 transition cursor-pointer"
                     >
                         <FiAlertCircle size={14} />
-                        Failed · click to view
+                        {job?.status === 'cancelled' ? 'Cancelled' : 'Failed'} · click to view
                     </button>
                 )}
                 {generatedAt && (
@@ -395,7 +458,11 @@ const LessonAIProcessor: React.FC<LessonAIProcessorProps> = ({
                 isOpen={modalOpen}
                 onClose={() => setModalOpen(false)}
                 onApply={onApply}
-                onCancel={handleCancel}
+                onCancel={
+                    job && (job.status === 'queued' || job.status === 'processing')
+                        ? handleCancel
+                        : undefined
+                }
                 cancelling={cancelling}
                 state={modalState}
                 language={language}

@@ -1,10 +1,13 @@
 /**
  * POST /api/admin/lessons/ai-process/cancel
  *
- * Admin-only. Sets the `aiProcessingCancelRequested` flag on a lesson so the
- * long-running ai-process route can stop at its next checkpoint.
+ * Body: { jobId: string }
  *
- * Body: { courseId: string, lessonId: string }
+ * Sets `cancelRequested: true` on `aiJobs/{jobId}`. The running worker
+ * polls this flag every second, aborts in-flight HTTP, kills ffmpeg and
+ * exits with status `cancelled`. If the worker is already gone (for
+ * example because the lambda was killed) we mark the job as cancelled
+ * directly here so the UI doesn't get stuck.
  */
 
 import { NextResponse, type NextRequest } from 'next/server';
@@ -12,14 +15,13 @@ import { NextResponse, type NextRequest } from 'next/server';
 export const runtime = 'nodejs';
 
 interface CancelBody {
-    courseId?: string;
-    lessonId?: string;
+    jobId?: string;
 }
 
 export async function POST(req: NextRequest) {
     const { requireAdmin } = await import('@/utils/api/auth');
     const { initializeApp, getApps, cert } = await import('firebase-admin/app');
-    const { getFirestore } = await import('firebase-admin/firestore');
+    const { getFirestore, FieldValue } = await import('firebase-admin/firestore');
 
     const authResult = await requireAdmin(req);
     if (authResult instanceof NextResponse) return authResult;
@@ -31,13 +33,9 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
     }
 
-    const courseId = body.courseId?.trim();
-    const lessonId = body.lessonId?.trim();
-    if (!courseId || !lessonId) {
-        return NextResponse.json(
-            { error: 'Missing required fields: courseId, lessonId' },
-            { status: 400 }
-        );
+    const jobId = body.jobId?.trim();
+    if (!jobId) {
+        return NextResponse.json({ error: 'Missing required field: jobId' }, { status: 400 });
     }
 
     if (!getApps().length) {
@@ -57,25 +55,57 @@ export async function POST(req: NextRequest) {
     }
 
     const db = getFirestore();
-    const lessonRef = db.doc(`courses/${courseId}/lessons/${lessonId}`);
-    const lessonSnap = await lessonRef.get();
-    if (!lessonSnap.exists) {
-        return NextResponse.json({ error: 'Lesson not found' }, { status: 404 });
+    const jobRef = db.doc(`aiJobs/${jobId}`);
+    const jobSnap = await jobRef.get();
+    if (!jobSnap.exists) {
+        return NextResponse.json({ error: 'Job not found' }, { status: 404 });
     }
-    const data = lessonSnap.data() || {};
-    if (data.aiProcessingStatus !== 'processing') {
+    const job = jobSnap.data() as {
+        status?: string;
+        courseId?: string;
+        lessonId?: string;
+        heartbeatAt?: number;
+    };
+
+    if (job.status === 'completed' || job.status === 'failed' || job.status === 'cancelled') {
         return NextResponse.json(
-            { error: 'No AI generation is currently running on this lesson.' },
-            { status: 409 }
+            { success: true, status: job.status, alreadyTerminal: true },
+            { status: 200 }
         );
     }
 
-    await lessonRef.update({
-        aiProcessingCancelRequested: true,
-        aiProcessingMessage: 'Cancellation requested\u2026',
+    // Always set the flag — the worker poller will pick it up and abort.
+    await jobRef.update({
+        cancelRequested: true,
+        message: 'Cancellation requested…',
     });
 
-    console.log('[ai-process/cancel] flagged', { courseId, lessonId });
+    // If the worker has been silent for >30s assume the lambda is dead and
+    // mark the job as cancelled ourselves so the UI is not stuck.
+    const stale = job.heartbeatAt && Date.now() - job.heartbeatAt > 30_000;
+    if (stale) {
+        await jobRef.update({
+            status: 'cancelled',
+            stage: 'cancelled',
+            message: 'Cancelled by admin (worker was unresponsive).',
+            error: 'Cancelled by admin',
+            finishedAt: Date.now(),
+            cancelRequested: false,
+        });
+        if (job.courseId && job.lessonId) {
+            try {
+                await db.doc(`courses/${job.courseId}/lessons/${job.lessonId}`).update({
+                    aiProcessingStatus: 'cancelled',
+                    aiProcessingError: 'Cancelled by admin',
+                    captionsProcessing: false,
+                    currentAiJobId: FieldValue.delete(),
+                });
+            } catch {
+                /* ignore */
+            }
+        }
+    }
 
-    return NextResponse.json({ success: true });
+    console.log('[ai-process/cancel] requested', { jobId, stale });
+    return NextResponse.json({ success: true, stale });
 }

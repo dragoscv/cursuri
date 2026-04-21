@@ -13,6 +13,7 @@ import { firebaseAuth } from '@/utils/firebase/firebase.config';
 import { useRouter } from 'next/navigation';
 
 import AdminBreadcrumbs from './AdminBreadcrumbs';
+import AdminAIJobsTray from './AdminAIJobsTray';
 import { useAdminShell } from './useAdminShell';
 import { IconMenu, IconCommand, IconExternal } from './icons';
 
@@ -100,6 +101,9 @@ const AdminTopbar: React.FC = () => {
                         <IconExternal />
                     </Link>
                 </Tooltip>
+
+                {/* AI processing jobs tray */}
+                <AdminAIJobsTray />
 
                 {/* Notifications (placeholder) */}
                 <Tooltip content="Notifications" placement="bottom">
