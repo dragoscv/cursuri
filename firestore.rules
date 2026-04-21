@@ -89,7 +89,12 @@ service cloud.firestore {
     match /{path=**}/users/{userId} {
       allow read: if hasAdminAccess();
     }
-    
+
+    // Allow public collectionGroup queries on lessons (e.g. homepage "latest lessons")
+    match /{path=**}/lessons/{lessonId} {
+      allow read: if true;
+    }
+
     match /courses/{courseId} {
       allow read: if true;
       allow write: if hasAdminAccess();
