@@ -119,6 +119,33 @@ export async function runAiJob(jobId: string): Promise<void> {
 
     console.log('[ai-job] start', { jobId, courseId, lessonId, language });
 
+    // Best-effort: sweep stale tmp dirs from previously crashed jobs so we
+    // don't accumulate gigabytes on warm serverless instances and trigger
+    // ENOSPC on subsequent runs.
+    try {
+        const tmpRoot = os.tmpdir();
+        const entries = await fs.promises.readdir(tmpRoot);
+        const cutoff = Date.now() - 30 * 60 * 1000; // 30 min
+        await Promise.all(
+            entries
+                .filter((e) => e.startsWith('lesson-ai-'))
+                .map(async (name) => {
+                    const full = path.join(tmpRoot, name);
+                    try {
+                        const stat = await fs.promises.stat(full);
+                        if (stat.mtimeMs < cutoff) {
+                            await fs.promises.rm(full, { recursive: true, force: true });
+                            console.log('[ai-job] swept stale tmp dir', { full });
+                        }
+                    } catch {
+                        /* ignore */
+                    }
+                })
+        );
+    } catch (e) {
+        console.warn('[ai-job] tmp sweep failed:', e);
+    }
+
     await jobRef.update({
         status: 'processing',
         stage: 'queued',
@@ -293,6 +320,13 @@ export async function runAiJob(jobId: string): Promise<void> {
         activeFfmpegCmd = null;
         checkCancelled();
 
+        // Free disk: source video is no longer needed once the MP3 exists.
+        try {
+            await fs.promises.unlink(videoPath);
+        } catch (e) {
+            console.warn(`[ai-job ${jobId}] could not remove source video:`, e);
+        }
+
         // 3) Transcribe ----------------------------------------------------------
         const mp3Bytes = (await fs.promises.stat(mp3Path)).size;
         await setStage(
@@ -324,6 +358,13 @@ export async function runAiJob(jobId: string): Promise<void> {
             clearInterval(transcribeTicker);
         }
         checkCancelled();
+
+        // Free disk: MP3 is no longer needed after transcription.
+        try {
+            await fs.promises.unlink(mp3Path);
+        } catch (e) {
+            console.warn(`[ai-job ${jobId}] could not remove mp3:`, e);
+        }
 
         // 4) Summarize -----------------------------------------------------------
         await setStage(
