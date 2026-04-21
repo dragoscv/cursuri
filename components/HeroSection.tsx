@@ -111,7 +111,11 @@ const HeroSection = memo(function HeroSection() {
 
   // Create floating particles animation (must be before early return - React Hooks rules)
   useEffect(() => {
-    if (!particlesRef.current) return;
+    const container = particlesRef.current;
+    if (!container) return;
+
+    let cancelled = false;
+    const timeouts = new Set<ReturnType<typeof setTimeout>>();
 
     // Create animation style only once
     if (!document.getElementById('hero-particles-animation-style')) {
@@ -141,6 +145,7 @@ const HeroSection = memo(function HeroSection() {
     }
 
     const createParticle = () => {
+      if (cancelled || !particlesRef.current) return;
       const particle = document.createElement('div');
 
       // Random size between 5px and 15px
@@ -159,12 +164,18 @@ const HeroSection = memo(function HeroSection() {
       particle.style.animation = `float-particle ${Math.random() * 10 + 10}s linear infinite`;
 
       // Add to the DOM
-      particlesRef.current?.appendChild(particle);
+      particlesRef.current.appendChild(particle);
 
-      // Remove after animation
-      setTimeout(() => {
-        particle.remove();
+      // Remove after animation - guard against unmount race that caused
+      // "Failed to execute 'removeChild': The node to be removed is not a child of this node"
+      const t = setTimeout(() => {
+        timeouts.delete(t);
+        if (cancelled) return;
+        if (particle.parentNode === particlesRef.current) {
+          particle.remove();
+        }
       }, 20000);
+      timeouts.add(t);
     };
 
     // Create particles periodically, but limit to fewer particles (every 800ms instead of 300ms)
@@ -182,7 +193,17 @@ const HeroSection = memo(function HeroSection() {
     }
 
     return () => {
+      cancelled = true;
       clearInterval(interval);
+      timeouts.forEach((id) => clearTimeout(id));
+      timeouts.clear();
+      // Clear all manually injected children so React's reconciliation never
+      // tries to removeChild a node already detached by a stale timeout.
+      if (container.isConnected) {
+        while (container.firstChild) {
+          container.removeChild(container.firstChild);
+        }
+      }
     };
   }, []);
 
