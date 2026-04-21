@@ -68,6 +68,7 @@ const LessonAIProcessor: React.FC<LessonAIProcessorProps> = ({
     const { showToast } = useToast();
     const [language, setLanguage] = useState('en-US');
     const [submitting, setSubmitting] = useState(false);
+    const [cancelling, setCancelling] = useState(false);
     const [snap, setSnap] = useState<LessonAiSnapshot>({});
     const [modalOpen, setModalOpen] = useState(false);
     const previousStatusRef = useRef<string | undefined>(undefined);
@@ -134,6 +135,10 @@ const LessonAIProcessor: React.FC<LessonAIProcessorProps> = ({
                 });
             }
             previousStatusRef.current = d.aiProcessingStatus;
+            // Reset cancelling flag once the job is no longer processing.
+            if (d.aiProcessingStatus !== 'processing') {
+                setCancelling(false);
+            }
         });
         return () => unsub();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -210,6 +215,48 @@ const LessonAIProcessor: React.FC<LessonAIProcessorProps> = ({
     };
 
     const captionLanguages = snap.captions ? Object.keys(snap.captions) : [];
+
+    const handleCancel = async () => {
+        if (!lessonId || cancelling) return;
+        setCancelling(true);
+        try {
+            const token = await firebaseAuth.currentUser?.getIdToken();
+            if (!token) {
+                showToast({ type: 'error', title: 'Not signed in', message: 'Please sign in again.' });
+                setCancelling(false);
+                return;
+            }
+            const res = await fetch('/api/admin/lessons/ai-process/cancel', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ courseId, lessonId }),
+            });
+            if (!res.ok) {
+                const data = (await res.json().catch(() => ({}))) as { error?: string };
+                showToast({
+                    type: 'error',
+                    title: 'Cancel failed',
+                    message: data.error || `HTTP ${res.status}`,
+                    duration: 5000,
+                });
+                setCancelling(false);
+                return;
+            }
+            showToast({
+                type: 'info',
+                title: 'Cancelling…',
+                message: 'Asked the server to stop. The job will end at the next safe checkpoint.',
+                duration: 4000,
+            });
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : 'Unexpected error';
+            showToast({ type: 'error', title: 'Cancel failed', message: msg, duration: 5000 });
+            setCancelling(false);
+        }
+    };
 
     const modalState: AiProgressState = {
         status,
@@ -348,6 +395,8 @@ const LessonAIProcessor: React.FC<LessonAIProcessorProps> = ({
                 isOpen={modalOpen}
                 onClose={() => setModalOpen(false)}
                 onApply={onApply}
+                onCancel={handleCancel}
+                cancelling={cancelling}
                 state={modalState}
                 language={language}
             />

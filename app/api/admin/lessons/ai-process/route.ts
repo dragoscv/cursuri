@@ -133,8 +133,38 @@ export async function POST(req: NextRequest) {
     aiProcessingStage: 'queued',
     aiProcessingProgress: 1,
     aiProcessingMessage: 'Preparing AI pipeline…',
+    aiProcessingCancelRequested: false,
     captionsProcessing: true,
   });
+
+  // Cooperative cancellation. We poll the lesson doc every 2s and look for
+  // `aiProcessingCancelRequested = true`. When set, we abort in-flight HTTP
+  // calls (download / Fast Transcription) via AbortController and throw at
+  // the next checkpoint in the pipeline so the route can clean up.
+  class CancelledError extends Error {
+    constructor() {
+      super('Cancelled by admin');
+      this.name = 'CancelledError';
+    }
+  }
+  const abortController = new AbortController();
+  let cancelRequested = false;
+  let activeFfmpegCmd: { kill: (signal?: string) => void } | null = null;
+  const cancelPoller = setInterval(async () => {
+    try {
+      const s = await lessonRef.get();
+      if (s.exists && s.data()?.aiProcessingCancelRequested === true) {
+        cancelRequested = true;
+        try { abortController.abort(); } catch { /* ignore */ }
+        try { activeFfmpegCmd?.kill('SIGKILL'); } catch { /* ignore */ }
+      }
+    } catch {
+      /* ignore poll errors */
+    }
+  }, 2000);
+  const checkCancelled = () => {
+    if (cancelRequested) throw new CancelledError();
+  };
 
   // Helper to push progress updates that the admin UI subscribes to.
   const setStage = async (
@@ -194,7 +224,7 @@ export async function POST(req: NextRequest) {
     // 1) Stream-download the video to disk so we never hold a multi-GB buffer
     //    in memory.
     await setStage('downloading', 5, 'Downloading the lesson video…');
-    const res = await fetch(videoUrl);
+    const res = await fetch(videoUrl, { signal: abortController.signal });
     if (!res.ok || !res.body) {
       throw new Error(`Failed to download video: ${res.status} ${res.statusText}`);
     }
@@ -222,6 +252,8 @@ export async function POST(req: NextRequest) {
       }
     });
     await pipeline(downloadStream, outStream);
+
+    checkCancelled();
 
     const videoBytes = totalBytes || (await fs.promises.stat(videoPath)).size;
 
@@ -277,9 +309,18 @@ export async function POST(req: NextRequest) {
           );
         })
         .on('end', () => resolve())
-        .on('error', (err: Error) => reject(new Error(`ffmpeg failed: ${err.message}`)));
+        .on('error', (err: Error) => {
+          if (cancelRequested) {
+            reject(new CancelledError());
+          } else {
+            reject(new Error(`ffmpeg failed: ${err.message}`));
+          }
+        });
+      activeFfmpegCmd = cmd as unknown as { kill: (signal?: string) => void };
       cmd.save(mp3Path);
     });
+    activeFfmpegCmd = null;
+    checkCancelled();
 
     // 3) Transcribe with Azure Fast Transcription (REST). Synchronous, up to
     //    ~40× real-time. We send the MP3 we just produced (small, ~30 MB/h).
@@ -307,10 +348,16 @@ export async function POST(req: NextRequest) {
     let transcription;
     try {
       const { transcribeAudioFile } = await import('@/utils/azure/speech');
-      transcription = await transcribeAudioFile(mp3Path, language);
+      transcription = await transcribeAudioFile(mp3Path, language, {
+        signal: abortController.signal,
+      });
+    } catch (e) {
+      if (cancelRequested) throw new CancelledError();
+      throw e;
     } finally {
       clearInterval(transcribeTicker);
     }
+    checkCancelled();
 
     // 4) Summarize with Azure OpenAI
     await setStage(
@@ -384,7 +431,10 @@ export async function POST(req: NextRequest) {
       aiProcessingError: null,
     };
 
-    await lessonRef.update(update);
+    await lessonRef.update({
+      ...update,
+      aiProcessingCancelRequested: false,
+    });
 
     return NextResponse.json({
       success: true,
@@ -399,22 +449,38 @@ export async function POST(req: NextRequest) {
       audioDurationSeconds: audioDurationSeconds ?? null,
     });
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error';
+    const isCancel = err instanceof CancelledError;
+    const message = isCancel
+      ? 'Cancelled by admin'
+      : err instanceof Error
+        ? err.message
+        : 'Unknown error';
     const stack = err instanceof Error ? err.stack : undefined;
-    console.error('[ai-process] failed:', { message, stack, courseId, lessonId });
+    if (isCancel) {
+      console.warn('[ai-process] cancelled by admin', { courseId, lessonId });
+    } else {
+      console.error('[ai-process] failed:', { message, stack, courseId, lessonId });
+    }
     try {
       await lessonRef.update({
         aiProcessingStatus: 'failed',
         aiProcessingStage: 'failed',
-        aiProcessingMessage: `Failed: ${message.slice(0, 200)}`,
-        aiProcessingError: message.slice(0, 500),
+        aiProcessingMessage: isCancel
+          ? 'Cancelled by admin.'
+          : `Failed: ${message.slice(0, 200)}`,
+        aiProcessingError: isCancel ? 'Cancelled by admin' : message.slice(0, 500),
+        aiProcessingCancelRequested: false,
         captionsProcessing: false,
       });
     } catch (writeErr) {
       console.error('[ai-process] failed to record failure on lesson:', writeErr);
     }
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json(
+      { error: message, cancelled: isCancel },
+      { status: isCancel ? 499 : 500 }
+    );
   } finally {
+    clearInterval(cancelPoller);
     try {
       await fs.promises.rm(tempDir, { recursive: true, force: true });
     } catch {

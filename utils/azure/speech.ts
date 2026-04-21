@@ -111,7 +111,10 @@ interface FastTranscriptionResponse {
 export async function transcribeAudioFile(
     audioPath: string,
     language: string = 'en-US',
-    options: { profanityFilter?: 'None' | 'Masked' | 'Removed' | 'Tags' } = {}
+    options: {
+        profanityFilter?: 'None' | 'Masked' | 'Removed' | 'Tags';
+        signal?: AbortSignal;
+    } = {}
 ): Promise<TranscriptionResult> {
     const key = process.env.AZURE_SPEECH_KEY;
     const region = process.env.AZURE_SPEECH_REGION;
@@ -165,6 +168,7 @@ export async function transcribeAudioFile(
             // Do NOT set Content-Type — fetch sets the multipart boundary.
         },
         body: form,
+        signal: options.signal,
     });
     const elapsedMs = Date.now() - started;
 

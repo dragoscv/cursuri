@@ -63,6 +63,8 @@ interface Props {
     isOpen: boolean;
     onClose: () => void;
     onApply?: (data: { transcription?: string }) => void;
+    onCancel?: () => void;
+    cancelling?: boolean;
     state: AiProgressState;
     language: string;
 }
@@ -111,6 +113,8 @@ const LessonAIProgressModal: React.FC<Props> = ({
     isOpen,
     onClose,
     onApply,
+    onCancel,
+    cancelling = false,
     state,
     language,
 }) => {
@@ -169,9 +173,25 @@ const LessonAIProgressModal: React.FC<Props> = ({
             Close
         </Button>
     ) : (
-        <span className="text-xs text-[color:var(--ai-muted)] mr-auto">
-            You can safely close this dialog — the job continues on the server.
-        </span>
+        <>
+            <span className="text-xs text-[color:var(--ai-muted)] mr-auto">
+                You can safely close this dialog — the job continues on the server.
+            </span>
+            <Button variant="bordered" onPress={onClose}>
+                Close
+            </Button>
+            {onCancel && (
+                <Button
+                    color="danger"
+                    variant="bordered"
+                    isLoading={cancelling}
+                    isDisabled={cancelling}
+                    onPress={onCancel}
+                >
+                    {cancelling ? 'Cancelling…' : 'Cancel job'}
+                </Button>
+            )}
+        </>
     );
 
     return (
@@ -183,8 +203,8 @@ const LessonAIProgressModal: React.FC<Props> = ({
             title={title}
             subtitle={subtitle}
             icon={icon}
-            isDismissable={!isRunning}
-            hideCloseButton={isRunning}
+            isDismissable={true}
+            hideCloseButton={false}
             scrollBehavior="inside"
             footer={footer}
             bodyClassName="space-y-4"
