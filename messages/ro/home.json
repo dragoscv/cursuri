@@ -230,6 +230,15 @@
     "title": "Recomandate Pentru Tine",
     "subtitle": "Recomandări personalizate de cursuri bazate pe interesele tale"
   },
+  "latestLessons": {
+    "title": "Proaspăt din Studio",
+    "subtitle": "Cele mai noi lecții publicate — intră și continuă să înveți.",
+    "lessonsHeading": "Cele Mai Noi Lecții",
+    "newestFirst": "Cele mai noi primele",
+    "empty": "Nicio lecție publicată încă.",
+    "noRecommendations": "Nicio recomandare disponibilă încă.",
+    "subscribeToWatch": "Abonează-te ca să vizionezi"
+  },
   "instructorHighlights": {
     "title": "Cunoaște Instructorii Noștri Experți",
     "subtitle": "Învață de la profesioniști din industrie cu experiență reală",

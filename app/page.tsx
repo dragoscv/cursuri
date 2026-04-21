@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 import HeroSection from '@/components/HeroSection';
-import RecommendedCoursesSection from '@/components/RecommendedCoursesSection';
+import LatestLessonsSection from '@/components/Home/LatestLessonsSection';
 import SectionSkeleton from '@/components/shared/SectionSkeleton';
 import AIContent from '@/components/shared/AIContent';
 import { constructMetadata } from '@/utils/metadata';
@@ -110,8 +110,8 @@ export default function Home() {
       {/* Hero section - Critical above-the-fold content */}
       <HeroSection />
 
-      {/* Recommended courses section - Critical above-the-fold content */}
-      <RecommendedCoursesSection />
+      {/* Latest lessons + recommended courses sidebar */}
+      <LatestLessonsSection />
 
       {/* Statistics section */}
       <Suspense fallback={<SectionSkeleton height="h-96" />}>

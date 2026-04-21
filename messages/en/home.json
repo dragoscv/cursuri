@@ -230,6 +230,15 @@
     "title": "Recommended for You",
     "subtitle": "Personalized course recommendations based on your interests"
   },
+  "latestLessons": {
+    "title": "Fresh from the Studio",
+    "subtitle": "The newest lessons we just published — jump in and keep learning.",
+    "lessonsHeading": "Latest Lessons",
+    "newestFirst": "Newest first",
+    "empty": "No lessons published yet.",
+    "noRecommendations": "No course recommendations available yet.",
+    "subscribeToWatch": "Subscribe to watch"
+  },
   "instructorHighlights": {
     "title": "Meet Our Expert Instructors",
     "subtitle": "Learn from industry professionals with real-world experience",
