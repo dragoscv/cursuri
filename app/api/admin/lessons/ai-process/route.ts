@@ -112,8 +112,35 @@ export async function POST(req: NextRequest) {
   await lessonRef.update({
     aiProcessingStatus: 'processing',
     aiProcessingError: null,
+    aiProcessingStage: 'queued',
+    aiProcessingProgress: 1,
+    aiProcessingMessage: 'Preparing AI pipeline…',
     captionsProcessing: true,
   });
+
+  // Helper to push progress updates that the admin UI subscribes to.
+  const setStage = async (
+    stage:
+      | 'queued'
+      | 'downloading'
+      | 'extracting_audio'
+      | 'transcribing'
+      | 'summarizing'
+      | 'uploading'
+      | 'finalizing',
+    progress: number,
+    message: string
+  ) => {
+    try {
+      await lessonRef.update({
+        aiProcessingStage: stage,
+        aiProcessingProgress: progress,
+        aiProcessingMessage: message,
+      });
+    } catch (e) {
+      console.warn('[ai-process] progress write failed:', e);
+    }
+  };
 
   const tempDir = path.join(os.tmpdir(), `lesson-ai-${uuidv4()}`);
   await fs.promises.mkdir(tempDir, { recursive: true });
@@ -125,14 +152,21 @@ export async function POST(req: NextRequest) {
 
   try {
     // 1) Download video
+    await setStage('downloading', 5, 'Downloading the lesson video…');
     const res = await fetch(videoUrl);
     if (!res.ok || !res.body) {
       throw new Error(`Failed to download video: ${res.status} ${res.statusText}`);
     }
     const arrayBuf = await res.arrayBuffer();
     await fs.promises.writeFile(videoPath, Buffer.from(arrayBuf));
+    const videoBytes = arrayBuf.byteLength;
 
     // 2) Extract audio (WAV for Azure, MP3 for download/playback)
+    await setStage(
+      'extracting_audio',
+      18,
+      `Extracting audio (${(videoBytes / (1024 * 1024)).toFixed(1)} MB video → MP3 + WAV)…`
+    );
     const ffmpegMod = await import('fluent-ffmpeg');
     const ffmpeg = (ffmpegMod as { default?: typeof ffmpegMod }).default || ffmpegMod;
     // Pin ffmpeg binary path from ffmpeg-static so it works in serverless.
@@ -171,10 +205,20 @@ export async function POST(req: NextRequest) {
     });
 
     // 3) Transcribe with Azure Speech
+    await setStage(
+      'transcribing',
+      35,
+      `Transcribing audio with Azure Speech (${language})… this is the longest step.`
+    );
     const { transcribeWavFile } = await import('@/utils/azure/speech');
     const transcription = await transcribeWavFile(wavPath, language);
 
     // 4) Summarize with Azure OpenAI
+    await setStage(
+      'summarizing',
+      72,
+      `Summarizing ${transcription.transcript.length.toLocaleString()} chars with Azure OpenAI…`
+    );
     const { summarizeTranscript } = await import('@/utils/azure/openai');
     let summaryResult = { summary: '', keyPoints: [] as string[], model: '' };
     try {
@@ -188,6 +232,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 5) Upload MP3 + VTT to Firebase Storage
+    await setStage('uploading', 85, 'Uploading MP3 + WEBVTT subtitles to storage…');
     const audioObjectName = `lesson-assets/${courseId}/${lessonId}/audio.mp3`;
     const vttObjectName = `lesson-assets/${courseId}/${lessonId}/captions.${language}.vtt`;
 
@@ -220,6 +265,8 @@ export async function POST(req: NextRequest) {
       /* ignore */
     }
 
+    await setStage('finalizing', 96, 'Saving everything on the lesson…');
+
     const captionsField = {
       ...(lessonData.captions || {}),
       [language]: {
@@ -241,6 +288,9 @@ export async function POST(req: NextRequest) {
       keyPoints: summaryResult.keyPoints,
       aiContentGeneratedAt: Date.now(),
       aiProcessingStatus: 'completed',
+      aiProcessingStage: 'completed',
+      aiProcessingProgress: 100,
+      aiProcessingMessage: 'All AI assets generated and saved.',
       aiProcessingError: null,
     };
 
@@ -264,6 +314,8 @@ export async function POST(req: NextRequest) {
     try {
       await lessonRef.update({
         aiProcessingStatus: 'failed',
+        aiProcessingStage: 'failed',
+        aiProcessingMessage: `Failed: ${message.slice(0, 200)}`,
         aiProcessingError: message.slice(0, 500),
         captionsProcessing: false,
       });

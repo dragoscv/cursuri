@@ -2025,6 +2025,11 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                       courseId={courseId}
                       lessonId={lessonId}
                       videoUrl={filePreview || undefined}
+                      onApply={(data) => {
+                        if (typeof data.transcription === 'string') {
+                          setTranscription(data.transcription);
+                        }
+                      }}
                     />
                   </div>
                 </div>

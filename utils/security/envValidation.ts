@@ -33,7 +33,9 @@ const ENV_PATTERNS = {
   'NEXT_PUBLIC_FIREBASE_API_KEY': /^AIza[0-9A-Za-z-_]{35}$/,
   'NEXT_PUBLIC_FIREBASE_PROJECT_ID': /^[a-z0-9\-]+$/,
   'NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN': /^[a-z0-9\-]+\.firebaseapp\.com$/,
-  'NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET': /^[a-z0-9\-]+\.appspot\.com$/,
+  // Firebase now provisions either <project>.appspot.com (legacy) or
+  // <project>.firebasestorage.app (current default for new projects).
+  'NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET': /^[a-z0-9\-]+\.(appspot\.com|firebasestorage\.app)$/,
   'NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID': /^[0-9]+$/,
   'NEXT_PUBLIC_FIREBASE_APP_ID': /^1:[0-9]+:web:[a-f0-9]+$/
 };

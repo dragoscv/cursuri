@@ -399,6 +399,18 @@ export interface Lesson {
   aiContentGeneratedAt?: number; // epoch ms
   aiProcessingStatus?: 'idle' | 'processing' | 'completed' | 'failed';
   aiProcessingError?: string;
+  aiProcessingStage?:
+    | 'queued'
+    | 'downloading'
+    | 'extracting_audio'
+    | 'transcribing'
+    | 'summarizing'
+    | 'uploading'
+    | 'finalizing'
+    | 'completed'
+    | 'failed';
+  aiProcessingProgress?: number; // 0-100
+  aiProcessingMessage?: string; // human-readable status line
   captionsProcessing?: boolean;
   captionsGenerated?: boolean;
 }
