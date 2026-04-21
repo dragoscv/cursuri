@@ -81,7 +81,57 @@ function SortableRow({ lesson, index, courseId, onEdit, onDelete }: SortableRowP
           <span>{lesson.order ?? index}</span>
         </div>
       </td>
-      <td className="px-4 py-3 font-medium text-[color:var(--ai-foreground)]">{lesson.name}</td>
+      <td className="px-4 py-3 font-medium text-[color:var(--ai-foreground)]">
+        <div className="flex items-center gap-2">
+          {lesson.transcription ? (
+            <span
+              title="Transcribed"
+              aria-label="Lesson is transcribed"
+              className="inline-flex items-center justify-center text-[color:var(--ai-success)]"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="8" y1="13" x2="15" y2="13" />
+                <line x1="8" y1="17" x2="15" y2="17" />
+                <polyline points="10 9 9 9 8 9" />
+              </svg>
+            </span>
+          ) : (
+            <span
+              title="Not transcribed"
+              aria-label="Lesson is not transcribed"
+              className="inline-flex items-center justify-center text-[color:var(--ai-muted)]/40"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+              </svg>
+            </span>
+          )}
+          <span>{lesson.name}</span>
+        </div>
+      </td>
       <td className="px-4 py-3 text-[color:var(--ai-muted)]">{lesson.type}</td>
       <td className="px-4 py-3">
         <span
