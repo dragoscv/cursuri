@@ -236,7 +236,7 @@ const LatestLessonsSection = React.memo(function LatestLessonsSection() {
                           <button
                             type="button"
                             onClick={() => handleLessonClick(lesson)}
-                            className="group w-full text-left flex gap-4 p-3 sm:p-4 transition-colors hover:bg-[color:var(--ai-primary)]/5 focus:outline-none focus-visible:bg-[color:var(--ai-primary)]/8"
+                            className="group w-full text-left flex gap-4 p-3 sm:p-4 cursor-pointer transition-colors hover:bg-[color:var(--ai-primary)]/5 focus:outline-none focus-visible:bg-[color:var(--ai-primary)]/8"
                           >
                             <div className="relative h-16 w-24 sm:h-20 sm:w-32 flex-shrink-0 rounded-lg overflow-hidden bg-[color:var(--ai-muted)]/10">
                               {thumb ? (
