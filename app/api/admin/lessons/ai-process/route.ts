@@ -169,29 +169,77 @@ export async function POST(req: NextRequest) {
   const wavPath = path.join(tempDir, 'audio.wav');
   const mp3Path = path.join(tempDir, 'audio.mp3');
 
+  // Throttled progress writer so we never spam Firestore from inner loops.
+  let lastProgressWriteAt = 0;
+  const writeProgressThrottled = async (
+    stage: 'downloading' | 'extracting_audio' | 'transcribing',
+    progress: number,
+    message: string,
+    minIntervalMs = 1500
+  ) => {
+    const now = Date.now();
+    if (now - lastProgressWriteAt < minIntervalMs) return;
+    lastProgressWriteAt = now;
+    try {
+      await lessonRef.update({
+        aiProcessingStage: stage,
+        aiProcessingProgress: Math.max(0, Math.min(100, Math.round(progress))),
+        aiProcessingMessage: message,
+      });
+    } catch {
+      /* ignore */
+    }
+  };
+
   try {
-    // 1) Download video
+    // 1) Stream-download the video to disk so we never hold a multi-GB buffer
+    //    in memory.
     await setStage('downloading', 5, 'Downloading the lesson video…');
     const res = await fetch(videoUrl);
     if (!res.ok || !res.body) {
       throw new Error(`Failed to download video: ${res.status} ${res.statusText}`);
     }
-    const arrayBuf = await res.arrayBuffer();
-    await fs.promises.writeFile(videoPath, Buffer.from(arrayBuf));
-    const videoBytes = arrayBuf.byteLength;
+    const totalBytes = Number(res.headers.get('content-length')) || 0;
+    const { Readable } = await import('node:stream');
+    const { pipeline } = await import('node:stream/promises');
+    const outStream = fs.createWriteStream(videoPath);
 
-    // 2) Extract audio (WAV for Azure, MP3 for download/playback)
+    let downloaded = 0;
+    const downloadStream = Readable.fromWeb(res.body as any);
+    downloadStream.on('data', (chunk: Buffer | string) => {
+      const len = typeof chunk === 'string' ? Buffer.byteLength(chunk) : chunk.length;
+      downloaded += len;
+      if (totalBytes > 0) {
+        const dlPct = downloaded / totalBytes;
+        // Map download progress to the 5..17 band (extraction takes the rest).
+        const overall = 5 + dlPct * 12;
+        const mb = (downloaded / (1024 * 1024)).toFixed(1);
+        const tot = (totalBytes / (1024 * 1024)).toFixed(1);
+        void writeProgressThrottled(
+          'downloading',
+          overall,
+          `Downloading the lesson video… ${mb} / ${tot} MB`
+        );
+      }
+    });
+    await pipeline(downloadStream, outStream);
+
+    const videoBytes = totalBytes || (await fs.promises.stat(videoPath)).size;
+
+    // 2) Single ffmpeg pass producing BOTH the MP3 (for playback/download) and
+    //    the 16kHz mono WAV (for Azure Speech). Decoding the source video once
+    //    is roughly 2× faster than running ffmpeg twice for huge inputs.
     await setStage(
       'extracting_audio',
       18,
-      `Extracting audio (${(videoBytes / (1024 * 1024)).toFixed(1)} MB video → MP3 + WAV)…`
+      `Extracting audio from ${(videoBytes / (1024 * 1024)).toFixed(1)} MB video (single pass, multithreaded)…`
     );
     const ffmpegMod = await import('fluent-ffmpeg');
     const ffmpeg = (ffmpegMod as { default?: typeof ffmpegMod }).default || ffmpegMod;
-    // Pin ffmpeg binary path from ffmpeg-static so it works in serverless.
     try {
       const ffStatic = await import('ffmpeg-static');
-      const binPath = (ffStatic as { default?: string }).default || (ffStatic as unknown as string);
+      const binPath =
+        (ffStatic as { default?: string }).default || (ffStatic as unknown as string);
       if (binPath) {
         ffmpeg.setFfmpegPath(binPath);
       }
@@ -199,38 +247,70 @@ export async function POST(req: NextRequest) {
       /* fall back to system ffmpeg */
     }
 
+    let extractedAudioDurationSeconds: number | undefined;
+
     await new Promise<void>((resolve, reject) => {
-      ffmpeg(videoPath)
-        .noVideo()
+      const cmd = ffmpeg(videoPath)
+        // -threads 0 → ffmpeg picks an optimal worker count for the host.
+        .inputOptions(['-threads', '0'])
+        // Output 1: WAV for Azure Speech (16kHz, mono, 16-bit PCM)
+        .output(wavPath)
         .audioCodec('pcm_s16le')
         .audioChannels(1)
         .audioFrequency(16000)
-        .format('wav')
-        .on('end', () => resolve())
-        .on('error', (err: Error) => reject(err))
-        .save(wavPath);
-    });
-
-    await new Promise<void>((resolve, reject) => {
-      ffmpeg(videoPath)
         .noVideo()
+        .format('wav')
+        // Output 2: MP3 for the public lesson page
+        .output(mp3Path)
         .audioCodec('libmp3lame')
         .audioBitrate('96k')
         .audioChannels(1)
+        .noVideo()
         .format('mp3')
+        .on('codecData', (data: { duration?: string }) => {
+          // duration string like "00:48:13.45" → seconds
+          if (data?.duration) {
+            const m = data.duration.match(/^(\d+):(\d+):(\d+(?:\.\d+)?)$/);
+            if (m) {
+              extractedAudioDurationSeconds =
+                Number(m[1]) * 3600 + Number(m[2]) * 60 + Number(m[3]);
+            }
+          }
+        })
+        .on('progress', (p: { percent?: number; timemark?: string }) => {
+          const pct = typeof p.percent === 'number' ? Math.max(0, Math.min(100, p.percent)) : 0;
+          // Map ffmpeg's own 0..100 onto the 18..32 band.
+          const overall = 18 + (pct / 100) * 14;
+          void writeProgressThrottled(
+            'extracting_audio',
+            overall,
+            `Extracting audio… ${pct.toFixed(0)}% (t=${p.timemark || '0'})`
+          );
+        })
         .on('end', () => resolve())
-        .on('error', (err: Error) => reject(err))
-        .save(mp3Path);
+        .on('error', (err: Error) => reject(new Error(`ffmpeg failed: ${err.message}`)));
+      cmd.run();
     });
 
-    // 3) Transcribe with Azure Speech
+    // 3) Transcribe with Azure Speech (streamed PushStream + live partial hook)
     await setStage(
       'transcribing',
       35,
-      `Transcribing audio with Azure Speech (${language})… this is the longest step.`
+      `Transcribing with Azure Speech (${language})… this is the longest step.`
     );
     const { transcribeWavFile } = await import('@/utils/azure/speech');
-    const transcription = await transcribeWavFile(wavPath, language);
+    const transcription = await transcribeWavFile(wavPath, language, {
+      onProgress: ({ chars, phrases }) => {
+        // Map a soft estimate based on phrase count onto 35..70.
+        const overall = Math.min(70, 35 + Math.min(35, phrases * 0.8));
+        void writeProgressThrottled(
+          'transcribing',
+          overall,
+          `Transcribing… ${phrases.toLocaleString()} segments, ${chars.toLocaleString()} chars`,
+          2500
+        );
+      },
+    });
 
     // 4) Summarize with Azure OpenAI
     await setStage(
@@ -253,7 +333,7 @@ export async function POST(req: NextRequest) {
     // 5) Upload MP3 + VTT to Firebase Storage
     await setStage('uploading', 85, 'Uploading MP3 + WEBVTT subtitles to storage…');
     const audioObjectName = `lesson-assets/${courseId}/${lessonId}/audio.mp3`;
-    const vttObjectName = `lesson-assets/${courseId}/${lessonId}/captions.${language}.vtt`;
+    const vttObjectName = `lesson-assets/${courseId}/${lessonId}/captions.${transcription.language}.vtt`;
 
     const audioFile = bucket.file(audioObjectName);
     await audioFile.save(await fs.promises.readFile(mp3Path), {
@@ -271,24 +351,15 @@ export async function POST(req: NextRequest) {
     await vttFile.makePublic();
     const vttUrl = `https://storage.googleapis.com/${bucket.name}/${vttObjectName}`;
 
-    // Probe audio duration via ffprobe (best effort)
-    let audioDurationSeconds: number | undefined;
-    try {
-      audioDurationSeconds = await new Promise<number>((resolve, reject) => {
-        ffmpeg.ffprobe(mp3Path, (err: Error | null, data: any) => {
-          if (err) return reject(err);
-          resolve(Number(data?.format?.duration) || 0);
-        });
-      });
-    } catch {
-      /* ignore */
-    }
+    // Duration came from the ffmpeg codecData event during extraction —
+    // skip a separate ffprobe pass for speed.
+    const audioDurationSeconds = extractedAudioDurationSeconds;
 
     await setStage('finalizing', 96, 'Saving everything on the lesson…');
 
     const captionsField = {
       ...(lessonData.captions || {}),
-      [language]: {
+      [transcription.language]: {
         url: vttUrl,
         content: transcription.transcript,
       },
@@ -299,7 +370,7 @@ export async function POST(req: NextRequest) {
       audioFileName: 'audio.mp3',
       audioDurationSeconds: audioDurationSeconds ?? null,
       transcription: transcription.transcript,
-      transcriptionLanguage: language,
+      transcriptionLanguage: transcription.language,
       captions: captionsField,
       captionsProcessing: false,
       captionsGenerated: true,
@@ -322,7 +393,7 @@ export async function POST(req: NextRequest) {
       audioUrl,
       vttUrl,
       transcription: transcription.transcript,
-      transcriptionLanguage: language,
+      transcriptionLanguage: transcription.language,
       summary: summaryResult.summary,
       keyPoints: summaryResult.keyPoints,
       audioDurationSeconds: audioDurationSeconds ?? null,

@@ -250,8 +250,15 @@ const LessonAIProcessor: React.FC<LessonAIProcessorProps> = ({
                             label=""
                             aria-label="Transcription language"
                             selectedKeys={[language]}
-                            onSelectionChange={(keys: any) => {
-                                const k = Array.from(keys as Set<string>)[0];
+                            onSelectionChange={(key: any) => {
+                                // Our custom Select returns a single string key.
+                                // (HeroUI returns a Set; tolerate both.)
+                                let k: string | undefined;
+                                if (typeof key === 'string') {
+                                    k = key;
+                                } else if (key && typeof (key as Iterable<string>)[Symbol.iterator] === 'function') {
+                                    k = Array.from(key as Iterable<string>)[0];
+                                }
                                 if (k) setLanguage(k);
                             }}
                             isDisabled={isProcessing}
