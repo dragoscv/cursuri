@@ -234,13 +234,20 @@ export async function runJob(jobId) {
             `Extracting MP3 from ${(videoBytes / 1024 / 1024).toFixed(1)} MB video…`);
 
         await new Promise((resolve, reject) => {
+            // Spoken-lecture-optimized:
+            //  - 16 kHz mono is what Azure Speech wants natively
+            //    (no resampling on their side either)
+            //  - 64 kbps MP3 (CBR) is indistinguishable from higher rates for
+            //    voice and ~30% smaller than the previous 96 kbps
+            //  - `-threads 0` uses all available CPU (we run with 4 vCPU)
             const args = [
                 '-hide_banner', '-loglevel', 'error',
                 '-threads', '0',
                 '-i', videoPath,
                 '-vn',
                 '-ac', '1',
-                '-ab', '96k',
+                '-ar', '16000',
+                '-b:a', '64k',
                 '-acodec', 'libmp3lame',
                 '-f', 'mp3',
                 mp3Path,
