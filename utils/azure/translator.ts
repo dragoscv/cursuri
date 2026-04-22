@@ -21,7 +21,9 @@
 
 import { getContentLocale } from '@/config/locales';
 import type { Course, CourseTranslation, Lesson, LessonTranslation } from '@/types';
-import { createHash } from 'crypto';
+import { hashLessonSource, hashCourseSource } from '@/utils/translationHash';
+
+export { hashLessonSource, hashCourseSource };
 
 const DEFAULT_API_VERSION = '2024-10-21';
 
@@ -76,52 +78,10 @@ function languageDisplayName(locale: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// Hashing — used to mark translations as `outdated` when source changes.
+// Hashing — re-exported from utils/translationHash above so client components
+// (LessonForm, AddCourse, TranslationsPanel) don't transitively import this
+// server-only module.
 // ---------------------------------------------------------------------------
-
-export function hashLessonSource(input: {
-    name?: string;
-    description?: string;
-    content?: string;
-    summary?: string;
-    keyPoints?: string[];
-    transcription?: string;
-    objectives?: string[];
-    tags?: string[];
-}): string {
-    const payload = JSON.stringify({
-        n: input.name || '',
-        d: input.description || '',
-        c: input.content || '',
-        s: input.summary || '',
-        k: input.keyPoints || [],
-        t: input.transcription || '',
-        o: input.objectives || [],
-        g: input.tags || [],
-    });
-    return createHash('sha256').update(payload).digest('hex').slice(0, 16);
-}
-
-export function hashCourseSource(input: {
-    name?: string;
-    description?: string;
-    fullDescription?: string;
-    benefits?: string[];
-    objectives?: string[];
-    requirements?: string[];
-    tags?: string[];
-}): string {
-    const payload = JSON.stringify({
-        n: input.name || '',
-        d: input.description || '',
-        f: input.fullDescription || '',
-        b: input.benefits || [],
-        o: input.objectives || [],
-        r: input.requirements || [],
-        g: input.tags || [],
-    });
-    return createHash('sha256').update(payload).digest('hex').slice(0, 16);
-}
 
 // ---------------------------------------------------------------------------
 // Lesson content translator

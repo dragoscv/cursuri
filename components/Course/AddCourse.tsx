@@ -26,6 +26,9 @@ import InstructorNameField from './fields/InstructorNameField';
 import CourseImageField from './fields/CourseImageField';
 import CourseAIFillButton from './CourseAIFillButton';
 import CourseAIImageButton from './CourseAIImageButton';
+import { Tabs, Tab } from '@heroui/react';
+import TranslationsPanel, { type ExistingTranslation } from '@/components/shared/TranslationsPanel';
+import { hashCourseSource } from '@/utils/translationHash';
 
 interface AddCourseProps {
     onClose: () => void;
@@ -483,6 +486,8 @@ export default function AddCourse(props: AddCourseProps) {
                     </div>
                 </div>
 
+                <Tabs aria-label="Course form sections" className="mb-6">
+                  <Tab key="details" title={tCourses('addCourse.tabDetails') || 'Course details'}>
                 <Card className="shadow-xl border border-[color:var(--ai-card-border)] overflow-hidden mb-8 hover:shadow-[color:var(--ai-primary)]/5 transition-all rounded-xl">
                     <CardBody className="p-6 overflow-visible">
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -1167,6 +1172,43 @@ export default function AddCourse(props: AddCourseProps) {
                         </div>
                     </CardBody>
                 </Card>
+                  </Tab>
+                  <Tab key="translations" title={tCourses('addCourse.tabTranslations') || 'Translations'}>
+                    <Card className="shadow-xl border border-[color:var(--ai-card-border)] overflow-hidden mb-8 hover:shadow-[color:var(--ai-primary)]/5 transition-all rounded-xl">
+                      <CardBody className="p-6">
+                        {!editMode || !courseId ? (
+                          <div className="p-8 text-center">
+                            <FiLayers size={48} className="text-[color:var(--ai-muted)] mx-auto mb-4" />
+                            <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-2">
+                              {tCourses('addCourse.translationsSaveFirstTitle') || 'Save the course first'}
+                            </h3>
+                            <p className="text-[color:var(--ai-muted)] max-w-md mx-auto">
+                              {tCourses('addCourse.translationsSaveFirstDesc') ||
+                                'Translations are generated from the saved course content. Save this course, then come back to this tab to translate it.'}
+                            </p>
+                          </div>
+                        ) : (
+                          <TranslationsPanel
+                            kind="course"
+                            courseId={courseId}
+                            sourceLocale={'ro'}
+                            currentSourceHash={hashCourseSource({
+                              name: courseName,
+                              description: courseDescription,
+                              fullDescription: undefined,
+                              benefits: undefined,
+                              objectives: courseObjectives,
+                              requirements: courseRequirements,
+                              tags: courseTags,
+                            })}
+                            existingTranslations={(courses[courseId] as any)?.translations as Record<string, ExistingTranslation> | undefined}
+                            activeJobId={(courses[courseId] as any)?.currentTranslationJobId as string | undefined}
+                          />
+                        )}
+                      </CardBody>
+                    </Card>
+                  </Tab>
+                </Tabs>
 
                 <Card className="shadow-xl border border-[color:var(--ai-card-border)] overflow-hidden mb-8 hover:shadow-[color:var(--ai-primary)]/5 transition-all">
                     <CardHeader className="flex gap-3 px-6 py-4 border-b border-[color:var(--ai-card-border)]/60 bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-transparent">

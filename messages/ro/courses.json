@@ -292,6 +292,10 @@
     "category": "Categorie",
     "certificate": "Certificat",
     "noPrerequisiteCourses": "Adaugă cursuri prealabile pe care studenții trebuie să le finalizeze mai întâi",
+    "tabDetails": "Detalii curs",
+    "tabTranslations": "Traduceri",
+    "translationsSaveFirstTitle": "Salvează mai întâi cursul",
+    "translationsSaveFirstDesc": "Traducerile sunt generate din conținutul salvat. Salvează cursul și revino în această filă pentru a-l traduce.",
     "pricing": {
       "subtitle": "Setează prețul cursului și opțiunile de plată",
       "title": "Prețuri"

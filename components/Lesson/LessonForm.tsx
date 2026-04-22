@@ -41,6 +41,9 @@ import RichTextEditor from '@/components/Lesson/QA/RichTextEditor';
 import LessonAIProcessor from '@/components/Lesson/LessonAIProcessor';
 import LessonChaptersEditor from '@/components/Lesson/LessonChaptersEditor';
 import AIFillButton from '@/components/Lesson/AIFillButton';
+import TranslationsPanel, { type ExistingTranslation } from '@/components/shared/TranslationsPanel';
+import { hashLessonSource } from '@/utils/translationHash';
+import { getContentLocale } from '@/config/locales';
 
 // Hoisted so it isn't re-declared on every render
 interface QuizQuestion {
@@ -122,6 +125,14 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
   const [embedType, setEmbedType] = useState<'youtube' | 'codepen' | 'github' | 'other'>('youtube');
   const [transcription, setTranscription] = useState('');
   const [chapters, setChapters] = useState<import('@/types').LessonChapter[] | undefined>(undefined);
+  const [existingTranslations, setExistingTranslations] = useState<
+    Record<string, ExistingTranslation> | undefined
+  >(undefined);
+  const [captionsByLang, setCaptionsByLang] = useState<
+    Record<string, { url?: string; content?: string }> | undefined
+  >(undefined);
+  const [transcriptionLanguage, setTranscriptionLanguage] = useState<string>('en-US');
+  const [activeTranslationJobId, setActiveTranslationJobId] = useState<string | undefined>(undefined);
 
   // ----- Resources tab -----
   const [repoUrl, setRepoUrl] = useState('');
@@ -284,6 +295,10 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
           setHasQuiz(lesson.hasQuiz || false);
           setTranscription(lesson.transcription || '');
           setChapters(lesson.chapters || []);
+          setExistingTranslations(lesson.translations || undefined);
+          setCaptionsByLang(lesson.captions || undefined);
+          setTranscriptionLanguage(lesson.transcriptionLanguage || 'en-US');
+          setActiveTranslationJobId(lesson.currentTranslationJobId || undefined);
 
           // Fetch quiz questions if the lesson has a quiz
           if (lesson.hasQuiz) {
@@ -2394,6 +2409,70 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                   </div>
                 </div>
               </div>
+            </CardBody>
+          </Card>
+        </Tab>
+
+        <Tab key="translations" title={renderTabTitle(t('translationsTab') || 'Translations', false)}>
+          <Card className="shadow-xl border border-[color:var(--ai-card-border)] overflow-hidden mb-8 hover:shadow-[color:var(--ai-primary)]/5 transition-all rounded-xl">
+            <CardHeader className="flex gap-3 px-6 py-4 border-b border-[color:var(--ai-card-border)]/60 bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-transparent">
+              <FiLayers className="text-[color:var(--ai-primary)]" size={20} />
+              <div className="flex flex-col">
+                <h2 className="text-lg font-semibold text-[color:var(--ai-foreground)]">
+                  {t('translationsTab') || 'Translations'}
+                </h2>
+                <p className="text-[color:var(--ai-muted)] text-sm">
+                  {t('translationsTabDesc') || 'Translate this lesson into 30+ languages with AI.'}
+                </p>
+              </div>
+            </CardHeader>
+            <CardBody className="p-6">
+              {!lessonId || !editMode ? (
+                <div className="p-8 text-center">
+                  <FiLayers size={48} className="text-[color:var(--ai-muted)] mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-2">
+                    {t('translationsSaveFirstTitle') || 'Save the lesson first'}
+                  </h3>
+                  <p className="text-[color:var(--ai-muted)] max-w-md mx-auto">
+                    {t('translationsSaveFirstDesc') ||
+                      'Translations are generated from the saved lesson content. Save this lesson, then come back to this tab to translate it.'}
+                  </p>
+                </div>
+              ) : !lessonName && !lessonDescription && !transcription ? (
+                <div className="p-8 text-center">
+                  <FiLayers size={48} className="text-[color:var(--ai-muted)] mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-2">
+                    {t('translationsEmptyTitle') || 'Nothing to translate yet'}
+                  </h3>
+                  <p className="text-[color:var(--ai-muted)] max-w-md mx-auto">
+                    {t('translationsEmptyDesc') ||
+                      'Add a name, description and (optionally) generate AI assets so the translator has source content to work with.'}
+                  </p>
+                </div>
+              ) : (
+                <TranslationsPanel
+                  kind="lesson"
+                  courseId={courseId}
+                  lessonId={lessonId}
+                  sourceLocale={getContentLocale(transcriptionLanguage)?.code || 'en'}
+                  currentSourceHash={hashLessonSource({
+                    name: lessonName,
+                    description: lessonDescription,
+                    content: lessonContent,
+                    summary: undefined,
+                    keyPoints: undefined,
+                    transcription,
+                    objectives: learningObjectives,
+                    tags: lessonTags,
+                  })}
+                  existingTranslations={existingTranslations}
+                  activeJobId={activeTranslationJobId}
+                  captionsAvailable={
+                    !!captionsByLang &&
+                    Object.values(captionsByLang).some((c) => !!c?.content || !!c?.url)
+                  }
+                />
+              )}
             </CardBody>
           </Card>
         </Tab>

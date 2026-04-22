@@ -288,6 +288,10 @@
         "category": "Category",
         "certificate": "Certificate",
         "noPrerequisiteCourses": "Add prerequisite courses that students should complete first",
+        "tabDetails": "Course details",
+        "tabTranslations": "Translations",
+        "translationsSaveFirstTitle": "Save the course first",
+        "translationsSaveFirstDesc": "Translations are generated from the saved course content. Save this course, then come back to this tab to translate it.",
         "pricing": {
             "subtitle": "Set your course price and payment options",
             "title": "Pricing"
