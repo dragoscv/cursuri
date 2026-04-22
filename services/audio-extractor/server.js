@@ -1,42 +1,47 @@
 /**
- * studiai-audio-extractor
+ * studiai-audio-extractor — full lesson AI pipeline worker.
  *
- * Tiny Cloud Run service that:
- *   1. downloads a video from a signed URL
- *   2. runs `ffmpeg -i input -vn -ac 1 -ab 96k -f mp3` to extract audio
- *   3. streams the resulting MP3 back to the caller as `audio/mpeg`
- *
- * Deployed alongside the Next.js app to offload the disk- and CPU-heavy
- * download + ffmpeg work that was blowing /tmp on Vercel serverless.
- *
- * Auth: shared bearer token via `AUDIO_EXTRACTOR_TOKEN` env var.
+ * Runs the entire `runAiJob` flow on Cloud Run (download → ffmpeg → Azure
+ * Speech transcribe → Azure OpenAI summarize → upload to Storage → write
+ * lesson + job docs in Firestore). Vercel only enqueues the job and pings
+ * this service.
  *
  * Endpoints:
- *   GET  /healthz            → 200 "ok"
- *   POST /extract            → audio/mpeg (streaming)
- *      body: { videoUrl: string, jobId?: string }
- *      headers: Authorization: Bearer <token>
+ *   GET  /healthz             → 200 { ok: true, inflight }
+ *   POST /jobs/run            → 202 { ok: true, jobId } (auth required)
+ *      body: { jobId: string }
+ *      headers: Authorization: Bearer <AUDIO_EXTRACTOR_TOKEN>
+ *
+ * The HTTP request returns immediately (202) while the pipeline keeps
+ * running in this process. Cancellation flows through Firestore
+ * (aiJobs/{jobId}.cancelRequested = true), polled by the pipeline.
+ *
+ * Env:
+ *   AUDIO_EXTRACTOR_TOKEN     bearer token shared with Vercel
+ *   FIREBASE_PROJECT_ID
+ *   FIREBASE_CLIENT_EMAIL
+ *   FIREBASE_PRIVATE_KEY      (with \n escapes; sanitized by lib/firebase.js)
+ *   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+ *   AZURE_SPEECH_KEY
+ *   AZURE_SPEECH_REGION
+ *   AZURE_OPENAI_ENDPOINT
+ *   AZURE_OPENAI_API_KEY
+ *   AZURE_OPENAI_DEPLOYMENT
+ *   AZURE_OPENAI_API_VERSION  (optional)
  */
 
 import http from 'node:http';
-import { spawn } from 'node:child_process';
-import { Readable } from 'node:stream';
-import { pipeline } from 'node:stream/promises';
-import fs from 'node:fs';
-import path from 'node:path';
-import os from 'node:os';
-import crypto from 'node:crypto';
+import { runJob } from './lib/pipeline.js';
 
 const PORT = Number(process.env.PORT) || 8080;
 const TOKEN = process.env.AUDIO_EXTRACTOR_TOKEN || '';
-const FFMPEG_BIN = process.env.FFMPEG_BIN || 'ffmpeg';
-const MAX_VIDEO_BYTES = Number(process.env.MAX_VIDEO_BYTES) || 4 * 1024 * 1024 * 1024; // 4 GB
 
 if (!TOKEN) {
-    console.warn('[audio-extractor] WARNING: AUDIO_EXTRACTOR_TOKEN is empty; refusing all /extract calls.');
+    console.warn('[worker] WARNING: AUDIO_EXTRACTOR_TOKEN is empty; refusing all /jobs/run calls.');
 }
 
-/** @param {http.IncomingMessage} req */
+const inflight = new Set();
+
 async function readJsonBody(req) {
     const chunks = [];
     let total = 0;
@@ -50,7 +55,6 @@ async function readJsonBody(req) {
     return JSON.parse(raw);
 }
 
-/** @param {http.ServerResponse} res */
 function sendJson(res, status, payload) {
     const body = JSON.stringify(payload);
     res.writeHead(status, {
@@ -61,21 +65,18 @@ function sendJson(res, status, payload) {
 }
 
 const server = http.createServer(async (req, res) => {
-    const reqId = crypto.randomUUID().slice(0, 8);
     const url = new URL(req.url || '/', 'http://x');
 
     if (req.method === 'GET' && url.pathname === '/healthz') {
-        res.writeHead(200, { 'content-type': 'text/plain' });
-        res.end('ok');
+        sendJson(res, 200, { ok: true, inflight: inflight.size });
         return;
     }
 
-    if (req.method !== 'POST' || url.pathname !== '/extract') {
+    if (req.method !== 'POST' || url.pathname !== '/jobs/run') {
         sendJson(res, 404, { error: 'not found' });
         return;
     }
 
-    // --- auth ---
     const auth = req.headers['authorization'] || '';
     const provided = typeof auth === 'string' && auth.startsWith('Bearer ') ? auth.slice(7) : '';
     if (!TOKEN || provided !== TOKEN) {
@@ -83,117 +84,35 @@ const server = http.createServer(async (req, res) => {
         return;
     }
 
-    // --- body ---
     let body;
-    try {
-        body = await readJsonBody(req);
-    } catch (e) {
-        sendJson(res, 400, { error: `invalid body: ${e.message}` });
-        return;
-    }
-    const videoUrl = String(body?.videoUrl || '');
-    const jobId = String(body?.jobId || reqId);
-    if (!videoUrl || !/^https?:\/\//i.test(videoUrl)) {
-        sendJson(res, 400, { error: 'videoUrl is required and must be http(s)' });
+    try { body = await readJsonBody(req); }
+    catch (e) { sendJson(res, 400, { error: `invalid body: ${e.message}` }); return; }
+
+    const jobId = String(body?.jobId || '').trim();
+    if (!jobId) {
+        sendJson(res, 400, { error: 'jobId is required' });
         return;
     }
 
-    const tempDir = path.join(os.tmpdir(), `extractor-${jobId}-${reqId}`);
-    await fs.promises.mkdir(tempDir, { recursive: true });
-    const ext = (videoUrl.split('?')[0].split('.').pop() || 'mp4').toLowerCase().slice(0, 4);
-    const videoPath = path.join(tempDir, `source.${ext}`);
-
-    let ffmpegProc = null;
-    let aborted = false;
-    req.on('close', () => {
-        if (!res.writableEnded) {
-            aborted = true;
-            try { ffmpegProc?.kill('SIGKILL'); } catch { /* ignore */ }
-        }
-    });
-
-    const cleanup = async () => {
-        try {
-            await fs.promises.rm(tempDir, { recursive: true, force: true });
-        } catch (e) {
-            console.warn(`[audio-extractor ${jobId}] cleanup failed:`, e.message);
-        }
-    };
-
-    try {
-        // --- 1) download -----------------------------------------------------
-        console.log(`[audio-extractor ${jobId}] download start: ${videoUrl}`);
-        const downloadRes = await fetch(videoUrl);
-        if (!downloadRes.ok || !downloadRes.body) {
-            throw new Error(`download failed: ${downloadRes.status} ${downloadRes.statusText}`);
-        }
-        const totalBytes = Number(downloadRes.headers.get('content-length')) || 0;
-        if (totalBytes > MAX_VIDEO_BYTES) {
-            throw new Error(`video too large: ${totalBytes} > ${MAX_VIDEO_BYTES}`);
-        }
-        const out = fs.createWriteStream(videoPath);
-        await pipeline(Readable.fromWeb(downloadRes.body), out);
-        const stat = await fs.promises.stat(videoPath);
-        console.log(`[audio-extractor ${jobId}] downloaded ${(stat.size / 1024 / 1024).toFixed(1)} MB`);
-
-        // --- 2) ffmpeg → mp3 streamed straight to the response ---------------
-        res.writeHead(200, {
-            'content-type': 'audio/mpeg',
-            'transfer-encoding': 'chunked',
-            'x-job-id': jobId,
-            'x-source-bytes': String(stat.size),
+    console.log(`[worker] starting job ${jobId} (${inflight.size + 1} in flight)`);
+    inflight.add(jobId);
+    runJob(jobId)
+        .catch((e) => console.error(`[worker] job ${jobId} threw at top level:`, e))
+        .finally(() => {
+            inflight.delete(jobId);
+            console.log(`[worker] finished job ${jobId} (${inflight.size} remaining)`);
         });
 
-        const args = [
-            '-hide_banner',
-            '-loglevel', 'error',
-            '-threads', '0',
-            '-i', videoPath,
-            '-vn',
-            '-ac', '1',
-            '-ab', '96k',
-            '-acodec', 'libmp3lame',
-            '-f', 'mp3',
-            'pipe:1',
-        ];
-
-        ffmpegProc = spawn(FFMPEG_BIN, args, { stdio: ['ignore', 'pipe', 'pipe'] });
-
-        ffmpegProc.stderr.on('data', (d) => {
-            // ffmpeg prints progress on stderr; only log a small tail to avoid noise
-            const s = d.toString();
-            if (s.length < 500) console.log(`[audio-extractor ${jobId}] ffmpeg: ${s.trim()}`);
-        });
-
-        const exitPromise = new Promise((resolve, reject) => {
-            ffmpegProc.on('error', reject);
-            ffmpegProc.on('close', (code, signal) => {
-                if (code === 0) resolve();
-                else if (aborted) reject(new Error('aborted'));
-                else reject(new Error(`ffmpeg exited code=${code} signal=${signal}`));
-            });
-        });
-
-        // pipe ffmpeg stdout → http response
-        ffmpegProc.stdout.pipe(res, { end: false });
-        await exitPromise;
-
-        // ensure all stdout is flushed before ending response
-        if (!res.writableEnded) res.end();
-        console.log(`[audio-extractor ${jobId}] done`);
-    } catch (err) {
-        console.error(`[audio-extractor ${jobId}] error:`, err);
-        if (!res.headersSent) {
-            sendJson(res, 500, { error: err.message || 'extraction failed' });
-        } else if (!res.writableEnded) {
-            // headers already sent (audio streaming started) — best we can do is end the stream
-            res.end();
-        }
-    } finally {
-        await cleanup();
-    }
+    sendJson(res, 202, { ok: true, jobId });
 });
 
 server.listen(PORT, () => {
-    console.log(`[audio-extractor] listening on :${PORT}`);
+    console.log(`[worker] listening on :${PORT}`);
 });
+
+function shutdown(sig) {
+    console.log(`[worker] received ${sig}, ${inflight.size} jobs in flight`);
+    server.close(() => console.log('[worker] http server closed'));
+}
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));

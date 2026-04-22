@@ -15,7 +15,6 @@
  */
 
 import { NextResponse, type NextRequest } from 'next/server';
-import { after } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 
 export const runtime = 'nodejs';
@@ -157,16 +156,62 @@ export async function POST(req: NextRequest) {
 
     console.log('[ai-process] enqueued', { jobId, courseId, lessonId, language });
 
-    // Schedule the worker after the response is sent. Each enqueue runs in
-    // its own serverless invocation, so jobs naturally parallelize.
-    after(async () => {
-        try {
-            const { runAiJob } = await import('@/utils/ai/jobQueue');
-            await runAiJob(jobId);
-        } catch (e) {
-            console.error('[ai-process] runAiJob threw at top level', e);
+    // Hand off to the Cloud Run worker. We do NOT await the pipeline; the
+    // worker returns 202 immediately and continues processing in its own
+    // long-running container. This keeps the Vercel function tiny and
+    // avoids the /tmp + 60s + cross-instance issues that broke the
+    // original `after(runAiJob)` design.
+    const workerUrl = process.env.AUDIO_EXTRACTOR_URL;
+    const workerToken = process.env.AUDIO_EXTRACTOR_TOKEN;
+    if (!workerUrl || !workerToken) {
+        await jobRef.update({
+            status: 'failed',
+            stage: 'failed',
+            message: 'Server is missing AUDIO_EXTRACTOR_URL / AUDIO_EXTRACTOR_TOKEN.',
+            error: 'Server is missing AUDIO_EXTRACTOR_URL / AUDIO_EXTRACTOR_TOKEN.',
+            finishedAt: Date.now(),
+        });
+        return NextResponse.json(
+            { error: 'Server is missing AUDIO_EXTRACTOR_URL / AUDIO_EXTRACTOR_TOKEN.' },
+            { status: 503 }
+        );
+    }
+
+    try {
+        const fireRes = await fetch(`${workerUrl.replace(/\/$/, '')}/jobs/run`, {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+                authorization: `Bearer ${workerToken}`,
+            },
+            body: JSON.stringify({ jobId }),
+            // Keep the call short: the worker just enqueues the job and returns 202.
+            signal: AbortSignal.timeout(15_000),
+        });
+        if (!fireRes.ok) {
+            const errText = await fireRes.text().catch(() => '');
+            throw new Error(`worker returned ${fireRes.status} ${fireRes.statusText} ${errText}`.trim());
         }
-    });
+    } catch (e) {
+        const message = e instanceof Error ? e.message : String(e);
+        console.error('[ai-process] failed to fire worker', { jobId, error: message });
+        await jobRef.update({
+            status: 'failed',
+            stage: 'failed',
+            message: `Failed to start worker: ${message.slice(0, 200)}`,
+            error: message.slice(0, 500),
+            finishedAt: Date.now(),
+        });
+        await lessonRef.update({
+            aiProcessingStatus: 'failed',
+            aiProcessingError: message.slice(0, 500),
+            captionsProcessing: false,
+        });
+        return NextResponse.json(
+            { error: `Failed to start worker: ${message}` },
+            { status: 502 }
+        );
+    }
 
     return NextResponse.json(
         { success: true, jobId, status: 'queued' },

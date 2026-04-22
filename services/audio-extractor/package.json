@@ -1,8 +1,8 @@
 {
   "name": "studiai-audio-extractor",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "Downloads a video URL, extracts mono 96k MP3 with ffmpeg, streams it back.",
+  "description": "Cloud Run worker that runs the full lesson AI pipeline (download → ffmpeg → Azure Speech → Azure OpenAI → Firebase Storage upload + Firestore update).",
   "type": "module",
   "main": "server.js",
   "scripts": {
@@ -12,5 +12,7 @@
   "engines": {
     "node": ">=22"
   },
-  "dependencies": {}
+  "dependencies": {
+    "firebase-admin": "^13.6.0"
+  }
 }
