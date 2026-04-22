@@ -28,6 +28,45 @@ class CancelledError extends Error {
 
 const FFMPEG_BIN = process.env.FFMPEG_BIN || 'ffmpeg';
 
+/**
+ * If `url` points at our own GCS bucket, return the object name (URL-decoded);
+ * otherwise return null. Handles both Firebase Storage download URLs
+ * (`https://firebasestorage.googleapis.com/v0/b/<bucket>/o/<encoded path>?alt=media&token=...`)
+ * and plain GCS URLs (`https://storage.googleapis.com/<bucket>/<path>`,
+ * `gs://<bucket>/<path>`).
+ */
+function parseOwnedObjectName(url, bucketName) {
+    if (!url || !bucketName) return null;
+    try {
+        // gs://bucket/object
+        if (url.startsWith('gs://')) {
+            const rest = url.slice(5);
+            const slash = rest.indexOf('/');
+            if (slash < 0) return null;
+            if (rest.slice(0, slash) !== bucketName) return null;
+            return decodeURIComponent(rest.slice(slash + 1).split('?')[0]);
+        }
+        const u = new URL(url);
+        // Firebase Storage download URL
+        if (u.hostname === 'firebasestorage.googleapis.com') {
+            // /v0/b/<bucket>/o/<encoded path>
+            const m = u.pathname.match(/^\/v0\/b\/([^/]+)\/o\/(.+)$/);
+            if (!m) return null;
+            if (m[1] !== bucketName) return null;
+            return decodeURIComponent(m[2]);
+        }
+        // Plain GCS public URL
+        if (u.hostname === 'storage.googleapis.com') {
+            const parts = u.pathname.replace(/^\//, '').split('/');
+            if (parts.shift() !== bucketName) return null;
+            return decodeURIComponent(parts.join('/'));
+        }
+        return null;
+    } catch {
+        return null;
+    }
+}
+
 export async function runJob(jobId) {
     ensureFirebase();
     const db = getFirestore();
@@ -137,25 +176,56 @@ export async function runJob(jobId) {
     try {
         // 1) Download video --------------------------------------------------
         await setStage('downloading', 5, 'Downloading the lesson video…');
-        const res = await fetch(videoUrl, { signal: abortController.signal });
-        if (!res.ok || !res.body) {
-            throw new Error(`Failed to download video: ${res.status} ${res.statusText}`);
-        }
-        const totalBytes = Number(res.headers.get('content-length')) || 0;
-        const out = fs.createWriteStream(videoPath);
+
+        // Detect Firebase Storage / GCS URLs that point at OUR bucket. When
+        // we own the bucket, we use the Admin SDK's createReadStream() which
+        // goes over Google's internal network instead of the public
+        // firebasestorage.googleapis.com edge — usually 10-50x faster from
+        // Cloud Run in the same region.
+        const ownedObjectName = parseOwnedObjectName(videoUrl, bucket.name);
+        let totalBytes = 0;
         let downloaded = 0;
-        const dlStream = Readable.fromWeb(res.body);
-        dlStream.on('data', (chunk) => {
-            downloaded += chunk.length;
+        const out = fs.createWriteStream(videoPath);
+        const onProgress = () => {
             if (totalBytes > 0) {
                 const dlPct = downloaded / totalBytes;
                 const overall = 5 + dlPct * 12;
                 const mb = (downloaded / 1024 / 1024).toFixed(1);
                 const tot = (totalBytes / 1024 / 1024).toFixed(1);
-                void writeProgressThrottled('downloading', overall, `Downloading the lesson video… ${mb} / ${tot} MB`);
+                void writeProgressThrottled('downloading', overall,
+                    `Downloading the lesson video… ${mb} / ${tot} MB`);
+            } else {
+                const mb = (downloaded / 1024 / 1024).toFixed(1);
+                void writeProgressThrottled('downloading', 5,
+                    `Downloading the lesson video… ${mb} MB`);
             }
-        });
-        await pipeline(dlStream, out);
+        };
+
+        if (ownedObjectName) {
+            console.log(`[ai-job ${jobId}] downloading via Admin SDK: gs://${bucket.name}/${ownedObjectName}`);
+            const file = bucket.file(ownedObjectName);
+            const [metadata] = await file.getMetadata();
+            totalBytes = Number(metadata.size) || 0;
+            const dlStream = file.createReadStream({ validation: false });
+            dlStream.on('data', (chunk) => { downloaded += chunk.length; onProgress(); });
+            const onCancel = () => { try { dlStream.destroy(new CancelledError()); } catch { /* ignore */ } };
+            abortController.signal.addEventListener('abort', onCancel);
+            try {
+                await pipeline(dlStream, out);
+            } finally {
+                abortController.signal.removeEventListener('abort', onCancel);
+            }
+        } else {
+            console.log(`[ai-job ${jobId}] downloading via public fetch: ${videoUrl.split('?')[0]}`);
+            const res = await fetch(videoUrl, { signal: abortController.signal });
+            if (!res.ok || !res.body) {
+                throw new Error(`Failed to download video: ${res.status} ${res.statusText}`);
+            }
+            totalBytes = Number(res.headers.get('content-length')) || 0;
+            const dlStream = Readable.fromWeb(res.body);
+            dlStream.on('data', (chunk) => { downloaded += chunk.length; onProgress(); });
+            await pipeline(dlStream, out);
+        }
         checkCancelled();
         const videoBytes = totalBytes || (await fs.promises.stat(videoPath)).size;
 
