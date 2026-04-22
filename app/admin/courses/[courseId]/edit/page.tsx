@@ -12,7 +12,7 @@ export default function EditCoursePage() {
 
   return (
     <AdminGuard>
-      <div className="max-w-3xl mx-auto py-8 px-4">
+      <div className="w-full mx-auto py-8 px-4">
         <h1 className="text-2xl font-bold mb-6">{t('courses.editCourse')}</h1>
         <AddCourseForm courseId={courseId} onClose={() => router.back()} />
       </div>
