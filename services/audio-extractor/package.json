@@ -1,0 +1,16 @@
+{
+  "name": "studiai-audio-extractor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Downloads a video URL, extracts mono 96k MP3 with ffmpeg, streams it back.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {}
+}

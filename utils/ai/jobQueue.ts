@@ -165,9 +165,13 @@ export async function runAiJob(jobId: string): Promise<void> {
     });
 
     // ---- Cancellation plumbing -------------------------------------------------
+    // Cancellation aborts in-flight HTTP (download, audio-extractor request,
+    // Azure transcription) via AbortController and trips a flag checked at
+    // every pipeline checkpoint. ffmpeg now runs in the audio-extractor Cloud
+    // Run service, so killing the upstream fetch is enough — the service
+    // detects the closed connection and SIGKILLs its own ffmpeg child.
     const abortController = new AbortController();
     let cancelRequested = false;
-    let activeFfmpegCmd: { kill: (signal?: string) => void } | null = null;
 
     const cancelPoller = setInterval(async () => {
         try {
@@ -175,7 +179,6 @@ export async function runAiJob(jobId: string): Promise<void> {
             if (s.exists && s.data()?.cancelRequested === true) {
                 cancelRequested = true;
                 try { abortController.abort(); } catch { /* ignore */ }
-                try { activeFfmpegCmd?.kill('SIGKILL'); } catch { /* ignore */ }
             }
         } catch {
             /* ignore */
@@ -224,108 +227,64 @@ export async function runAiJob(jobId: string): Promise<void> {
     const tempDir = path.join(os.tmpdir(), `lesson-ai-${jobId}-${uuidv4()}`);
     await fs.promises.mkdir(tempDir, { recursive: true });
 
-    const ext = (videoUrl.split('?')[0].split('.').pop() || 'mp4').toLowerCase().slice(0, 4);
-    const videoPath = path.join(tempDir, `source.${ext}`);
     const mp3Path = path.join(tempDir, 'audio.mp3');
 
     try {
-        // 1) Download video -----------------------------------------------------
-        await setStage('downloading', 5, 'Downloading the lesson video…');
-        const res = await fetch(videoUrl, { signal: abortController.signal });
-        if (!res.ok || !res.body) {
-            throw new Error(`Failed to download video: ${res.status} ${res.statusText}`);
-        }
-        const totalBytes = Number(res.headers.get('content-length')) || 0;
-        const { Readable } = await import('node:stream');
-        const { pipeline } = await import('node:stream/promises');
-        const outStream = fs.createWriteStream(videoPath);
-        let downloaded = 0;
-        const downloadStream = Readable.fromWeb(res.body as never);
-        downloadStream.on('data', (chunk: Buffer | string) => {
-            const len = typeof chunk === 'string' ? Buffer.byteLength(chunk) : chunk.length;
-            downloaded += len;
-            if (totalBytes > 0) {
-                const dlPct = downloaded / totalBytes;
-                const overall = 5 + dlPct * 12;
-                const mb = (downloaded / (1024 * 1024)).toFixed(1);
-                const tot = (totalBytes / (1024 * 1024)).toFixed(1);
-                void writeProgressThrottled(
-                    'downloading',
-                    overall,
-                    `Downloading the lesson video… ${mb} / ${tot} MB`
-                );
-            }
-        });
-        await pipeline(downloadStream, outStream);
-        checkCancelled();
-        const videoBytes = totalBytes || (await fs.promises.stat(videoPath)).size;
+        // 1+2) Download + extract MP3 — offloaded to the audio-extractor
+        // Cloud Run service so we never put the source video on Vercel's
+        // tiny /tmp. The service streams the MP3 back, we save just that.
+        await setStage('downloading', 5, 'Sending video to audio-extractor service…');
 
-        // 2) Extract MP3 with ffmpeg --------------------------------------------
+        const extractorUrl = process.env.AUDIO_EXTRACTOR_URL;
+        const extractorToken = process.env.AUDIO_EXTRACTOR_TOKEN;
+        if (!extractorUrl || !extractorToken) {
+            throw new Error(
+                'AUDIO_EXTRACTOR_URL and AUDIO_EXTRACTOR_TOKEN must be set (see services/audio-extractor/README.md)'
+            );
+        }
+
+        const extractorRes = await fetch(`${extractorUrl.replace(/\/$/, '')}/extract`, {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+                authorization: `Bearer ${extractorToken}`,
+            },
+            body: JSON.stringify({ videoUrl, jobId }),
+            signal: abortController.signal,
+        });
+
+        if (!extractorRes.ok || !extractorRes.body) {
+            const errText = await extractorRes.text().catch(() => '');
+            throw new Error(
+                `audio-extractor failed: ${extractorRes.status} ${extractorRes.statusText} ${errText}`.trim()
+            );
+        }
+
+        const sourceBytesHeader = Number(extractorRes.headers.get('x-source-bytes')) || 0;
         await setStage(
             'extracting_audio',
             18,
-            `Extracting MP3 audio from ${(videoBytes / (1024 * 1024)).toFixed(1)} MB video (multithreaded)…`
+            sourceBytesHeader > 0
+                ? `Streaming MP3 from extractor (source ${(sourceBytesHeader / 1024 / 1024).toFixed(1)} MB)…`
+                : 'Streaming MP3 from extractor…'
         );
-        const ffmpegMod = await import('fluent-ffmpeg');
-        const ffmpeg = (ffmpegMod as { default?: typeof ffmpegMod }).default || ffmpegMod;
-        try {
-            const ffStatic = await import('ffmpeg-static');
-            const binPath =
-                (ffStatic as { default?: string }).default || (ffStatic as unknown as string);
-            if (binPath) ffmpeg.setFfmpegPath(binPath);
-        } catch {
-            /* fall back to system ffmpeg */
-        }
 
-        let extractedAudioDurationSeconds: number | undefined;
-
-        await new Promise<void>((resolve, reject) => {
-            const cmd = ffmpeg(videoPath)
-                .inputOptions(['-threads', '0'])
-                .noVideo()
-                .audioCodec('libmp3lame')
-                .audioBitrate('96k')
-                .audioChannels(1)
-                .format('mp3')
-                .on('codecData', (data: { duration?: string }) => {
-                    if (data?.duration) {
-                        const m = data.duration.match(/^(\d+):(\d+):(\d+(?:\.\d+)?)$/);
-                        if (m) {
-                            extractedAudioDurationSeconds =
-                                Number(m[1]) * 3600 + Number(m[2]) * 60 + Number(m[3]);
-                        }
-                    }
-                })
-                .on('progress', (p: { percent?: number; timemark?: string }) => {
-                    const pct =
-                        typeof p.percent === 'number' ? Math.max(0, Math.min(100, p.percent)) : 0;
-                    const overall = 18 + (pct / 100) * 14;
-                    void writeProgressThrottled(
-                        'extracting_audio',
-                        overall,
-                        `Extracting audio… ${pct.toFixed(0)}% (t=${p.timemark || '0'})`
-                    );
-                })
-                .on('end', () => resolve())
-                .on('error', (err: Error) => {
-                    if (cancelRequested) {
-                        reject(new CancelledError());
-                    } else {
-                        reject(new Error(`ffmpeg failed: ${err.message}`));
-                    }
-                });
-            activeFfmpegCmd = cmd as unknown as { kill: (signal?: string) => void };
-            cmd.save(mp3Path);
+        const { Readable } = await import('node:stream');
+        const { pipeline } = await import('node:stream/promises');
+        const mp3Out = fs.createWriteStream(mp3Path);
+        let mp3Downloaded = 0;
+        const mp3Stream = Readable.fromWeb(extractorRes.body as never);
+        mp3Stream.on('data', (chunk: Buffer | string) => {
+            mp3Downloaded += typeof chunk === 'string' ? Buffer.byteLength(chunk) : chunk.length;
+            const mb = (mp3Downloaded / (1024 * 1024)).toFixed(1);
+            void writeProgressThrottled(
+                'extracting_audio',
+                Math.min(32, 18 + mp3Downloaded / (3 * 1024 * 1024)), // creep up to 32%
+                `Receiving MP3 from extractor… ${mb} MB`
+            );
         });
-        activeFfmpegCmd = null;
+        await pipeline(mp3Stream, mp3Out);
         checkCancelled();
-
-        // Free disk: source video is no longer needed once the MP3 exists.
-        try {
-            await fs.promises.unlink(videoPath);
-        } catch (e) {
-            console.warn(`[ai-job ${jobId}] could not remove source video:`, e);
-        }
 
         // 3) Transcribe ----------------------------------------------------------
         const mp3Bytes = (await fs.promises.stat(mp3Path)).size;
@@ -408,7 +367,10 @@ export async function runAiJob(jobId: string): Promise<void> {
         await vttFile.makePublic();
         const vttUrl = `https://storage.googleapis.com/${bucket.name}/${vttObjectName}`;
 
-        const audioDurationSeconds = extractedAudioDurationSeconds;
+        const audioDurationSeconds =
+            typeof transcription.durationMs === 'number'
+                ? Math.round(transcription.durationMs / 1000)
+                : null;
 
         // 6) Finalize ------------------------------------------------------------
         await setStage('finalizing', 96, 'Saving everything on the lesson…');
