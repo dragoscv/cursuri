@@ -13,7 +13,8 @@
  * component remains the single live view of all running pipelines.
  */
 
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import {
     collection,
@@ -95,6 +96,31 @@ const AdminAIJobsTray: React.FC = () => {
     const [cancellingId, setCancellingId] = useState<string | null>(null);
     const popoverRef = useRef<HTMLDivElement | null>(null);
     const buttonRef = useRef<HTMLButtonElement | null>(null);
+    const [popoverPos, setPopoverPos] = useState<{ top: number; right: number } | null>(null);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => { setMounted(true); }, []);
+
+    // Position the portaled popover under the trigger button. Recompute on
+    // open, scroll, and resize so it stays anchored.
+    useLayoutEffect(() => {
+        if (!open || !buttonRef.current) return;
+        const update = () => {
+            if (!buttonRef.current) return;
+            const rect = buttonRef.current.getBoundingClientRect();
+            setPopoverPos({
+                top: rect.bottom + 8,
+                right: Math.max(8, window.innerWidth - rect.right),
+            });
+        };
+        update();
+        window.addEventListener('scroll', update, true);
+        window.addEventListener('resize', update);
+        return () => {
+            window.removeEventListener('scroll', update, true);
+            window.removeEventListener('resize', update);
+        };
+    }, [open]);
 
     useEffect(() => {
         if (!isAdmin) return;
@@ -162,6 +188,77 @@ const AdminAIJobsTray: React.FC = () => {
 
     if (!isAdmin) return null;
 
+    const popover = open && popoverPos && (
+        <motion.div
+            ref={popoverRef}
+            initial={{ opacity: 0, y: -6, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -6, scale: 0.98 }}
+            transition={{ duration: 0.12 }}
+            style={{
+                position: 'fixed',
+                top: popoverPos.top,
+                right: popoverPos.right,
+                zIndex: 1000,
+            }}
+            className="w-[360px] max-h-[70vh] overflow-auto rounded-xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] shadow-2xl"
+        >
+            <div className="px-4 py-3 border-b border-[color:var(--ai-card-border)] flex items-center justify-between">
+                <div>
+                    <div className="text-sm font-semibold text-[color:var(--ai-foreground)] inline-flex items-center gap-2">
+                        <FiCpu size={14} className="text-[color:var(--ai-primary)]" />
+                        AI processing jobs
+                    </div>
+                    <div className="text-[11px] text-[color:var(--ai-muted)] mt-0.5">
+                        {activeCount === 0
+                            ? 'No jobs running.'
+                            : `${activeCount} running · saved on the server`}
+                    </div>
+                </div>
+                <button
+                    type="button"
+                    onClick={() => setOpen(false)}
+                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]"
+                    aria-label="Close"
+                >
+                    <FiX size={16} />
+                </button>
+            </div>
+
+            {active.length === 0 && recent.length === 0 && (
+                <div className="px-4 py-6 text-sm text-[color:var(--ai-muted)] text-center">
+                    You haven't queued any AI jobs yet.
+                </div>
+            )}
+
+            {active.length > 0 && (
+                <div className="divide-y divide-[color:var(--ai-card-border)]/60">
+                    {active.map((j) => (
+                        <JobRow
+                            key={j.jobId}
+                            job={j}
+                            cancelling={cancellingId === j.jobId}
+                            onCancel={() => handleCancel(j.jobId)}
+                        />
+                    ))}
+                </div>
+            )}
+
+            {recent.length > 0 && (
+                <div className="border-t border-[color:var(--ai-card-border)] bg-black/5 dark:bg-white/[0.02]">
+                    <div className="px-4 pt-3 pb-1 text-[11px] uppercase tracking-wide text-[color:var(--ai-muted)] font-semibold">
+                        Recent
+                    </div>
+                    <div className="divide-y divide-[color:var(--ai-card-border)]/60">
+                        {recent.map((j) => (
+                            <JobRow key={j.jobId} job={j} />
+                        ))}
+                    </div>
+                </div>
+            )}
+        </motion.div>
+    );
+
     return (
         <div className="relative">
             <Tooltip content={activeCount > 0 ? `${activeCount} AI job(s) running` : 'AI jobs'} placement="bottom">
@@ -186,72 +283,7 @@ const AdminAIJobsTray: React.FC = () => {
                 </button>
             </Tooltip>
 
-            <AnimatePresence>
-                {open && (
-                    <motion.div
-                        ref={popoverRef}
-                        initial={{ opacity: 0, y: -6, scale: 0.98 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -6, scale: 0.98 }}
-                        transition={{ duration: 0.12 }}
-                        className="absolute right-0 mt-2 w-[360px] max-h-[70vh] overflow-auto rounded-xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] shadow-2xl z-50"
-                    >
-                        <div className="px-4 py-3 border-b border-[color:var(--ai-card-border)] flex items-center justify-between">
-                            <div>
-                                <div className="text-sm font-semibold text-[color:var(--ai-foreground)] inline-flex items-center gap-2">
-                                    <FiCpu size={14} className="text-[color:var(--ai-primary)]" />
-                                    AI processing jobs
-                                </div>
-                                <div className="text-[11px] text-[color:var(--ai-muted)] mt-0.5">
-                                    {activeCount === 0
-                                        ? 'No jobs running.'
-                                        : `${activeCount} running · saved on the server`}
-                                </div>
-                            </div>
-                            <button
-                                type="button"
-                                onClick={() => setOpen(false)}
-                                className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]"
-                                aria-label="Close"
-                            >
-                                <FiX size={16} />
-                            </button>
-                        </div>
-
-                        {active.length === 0 && recent.length === 0 && (
-                            <div className="px-4 py-6 text-sm text-[color:var(--ai-muted)] text-center">
-                                You haven't queued any AI jobs yet.
-                            </div>
-                        )}
-
-                        {active.length > 0 && (
-                            <div className="divide-y divide-[color:var(--ai-card-border)]/60">
-                                {active.map((j) => (
-                                    <JobRow
-                                        key={j.jobId}
-                                        job={j}
-                                        cancelling={cancellingId === j.jobId}
-                                        onCancel={() => handleCancel(j.jobId)}
-                                    />
-                                ))}
-                            </div>
-                        )}
-
-                        {recent.length > 0 && (
-                            <div className="border-t border-[color:var(--ai-card-border)] bg-black/5 dark:bg-white/[0.02]">
-                                <div className="px-4 pt-3 pb-1 text-[11px] uppercase tracking-wide text-[color:var(--ai-muted)] font-semibold">
-                                    Recent
-                                </div>
-                                <div className="divide-y divide-[color:var(--ai-card-border)]/60">
-                                    {recent.map((j) => (
-                                        <JobRow key={j.jobId} job={j} />
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            {mounted && createPortal(<AnimatePresence>{popover}</AnimatePresence>, document.body)}
         </div>
     );
 };

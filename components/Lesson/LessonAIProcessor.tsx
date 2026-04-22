@@ -86,10 +86,22 @@ const LessonAIProcessor: React.FC<LessonAIProcessorProps> = ({
     const [modalOpen, setModalOpen] = useState(false);
     const previousJobStatusRef = useRef<string | undefined>(undefined);
     const modalOpenRef = useRef(false);
+    // Track which jobIds the user has explicitly dismissed so progress
+    // updates do NOT re-open the modal mid-job. Cleared when the user
+    // starts a fresh job (handleRun) or when a new job becomes active.
+    const dismissedJobIdsRef = useRef<Set<string>>(new Set());
+    const lastTrackedJobIdRef = useRef<string | undefined>(undefined);
 
     useEffect(() => {
         modalOpenRef.current = modalOpen;
     }, [modalOpen]);
+
+    const closeModal = () => {
+        if (job?.jobId && (job.status === 'queued' || job.status === 'processing')) {
+            dismissedJobIdsRef.current.add(job.jobId);
+        }
+        setModalOpen(false);
+    };
 
     // Subscribe to the lesson document — we mostly need `currentAiJobId` and
     // the persisted result fields (transcription, summary, audioUrl) used to
@@ -156,12 +168,17 @@ const LessonAIProcessor: React.FC<LessonAIProcessorProps> = ({
     }, [lessonId, snap.currentAiJobId]);
 
     // Auto-open the modal if a job is running when we mount/refresh.
+    // Only opens ONCE per jobId — otherwise progress writes (every 1.5s)
+    // would re-open the modal that the user just closed.
     useEffect(() => {
         if (!job) return;
-        if (
-            (job.status === 'queued' || job.status === 'processing') &&
-            !modalOpenRef.current
-        ) {
+        // Reset the per-job tracking when we see a new jobId.
+        if (lastTrackedJobIdRef.current !== job.jobId) {
+            lastTrackedJobIdRef.current = job.jobId;
+        }
+        const isActive = job.status === 'queued' || job.status === 'processing';
+        const wasDismissed = dismissedJobIdsRef.current.has(job.jobId);
+        if (isActive && !modalOpenRef.current && !wasDismissed) {
             setModalOpen(true);
         }
         // Toast on transition to terminal state when the modal is closed.
@@ -234,6 +251,8 @@ const LessonAIProcessor: React.FC<LessonAIProcessorProps> = ({
             });
             return;
         }
+        // New run — clear any prior dismissal so the modal can open again.
+        dismissedJobIdsRef.current.clear();
         setSubmitting(true);
         setModalOpen(true);
         try {
@@ -456,7 +475,7 @@ const LessonAIProcessor: React.FC<LessonAIProcessorProps> = ({
 
             <LessonAIProgressModal
                 isOpen={modalOpen}
-                onClose={() => setModalOpen(false)}
+                onClose={closeModal}
                 onApply={onApply}
                 onCancel={
                     job && (job.status === 'queued' || job.status === 'processing')
