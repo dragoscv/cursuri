@@ -161,8 +161,8 @@ export async function POST(req: NextRequest) {
     // long-running container. This keeps the Vercel function tiny and
     // avoids the /tmp + 60s + cross-instance issues that broke the
     // original `after(runAiJob)` design.
-    const workerUrl = process.env.AUDIO_EXTRACTOR_URL;
-    const workerToken = process.env.AUDIO_EXTRACTOR_TOKEN;
+    const workerUrl = process.env.AUDIO_EXTRACTOR_URL?.trim();
+    const workerToken = process.env.AUDIO_EXTRACTOR_TOKEN?.trim();
     if (!workerUrl || !workerToken) {
         await jobRef.update({
             status: 'failed',
