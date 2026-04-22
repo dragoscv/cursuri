@@ -24,6 +24,8 @@ import CourseNameField from './fields/CourseNameField';
 import CourseDescriptionField from './fields/CourseDescriptionField';
 import InstructorNameField from './fields/InstructorNameField';
 import CourseImageField from './fields/CourseImageField';
+import CourseAIFillButton from './CourseAIFillButton';
+import CourseAIImageButton from './CourseAIImageButton';
 
 interface AddCourseProps {
     onClose: () => void;
@@ -454,7 +456,7 @@ export default function AddCourse(props: AddCourseProps) {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
-                className="w-full max-w-4xl mx-auto"
+                className="w-full max-w-[1600px] mx-auto px-2 sm:px-4"
             >
                 <div className="relative mb-8">
                     <div className="absolute inset-0 bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-[color:var(--ai-accent)]/10 rounded-xl blur-xl"></div>
@@ -486,13 +488,30 @@ export default function AddCourse(props: AddCourseProps) {
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                             <div>
                                 <div className="relative mb-6">
-                                    <CourseNameField value={courseName} onChange={(e) => {
-                                        const newName = e.target.value;
-                                        setCourseName(newName);
-                                        if (!slugManuallyEdited) {
-                                            setCourseSlug(generateSlug(newName));
-                                        }
-                                    }} />
+                                    <div className="flex items-start gap-2">
+                                        <div className="flex-1 min-w-0">
+                                            <CourseNameField value={courseName} onChange={(e) => {
+                                                const newName = e.target.value;
+                                                setCourseName(newName);
+                                                if (!slugManuallyEdited) {
+                                                    setCourseSlug(generateSlug(newName));
+                                                }
+                                            }} />
+                                        </div>
+                                        <div className="pt-7">
+                                            <CourseAIFillButton
+                                                courseId={courseId}
+                                                field="name"
+                                                currentValue={courseName}
+                                                onFill={(v) => {
+                                                    if (typeof v === 'string') {
+                                                        setCourseName(v);
+                                                        if (!slugManuallyEdited) setCourseSlug(generateSlug(v));
+                                                    }
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
                                     <div className="h-0.5 w-full bg-gradient-to-r from-[color:var(--ai-primary)]/50 to-[color:var(--ai-secondary)]/50 mt-1 rounded-full"></div>
                                 </div>
 
@@ -515,7 +534,19 @@ export default function AddCourse(props: AddCourseProps) {
                                     />
                                 </div>
 
-                                <CourseDescriptionField value={courseDescription} onChange={(e) => setCourseDescription(e.target.value)} />
+                                <div className="flex items-start gap-2">
+                                    <div className="flex-1 min-w-0">
+                                        <CourseDescriptionField value={courseDescription} onChange={(e) => setCourseDescription(e.target.value)} />
+                                    </div>
+                                    <div className="pt-7">
+                                        <CourseAIFillButton
+                                            courseId={courseId}
+                                            field="description"
+                                            currentValue={courseDescription}
+                                            onFill={(v) => { if (typeof v === 'string') setCourseDescription(v); }}
+                                        />
+                                    </div>
+                                </div>
 
                                 <div className="grid grid-cols-2 gap-6 mb-6">
                                     <InstructorNameField value={instructorName} onChange={(e) => setInstructorName(e.target.value)} />
@@ -561,6 +592,17 @@ export default function AddCourse(props: AddCourseProps) {
                                             setImagePreview(null);
                                             setOriginalImageUrl(null);
                                         }}
+                                        footer={
+                                            <CourseAIImageButton
+                                                courseId={courseId}
+                                                disabled={!courseName && !courseDescription}
+                                                onGenerated={({ imageUrl }) => {
+                                                    setImagePreview(imageUrl);
+                                                    setOriginalImageUrl(imageUrl);
+                                                    setCourseImage(null);
+                                                }}
+                                            />
+                                        }
                                     />
                                 </div>
                                 <div className="mb-6">
@@ -598,6 +640,19 @@ export default function AddCourse(props: AddCourseProps) {
                                 <div className="mb-6">
                                     <label className="flex items-center gap-2 text-sm font-medium text-[color:var(--ai-foreground)] mb-3">
                                         <FiFileText className="text-[color:var(--ai-primary)]" /> {tCourses('addCourse.category')}
+                                        <span className="ml-auto">
+                                            <CourseAIFillButton
+                                                courseId={courseId}
+                                                field="categories"
+                                                currentValue={courseCategories.join(', ')}
+                                                onFill={(v) => {
+                                                    if (Array.isArray(v)) {
+                                                        const merged = Array.from(new Set([...courseCategories, ...v.map((s) => s.trim()).filter(Boolean)]));
+                                                        setCourseCategories(merged);
+                                                    }
+                                                }}
+                                            />
+                                        </span>
                                     </label>
                                     <div className="flex flex-wrap gap-2 mb-3 min-h-[40px] p-2 rounded-lg border border-[color:var(--ai-card-border)]/50">
                                         {courseCategories.length > 0 ? (
@@ -829,6 +884,19 @@ export default function AddCourse(props: AddCourseProps) {
                                 <div className="mb-6">
                                     <label className="flex items-center gap-2 text-sm font-medium text-[color:var(--ai-foreground)] mb-3">
                                         <FiTag className="text-[color:var(--ai-primary)]" /> {tCourses('addCourse.tags')}
+                                        <span className="ml-auto">
+                                            <CourseAIFillButton
+                                                courseId={courseId}
+                                                field="tags"
+                                                currentValue={courseTags.join(', ')}
+                                                onFill={(v) => {
+                                                    if (Array.isArray(v)) {
+                                                        const merged = Array.from(new Set([...courseTags, ...v.map((s) => s.toLowerCase().trim()).filter(Boolean)]));
+                                                        setCourseTags(merged);
+                                                    }
+                                                }}
+                                            />
+                                        </span>
                                     </label>
                                     <div className="flex flex-wrap gap-2 mb-3 min-h-[40px] p-2 rounded-lg border border-[color:var(--ai-card-border)]/50">
                                         {courseTags.length > 0 ? courseTags.map((tag) => (
@@ -905,6 +973,19 @@ export default function AddCourse(props: AddCourseProps) {
                                 <div className="mb-6">
                                     <label className="flex items-center gap-2 text-sm font-medium text-[color:var(--ai-foreground)] mb-3">
                                         <FiTarget className="text-[color:var(--ai-primary]" /> {tCourses('addCourse.whatYouWillLearn')}
+                                        <span className="ml-auto">
+                                            <CourseAIFillButton
+                                                courseId={courseId}
+                                                field="objectives"
+                                                currentValue={courseObjectives.join('\n')}
+                                                onFill={(v) => {
+                                                    if (Array.isArray(v)) {
+                                                        const merged = Array.from(new Set([...courseObjectives, ...v.map((s) => s.trim()).filter(Boolean)]));
+                                                        setCourseObjectives(merged);
+                                                    }
+                                                }}
+                                            />
+                                        </span>
                                     </label>
                                     <div className="space-y-2 mb-3 min-h-[100px]">
                                         {courseObjectives.length > 0 ? courseObjectives.map((objective, index) => (
@@ -952,6 +1033,19 @@ export default function AddCourse(props: AddCourseProps) {
                                 <div>
                                     <label className="flex items-center gap-2 text-sm font-medium text-[color:var(--ai-foreground)] mb-3">
                                         <FiList className="text-[color:var(--ai-primary)]" /> {tCourses('addCourse.courseRequirements')}
+                                        <span className="ml-auto">
+                                            <CourseAIFillButton
+                                                courseId={courseId}
+                                                field="requirements"
+                                                currentValue={courseRequirements.join('\n')}
+                                                onFill={(v) => {
+                                                    if (Array.isArray(v)) {
+                                                        const merged = Array.from(new Set([...courseRequirements, ...v.map((s) => s.trim()).filter(Boolean)]));
+                                                        setCourseRequirements(merged);
+                                                    }
+                                                }}
+                                            />
+                                        </span>
                                     </label>
                                     <div className="space-y-2 mb-3 min-h-[100px]">
                                         {courseRequirements.length > 0 ? courseRequirements.map((requirement, index) => (

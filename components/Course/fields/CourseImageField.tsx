@@ -3,7 +3,7 @@ import { FiImage } from '../../icons/FeatherIconsExtended';
 import { CourseImageFieldProps } from '@/types';
 import { useTranslations } from 'next-intl';
 
-export default function CourseImageField({ imagePreview, onImageChange, onRemoveImage }: CourseImageFieldProps) {
+export default function CourseImageField({ imagePreview, onImageChange, onRemoveImage, footer }: CourseImageFieldProps) {
     const t = useTranslations('courses.fields');
     return (
         <div className="mb-6">
@@ -46,6 +46,7 @@ export default function CourseImageField({ imagePreview, onImageChange, onRemove
                     </label>
                 )}
             </div>
+            {footer ? <div className="mt-3">{footer}</div> : null}
         </div>
     );
 }

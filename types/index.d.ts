@@ -824,6 +824,8 @@ export interface CourseImageFieldProps {
   imagePreview: string | null;
   onImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onRemoveImage: () => void;
+  /** Optional content rendered under the picker (e.g. AI-generate button). */
+  footer?: React.ReactNode;
 }
 
 /**
