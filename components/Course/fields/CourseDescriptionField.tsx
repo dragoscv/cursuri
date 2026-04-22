@@ -1,22 +1,22 @@
 'use client';
 
-import Textarea from '@/components/ui/Textarea';
+import RichTextEditor from '@/components/Lesson/QA/RichTextEditor';
 import { CourseDescriptionFieldProps } from '@/types';
 import { useTranslations } from 'next-intl';
 
 export default function CourseDescriptionField({ value, onChange }: CourseDescriptionFieldProps) {
     const t = useTranslations('courses.fields');
     return (
-        <Textarea
-            label={t('description.label')}
-            variant="bordered"
-            placeholder={t('description.placeholder')}
-            value={value}
-            onChange={onChange}
-            className="mb-6 bg-[color:var(--ai-card-bg)]/40"
-            isRequired
-            minRows={5}
-            classNames={{ label: "text-[color:var(--ai-foreground)] font-medium" }}
-        />
+        <div className="mb-6">
+            <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
+                {t('description.label')} <span className="text-[color:var(--ai-danger,#f43f5e)]">*</span>
+            </label>
+            <RichTextEditor
+                value={value}
+                onChange={(_text, html) => onChange(html)}
+                placeholder={t('description.placeholder')}
+                minHeight={200}
+            />
+        </div>
     );
 }

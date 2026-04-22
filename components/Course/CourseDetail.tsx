@@ -1,5 +1,7 @@
 'use client';
 
+import { stripHtml } from '@/utils/security/htmlSanitizer';
+
 import React, { useContext, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { AppContext } from '../AppContext';
@@ -203,7 +205,7 @@ export default function CourseDetail({ courseId }: { courseId: string }) {
     // Generate structured data
     const structuredData = generateCourseStructuredData({
       title: course.title || course.name || 'Course',
-      description: course.description || t('fallbacks.noDescription'),
+      description: course.description ? stripHtml(course.description) : t('fallbacks.noDescription'),
       instructorName:
         course.instructorName ||
         (typeof course.instructor === 'string' ? course.instructor : course.instructor?.name) ||

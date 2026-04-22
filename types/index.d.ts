@@ -334,6 +334,37 @@ export interface Course {
     /** The Stripe product ID. */
     id: string;
   };
+  /**
+   * AI-translated copies of user-facing course fields, keyed by BCP-47 locale.
+   * The original fields on the Course (`name`, `description`, …) are always
+   * the source of truth; entries here are derived translations.
+   */
+  translations?: Record<string, CourseTranslation>;
+  /** Active translation job ID (Firestore `translationJobs/{jobId}`). */
+  currentTranslationJobId?: string;
+}
+
+/**
+ * A single translated copy of a course's user-facing fields.
+ */
+export interface CourseTranslation {
+  name?: string;
+  description?: string;
+  fullDescription?: string;
+  benefits?: string[];
+  objectives?: string[];
+  requirements?: string[];
+  tags?: string[];
+  /** Status of this translation. `outdated` means source fields changed since translation. */
+  status: 'complete' | 'partial' | 'outdated';
+  /** Hash of the source content this translation was derived from. */
+  sourceHash: string;
+  /** Epoch ms when this translation was generated. */
+  translatedAt: number;
+  /** Model identifier (e.g. "gpt-4o-mini"). */
+  model?: string;
+  /** Auto-detected source locale at translation time. */
+  sourceLocale?: string;
 }
 
 /**
@@ -425,6 +456,39 @@ export interface Lesson {
   waveformUrl?: string;
   /** Number of peak buckets in the waveform JSON (typically 600). */
   waveformPeakCount?: number;
+  /**
+   * AI-translated copies of user-facing lesson fields, keyed by BCP-47 locale.
+   * The original fields on the lesson are always the source of truth.
+   */
+  translations?: Record<string, LessonTranslation>;
+  /** Active translation job ID (Firestore `translationJobs/{jobId}`). */
+  currentTranslationJobId?: string;
+}
+
+/**
+ * A single translated copy of a lesson's user-facing fields. Captions are
+ * NOT stored here — translated WEBVTT files are written to
+ * `lesson.captions[targetLocale] = { url, content }` so the existing player
+ * dropdown picks them up automatically.
+ */
+export interface LessonTranslation {
+  name?: string;
+  description?: string;
+  content?: string;
+  summary?: string;
+  keyPoints?: string[];
+  transcription?: string;
+  objectives?: string[];
+  tags?: string[];
+  /** True when the captions VTT for this locale was also translated. */
+  captionsTranslated?: boolean;
+  status: 'complete' | 'partial' | 'outdated';
+  /** Hash of the source content this translation was derived from. */
+  sourceHash: string;
+  /** Epoch ms when this translation was generated. */
+  translatedAt: number;
+  model?: string;
+  sourceLocale?: string;
 }
 
 /** A single AI-generated (or hand-edited) lesson chapter marker. */
@@ -773,7 +837,8 @@ export interface CourseNameFieldProps {
  */
 export interface CourseDescriptionFieldProps {
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  /** Receives sanitized HTML produced by the rich-text editor. */
+  onChange: (html: string) => void;
 }
 
 /**

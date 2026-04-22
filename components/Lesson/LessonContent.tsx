@@ -1,5 +1,7 @@
 'use client';
 
+import { sanitizeRich } from '@/utils/security/htmlSanitizer';
+
 import React, { useState, useEffect, useCallback, useMemo, useContext, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { AppContext } from '../AppContext';
@@ -16,7 +18,6 @@ import LessonNavigation from './Navigation/LessonNavigation';
 import LessonAIContent from './LessonAIContent';
 import LessonChaptersPanel from './LessonChaptersPanel';
 import OfflineButton from './OfflineButton';
-import { sanitizeRich } from '@/utils/security/htmlSanitizer';
 import { useOfflineContent } from '../Profile/hooks/useOfflineContent';
 import { FiWifi, FiWifiOff, FiFileText, FiCheckCircle, FiBookOpen } from '@/components/icons/FeatherIcons';
 import { logLessonCompletion, logVideoProgress, logCourseCompletion } from '@/utils/analytics';
@@ -264,9 +265,10 @@ function LessonContent({
                   {lesson.name}
                 </h1>
                 {lesson.description && (
-                  <p className="text-[color:var(--ai-muted)] mt-3 max-w-2xl leading-relaxed">
-                    {lesson.description}
-                  </p>
+                  <div
+                    className="prose prose-sm prose-invert text-[color:var(--ai-muted)] mt-3 max-w-2xl leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: sanitizeRich(lesson.description) }}
+                  />
                 )}
 
                 {/* Status chips */}

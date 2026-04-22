@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { sanitizeRich } from '@/utils/security/htmlSanitizer';
 import { motion } from 'framer-motion';
 import CourseHeader from './CourseHeader';
 import CourseDetails from './CourseDetails';
@@ -140,9 +141,10 @@ export default function CourseDetailView({
             transition={{ duration: 0.4, delay: 0.15 }}
             className="mt-6 rounded-2xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/70 backdrop-blur-sm p-6 shadow-sm"
           >
-            <p className="text-[color:var(--ai-muted)] leading-relaxed">
-              {course.fullDescription}
-            </p>
+            <div
+              className="prose prose-invert max-w-none text-[color:var(--ai-muted)] leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: sanitizeRich(course.fullDescription) }}
+            />
           </motion.div>
         )}
 

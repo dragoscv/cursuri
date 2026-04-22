@@ -5,8 +5,8 @@ import { useTranslations } from 'next-intl';
 import { Lesson } from '@/types';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button as HeroButton } from '@heroui/react';
 import { AppContext } from '@/components/AppContext';
+import { useToast } from '@/components/Toast/ToastContext';
 import useVideoControls from '../hooks/useVideoControls';
-import ResumeVideoModal from './ResumeVideoModal';
 import {
   PlayIcon,
   PauseIcon,
@@ -22,6 +22,14 @@ import VolumeIcon from '@/components/icons/svg/VolumeIcon';
 import MuteIcon from '@/components/icons/svg/MuteIcon';
 import Button from '@/components/ui/Button';
 import LessonTimeline from './LessonTimeline';
+import CaptionsRenderer from './CaptionsRenderer';
+import CaptionsSettingsModal from './CaptionsSettingsModal';
+import {
+  CaptionsSettings,
+  DEFAULT_CC_SETTINGS,
+  loadCaptionsSettings,
+  saveCaptionsSettings,
+} from './captionsSettings';
 
 interface VideoPlayerProps {
   lesson: Lesson;
@@ -49,17 +57,30 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   setProgressSaved,
 }) => {
   const t = useTranslations('common.videoPlayer');
+  const tResume = useTranslations('lessons.resumeVideo');
+  const { showToast } = useToast();
   const context = useContext(AppContext);
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoContainerRef = useRef<HTMLDivElement>(null);
   const [isMuted, setIsMuted] = React.useState(false);
   const [captionsEnabled, setCaptionsEnabled] = React.useState(false);
   const [selectedCaptionLanguage, setSelectedCaptionLanguage] = React.useState<string>('off');
+  const [ccSettings, setCcSettings] = React.useState<CaptionsSettings>(DEFAULT_CC_SETTINGS);
+  const [ccSettingsOpen, setCcSettingsOpen] = React.useState(false);
+
+  // Load persisted CC settings on mount.
+  React.useEffect(() => {
+    setCcSettings(loadCaptionsSettings());
+  }, []);
+
+  const updateCcSettings = React.useCallback((next: CaptionsSettings) => {
+    setCcSettings(next);
+    saveCaptionsSettings(next);
+  }, []);
   const [playbackSpeed, setPlaybackSpeed] = React.useState(1);
-  const [showResumeModal, setShowResumeModal] = React.useState(false);
   const [savedPosition, setSavedPosition] = React.useState<number>(0);
   const [videoReady, setVideoReady] = React.useState(false);
-  const [hasShownModal, setHasShownModal] = React.useState(false);
+  const [hasShownResumePrompt, setHasShownResumePrompt] = React.useState(false);
   const [videoError, setVideoError] = React.useState<string | null>(null);
 
   const courseId = lesson?.courseId || '';
@@ -100,32 +121,32 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
     }
   };
 
-  // Handle caption language selection
+  // Handle caption language selection.
+  // We always set the active track to `hidden` (not `showing`) — captions
+  // are painted by our custom <CaptionsRenderer> overlay so we get full
+  // styling control (padding, edges, position) that ::cue can't provide.
   const handleCaptionChange = (language: string) => {
     setSelectedCaptionLanguage(language);
     setCaptionsEnabled(language !== 'off');
 
     if (videoRef.current) {
-      // Get text tracks from video element
       const tracks = videoRef.current.textTracks;
-
-      // Set mode for all tracks
       for (let i = 0; i < tracks.length; i++) {
         const track = tracks[i];
         if (language === 'off') {
-          track.mode = 'hidden';
+          track.mode = 'disabled';
         } else if (track.language === language.split('-')[0]) {
-          track.mode = 'showing';
-        } else {
           track.mode = 'hidden';
+        } else {
+          track.mode = 'disabled';
         }
       }
     }
   };
 
-  // Check for saved progress and show resume modal
+  // Check for saved progress and offer resume via toast
   useEffect(() => {
-    if (!context || !videoRef.current || !videoReady || hasShownModal) return;
+    if (!context || !videoRef.current || !videoReady || hasShownResumePrompt) return;
 
     const lessonProgress = context.lessonProgress?.[courseId]?.[lesson.id];
 
@@ -133,17 +154,32 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       const position = lessonProgress.lastPosition;
       const duration = videoRef.current.duration;
 
-      // Only show resume modal if:
+      // Only offer resume if:
       // 1. Saved position is at least 3 seconds in
       // 2. Saved position is more than 60 seconds before the end
       // 3. Position is less than 95% of total duration
       if (position > 3 && (duration - position) > 60 && position < duration * 0.95) {
         setSavedPosition(position);
-        setShowResumeModal(true);
-        setHasShownModal(true);
+        setHasShownResumePrompt(true);
+
+        const resumeAt = (sec: number) => {
+          if (videoRef.current) {
+            videoRef.current.currentTime = sec;
+            videoRef.current.play().catch((err) => console.error('Error playing video:', err));
+          }
+        };
+
+        showToast({
+          type: 'info',
+          title: tResume('title'),
+          message: `${tResume('savedPosition')}: ${formatTime(position)} / ${formatTime(duration)}`,
+          duration: 8000,
+          actionLabel: tResume('resume'),
+          action: () => resumeAt(position),
+        });
       }
     }
-  }, [context, courseId, lesson.id, videoReady, hasShownModal]);
+  }, [context, courseId, lesson.id, videoReady, hasShownResumePrompt, showToast, tResume, formatTime]);
 
   // Handle video metadata loaded
   useEffect(() => {
@@ -194,34 +230,6 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
     };
   }, [lesson.file, lesson.videoUrl]);
 
-  // Handle resume video
-  const handleResumeVideo = () => {
-    setShowResumeModal(false);
-    // Use setTimeout to ensure modal is closed and DOM is settled
-    setTimeout(() => {
-      if (videoRef.current && savedPosition > 0) {
-        videoRef.current.currentTime = savedPosition;
-        videoRef.current.play().catch((error) => {
-          console.error('Error playing video:', error);
-        });
-      }
-    }, 100);
-  };
-
-  // Handle start from beginning
-  const handleStartFromBeginning = () => {
-    setShowResumeModal(false);
-    // Use setTimeout to ensure modal is closed and DOM is settled
-    setTimeout(() => {
-      if (videoRef.current) {
-        videoRef.current.currentTime = 0;
-        videoRef.current.play().catch((error) => {
-          console.error('Error playing video:', error);
-        });
-      }
-    }, 100);
-  };
-
   // Initialize captions when the component mounts
   React.useEffect(() => {
     if (videoRef.current && lesson.captions) {
@@ -259,18 +267,6 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
   return (
     <>
-      {/* Resume modal overlay */}
-      {showResumeModal && videoRef.current && (
-        <ResumeVideoModal
-          isOpen={showResumeModal}
-          savedPosition={savedPosition}
-          duration={videoRef.current.duration || 0}
-          onResume={handleResumeVideo}
-          onStartFromBeginning={handleStartFromBeginning}
-          formatTime={formatTime}
-        />
-      )}
-
       <div
         ref={videoContainerRef}
         className={`relative overflow-hidden rounded-3xl bg-black shadow-2xl group ${isFullscreen ? 'flex items-center justify-center' : ''}`}
@@ -302,6 +298,15 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
           onClick={togglePlayPause}
           poster={lesson.thumbnail || lesson.thumbnailUrl || ''}
           crossOrigin="anonymous"
+        />
+
+        {/* Custom captions overlay (replaces native ::cue rendering for full styling control). */}
+        <CaptionsRenderer
+          containerRef={videoContainerRef}
+          videoRef={videoRef}
+          selectedLanguage={selectedCaptionLanguage}
+          enabled={captionsEnabled && ccSettings.enabled}
+          settings={ccSettings}
         />
 
         {/* Video Error Overlay */}
@@ -417,35 +422,50 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
               {' '}
               {/* Captions Dropdown */}
               {lesson.captions && Object.keys(lesson.captions).length > 0 && (
-                <Dropdown>
-                  <DropdownTrigger>
-                    <HeroButton
-                      variant="light"
-                      size="sm"
-                      className={captionsEnabled ? 'text-white bg-[color:var(--ai-primary)]/20' : 'text-white'}
-                      startContent={<CaptionsIcon />}
+                <>
+                  <Dropdown>
+                    <DropdownTrigger>
+                      <HeroButton
+                        variant="light"
+                        size="sm"
+                        className={captionsEnabled ? 'text-white bg-[color:var(--ai-primary)]/20' : 'text-white'}
+                        startContent={<CaptionsIcon />}
+                        aria-label={t('selectCaptions')}
+                      >
+                        {selectedCaptionLanguage === 'off' ? 'Off' : selectedCaptionLanguage.toUpperCase()}
+                      </HeroButton>
+                    </DropdownTrigger>
+                    <DropdownMenu
                       aria-label={t('selectCaptions')}
+                      className="bg-[color:var(--ai-background)]/90 backdrop-blur-md border border-[color:var(--ai-card-border)]/50 text-[color:var(--ai-foreground)]"
+                      selectedKeys={[selectedCaptionLanguage]}
+                      selectionMode="single"
+                      onAction={(key) => {
+                        handleCaptionChange(key.toString());
+                      }}
                     >
-                      {selectedCaptionLanguage === 'off' ? 'Off' : selectedCaptionLanguage.toUpperCase()}
-                    </HeroButton>
-                  </DropdownTrigger>
-                  <DropdownMenu
-                    aria-label={t('selectCaptions')}
-                    className="bg-[color:var(--ai-background)]/90 backdrop-blur-md border border-[color:var(--ai-card-border)]/50 text-[color:var(--ai-foreground)]"
-                    selectedKeys={[selectedCaptionLanguage]}
-                    selectionMode="single"
-                    onAction={(key) => {
-                      handleCaptionChange(key.toString());
-                    }}
+                      <DropdownItem key="off">{t('captionsOff') || 'Off'}</DropdownItem>
+                      {Object.keys(lesson.captions).map((language) => (
+                        <DropdownItem key={language}>
+                          {language.toUpperCase()}
+                        </DropdownItem>
+                      )) as any}
+                    </DropdownMenu>
+                  </Dropdown>
+                  {/* Caption appearance settings */}
+                  <button
+                    type="button"
+                    onClick={() => setCcSettingsOpen(true)}
+                    aria-label={t('captionSettings') || 'Caption settings'}
+                    title={t('captionSettings') || 'Caption settings'}
+                    className="p-1.5 rounded-xl hover:bg-white/20 transition duration-300 text-white"
                   >
-                    <DropdownItem key="off">{t('captionsOff') || 'Off'}</DropdownItem>
-                    {Object.keys(lesson.captions).map((language) => (
-                      <DropdownItem key={language}>
-                        {language.toUpperCase()}
-                      </DropdownItem>
-                    )) as any}
-                  </DropdownMenu>
-                </Dropdown>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <circle cx="12" cy="12" r="3" />
+                      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                    </svg>
+                  </button>
+                </>
               )}
               {/* Playback Speed */}{' '}
               <Dropdown>
@@ -519,6 +539,14 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
           </div>
         </div>
       </div>
+
+      <CaptionsSettingsModal
+        isOpen={ccSettingsOpen}
+        onClose={() => setCcSettingsOpen(false)}
+        settings={ccSettings}
+        onChange={updateCcSettings}
+        onReset={() => updateCcSettings(DEFAULT_CC_SETTINGS)}
+      />
     </>
   );
 };

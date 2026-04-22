@@ -1,4 +1,5 @@
 import React from 'react';
+import { stripHtml } from '@/utils/security/htmlSanitizer';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import {
@@ -257,7 +258,7 @@ export default function LessonsList({
                             {lesson.title || lesson.name || t('unnamedLesson')}
                           </h3>
                           <p className="text-sm text-[color:var(--ai-muted)] line-clamp-2 mt-1">
-                            {lesson.description || t('noDescription')}
+                            {lesson.description ? stripHtml(lesson.description) : t('noDescription')}
                           </p>
                           {lesson.isFree && !userHasAccess && (
                             <span className="inline-block mt-2 text-xs font-medium bg-[color:var(--ai-accent)]/10 text-[color:var(--ai-accent)] px-2 py-0.5 rounded-full">
@@ -292,7 +293,7 @@ export default function LessonsList({
                             {lesson.title || lesson.name || 'Unnamed Lesson'}
                           </h3>
                           <p className="text-sm text-[color:var(--ai-muted)]/70 line-clamp-2 mt-1">
-                            {lesson.description || 'No description available'}
+                            {lesson.description ? stripHtml(lesson.description) : 'No description available'}
                           </p>
                         </div>
                       </div>

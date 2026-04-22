@@ -536,7 +536,7 @@ export default function AddCourse(props: AddCourseProps) {
 
                                 <div className="flex items-start gap-2">
                                     <div className="flex-1 min-w-0">
-                                        <CourseDescriptionField value={courseDescription} onChange={(e) => setCourseDescription(e.target.value)} />
+                                        <CourseDescriptionField value={courseDescription} onChange={(html) => setCourseDescription(html)} />
                                     </div>
                                     <div className="pt-7">
                                         <CourseAIFillButton

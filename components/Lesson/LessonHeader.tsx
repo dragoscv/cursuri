@@ -6,6 +6,7 @@ import { Chip } from '@heroui/react';
 import Button from '@/components/ui/Button';
 import { FiArrowLeft, FiClock, FiCheck, FiLock } from '@/components/icons/FeatherIcons';
 import { Lesson } from '@/types';
+import { sanitizeRich } from '@/utils/security/htmlSanitizer';
 
 interface LessonHeaderProps {
     lesson: Lesson;
@@ -80,9 +81,10 @@ const LessonHeader: React.FC<LessonHeaderProps> = ({
             </h1>
 
             {lesson.description && (
-                <p className="text-[color:var(--ai-muted)] mt-2 max-w-3xl">
-                    {lesson.description}
-                </p>
+                <div
+                    className="prose prose-sm prose-invert max-w-3xl text-[color:var(--ai-muted)] mt-2"
+                    dangerouslySetInnerHTML={{ __html: sanitizeRich(lesson.description) }}
+                />
             )}
         </div>
     );

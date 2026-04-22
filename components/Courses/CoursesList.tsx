@@ -1,4 +1,5 @@
 import React, { useContext, useCallback, memo, useMemo } from 'react';
+import { stripHtml } from '@/utils/security/htmlSanitizer';
 import { AppContext } from '../AppContext';
 import { useToast } from '@/components/Toast/ToastContext';
 import { Chip, Progress } from '@heroui/react';
@@ -439,7 +440,7 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
                 <p
                   className="mb-4 flex-1 text-sm text-[color:var(--ai-muted)] line-clamp-2"
                 >
-                  {course.description || ''}
+                  {course.description ? stripHtml(course.description) : ''}
                 </p>
 
                 {/* Tags */}

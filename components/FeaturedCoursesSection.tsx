@@ -1,5 +1,7 @@
 'use client';
 
+import { stripHtml } from '@/utils/security/htmlSanitizer';
+
 import React, { useContext, useMemo, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { AppContext } from './AppContext';
@@ -109,7 +111,7 @@ const FeaturedCoursesSection = React.memo(function FeaturedCoursesSection() {
                     {course.name}
                   </h3>
                   <p className="mb-4 text-sm text-[color:var(--ai-muted)] line-clamp-2 leading-relaxed">
-                    {course.description || ''}
+                    {course.description ? stripHtml(course.description) : ''}
                   </p>
                   <div className="flex items-center gap-1.5 mb-4">
                     {course.tags?.slice(0, 2).map((tag) => (
