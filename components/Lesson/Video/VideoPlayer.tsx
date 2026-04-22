@@ -21,6 +21,7 @@ import CaptionsIcon from '@/components/icons/svg/CaptionsIcon';
 import VolumeIcon from '@/components/icons/svg/VolumeIcon';
 import MuteIcon from '@/components/icons/svg/MuteIcon';
 import Button from '@/components/ui/Button';
+import LessonTimeline from './LessonTimeline';
 
 interface VideoPlayerProps {
   lesson: Lesson;
@@ -342,36 +343,29 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
         <div
           className={`absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/80 to-transparent transition-opacity duration-300 ${isControlsVisible || !isPlaying ? 'opacity-100' : 'opacity-0'}`}
         >
-          {/* Progress Bar */}
+          {/* Progress Bar (waveform + speech regions + chapter markers) */}
           <div className="relative w-full mb-2">
-            <div
-              className="h-1.5 bg-[color:var(--ai-card-border)]/50 rounded-full overflow-hidden cursor-pointer"
-              onClick={(e) => {
-                if (videoRef.current) {
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  const clickPosition = (e.clientX - rect.left) / rect.width;
-                  videoRef.current.currentTime = clickPosition * videoRef.current.duration;
-                }
-              }}
-            >
-              <div
-                className="h-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
-                style={{ width: `${videoProgress}%` }}
-              ></div>
-            </div>
-
-            {/* Buffered Progress */}
-            <div
-              className="absolute left-0 top-0 h-1.5 bg-[color:var(--ai-card-border)]/20 pointer-events-none rounded-full"
-              style={{
-                width: `${videoRef.current && videoRef.current.buffered.length > 0
-                  ? (videoRef.current.buffered.end(videoRef.current.buffered.length - 1) /
-                    videoRef.current.duration) *
-                  100
+            <LessonTimeline
+              durationSeconds={videoRef.current?.duration || 0}
+              currentSeconds={videoRef.current?.currentTime || 0}
+              bufferedSeconds={
+                videoRef.current && videoRef.current.buffered.length > 0
+                  ? videoRef.current.buffered.end(videoRef.current.buffered.length - 1)
                   : 0
-                  }%`,
+              }
+              waveformUrl={lesson.waveformUrl}
+              speechSegments={lesson.speechSegments}
+              chapters={lesson.chapters}
+              onSeek={(t) => {
+                if (videoRef.current && Number.isFinite(t)) videoRef.current.currentTime = t;
               }}
-            ></div>
+              onJumpToNextSpeech={() => {
+                if (!videoRef.current || !lesson.speechSegments?.length) return;
+                const cur = videoRef.current.currentTime;
+                const next = lesson.speechSegments.find((s) => s.startSeconds > cur + 0.5);
+                if (next) videoRef.current.currentTime = next.startSeconds;
+              }}
+            />
           </div>
 
           {/* Controls Row */}

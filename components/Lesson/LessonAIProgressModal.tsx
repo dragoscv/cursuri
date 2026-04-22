@@ -39,6 +39,8 @@ export type AiStage =
     | 'extracting_audio'
     | 'transcribing'
     | 'summarizing'
+    | 'analyzing_audio'
+    | 'generating_chapters'
     | 'uploading'
     | 'finalizing'
     | 'completed'
@@ -74,7 +76,9 @@ const STAGES: { key: AiStage; label: string }[] = [
     { key: 'extracting_audio', label: 'Extract audio (MP3 + WAV)' },
     { key: 'transcribing', label: 'Transcribe with Azure Speech' },
     { key: 'summarizing', label: 'Summarize with Azure OpenAI' },
-    { key: 'uploading', label: 'Upload audio + WEBVTT' },
+    { key: 'analyzing_audio', label: 'Analyze waveform & speech' },
+    { key: 'generating_chapters', label: 'Generate AI chapters' },
+    { key: 'uploading', label: 'Upload audio + WEBVTT + waveform' },
     { key: 'finalizing', label: 'Save on the lesson' },
 ];
 
@@ -84,6 +88,8 @@ const STAGE_ORDER: AiStage[] = [
     'extracting_audio',
     'transcribing',
     'summarizing',
+    'analyzing_audio',
+    'generating_chapters',
     'uploading',
     'finalizing',
     'completed',

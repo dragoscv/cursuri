@@ -39,6 +39,7 @@ import Accordion, { AccordionItem } from '../ui/Accordion';
 import Checkbox from '@/components/ui/Checkbox';
 import RichTextEditor from '@/components/Lesson/QA/RichTextEditor';
 import LessonAIProcessor from '@/components/Lesson/LessonAIProcessor';
+import LessonChaptersEditor from '@/components/Lesson/LessonChaptersEditor';
 import AIFillButton from '@/components/Lesson/AIFillButton';
 
 // Hoisted so it isn't re-declared on every render
@@ -120,6 +121,7 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
   const [embedUrl, setEmbedUrl] = useState('');
   const [embedType, setEmbedType] = useState<'youtube' | 'codepen' | 'github' | 'other'>('youtube');
   const [transcription, setTranscription] = useState('');
+  const [chapters, setChapters] = useState<import('@/types').LessonChapter[] | undefined>(undefined);
 
   // ----- Resources tab -----
   const [repoUrl, setRepoUrl] = useState('');
@@ -281,6 +283,7 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
           setModuleId(lesson.moduleId || '');
           setHasQuiz(lesson.hasQuiz || false);
           setTranscription(lesson.transcription || '');
+          setChapters(lesson.chapters || []);
 
           // Fetch quiz questions if the lesson has a quiz
           if (lesson.hasQuiz) {
@@ -2114,6 +2117,16 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                       }}
                     />
                   </div>
+
+                  {lessonId && (
+                    <div className="mb-6">
+                      <LessonChaptersEditor
+                        courseId={courseId}
+                        lessonId={lessonId}
+                        initialChapters={chapters}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </CardBody>

@@ -405,6 +405,8 @@ export interface Lesson {
     | 'extracting_audio'
     | 'transcribing'
     | 'summarizing'
+    | 'analyzing_audio'
+    | 'generating_chapters'
     | 'uploading'
     | 'finalizing'
     | 'completed'
@@ -413,6 +415,30 @@ export interface Lesson {
   aiProcessingMessage?: string; // human-readable status line
   captionsProcessing?: boolean;
   captionsGenerated?: boolean;
+  /** AI-generated chapter markers (table of contents) for the lesson video. */
+  chapters?: LessonChapter[];
+  /** When true, the AI pipeline will not overwrite existing chapters on re-runs. */
+  chaptersManuallyEdited?: boolean;
+  /** Spoken-region intervals derived from the transcription, in seconds. */
+  speechSegments?: LessonSpeechSegment[];
+  /** Public URL of a JSON file containing pre-computed waveform peaks (Float32 array stored as numbers). */
+  waveformUrl?: string;
+  /** Number of peak buckets in the waveform JSON (typically 600). */
+  waveformPeakCount?: number;
+}
+
+/** A single AI-generated (or hand-edited) lesson chapter marker. */
+export interface LessonChapter {
+  id: string;
+  title: string;
+  startSeconds: number;
+  summary?: string;
+}
+
+/** A contiguous spoken region of the lesson audio. */
+export interface LessonSpeechSegment {
+  startSeconds: number;
+  endSeconds: number;
 }
 
 /**

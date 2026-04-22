@@ -20,7 +20,8 @@ import { randomUUID } from 'node:crypto';
 
 import { ensureFirebase, getFirestore, getStorage, FieldValue } from './firebase.js';
 import { transcribeAudioFile } from './azure-speech.js';
-import { summarizeTranscript } from './azure-openai.js';
+import { summarizeTranscript, generateChapters } from './azure-openai.js';
+import { computeWaveformPeaks, phrasesToSpeechSegments } from './waveform.js';
 
 class CancelledError extends Error {
     constructor() { super('Cancelled by admin'); this.name = 'CancelledError'; }
@@ -310,8 +311,39 @@ export async function runJob(jobId) {
         }
         checkCancelled();
 
+        // 5a) Waveform + speech segments ------------------------------------
+        await setStage('analyzing_audio', 78, 'Analyzing audio waveform & speech regions…');
+        let waveformPeaks = [];
+        try {
+            waveformPeaks = await computeWaveformPeaks(mp3Path, { signal: abortController.signal, buckets: 600 });
+        } catch (wfErr) {
+            if (cancelRequested) throw new CancelledError();
+            console.error(`[ai-job ${jobId}] waveform extraction failed (continuing without):`, wfErr);
+        }
+        const speechSegments = phrasesToSpeechSegments(transcription.phrases);
+        checkCancelled();
+
+        // 5b) Generate chapters ---------------------------------------------
+        await setStage('generating_chapters', 84, 'Generating AI chapter markers…');
+        let chapters = [];
+        try {
+            const audioDurationS = typeof transcription.durationMs === 'number'
+                ? transcription.durationMs / 1000 : undefined;
+            const result = await generateChapters({
+                phrases: transcription.phrases,
+                lessonTitle: lessonData.name || lessonData.title,
+                lessonDescription: lessonData.description,
+                totalDurationSeconds: audioDurationS,
+            });
+            chapters = result.chapters || [];
+        } catch (chErr) {
+            if (cancelRequested) throw new CancelledError();
+            console.error(`[ai-job ${jobId}] chapter generation failed (continuing without):`, chErr);
+        }
+        checkCancelled();
+
         // 5) Upload ----------------------------------------------------------
-        await setStage('uploading', 85, 'Uploading MP3 + WEBVTT subtitles to storage…');
+        await setStage('uploading', 88, 'Uploading MP3, captions & waveform to storage…');
         const audioObjectName = `lesson-assets/${courseId}/${lessonId}/audio.mp3`;
         const vttObjectName = `lesson-assets/${courseId}/${lessonId}/captions.${transcription.language}.vtt`;
 
@@ -331,6 +363,19 @@ export async function runJob(jobId) {
         await vttFile.makePublic();
         const vttUrl = `https://storage.googleapis.com/${bucket.name}/${vttObjectName}`;
 
+        // Waveform JSON (cache-busted via lastModified-style timestamp on URL).
+        let waveformUrl = null;
+        if (waveformPeaks.length > 0) {
+            const wfObjectName = `lesson-assets/${courseId}/${lessonId}/waveform.json`;
+            const wfFile = bucket.file(wfObjectName);
+            await wfFile.save(
+                JSON.stringify({ peaks: waveformPeaks, sampleRate: 8000, generatedAt: Date.now() }),
+                { metadata: { contentType: 'application/json', cacheControl: 'public, max-age=31536000, immutable' }, resumable: false }
+            );
+            await wfFile.makePublic();
+            waveformUrl = `https://storage.googleapis.com/${bucket.name}/${wfObjectName}`;
+        }
+
         try { await fs.promises.unlink(mp3Path); } catch { /* ignore */ }
 
         const audioDurationSeconds = typeof transcription.durationMs === 'number'
@@ -344,7 +389,18 @@ export async function runJob(jobId) {
             [transcription.language]: { url: vttUrl, content: transcription.transcript },
         };
 
-        await lessonRef.update({
+        // Preserve hand-edited chapters: only overwrite when AI returned some
+        // AND the lesson has none yet, OR when no manual edit flag is present.
+        // Simpler heuristic: if existing chapters look auto-generated (have ids
+        // starting with 'ch_'), replace them; if user edited them (presence of
+        // chaptersManuallyEdited flag), keep them and only fill if empty.
+        const existingChapters = Array.isArray(lessonData.chapters) ? lessonData.chapters : [];
+        const userEdited = lessonData.chaptersManuallyEdited === true;
+        const finalChapters = userEdited && existingChapters.length > 0
+            ? existingChapters
+            : (chapters.length > 0 ? chapters : existingChapters);
+
+        const lessonUpdate = {
             audioUrl,
             audioFileName: 'audio.mp3',
             audioDurationSeconds: audioDurationSeconds ?? null,
@@ -355,11 +411,18 @@ export async function runJob(jobId) {
             captionsGenerated: true,
             summary: summaryResult.summary,
             keyPoints: summaryResult.keyPoints,
+            chapters: finalChapters,
+            speechSegments,
             aiContentGeneratedAt: Date.now(),
             aiProcessingStatus: 'completed',
             aiProcessingError: null,
             currentAiJobId: FieldValue.delete(),
-        });
+        };
+        if (waveformUrl) {
+            lessonUpdate.waveformUrl = waveformUrl;
+            lessonUpdate.waveformPeakCount = waveformPeaks.length;
+        }
+        await lessonRef.update(lessonUpdate);
 
         await jobRef.update({
             status: 'completed',
@@ -376,6 +439,9 @@ export async function runJob(jobId) {
             summary: summaryResult.summary,
             keyPoints: summaryResult.keyPoints,
             audioDurationSeconds: audioDurationSeconds ?? null,
+            waveformUrl: waveformUrl || null,
+            chaptersCount: finalChapters.length,
+            speechSegmentsCount: speechSegments.length,
         });
 
         console.log(`[ai-job ${jobId}] completed`);

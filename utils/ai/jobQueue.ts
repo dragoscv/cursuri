@@ -37,6 +37,8 @@ export type AiJobStage =
     | 'extracting_audio'
     | 'transcribing'
     | 'summarizing'
+    | 'analyzing_audio'
+    | 'generating_chapters'
     | 'uploading'
     | 'finalizing'
     | 'completed'
