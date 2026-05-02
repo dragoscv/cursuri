@@ -67,10 +67,15 @@ export default function CourseDetail({ courseId }: { courseId: string }) {
           console.error('Failed to track revenue:', error);
         });
 
-        // Clear URL params after tracking
-        setTimeout(() => {
+        // Clear URL params after tracking. Capture timeout id so we can
+        // cancel on unmount and never touch window history of the *next*
+        // page after navigation.
+        const cleanupTimeout = window.setTimeout(() => {
           window.history.replaceState({}, '', window.location.pathname);
         }, 2000);
+        return () => {
+          window.clearTimeout(cleanupTimeout);
+        };
       } else {
         console.warn('[CourseDetail] Cannot track purchase - missing URL params');
       }
@@ -78,6 +83,7 @@ export default function CourseDetail({ courseId }: { courseId: string }) {
       // Clear URL params
       window.history.replaceState({}, '', window.location.pathname);
     }
+    return undefined;
   }, [searchParams, user, courseId]);
 
   // Fetch course data if not available
@@ -90,16 +96,22 @@ export default function CourseDetail({ courseId }: { courseId: string }) {
     }
   }, [courseId, fetchCourseById, courses]);
 
-  // Always fetch fresh lessons on mount to ensure latest order
+  // Fetch lessons on mount. Use a stable cacheKey so concurrent mounts and
+  // back/forward navigations dedupe through the in-flight tracker in
+  // AppContext (`isRequestPending`). Previously a `Date.now()` key produced
+  // a unique key on every mount which both defeated dedup and re-hit
+  // Firestore on every navigation back to the page. We still skip when
+  // lessons are already in state so revisits don't refetch unnecessarily.
   useEffect(() => {
-    if (courseId) {
-      // Force fresh fetch by clearing cache to get latest order
-      fetchLessonsForCourse(courseId, {
-        persist: false,
-        cacheKey: `lessons_${courseId}_${Date.now()}`,
-      });
-    }
-    // Only run on mount and when courseId changes
+    if (!courseId) return;
+    const alreadyHaveLessons =
+      lessons && lessons[courseId] &&
+      ((Array.isArray(lessons[courseId]) && (lessons[courseId] as unknown[]).length > 0) ||
+        (typeof lessons[courseId] === 'object' && Object.keys(lessons[courseId] as object).length > 0));
+    if (alreadyHaveLessons) return;
+    fetchLessonsForCourse(courseId, { persist: false });
+    // Only re-run when courseId changes; lessons reference would otherwise
+    // re-trigger the effect after the fetch resolves.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseId]);
 
@@ -196,13 +208,24 @@ export default function CourseDetail({ courseId }: { courseId: string }) {
     return Math.round((completedCount / courseLessons.length) * 100);
   }, [courseLessons, completedLessons]);
 
-  // Add structured data
+  // Client-side structured-data enhancement.
+  //
+  // We inject our own JSON-LD <script> in document.head (tagged with a unique
+  // data attribute) so we can update it after client-side data hydrates with
+  // fresher info (e.g. full lesson list, latest rating).
+  //
+  // IMPORTANT: We must only ever touch the script we created. The previous
+  // implementation removed *all* `script[type="application/ld+json"]` nodes,
+  // including ones rendered server-side by `app/layout.tsx` and the route
+  // page (`app/courses/[courseId]/page.tsx`) via `dangerouslySetInnerHTML`.
+  // Detaching React-managed nodes broke React's reconciliation and caused
+  // `NotFoundError: Failed to execute 'removeChild' on 'Node'` during
+  // navigation away from course / lesson pages.
   useEffect(() => {
     if (!course) {
-      return undefined; // Early return if no course data
+      return undefined;
     }
 
-    // Generate structured data
     const structuredData = generateCourseStructuredData({
       title: course.title || course.name || 'Course',
       description: course.description ? stripHtml(course.description) : t('fallbacks.noDescription'),
@@ -226,7 +249,7 @@ export default function CourseDetail({ courseId }: { courseId: string }) {
       rating: typeof course.rating === 'string' ? parseFloat(course.rating) : course.rating,
       ratingCount: course.reviewCount,
       lessons: courseLessons
-        .filter((lesson) => lesson !== null && lesson !== undefined) // Filter out null/undefined lessons
+        .filter((lesson) => lesson !== null && lesson !== undefined)
         .map((lesson) => ({
           title: lesson?.title || lesson?.name || t('fallbacks.unnamedLesson'),
           duration:
@@ -236,21 +259,27 @@ export default function CourseDetail({ courseId }: { courseId: string }) {
         })),
     });
 
-    // Create script element for structured data
-    const script = document.createElement('script');
-    script.setAttribute('type', 'application/ld+json');
+    const ownerAttr = 'data-coursedetail-jsonld';
+    const ownerValue = courseId;
+    const selector = `script[type="application/ld+json"][${ownerAttr}="${CSS.escape(ownerValue)}"]`;
+
+    // Update existing or create new — never touch scripts we don't own.
+    let script = document.head.querySelector<HTMLScriptElement>(selector);
+    if (!script) {
+      script = document.createElement('script');
+      script.setAttribute('type', 'application/ld+json');
+      script.setAttribute(ownerAttr, ownerValue);
+      document.head.appendChild(script);
+    }
     script.textContent = structuredData;
 
-    // Remove any existing structured data scripts
-    const existingScripts = document.querySelectorAll('script[type="application/ld+json"]');
-    existingScripts.forEach((s) => s.remove());
-
-    // Add script to head
-    document.head.appendChild(script); // Cleanup on unmount
     return () => {
-      document.head.removeChild(script);
+      // Defensive removal: only remove if still our child.
+      if (script && script.parentNode === document.head) {
+        document.head.removeChild(script);
+      }
     };
-  }, [course, courseId, courseLessons]);
+  }, [course, courseId, courseLessons, t]);
 
   if (!course) {
     return (

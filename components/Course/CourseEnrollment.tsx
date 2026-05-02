@@ -26,6 +26,7 @@ import { stripePayments } from '@/utils/firebase/stripe';
 import { firebaseApp } from '@/utils/firebase/firebase.config';
 import Login from '../Login';
 import LoadingButton from '../Buttons/LoadingButton';
+import { useToast } from '@/components/Toast/ToastContext';
 import { logCourseEnrollment } from '@/utils/analytics';
 import { incrementCourseEnrollments, incrementUserCourseCount } from '@/utils/statistics';
 
@@ -55,6 +56,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
   }
 
   const { user, openModal, closeModal, subscriptions } = context;
+  const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const t = useTranslations('courses.enrollment');
@@ -202,7 +204,19 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
         const priceId = priceInfo.priceId;
 
         if (!priceId) {
-          console.error('Price ID not found for course:', course.id, priceInfo);
+          // Course is flagged as paid but has no Stripe price configured.
+          // Surface this to the user instead of silently failing, and log
+          // diagnostic info for the admin.
+          console.warn(
+            '[CourseEnrollment] Paid course has no Stripe price configured',
+            { courseId: course.id, priceInfo }
+          );
+          showToast({
+            type: 'error',
+            message:
+              'This course is not available for purchase yet. Please contact support or try again later.',
+            duration: 5000,
+          });
           setIsLoading(false);
           return;
         }
