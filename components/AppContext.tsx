@@ -1608,7 +1608,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
       const today = new Date().toISOString().split('T')[0];
 
       let loginStreak = 1;
-      let lastLoginDate = today;
+      const lastLoginDate = today;
 
       if (statsSnap.exists()) {
         const statsData = statsSnap.data();

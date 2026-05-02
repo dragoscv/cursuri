@@ -27,15 +27,22 @@ export default function LessonDetailComponent({
     const t = useTranslations('lessons.detail');
     const tCommon = useTranslations('common');
 
-    // Validate params at component level
-    if (!params || typeof params.courseId !== 'string' || typeof params.lessonId !== 'string') {
-        console.error("Invalid params in LessonDetailComponent:", params);
-        return <div className="p-8 text-center">Error: Invalid lesson parameters</div>;
+    // Validate params at component level. We compute validity here but defer
+    // any early return until AFTER all hooks have run, so the hook order is
+    // stable across renders (react-hooks/rules-of-hooks).
+    const paramsValid =
+        !!params && typeof params.courseId === 'string' && typeof params.lessonId === 'string';
+    if (!paramsValid) {
+        // Logging is a side effect, but it's safe at the top of render — no
+        // hook is involved. We still avoid returning before the hooks below.
+        console.error('Invalid params in LessonDetailComponent:', params);
     }
 
-    // Extract courseId and lessonId, ensure they're strings
-    const courseId = params.courseId;
-    const lessonId = params.lessonId;
+    // Extract courseId and lessonId. When invalid, fall back to empty strings
+    // so the hooks below see stable types; the component will render the
+    // error UI after hook execution.
+    const courseId = paramsValid ? params.courseId : '';
+    const lessonId = paramsValid ? params.lessonId : '';
 
     const context = useContext(AppContext);
     const router = useRouter();
@@ -185,6 +192,11 @@ export default function LessonDetailComponent({
             }
         }
     }, [courseId, lessonId, course, courseLessons, hasAccess, context?.user]);
+
+    // Now that all hooks have run, we can branch on invalid params safely.
+    if (!paramsValid) {
+        return <div className="p-8 text-center">Error: Invalid lesson parameters</div>;
+    }
 
     // If course doesn't exist, show error
     if (!course) {

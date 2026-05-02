@@ -40,7 +40,6 @@ export default function ProfileDashboard() {
     throw new Error('AppContext not found');
   }
   const { user, userPaidProducts = [], courses = {}, lessonProgress = {}, userProfile } = context;
-  if (!user) return null;
 
   const unlocked = achievements.filter((a) => a.isUnlocked).length;
   const totalAchievements = achievements.length;
@@ -79,6 +78,10 @@ export default function ProfileDashboard() {
   }, [userPaidProducts, courses, lessonProgress]);
 
   const overallPct = stats.lessonCompletionPercentage || 0;
+
+  // Render nothing until we have an authenticated user. This branch lives
+  // AFTER all hooks so the hook order stays stable (react-hooks/rules-of-hooks).
+  if (!user) return null;
 
   return (
     <div className="space-y-6">

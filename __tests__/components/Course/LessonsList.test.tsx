@@ -290,7 +290,7 @@ describe('LessonsList Component', () => {
             );
 
             // Should show locked state
-            let lockIcons = document.querySelectorAll('.feather-lock');
+            const lockIcons = document.querySelectorAll('.feather-lock');
             expect(lockIcons.length).toBeGreaterThan(0);
 
             // Re-render with access

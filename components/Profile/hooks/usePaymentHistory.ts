@@ -57,7 +57,7 @@ export default function usePaymentHistory(): PaymentHistoryData {
                     const invoiceData = doc.data();
 
                     // Extract product ID from subscription line items
-                    let productId = invoiceData.lines?.data?.[0]?.price?.product || '';
+                    const productId = invoiceData.lines?.data?.[0]?.price?.product || '';
 
                     // Find product or subscription name
                     let productName = 'Subscription Payment';

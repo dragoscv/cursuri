@@ -64,7 +64,6 @@ const ProfileSidebar: React.FC = () => {
   }
 
   const { user, lessonProgress, userPaidProducts, lessons, userProfile } = context;
-  if (!user) return null;
 
   const enrolledCount = useMemo(
     () => userPaidProducts?.filter((p) => p.metadata?.courseId).length || 0,
@@ -97,6 +96,10 @@ const ProfileSidebar: React.FC = () => {
 
   const displayName =
     user?.displayName || userProfile?.displayName || user?.email?.split('@')[0] || t('defaultUserName');
+
+  // Render nothing until we have an authenticated user. This branch lives
+  // AFTER all hooks so the hook order stays stable (react-hooks/rules-of-hooks).
+  if (!user) return null;
 
   return (
     <aside className="lg:sticky lg:top-24 space-y-4">

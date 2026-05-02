@@ -276,8 +276,11 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
             try {
               const url = new URL(lesson.file);
               const pathname = decodeURIComponent(url.pathname);
-              // Extract filename from path like /v0/b/bucket/o/lessons%2FcourseId%2Ffilename
-              const match = pathname.match(/lessons[\/\%2F][^\/\%2F]+[\/\%2F]([^?]+)/);
+              // Extract filename from path like /v0/b/bucket/o/lessons%2FcourseId%2Ffilename.
+              // Note: pathname has been decoded above, so it contains literal `/`.
+              // The character class also tolerates leftover `%2F` characters in
+              // case decoding partially failed.
+              const match = pathname.match(/lessons[/%2F]+[^/%2F]+[/%2F]+([^?]+)/);
               if (match && match[1]) {
                 // Remove timestamp suffix if present (e.g., _1234567890)
                 const filename = match[1].replace(/_\d+(\.[^.]+)$/, '$1');
