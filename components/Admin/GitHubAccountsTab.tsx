@@ -13,6 +13,8 @@ import { AppModal, DataTable, type DataTableColumn } from '@/components/shared/u
 import { firebaseAuth, firebaseApp } from '@/utils/firebase/firebase.config';
 import { createCheckoutSession } from 'firewand';
 import { stripePayments } from '@/utils/firebase/stripe';
+import { resolveGithubPriceId } from '@/utils/firebase/publicConfig';
+import { usePublicConfig } from '@/hooks/usePublicConfig';
 import type { GitHubAccount } from '@/types/github-accounts';
 import type { UserProfile } from '@/types';
 import type { EnrichedSubscription } from '@/types/stripe';
@@ -260,6 +262,7 @@ function OrgMembershipCell({
 }
 
 export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccountsTabProps) {
+  const { config: publicConfig } = usePublicConfig();
   const [accounts, setAccounts] = useState<GitHubAccount[]>([]);
   const [loading, setLoading] = useState(true);
   const [togglingId, setTogglingId] = useState<string | null>(null);
@@ -448,10 +451,10 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
   };
 
   const handlePurchaseSubscription = async () => {
-    const priceId = process.env.NEXT_PUBLIC_STRIPE_GITHUB_PRICE_ID;
+    const priceId = resolveGithubPriceId(publicConfig);
     if (!priceId) {
       setError(
-        'GitHub subscription price is not configured (set NEXT_PUBLIC_STRIPE_GITHUB_PRICE_ID).'
+        'GitHub subscription price is not configured. Set the Stripe price ID under Admin → Settings → Pricing.'
       );
       return;
     }

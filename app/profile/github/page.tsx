@@ -18,6 +18,8 @@ import {
   query,
 } from 'firebase/firestore';
 import { stripePayments } from '@/utils/firebase/stripe';
+import { resolveGithubPriceId } from '@/utils/firebase/publicConfig';
+import { usePublicConfig } from '@/hooks/usePublicConfig';
 import { GradientCard, MetricCard, SectionShell } from '@/components/user-shell';
 import { AppButton } from '@/components/shared/ui';
 import { useToast } from '@/components/Toast/ToastContext';
@@ -32,8 +34,6 @@ interface GitHubAccountDoc {
   isActive: boolean;
   subscriptionId?: string;
 }
-
-const GITHUB_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_GITHUB_PRICE_ID || '';
 
 function GitHubMark({ className = '' }: { className?: string }) {
   return (
@@ -71,6 +71,8 @@ export default function GitHubAccountsPage() {
   const t = useTranslations('profile.github');
   const ctx = useContext(AppContext) as AppContextProps;
   const { showToast } = useToast();
+  const { config: publicConfig } = usePublicConfig();
+  const githubPriceId = resolveGithubPriceId(publicConfig);
 
   const [accounts, setAccounts] = useState<GitHubAccountDoc[]>([]);
   const [loading, setLoading] = useState(true);
@@ -117,11 +119,11 @@ export default function GitHubAccountsPage() {
   }, [subscriptions]);
 
   const handlePurchase = async () => {
-    if (!GITHUB_PRICE_ID) {
+    if (!githubPriceId) {
       showToast({
         type: 'error',
         message:
-          'GitHub subscription is not configured. Please contact support (NEXT_PUBLIC_STRIPE_GITHUB_PRICE_ID is missing).',
+          'GitHub subscription is not configured yet. An admin must set the Stripe price ID under Admin → Settings → Pricing.',
         duration: 6000,
       });
       return;
@@ -130,7 +132,7 @@ export default function GitHubAccountsPage() {
     try {
       const payments = stripePayments(firebaseApp);
       const session = await createCheckoutSession(payments, {
-        price: GITHUB_PRICE_ID,
+        price: githubPriceId,
         allow_promotion_codes: true,
         mode: 'subscription',
         success_url: `${window.location.origin}/profile/github?status=success`,

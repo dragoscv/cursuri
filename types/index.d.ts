@@ -754,6 +754,30 @@ export interface AdminSettings {
 }
 
 /**
+ * Public, admin-managed runtime configuration.
+ *
+ * Stored in Firestore at `config/public`. Readable by anyone, writable only by
+ * admins (see `firestore.rules`). MUST contain only values that are safe to
+ * expose to the public web — e.g. Stripe price IDs, which are public
+ * identifiers in the same family as the `pk_*` publishable key. NEVER store
+ * secret keys, webhook secrets, API tokens, or PII here.
+ */
+export interface PublicConfig {
+  /** Stripe price IDs the checkout client needs to know about. */
+  stripe?: {
+    /**
+     * Price ID for the GitHub + Microsoft account subscription
+     * (used by `/profile/github` and the admin GitHub accounts tab).
+     */
+    githubPriceId?: string;
+  };
+  /** Server-side timestamp of last update. Optional; informational only. */
+  updatedAt?: unknown;
+  /** Admin uid that last updated this document. Optional; informational only. */
+  updatedBy?: string;
+}
+
+/**
  * Lesson Settings Props interface
  */
 export interface LessonSettingsProps {

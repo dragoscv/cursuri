@@ -148,6 +148,16 @@ service cloud.firestore {
     match /admin/{document=**} {
       allow read, write: if hasAdminAccess();
     }
+
+    // Public, admin-managed config (e.g. Stripe price IDs needed by the
+    // checkout client). Readable by anyone; only admins can write.
+    // Documents under /config must NEVER contain secrets — only values that
+    // are safe to expose to the public web (Stripe price IDs are public
+    // identifiers, equivalent to the `pk_*` publishable key family).
+    match /config/{document=**} {
+      allow read: if true;
+      allow write: if hasAdminAccess();
+    }
     
     // Adding analytics collection
     match /analytics/{document=**} {

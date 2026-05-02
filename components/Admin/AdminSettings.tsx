@@ -6,14 +6,19 @@ import { Tabs, Tab, SelectItem, Divider } from '@heroui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button, Input, Switch, Select, Textarea } from '@/components/ui';
 import { AppContext } from '@/components/AppContext';
-import { AdminSettings as AdminSettingsType } from '@/types';
+import { AdminSettings as AdminSettingsType, PublicConfig } from '@/types';
 import { SectionCard } from '@/components/Admin/shell';
+import {
+  getPublicConfig,
+  updatePublicConfig,
+} from '@/utils/firebase/publicConfig';
 import {
   FiCheckCircle,
   FiX,
   FiUsers,
   FiAward,
   FiTarget,
+  FiCreditCard,
 } from '@/components/icons/FeatherIcons';
 
 const DEFAULT_SETTINGS: AdminSettingsType = {
@@ -35,7 +40,7 @@ const AdminSettings: React.FC = () => {
     throw new Error('AdminSettings must be used within an AppProvider');
   }
 
-  const { getAdminSettings, updateAdminSettings } = context;
+  const { getAdminSettings, updateAdminSettings, user } = context;
   const [loading, setLoading] = useState<boolean>(true);
   const [saving, setSaving] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
@@ -43,6 +48,31 @@ const AdminSettings: React.FC = () => {
   const [formData, setFormData] = useState<AdminSettingsType>(DEFAULT_SETTINGS);
   const [initialData, setInitialData] = useState<AdminSettingsType>(DEFAULT_SETTINGS);
   const [activeTab, setActiveTab] = useState<string>('general');
+
+  // Public, admin-managed runtime config (Stripe price IDs, etc.). Stored in
+  // Firestore at `config/public` so non-admin clients can read it for
+  // checkout while only admins can mutate it.
+  const [pricing, setPricing] = useState<{ githubPriceId: string }>({ githubPriceId: '' });
+  const [pricingInitial, setPricingInitial] = useState<{ githubPriceId: string }>({ githubPriceId: '' });
+  const [savingPricing, setSavingPricing] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      try {
+        const config = await getPublicConfig();
+        if (!active) return;
+        const next = { githubPriceId: config?.stripe?.githubPriceId ?? '' };
+        setPricing(next);
+        setPricingInitial(next);
+      } catch (err) {
+        console.error('Error fetching public config:', err);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -73,6 +103,34 @@ const AdminSettings: React.FC = () => {
     () => JSON.stringify(formData) !== JSON.stringify(initialData),
     [formData, initialData]
   );
+
+  const isPricingDirty = useMemo(
+    () => JSON.stringify(pricing) !== JSON.stringify(pricingInitial),
+    [pricing, pricingInitial]
+  );
+
+  const handlePricingSave = async () => {
+    setSavingPricing(true);
+    setSuccess(false);
+    setError(null);
+    try {
+      const trimmed = pricing.githubPriceId.trim();
+      const patch: Partial<PublicConfig> = {
+        stripe: { githubPriceId: trimmed },
+      };
+      await updatePublicConfig(patch, user?.uid);
+      const next = { githubPriceId: trimmed };
+      setPricing(next);
+      setPricingInitial(next);
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 3000);
+    } catch (err) {
+      console.error('Error saving pricing config:', err);
+      setError('Failed to save pricing. You may not have admin permissions.');
+    } finally {
+      setSavingPricing(false);
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -332,6 +390,55 @@ const AdminSettings: React.FC = () => {
                     Applied at checkout (0–100%).
                   </p>
                 </div>
+              </div>
+            </div>
+          </SectionCard>
+        </Tab>
+
+        <Tab
+          key="pricing"
+          title={
+            <div className="flex items-center gap-2">
+              <FiCreditCard size={14} />
+              <span>Pricing</span>
+            </div>
+          }
+        >
+          <SectionCard
+            title="Stripe Pricing"
+            description="Stripe price IDs used by checkout flows. Stored in Firestore (config/public) and readable by clients — never paste secret keys here."
+          >
+            <div className="space-y-5">
+              <div>
+                <label className="block text-sm font-medium text-[color:var(--ai-foreground)] mb-2">
+                  GitHub + Microsoft account subscription price ID
+                </label>
+                <Input
+                  name="githubPriceId"
+                  value={pricing.githubPriceId}
+                  onChange={(e) =>
+                    setPricing((prev) => ({ ...prev, githubPriceId: e.target.value }))
+                  }
+                  placeholder="price_..."
+                  autoComplete="off"
+                  spellCheck={false}
+                />
+                <p className="mt-1.5 text-xs text-[color:var(--ai-muted)]">
+                  Stripe Dashboard → Products → your GitHub subscription product → copy the price ID (starts with <code>price_</code>). Used by <code>/profile/github</code> and the admin GitHub accounts tab.
+                </p>
+              </div>
+
+              <div className="flex justify-end">
+                <Button
+                  color="primary"
+                  isLoading={savingPricing}
+                  isDisabled={savingPricing || !isPricingDirty}
+                  onPress={handlePricingSave}
+                  size="sm"
+                  className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white"
+                >
+                  Save pricing
+                </Button>
               </div>
             </div>
           </SectionCard>
