@@ -725,6 +725,8 @@ export interface AdminAnalytics {
   newUsers: number;
   /** New sales in the last 30 days. */
   newSales: number;
+  /** Total number of successful sales (payments) all-time. */
+  totalSalesCount: number;
   /** Monthly revenue breakdown. */
   monthlyRevenue: Record<string, number>;
   /** Popular courses by enrollment. */

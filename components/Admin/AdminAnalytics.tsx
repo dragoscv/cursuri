@@ -80,6 +80,15 @@ const AdminAnalytics: React.FC = () => {
     const totalSales =
         adminAnalytics?.popularCourses?.reduce((sum, c) => sum + c.enrollments, 0) || 0;
 
+    /**
+     * Real number of payments / sales used to compute the average sale value.
+     * The previous implementation used the sum of `popularCourses.enrollments`,
+     * which is unrelated to the actual sales count and produced wildly inflated
+     * averages (e.g. revenue 7,400 RON / 3 enrollments = 2,467 RON instead of
+     * the real ~336 RON per sale).
+     */
+    const realSalesCount = adminAnalytics?.totalSalesCount || 0;
+
     const revenueGrowth = useMemo(() => {
         if (sortedMonthlyRevenue.length < 2) return 0;
         const cur = sortedMonthlyRevenue[sortedMonthlyRevenue.length - 1];
@@ -124,8 +133,8 @@ const AdminAnalytics: React.FC = () => {
                 <StatCard
                     label={t('averagePerSale')}
                     value={
-                        adminAnalytics && adminAnalytics.totalRevenue && totalSales > 0
-                            ? fmtCurrency(adminAnalytics.totalRevenue / totalSales, { maximumFractionDigits: 0 })
+                        adminAnalytics && adminAnalytics.totalRevenue && realSalesCount > 0
+                            ? fmtCurrency(adminAnalytics.totalRevenue / realSalesCount, { maximumFractionDigits: 0 })
                             : '0 RON'
                     }
                     icon={<FiTarget size={16} />}
@@ -139,8 +148,8 @@ const AdminAnalytics: React.FC = () => {
                 <StatCard
                     label={t('revenueGrowth')}
                     value={`${revenueGrowth >= 0 ? '+' : ''}${revenueGrowth.toFixed(1)}%`}
+                    icon={<FiTarget size={16} />}
                     tone={revenueGrowth >= 0 ? 'success' : 'danger'}
-                    trend={revenueGrowth}
                 />
             </div>
 
@@ -150,16 +159,16 @@ const AdminAnalytics: React.FC = () => {
                 description="Monthly revenue trend across the platform."
             >
                 {sortedMonthlyRevenue.length > 0 ? (
-                    <div className="h-64 flex items-end gap-2">
+                    <div className="h-64 flex items-stretch gap-2">
                         {sortedMonthlyRevenue.map((item, i) => {
                             const heightPct = maxRevenue > 0 ? (item.amount / maxRevenue) * 100 : 0;
                             return (
                                 <div
                                     key={item.monthYear}
-                                    className="flex flex-col items-center flex-1 min-w-0 group"
+                                    className="flex flex-col items-center flex-1 min-w-0 group h-full"
                                     title={fmtCurrency(item.amount)}
                                 >
-                                    <div className="w-full h-full flex items-end">
+                                    <div className="w-full flex-1 flex items-end">
                                         <motion.div
                                             initial={{ scaleY: 0 }}
                                             animate={{ scaleY: 1 }}

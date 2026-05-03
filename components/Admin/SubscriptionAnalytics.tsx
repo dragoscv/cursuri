@@ -65,6 +65,8 @@ interface AnalyticsResponse {
     signupsByMonth: Record<string, number>;
     cancellationsByMonth: Record<string, number>;
     recent: RecentSub[];
+    recentTotal: number;
+    recentLimit: number;
 }
 
 const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -79,11 +81,14 @@ const STATUS_COLORS: Record<string, string> = {
     unpaid: 'text-rose-600 dark:text-rose-400 bg-rose-500/10',
 };
 
-async function fetchAnalytics(): Promise<AnalyticsResponse> {
+async function fetchAnalytics(recentLimit = 10): Promise<AnalyticsResponse> {
     const token = await firebaseAuth.currentUser?.getIdToken();
-    const res = await fetch('/api/admin/subscriptions/analytics', {
-        headers: { Authorization: `Bearer ${token}` },
-    });
+    const res = await fetch(
+        `/api/admin/subscriptions/analytics?recentLimit=${encodeURIComponent(recentLimit)}`,
+        {
+            headers: { Authorization: `Bearer ${token}` },
+        }
+    );
     const data = await res.json();
     if (!res.ok) throw new Error(data?.error || 'Failed to load analytics');
     return data as AnalyticsResponse;
@@ -119,23 +124,41 @@ const SubscriptionAnalytics: React.FC = () => {
     const [actionReason, setActionReason] = useState('');
     const [actionLoading, setActionLoading] = useState(false);
     const [actionError, setActionError] = useState<string | null>(null);
+    const [recentLimit, setRecentLimit] = useState(10);
+    const [loadingMore, setLoadingMore] = useState(false);
 
-    const reload = useCallback(async () => {
+    const reload = useCallback(async (limit?: number) => {
         setLoading(true);
         setError(null);
         try {
-            const d = await fetchAnalytics();
+            const d = await fetchAnalytics(limit ?? recentLimit);
             setData(d);
         } catch (e: any) {
             setError(e.message || 'Failed');
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [recentLimit]);
+
+    const loadMore = useCallback(async () => {
+        if (!data) return;
+        const next = Math.min(200, recentLimit + 10);
+        if (next === recentLimit) return;
+        setLoadingMore(true);
+        try {
+            const d = await fetchAnalytics(next);
+            setRecentLimit(next);
+            setData(d);
+        } catch (e: any) {
+            setError(e.message || 'Failed');
+        } finally {
+            setLoadingMore(false);
+        }
+    }, [data, recentLimit]);
 
     useEffect(() => {
         let mounted = true;
-        fetchAnalytics()
+        fetchAnalytics(10)
             .then((d) => {
                 if (mounted) setData(d);
             })
@@ -293,13 +316,13 @@ const SubscriptionAnalytics: React.FC = () => {
                     </div>
                 ) : (
                     <>
-                        <div className="h-56 flex items-end gap-3">
+                        <div className="h-56 flex items-stretch gap-3">
                             {sortedSignups.map((s, i) => {
                                 const upPct = maxBar > 0 ? (s.value / maxBar) * 100 : 0;
                                 const downPct = maxBar > 0 ? (s.cancellations / maxBar) * 100 : 0;
                                 return (
-                                    <div key={s.key} className="flex-1 flex flex-col items-center min-w-0">
-                                        <div className="flex items-end gap-1 w-full h-full">
+                                    <div key={s.key} className="flex-1 flex flex-col items-center min-w-0 h-full">
+                                        <div className="flex items-end gap-1 w-full flex-1">
                                             <div className="flex-1 flex items-end h-full">
                                                 <motion.div
                                                     initial={{ scaleY: 0 }}
@@ -542,6 +565,31 @@ const SubscriptionAnalytics: React.FC = () => {
                                 })}
                             </tbody>
                         </table>
+                        {data.recentTotal > data.recent.length && (
+                            <div className="flex items-center justify-between gap-3 px-5 py-3 border-t border-[color:var(--ai-card-border)]/60 text-xs text-[color:var(--ai-muted)]">
+                                <span>
+                                    Showing{' '}
+                                    <span className="text-[color:var(--ai-foreground)] font-medium">
+                                        {data.recent.length}
+                                    </span>{' '}
+                                    of{' '}
+                                    <span className="text-[color:var(--ai-foreground)] font-medium">
+                                        {data.recentTotal}
+                                    </span>
+                                </span>
+                                <AppButton
+                                    size="sm"
+                                    variant="secondary"
+                                    onPress={loadMore}
+                                    isDisabled={loadingMore || recentLimit >= 200}
+                                    isLoading={loadingMore}
+                                >
+                                    {recentLimit >= 200
+                                        ? 'Maximum reached'
+                                        : `Load more (+${Math.min(10, data.recentTotal - data.recent.length)})`}
+                                </AppButton>
+                            </div>
+                        )}
                     </div>
                 )}
             </SectionCard>

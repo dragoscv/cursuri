@@ -1029,6 +1029,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         const salesSnapshot = await getDocs(salesQuery);
 
         let totalRevenue = 0;
+        let totalSalesCount = 0;
         let newSales = 0;
         const monthlyRevenue: Record<string, number> = {};
 
@@ -1043,6 +1044,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
           if (sale.amount !== undefined && sale.amount !== null) {
             const amount = typeof sale.amount === 'number' ? sale.amount : parseFloat(sale.amount);
             totalRevenue += amount / 100; // Convert from bani to RON
+            totalSalesCount++;
 
             // Calculate monthly revenue - try multiple date field options
             let date: Date | null = null;
@@ -1136,6 +1138,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
           totalRevenue,
           newUsers,
           newSales,
+          totalSalesCount,
           monthlyRevenue,
           popularCourses: popularCourses.slice(0, 5), // Top 5 courses
         };

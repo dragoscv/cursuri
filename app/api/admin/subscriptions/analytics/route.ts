@@ -51,6 +51,16 @@ export async function GET(request: NextRequest) {
     }
 
     try {
+        // Parse optional `recentLimit` query param so the UI can request more
+        // entries for the "Recent subscriptions" table without having to
+        // refetch from a separate endpoint. Capped at 200 to keep the
+        // response payload reasonable.
+        const url = new URL(request.url);
+        const recentLimitParam = parseInt(url.searchParams.get('recentLimit') || '10', 10);
+        const recentLimit = Number.isFinite(recentLimitParam)
+            ? Math.min(200, Math.max(1, recentLimitParam))
+            : 10;
+
         // Page through all subscriptions (any status)
         const all: Stripe.Subscription[] = [];
         let starting_after: string | undefined;
@@ -198,11 +208,11 @@ export async function GET(request: NextRequest) {
         const churnRate30d =
             activeStartOf30dWindow > 0 ? (canceledLast30 / activeStartOf30dWindow) * 100 : 0;
 
-        // Recent 10 subs (sorted by created desc)
+        // Recent subscriptions (sorted by created desc), bounded by `recentLimit`.
         const recent: RecentSub[] = enriched
             .slice()
             .sort((a, b) => b.sub.created - a.sub.created)
-            .slice(0, 10)
+            .slice(0, recentLimit)
             .map(({ sub, price, product }) => {
                 const customer = sub.customer as Stripe.Customer | string;
                 const customerEmail =
@@ -265,6 +275,8 @@ export async function GET(request: NextRequest) {
             signupsByMonth,
             cancellationsByMonth,
             recent,
+            recentTotal: enriched.length,
+            recentLimit,
         });
     } catch (error: any) {
         console.error('Failed to compute subscription analytics:', error);
