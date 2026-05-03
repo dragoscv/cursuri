@@ -147,9 +147,13 @@ export async function GET(request: NextRequest) {
 
             if (sub.cancel_at_period_end) cancelAtPeriodEndCount++;
 
-            // MRR contribution from active/trialing
+            // MRR contribution: only paying customers count. Trialing subs are
+            // excluded because they are often provisioned manually for testing
+            // or comp access and do not represent real recurring revenue yet.
+            // They will start contributing once Stripe transitions them to
+            // `active` after the trial converts.
             if (
-                (sub.status === 'active' || sub.status === 'trialing') &&
+                sub.status === 'active' &&
                 price?.unit_amount &&
                 price.recurring
             ) {

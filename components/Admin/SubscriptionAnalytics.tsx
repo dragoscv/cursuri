@@ -261,7 +261,12 @@ const SubscriptionAnalytics: React.FC = () => {
     if (!data) return null;
 
     const { kpis } = data;
-    const totalActive = kpis.activeCount + kpis.trialingCount;
+    // "Active subscribers" should reflect the number of paying customers.
+    // Trialing subscribers are excluded here because they are often manually
+    // provisioned and surfacing them on the same KPI card as paying users
+    // overstates real subscription volume. The trialing count remains visible
+    // in the status pills below.
+    const totalActive = kpis.activeCount;
 
     return (
         <div className="space-y-6">
