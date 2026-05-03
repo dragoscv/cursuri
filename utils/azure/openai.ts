@@ -698,29 +698,53 @@ export async function generateCourseImage(opts: {
   /** 'low' | 'medium' | 'high' | 'auto' — gpt-image-1 quality knob. */
   quality?: 'low' | 'medium' | 'high' | 'auto';
 }): Promise<CourseImageResult> {
-  const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
-  const apiKey = process.env.AZURE_OPENAI_API_KEY;
-  const imageDeployment = process.env.AZURE_OPENAI_IMAGE_DEPLOYMENT;
+  // Trim env vars defensively — copy-pasted .env values frequently carry
+  // trailing whitespace / CR that, when interpolated into the URL, cause
+  // Azure's front-end gateway to respond with an HTML "HTTP Error 400 -
+  // Invalid URL" page (rather than a normal JSON error from the API).
+  const endpoint = process.env.AZURE_OPENAI_ENDPOINT?.trim();
+  const apiKey = process.env.AZURE_OPENAI_API_KEY?.trim();
+  const imageDeployment = process.env.AZURE_OPENAI_IMAGE_DEPLOYMENT?.trim();
+  const apiVersion = (process.env.AZURE_OPENAI_IMAGE_API_VERSION || IMAGE_API_VERSION).trim();
   if (!endpoint || !apiKey || !imageDeployment) {
     throw new Error('AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_API_KEY and AZURE_OPENAI_IMAGE_DEPLOYMENT must be set');
   }
+  if (!/^https:\/\/[^\s/]+/.test(endpoint)) {
+    throw new Error(`AZURE_OPENAI_ENDPOINT looks invalid (expected https://<resource>.openai.azure.com): "${endpoint}"`);
+  }
+  // Deployment names may only contain letters, digits, dashes and underscores.
+  if (!/^[A-Za-z0-9_-]+$/.test(imageDeployment)) {
+    throw new Error(`AZURE_OPENAI_IMAGE_DEPLOYMENT contains invalid characters: "${imageDeployment}"`);
+  }
   const size = opts.size || '1536x1024';   // landscape for course cards
   const quality = opts.quality || 'high';
-  const url = `${endpoint.replace(/\/$/, '')}/openai/deployments/${encodeURIComponent(imageDeployment)}/images/generations?api-version=${encodeURIComponent(IMAGE_API_VERSION)}`;
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'api-key': apiKey },
-    body: JSON.stringify({
-      prompt: opts.prompt,
-      n: 1,
-      size,
-      quality,
-      output_format: 'png',
-    }),
-  });
+  const url = `${endpoint.replace(/\/+$/, '')}/openai/deployments/${encodeURIComponent(imageDeployment)}/images/generations?api-version=${encodeURIComponent(apiVersion)}`;
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'api-key': apiKey },
+      body: JSON.stringify({
+        prompt: opts.prompt,
+        n: 1,
+        size,
+        quality,
+        output_format: 'png',
+      }),
+    });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : 'Unknown fetch error';
+    throw new Error(`Image generation network error calling Azure OpenAI (${url.replace(/api-version=[^&]+/, 'api-version=***')}): ${msg}`);
+  }
   if (!res.ok) {
     const text = await res.text().catch(() => '');
-    throw new Error(`Image generation failed: ${res.status} ${res.statusText} ${text.slice(0, 400)}`);
+    // If Azure's gateway returned HTML, surface a more actionable error so
+    // the operator knows it's an URL/config issue, not a model issue.
+    const looksLikeGatewayError = text.trimStart().startsWith('<');
+    const hint = looksLikeGatewayError
+      ? ' — looks like an Azure gateway rejection. Verify AZURE_OPENAI_ENDPOINT (no trailing slash/whitespace), AZURE_OPENAI_IMAGE_DEPLOYMENT name, and that AZURE_OPENAI_IMAGE_API_VERSION matches a version that supports gpt-image-1 (e.g. 2025-04-01-preview).'
+      : '';
+    throw new Error(`Image generation failed: ${res.status} ${res.statusText}${hint} ${text.slice(0, 400)}`);
   }
   const json = (await res.json()) as { data?: Array<{ b64_json?: string; url?: string }>; };
   const item = json.data?.[0];
