@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 
 import { AppContext } from '@/components/AppContext';
 import { AdminShell } from '@/components/Admin/shell';
+import { ContextMenuProvider } from '@/components/ui/ContextMenu';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -36,5 +37,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  return <AdminShell>{children}</AdminShell>;
+  return (
+    <ContextMenuProvider>
+      <AdminShell>{children}</AdminShell>
+    </ContextMenuProvider>
+  );
 }

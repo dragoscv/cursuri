@@ -15,24 +15,76 @@ import { motion } from 'framer-motion';
 import { AppContext } from '@/components/AppContext';
 import { Course, UserProfile } from '@/types';
 import { useToast } from '@/components/Toast/ToastContext';
-import { DataToolbar, EmptyState } from '@/components/Admin/shell';
+import {
+  ColumnVisibilityMenu,
+  DataToolbar,
+  EmptyState,
+  SortableHeader,
+  type ColumnDef,
+  type SortDirection,
+} from '@/components/Admin/shell';
 import { AppModal } from '@/components/shared/ui';
 import { firebaseAuth } from '@/utils/firebase/firebase.config';
 import Select, { SelectItem } from '@/components/ui/Select';
+import Autocomplete from '@/components/ui/Autocomplete';
+import { ContextMenuTrigger, type ContextMenuItem } from '@/components/ui/ContextMenu';
 import {
   FiUsers,
   FiCheckCircle,
   FiX,
   FiBookOpen,
   FiCreditCard,
+  FiCheck,
 } from '@/components/icons/FeatherIcons';
 import { IconBolt } from '@/components/Admin/shell/icons';
 
 const ROWS_PER_PAGE = 12;
 
-type RoleFilter = 'all' | 'admin' | 'instructor' | 'user';
-type VerifiedFilter = 'all' | 'verified' | 'unverified';
-type SortKey = 'newest' | 'oldest' | 'name' | 'email' | 'enrollments';
+type RoleFilter = '' | 'admin' | 'instructor' | 'user';
+type VerifiedFilter = '' | 'verified' | 'unverified';
+type ColumnKey =
+  | 'select'
+  | 'user'
+  | 'email'
+  | 'verified'
+  | 'role'
+  | 'enrolled'
+  | 'subscriptions'
+  | 'githubAccounts'
+  | 'memberSince'
+  | 'actions';
+
+const COLUMN_DEFS: ColumnDef<ColumnKey>[] = [
+  { key: 'select', label: 'Selection checkbox', locked: true },
+  { key: 'user', label: 'User', locked: true, description: 'Avatar, name, ID' },
+  { key: 'email', label: 'Email' },
+  { key: 'verified', label: 'Verified' },
+  { key: 'role', label: 'Role' },
+  { key: 'enrolled', label: 'Enrolled', description: 'Number of course enrollments' },
+  { key: 'subscriptions', label: 'Subscriptions', description: 'Active / total Stripe subs' },
+  {
+    key: 'githubAccounts',
+    label: 'GitHub accounts',
+    description: 'Healthy / total provisioned accounts',
+  },
+  { key: 'memberSince', label: 'Member since' },
+  { key: 'actions', label: 'Actions', locked: true },
+];
+
+const DEFAULT_VISIBILITY: Record<ColumnKey, boolean> = {
+  select: true,
+  user: true,
+  email: true,
+  verified: true,
+  role: true,
+  enrolled: true,
+  subscriptions: true,
+  githubAccounts: true,
+  memberSince: true,
+  actions: true,
+};
+
+const COLUMN_VIS_STORAGE_KEY = 'admin-users-column-visibility-v2';
 
 const formatDate = (raw: any): string => {
   if (!raw) return '—';
@@ -47,6 +99,14 @@ const formatDate = (raw: any): string => {
 const enrollmentCount = (u: UserProfile): number =>
   u.enrollments ? Object.keys(u.enrollments).length : 0;
 
+const createdAtSeconds = (u: UserProfile): number => {
+  const raw = u.createdAt as any;
+  if (!raw) return 0;
+  if (typeof raw === 'object' && 'seconds' in raw) return raw.seconds as number;
+  const t = new Date(raw).getTime();
+  return Number.isNaN(t) ? 0 : t / 1000;
+};
+
 const AdminUsers: React.FC = () => {
   const t = useTranslations('admin.users');
   const tCommon = useTranslations('common');
@@ -60,16 +120,43 @@ const AdminUsers: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
-  const [roleFilter, setRoleFilter] = useState<RoleFilter>('all');
-  const [verifiedFilter, setVerifiedFilter] = useState<VerifiedFilter>('all');
-  const [sort, setSort] = useState<SortKey>('newest');
+  const [roleFilter, setRoleFilter] = useState<RoleFilter>('');
+  const [verifiedFilter, setVerifiedFilter] = useState<VerifiedFilter>('');
+  const [sortKey, setSortKey] = useState<string | null>('memberSince');
+  const [sortDir, setSortDir] = useState<SortDirection>('desc');
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [columnVisibility, setColumnVisibility] = useState<Record<ColumnKey, boolean>>(
+    DEFAULT_VISIBILITY
+  );
 
-  // Per-user subscription counts: { [userId]: { total, active } }.
-  // Sourced from /api/admin/users/subscriptions-summary so we can render an
-  // "active/total" pill in the Subscriptions column without N round-trips.
+  // Hydrate column visibility from localStorage so admins keep their layout.
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(COLUMN_VIS_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as Partial<Record<ColumnKey, boolean>>;
+        setColumnVisibility((prev) => ({ ...prev, ...parsed }));
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  const persistVisibility = (next: Record<ColumnKey, boolean>) => {
+    setColumnVisibility(next);
+    try {
+      localStorage.setItem(COLUMN_VIS_STORAGE_KEY, JSON.stringify(next));
+    } catch {
+      /* ignore */
+    }
+  };
+
+  // Per-user counters loaded from aggregate endpoints.
   const [subSummary, setSubSummary] = useState<Record<string, { total: number; active: number }>>(
+    {}
+  );
+  const [ghSummary, setGhSummary] = useState<Record<string, { total: number; healthy: number }>>(
     {}
   );
 
@@ -99,22 +186,32 @@ const AdminUsers: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Fetch the per-user subscription counts in parallel with users. Errors
-  // are non-fatal — column simply renders "—" for users without data.
+  // Fetch the per-user subscription + GitHub account counters in parallel.
+  // Errors are non-fatal — column simply renders "—" for users without data.
   useEffect(() => {
     let mounted = true;
     (async () => {
       try {
         const token = await firebaseAuth.currentUser?.getIdToken();
         if (!token) return;
-        const res = await fetch('/api/admin/users/subscriptions-summary', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) return;
-        const data = await res.json();
-        if (mounted && data?.summary) setSubSummary(data.summary);
+        const [subsRes, ghRes] = await Promise.all([
+          fetch('/api/admin/users/subscriptions-summary', {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch('/api/admin/users/github-accounts-summary', {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+        if (subsRes.ok) {
+          const data = await subsRes.json();
+          if (mounted && data?.summary) setSubSummary(data.summary);
+        }
+        if (ghRes.ok) {
+          const data = await ghRes.json();
+          if (mounted && data?.summary) setGhSummary(data.summary);
+        }
       } catch (e) {
-        console.warn('Failed to fetch subscriptions summary:', e);
+        console.warn('Failed to fetch admin user summaries:', e);
       }
     })();
     return () => {
@@ -131,10 +228,17 @@ const AdminUsers: React.FC = () => {
     const q = search.trim().toLowerCase();
     return allUsers
       .filter((u) => {
-        if (q && !(u.email?.toLowerCase().includes(q) || u.displayName?.toLowerCase().includes(q) || u.id.toLowerCase().includes(q))) {
+        if (
+          q &&
+          !(
+            u.email?.toLowerCase().includes(q) ||
+            u.displayName?.toLowerCase().includes(q) ||
+            u.id.toLowerCase().includes(q)
+          )
+        ) {
           return false;
         }
-        if (roleFilter !== 'all') {
+        if (roleFilter) {
           const role = (u.role || 'user') as string;
           if (role !== roleFilter) return false;
         }
@@ -143,32 +247,41 @@ const AdminUsers: React.FC = () => {
         return true;
       })
       .sort((a, b) => {
-        switch (sort) {
-          case 'name':
-            return (a.displayName || a.email || '').localeCompare(b.displayName || b.email || '');
-          case 'email':
-            return (a.email || '').localeCompare(b.email || '');
-          case 'enrollments':
-            return enrollmentCount(b) - enrollmentCount(a);
-          case 'oldest':
-          case 'newest': {
-            const da = a.createdAt
-              ? typeof a.createdAt === 'object' && 'seconds' in a.createdAt
-                ? a.createdAt.seconds
-                : new Date(a.createdAt as any).getTime() / 1000
-              : 0;
-            const db = b.createdAt
-              ? typeof b.createdAt === 'object' && 'seconds' in b.createdAt
-                ? b.createdAt.seconds
-                : new Date(b.createdAt as any).getTime() / 1000
-              : 0;
-            return sort === 'newest' ? db - da : da - db;
+        if (!sortKey || !sortDir) return 0;
+        const dir = sortDir === 'asc' ? 1 : -1;
+        switch (sortKey) {
+          case 'user': {
+            return (
+              (a.displayName || a.email || '').localeCompare(
+                b.displayName || b.email || ''
+              ) * dir
+            );
           }
+          case 'email':
+            return (a.email || '').localeCompare(b.email || '') * dir;
+          case 'verified':
+            return ((a.emailVerified ? 1 : 0) - (b.emailVerified ? 1 : 0)) * dir;
+          case 'role':
+            return (a.role || 'user').localeCompare(b.role || 'user') * dir;
+          case 'enrolled':
+            return (enrollmentCount(a) - enrollmentCount(b)) * dir;
+          case 'subscriptions': {
+            const sa = subSummary[a.id]?.active ?? 0;
+            const sb = subSummary[b.id]?.active ?? 0;
+            return (sa - sb) * dir;
+          }
+          case 'githubAccounts': {
+            const ga = ghSummary[a.id]?.healthy ?? 0;
+            const gb = ghSummary[b.id]?.healthy ?? 0;
+            return (ga - gb) * dir;
+          }
+          case 'memberSince':
+            return (createdAtSeconds(a) - createdAtSeconds(b)) * dir;
           default:
             return 0;
         }
       });
-  }, [allUsers, search, roleFilter, verifiedFilter, sort]);
+  }, [allUsers, search, roleFilter, verifiedFilter, sortKey, sortDir, subSummary, ghSummary]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / ROWS_PER_PAGE));
   const paginated = filtered.slice((page - 1) * ROWS_PER_PAGE, page * ROWS_PER_PAGE);
@@ -176,7 +289,7 @@ const AdminUsers: React.FC = () => {
   // reset paging on filter change
   useEffect(() => {
     setPage(1);
-  }, [search, roleFilter, verifiedFilter, sort]);
+  }, [search, roleFilter, verifiedFilter, sortKey, sortDir]);
 
   // selection helpers
   const allOnPageSelected = paginated.length > 0 && paginated.every((u) => selected.has(u.id));
@@ -285,6 +398,84 @@ const AdminUsers: React.FC = () => {
     admins: allUsers.filter((u) => u.role === 'admin').length,
   };
 
+  // Build per-row context menu items.
+  const buildRowMenu = (user: UserProfile): ContextMenuItem[] => {
+    const sub = subSummary[user.id];
+    const gh = ghSummary[user.id];
+    const items: ContextMenuItem[] = [
+      {
+        id: 'view',
+        label: 'View user details',
+        icon: <FiUsers size={14} />,
+        onSelect: () => router.push(`/admin/users/${user.id}`),
+      },
+      {
+        id: 'assign',
+        label: 'Assign course',
+        icon: <FiBookOpen size={14} />,
+        onSelect: () => openAssign(user),
+      },
+      {
+        id: 'subs',
+        label: `View subscriptions${sub ? ` (${sub.active}/${sub.total})` : ''}`,
+        icon: <FiCreditCard size={14} />,
+        onSelect: () => router.push(`/admin/users/${user.id}#subscriptions`),
+      },
+      {
+        id: 'github',
+        label: `View GitHub accounts${gh ? ` (${gh.healthy}/${gh.total})` : ''}`,
+        icon: <GitHubIcon size={14} />,
+        onSelect: () => router.push(`/admin/users/${user.id}#github-accounts`),
+      },
+      {
+        id: 'sep1',
+        divider: true,
+      },
+      {
+        id: 'copy-email',
+        label: 'Copy email',
+        description: user.email,
+        icon: <CopyIcon size={14} />,
+        disabled: !user.email,
+        onSelect: () => {
+          if (user.email) {
+            navigator.clipboard.writeText(user.email);
+            showToast({ type: 'success', message: 'Email copied', duration: 2000 });
+          }
+        },
+      },
+      {
+        id: 'copy-id',
+        label: 'Copy user ID',
+        description: user.id,
+        icon: <CopyIcon size={14} />,
+        onSelect: () => {
+          navigator.clipboard.writeText(user.id);
+          showToast({ type: 'success', message: 'User ID copied', duration: 2000 });
+        },
+      },
+      {
+        id: 'sep2',
+        divider: true,
+      },
+      {
+        id: 'select',
+        label: selected.has(user.id) ? 'Remove from selection' : 'Add to selection',
+        icon: <FiCheck size={14} />,
+        onSelect: () => toggleSelect(user.id),
+      },
+    ];
+    return items;
+  };
+
+  const handleSort = (key: string, direction: SortDirection) => {
+    setSortKey(direction ? key : null);
+    setSortDir(direction);
+  };
+
+  const colspan =
+    Object.values(columnVisibility).filter(Boolean).length;
+
   return (
     <div className="space-y-5">
       {/* Mini stats strip */}
@@ -312,45 +503,35 @@ const AdminUsers: React.FC = () => {
         }
         filters={
           <>
-            <Select
-              aria-label="Filter by role"
-              size="sm"
-              variant="flat"
-              className="min-w-[140px]"
+            <Autocomplete<RoleFilter>
+              ariaLabel="Filter by role"
+              placeholder="All roles"
+              className="min-w-[160px]"
               value={roleFilter}
-              onChange={(e) => setRoleFilter(e.target.value as RoleFilter)}
-            >
-              <SelectItem itemKey="all" value="all">All roles</SelectItem>
-              <SelectItem itemKey="admin" value="admin">Admin</SelectItem>
-              <SelectItem itemKey="instructor" value="instructor">Instructor</SelectItem>
-              <SelectItem itemKey="user" value="user">User</SelectItem>
-            </Select>
-            <Select
-              aria-label="Filter by verification"
-              size="sm"
-              variant="flat"
-              className="min-w-[160px]"
+              onChange={(v) => setRoleFilter(v as RoleFilter)}
+              options={[
+                { value: 'admin', label: 'Admin', description: 'Full platform access' },
+                { value: 'instructor', label: 'Instructor', description: 'Can manage courses' },
+                { value: 'user', label: 'User', description: 'Standard learner' },
+              ]}
+            />
+            <Autocomplete<VerifiedFilter>
+              ariaLabel="Filter by verification"
+              placeholder="All statuses"
+              className="min-w-[170px]"
               value={verifiedFilter}
-              onChange={(e) => setVerifiedFilter(e.target.value as VerifiedFilter)}
-            >
-              <SelectItem itemKey="all" value="all">All statuses</SelectItem>
-              <SelectItem itemKey="verified" value="verified">{t('verified')}</SelectItem>
-              <SelectItem itemKey="unverified" value="unverified">{t('notVerified')}</SelectItem>
-            </Select>
-            <Select
-              aria-label="Sort by"
-              size="sm"
-              variant="flat"
-              className="min-w-[160px]"
-              value={sort}
-              onChange={(e) => setSort(e.target.value as SortKey)}
-            >
-              <SelectItem itemKey="newest" value="newest">Newest first</SelectItem>
-              <SelectItem itemKey="oldest" value="oldest">Oldest first</SelectItem>
-              <SelectItem itemKey="name" value="name">Name (A→Z)</SelectItem>
-              <SelectItem itemKey="email" value="email">Email (A→Z)</SelectItem>
-              <SelectItem itemKey="enrollments" value="enrollments">Most enrollments</SelectItem>
-            </Select>
+              onChange={(v) => setVerifiedFilter(v as VerifiedFilter)}
+              options={[
+                { value: 'verified', label: t('verified') },
+                { value: 'unverified', label: t('notVerified') },
+              ]}
+            />
+            <ColumnVisibilityMenu<ColumnKey>
+              columns={COLUMN_DEFS}
+              visible={columnVisibility}
+              onChange={persistVisibility}
+              onReset={() => persistVisibility(DEFAULT_VISIBILITY)}
+            />
           </>
         }
       />
@@ -360,35 +541,120 @@ const AdminUsers: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-[11px] uppercase tracking-wider text-[color:var(--ai-muted)] bg-[color:var(--ai-background)]/40">
-                <th className="w-10 px-4 py-3">
-                  <input
-                    type="checkbox"
-                    aria-label="Select all on page"
-                    checked={allOnPageSelected}
-                    onChange={toggleSelectAllOnPage}
-                    className="accent-[color:var(--ai-primary)] cursor-pointer"
-                  />
-                </th>
-                <th className="px-4 py-3 font-semibold">{t('tableUser')}</th>
-                <th className="px-4 py-3 font-semibold hidden md:table-cell">{t('tableEmail')}</th>
-                <th className="px-4 py-3 font-semibold hidden sm:table-cell">{t('tableVerified')}</th>
-                <th className="px-4 py-3 font-semibold">{t('tableRole')}</th>
-                <th className="px-4 py-3 font-semibold hidden lg:table-cell">Enrolled</th>
-                <th className="px-4 py-3 font-semibold hidden lg:table-cell">Subscriptions</th>
-                <th className="px-4 py-3 font-semibold hidden xl:table-cell">Member since</th>
-                <th className="px-4 py-3 font-semibold text-right">{t('tableActions')}</th>
+              <tr className="text-left text-[11px] uppercase tracking-wider bg-[color:var(--ai-background)]/40">
+                {columnVisibility.select && (
+                  <th className="w-10 px-4 py-3">
+                    <input
+                      type="checkbox"
+                      aria-label="Select all on page"
+                      checked={allOnPageSelected}
+                      onChange={toggleSelectAllOnPage}
+                      className="accent-[color:var(--ai-primary)] cursor-pointer"
+                    />
+                  </th>
+                )}
+                {columnVisibility.user && (
+                  <SortableHeader
+                    sortKey="user"
+                    activeKey={sortKey}
+                    direction={sortDir}
+                    onSort={handleSort}
+                  >
+                    {t('tableUser')}
+                  </SortableHeader>
+                )}
+                {columnVisibility.email && (
+                  <SortableHeader
+                    sortKey="email"
+                    activeKey={sortKey}
+                    direction={sortDir}
+                    onSort={handleSort}
+                    className="hidden md:table-cell"
+                  >
+                    {t('tableEmail')}
+                  </SortableHeader>
+                )}
+                {columnVisibility.verified && (
+                  <SortableHeader
+                    sortKey="verified"
+                    activeKey={sortKey}
+                    direction={sortDir}
+                    onSort={handleSort}
+                    className="hidden sm:table-cell"
+                  >
+                    {t('tableVerified')}
+                  </SortableHeader>
+                )}
+                {columnVisibility.role && (
+                  <SortableHeader
+                    sortKey="role"
+                    activeKey={sortKey}
+                    direction={sortDir}
+                    onSort={handleSort}
+                  >
+                    {t('tableRole')}
+                  </SortableHeader>
+                )}
+                {columnVisibility.enrolled && (
+                  <SortableHeader
+                    sortKey="enrolled"
+                    activeKey={sortKey}
+                    direction={sortDir}
+                    onSort={handleSort}
+                    className="hidden lg:table-cell"
+                  >
+                    Enrolled
+                  </SortableHeader>
+                )}
+                {columnVisibility.subscriptions && (
+                  <SortableHeader
+                    sortKey="subscriptions"
+                    activeKey={sortKey}
+                    direction={sortDir}
+                    onSort={handleSort}
+                    className="hidden lg:table-cell"
+                  >
+                    Subscriptions
+                  </SortableHeader>
+                )}
+                {columnVisibility.githubAccounts && (
+                  <SortableHeader
+                    sortKey="githubAccounts"
+                    activeKey={sortKey}
+                    direction={sortDir}
+                    onSort={handleSort}
+                    className="hidden lg:table-cell"
+                  >
+                    GitHub
+                  </SortableHeader>
+                )}
+                {columnVisibility.memberSince && (
+                  <SortableHeader
+                    sortKey="memberSince"
+                    activeKey={sortKey}
+                    direction={sortDir}
+                    onSort={handleSort}
+                    className="hidden xl:table-cell"
+                  >
+                    Member since
+                  </SortableHeader>
+                )}
+                {columnVisibility.actions && (
+                  <th className="px-4 py-3 font-semibold text-right text-[color:var(--ai-muted)]">
+                    {t('tableActions')}
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody>
               {paginated.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="py-10">
+                  <td colSpan={colspan} className="py-10">
                     <EmptyState
                       icon={<FiUsers size={22} />}
                       title={t('noUsersFound')}
                       description={
-                        search || roleFilter !== 'all' || verifiedFilter !== 'all'
+                        search || roleFilter || verifiedFilter
                           ? 'Try adjusting your filters'
                           : 'Users will appear here as they register'
                       }
@@ -400,132 +666,149 @@ const AdminUsers: React.FC = () => {
                   const isSel = selected.has(user.id);
                   const enroll = enrollmentCount(user);
                   return (
-                    <motion.tr
+                    <ContextMenuTrigger
                       key={user.id}
-                      initial={{ opacity: 0, y: 4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.015 }}
-                      className={[
-                        'group border-t border-[color:var(--ai-card-border)] transition-colors cursor-pointer',
-                        isSel
-                          ? 'bg-[color:var(--ai-primary)]/8'
-                          : 'hover:bg-[color:var(--ai-primary)]/4',
-                      ].join(' ')}
-                      onClick={() => router.push(`/admin/users/${user.id}`)}
+                      items={() => buildRowMenu(user)}
+                      contextLabel={user.displayName || user.email || 'User'}
                     >
-                      <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                        <input
-                          type="checkbox"
-                          aria-label={`Select ${user.email}`}
-                          checked={isSel}
-                          onChange={() => toggleSelect(user.id)}
-                          className="accent-[color:var(--ai-primary)] cursor-pointer"
-                        />
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <Avatar
-                            src={user.photoURL || ''}
-                            name={user.displayName || user.email}
-                            size="sm"
-                          />
-                          <div className="min-w-0">
-                            <div className="font-medium text-[color:var(--ai-foreground)] truncate">
-                              {user.displayName || t('noName')}
-                            </div>
-                            <div className="md:hidden text-[11px] text-[color:var(--ai-muted)] truncate">
-                              {user.email}
-                            </div>
-                            <div className="text-[10px] text-[color:var(--ai-muted)] font-mono">
-                              {user.id.substring(0, 10)}…
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 hidden md:table-cell text-[color:var(--ai-foreground)]/85">
-                        {user.email}
-                      </td>
-                      <td className="px-4 py-3 hidden sm:table-cell">
-                        {user.emailVerified ? (
-                          <Chip color="success" size="sm" variant="flat" className="h-6">
-                            {t('verified')}
-                          </Chip>
-                        ) : (
-                          <Chip color="warning" size="sm" variant="flat" className="h-6">
-                            {t('notVerified')}
-                          </Chip>
+                      <motion.tr
+                        initial={{ opacity: 0, y: 4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.015 }}
+                        className={[
+                          'group border-t border-[color:var(--ai-card-border)] transition-colors cursor-pointer',
+                          isSel
+                            ? 'bg-[color:var(--ai-primary)]/8'
+                            : 'hover:bg-[color:var(--ai-primary)]/4',
+                        ].join(' ')}
+                        onClick={() => router.push(`/admin/users/${user.id}`)}
+                      >
+                        {columnVisibility.select && (
+                          <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                            <input
+                              type="checkbox"
+                              aria-label={`Select ${user.email}`}
+                              checked={isSel}
+                              onChange={() => toggleSelect(user.id)}
+                              className="accent-[color:var(--ai-primary)] cursor-pointer"
+                            />
+                          </td>
                         )}
-                      </td>
-                      <td className="px-4 py-3">
-                        <Chip
-                          color={user.role === 'admin' ? 'primary' : 'default'}
-                          variant={user.role === 'admin' ? 'shadow' : 'flat'}
-                          size="sm"
-                          className="h-6 capitalize"
-                        >
-                          {user.role || 'user'}
-                        </Chip>
-                      </td>
-                      <td className="px-4 py-3 hidden lg:table-cell">
-                        <span className="inline-flex items-center gap-1 text-[color:var(--ai-foreground)]/80">
-                          <FiBookOpen size={12} className="opacity-60" />
-                          {enroll}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 hidden lg:table-cell">
-                        {(() => {
-                          const s = subSummary[user.id];
-                          if (!s) {
-                            return (
-                              <span className="text-[color:var(--ai-muted)]/60 text-xs">—</span>
-                            );
-                          }
-                          const hasActive = s.active > 0;
-                          return (
-                            <span
-                              className={[
-                                'inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium tabular-nums',
-                                hasActive
-                                  ? 'bg-emerald-500/10 text-emerald-500'
-                                  : s.total > 0
-                                    ? 'bg-amber-500/10 text-amber-500'
-                                    : 'bg-[color:var(--ai-card-bg)]/60 text-[color:var(--ai-muted)]',
-                              ].join(' ')}
-                              title={`${s.active} active of ${s.total} total subscription${s.total === 1 ? '' : 's'}`}
-                            >
-                              <FiCreditCard size={11} className="opacity-70" />
-                              {s.active}/{s.total}
-                            </span>
-                          );
-                        })()}
-                      </td>
-                      <td className="px-4 py-3 hidden xl:table-cell text-[color:var(--ai-muted)] text-xs">
-                        {formatDate(user.createdAt)}
-                      </td>
-                      <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
-                        <div className="inline-flex items-center gap-1.5">
-                          <Tooltip content={t('assignCourse')} placement="left">
-                            <Button
-                              isIconOnly
+                        {columnVisibility.user && (
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <Avatar
+                                src={user.photoURL || ''}
+                                name={user.displayName || user.email}
+                                size="sm"
+                              />
+                              <div className="min-w-0">
+                                <div className="font-medium text-[color:var(--ai-foreground)] truncate">
+                                  {user.displayName || t('noName')}
+                                </div>
+                                <div className="md:hidden text-[11px] text-[color:var(--ai-muted)] truncate">
+                                  {user.email}
+                                </div>
+                                <div className="text-[10px] text-[color:var(--ai-muted)] font-mono">
+                                  {user.id.substring(0, 10)}…
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        )}
+                        {columnVisibility.email && (
+                          <td className="px-4 py-3 hidden md:table-cell text-[color:var(--ai-foreground)]/85">
+                            {user.email}
+                          </td>
+                        )}
+                        {columnVisibility.verified && (
+                          <td className="px-4 py-3 hidden sm:table-cell">
+                            {user.emailVerified ? (
+                              <Chip color="success" size="sm" variant="flat" className="h-6">
+                                {t('verified')}
+                              </Chip>
+                            ) : (
+                              <Chip color="warning" size="sm" variant="flat" className="h-6">
+                                {t('notVerified')}
+                              </Chip>
+                            )}
+                          </td>
+                        )}
+                        {columnVisibility.role && (
+                          <td className="px-4 py-3">
+                            <Chip
+                              color={user.role === 'admin' ? 'primary' : 'default'}
+                              variant={user.role === 'admin' ? 'shadow' : 'flat'}
                               size="sm"
-                              variant="flat"
-                              color="primary"
-                              aria-label={t('assignCourse')}
-                              onPress={() => openAssign(user)}
+                              className="h-6 capitalize"
                             >
-                              <FiBookOpen size={14} />
-                            </Button>
-                          </Tooltip>
-                          <Button
-                            size="sm"
-                            variant="light"
-                            onPress={() => router.push(`/admin/users/${user.id}`)}
+                              {user.role || 'user'}
+                            </Chip>
+                          </td>
+                        )}
+                        {columnVisibility.enrolled && (
+                          <td className="px-4 py-3 hidden lg:table-cell">
+                            <span className="inline-flex items-center gap-1 text-[color:var(--ai-foreground)]/80">
+                              <FiBookOpen size={12} className="opacity-60" />
+                              {enroll}
+                            </span>
+                          </td>
+                        )}
+                        {columnVisibility.subscriptions && (
+                          <td className="px-4 py-3 hidden lg:table-cell">
+                            <CountPill
+                              icon={<FiCreditCard size={11} />}
+                              healthy={subSummary[user.id]?.active}
+                              total={subSummary[user.id]?.total}
+                              tooltipUnit="subscription"
+                            />
+                          </td>
+                        )}
+                        {columnVisibility.githubAccounts && (
+                          <td className="px-4 py-3 hidden lg:table-cell">
+                            <CountPill
+                              icon={<GitHubIcon size={11} />}
+                              healthy={ghSummary[user.id]?.healthy}
+                              total={ghSummary[user.id]?.total}
+                              tooltipUnit="GitHub account"
+                            />
+                          </td>
+                        )}
+                        {columnVisibility.memberSince && (
+                          <td className="px-4 py-3 hidden xl:table-cell text-[color:var(--ai-muted)] text-xs">
+                            {formatDate(user.createdAt)}
+                          </td>
+                        )}
+                        {columnVisibility.actions && (
+                          <td
+                            className="px-4 py-3 text-right"
+                            onClick={(e) => e.stopPropagation()}
                           >
-                            Details
-                          </Button>
-                        </div>
-                      </td>
-                    </motion.tr>
+                            <div className="inline-flex items-center gap-1.5">
+                              <Tooltip content={t('assignCourse')} placement="left">
+                                <Button
+                                  isIconOnly
+                                  size="sm"
+                                  variant="flat"
+                                  color="primary"
+                                  aria-label={t('assignCourse')}
+                                  onPress={() => openAssign(user)}
+                                >
+                                  <FiBookOpen size={14} />
+                                </Button>
+                              </Tooltip>
+                              <Button
+                                size="sm"
+                                variant="light"
+                                onPress={() => router.push(`/admin/users/${user.id}`)}
+                              >
+                                Details
+                              </Button>
+                            </div>
+                          </td>
+                        )}
+                      </motion.tr>
+                    </ContextMenuTrigger>
                   );
                 })
               )}
@@ -539,6 +822,9 @@ const AdminUsers: React.FC = () => {
               Showing <span className="text-[color:var(--ai-foreground)] font-medium">{(page - 1) * ROWS_PER_PAGE + 1}</span>–
               <span className="text-[color:var(--ai-foreground)] font-medium">{Math.min(page * ROWS_PER_PAGE, filtered.length)}</span>{' '}
               of <span className="text-[color:var(--ai-foreground)] font-medium">{filtered.length}</span>
+              <span className="ml-3 hidden sm:inline opacity-70">
+                Tip: right-click a row (or long-press on touch) for quick actions.
+              </span>
             </span>
             {totalPages > 1 && (
               <Pagination
@@ -635,4 +921,69 @@ const MiniStat: React.FC<MiniStatProps> = ({ label, value, icon, tone }) => (
   </motion.div>
 );
 
+interface CountPillProps {
+  icon: React.ReactNode;
+  healthy?: number;
+  total?: number;
+  tooltipUnit: string;
+}
+
+const CountPill: React.FC<CountPillProps> = ({ icon, healthy, total, tooltipUnit }) => {
+  if (total == null) {
+    return <span className="text-[color:var(--ai-muted)]/60 text-xs">—</span>;
+  }
+  const isHealthy = (healthy ?? 0) > 0;
+  const partial = total > 0 && (healthy ?? 0) === 0;
+  return (
+    <span
+      className={[
+        'inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium tabular-nums',
+        isHealthy
+          ? 'bg-emerald-500/10 text-emerald-500'
+          : partial
+            ? 'bg-amber-500/10 text-amber-500'
+            : 'bg-[color:var(--ai-card-bg)]/60 text-[color:var(--ai-muted)]',
+      ].join(' ')}
+      title={`${healthy ?? 0} healthy of ${total} total ${tooltipUnit}${total === 1 ? '' : 's'}`}
+    >
+      <span className="opacity-70">{icon}</span>
+      {healthy ?? 0}/{total}
+    </span>
+  );
+};
+
+interface IconProps { size?: number; className?: string }
+
+const GitHubIcon: React.FC<IconProps> = ({ size = 14, className }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className={className}
+    aria-hidden="true"
+  >
+    <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.4 3-.405 1.02.005 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+  </svg>
+);
+
+const CopyIcon: React.FC<IconProps> = ({ size = 14, className }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    aria-hidden="true"
+  >
+    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+  </svg>
+);
+
 export default AdminUsers;
+
