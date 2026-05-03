@@ -9,6 +9,7 @@ export { default as SortableHeader } from './SortableHeader';
 export type { SortDirection } from './SortableHeader';
 export { default as ColumnVisibilityMenu } from './ColumnVisibilityMenu';
 export type { ColumnDef } from './ColumnVisibilityMenu';
+export { default as PageSizeSelect } from './PageSizeSelect';
 export { default as AdminBreadcrumbs } from './AdminBreadcrumbs';
 export { default as AdminSidebarNew } from './AdminSidebarNew';
 export { default as AdminTopbar } from './AdminTopbar';

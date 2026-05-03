@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Chip, Card } from '@heroui/react';
 import Progress from '@/components/ui/Progress';
 import { Course, Lesson } from '@/types';
+import { stripHtml } from '@/utils/security/htmlSanitizer';
 import { FiPlay, FiLock, FiCheck, FiClock, FiBookOpen } from '../icons/FeatherIcons';
 import { AlertIcon } from '../icons/svg';
 
@@ -414,7 +415,7 @@ const LessonItem: React.FC<LessonItemProps> = ({
 
         {lesson.description && (
           <p className="mt-1 text-sm text-[color:var(--ai-muted)] line-clamp-1">
-            {lesson.description}
+            {stripHtml(lesson.description)}
           </p>
         )}
       </div>{' '}

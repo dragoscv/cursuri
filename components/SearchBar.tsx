@@ -9,6 +9,7 @@ import { AppContext } from './AppContext';
 import SearchIcon from './icons/SearchIcon';
 import CloseIcon from './icons/CloseIcon';
 import { useTranslations } from 'next-intl';
+import { stripHtml } from '@/utils/security/htmlSanitizer';
 
 const SearchBar = React.memo(function SearchBar() {
   const t = useTranslations('common');
@@ -260,7 +261,7 @@ const SearchBar = React.memo(function SearchBar() {
                             </h3>
                             {course.description && (
                               <p className="text-xs text-[color:var(--ai-muted)] line-clamp-1">
-                                {course.description}
+                                {stripHtml(course.description)}
                               </p>
                             )}
                           </div>

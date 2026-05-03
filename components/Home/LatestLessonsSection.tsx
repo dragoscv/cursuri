@@ -13,6 +13,7 @@ import { AppContext } from '@/components/AppContext';
 import { firestoreDB } from '@/utils/firebase/firebase.config';
 import type { Course, Lesson } from '@/types';
 import { getCoursePrice as getUnifiedCoursePrice } from '@/utils/pricing';
+import { stripHtml } from '@/utils/security/htmlSanitizer';
 
 type LatestLesson = Lesson & {
   courseId: string;
@@ -228,7 +229,7 @@ const LatestLessonsSection = React.memo(function LatestLessonsSection() {
                         ownedCourseIds.has(lesson.courseId) ||
                         lesson.isFree;
                       const lessonName = lesson.name || lesson.title || 'Untitled lesson';
-                      const lessonDesc = lesson.description || '';
+                      const lessonDesc = lesson.description ? stripHtml(lesson.description) : '';
                       const thumb = lesson.thumbnail || lesson.thumbnailUrl || course?.imageUrl;
 
                       return (
@@ -396,7 +397,7 @@ const LatestLessonsSection = React.memo(function LatestLessonsSection() {
                         </h4>
                         {course.description && (
                           <p className="mt-1.5 text-xs text-[color:var(--ai-muted)] line-clamp-2 leading-relaxed">
-                            {course.description}
+                            {stripHtml(course.description)}
                           </p>
                         )}
                         <div className="mt-3 flex items-center justify-between">

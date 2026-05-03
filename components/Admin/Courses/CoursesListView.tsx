@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Card, Chip } from '@heroui/react';
 import Button from '@/components/ui/Button';
 import { CourseWithPriceProduct } from '@/types';
+import { stripHtml } from '@/utils/security/htmlSanitizer';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
@@ -64,7 +65,7 @@ function SortableRow({
         </div>
         {course.description && (
           <div className="text-sm text-[color:var(--ai-muted)] truncate max-w-xs">
-            {course.description}
+            {stripHtml(course.description)}
           </div>
         )}
       </td>

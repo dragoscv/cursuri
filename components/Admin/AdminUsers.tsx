@@ -19,6 +19,7 @@ import {
   ColumnVisibilityMenu,
   DataToolbar,
   EmptyState,
+  PageSizeSelect,
   SortableHeader,
   type ColumnDef,
   type SortDirection,
@@ -39,6 +40,9 @@ import {
 import { IconBolt } from '@/components/Admin/shell/icons';
 
 const ROWS_PER_PAGE = 12;
+const PAGE_SIZE_STORAGE_KEY = 'admin-users-page-size-v1';
+const PAGE_SIZE_OPTIONS = [12, 25, 50, 100, 250, 500];
+const MAX_PAGE_SIZE = 500;
 
 type RoleFilter = '' | 'admin' | 'instructor' | 'user';
 type VerifiedFilter = '' | 'verified' | 'unverified';
@@ -125,6 +129,7 @@ const AdminUsers: React.FC = () => {
   const [sortKey, setSortKey] = useState<string | null>('memberSince');
   const [sortDir, setSortDir] = useState<SortDirection>('desc');
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState<number>(ROWS_PER_PAGE);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [columnVisibility, setColumnVisibility] = useState<Record<ColumnKey, boolean>>(
     DEFAULT_VISIBILITY
@@ -141,7 +146,30 @@ const AdminUsers: React.FC = () => {
     } catch {
       /* ignore */
     }
+    // Hydrate page size, clamped to allowed range.
+    try {
+      const raw = localStorage.getItem(PAGE_SIZE_STORAGE_KEY);
+      if (raw) {
+        const parsed = parseInt(raw, 10);
+        if (Number.isFinite(parsed) && parsed > 0) {
+          setPageSize(Math.min(MAX_PAGE_SIZE, Math.max(1, parsed)));
+        }
+      }
+    } catch {
+      /* ignore */
+    }
   }, []);
+
+  const handlePageSizeChange = (next: number) => {
+    const clamped = Math.min(MAX_PAGE_SIZE, Math.max(1, next));
+    setPageSize(clamped);
+    setPage(1);
+    try {
+      localStorage.setItem(PAGE_SIZE_STORAGE_KEY, String(clamped));
+    } catch {
+      /* ignore */
+    }
+  };
 
   const persistVisibility = (next: Record<ColumnKey, boolean>) => {
     setColumnVisibility(next);
@@ -283,8 +311,8 @@ const AdminUsers: React.FC = () => {
       });
   }, [allUsers, search, roleFilter, verifiedFilter, sortKey, sortDir, subSummary, ghSummary]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / ROWS_PER_PAGE));
-  const paginated = filtered.slice((page - 1) * ROWS_PER_PAGE, page * ROWS_PER_PAGE);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   // reset paging on filter change
   useEffect(() => {
@@ -817,12 +845,19 @@ const AdminUsers: React.FC = () => {
         </div>
 
         {filtered.length > 0 && (
-          <div className="flex items-center justify-between gap-3 px-4 py-3 border-t border-[color:var(--ai-card-border)] text-xs text-[color:var(--ai-muted)]">
-            <span>
-              Showing <span className="text-[color:var(--ai-foreground)] font-medium">{(page - 1) * ROWS_PER_PAGE + 1}</span>–
-              <span className="text-[color:var(--ai-foreground)] font-medium">{Math.min(page * ROWS_PER_PAGE, filtered.length)}</span>{' '}
-              of <span className="text-[color:var(--ai-foreground)] font-medium">{filtered.length}</span>
-              <span className="ml-3 hidden sm:inline opacity-70">
+          <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-t border-[color:var(--ai-card-border)] text-xs text-[color:var(--ai-muted)]">
+            <span className="flex items-center gap-3 flex-wrap">
+              <span>
+                Showing <span className="text-[color:var(--ai-foreground)] font-medium">{(page - 1) * pageSize + 1}</span>–
+                <span className="text-[color:var(--ai-foreground)] font-medium">{Math.min(page * pageSize, filtered.length)}</span>{' '}
+                of <span className="text-[color:var(--ai-foreground)] font-medium">{filtered.length}</span>
+              </span>
+              <PageSizeSelect
+                value={pageSize}
+                onChange={handlePageSizeChange}
+                options={PAGE_SIZE_OPTIONS}
+              />
+              <span className="hidden lg:inline opacity-70">
                 Tip: right-click a row (or long-press on touch) for quick actions.
               </span>
             </span>

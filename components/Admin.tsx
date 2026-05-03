@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { Lesson, CourseWithPriceProduct } from '@/types';
 import { getCoursePrice } from '@/utils/pricing';
+import { stripHtml } from '@/utils/security/htmlSanitizer';
 
 // Import Admin Components
 import AdminDashboard from './Admin/AdminDashboard';
@@ -486,7 +487,7 @@ export default function Admin() {
                                                                 </div>
                                                                 {lesson.description && (
                                                                     <div className="text-sm text-[color:var(--ai-muted-foreground)] truncate max-w-xs">
-                                                                        {lesson.description}
+                                                                        {stripHtml(lesson.description)}
                                                                     </div>
                                                                 )}
                                                             </td>
