@@ -8,8 +8,6 @@ import {
   Button,
   Chip,
   Pagination,
-  Select,
-  SelectItem,
   Tooltip,
 } from '@heroui/react';
 import { motion } from 'framer-motion';
@@ -19,11 +17,14 @@ import { Course, UserProfile } from '@/types';
 import { useToast } from '@/components/Toast/ToastContext';
 import { DataToolbar, EmptyState } from '@/components/Admin/shell';
 import { AppModal } from '@/components/shared/ui';
+import { firebaseAuth } from '@/utils/firebase/firebase.config';
+import Select, { SelectItem } from '@/components/ui/Select';
 import {
   FiUsers,
   FiCheckCircle,
   FiX,
   FiBookOpen,
+  FiCreditCard,
 } from '@/components/icons/FeatherIcons';
 import { IconBolt } from '@/components/Admin/shell/icons';
 
@@ -65,6 +66,13 @@ const AdminUsers: React.FC = () => {
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
+  // Per-user subscription counts: { [userId]: { total, active } }.
+  // Sourced from /api/admin/users/subscriptions-summary so we can render an
+  // "active/total" pill in the Subscriptions column without N round-trips.
+  const [subSummary, setSubSummary] = useState<Record<string, { total: number; active: number }>>(
+    {}
+  );
+
   // assign course modal
   const [assignFor, setAssignFor] = useState<UserProfile | null>(null);
   const [assignBulk, setAssignBulk] = useState(false);
@@ -89,6 +97,29 @@ const AdminUsers: React.FC = () => {
       mounted = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Fetch the per-user subscription counts in parallel with users. Errors
+  // are non-fatal — column simply renders "—" for users without data.
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const token = await firebaseAuth.currentUser?.getIdToken();
+        if (!token) return;
+        const res = await fetch('/api/admin/users/subscriptions-summary', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (mounted && data?.summary) setSubSummary(data.summary);
+      } catch (e) {
+        console.warn('Failed to fetch subscriptions summary:', e);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const allUsers = useMemo<UserProfile[]>(
@@ -286,45 +317,39 @@ const AdminUsers: React.FC = () => {
               size="sm"
               variant="flat"
               className="min-w-[140px]"
-              selectedKeys={[roleFilter]}
-              onSelectionChange={(keys) =>
-                setRoleFilter(Array.from(keys)[0] as RoleFilter)
-              }
+              value={roleFilter}
+              onChange={(e) => setRoleFilter(e.target.value as RoleFilter)}
             >
-              <SelectItem key="all">All roles</SelectItem>
-              <SelectItem key="admin">Admin</SelectItem>
-              <SelectItem key="instructor">Instructor</SelectItem>
-              <SelectItem key="user">User</SelectItem>
+              <SelectItem itemKey="all" value="all">All roles</SelectItem>
+              <SelectItem itemKey="admin" value="admin">Admin</SelectItem>
+              <SelectItem itemKey="instructor" value="instructor">Instructor</SelectItem>
+              <SelectItem itemKey="user" value="user">User</SelectItem>
             </Select>
             <Select
               aria-label="Filter by verification"
               size="sm"
               variant="flat"
               className="min-w-[160px]"
-              selectedKeys={[verifiedFilter]}
-              onSelectionChange={(keys) =>
-                setVerifiedFilter(Array.from(keys)[0] as VerifiedFilter)
-              }
+              value={verifiedFilter}
+              onChange={(e) => setVerifiedFilter(e.target.value as VerifiedFilter)}
             >
-              <SelectItem key="all">All statuses</SelectItem>
-              <SelectItem key="verified">{t('verified')}</SelectItem>
-              <SelectItem key="unverified">{t('notVerified')}</SelectItem>
+              <SelectItem itemKey="all" value="all">All statuses</SelectItem>
+              <SelectItem itemKey="verified" value="verified">{t('verified')}</SelectItem>
+              <SelectItem itemKey="unverified" value="unverified">{t('notVerified')}</SelectItem>
             </Select>
             <Select
               aria-label="Sort by"
               size="sm"
               variant="flat"
-              className="min-w-[150px]"
-              selectedKeys={[sort]}
-              onSelectionChange={(keys) =>
-                setSort(Array.from(keys)[0] as SortKey)
-              }
+              className="min-w-[160px]"
+              value={sort}
+              onChange={(e) => setSort(e.target.value as SortKey)}
             >
-              <SelectItem key="newest">Newest first</SelectItem>
-              <SelectItem key="oldest">Oldest first</SelectItem>
-              <SelectItem key="name">Name (A→Z)</SelectItem>
-              <SelectItem key="email">Email (A→Z)</SelectItem>
-              <SelectItem key="enrollments">Most enrollments</SelectItem>
+              <SelectItem itemKey="newest" value="newest">Newest first</SelectItem>
+              <SelectItem itemKey="oldest" value="oldest">Oldest first</SelectItem>
+              <SelectItem itemKey="name" value="name">Name (A→Z)</SelectItem>
+              <SelectItem itemKey="email" value="email">Email (A→Z)</SelectItem>
+              <SelectItem itemKey="enrollments" value="enrollments">Most enrollments</SelectItem>
             </Select>
           </>
         }
@@ -350,6 +375,7 @@ const AdminUsers: React.FC = () => {
                 <th className="px-4 py-3 font-semibold hidden sm:table-cell">{t('tableVerified')}</th>
                 <th className="px-4 py-3 font-semibold">{t('tableRole')}</th>
                 <th className="px-4 py-3 font-semibold hidden lg:table-cell">Enrolled</th>
+                <th className="px-4 py-3 font-semibold hidden lg:table-cell">Subscriptions</th>
                 <th className="px-4 py-3 font-semibold hidden xl:table-cell">Member since</th>
                 <th className="px-4 py-3 font-semibold text-right">{t('tableActions')}</th>
               </tr>
@@ -357,7 +383,7 @@ const AdminUsers: React.FC = () => {
             <tbody>
               {paginated.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-10">
+                  <td colSpan={9} className="py-10">
                     <EmptyState
                       icon={<FiUsers size={22} />}
                       title={t('noUsersFound')}
@@ -445,6 +471,33 @@ const AdminUsers: React.FC = () => {
                           <FiBookOpen size={12} className="opacity-60" />
                           {enroll}
                         </span>
+                      </td>
+                      <td className="px-4 py-3 hidden lg:table-cell">
+                        {(() => {
+                          const s = subSummary[user.id];
+                          if (!s) {
+                            return (
+                              <span className="text-[color:var(--ai-muted)]/60 text-xs">—</span>
+                            );
+                          }
+                          const hasActive = s.active > 0;
+                          return (
+                            <span
+                              className={[
+                                'inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium tabular-nums',
+                                hasActive
+                                  ? 'bg-emerald-500/10 text-emerald-500'
+                                  : s.total > 0
+                                    ? 'bg-amber-500/10 text-amber-500'
+                                    : 'bg-[color:var(--ai-card-bg)]/60 text-[color:var(--ai-muted)]',
+                              ].join(' ')}
+                              title={`${s.active} active of ${s.total} total subscription${s.total === 1 ? '' : 's'}`}
+                            >
+                              <FiCreditCard size={11} className="opacity-70" />
+                              {s.active}/{s.total}
+                            </span>
+                          );
+                        })()}
                       </td>
                       <td className="px-4 py-3 hidden xl:table-cell text-[color:var(--ai-muted)] text-xs">
                         {formatDate(user.createdAt)}
@@ -534,13 +587,13 @@ const AdminUsers: React.FC = () => {
         <Select
           label={t('selectCourse')}
           placeholder={t('chooseACourse')}
-          selectedKeys={assignCourseId ? [assignCourseId] : []}
-          onSelectionChange={(keys) =>
-            setAssignCourseId(Array.from(keys)[0] as string)
-          }
+          value={assignCourseId}
+          onChange={(e) => setAssignCourseId(e.target.value)}
         >
           {Object.values(courses ?? {}).map((c: Course) => (
-            <SelectItem key={c.id}>{c.name}</SelectItem>
+            <SelectItem itemKey={c.id} value={c.id} key={c.id}>
+              {c.name}
+            </SelectItem>
           ))}
         </Select>
         <p className="mt-2 text-xs text-[color:var(--ai-muted)]">
