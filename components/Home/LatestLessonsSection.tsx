@@ -110,7 +110,29 @@ const LatestLessonsSection = React.memo(function LatestLessonsSection() {
   const recommendedCourses = useMemo(() => {
     const allCourses = Object.values(courses) as Course[];
     const enrolledIds = Array.from(ownedCourseIds);
-    const notEnrolled = allCourses.filter((c) => !enrolledIds.includes(c.id));
+
+    // Set of course IDs that have at least one published lesson, derived from
+    // the latest-lessons fetch we already perform above. Used to filter out
+    // empty/draft courses below.
+    const courseIdsWithLessons = new Set(latestLessons.map((l) => l.courseId));
+
+    // Filter out:
+    //  - courses the user is already enrolled in
+    //  - courses that are still drafts: 0 price AND no lessons published yet
+    //    (these typically appear as "0 RON" placeholders that aren't ready to
+    //    promote in the recommendations sidebar).
+    const notEnrolled = allCourses.filter((c) => {
+      if (enrolledIds.includes(c.id)) return false;
+      const priceInfo = getUnifiedCoursePrice(c, products);
+      const hasPrice = (priceInfo?.amount ?? 0) > 0;
+      const hasLessons =
+        courseIdsWithLessons.has(c.id) ||
+        (typeof c.lessonsCount === 'number' && c.lessonsCount > 0);
+      // A course is "ready" when it either has a real price OR at least one
+      // published lesson. Drafts with no price AND no lessons are excluded.
+      if (!hasPrice && !hasLessons) return false;
+      return true;
+    });
 
     // Build user interests from owned courses' tags
     const interests = new Set<string>();
@@ -126,14 +148,14 @@ const LatestLessonsSection = React.memo(function LatestLessonsSection() {
           match: course.tags ? course.tags.filter((tg) => interests.has(tg)).length : 0,
         }))
         .sort((a, b) => b.match - a.match)
-        .slice(0, 4)
+        .slice(0, 3)
         .map((x) => x.course);
     }
 
     return notEnrolled
       .sort((a, b) => (b.reviews?.length || 0) - (a.reviews?.length || 0))
-      .slice(0, 4);
-  }, [courses, ownedCourseIds]);
+      .slice(0, 3);
+  }, [courses, ownedCourseIds, latestLessons, products]);
 
   const handleLessonClick = useCallback(
     (lesson: LatestLesson) => {

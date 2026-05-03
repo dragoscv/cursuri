@@ -55,8 +55,17 @@ const RecommendedCoursesSection = React.memo(function RecommendedCoursesSection(
   // Recommend courses not enrolled, sorted by tag/category match, fallback to popular
   const recommendedCourses = useMemo(() => {
     const allCourses = Object.values(courses) as Course[];
-    // Exclude already enrolled
-    const notEnrolled = allCourses.filter((c) => !enrolledCourseIds.includes(c.id));
+    // Exclude already enrolled, and exclude empty drafts (no price AND no
+    // lessons) to avoid promoting unfinished placeholder courses on the
+    // landing page.
+    const notEnrolled = allCourses.filter((c) => {
+      if (enrolledCourseIds.includes(c.id)) return false;
+      const priceInfo = getUnifiedCoursePrice(c, products);
+      const hasPrice = (priceInfo?.amount ?? 0) > 0;
+      const hasLessons = typeof c.lessonsCount === 'number' && c.lessonsCount > 0;
+      if (!hasPrice && !hasLessons) return false;
+      return true;
+    });
     if (userInterests.length) {
       // Sort by number of matching tags
       return notEnrolled
@@ -72,7 +81,7 @@ const RecommendedCoursesSection = React.memo(function RecommendedCoursesSection(
     return notEnrolled
       .sort((a, b) => (b.reviews?.length || 0) - (a.reviews?.length || 0))
       .slice(0, 3);
-  }, [courses, enrolledCourseIds, userInterests]);
+  }, [courses, enrolledCourseIds, userInterests, products]);
 
   // Social share handler
   const handleShare = (course: Course) => {
