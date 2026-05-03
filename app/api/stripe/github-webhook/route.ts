@@ -4,8 +4,14 @@ import { getFirestore } from 'firebase-admin/firestore';
 import { getApps, initializeApp, cert } from 'firebase-admin/app';
 import {
   createGitHubAccount,
+  repairAccount,
   setAzureAccountEnabled,
 } from '@/utils/github-accounts';
+
+// SCIM provisioning + org membership polling can take up to ~55s for the
+// follow-up repair pass, on top of ~10s for the initial create. Give the
+// webhook handler a generous budget so the whole flow lands in one execution.
+export const maxDuration = 90;
 
 function initFirebaseAdmin() {
   if (!getApps().length) {
@@ -157,10 +163,51 @@ export async function POST(request: NextRequest) {
               console.log(
                 `Auto-created GitHub account ${result.account?.githubUsername} for user ${userId} (subscription ${subscriptionId})`
               );
+
+              // The initial create only waits ~4s for SCIM to propagate before
+              // adding the user to the org. In practice that's often not
+              // enough and org membership ends up `pending`, leaving the
+              // admin to click "Repair" manually. Run repairAccount inline
+              // here so steps 3 (SCIM provision-on-demand) and 4 (org
+              // membership) get the same poll-up-to-~50s treatment as the
+              // manual repair button, all within the same webhook execution.
+              let repairOutcome: Awaited<ReturnType<typeof repairAccount>> | null = null;
+              if (
+                result.account &&
+                result.account.orgMembershipStatus !== 'added'
+              ) {
+                try {
+                  repairOutcome = await repairAccount({
+                    userId,
+                    accountId: result.account.id,
+                  });
+                  console.log(
+                    `Auto-repair after create for ${result.account.githubUsername}: orgMembership=${
+                      repairOutcome.health?.checks.find((c) => c.id === 'org-membership')
+                        ?.status ?? 'unknown'
+                    }`
+                  );
+                } catch (repairErr) {
+                  console.error(
+                    `Auto-repair after create failed for ${userId}/${result.account.id}:`,
+                    repairErr
+                  );
+                }
+              }
+
               return NextResponse.json({
                 received: true,
                 action: 'account_created',
                 githubUsername: result.account?.githubUsername,
+                autoRepair: repairOutcome
+                  ? {
+                      ranSteps: repairOutcome.steps?.map((s) => ({
+                        id: s.id,
+                        status: s.status,
+                      })),
+                      health: repairOutcome.health?.overall,
+                    }
+                  : null,
               });
             } else {
               console.error(`Failed to auto-create account for ${userId}:`, result.error);
