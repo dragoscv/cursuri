@@ -46,6 +46,7 @@ const MAX_PAGE_SIZE = 500;
 
 type RoleFilter = '' | 'admin' | 'instructor' | 'user';
 type VerifiedFilter = '' | 'verified' | 'unverified';
+type SubscriptionFilter = '' | 'active' | 'inactive' | 'none';
 type ColumnKey =
   | 'select'
   | 'user'
@@ -126,6 +127,7 @@ const AdminUsers: React.FC = () => {
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState<RoleFilter>('');
   const [verifiedFilter, setVerifiedFilter] = useState<VerifiedFilter>('');
+  const [subscriptionFilter, setSubscriptionFilter] = useState<SubscriptionFilter>('');
   const [sortKey, setSortKey] = useState<string | null>('memberSince');
   const [sortDir, setSortDir] = useState<SortDirection>('desc');
   const [page, setPage] = useState(1);
@@ -272,6 +274,14 @@ const AdminUsers: React.FC = () => {
         }
         if (verifiedFilter === 'verified' && !u.emailVerified) return false;
         if (verifiedFilter === 'unverified' && u.emailVerified) return false;
+        if (subscriptionFilter) {
+          const s = subSummary[u.id];
+          const active = s?.active ?? 0;
+          const total = s?.total ?? 0;
+          if (subscriptionFilter === 'active' && active <= 0) return false;
+          if (subscriptionFilter === 'inactive' && !(total > 0 && active === 0)) return false;
+          if (subscriptionFilter === 'none' && total > 0) return false;
+        }
         return true;
       })
       .sort((a, b) => {
@@ -309,7 +319,7 @@ const AdminUsers: React.FC = () => {
             return 0;
         }
       });
-  }, [allUsers, search, roleFilter, verifiedFilter, sortKey, sortDir, subSummary, ghSummary]);
+  }, [allUsers, search, roleFilter, verifiedFilter, subscriptionFilter, sortKey, sortDir, subSummary, ghSummary]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
@@ -317,7 +327,7 @@ const AdminUsers: React.FC = () => {
   // reset paging on filter change
   useEffect(() => {
     setPage(1);
-  }, [search, roleFilter, verifiedFilter, sortKey, sortDir]);
+  }, [search, roleFilter, verifiedFilter, subscriptionFilter, sortKey, sortDir]);
 
   // selection helpers
   const allOnPageSelected = paginated.length > 0 && paginated.every((u) => selected.has(u.id));
@@ -554,6 +564,18 @@ const AdminUsers: React.FC = () => {
                 { value: 'unverified', label: t('notVerified') },
               ]}
             />
+            <Autocomplete<SubscriptionFilter>
+              ariaLabel="Filter by subscription"
+              placeholder="All subscriptions"
+              className="min-w-[180px]"
+              value={subscriptionFilter}
+              onChange={(v) => setSubscriptionFilter(v as SubscriptionFilter)}
+              options={[
+                { value: 'active', label: 'Active subscription', description: 'At least one active or trialing sub' },
+                { value: 'inactive', label: 'Inactive only', description: 'Has subs but none active' },
+                { value: 'none', label: 'No subscription', description: 'Never subscribed' },
+              ]}
+            />
             <ColumnVisibilityMenu<ColumnKey>
               columns={COLUMN_DEFS}
               visible={columnVisibility}
@@ -682,7 +704,7 @@ const AdminUsers: React.FC = () => {
                       icon={<FiUsers size={22} />}
                       title={t('noUsersFound')}
                       description={
-                        search || roleFilter || verifiedFilter
+                        search || roleFilter || verifiedFilter || subscriptionFilter
                           ? 'Try adjusting your filters'
                           : 'Users will appear here as they register'
                       }

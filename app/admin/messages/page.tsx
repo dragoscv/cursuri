@@ -4,8 +4,9 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useTranslations } from 'next-intl';
 import { AppContext } from '@/components/AppContext';
 import { useToast } from '@/components/Toast';
-import { Card, CardBody, Chip, Spinner, Select, SelectItem } from '@heroui/react';
+import { Card, CardBody, Chip, Spinner } from '@heroui/react';
 import Button from '@/components/ui/Button';
+import Autocomplete from '@/components/ui/Autocomplete';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     collection,
@@ -15,7 +16,6 @@ import {
     updateDoc,
     deleteDoc,
     doc,
-    where,
     Timestamp
 } from 'firebase/firestore';
 import { firestoreDB } from '@/utils/firebase/firebase.config';
@@ -32,10 +32,34 @@ export default function AdminMessagesPage() {
     const router = useRouter();
     const [messages, setMessages] = useState<ContactMessage[]>([]);
     const [loading, setLoading] = useState(true);
-    const [filterStatus, setFilterStatus] = useState<'all' | 'new' | 'read' | 'archived'>('all');
+    type MessageStatus = 'all' | 'new' | 'read' | 'archived';
+    const FILTER_STORAGE_KEY = 'admin-messages-filter-v1';
+    // Default to "new" so admins land on actionable, unread messages.
+    const [filterStatus, setFilterStatus] = useState<MessageStatus>('new');
     const [searchTerm, setSearchTerm] = useState('');
     const [pendingDelete, setPendingDelete] = useState<ContactMessage | null>(null);
     const [deleting, setDeleting] = useState(false);
+
+    // Hydrate filter preference from localStorage so admins keep their last view.
+    useEffect(() => {
+        try {
+            const raw = localStorage.getItem(FILTER_STORAGE_KEY);
+            if (raw === 'all' || raw === 'new' || raw === 'read' || raw === 'archived') {
+                setFilterStatus(raw);
+            }
+        } catch {
+            /* ignore */
+        }
+    }, []);
+
+    const handleFilterChange = (next: MessageStatus) => {
+        setFilterStatus(next);
+        try {
+            localStorage.setItem(FILTER_STORAGE_KEY, next);
+        } catch {
+            /* ignore */
+        }
+    };
 
     useEffect(() => {
         if (!context?.user || !context?.isAdmin) {
@@ -43,14 +67,11 @@ export default function AdminMessagesPage() {
             return;
         }
 
-        // Subscribe to messages in real-time
+        // Subscribe to ALL messages in real-time. We filter client-side so the
+        // StatCards and Autocomplete option labels can always show accurate
+        // counts regardless of the currently selected status filter.
         const messagesRef = collection(firestoreDB, 'contactMessages');
-        let q = query(messagesRef, orderBy('timestamp', 'desc'));
-
-        // Apply status filter
-        if (filterStatus !== 'all') {
-            q = query(messagesRef, where('status', '==', filterStatus), orderBy('timestamp', 'desc'));
-        }
+        const q = query(messagesRef, orderBy('timestamp', 'desc'));
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const messagesData: ContactMessage[] = [];
@@ -68,7 +89,7 @@ export default function AdminMessagesPage() {
         });
 
         return () => unsubscribe();
-    }, [context?.user, context?.isAdmin, router, filterStatus]);
+    }, [context?.user, context?.isAdmin, router]);
 
     const handleStatusChange = async (messageId: string, newStatus: 'new' | 'read' | 'archived') => {
         try {
@@ -143,6 +164,7 @@ export default function AdminMessagesPage() {
     };
 
     const filteredMessages = messages.filter(message => {
+        if (filterStatus !== 'all' && message.status !== filterStatus) return false;
         if (!searchTerm) return true;
         const search = searchTerm.toLowerCase();
         return (
@@ -192,21 +214,18 @@ export default function AdminMessagesPage() {
                 onSearchChange={setSearchTerm}
                 searchPlaceholder={t('searchPlaceholder')}
                 filters={
-                    <Select
-                        aria-label="Filter by status"
-                        size="sm"
-                        variant="flat"
-                        className="min-w-[160px]"
-                        selectedKeys={[filterStatus]}
-                        onSelectionChange={(keys) =>
-                            setFilterStatus(Array.from(keys)[0] as 'all' | 'new' | 'read' | 'archived')
-                        }
-                    >
-                        <SelectItem key="all">{t('filters.all')}</SelectItem>
-                        <SelectItem key="new">{t('filters.new')}</SelectItem>
-                        <SelectItem key="read">{t('filters.read')}</SelectItem>
-                        <SelectItem key="archived">{t('filters.archived')}</SelectItem>
-                    </Select>
+                    <Autocomplete<MessageStatus>
+                        ariaLabel="Filter by status"
+                        placeholder={t('filters.all')}
+                        className="min-w-[180px]"
+                        value={filterStatus === 'all' ? '' : filterStatus}
+                        onChange={(v) => handleFilterChange((v || 'all') as MessageStatus)}
+                        options={[
+                            { value: 'new', label: `${t('filters.new')} (${statusCounts.new})`, description: 'Unread, awaiting action' },
+                            { value: 'read', label: `${t('filters.read')} (${statusCounts.read})` },
+                            { value: 'archived', label: `${t('filters.archived')} (${statusCounts.archived})` },
+                        ]}
+                    />
                 }
             />
 
