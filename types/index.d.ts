@@ -92,6 +92,10 @@ export interface AppContextProps {
     priceId: string;
     amount: number;
     currency: string;
+    recurring?: {
+      interval: 'day' | 'week' | 'month' | 'year';
+      interval_count: number;
+    } | null;
   }) => Promise<void>;
   subscriptions: import('@/types/stripe').EnrichedSubscription[];
   subscriptionsLoading: boolean;

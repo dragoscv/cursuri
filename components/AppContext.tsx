@@ -1822,6 +1822,10 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
       priceId: string;
       amount: number;
       currency: string;
+      recurring?: {
+        interval: 'day' | 'week' | 'month' | 'year';
+        interval_count: number;
+      } | null;
     }) => {
       try {
         // If new product data is provided, add it immediately to the state
@@ -1832,8 +1836,11 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             active: true,
             currency: newProductData.currency,
             unit_amount: newProductData.amount,
-            type: 'one_time' as const,
+            type: (newProductData.recurring ? 'recurring' : 'one_time') as
+              | 'recurring'
+              | 'one_time',
             billing_scheme: 'per_unit' as const,
+            recurring: newProductData.recurring ?? undefined,
             metadata: {
               app: 'cursuri',
             },

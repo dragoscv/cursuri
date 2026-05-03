@@ -107,6 +107,13 @@ export const APISchemas = {
         amount: z.number().int().positive().max(99999999), // Max $999,999.99
         currency: z.string().length(3).toLowerCase(),
         metadata: z.record(z.string()).optional(),
+        // Optional recurring price (subscription). Omit for one-time prices.
+        recurring: z
+            .object({
+                interval: z.enum(['day', 'week', 'month', 'year']),
+                intervalCount: z.number().int().positive().max(12).optional(),
+            })
+            .optional(),
     }),
 
     /**

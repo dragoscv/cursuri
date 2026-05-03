@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { productName, productDescription, amount, currency, metadata } = validation.data!;
+    const { productName, productDescription, amount, currency, metadata, recurring } = validation.data!;
 
     // Create or find product
     let product;
@@ -89,11 +89,19 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Create price
+    // Create price (one-time or recurring/subscription)
     const price = await stripe.prices.create({
       product: product.id,
       unit_amount: amount,
       currency: currency.toLowerCase(),
+      ...(recurring
+        ? {
+            recurring: {
+              interval: recurring.interval,
+              interval_count: recurring.intervalCount ?? 1,
+            },
+          }
+        : {}),
       metadata: {
         ...metadata,
         app: metadata?.app || 'cursuri',
@@ -123,6 +131,12 @@ export async function POST(request: NextRequest) {
       priceId: price.id,
       amount: price.unit_amount,
       currency: price.currency,
+      recurring: price.recurring
+        ? {
+            interval: price.recurring.interval,
+            interval_count: price.recurring.interval_count,
+          }
+        : null,
       message: 'Price created successfully',
       createdBy: user.uid,
     });
