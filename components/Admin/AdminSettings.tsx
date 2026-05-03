@@ -2,9 +2,10 @@
 
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Tabs, Tab, SelectItem, Divider } from '@heroui/react';
+import { Tabs, Tab, Divider } from '@heroui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button, Input, Switch, Select, Textarea } from '@/components/ui';
+import { SelectItem } from '@/components/ui/Select';
 import { AppContext } from '@/components/AppContext';
 import { useToast } from '@/components/Toast/ToastContext';
 import { AdminSettings as AdminSettingsType, PublicConfig } from '@/types';
@@ -509,14 +510,10 @@ const AdminSettings: React.FC = () => {
                       handleSelectChange('currencyCode', e.target.value)
                     }
                   >
-                    {/* @ts-expect-error - HeroUI SelectItem value typing */}
-                    <SelectItem key="RON" value="RON">{tCurrency('ron')}</SelectItem>
-                    {/* @ts-expect-error - HeroUI SelectItem value typing */}
-                    <SelectItem key="USD" value="USD">{tCurrency('usd')}</SelectItem>
-                    {/* @ts-expect-error - HeroUI SelectItem value typing */}
-                    <SelectItem key="EUR" value="EUR">{tCurrency('eur')}</SelectItem>
-                    {/* @ts-expect-error - HeroUI SelectItem value typing */}
-                    <SelectItem key="GBP" value="GBP">{tCurrency('gbp')}</SelectItem>
+                    <SelectItem itemKey="RON" value="RON">{tCurrency('ron')}</SelectItem>
+                    <SelectItem itemKey="USD" value="USD">{tCurrency('usd')}</SelectItem>
+                    <SelectItem itemKey="EUR" value="EUR">{tCurrency('eur')}</SelectItem>
+                    <SelectItem itemKey="GBP" value="GBP">{tCurrency('gbp')}</SelectItem>
                   </Select>
                 </div>
                 <div>
@@ -567,13 +564,11 @@ const AdminSettings: React.FC = () => {
                   }
                   aria-label="Select GitHub subscription price"
                 >
-                  {/* @ts-expect-error - HeroUI SelectItem value typing */}
-                  <SelectItem key="" value="">
+                  <SelectItem itemKey="" value="">
                     — None selected —
                   </SelectItem>
                   {priceOptions.map((opt) => (
-                    /* @ts-expect-error - HeroUI SelectItem value typing */
-                    <SelectItem key={opt.priceId} value={opt.priceId}>
+                    <SelectItem itemKey={opt.priceId} value={opt.priceId} key={opt.priceId}>
                       {opt.label}
                     </SelectItem>
                   ))}
@@ -643,12 +638,9 @@ const AdminSettings: React.FC = () => {
                       }
                       aria-label="Currency"
                     >
-                      {/* @ts-expect-error - HeroUI SelectItem value typing */}
-                      <SelectItem key="ron" value="ron">RON (Romanian Leu)</SelectItem>
-                      {/* @ts-expect-error - HeroUI SelectItem value typing */}
-                      <SelectItem key="usd" value="usd">USD (US Dollar)</SelectItem>
-                      {/* @ts-expect-error - HeroUI SelectItem value typing */}
-                      <SelectItem key="eur" value="eur">EUR (Euro)</SelectItem>
+                      <SelectItem itemKey="ron" value="ron">RON (Romanian Leu)</SelectItem>
+                      <SelectItem itemKey="usd" value="usd">USD (US Dollar)</SelectItem>
+                      <SelectItem itemKey="eur" value="eur">EUR (Euro)</SelectItem>
                     </Select>
                   </div>
                   <div className="md:col-span-2">
@@ -662,12 +654,9 @@ const AdminSettings: React.FC = () => {
                       }
                       aria-label="Billing interval"
                     >
-                      {/* @ts-expect-error - HeroUI SelectItem value typing */}
-                      <SelectItem key="month" value="month">Recurring — monthly</SelectItem>
-                      {/* @ts-expect-error - HeroUI SelectItem value typing */}
-                      <SelectItem key="year" value="year">Recurring — yearly</SelectItem>
-                      {/* @ts-expect-error - HeroUI SelectItem value typing */}
-                      <SelectItem key="one_time" value="one_time">One-time payment</SelectItem>
+                      <SelectItem itemKey="month" value="month">Recurring — monthly</SelectItem>
+                      <SelectItem itemKey="year" value="year">Recurring — yearly</SelectItem>
+                      <SelectItem itemKey="one_time" value="one_time">One-time payment</SelectItem>
                     </Select>
                     <p className="mt-1.5 text-xs text-[color:var(--ai-muted)]">
                       The GitHub plan is normally a monthly recurring subscription.
