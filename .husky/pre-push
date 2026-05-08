@@ -1,0 +1,20 @@
+set -e
+
+echo ""
+echo "──────────────────────────────────────────"
+echo "  Running pre-push checks (next build)"
+echo "──────────────────────────────────────────"
+
+# Full production build catches anything tsc + eslint missed (e.g. server
+# component boundary errors, route param mismatches). Skip with NO_VERIFY=1
+# in genuine emergencies.
+if [ "$NO_VERIFY" = "1" ]; then
+  echo "⚠ pre-push: skipped via NO_VERIFY=1"
+  exit 0
+fi
+
+npm run build
+
+echo ""
+echo "✓ Pre-push build passed"
+echo ""

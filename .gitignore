@@ -41,7 +41,8 @@ next-env.d.ts
 
 /.credentials
 .pnpm-cache
-.husky
+# Husky: track committed hook files but ignore the generated loader directory.
+.husky/_
 dist
 .env.test
 

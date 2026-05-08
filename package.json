@@ -1,6 +1,6 @@
 {
   "name": "cursuri",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,7 +9,12 @@
     "build:win": "powershell -Command \"$tempDir = Join-Path $PWD '.build-temp'; New-Item -ItemType Directory -Force -Path $tempDir | Out-Null; $env:TEMP = $tempDir; $env:TMP = $tempDir; npm run build\"",
     "start": "next start",
     "lint": "next lint",
+    "lint:strict": "eslint . --format=stylish",
+    "typecheck": "node ./scripts/typecheck.mjs",
+    "check:version": "node ./scripts/check-version-bump.mjs",
+    "precommit": "lint-staged && npm run typecheck && npm run lint:strict && npm run check:version",
     "lint-staged": "lint-staged",
+    "prepare": "husky",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:ci": "jest --ci --coverage --watchAll=false",
@@ -71,6 +76,7 @@
     "eslint-formatter-compact": "^9.0.1",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react-hooks": "^7.0.0",
+    "husky": "^9.1.7",
     "jest": "^30.2.0",
     "jest-environment-jsdom": "^30.2.0",
     "jsdom": "^27.1.0",

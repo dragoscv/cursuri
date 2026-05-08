@@ -29,6 +29,7 @@ export default tseslint.config(
       'jest.setup.js',
       'scripts/**/*.cjs',
       'scripts/**/*.js',
+      'scripts/**/*.mjs',
       'services/**/*.js',
       'docs/**/*.js',
       '__mocks__/**/*.js',
