@@ -20,6 +20,7 @@ import {
 import { stripePayments } from '@/utils/firebase/stripe';
 import { resolveGithubPriceId } from '@/utils/firebase/publicConfig';
 import { usePublicConfig } from '@/hooks/usePublicConfig';
+import { resolveCopilotMonthlyPrice, type AnyProduct } from '@/utils/stripe/plans';
 import { GradientCard, MetricCard, SectionShell } from '@/components/user-shell';
 import { AppButton } from '@/components/shared/ui';
 import { useToast } from '@/components/Toast/ToastContext';
@@ -72,7 +73,15 @@ export default function GitHubAccountsPage() {
   const ctx = useContext(AppContext) as AppContextProps;
   const { showToast } = useToast();
   const { config: publicConfig } = usePublicConfig();
-  const githubPriceId = resolveGithubPriceId(publicConfig);
+  // Prefer the active Copilot product/price from Stripe (same source as the
+  // /subscriptions page). Falls back to the admin-managed legacy price ID
+  // only if no active Copilot product is loaded yet.
+  const copilotPrice = useMemo(
+    () => resolveCopilotMonthlyPrice((ctx?.products as AnyProduct[]) || []),
+    [ctx?.products]
+  );
+  const fallbackPriceId = resolveGithubPriceId(publicConfig);
+  const githubPriceId: string = copilotPrice?.id || fallbackPriceId;
 
   const [accounts, setAccounts] = useState<GitHubAccountDoc[]>([]);
   const [loading, setLoading] = useState(true);
@@ -131,13 +140,17 @@ export default function GitHubAccountsPage() {
     setPurchasing(true);
     try {
       const payments = stripePayments(firebaseApp);
-      const session = await createCheckoutSession(payments, {
+      const introPromoId: string | undefined =
+        copilotPrice?.metadata?.intro_promotion_code;
+      const checkoutParams: any = {
         price: githubPriceId,
-        allow_promotion_codes: true,
+        allow_promotion_codes: !introPromoId,
         mode: 'subscription',
         success_url: `${window.location.origin}/profile/github?status=success`,
         cancel_url: `${window.location.origin}/profile/github?status=cancel`,
-      });
+      };
+      if (introPromoId) checkoutParams.promotion_code = introPromoId;
+      const session = await createCheckoutSession(payments, checkoutParams);
       window.location.assign(session.url);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Could not start checkout.';

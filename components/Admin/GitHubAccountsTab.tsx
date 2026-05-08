@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import React, { useCallback, useContext, useEffect, useState, useRef } from 'react';
 import {
   Button,
   Chip,
@@ -15,6 +15,8 @@ import { createCheckoutSession } from 'firewand';
 import { stripePayments } from '@/utils/firebase/stripe';
 import { resolveGithubPriceId } from '@/utils/firebase/publicConfig';
 import { usePublicConfig } from '@/hooks/usePublicConfig';
+import { AppContext } from '@/components/AppContext';
+import { resolveCopilotMonthlyPrice, type AnyProduct } from '@/utils/stripe/plans';
 import type { GitHubAccount } from '@/types/github-accounts';
 import type { UserProfile } from '@/types';
 import type { EnrichedSubscription } from '@/types/stripe';
@@ -263,6 +265,7 @@ function OrgMembershipCell({
 
 export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccountsTabProps) {
   const { config: publicConfig } = usePublicConfig();
+  const appCtx = useContext(AppContext);
   const [accounts, setAccounts] = useState<GitHubAccount[]>([]);
   const [loading, setLoading] = useState(true);
   const [togglingId, setTogglingId] = useState<string | null>(null);
@@ -451,7 +454,10 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
   };
 
   const handlePurchaseSubscription = async () => {
-    const priceId = resolveGithubPriceId(publicConfig);
+    const copilotPrice = resolveCopilotMonthlyPrice(
+      (appCtx?.products as AnyProduct[]) || []
+    );
+    const priceId = copilotPrice?.id || resolveGithubPriceId(publicConfig);
     if (!priceId) {
       setError(
         'GitHub subscription price is not configured. Set the Stripe price ID under Admin → Settings → Pricing.'
@@ -461,13 +467,17 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
     setPurchaseLoading(true);
     try {
       const payments = stripePayments(firebaseApp);
-      const session = await createCheckoutSession(payments, {
+      const introPromoId: string | undefined =
+        copilotPrice?.metadata?.intro_promotion_code;
+      const checkoutParams: any = {
         price: priceId,
-        allow_promotion_codes: true,
+        allow_promotion_codes: !introPromoId,
         mode: 'subscription',
         success_url: `${window.location.origin}/admin?tab=users&githubCreated=true&userId=${user.id}`,
         cancel_url: `${window.location.origin}/admin?tab=users&userId=${user.id}`,
-      });
+      };
+      if (introPromoId) checkoutParams.promotion_code = introPromoId;
+      const session = await createCheckoutSession(payments, checkoutParams);
       window.location.assign(session.url);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to start subscription checkout';

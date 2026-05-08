@@ -15,6 +15,7 @@ import { validatePassword } from '@/utils/security/passwordValidation';
 import PasswordStrengthMeter from '@/components/ui/PasswordStrengthMeter';
 import { useTranslations } from 'next-intl';
 import { logUserLogin, logUserRegistration, logError } from '@/utils/analytics';
+import { logClientAuthEvent } from '@/utils/clientAudit';
 
 // Helper function to get user-friendly error messages
 const getFirebaseErrorMessage = (error: any, t: any): string => {
@@ -87,6 +88,7 @@ export default function Login(props: { onClose: () => void }) {
       if (result) {
         // Log successful Google login
         logUserLogin('google');
+        logClientAuthEvent('login', { uid: result.user?.uid, email: result.user?.email });
 
         props.onClose();
         if (toast) {
@@ -131,6 +133,7 @@ export default function Login(props: { onClose: () => void }) {
       if (result) {
         // Log successful email login
         logUserLogin('email');
+        logClientAuthEvent('login', { uid: result.user?.uid, email: result.user?.email });
 
         props.onClose();
         if (toast) {
@@ -257,6 +260,7 @@ export default function Login(props: { onClose: () => void }) {
       if (result) {
         // Log successful registration
         logUserRegistration('email');
+        logClientAuthEvent('registration', { uid: result.user?.uid, email: result.user?.email });
 
         props.onClose();
         if (toast) {

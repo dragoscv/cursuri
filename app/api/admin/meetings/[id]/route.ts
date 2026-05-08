@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { requireAdmin } from '@/utils/api/auth';
 import { getMeeting, updateMeeting } from '@/utils/meetings/firestore';
 import type { Meeting, MeetingStatus } from '@/types/meetings';
+import { logAdminAction } from '@/utils/auditLog';
 
 export const dynamic = 'force-dynamic';
 
@@ -61,6 +62,15 @@ export async function PATCH(
 
     await updateMeeting(id, patch);
     const updated = await getMeeting(id);
+    await logAdminAction(
+      'meeting_updated',
+      request,
+      authResult.user!,
+      'meeting',
+      id,
+      { changes: parsed.data, status: updated?.status },
+      true
+    );
     return NextResponse.json({ success: true, meeting: updated });
   } catch (err: any) {
     console.error('PATCH /api/admin/meetings/[id] failed:', err);

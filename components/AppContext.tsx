@@ -25,8 +25,18 @@ import {
   deleteDoc,
   serverTimestamp,
 } from 'firebase/firestore';
-import { setAnalyticsUserId, setAnalyticsUserProperties } from '@/utils/analytics';
-import { trackDailyActiveUser } from '@/utils/statistics';
+import {
+  setAnalyticsUserId,
+  setAnalyticsUserProperties,
+  logLessonCompletion,
+  logCourseCompletion,
+} from '@/utils/analytics';
+import {
+  trackDailyActiveUser,
+  incrementLessonCompletions,
+  incrementUserCompletedCourses,
+  trackUserActivity,
+} from '@/utils/statistics';
 import ModalComponent from '@/components/Modal';
 import { useModal } from './contexts/useModal';
 import OnboardingModal from './OnboardingModal';
@@ -697,6 +707,44 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
       // Trigger achievement sync if lesson was marked as complete (not uncomplete)
       if (result && !isCurrentlyCompleted) {
+        // Fire analytics + Firestore counters for lesson completion
+        try {
+          const lessonName = state.lessons?.[courseId]?.[lessonId]?.name || lessonId;
+          const courseName = state.courses?.[courseId]?.name || courseId;
+          const duration = Number(state.lessons?.[courseId]?.[lessonId]?.duration) || 0;
+          logLessonCompletion(lessonId, lessonName, courseId, duration);
+          incrementLessonCompletions(courseId, lessonId);
+          if (user) {
+            trackUserActivity(user.uid, 'lesson_completed', {
+              courseId,
+              lessonId,
+              lessonName,
+              courseName,
+            });
+          }
+
+          // Detect full-course completion: all lessons in this course completed.
+          const lessonsForCourse = state.lessons?.[courseId] || {};
+          const totalLessons = Object.keys(lessonsForCourse).length;
+          const progressForCourse = state.lessonProgress?.[courseId] || {};
+          // The just-completed lesson isn't in state yet; count it manually.
+          const completedCount =
+            Object.values(progressForCourse).filter((p) => p?.isCompleted).length + 1;
+          if (totalLessons > 0 && completedCount >= totalLessons) {
+            const completionPct = 100;
+            logCourseCompletion(courseId, courseName, completionPct);
+            if (user) {
+              incrementUserCompletedCourses(user.uid);
+              trackUserActivity(user.uid, 'course_completed', {
+                courseId,
+                courseName,
+              });
+            }
+          }
+        } catch (error) {
+          console.error('Lesson/course completion analytics failed (non-critical):', error);
+        }
+
         // Import and call syncAchievements to check if user unlocked any achievements
         // This is done asynchronously to not block the UI
         try {
@@ -709,7 +757,13 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
       return result;
     },
-    [saveLessonProgress, state.lessonProgress]
+    [
+      saveLessonProgress,
+      state.lessonProgress,
+      state.lessons,
+      state.courses,
+      user,
+    ]
   );
 
   const getUserLessonProgress = useCallback(async () => {

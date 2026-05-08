@@ -11,6 +11,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { getMeeting, updateMeeting } from '@/utils/meetings/firestore';
+import { logPaymentTransaction, logSecurityEvent, AuditSeverity } from '@/utils/auditLog';
+import type { AuthenticatedUser } from '@/utils/api/auth';
+import { UserRole } from '@/utils/firebase/adminAuth';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -35,6 +38,12 @@ export async function POST(request: NextRequest) {
     event = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret);
   } catch (err: any) {
     console.error('Meetings webhook signature verification failed:', err?.message);
+    await logSecurityEvent(
+      'stripe_webhook_signature_invalid',
+      request,
+      AuditSeverity.CRITICAL,
+      { endpoint: '/api/stripe/meetings-webhook', error: err?.message }
+    );
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
@@ -62,6 +71,25 @@ export async function POST(request: NextRequest) {
               ? session.payment_intent
               : session.payment_intent?.id,
         });
+
+        // Audit-log the successful payment.
+        const paymentUser: AuthenticatedUser = {
+          uid: meeting.userId || 'unknown-user',
+          email: meeting.userEmail || undefined,
+          emailVerified: true,
+          role: UserRole.USER,
+        };
+        await logPaymentTransaction(
+          'meeting_payment_confirmed',
+          request,
+          paymentUser,
+          session.amount_total || 0,
+          (session.currency || 'ron').toUpperCase(),
+          typeof session.payment_intent === 'string'
+            ? session.payment_intent
+            : session.payment_intent?.id || session.id,
+          true
+        );
       }
     } else if (
       event.type === 'checkout.session.expired' ||

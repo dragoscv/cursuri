@@ -15,6 +15,8 @@ import {
   FiTrendingUp,
 } from '@/components/icons/FeatherIcons';
 import { signOut } from 'firebase/auth';
+import { logClientAuthEvent } from '@/utils/clientAudit';
+import { logUserLogout } from '@/utils/analytics';
 import { firebaseAuth } from '@/utils/firebase/firebase.config';
 import { AppContext } from '@/components/AppContext';
 import { useRouter, usePathname } from 'next/navigation';
@@ -47,6 +49,8 @@ const AdminSidebar: React.FC = () => {
 
   // Handle sign out
   const handleSignOut = async () => {
+    await logClientAuthEvent('logout', { uid: user?.uid, email: user?.email });
+    logUserLogout();
     await signOut(firebaseAuth);
     router.push('/');
   };

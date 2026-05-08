@@ -6,6 +6,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Avatar, Tooltip, Chip } from '@heroui/react';
 import { signOut } from 'firebase/auth';
+import { logClientAuthEvent } from '@/utils/clientAudit';
+import { logUserLogout } from '@/utils/analytics';
 
 import { AppContext } from '@/components/AppContext';
 import { firebaseAuth } from '@/utils/firebase/firebase.config';
@@ -31,6 +33,8 @@ const AdminSidebarNew: React.FC<Props> = ({ variant = 'desktop' }) => {
     const isCollapsed = !isMobile && collapsed;
 
     const handleSignOut = async () => {
+        await logClientAuthEvent('logout', { uid: user?.uid, email: user?.email });
+        logUserLogout();
         await signOut(firebaseAuth);
         router.push('/');
     };

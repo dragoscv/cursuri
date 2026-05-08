@@ -7,6 +7,7 @@ import {
   linkExistingGitHubAccount,
   setAzureAccountEnabled,
 } from '@/utils/github-accounts';
+import { logAdminAction, logUserManagementAction } from '@/utils/auditLog';
 
 const CreateNewSchema = z.object({
   mode: z.literal('create'),
@@ -128,6 +129,20 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  await logUserManagementAction(
+    data.mode === 'link' ? 'github_account_linked' : 'github_account_created',
+    request,
+    adminUser,
+    data.userId,
+    {
+      mode: data.mode,
+      subscriptionId: data.subscriptionId,
+      githubUsername: result.account?.githubUsername,
+      azureUserId: result.account?.azureUserId,
+    },
+    true
+  );
+
   return NextResponse.json({ success: true, account: result.account });
 }
 
@@ -183,6 +198,15 @@ export async function PATCH(request: NextRequest) {
       .doc(accountId)
       .update({ isActive: enabled, updatedAt: new Date() });
 
+    await logUserManagementAction(
+      enabled ? 'github_account_enabled' : 'github_account_disabled',
+      request,
+      authResult.user!,
+      userId,
+      { accountId, azureUserId: account.azureUserId },
+      true
+    );
+
     return NextResponse.json({ success: true, accountId, isActive: enabled });
   } catch (error) {
     console.error('Error toggling GitHub account:', error);
@@ -235,6 +259,15 @@ export async function PUT(request: NextRequest) {
       subscriptionId,
       updatedAt: new Date(),
     });
+
+    await logUserManagementAction(
+      'github_account_subscription_linked',
+      request,
+      authResult.user!,
+      userId,
+      { accountId, subscriptionId },
+      true
+    );
 
     return NextResponse.json({
       success: true,
@@ -297,7 +330,17 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Account not found' }, { status: 404 });
     }
 
+    const accountData = accountDoc.data();
     await accountRef.delete();
+
+    await logUserManagementAction(
+      'github_account_unlinked',
+      request,
+      authResult.user!,
+      userId,
+      { accountId, azureUserId: accountData?.azureUserId, githubUsername: accountData?.githubUsername },
+      true
+    );
 
     return NextResponse.json({ success: true, accountId });
   } catch (error) {

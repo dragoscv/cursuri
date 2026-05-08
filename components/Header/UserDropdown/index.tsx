@@ -22,6 +22,8 @@ import {
 } from '@/components/icons/FeatherIcons';
 import { firebaseApp, firebaseAuth } from '@/utils/firebase/firebase.config';
 import { signOut } from 'firebase/auth';
+import { logClientAuthEvent } from '@/utils/clientAudit';
+import { logUserLogout } from '@/utils/analytics';
 import Login from '@/components/Login';
 import AddCourse from '@/components/Course/AddCourse';
 import SocialIcons from '@/components/Header/SocialIcons';
@@ -51,6 +53,8 @@ export default function UserDropdown() {
   }
 
   const handleSignOut = async () => {
+    await logClientAuthEvent('logout', { uid: user.uid, email: user.email });
+    logUserLogout();
     await signOut(firebaseAuth);
   };
 

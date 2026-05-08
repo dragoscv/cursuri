@@ -7,6 +7,16 @@ import {
   repairAccount,
   setAzureAccountEnabled,
 } from '@/utils/github-accounts';
+import { logUserManagementAction, logSecurityEvent, AuditSeverity } from '@/utils/auditLog';
+import type { AuthenticatedUser } from '@/utils/api/auth';
+import { UserRole } from '@/utils/firebase/adminAuth';
+
+const SYSTEM_USER: AuthenticatedUser = {
+  uid: 'system-stripe-webhook',
+  emailVerified: true,
+  role: UserRole.SUPER_ADMIN,
+  email: 'system@studiai.ro',
+};
 
 // SCIM provisioning + org membership polling can take up to ~55s for the
 // follow-up repair pass, on top of ~10s for the initial create. Give the
@@ -61,6 +71,12 @@ export async function POST(request: NextRequest) {
     event = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret);
   } catch (err) {
     console.error('Webhook signature verification failed:', err);
+    await logSecurityEvent(
+      'stripe_webhook_signature_invalid',
+      request,
+      AuditSeverity.CRITICAL,
+      { endpoint: '/api/stripe/github-webhook', error: err instanceof Error ? err.message : String(err) }
+    );
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
@@ -183,6 +199,19 @@ export async function POST(request: NextRequest) {
               console.log(
                 `Auto-created GitHub account ${result.account?.githubUsername} for user ${userId} (subscription ${subscriptionId})`
               );
+              await logUserManagementAction(
+                'github_account_auto_provisioned',
+                request,
+                SYSTEM_USER,
+                userId,
+                {
+                  subscriptionId,
+                  githubUsername: result.account?.githubUsername,
+                  azureUserId: result.account?.azureUserId,
+                  source: 'stripe-webhook',
+                },
+                true
+              );
 
               // The initial create only waits ~4s for SCIM to propagate before
               // adding the user to the org. In practice that's often not
@@ -231,6 +260,14 @@ export async function POST(request: NextRequest) {
               });
             } else {
               console.error(`Failed to auto-create account for ${userId}:`, result.error);
+              await logUserManagementAction(
+                'github_account_auto_provisioned',
+                request,
+                SYSTEM_USER,
+                userId,
+                { subscriptionId, error: result.error, source: 'stripe-webhook' },
+                false
+              );
             }
           } else {
             console.log(`Account already exists for subscription ${subscriptionId}`);

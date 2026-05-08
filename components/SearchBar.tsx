@@ -10,6 +10,8 @@ import SearchIcon from './icons/SearchIcon';
 import CloseIcon from './icons/CloseIcon';
 import { useTranslations } from 'next-intl';
 import { stripHtml } from '@/utils/security/htmlSanitizer';
+import { logSearch } from '@/utils/analytics';
+import { trackSearchQuery } from '@/utils/statistics';
 
 const SearchBar = React.memo(function SearchBar() {
   const t = useTranslations('common');
@@ -126,6 +128,15 @@ const SearchBar = React.memo(function SearchBar() {
   useEffect(() => {
     const delaySearch = setTimeout(() => {
       handleSearch();
+      const trimmed = searchQuery.trim();
+      if (trimmed.length >= 2) {
+        try {
+          logSearch(trimmed, searchResults.length);
+          trackSearchQuery(trimmed, searchResults.length);
+        } catch {
+          /* analytics must never break search */
+        }
+      }
     }, 300);
 
     return () => clearTimeout(delaySearch);

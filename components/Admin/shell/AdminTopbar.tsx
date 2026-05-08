@@ -9,6 +9,8 @@ import { AppContext } from '@/components/AppContext';
 import DefaultAvatar from '@/components/shared/DefaultAvatar';
 import { FiUser, FiSettings, FiLogOut, FiBell } from '@/components/icons/FeatherIcons';
 import { signOut } from 'firebase/auth';
+import { logClientAuthEvent } from '@/utils/clientAudit';
+import { logUserLogout } from '@/utils/analytics';
 import { firebaseAuth } from '@/utils/firebase/firebase.config';
 import { useRouter } from 'next/navigation';
 
@@ -24,6 +26,8 @@ const AdminTopbar: React.FC = () => {
     const user = ctx?.user;
 
     const handleSignOut = async () => {
+        await logClientAuthEvent('logout', { uid: user?.uid, email: user?.email });
+        logUserLogout();
         await signOut(firebaseAuth);
         router.push('/');
     };

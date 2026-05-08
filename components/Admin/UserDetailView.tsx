@@ -27,6 +27,7 @@ import {
     getDocs,
 } from 'firebase/firestore';
 import GitHubAccountsTab from './GitHubAccountsTab';
+import UserActivityTimeline from './UserActivityTimeline';
 import { UserRole } from '@/utils/firebase/adminAuth';
 
 interface AdminUserData {
@@ -162,17 +163,17 @@ export default function UserDetailView({ userId }: { userId: string }) {
         if (!user) return;
         setSavingProfile(true);
         try {
-            const db = getFirestore(firebaseApp);
-            await updateDoc(doc(db, `users/${user.id}`), {
-                ...edited,
-                updatedAt: Timestamp.now(),
-            });
+            const res = await apiCall(`/api/admin/users/${user.id}`, 'PATCH', edited as Record<string, unknown>);
+            const data = await res.json();
+            if (!res.ok || !data.success) {
+                throw new Error(data.error || 'Failed to update profile');
+            }
             setUser({ ...user, ...edited });
             setEditMode(false);
             setEdited({});
         } catch (err) {
             console.error(err);
-            setError('Failed to update profile');
+            setError(err instanceof Error ? err.message : 'Failed to update profile');
         } finally {
             setSavingProfile(false);
         }
@@ -358,6 +359,7 @@ export default function UserDetailView({ userId }: { userId: string }) {
                         <Tab key="enrollments" title={`📚 Enrollments (${enrollmentCount})`} />
                         <Tab key="github" title="🐙 GitHub Accounts" />
                         <Tab key="subscriptions" title={`💎 Subscriptions (${subscriptions.length})`} />
+                        <Tab key="activity" title="📈 Activity" />
                         <Tab key="notes" title="📝 Admin Notes" />
                         <Tab key="permissions" title="🛡️ Permissions" />
                     </Tabs>
@@ -539,6 +541,11 @@ export default function UserDetailView({ userId }: { userId: string }) {
                                 <EmptyState icon="💎" message="No subscriptions yet" />
                             )}
                         </div>
+                    )}
+
+                    {/* Activity Tab */}
+                    {selectedTab === 'activity' && (
+                        <UserActivityTimeline userId={userId} />
                     )}
 
                     {/* Notes Tab */}
