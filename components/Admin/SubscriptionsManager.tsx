@@ -95,6 +95,7 @@ interface ProductFormState {
     active: boolean;
     featured: boolean;
     mainPlan: boolean;
+    tier: 'courses' | 'copilot';
 }
 
 const emptyForm: ProductFormState = {
@@ -103,6 +104,7 @@ const emptyForm: ProductFormState = {
     active: true,
     featured: false,
     mainPlan: false,
+    tier: 'courses',
 };
 
 interface ProductEditorProps {
@@ -126,12 +128,20 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ isOpen, onClose, onSaved,
     useEffect(() => {
         if (!isOpen) return;
         if (editing) {
+            const legacyTier =
+                editing.metadata?.tier === 'copilot' ||
+                editing.metadata?.tier === 'courses'
+                    ? (editing.metadata.tier as 'courses' | 'copilot')
+                    : editing.metadata?.mainPlan === 'true'
+                        ? 'copilot'
+                        : 'courses';
             setForm({
                 name: editing.name,
                 description: editing.description || '',
                 active: editing.active,
                 featured: editing.metadata?.featured === 'true',
                 mainPlan: editing.metadata?.mainPlan === 'true',
+                tier: legacyTier,
             });
             setIncludePrice(false);
         } else {
@@ -157,6 +167,7 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ isOpen, onClose, onSaved,
                     active: form.active,
                     featured: form.featured,
                     mainPlan: form.mainPlan,
+                    tier: form.tier,
                 });
             } else {
                 const body: any = {
@@ -166,6 +177,7 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ isOpen, onClose, onSaved,
                     metadata: {
                         featured: String(form.featured),
                         mainPlan: String(form.mainPlan),
+                        tier: form.tier,
                     },
                 };
                 if (includePrice && priceAmount) {
@@ -258,6 +270,26 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ isOpen, onClose, onSaved,
                         onChange={(v) => setForm({ ...form, mainPlan: v })}
                     />
                 </div>
+
+                <Field
+                    label="Plan tier"
+                    hint="Copilot plans auto-provision a GitHub account on subscribe. Courses-only plans just unlock courses & lessons."
+                >
+                    <div className="grid grid-cols-2 gap-3">
+                        <ToggleCard
+                            label="Courses only"
+                            description="Unlocks all courses & lessons"
+                            checked={form.tier === 'courses'}
+                            onChange={() => setForm({ ...form, tier: 'courses' })}
+                        />
+                        <ToggleCard
+                            label="Copilot included"
+                            description="Courses + auto GitHub Copilot account"
+                            checked={form.tier === 'copilot'}
+                            onChange={() => setForm({ ...form, tier: 'copilot' })}
+                        />
+                    </div>
+                </Field>
 
                 {!editing && (
                     <SectionCard
@@ -364,6 +396,10 @@ const AddPriceModal: React.FC<AddPriceModalProps> = ({ isOpen, onClose, onSaved,
     const [interval, setInterval] = useState<'month' | 'year' | 'week' | 'day'>('month');
     const [nickname, setNickname] = useState('');
     const [trialDays, setTrialDays] = useState('');
+    const [setAsDefault, setSetAsDefault] = useState(true);
+    const [hasIntro, setHasIntro] = useState(false);
+    const [introAmount, setIntroAmount] = useState('');
+    const [introMonths, setIntroMonths] = useState('1');
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -371,6 +407,10 @@ const AddPriceModal: React.FC<AddPriceModalProps> = ({ isOpen, onClose, onSaved,
         if (isOpen) {
             setAmount('');
             setNickname('');
+            setSetAsDefault(true);
+            setHasIntro(false);
+            setIntroAmount('');
+            setIntroMonths('1');
             setError(null);
         }
     }, [isOpen]);
@@ -379,6 +419,14 @@ const AddPriceModal: React.FC<AddPriceModalProps> = ({ isOpen, onClose, onSaved,
         if (!product) return;
         if (!amount) {
             setError('Amount is required.');
+            return;
+        }
+        if (hasIntro && (!introAmount || parseFloat(introAmount) >= parseFloat(amount))) {
+            setError('Intro amount must be lower than the regular price.');
+            return;
+        }
+        if (hasIntro && type !== 'recurring') {
+            setError('Intro offers are only supported on recurring prices.');
             return;
         }
         setSaving(true);
@@ -392,6 +440,14 @@ const AddPriceModal: React.FC<AddPriceModalProps> = ({ isOpen, onClose, onSaved,
                 trial_period_days:
                     type === 'recurring' && trialDays ? parseInt(trialDays, 10) : undefined,
                 nickname: nickname || undefined,
+                setDefault: setAsDefault,
+                intro:
+                    hasIntro && type === 'recurring'
+                        ? {
+                            unit_amount: Math.round(parseFloat(introAmount) * 100),
+                            months: parseInt(introMonths, 10) || 1,
+                        }
+                        : undefined,
             });
             onSaved();
             onClose();
@@ -495,6 +551,270 @@ const AddPriceModal: React.FC<AddPriceModalProps> = ({ isOpen, onClose, onSaved,
                         />
                     </Field>
                 </div>
+                <ToggleCard
+                    label="Set as default for this interval"
+                    description="The storefront will use this price when listing the plan. Only one default per interval per product."
+                    checked={setAsDefault}
+                    onChange={setSetAsDefault}
+                />
+                {type === 'recurring' && (
+                    <SectionCard
+                        title="Intro offer (optional)"
+                        description="Charge a lower price for the first N billing periods, then revert to the regular price."
+                        flush={false}
+                    >
+                        <div className="flex items-center gap-2 mb-3">
+                            <input
+                                id="hasIntro"
+                                type="checkbox"
+                                checked={hasIntro}
+                                onChange={(e) => setHasIntro(e.target.checked)}
+                                className="h-4 w-4"
+                            />
+                            <label htmlFor="hasIntro" className="text-sm">
+                                Add an intro offer for new subscribers
+                            </label>
+                        </div>
+                        {hasIntro && (
+                            <div className="grid grid-cols-2 gap-3">
+                                <Field label="Intro amount" hint="Per billing period, e.g. 500">
+                                    <input
+                                        type="number"
+                                        min={0}
+                                        step="0.01"
+                                        value={introAmount}
+                                        onChange={(e) => setIntroAmount(e.target.value)}
+                                        className={inputCls}
+                                        placeholder="500"
+                                    />
+                                </Field>
+                                <Field label="For how many months?" hint="1–12 billing periods">
+                                    <input
+                                        type="number"
+                                        min={1}
+                                        max={12}
+                                        value={introMonths}
+                                        onChange={(e) => setIntroMonths(e.target.value)}
+                                        className={inputCls}
+                                        placeholder="1"
+                                    />
+                                </Field>
+                                <p className="col-span-2 text-[11px] text-[color:var(--ai-muted)]">
+                                    A Stripe coupon + hidden promotion code will be created for this
+                                    price. Customers see and pay the intro amount automatically at
+                                    checkout — no code to type.
+                                </p>
+                            </div>
+                        )}
+                    </SectionCard>
+                )}
+            </div>
+        </AppModal>
+    );
+};
+
+// ---------- Edit price modal ----------
+interface EditPriceModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onSaved: () => void;
+    productId: string | null;
+    price: PriceRow | null;
+}
+
+const EditPriceModal: React.FC<EditPriceModalProps> = ({
+    isOpen,
+    onClose,
+    onSaved,
+    productId,
+    price,
+}) => {
+    const [nickname, setNickname] = useState('');
+    const [isDefault, setIsDefault] = useState(false);
+    const [hasIntro, setHasIntro] = useState(false);
+    const [introAmount, setIntroAmount] = useState('');
+    const [introMonths, setIntroMonths] = useState('1');
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const isRecurring = price?.type === 'recurring';
+    const hadIntroInitially = !!price?.metadata?.intro_coupon;
+
+    useEffect(() => {
+        if (isOpen && price) {
+            setNickname(price.nickname || '');
+            setIsDefault(price.metadata?.default === 'true');
+            const introMeta = price.metadata?.intro_amount;
+            const monthsMeta = price.metadata?.intro_months;
+            if (introMeta) {
+                setHasIntro(true);
+                setIntroAmount((parseInt(introMeta, 10) / 100).toString());
+                setIntroMonths(monthsMeta || '1');
+            } else {
+                setHasIntro(false);
+                setIntroAmount('');
+                setIntroMonths('1');
+            }
+            setError(null);
+        }
+    }, [isOpen, price]);
+
+    const onSubmit = async () => {
+        if (!productId || !price) return;
+        if (hasIntro && isRecurring) {
+            const introCents = Math.round(parseFloat(introAmount || '0') * 100);
+            if (!introAmount || introCents <= 0) {
+                setError('Intro amount is required.');
+                return;
+            }
+            if (price.unit_amount != null && introCents >= price.unit_amount) {
+                setError('Intro amount must be lower than the regular price.');
+                return;
+            }
+        }
+        setSaving(true);
+        setError(null);
+        try {
+            // Decide what to send for `intro`:
+            //   - has + recurring  -> set/replace
+            //   - !has + had       -> clear (null)
+            //   - else             -> omit
+            let introPayload: any = undefined;
+            if (hasIntro && isRecurring) {
+                introPayload = {
+                    unit_amount: Math.round(parseFloat(introAmount) * 100),
+                    months: parseInt(introMonths, 10) || 1,
+                };
+            } else if (!hasIntro && hadIntroInitially) {
+                introPayload = null;
+            }
+            await api(`/api/stripe/products/${productId}/prices/${price.id}`, 'PATCH', {
+                nickname: nickname || null,
+                setDefault: isDefault,
+                intro: introPayload,
+            });
+            onSaved();
+            onClose();
+        } catch (e: any) {
+            setError(e.message || 'Failed to update price');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    return (
+        <AppModal
+            isOpen={isOpen}
+            onClose={onClose}
+            title="Edit price"
+            subtitle={
+                price
+                    ? `${(price.unit_amount ?? 0) / 100} ${price.currency.toUpperCase()} ${
+                          price.recurring ? `/ ${price.recurring.interval}` : 'one-time'
+                      }`
+                    : undefined
+            }
+            tone="primary"
+            size="md"
+            footer={
+                <div className="flex items-center gap-2">
+                    <AppButton variant="light" onPress={onClose} isDisabled={saving}>
+                        Cancel
+                    </AppButton>
+                    <AppButton
+                        variant="primary"
+                        onPress={onSubmit}
+                        isLoading={saving}
+                        loadingText="Saving…"
+                    >
+                        Save changes
+                    </AppButton>
+                </div>
+            }
+        >
+            <div className="space-y-4">
+                {error && (
+                    <div className="rounded-lg border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-600 dark:text-rose-400">
+                        {error}
+                    </div>
+                )}
+                <div className="rounded-lg border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/40 px-3 py-2 text-xs text-[color:var(--ai-muted)]">
+                    Stripe doesn’t allow editing the amount, currency or interval of an existing
+                    price. To change those, add a new price and deactivate this one.
+                </div>
+                <Field label="Nickname (internal label)">
+                    <input
+                        value={nickname}
+                        onChange={(e) => setNickname(e.target.value)}
+                        className={inputCls}
+                        placeholder="e.g. Courses Monthly"
+                    />
+                </Field>
+                <ToggleCard
+                    label="Default price for this interval"
+                    description="The storefront will pick this price when showing this plan. Only one default per (product, interval)."
+                    checked={isDefault}
+                    onChange={setIsDefault}
+                />
+                {isRecurring && (
+                    <SectionCard
+                        title="Intro offer"
+                        description="Charge less for the first N billing periods, then revert to the regular price. Implemented as a Stripe coupon applied automatically at checkout."
+                        flush={false}
+                    >
+                        <div className="flex items-center gap-2 mb-3">
+                            <input
+                                id="hasIntroEdit"
+                                type="checkbox"
+                                checked={hasIntro}
+                                onChange={(e) => setHasIntro(e.target.checked)}
+                                className="h-4 w-4"
+                            />
+                            <label htmlFor="hasIntroEdit" className="text-sm">
+                                Offer a discounted intro price
+                            </label>
+                        </div>
+                        {hasIntro && (
+                            <div className="grid grid-cols-2 gap-3">
+                                <Field label="Intro amount" hint="Per billing period (same currency)">
+                                    <input
+                                        type="number"
+                                        min={0}
+                                        step="0.01"
+                                        value={introAmount}
+                                        onChange={(e) => setIntroAmount(e.target.value)}
+                                        className={inputCls}
+                                        placeholder="500"
+                                    />
+                                </Field>
+                                <Field label="For how many months?" hint="1–12">
+                                    <input
+                                        type="number"
+                                        min={1}
+                                        max={12}
+                                        value={introMonths}
+                                        onChange={(e) => setIntroMonths(e.target.value)}
+                                        className={inputCls}
+                                        placeholder="1"
+                                    />
+                                </Field>
+                                {hadIntroInitially && (
+                                    <p className="col-span-2 text-[11px] text-amber-600 dark:text-amber-400">
+                                        Updating will replace the existing coupon with a new one.
+                                        Customers already on this offer keep their current
+                                        discount; only new subscriptions use the new amount.
+                                    </p>
+                                )}
+                            </div>
+                        )}
+                        {!hasIntro && hadIntroInitially && (
+                            <p className="text-[11px] text-rose-600 dark:text-rose-400">
+                                The current intro offer will be removed on save. Existing
+                                discounted subscribers keep their discount until it expires.
+                            </p>
+                        )}
+                    </SectionCard>
+                )}
             </div>
         </AppModal>
     );
@@ -558,6 +878,9 @@ const SubscriptionsManager: React.FC = () => {
     const [editing, setEditing] = useState<ProductRow | null>(null);
     const [priceModalOpen, setPriceModalOpen] = useState(false);
     const [activePriceProduct, setActivePriceProduct] = useState<ProductRow | null>(null);
+    const [editPriceState, setEditPriceState] = useState<
+        { productId: string; price: PriceRow } | null
+    >(null);
     const [confirmArchive, setConfirmArchive] = useState<ProductRow | null>(null);
     const [confirmPriceToggle, setConfirmPriceToggle] = useState<
         { productId: string; price: PriceRow } | null
@@ -644,6 +967,23 @@ const SubscriptionsManager: React.FC = () => {
                                 {t('badges.featured')}
                             </span>
                         )}
+                        {(() => {
+                            const tier =
+                                p.metadata?.tier === 'copilot' || p.metadata?.tier === 'courses'
+                                    ? p.metadata.tier
+                                    : p.metadata?.mainPlan === 'true'
+                                        ? 'copilot'
+                                        : 'courses';
+                            return tier === 'copilot' ? (
+                                <span className="inline-flex items-center gap-1 px-1.5 h-5 rounded-full bg-violet-500/15 text-[10px] font-medium text-violet-600 dark:text-violet-300">
+                                    {t('badges.copilot')}
+                                </span>
+                            ) : (
+                                <span className="inline-flex items-center gap-1 px-1.5 h-5 rounded-full bg-sky-500/15 text-[10px] font-medium text-sky-600 dark:text-sky-300">
+                                    {t('badges.courses')}
+                                </span>
+                            );
+                        })()}
                     </div>
                     {p.description && (
                         <span className="text-xs text-[color:var(--ai-muted)] line-clamp-1">
@@ -703,6 +1043,32 @@ const SubscriptionsManager: React.FC = () => {
                                             ({pr.nickname})
                                         </span>
                                     )}
+                                    {pr.metadata?.default === 'true' && (
+                                        <span
+                                            className="inline-flex items-center gap-1 px-1.5 h-5 rounded-full bg-[color:var(--ai-primary)]/15 text-[10px] font-medium text-[color:var(--ai-primary)]"
+                                            title={t('badges.defaultHint')}
+                                        >
+                                            <FiStar size={10} /> {t('badges.default')}
+                                        </span>
+                                    )}
+                                    {pr.metadata?.intro_amount && pr.metadata?.intro_months && (
+                                        <span
+                                            className="inline-flex items-center gap-1 px-1.5 h-5 rounded-full bg-emerald-500/15 text-[10px] font-medium text-emerald-600 dark:text-emerald-400"
+                                            title={`${(parseInt(pr.metadata.intro_amount, 10) / 100).toFixed(2)} ${pr.currency.toUpperCase()} for ${pr.metadata.intro_months} mo, then regular price`}
+                                        >
+                                            🎁 {(parseInt(pr.metadata.intro_amount, 10) / 100).toFixed(0)} {pr.currency.toUpperCase()} × {pr.metadata.intro_months}mo
+                                        </span>
+                                    )}
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setEditPriceState({ productId: p.id, price: pr })
+                                        }
+                                        className="inline-flex items-center px-1.5 h-5 rounded-full border border-[color:var(--ai-card-border)] text-[10px] text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)] hover:border-[color:var(--ai-primary)]/40"
+                                        title={t('actions.editPrice')}
+                                    >
+                                        <FiEdit size={10} />
+                                    </button>
                                     <button
                                         type="button"
                                         onClick={() =>
@@ -860,6 +1226,13 @@ const SubscriptionsManager: React.FC = () => {
                 onClose={() => setPriceModalOpen(false)}
                 onSaved={reload}
                 product={activePriceProduct}
+            />
+            <EditPriceModal
+                isOpen={!!editPriceState}
+                onClose={() => setEditPriceState(null)}
+                onSaved={reload}
+                productId={editPriceState?.productId ?? null}
+                price={editPriceState?.price ?? null}
             />
             <AppModal
                 isOpen={!!confirmArchive}

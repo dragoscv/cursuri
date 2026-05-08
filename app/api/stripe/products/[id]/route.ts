@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { requireAdmin, checkRateLimit } from '@/utils/api/auth';
 import { logAdminAction } from '@/utils/auditLog';
 import { validateRequestBody } from '@/utils/security/inputValidation';
+import { detachIntroOffer } from '@/utils/stripe/introOffers';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: '2026-02-25.clover',
@@ -55,6 +56,11 @@ const ProductUpdateSchema = z.object({
     /** Convenience flags merged into metadata */
     featured: z.boolean().optional(),
     mainPlan: z.boolean().optional(),
+    /**
+     * Plan tier. `copilot` plans auto-provision a GitHub account on subscribe;
+     * `courses` plans only unlock course access.
+     */
+    tier: z.enum(['courses', 'copilot']).optional(),
 });
 
 export async function PATCH(request: NextRequest, ctx: RouteContext) {
@@ -114,6 +120,7 @@ export async function PATCH(request: NextRequest, ctx: RouteContext) {
             };
             if (data.featured !== undefined) mergedMeta.featured = String(data.featured);
             if (data.mainPlan !== undefined) mergedMeta.mainPlan = String(data.mainPlan);
+            if (data.tier !== undefined) mergedMeta.tier = data.tier;
             updateParams.metadata = mergedMeta;
         }
 
@@ -160,12 +167,17 @@ export async function DELETE(request: NextRequest, ctx: RouteContext) {
     const { id } = await ctx.params;
 
     try {
-        // Deactivate all prices first
+        // Deactivate all prices first (and detach any intro offers)
         const prices = await stripe.prices.list({ product: id, limit: 100 });
         await Promise.all(
-            prices.data
-                .filter((p) => p.active)
-                .map((p) => stripe.prices.update(p.id, { active: false }))
+            prices.data.flatMap((p) => {
+                const tasks: Promise<unknown>[] = [];
+                if (p.active) tasks.push(stripe.prices.update(p.id, { active: false }));
+                if (p.metadata?.intro_coupon || p.metadata?.intro_promotion_code) {
+                    tasks.push(detachIntroOffer(stripe, p.metadata));
+                }
+                return tasks;
+            })
         );
         // Archive the product
         const product = await stripe.products.update(id, { active: false });

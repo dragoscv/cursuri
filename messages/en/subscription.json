@@ -1,10 +1,10 @@
 {
-  "title": "GitHub Copilot included with every subscription",
-  "subtitle": "Get a personal GitHub account with Copilot, unlimited access to all AI courses, and the workflow used by 10x developers.",
+  "title": "Choose your plan",
+  "subtitle": "Unlock every course on the platform — and upgrade to the Copilot plan to get a personal GitHub account with unlimited Copilot Pro included.",
   "copilot": {
-    "eyebrow": "INCLUDED IN EVERY PLAN",
+    "eyebrow": "INCLUDED IN THE COPILOT PLAN",
     "headline": "GitHub Copilot Pro — unlimited, on us.",
-    "lead": "Every paid subscription auto-provisions a personal GitHub account with Copilot Pro enabled — unlimited access to all the latest frontier models: Claude Opus 4.7, GPT, Gemini and more. Use it inside VS Code (we recommend Insiders for the latest features) and pair it with OpenClaw for a Claude-grade coding agent right in your editor.",
+    "lead": "The Copilot plan auto-provisions a personal GitHub account with Copilot Pro enabled — unlimited access to all the latest frontier models: Claude Opus 4.7, GPT, Gemini and more. Use it inside VS Code (we recommend Insiders for the latest features) and pair it with OpenClaw for a Claude-grade coding agent right in your editor.",
     "footnote": "Your account is ready in seconds after checkout. Find credentials anytime under Profile → GitHub.",
     "perks": {
       "account": {
@@ -78,6 +78,34 @@
       "cta": "Start AI Journey"
     },
     "popular": "Most Popular",
+    "unavailable": "Unavailable",
+    "introBadge": "Intro offer — first {months, plural, =1 {month} other {# months}}",
+    "introThen": "For the first {months, plural, =1 {month} other {# months}}, then {price}/{period}",
+    "courses": {
+      "name": "Courses",
+      "description": "Full access to every course and lesson on the platform.",
+      "features": {
+        "allCourses": "Unlimited access to all courses",
+        "allLessons": "All lessons, code samples and resources",
+        "certificates": "Certificate of completion",
+        "communityAccess": "Community support",
+        "cancelAnytime": "Cancel anytime"
+      },
+      "cta": "Get all courses"
+    },
+    "copilot": {
+      "name": "Copilot",
+      "description": "Everything in Courses + a personal GitHub account with unlimited Copilot Pro auto-provisioned for you.",
+      "features": {
+        "copilotAccount": "Personal GitHub account auto-created at checkout",
+        "unlimitedModels": "Unlimited Copilot Pro — Claude Opus 4.7, GPT, Gemini",
+        "allCourses": "Everything in the Courses plan",
+        "prioritySupport": "Priority support from AI practitioners",
+        "exclusiveContent": "Exclusive AI prompts and templates",
+        "cancelAnytime": "Cancel anytime"
+      },
+      "cta": "Get Copilot + Courses"
+    },
     "proYearly": {
       "name": "AI Master Yearly",
       "price": "1000 RON",
@@ -97,6 +125,11 @@
       "savings": "Save 200 RON per year",
       "badge": "Best Value"
     }
+  },
+  "billing": {
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "savePill": "Save"
   },
   "benefits": {
     "title": "Why Go Pro?",
@@ -123,7 +156,7 @@
     "subtitle": "Everything you need to know about our subscriptions",
     "whatIsCopilot": {
       "question": "What is GitHub Copilot Pro and which models do I get?",
-      "answer": "GitHub Copilot Pro is an AI pair-programmer built into VS Code. Every paid subscription auto-provisions a personal GitHub account with Copilot Pro enabled — unlimited, unrestricted access to all the latest frontier models including Claude Opus 4.7, GPT-5, Gemini 2.5 Pro, and every new model on day one. After checkout, your credentials appear under Profile → GitHub. Sign into VS Code (we recommend the Insiders build) and Copilot is ready: chat, inline suggestions, multi-file edits, agent mode — the lot."
+      "answer": "GitHub Copilot Pro is an AI pair-programmer built into VS Code. The Copilot plan auto-provisions a personal GitHub account with Copilot Pro enabled — unlimited, unrestricted access to all the latest frontier models including Claude Opus 4.7, GPT-5, Gemini 2.5 Pro, and every new model on day one. After checkout, your credentials appear under Profile → GitHub. Sign into VS Code (we recommend the Insiders build) and Copilot is ready: chat, inline suggestions, multi-file edits, agent mode — the lot."
     },
     "howToActivate": {
       "question": "How do I activate Copilot after subscribing?",

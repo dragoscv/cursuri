@@ -127,7 +127,11 @@
     },
     "badges": {
       "main": "Main",
-      "featured": "Featured"
+      "featured": "Featured",
+      "default": "Default",
+      "defaultHint": "Used by the storefront for this plan & interval",
+      "copilot": "Copilot",
+      "courses": "Courses"
     },
     "status": {
       "active": "Active",
@@ -143,6 +147,7 @@
       "newProduct": "New product",
       "addPrice": "Add price",
       "edit": "Edit",
+      "editPrice": "Edit price",
       "archive": "Archive",
       "cancel": "Cancel",
       "activePrice": "Active",

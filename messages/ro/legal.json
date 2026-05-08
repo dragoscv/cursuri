@@ -1,354 +1,663 @@
 {
+  "common": {
+    "lastUpdated": "Ultima actualizare: {effectiveDate}",
+    "operatorBlock": "{brandName} este operat de {operatorName} ({operatorStatus}), cu adresa {operatorCountry}. Contact: {contactEmail}.",
+    "anpcLine": "Autoritatea Națională pentru Protecția Consumatorilor (ANPC): {anpcUrl}. Soluționare alternativă a litigiilor (SAL): {anpcSalUrl}. Platforma UE de Soluționare Online a Litigiilor (ODR): {odrUrl}.",
+    "questionsContact": "Aveți întrebări despre acest document? Scrieți-ne la {legalEmail}."
+  },
+
   "terms": {
     "title": "Termeni și Condiții",
-    "lastUpdated": "4 aprilie 2025",
+    "lastUpdated": "{effectiveDate}",
     "sections": {
+      "operator": {
+        "title": "1. Cine suntem",
+        "intro": "Acești Termeni și Condiții (denumiți „Termenii”) reglementează accesul și utilizarea {siteUrl} și a oricăror servicii conexe pe care le oferim (împreună, „Platforma”). Platforma este operată de:",
+        "items": {
+          "name": "Operator: {operatorName} ({operatorStatus}).",
+          "address": "Adresă: {operatorCountry}.",
+          "fiscal": "Cod fiscal (acolo unde este cazul): {operatorFiscalCode}.",
+          "regCom": "Număr Registrul Comerțului / înregistrare (acolo unde este cazul): {operatorRegCom}.",
+          "vat": "Cod TVA (acolo unde este cazul): {operatorVat}.",
+          "contact": "Contact general: {contactEmail}. Juridic și facturare: {legalEmail}. Telefon (acolo unde este cazul): {phone}."
+        },
+        "businessInvoices": "{operatorName} comercializează acces la cursuri și conținut digital în calitate de persoană fizică. Dacă sunteți o societate și aveți nevoie de factură fiscală pe firmă, vă rugăm să ne contactați la {legalEmail} înainte sau imediat după achiziție, comunicând denumirea companiei, codul fiscal, sediul social și referința comenzii."
+      },
       "introduction": {
-        "title": "1. Introducere",
+        "title": "2. Acceptarea Termenilor",
         "content": {
-          "welcome": "Bun venit la Cursuri. Acești Termeni și Condiții reglementează utilizarea site-ului nostru web, cursurilor și serviciilor. Prin accesarea sau utilizarea platformei noastre, sunteți de acord să respectați acești Termeni.",
-          "readCarefully": "Vă rugăm să citiți cu atenție acești Termeni înainte de a utiliza serviciile noastre. Dacă nu sunteți de acord cu vreo parte a acestor Termeni, nu trebuie să utilizați platforma noastră."
+          "welcome": "Bine ați venit pe {brandName}. Prin crearea unui cont, navigarea pe Platformă, achiziționarea unui curs sau abonarea la un plan, confirmați că ați citit, ați înțeles și sunteți de acord să respectați acești Termeni, Politica de Confidențialitate, Notificarea GDPR, Politica de Cookies și Politica de Rambursare.",
+          "readCarefully": "Dacă nu sunteți de acord cu vreo parte din acești Termeni, nu trebuie să utilizați Platforma. Acești Termeni constituie un acord cu valoare juridică obligatorie între dumneavoastră și {operatorName}."
         }
       },
       "definitions": {
-        "title": "2. Definiții",
+        "title": "3. Definiții",
         "items": {
-          "platform": "\"Platforma\" se referă la site-ul web Cursuri și la tot conținutul, funcționalitățile și serviciile sale.",
-          "user": "\"Utilizator\", \"Dumneavoastră\" și \"Al dumneavoastră\" se referă la persoana fizică sau entitatea care accesează sau utilizează Platforma.",
-          "we": "\"Noi\", \"Al nostru\" și \"Cursuri\" se referă la Cursuri.",
-          "content": "\"Conținut\" se referă la materialele cursurilor, videoclipuri, text, grafică, imagini și alte materiale disponibile pe Platformă.",
-          "subscription": "\"Abonament\" se referă la accesul plătit la cursuri sau servicii oferite pe Platformă."
+          "platform": "„Platformă” — site-ul {siteUrl}, software-ul aferent și orice aplicații și servicii conexe pe care le oferim.",
+          "user": "„Utilizator”, „dumneavoastră” — orice persoană care accesează Platforma, cu sau fără cont.",
+          "we": "„Noi”, „nouă”, „nostru” — operatorul identificat mai sus.",
+          "content": "„Conținut” — toate cursurile, lecțiile, materialele video, audio, text, cod, descărcările, designul și alte materiale puse la dispoziție prin Platformă.",
+          "subscription": "„Abonament” — un plan plătit recurent care oferă acces la Conținut pe perioada în care este activ.",
+          "coursesPlan": "„Plan Cursuri” — un Abonament care oferă acces la toate cursurile și lecțiile de pe Platformă, dar nu include Bonusul GitHub Copilot.",
+          "copilotPlan": "„Plan Copilot” — un Abonament care include beneficiile Planului Cursuri plus Bonusul GitHub Copilot descris la Secțiunea 9.",
+          "copilotBonus": "„Bonus GitHub Copilot” — accesul opțional și discreționar la un cont GitHub cu GitHub Copilot activat, livrat prin furnizori terți (Microsoft / GitHub) și descris la Secțiunea 9.",
+          "introOffer": "„Ofertă Introductivă” — un preț redus aplicat automat primelor N perioade de facturare ale unui Abonament nou, după care se aplică prețul standard."
         }
       },
-      "accountRegistration": {
-        "title": "3. Înregistrarea Contului",
+      "eligibility": {
+        "title": "4. Eligibilitate și înregistrare cont",
         "content": {
-          "registration": "Pentru a accesa anumite funcționalități ale Platformei, trebuie să vă înregistrați pentru un cont. Când vă înregistrați, sunteți de acord să furnizați informații exacte, actuale și complete și să actualizați aceste informații pentru a menține acuratețea lor.",
-          "responsibility": "Sunteți responsabil pentru menținerea confidențialității acreditărilor contului dvs. și pentru toate activitățile care au loc în contul dvs. Trebuie să ne notificați imediat despre orice utilizare neautorizată a contului dvs."
+          "age": "Trebuie să aveți cel puțin 16 ani pentru a crea un cont. Utilizatorii sub 18 ani confirmă că au consimțământul unui părinte sau tutore legal pentru a folosi Platforma și pentru a accepta acești Termeni.",
+          "registration": "La înregistrare trebuie să furnizați informații exacte, actualizate și complete și să le păstrați actualizate. Puteți înregistra un singur cont personal.",
+          "responsibility": "Sunteți responsabil pentru tot ceea ce se întâmplă în contul dumneavoastră, inclusiv pentru confidențialitatea datelor de autentificare și pentru orice activitate desfășurată cu acestea. Notificați-ne imediat la {legalEmail} dacă suspectați o utilizare neautorizată.",
+          "suspension": "Putem suspenda, restricționa sau închide contul dumneavoastră dacă încălcați acești Termeni, legislația aplicabilă sau dacă activitatea dumneavoastră reprezintă un risc de securitate sau reputațional pentru Platformă sau pentru alți utilizatori."
         }
       },
       "userConduct": {
-        "title": "4. Conduita Utilizatorului",
-        "intro": "Prin utilizarea Platformei noastre, sunteți de acord să nu:",
+        "title": "5. Utilizare acceptabilă",
+        "intro": "Folosind Platforma, sunteți de acord să nu:",
         "prohibitedActions": [
-          "Încălcați legile sau reglementările aplicabile",
-          "Încălcați drepturile altora",
-          "Partajați contul sau accesul la cursuri cu alții",
-          "Încercați să accesați zone restricționate ale Platformei",
-          "Utilizați Platforma în scopuri ilegale sau neautorizate",
-          "Transmiteți viruși, malware sau alt cod dăunător",
-          "Interferați cu funcționarea corectă a Platformei",
-          "Colectați sau urmăriți informații personale ale altor utilizatori",
-          "Vă angajați în orice activitate care ar putea deteriora, dezactiva sau afecta Platforma"
+          "Încălcați nicio lege, regulament sau drept al unei terțe părți.",
+          "Distribuiți, revindeți, sublicențiați, difuzați, oglindiți sau redistribuiți în alt mod orice Conținut fără consimțământul nostru scris prealabil.",
+          "Distribuiți datele de autentificare sau să permiteți mai multor persoane să utilizeze un singur cont.",
+          "Decompilați, scanați (scrape), recoltați sau copiați sistematic vreo parte a Platformei sau a Conținutului.",
+          "Încărcați viruși, malware sau orice intenționează să perturbe sau să compromită Platforma.",
+          "Încercați să obțineți acces neautorizat la conturi, sisteme, rețele sau zone non-publice ale Platformei.",
+          "Hărțuiți, amenințați, defăimați sau pretindeți a fi o altă persoană, ori să postați conținut ilegal, instigator la ură, sexual explicit sau care încalcă drepturi.",
+          "Folosiți unelte automate (bots, scripturi, agenți) pentru a accesa Platforma într-un mod care suprasolicită nerezonabil infrastructura noastră.",
+          "Folosiți Platforma sau orice Conținut pentru a antrena, ajusta sau dezvolta un model AI, set de date sau produs concurent fără consimțământul nostru scris prealabil."
         ]
       },
       "intellectualProperty": {
-        "title": "5. Proprietate Intelectuală",
+        "title": "6. Proprietate intelectuală",
         "content": {
-          "ownership": "Tot conținutul de pe Platformă, inclusiv cursuri, videoclipuri, text, grafică, logo-uri și software, este proprietatea Cursuri sau a furnizorilor săi de conținut și este protejat prin legi privind drepturile de autor, mărcile comerciale și alte legi ale proprietății intelectuale.",
-          "license": "Vi se acordă o licență limitată, neexclusivă, netransferabilă pentru a accesa și utiliza conținutul în scopuri personale, necomerciale. Nu puteți reproduce, distribui, modifica, crea opere derivate, afișa public, executa public, republica, descărca, stoca sau transmite niciun conținut fără permisiunea noastră expresă în scris."
+          "ownership": "Tot Conținutul de pe Platformă — inclusiv cursuri, lecții, video, audio, text, exemple de cod, prezentări, grafică, logo-uri și software-ul aferent — aparține {operatorName} sau ne este licențiat și este protejat prin legile drepturilor de autor, mărcilor comerciale și alte legi aplicabile privind proprietatea intelectuală.",
+          "license": "Sub rezerva respectării acestor Termeni și a plății oricăror taxe aplicabile, vă acordăm o licență limitată, personală, neexclusivă, netransferabilă, nesublicențiabilă și revocabilă pentru a accesa și viziona Conținutul în scopuri proprii, personale, necomerciale, de învățare. Nu se acordă alte drepturi, expres sau implicit. Nu puteți descărca, copia, redistribui, afișa public sau crea opere derivate din Conținut fără consimțământul nostru scris prealabil.",
+          "feedback": "Dacă ne trimiteți feedback, sugestii sau idei despre Platformă sau Conținut, ne acordați o licență mondială, gratuită, perpetuă și irevocabilă pentru a le folosi fără restricții și fără compensare."
         }
       },
-      "coursesAndSubscriptions": {
-        "title": "6. Cursuri și Abonamente",
-        "courseAccess": {
-          "title": "Accesul la Cursuri",
-          "content": "La achiziționarea unui curs sau abonament, vi se va acorda acces la materialele cursului pentru perioada specificată. Accesul poate varia în funcție de tipul de curs sau abonament achiziționat."
-        },
-        "paymentsAndRefunds": {
-          "title": "Plăți și Rambursări",
-          "content": "Toate plățile sunt procesate în siguranță prin procesatorii noștri de plăți. Prețurile pentru cursuri și abonamente pot fi modificate fără notificare prealabilă. Putem oferi rambursări la discreția noastră conform politicii noastre de rambursare."
-        },
-        "courseUpdates": {
-          "title": "Actualizări ale Cursurilor",
-          "content": "Ne străduim să menținem conținutul cursurilor la zi. Ne rezervăm dreptul de a modifica, actualiza sau elimina conținutul cursurilor în orice moment, fără notificare prealabilă."
-        },
-        "githubCopilot": {
-          "title": "Cont GitHub Copilot",
-          "content": "Ca parte a fiecărui abonament plătit, creăm automat un cont GitHub personal cu GitHub Copilot activat. Datele de acces pentru acest cont devin disponibile în profilul tău StudiAI la Profil → GitHub imediat după achiziție. Abonamentul Copilot este licențiat pentru acest cont pe durata abonamentului tău StudiAI activ.",
-          "usage": "Te angajezi să folosești contul GitHub provizionat în conformitate cu Termenii și Condițiile GitHub și cu politicile lor de utilizare acceptabilă. Contul este destinat utilizării personale, non-comerciale, pentru asistență la programare în instrumente precum Visual Studio Code (recomandăm Insiders) și OpenClaw. Ești responsabil pentru protejarea credentialelor și pentru orice activitate desfășurată sub acest cont.",
-          "termination": "Dacă abonamentul tău StudiAI este anulat, expirat, rambursat sau încetat pentru motive justificate, licența GitHub Copilot asociată poate fi revocată, iar contul GitHub provizionat poate fi suspendat sau revendicat. Nu garantăm că datele stocate pe contul GitHub provizionat vor rămâne accesibile după încetarea abonamentului; îți recomandăm să faci backup la orice lucrare pe care vrei să o păstrezi."
+      "courseAccess": {
+        "title": "7. Accesul la cursuri și Abonamente",
+        "content": {
+          "individualPurchases": "Unele cursuri pot fi achiziționate individual cu plată unică. Astfel de achiziții vă oferă licența descrisă la Secțiunea 6 atât timp cât menținem cursul disponibil pe Platformă.",
+          "subscriptionAccess": "Un Abonament activ oferă acces la cursurile și funcționalitățile incluse în planul respectiv, atât timp cât Abonamentul este activ și plătit.",
+          "billingCycle": "Abonamentele se reînnoiesc automat la sfârșitul fiecărei perioade de facturare (lunar sau anual, după caz) la prețul standard în vigoare pentru acel plan, până la anulare. Puteți anula oricând din contul dumneavoastră; anularea produce efecte la finalul perioadei curente de facturare și păstrați accesul până atunci.",
+          "pricesAndTaxes": "Toate prețurile sunt afișate pe Platformă în moneda indicată la finalizarea comenzii (de regulă RON). Prețurile includ taxele aplicabile, dacă nu se prevede altfel. Conversiile valutare și eventualele comisioane bancare sunt în sarcina dumneavoastră.",
+          "paymentProcessor": "Plățile sunt procesate de Stripe Payments Europe, Ltd. Nu stocăm pe serverele noastre datele complete ale cardului. Prin efectuarea plății sunteți de acord cu termenii și politica de confidențialitate Stripe.",
+          "noFiscalInvoiceByDefault": "Întrucât Platforma este operată de o persoană fizică, facturile fiscale nu sunt emise automat. Dacă aveți nevoie de factură fiscală (de exemplu, în calitate de client persoană juridică), trimiteți un email la {legalEmail} cu datele firmei și referința comenzii."
         }
       },
-      "userGeneratedContent": {
-        "title": "7. Conținut Generat de Utilizatori",
+      "introOffers": {
+        "title": "8. Oferte Introductive, promoții și modificări de preț",
         "content": {
-          "grant": "Anumite părți ale Platformei noastre pot permite utilizatorilor să posteze conținut, cum ar fi recenzii, comentarii sau postări pe forum. Prin postarea conținutului, ne acordați un drept neexclusiv, fără redevențe, perpetuu, irevocabil și complet sublicențiabil de a utiliza, reproduce, modifica, adapta, publica, traduce, crea opere derivate, distribui și afișa astfel de conținut în întreaga lume.",
-          "warranty": "Declarați și garantați că dețineți sau aveți drepturile necesare asupra conținutului pe care îl postați și că acest conținut nu încalcă drepturile niciunei terțe părți."
+          "introOffer": "Putem oferi o Ofertă Introductivă (de exemplu, un preț mai mic pentru prima lună) la anumite planuri. Dacă vă abonați în timp ce o Ofertă Introductivă este activă, prețul redus se aplică doar primelor N perioade de facturare comunicate la finalizarea comenzii. Ulterior, Abonamentul se reînnoiește automat la prețul standard publicat pentru acel plan, până la anulare.",
+          "noStacking": "Ofertele Introductive și alte coduri promoționale nu pot fi cumulate decât dacă precizăm expres altfel.",
+          "priceChangesNew": "Putem modifica oricând prețul oricărui plan pentru noii abonați, inclusiv prețul aplicabil după încheierea unei Oferte Introductive. Modificările intră în vigoare de la data publicării prețului actualizat pe Platformă.",
+          "priceChangesExisting": "Pentru abonații existenți, vom oferi un preaviz rezonabil (cel puțin 30 de zile, prin email sau în contul dumneavoastră) înainte de orice creștere de preț. Puteți anula Abonamentul înainte ca noul preț să se aplice; dacă nu anulați, Abonamentul se va reînnoi la noul preț."
+        }
+      },
+      "githubCopilot": {
+        "title": "9. Bonus GitHub Copilot (doar Plan Copilot)",
+        "content": {
+          "natureOfBonus": "Planul Copilot include în prezent un bonus discreționar, cu valoare adăugată: la discreția noastră exclusivă, putem furniza automat un cont personal GitHub cu GitHub Copilot activat, iar datele de autentificare sunt puse la dispoziție în profilul dumneavoastră, la Profil → GitHub. Acesta este denumit „Bonus GitHub Copilot”.",
+          "thirdParty": "GitHub Copilot este un serviciu furnizat de GitHub, Inc. și Microsoft Corporation. Noi nu suntem GitHub sau Microsoft, nu controlăm aceste servicii și nu facem nicio declarație sau garanție în numele lor. Bonusul GitHub Copilot este livrat prin acești furnizori terți și este în orice moment supus termenilor lor de utilizare, politicilor de utilizare acceptabilă, politicilor de confidențialitate și modificărilor de produs ale acestora.",
+          "personalUseOnly": "Contul GitHub furnizat este licențiat dumneavoastră personal pentru utilizare necomercială, ca asistență la programare, în editoare precum Visual Studio Code (recomandat Insiders) și OpenClaw. Sunteți de acord să respectați Termenii de Utilizare și Politicile de Utilizare Acceptabilă ale GitHub. Sunteți unicul responsabil pentru păstrarea în siguranță a datelor de autentificare și pentru orice activitate desfășurată în contul furnizat.",
+          "noWarranty": "Bonusul GitHub Copilot este oferit „așa cum este disponibil” și „așa cum este”. Nu garantăm că vreo funcționalitate Copilot, model, cuantum (quota), aranjament de facturare, tip de cont sau nivel de serviciu terț va fi disponibil sau va continua să fie disponibil la o anumită dată. Modelele disponibile (incluzând, fără limitare, Claude Opus, GPT și Gemini), limitele de utilizare și sfera funcționalităților se pot modifica oricând la discreția furnizorilor terți."
+        },
+        "discretionaryChanges": {
+          "title": "9.1 Modificări ale Bonusului Copilot",
+          "content": "Putem, oricând și la discreția noastră exclusivă, să modificăm, reducem, înlocuim, suspendăm sau întrerupem complet Bonusul GitHub Copilot, în întregime sau parțial, inclusiv (fără limitare): schimbarea tipului de cont furnizat, a modelelor disponibile, a cuantumului inclus sau a criteriilor de eligibilitate. Pentru abonamente noi, orice astfel de modificare intră în vigoare de la data actualizării și publicării acestor Termeni pe Platformă. Pentru abonații existenți pe Planul Copilot, vom oferi un preaviz rezonabil (cel puțin 30 de zile, acolo unde este rezonabil posibil) înainte ca o reducere materială sau o întrerupere să producă efecte, cu excepția cazurilor în care modificarea imediată este necesară din motive juridice, de securitate, prevenire a fraudei sau determinate de terți (de exemplu, modificarea sau încetarea serviciului de bază de către GitHub sau Microsoft)."
+        },
+        "autoDowngrade": {
+          "title": "9.2 Trecerea automată la Planul Cursuri",
+          "content": "Dacă întrerupem definitiv Bonusul GitHub Copilot sau nu îl mai putem oferi din motive aflate dincolo de controlul nostru rezonabil, Abonamentul Plan Copilot va fi convertit automat, la următoarea dată de reînnoire, la Planul Cursuri, la prețul standard publicat la acel moment pentru Planul Cursuri. Veți păstra accesul neîntrerupt la toate cursurile și lecțiile. Vă vom notifica conversia în avans, acolo unde este rezonabil posibil. Dacă nu doriți să continuați pe Planul Cursuri, puteți anula Abonamentul înainte de data conversiei și nu vi se va factura noua sumă."
+        },
+        "noLiability": {
+          "title": "9.3 Lipsa răspunderii pentru Bonusul Copilot și serviciile terțe",
+          "content": "În măsura maximă permisă de lege, nu suntem răspunzători pentru nicio pierdere, daună, pretenție, cost sau cheltuială rezultată din sau în legătură cu: (a) orice indisponibilitate, întrerupere, încetinire, eroare, defect, bug, modificare, suspendare, restricționare, anulare sau încetare a GitHub, GitHub Copilot, Microsoft, Azure sau a oricărui alt serviciu terț utilizat pentru livrarea Bonusului Copilot; (b) orice modificare a prețurilor, facturării, planurilor, modelelor, cuantumurilor, funcționalităților sau termenilor de către GitHub sau Microsoft; (c) orice suspendare, restricționare sau încetare a contului GitHub furnizat de către GitHub sau Microsoft (inclusiv pentru încălcarea termenilor lor de către dumneavoastră sau de către o terță parte); (d) orice pierdere sau imposibilitate de acces la cod, repository-uri, setări, istoric sau orice alte date stocate pe sau asociate contului GitHub furnizat; (e) orice decizie a noastră de a modifica, reduce, înlocui sau întrerupe Bonusul GitHub Copilot, în întregime sau parțial, conform Secțiunii 9.1; sau (f) orice consecințe fiscale, vamale sau de altă natură reglementară pentru dumneavoastră, decurgând din primirea Bonusului Copilot."
+        },
+        "termination": {
+          "title": "9.4 Ce se întâmplă cu contul GitHub la anulare",
+          "content": "Dacă Abonamentul dumneavoastră este anulat, expiră, este rambursat sau este reziliat pentru încălcare, licența GitHub Copilot asociată contului furnizat poate fi revocată, iar contul GitHub însuși poate fi suspendat, recuperat sau șters de către noi sau de către furnizorii terți. Nu garantăm că datele stocate pe contul furnizat vor rămâne accesibile după o astfel de încetare — faceți copii de rezervă pentru tot ce doriți să păstrați."
+        }
+      },
+      "userContent": {
+        "title": "10. Conținut generat de utilizatori",
+        "content": {
+          "grant": "Anumite zone ale Platformei pot permite postarea de conținut (de exemplu, recenzii, comentarii, postări pe forum sau lucrări de temă). Prin postare, ne acordați o licență mondială, neexclusivă, gratuită, sublicențiabilă, perpetuă și irevocabilă de a folosi, reproduce, modifica, adapta, publica, traduce, crea opere derivate din, distribui și afișa acest conținut în legătură cu operarea și promovarea Platformei.",
+          "warranty": "Declarați și garantați că dețineți sau aveți toate drepturile necesare asupra conținutului postat și că acesta nu încalcă drepturile vreunei terțe părți, nu conține conținut ilegal și nu încalcă acești Termeni.",
+          "moderation": "Putem elimina, edita sau refuza publicarea oricărui conținut al utilizatorilor, la discreția noastră, în special atunci când avem motive rezonabile să credem că este ilegal, încalcă drepturi, este înșelător, dăunător, în afara subiectului sau contrar acestor Termeni — fără preaviz."
+        }
+      },
+      "withdrawal": {
+        "title": "11. Drept de retragere — conținut digital (consumatori UE)",
+        "content": {
+          "intro": "Dacă sunteți consumator cu reședința în Uniunea Europeană sau Spațiul Economic European, beneficiați în mod normal de un drept de retragere de 14 zile dintr-un contract la distanță, conform legislației române care transpune Directiva 2011/83/UE (OUG 34/2014).",
+          "digitalContentWaiver": "Totuși, Conținutul vândut pe Platformă constituie conținut digital livrat altfel decât pe un suport material. Conform Articolului 16(m) din Directiva 2011/83/UE și prevederilor corespunzătoare din OUG 34/2014, prin achiziționarea unui curs sau activarea unui Abonament solicitați expres punerea imediată la dispoziție a Conținutului și consimțiți expres la executarea imediată a contractului. Recunoașteți că, în consecință, pierdeți dreptul de retragere de 14 zile imediat ce începeți să accesați orice parte din Conținut.",
+          "checkout": "Acest consimțământ și recunoaștere se confirmă la finalizarea comenzii prin bifarea casetei corespunzătoare (sau prin finalizarea cumpărării, acolo unde bifarea nu este obligatorie în jurisdicția dumneavoastră). Până când nu ați accesat pentru prima dată niciun Conținut, vă puteți retrage în termen de 14 zile prin email la {legalEmail}, indicând referința comenzii.",
+          "outsideEU": "Dacă nu sunteți consumator UE/SEE, dreptul de retragere conform legislației UE nu se aplică, dar Politica noastră de Rambursare de mai jos vă poate oferi totuși o cale de remediere."
+        }
+      },
+      "refunds": {
+        "title": "12. Rambursări",
+        "content": {
+          "summary": "Politica noastră completă de Rambursare este disponibilă la {siteUrl}/refund-policy. Pe scurt, rambursările sunt la discreția noastră și sunt analizate, de regulă, doar dacă: (a) Conținutul nu a fost accesat; (b) există un defect substanțial pe care nu îl putem remedia rezonabil într-un termen rezonabil; sau (c) rambursările sunt cerute de legislația aplicabilă.",
+          "subscriptions": "Pentru Abonamente, puteți anula oricând și păstrați accesul până la finalul perioadei curente de facturare. Sumele deja plătite nu se rambursează pro-rata, cu excepția cazurilor cerute de lege.",
+          "introOfferRefunds": "Rambursările se calculează pe suma efectiv plătită, inclusiv eventuala reducere de Ofertă Introductivă de care ați beneficiat."
         }
       },
       "thirdParty": {
-        "title": "8. Link-uri și Servicii ale Terților",
-        "content": "Platforma noastră poate conține link-uri către site-uri web sau servicii ale terților care nu sunt deținute sau controlate de noi. Nu avem control asupra și nu ne asumăm responsabilitatea pentru conținutul, politicile de confidențialitate sau practicile oricăror site-uri web sau servicii ale terților."
+        "title": "13. Servicii și linkuri terțe",
+        "content": "Platforma integrează sau face legătura cu servicii terțe, inclusiv (fără limitare) Stripe (plăți), Firebase / Google Cloud (autentificare, găzduire, stocare), Sentry (monitorizare erori), GitHub și Microsoft (livrarea Bonusului Copilot) și furnizori de analiză. Nu suntem responsabili și nu oferim nicio garanție privind conținutul, disponibilitatea, securitatea, practicile de confidențialitate sau termenii vreunui serviciu terț."
       },
-      "disclaimerOfWarranties": {
-        "title": "9. Declinarea Garanțiilor",
+      "availability": {
+        "title": "14. Disponibilitate și modificări ale Platformei",
+        "content": "Ne străduim să menținem Platforma disponibilă, dar nu garantăm acces neîntrerupt. Putem oricând și fără preaviz să modificăm, suspendăm sau întrerupem orice parte a Platformei sau a Conținutului, inclusiv cursuri sau lecții individuale, din motive de mentenanță, securitate, juridice sau comerciale. Nu vom fi răspunzători față de dumneavoastră sau față de vreo terță parte pentru o astfel de modificare, suspendare sau întrerupere."
+      },
+      "disclaimers": {
+        "title": "15. Excluderea garanțiilor",
         "content": {
-          "asIs": "Platforma și conținutul său sunt furnizate \"așa cum sunt\" și \"după disponibilitate\", fără garanții de niciun fel. Declinăm toate garanțiile, exprese sau implicite, inclusiv, dar fără a se limita la, garanțiile implicite de vandabilitate, adecvare pentru un anumit scop și neîncălcare.",
-          "noGuarantee": "Nu garantăm că Platforma va fi lipsită de erori, neîntreruptă, sigură sau că defectele vor fi corectate."
+          "asIs": "În măsura maximă permisă de lege, Platforma și Conținutul sunt furnizate „așa cum sunt” și „așa cum sunt disponibile”, fără garanții de niciun fel, exprese, implicite sau statutare, inclusiv (fără limitare) garanții de vandabilitate, adecvare pentru un scop anume, neîncălcare, acuratețe, fiabilitate sau funcționare neîntreruptă.",
+          "noResults": "Nu garantăm că parcurgerea unui curs va conduce la vreun rezultat de învățare, angajare, certificare, venit sau carieră specific. Conținutul educațional furnizat are caracter informativ și reflectă opiniile și experiența instructorului la momentul înregistrării.",
+          "noProfessionalAdvice": "Nimic de pe Platformă nu constituie consultanță juridică, financiară, medicală, fiscală sau de altă natură profesională. Trebuie să consultați un profesionist calificat înainte de a acționa pe baza vreunei informații."
         }
       },
-      "limitationOfLiability": {
-        "title": "10. Limitarea Răspunderii",
-        "content": "În niciun caz Cursuri nu va fi răspunzător pentru daune indirecte, accidentale, speciale, consecvente sau punitive, inclusiv, dar fără a se limita la, pierderea profiturilor, datelor, utilizării, fondului comercial sau alte pierderi intangibile, rezultate din accesul sau utilizarea dvs. sau incapacitatea de a accesa sau utiliza Platforma."
+      "liability": {
+        "title": "16. Limitarea răspunderii",
+        "content": {
+          "general": "În măsura maximă permisă de legislația aplicabilă, nu vom fi răspunzători pentru daune indirecte, incidentale, speciale, consecvente, exemplare sau punitive, inclusiv pierdere de profit, venit, date, fond comercial sau oportunități de afaceri, rezultate din sau în legătură cu utilizarea Platformei sau a oricărui Conținut, chiar dacă am fost informați de posibilitatea unor astfel de daune.",
+          "cap": "Fără a limita cele de mai sus, răspunderea noastră totală cumulată față de dumneavoastră într-o perioadă de 12 luni nu va depăși sumele efectiv plătite de dumneavoastră către noi în acea perioadă de 12 luni pentru serviciul care a generat pretenția, sau 100 RON, oricare este mai mare.",
+          "consumerCarveOut": "Nimic din acești Termeni nu exclude sau limitează răspunderea noastră acolo unde acest lucru ar fi ilegal conform legislației aplicabile privind protecția consumatorilor, inclusiv răspunderea pentru deces sau vătămare corporală cauzate de neglijența noastră, pentru fraudă sau declarații frauduloase, sau pentru drepturile statutare ale consumatorilor care nu pot fi excluse prin contract."
+        }
       },
       "indemnification": {
-        "title": "11. Despăgubire",
-        "content": "Sunteți de acord să despăgubiți, să apărați și să protejați Cursuri și funcționarii, directorii, angajații, agenții și afiliații săi de și împotriva oricăror revendicări, răspunderi, daune, pierderi, costuri, cheltuieli sau taxe (inclusiv onorariile avocaților rezonabile) rezultate din utilizarea dvs. a Platformei, încălcarea acestor Termeni sau încălcarea drepturilor altcuiva."
+        "title": "17. Despăgubire",
+        "content": "În măsura maximă permisă de lege, sunteți de acord să apărați, să despăgubiți și să exonerați de răspundere {operatorName} și orice persoane care acționează în numele nostru, împotriva tuturor pretențiilor, răspunderilor, daunelor, pierderilor, costurilor și cheltuielilor (inclusiv onorarii avocațiale rezonabile) rezultate din sau legate de: (a) încălcarea de către dumneavoastră a acestor Termeni; (b) utilizarea Platformei sau a oricărui Conținut cu încălcarea legii aplicabile sau a drepturilor unor terți; (c) orice conținut postat de dumneavoastră pe Platformă; sau (d) utilizarea Bonusului GitHub Copilot sau a contului GitHub furnizat."
       },
       "termination": {
-        "title": "12. Încetarea",
+        "title": "18. Suspendare și încetare",
         "content": {
-          "right": "Putem suspenda sau închide contul dvs. și accesul la Platformă imediat, fără notificare prealabilă sau răspundere, din orice motiv, inclusiv, dar fără a se limita la, o încălcare a acestor Termeni.",
-          "effect": "La încetare, dreptul dvs. de a utiliza Platforma va înceta imediat. Toate prevederile acestor Termeni care, prin natura lor, ar trebui să supraviețuiască încetării, vor supraviețui încetării."
+          "byYou": "Puteți înceta oricând utilizarea Platformei și închide contul, contactându-ne la {legalEmail}.",
+          "byUs": "Putem suspenda sau înceta accesul dumneavoastră la Platformă, cu sau fără preaviz, pentru orice încălcare a acestor Termeni, a legii aplicabile, neplată sau alt motiv legitim. La încetare, licența dumneavoastră de a accesa Conținutul încetează imediat.",
+          "survival": "Secțiunile referitoare la proprietate intelectuală, licența asupra conținutului utilizatorilor, excluderea garanțiilor, limitarea răspunderii, despăgubire, lege aplicabilă, soluționarea litigiilor și prezentele prevederi privind încetarea supraviețuiesc oricărei încetări a acestor Termeni."
         }
       },
-      "changesToTerms": {
-        "title": "13. Modificări ale Termenilor",
-        "content": "Ne rezervăm dreptul de a modifica sau înlocui acești Termeni în orice moment. Vom furniza notificări despre orice modificări materiale prin postarea Termenilor actualizați pe Platformă și actualizarea datei \"Ultima actualizare\". Utilizarea continuă a Platformei după astfel de modificări constituie acceptarea dvs. a noilor Termeni."
+      "forceMajeure": {
+        "title": "19. Forță majoră",
+        "content": "Nu suntem răspunzători pentru nicio întârziere sau neîndeplinire a vreunei obligații conform acestor Termeni cauzată de evenimente aflate dincolo de controlul nostru rezonabil, incluzând fără limitare: catastrofe naturale, război, terorism, tulburări civile, pandemii, acțiuni guvernamentale, conflicte de muncă, întreruperi internet sau telecomunicații, defecțiuni ale serviciilor terțe (inclusiv cele care afectează Stripe, Firebase, Google Cloud, GitHub sau Microsoft), atacuri cibernetice sau dezastre naturale."
       },
-      "governingLaw": {
-        "title": "14. Legea Aplicabilă",
-        "content": "Acești Termeni vor fi guvernați și interpretați în conformitate cu legile României, fără a ține cont de dispozițiile sale privind conflictele de legi."
+      "changes": {
+        "title": "20. Modificări ale acestor Termeni",
+        "content": "Putem modifica acești Termeni periodic. Versiunea curentă este publicată întotdeauna la {siteUrl}/terms-conditions, cu data „Ultima actualizare”. Modificările materiale vor fi comunicate prin email și/sau prin notificare în produs cu cel puțin 15 zile înainte de a intra în vigoare, cu excepția cazurilor în care un termen mai scurt este necesar din motive juridice, de securitate sau determinate de terți. Continuarea utilizării Platformei după data intrării în vigoare constituie acceptarea Termenilor actualizați; dacă nu sunteți de acord, trebuie să încetați utilizarea Platformei și puteți anula Abonamentul."
+      },
+      "law": {
+        "title": "21. Lege aplicabilă și jurisdicție",
+        "content": "Acești Termeni sunt guvernați de legile {operatorCountry}. Legile imperative privind protecția consumatorilor din țara dumneavoastră de reședință în UE/SEE continuă să se aplice. Orice litigiu rezultat din sau în legătură cu acești Termeni va fi supus instanțelor competente din {operatorCountry}, fără a aduce atingere dreptului dumneavoastră, în calitate de consumator, de a introduce acțiune la instanțele din țara de reședință."
+      },
+      "anpc": {
+        "title": "22. Autorități de protecție a consumatorilor și soluționarea litigiilor",
+        "content": {
+          "anpc": "Dacă sunteți consumator și aveți o reclamație, vă rugăm să ne contactați mai întâi la {legalEmail} ca să încercăm să o rezolvăm. Vă puteți adresa, de asemenea, Autorității Naționale pentru Protecția Consumatorilor (ANPC) la {anpcUrl}.",
+          "sal": "Soluționare alternativă a litigiilor (SAL) pentru litigiile de consum în România: {anpcSalUrl}.",
+          "odr": "Platforma UE de Soluționare Online a Litigiilor (pentru litigiile de consum transfrontaliere): {odrUrl}."
+        }
+      },
+      "general": {
+        "title": "23. Dispoziții diverse",
+        "content": {
+          "severability": "Dacă vreo prevedere a acestor Termeni este declarată nulă sau inaplicabilă, acea prevedere va fi modificată în măsura minimă necesară sau eliminată, iar prevederile rămase își vor produce în continuare efectele depline.",
+          "noWaiver": "Neexercitarea vreunui drept conform acestor Termeni nu reprezintă o renunțare la acel drept.",
+          "assignment": "Nu puteți cesiona sau transfera drepturile dumneavoastră conform acestor Termeni fără consimțământul nostru scris prealabil. Putem cesiona drepturile noastre oricărui succesor sau în legătură cu un transfer al Platformei.",
+          "entireAgreement": "Acești Termeni, împreună cu Politica de Confidențialitate, Notificarea GDPR, Politica de Cookies, Politica de Rambursare, Notificarea Legală și Notificarea DSA, constituie întregul acord dintre dumneavoastră și noi cu privire la Platformă și înlocuiesc orice acorduri anterioare.",
+          "language": "Acești Termeni sunt puși la dispoziție în engleză și română. În caz de discrepanță, versiunea în română prevalează pentru utilizatorii cu reședința în România; versiunea în engleză prevalează pentru toți ceilalți utilizatori."
+        }
       },
       "contact": {
-        "title": "15. Contactați-ne",
-        "intro": "Dacă aveți întrebări despre acești Termeni, vă rugăm să ne contactați la:",
-        "email": "Email: contact@studiai.ro"
+        "title": "24. Contact",
+        "intro": "Întrebări despre acești Termeni? Contact:",
+        "items": {
+          "general": "General: {contactEmail}",
+          "legal": "Juridic și facturare: {legalEmail}",
+          "privacy": "Confidențialitate / GDPR: {dpoEmail}"
+        }
       }
     }
   },
+
   "privacy": {
     "title": "Politica de Confidențialitate",
-    "lastUpdated": "4 aprilie 2025",
+    "lastUpdated": "{effectiveDate}",
     "sections": {
       "introduction": {
-        "title": "1. Introducere",
+        "title": "Introducere",
         "content": {
-          "welcome": "Bun venit la Cursuri (\"noi\", \"al nostru\" sau \"Cursuri\"). Ne angajăm să vă protejăm confidențialitatea și informațiile personale. Această Politică de Confidențialitate explică modul în care colectăm, utilizăm, dezvăluim și protejăm informațiile dvs. când vizitați site-ul nostru web și utilizați serviciile noastre.",
-          "readCarefully": "Vă rugăm să citiți cu atenție această politică de confidențialitate. Dacă nu sunteți de acord cu termenii acestei politici de confidențialitate, vă rugăm să nu accesați site-ul."
+          "welcome": "Această Politică de Confidențialitate explică modul în care {operatorName} (operatorul {brandName} la {siteUrl}) colectează, utilizează, partajează și protejează datele dumneavoastră cu caracter personal atunci când utilizați Platforma.",
+          "readCarefully": "Vă rugăm să citiți această Politică împreună cu Notificarea GDPR (care detaliază drepturile și temeiurile noastre legale), Politica de Cookies și Termenii și Condițiile."
         }
       },
+      "controller": {
+        "title": "Operator de date",
+        "content": "Operatorul de date este {operatorName}, {operatorStatus}, {operatorCountry}. Pentru orice cerere legată de confidențialitate, contactați {dpoEmail}."
+      },
       "informationWeCollect": {
-        "title": "2. Informațiile pe Care le Colectăm",
+        "title": "Informațiile pe care le colectăm",
         "personalInformation": {
-          "title": "Informații Personale",
-          "intro": "Putem colecta informații personale pe care le furnizați în mod voluntar atunci când:",
+          "title": "Informații personale",
+          "intro": "Colectăm informațiile personale pe care ni le furnizați direct, în următoarele situații:",
           "situations": [
-            "Vă înregistrați pentru un cont",
-            "Achiziționați un curs",
-            "Vă abonați la buletinul nostru informativ",
-            "Ne contactați",
-            "Participați la sondaje sau concursuri"
+            "Când creați un cont, vă autentificați sau actualizați profilul.",
+            "Când achiziționați un curs sau vă abonați la un plan.",
+            "Când solicitați factură fiscală în calitate de client persoană juridică.",
+            "Când ne contactați prin email sau alte canale.",
+            "Când postați recenzii, comentarii sau alt conținut pe Platformă."
           ],
           "types": {
-            "intro": "Aceste informații pot include:",
+            "intro": "Categoriile de date personale pe care le colectăm de regulă:",
             "items": [
-              "Nume",
-              "Adresă de email",
-              "Număr de telefon",
-              "Informații de facturare",
-              "Background educațional",
-              "Informații de profil"
+              "Date de identitate (nume, nume afișat, fotografie de profil).",
+              "Date de contact (adresă de email, telefon opțional).",
+              "Date de cont (Firebase UID, credențiale hash, furnizori de autentificare).",
+              "Date de tranzacție (statut plată, plan, valută, țară, ultimele 4 cifre ale cardului prin Stripe — nu stocăm datele complete ale cardului).",
+              "Date de facturare pentru facturi B2B atunci când le solicitați (denumire firmă, cod fiscal, sediu social).",
+              "Date opționale pe care le furnizați (recenzii, comentarii, lucrări de temă, mesaje de suport)."
             ]
           }
         },
         "usageInformation": {
-          "title": "Informații de Utilizare",
-          "intro": "Colectăm automat anumite informații când vizitați, utilizați sau navigați pe platforma noastră. Aceste informații nu dezvăluie identitatea dvs. specifică, dar pot include:",
+          "title": "Informații de utilizare",
+          "intro": "Colectăm automat anumite date tehnice și de utilizare când interacționați cu Platforma:",
           "items": [
-            "Informații despre dispozitiv și browser",
-            "Adresă IP",
-            "Sistem de operare",
-            "URL-uri de referință",
-            "Pagini vizualizate",
-            "Timp petrecut pe pagini",
-            "Progres și activitate în cursuri"
+            "Informații despre dispozitiv (tip, sistem de operare, browser).",
+            "Adresa IP (folosită pentru securitate, prevenirea fraudei și geolocație aproximativă).",
+            "Pagini vizitate, lecții vizionate, progres curs și finalizare.",
+            "URL de referință și termeni de căutare.",
+            "Date de performanță și erori (prin Sentry) pentru diagnosticare.",
+            "Analize agregate (Google Analytics, Microsoft Clarity, Meta Pixel, TikTok Pixel — doar cu consimțământul cookie).",
+            "Jurnale de furnizare Bonus GitHub Copilot (doar Plan Copilot): username atribuit, statut apartenență organizație, verificări de sănătate ale contului."
           ]
         }
       },
       "howWeUseInformation": {
-        "title": "3. Cum Utilizăm Informațiile Dvs.",
-        "intro": "Utilizăm informațiile pe care le colectăm în diverse scopuri, inclusiv pentru a:",
+        "title": "Cum folosim informațiile dumneavoastră",
+        "intro": "Folosim datele personale doar în scopurile prezentate mai jos, pe temeiurile juridice descrise în Notificarea GDPR:",
         "purposes": [
-          "Furniza, opera și menține serviciile noastre",
-          "Procesa și finaliza tranzacții",
-          "Trimite informații administrative",
-          "Răspunde la întrebări și oferi asistență",
-          "Trimite comunicări de marketing și promoționale",
-          "Îmbunătăți experiența utilizatorului",
-          "Dezvolta noi produse și servicii",
-          "Preveni tranzacții frauduloase",
-          "Monitoriza tiparele de utilizare și analiza tendințe"
+          "Pentru a crea și opera contul dumneavoastră și a vă autentifica în siguranță.",
+          "Pentru a livra cursurile, Abonamentele și alte funcționalități pe care le-ați achiziționat.",
+          "Pentru a furniza și gestiona Bonusul GitHub Copilot atunci când sunteți pe Planul Copilot.",
+          "Pentru a procesa plăți, gestiona Abonamentele și a detecta sau preveni frauda.",
+          "Pentru a emite facturi fiscale clienților persoane juridice la cerere.",
+          "Pentru a răspunde solicitărilor de suport și contact.",
+          "Pentru a trimite comunicări legate de serviciu (cont, facturare, securitate, actualizări de termeni).",
+          "Pentru a îmbunătăți Platforma și conținutul nostru pe baza analizelor agregate, neidentificabile.",
+          "Pentru a respecta obligații legale, contabile și de reglementare și pentru a apăra sau formula pretenții juridice."
         ]
       },
       "cookiesAndTracking": {
-        "title": "4. Cookie-uri și Tehnologii Similare",
-        "intro": "Utilizăm cookie-uri și tehnologii similare de urmărire pentru a urmări activitatea pe platforma noastră și pentru a stoca anumite informații. Cookie-urile sunt fișiere cu o cantitate mică de date care pot include un identificator unic anonim.",
-        "typesIntro": "Tipurile de cookie-uri pe care le folosim:",
+        "title": "Cookies și urmărire",
+        "intro": "Folosim cookies și tehnologii similare. Vedeți Politica noastră dedicată de Cookies la {siteUrl}/cookie-policy pentru lista completă și opțiunile dumneavoastră.",
+        "typesIntro": "Cookies pe care le folosim se încadrează în următoarele categorii:",
         "types": {
-          "essential": "Cookie-uri esențiale: Necesare pentru ca platforma să funcționeze corect",
-          "functionality": "Cookie-uri de funcționalitate: Ne permit să ne amintim preferințele și setările dvs.",
-          "analytics": "Cookie-uri analitice: Ne ajută să înțelegem modul în care vizitatorii interacționează cu platforma noastră",
-          "marketing": "Cookie-uri de marketing: Ne permit să livrăm reclame relevante"
+          "essential": "Strict necesare — necesare pentru operarea Platformei (autentificare, sesiune, securitate).",
+          "functionality": "Funcționalitate — rețin preferințele dumneavoastră, cum ar fi limba și tema.",
+          "analytics": "Analitice — ne ajută să înțelegem cum este folosită Platforma (setate doar cu consimțământ).",
+          "marketing": "Marketing — folosite pentru a măsura eficacitatea campaniilor noastre publicitare (setate doar cu consimțământ)."
         },
-        "browserSettings": "Puteți instrui browserul să refuze toate cookie-urile sau să indice când se trimite un cookie. Cu toate acestea, dacă nu acceptați cookie-uri, este posibil să nu puteți utiliza unele părți ale platformei noastre."
+        "browserSettings": "Puteți gestiona cookies din setările browserului; refuzarea cookies-urilor neesențiale nu vă va împiedica să folosiți funcționalitățile de bază ale Platformei."
       },
       "dataSharing": {
-        "title": "5. Partajarea și Dezvăluirea Datelor",
-        "intro": "Putem partaja informațiile dvs. cu terțe părți în următoarele situații:",
+        "title": "Cum partajăm datele dumneavoastră",
+        "intro": "Partajăm datele personale doar cu următoarele categorii de destinatari, sub garanții legale adecvate:",
         "situations": {
-          "businessPartners": "Parteneri de afaceri: Pentru a oferi anumite produse, servicii sau promoții",
-          "serviceProviders": "Furnizori de servicii: Pentru a ne ajuta să operăm afacerea și platforma",
-          "affiliates": "Afiliați: Cu compania noastră mamă, filialele și afiliatele",
-          "legalRequirements": "Cerințe legale: Pentru a ne conforma legilor, reglementărilor sau procesului legal",
-          "protectionOfRights": "Protecția drepturilor: Pentru a proteja drepturile, proprietatea sau siguranța Cursuri, utilizatorilor noștri sau a altora",
-          "businessTransfers": "Transferuri de afaceri: În legătură cu orice fuziune, vânzare de active ale companiei, finanțare sau achiziție"
+          "businessPartners": "Parteneri de afaceri — instructori și furnizori de conținut, strict pentru livrarea Conținutului achiziționat.",
+          "serviceProviders": "Furnizori de servicii care acționează ca persoane împuternicite — inclusiv Stripe (plăți), Firebase / Google Cloud (autentificare, bază de date, găzduire, stocare), Sentry (monitorizare erori), Microsoft / GitHub (furnizare Bonus Copilot), Resend sau similar (email tranzacțional) și furnizori de analiză acolo unde ați consimțit.",
+          "affiliates": "Persoane care acționează în numele nostru pentru contabilitate, juridic sau fiscalitate, obligate prin confidențialitate.",
+          "legalRequirements": "Autorități publice și organe de aplicare a legii, când este cerut de lege sau pentru protecția drepturilor, proprietății sau siguranței.",
+          "protectionOfRights": "Atunci când este necesar pentru a investiga, preveni sau remedia fraude, incidente de securitate sau încălcări ale acestor Termeni.",
+          "businessTransfers": "În cazul vânzării, fuziunii sau transferului total ori parțial al Platformei, situație în care vă vom informa în avans și vom asigura o protecție echivalentă."
         }
       },
       "dataSecurity": {
-        "title": "6. Securitatea Datelor",
-        "content": "Am implementat măsuri de securitate tehnice și organizatorice adecvate pentru a vă proteja informațiile personale împotriva pierderii accidentale, accesului neautorizat, utilizării, modificării și dezvăluirii. Cu toate acestea, vă rugăm să rețineți că nicio metodă de transmitere prin Internet sau stocare electronică nu este 100% sigură."
+        "title": "Securitatea datelor",
+        "content": "Implementăm măsuri tehnice și organizatorice adecvate pentru protecția datelor, inclusiv criptare în tranzit, controale de acces, jurnale de audit, rotație a secretelor și revizuiri de securitate regulate. Niciun sistem nu este 100% sigur: în cazul unei breșe de securitate care vă afectează drepturile, vă vom notifica pe dumneavoastră și {dpaName}, conform GDPR."
       },
       "dataRetention": {
-        "title": "7. Retenția Datelor",
-        "content": "Vom păstra informațiile dvs. personale doar atât timp cât este necesar pentru scopurile stabilite în această politică de confidențialitate sau după cum este necesar pentru a ne conforma obligațiilor legale, a rezolva disputele și a aplica acordurile noastre."
+        "title": "Păstrarea datelor",
+        "content": "Păstrăm datele personale doar atât timp cât este necesar pentru scopurile menționate, inclusiv cerințe legale, contabile și de raportare. Datele de cont și de tranzacție sunt păstrate de regulă pe durata contului și până la 10 ani după ultima tranzacție pentru contabilitate. Puteți solicita ștergerea datelor care nu mai sunt necesare prin email la {dpoEmail}."
       },
       "yourRights": {
-        "title": "8. Drepturile Dvs.",
-        "intro": "În funcție de locația dvs., puteți avea drepturi cu privire la informațiile dvs. personale, cum ar fi:",
+        "title": "Drepturile dumneavoastră",
+        "intro": "Sub rezerva legii aplicabile (în special GDPR), aveți următoarele drepturi:",
         "rights": [
-          "Acces la informațiile dvs. personale",
-          "Corectarea informațiilor incorecte sau incomplete",
-          "Ștergerea informațiilor dvs. personale",
-          "Restricționarea prelucrării informațiilor dvs. personale",
-          "Portabilitatea datelor",
-          "Obiecție la prelucrare",
-          "Retragerea consimțământului"
+          "Acces — să obțineți o copie a datelor cu caracter personal pe care le deținem despre dumneavoastră.",
+          "Rectificare — să corectați date inexacte sau incomplete.",
+          "Ștergere — să solicitați ștergerea atunci când nu există un motiv legal preponderent să le păstrăm.",
+          "Restricționare — să limitați modul în care vă procesăm datele în anumite situații.",
+          "Portabilitate — să primiți datele într-un format structurat, lizibil automat.",
+          "Opoziție — să vă opuneți procesării bazate pe interesul nostru legitim, inclusiv marketing direct.",
+          "Retragerea consimțământului — oricând, atunci când procesarea se bazează pe consimțământ."
         ],
-        "exercise": "Pentru a exercita aceste drepturi, vă rugăm să ne contactați folosind detaliile furnizate mai jos."
+        "exercise": "Pentru a exercita oricare dintre aceste drepturi, scrieți la {dpoEmail}. Aveți, de asemenea, dreptul să depuneți plângere la {dpaName} ({dpaUrl})."
       },
       "childrensPrivacy": {
-        "title": "9. Confidențialitatea Copiilor",
-        "content": "Platforma noastră nu este destinată persoanelor sub 16 ani. Nu colectăm în mod conștient informații personale de la copii sub 16 ani. Dacă aflăm că am colectat informații personale de la un copil sub 16 ani, vom șterge aceste informații."
+        "title": "Confidențialitatea copiilor",
+        "content": "Platforma nu este destinată utilizatorilor sub 16 ani. Nu colectăm cu bună știință date personale de la copii. Dacă bănuiți că am colectat astfel de date, scrieți la {dpoEmail} și le vom șterge fără întârziere nejustificată."
       },
       "changesToPolicy": {
-        "title": "10. Modificări ale Acestei Politici de Confidențialitate",
-        "content": "Putem actualiza Politica noastră de Confidențialitate din când în când. Vă vom notifica despre orice modificări prin postarea noii Politici de Confidențialitate pe această pagină și actualizarea datei \"Ultima actualizare\". Vă sfătuim să revizuiți periodic această Politică de Confidențialitate pentru orice modificări."
+        "title": "Modificări ale acestei Politici",
+        "content": "Putem actualiza această Politică de Confidențialitate periodic. Versiunea curentă, cu data „Ultima actualizare”, este disponibilă întotdeauna la {siteUrl}/privacy-policy. Modificările materiale vor fi comunicate prin email sau notificare în produs."
       },
       "contact": {
-        "title": "11. Contactați-ne",
-        "intro": "Dacă aveți întrebări despre această Politică de Confidențialitate, vă rugăm să ne contactați la:",
-        "email": "Email: contact@studiai.ro"
+        "title": "Contact",
+        "intro": "Întrebări despre confidențialitate? Contact:",
+        "email": "Confidențialitate / GDPR: {dpoEmail}. Operator: {operatorName}, {operatorCountry}."
       }
     }
   },
+
   "gdpr": {
-    "title": "Politica GDPR",
-    "lastUpdated": "4 aprilie 2025",
+    "title": "Notificare GDPR",
+    "lastUpdated": "{effectiveDate}",
     "sections": {
       "introduction": {
-        "title": "1. Introducere",
-        "paragraph1": "Această Politică GDPR explică modul în care Cursuri (\"noi\", \"al nostru\" sau \"ne\") procesează datele personale în conformitate cu Regulamentul General privind Protecția Datelor (GDPR) și descrie drepturile dumneavoastră ca subiect al datelor.",
-        "paragraph2": "Ne angajăm să vă protejăm confidențialitatea și să gestionăm datele dumneavoastră într-o manieră deschisă și transparentă. Această politică se aplică acolo unde acționăm ca operator de date în ceea ce privește datele dumneavoastră personale."
+        "title": "Introducere",
+        "paragraph1": "Această Notificare GDPR completează Politica de Confidențialitate și explică modul în care respectăm Regulamentul (UE) 2016/679 (GDPR) când prelucrăm date personale ale utilizatorilor din UE/SEE.",
+        "paragraph2": "Termenii cu majusculă neexpres definiți aici au sensul atribuit în Termenii și Condițiile sau Politica de Confidențialitate."
       },
       "dataController": {
-        "title": "2. Operator de Date",
-        "intro": "Cursuri este operatorul de date responsabil pentru datele dumneavoastră personale. Dacă aveți întrebări despre această Politică GDPR sau despre practicile noastre privind datele, vă rugăm să contactați Responsabilul nostru cu Protecția Datelor la:",
-        "email": "Email: dpo@cursuri.dev"
+        "title": "Operator de date",
+        "intro": "Operatorul datelor cu caracter personal prelucrate prin Platformă este {operatorName} ({operatorStatus}), {operatorCountry}.",
+        "email": "Contact pentru protecția datelor / confidențialitate: {dpoEmail}."
       },
       "categories": {
-        "title": "3. Categorii de Date Personale pe care le Procesăm",
-        "intro": "Este posibil să procesăm următoarele categorii de date personale despre dumneavoastră:",
-        "identityData": "Date de Identitate: Nume, nume de utilizator, dată de naștere",
-        "contactData": "Date de Contact: Adresă de email, număr de telefon, adresă",
-        "financialData": "Date Financiare: Informații de plată, istoric de achiziții",
-        "technicalData": "Date Tehnice: Adresă IP, tip și versiune de browser, setare fus orar, informații despre dispozitiv",
-        "profileData": "Date de Profil: Nume de utilizator, parolă, achiziții, interese, preferințe",
-        "usageData": "Date de Utilizare: Informații despre modul în care utilizați platforma noastră, cursuri vizualizate, rate de finalizare",
-        "marketingData": "Date de Marketing: Preferințe pentru primirea de marketing de la noi"
+        "title": "Categorii de date personale",
+        "intro": "Prelucrăm următoarele categorii de date personale:",
+        "identityData": "Date de identitate — nume, nume afișat, fotografie de profil.",
+        "contactData": "Date de contact — adresă de email, telefon opțional, date de facturare.",
+        "financialData": "Date financiare / de tranzacție — statut plată, sumă, valută, ultimele 4 cifre ale cardului prin Stripe.",
+        "technicalData": "Date tehnice — adresă IP, dispozitiv, browser, sistem de operare.",
+        "profileData": "Date de profil — preferințe, limbă, temă, progres în învățare.",
+        "usageData": "Date de utilizare — pagini vizitate, lecții vizionate, timp petrecut, interacțiuni cu funcționalități.",
+        "marketingData": "Date de marketing — doar cu consimțământul dumneavoastră explicit pentru analiză și măsurarea reclamelor.",
+        "copilotData": "Date Bonus Copilot (doar Plan Copilot) — username GitHub furnizat, statut apartenență organizație, marcaje temporale de furnizare."
       },
       "collection": {
-        "title": "4. Cum Colectăm Datele Dumneavoastră Personale",
-        "intro": "Colectăm date personale prin diverse metode:",
-        "directInteractions": "Interacțiuni directe: Când vă creați un cont, achiziționați cursuri sau ne contactați",
-        "automatedTechnologies": "Tehnologii automate: Pe măsură ce interacționați cu platforma noastră, putem colecta automat Date Tehnice",
-        "thirdParties": "Terți: Putem primi date de la furnizori de analize, furnizori de plăți și platforme de social media"
+        "title": "Cum colectăm datele personale",
+        "intro": "Colectăm date personale:",
+        "directInteractions": "Direct de la dumneavoastră, când vă înregistrați, autentificați, achiziționați, ne contactați sau postați conținut.",
+        "automatedTechnologies": "Automat, prin cookies, jurnale server și unelte de analiză acolo unde ați consimțit.",
+        "thirdParties": "De la servicii terțe (Stripe pentru statut plată, Firebase Auth pentru autentificare, GitHub / Microsoft pentru starea furnizării contului Copilot, Google / Meta / TikTok pentru măsurarea reclamelor când există consimțământ)."
       },
       "legalBasis": {
-        "title": "5. Baza Legală pentru Procesare",
-        "intro": "Vom procesa datele dumneavoastră personale numai atunci când avem o bază legală pentru a face acest lucru. Bazele legale pe care ne bazăm includ:",
-        "consent": "Consimțământ: Când ați acceptat în mod explicit procesarea datelor dumneavoastră personale",
-        "contract": "Contract: Când procesarea este necesară pentru executarea unui contract cu dumneavoastră",
-        "legalObligation": "Obligație legală: Când procesarea este necesară pentru conformitatea cu o obligație legală",
-        "legitimateInterests": "Interese legitime: Când procesarea este necesară pentru interesele noastre legitime, cu condiția ca acestea să nu fie înlocuite de drepturile dumneavoastră"
+        "title": "Temeiuri juridice de prelucrare",
+        "intro": "Prelucrăm date personale pe unul sau mai multe dintre următoarele temeiuri juridice (Art. 6 GDPR):",
+        "consent": "Consimțământ (Art. 6(1)(a)) — pentru cookies neesențiale, marketing și analiză acolo unde este necesar.",
+        "contract": "Executarea unui contract (Art. 6(1)(b)) — pentru a opera contul, livra cursurile, gestiona Abonamentul și furniza Bonusul Copilot.",
+        "legalObligation": "Respectarea unei obligații legale (Art. 6(1)(c)) — pentru obligații contabile, fiscale, antifraudă și protecția consumatorilor.",
+        "legitimateInterests": "Interesele noastre legitime (Art. 6(1)(f)) — pentru îmbunătățirea serviciului, securitate, prevenirea fraudei, apărarea pretențiilor juridice și comunicări directe către clienții existenți despre servicii similare."
       },
       "purposes": {
-        "title": "6. Scopurile Procesării",
-        "intro": "Procesăm datele dumneavoastră personale în următoarele scopuri:",
+        "title": "Scopurile prelucrării",
+        "intro": "Prelucrăm date personale în următoarele scopuri:",
         "items": [
-          "Pentru a crea și gestiona contul dumneavoastră",
-          "Pentru a furniza și gestiona cursurile și serviciile noastre",
-          "Pentru a procesa plăți și a menține înregistrări financiare",
-          "Pentru a personaliza experiența dumneavoastră pe platforma noastră",
-          "Pentru a comunica cu dumneavoastră în legătură cu contul, achizițiile sau întrebările dumneavoastră",
-          "Pentru a vă trimite comunicări de marketing (unde ați optat)",
-          "Pentru a îmbunătăți platforma, produsele și serviciile noastre",
-          "Pentru a asigura securitatea platformei și a preveni frauda",
-          "Pentru a respecta obligațiile legale"
+          "Crearea contului, autentificare și securitate.",
+          "Livrarea cursurilor, Abonamentelor și a Bonusului Copilot.",
+          "Procesarea plăților, prevenirea fraudei și contabilitate.",
+          "Suport client și soluționarea litigiilor.",
+          "Comunicări legate de serviciu și (cu consimțământ) comunicări de marketing.",
+          "Analiză agregată și îmbunătățirea produsului.",
+          "Respectarea obligațiilor legale, de reglementare și fiscale.",
+          "Apărarea sau formularea pretențiilor juridice."
         ]
       },
       "retention": {
-        "title": "7. Păstrarea Datelor",
-        "paragraph1": "Vom păstra datele dumneavoastră personale numai atât timp cât este necesar pentru îndeplinirea scopurilor pentru care au fost colectate, inclusiv cerințe legale, contabile sau de raportare.",
-        "paragraph2": "Diferite perioade de păstrare se aplică diferitelor tipuri de date. Pentru a determina perioada de păstrare adecvată pentru datele personale, luăm în considerare cantitatea, natura și sensibilitatea datelor personale, riscul potențial de vătămare din utilizarea sau divulgarea neautorizată, scopurile pentru care le procesăm și dacă putem realiza acele scopuri prin alte mijloace."
+        "title": "Păstrarea datelor",
+        "paragraph1": "Păstrăm datele personale doar atât timp cât este necesar pentru scopurile pentru care au fost colectate, sau atât timp cât impune legea (de regulă până la 10 ani pentru evidențele contabile și fiscale, și pe durata contului plus o perioadă rezonabilă de arhivă pentru restul).",
+        "paragraph2": "La închiderea contului ștergem sau anonimizăm datele personale care nu mai sunt necesare pentru obligații legale în curs sau pentru apărarea pretențiilor juridice."
       },
       "sharing": {
-        "title": "8. Partajarea Datelor",
-        "intro": "Putem partaja datele dumneavoastră personale cu:",
-        "serviceProviders": "Furnizori de servicii: Companii care ne furnizează servicii, cum ar fi procesarea plăților, analize, marketing",
-        "businessPartners": "Parteneri de afaceri: Terți de încredere care ne ajută să livrăm serviciile noastre",
-        "legalAuthorities": "Autorități legale: Când este cerut de lege sau pentru a ne proteja drepturile",
-        "requirements": "Cerem tuturor terților să respecte securitatea datelor dumneavoastră personale și să le trateze în conformitate cu legea. Permitem doar furnizorilor noștri de servicii terți să proceseze datele dumneavoastră personale pentru scopuri specificate și în conformitate cu instrucțiunile noastre."
+        "title": "Destinatarii datelor personale",
+        "intro": "Partajăm datele personale doar cu:",
+        "serviceProviders": "Persoane împuternicite care acționează în baza instrucțiunilor noastre scrise — Stripe, Google / Firebase, Sentry, Microsoft / GitHub, furnizori de email tranzacțional, furnizori de analiză (doar cu consimțământ).",
+        "businessPartners": "Instructori, strict pentru livrarea Conținutului achiziționat, sub confidențialitate.",
+        "legalAuthorities": "Autorități publice, autorități de reglementare sau instanțe, când este cerut de lege sau în proceduri juridice.",
+        "requirements": "Toate persoanele împuternicite sunt obligate prin acorduri de prelucrare a datelor care asigură o protecție echivalentă GDPR."
       },
       "internationalTransfers": {
-        "title": "9. Transferuri Internaționale",
-        "intro": "Putem transfera datele dumneavoastră personale în țări din afara Spațiului Economic European (SEE). Ori de câte ori transferăm datele dumneavoastră personale în afara SEE, ne asigurăm că li se acordă un grad similar de protecție prin implementarea măsurilor de protecție adecvate:",
+        "title": "Transferuri internaționale",
+        "intro": "Unele dintre persoanele noastre împuternicite sunt situate în afara UE/SEE (în special în Statele Unite — Stripe, Google / Firebase, Microsoft / GitHub, Sentry, Meta, TikTok). Acolo unde datele personale sunt transferate în afara UE/SEE, ne bazăm pe:",
         "items": [
-          "Utilizarea Clauzelor Contractuale Standard aprobate de Comisia Europeană",
-          "Transferul către țări care au fost considerate că oferă un nivel adecvat de protecție",
-          "Implementarea regulilor corporative obligatorii, după caz"
+          "Decizii de adecvare ale Comisiei Europene unde sunt aplicabile (de ex., participanți la EU-US Data Privacy Framework).",
+          "Clauze Contractuale Standard aprobate de Comisia Europeană.",
+          "Măsuri tehnice și organizatorice suplimentare unde este cazul.",
+          "Consimțământul dumneavoastră explicit în cazuri specifice."
         ]
       },
       "rights": {
-        "title": "10. Drepturile Dumneavoastră ca Subiect al Datelor",
-        "intro": "În conformitate cu GDPR, aveți următoarele drepturi:",
-        "access": "Dreptul de acces: Puteți solicita o copie a datelor dumneavoastră personale",
-        "rectification": "Dreptul la rectificare: Puteți solicita corectarea datelor inexacte sau incomplete",
-        "erasure": "Dreptul la ștergere: Puteți solicita ștergerea datelor dumneavoastră personale în anumite circumstanțe",
-        "restrictProcessing": "Dreptul de a restricționa procesarea: Puteți solicita restricționarea procesării în anumite circumstanțe",
-        "dataPortability": "Dreptul la portabilitatea datelor: Puteți solicita transferul datelor dumneavoastră către o altă organizație",
-        "object": "Dreptul de a obiecta: Puteți obiecta la procesarea bazată pe interese legitime sau marketing direct",
-        "automatedDecisions": "Drepturi legate de luarea deciziilor automate: Puteți solicita intervenție umană pentru deciziile bazate exclusiv pe procesarea automată",
-        "withdrawConsent": "Dreptul de a retrage consimțământul: Puteți retrage consimțământul în orice moment, unde ne bazăm pe consimțământ pentru a vă procesa datele",
-        "exercise": "Pentru a exercita oricare dintre aceste drepturi, vă rugăm să ne contactați la dpo@cursuri.dev."
+        "title": "Drepturile dumneavoastră conform GDPR",
+        "intro": "Aveți următoarele drepturi conform GDPR:",
+        "access": "Dreptul de acces (Art. 15) — să obțineți confirmarea și o copie a datelor personale prelucrate despre dumneavoastră.",
+        "rectification": "Dreptul la rectificare (Art. 16) — să corectați date inexacte sau incomplete.",
+        "erasure": "Dreptul la ștergere (Art. 17) — să solicitați ștergerea în anumite circumstanțe.",
+        "restrictProcessing": "Dreptul la restricționarea prelucrării (Art. 18).",
+        "dataPortability": "Dreptul la portabilitatea datelor (Art. 20) — să primiți datele într-un format structurat, utilizat în mod curent, lizibil automat.",
+        "object": "Dreptul de opoziție (Art. 21) — la prelucrarea bazată pe interes legitim, inclusiv marketing direct.",
+        "automatedDecisions": "Drepturi privind procesul decizional automatizat (Art. 22) — în prezent nu luăm decizii automatizate care produc efecte juridice sau similare semnificative asupra dumneavoastră.",
+        "withdrawConsent": "Dreptul de a retrage consimțământul (Art. 7) — oricând, fără a afecta legalitatea prelucrării bazate pe consimțământ înainte de retragere.",
+        "exercise": "Pentru a exercita oricare dintre aceste drepturi, scrieți la {dpoEmail}. Vom răspunde în termen de o lună, prelungit cu încă două luni pentru cereri complexe."
       },
       "security": {
-        "title": "11. Securitatea Datelor",
-        "paragraph1": "Am implementat măsuri tehnice și organizatorice adecvate pentru a proteja datele dumneavoastră personale împotriva accesului neautorizat, pierderii accidentale, modificării sau divulgării. Aceste măsuri includ criptarea, controalele de acces, evaluările regulate de securitate și formarea personalului.",
-        "paragraph2": "Revizuim periodic practicile noastre de securitate pentru a asigura protecția continuă a datelor dumneavoastră."
+        "title": "Securitate",
+        "paragraph1": "Implementăm măsuri tehnice și organizatorice adecvate riscului, inclusiv criptare în tranzit (HTTPS), criptare în repaus acolo unde este suportată de furnizorii noștri, controale de acces, jurnale de audit, rotație a secretelor, antete de securitate și revizuiri regulate.",
+        "paragraph2": "În cazul unei breșe de date personale care prezintă risc pentru drepturile și libertățile dumneavoastră, vă vom notifica pe dumneavoastră și {dpaName}, conform Art. 33 și 34 GDPR."
       },
       "cookies": {
-        "title": "12. Cookie-uri și Tehnologii Similare",
-        "content": "Utilizăm cookie-uri și tehnologii similare pentru a îmbunătăți experiența dumneavoastră pe platforma noastră. Pentru informații detaliate despre modul în care utilizăm cookie-urile, vă rugăm să consultați Politica noastră privind Cookie-urile disponibilă pe platforma noastră."
+        "title": "Cookies",
+        "content": "Vedeți Politica noastră dedicată de Cookies la {siteUrl}/cookie-policy pentru lista cookies-urilor pe care le folosim și cum le puteți gestiona."
       },
       "changes": {
-        "title": "13. Modificări ale Acestei Politici GDPR",
-        "content": "Putem actualiza această Politică GDPR din când în când pentru a reflecta modificările practicilor noastre sau cerințelor legale. Vă vom notifica despre orice modificări materiale prin postarea politicii actualizate pe platforma noastră și actualizarea datei \"Ultima actualizare\"."
+        "title": "Modificări ale acestei Notificări",
+        "content": "Putem actualiza această Notificare GDPR. Versiunea curentă este disponibilă întotdeauna la {siteUrl}/gdpr. Modificările materiale vor fi comunicate prin email sau notificare în produs."
       },
       "complaints": {
-        "title": "14. Reclamații",
-        "content": "Dacă aveți preocupări cu privire la practicile noastre de procesare a datelor, vă rugăm să ne contactați mai întâi. Aveți, de asemenea, dreptul de a depune o plângere la autoritatea locală de protecție a datelor dacă considerați că nu am respectat legile aplicabile privind protecția datelor."
+        "title": "Plângeri",
+        "content": "Dacă bănuiți că nu am gestionat corespunzător datele dumneavoastră personale, vă rugăm să ne contactați mai întâi la {dpoEmail} ca să încercăm să rezolvăm problema. Aveți, de asemenea, dreptul să depuneți plângere la {dpaName} ({dpaUrl}) sau la autoritatea de supraveghere din țara dumneavoastră de reședință."
+      }
+    }
+  },
+
+  "cookies": {
+    "title": "Politica de Cookies",
+    "lastUpdated": "{effectiveDate}",
+    "sections": {
+      "intro": {
+        "title": "Ce sunt cookies-urile?",
+        "content": "Cookies-urile sunt fișiere mici de text plasate pe dispozitivul dumneavoastră de site-urile pe care le vizitați. Sunt utilizate pe scară largă pentru a face site-urile să funcționeze, să funcționeze mai eficient și pentru a furniza informații de raportare. Tehnologiile similare (local storage, pixeli, SDK-uri) sunt acoperite, de asemenea, de această Politică."
+      },
+      "operator": {
+        "title": "Cine setează cookies pe acest site",
+        "content": "{brandName} ({operatorName}, {operatorStatus}, {operatorCountry}) setează cookies de primă parte pe {siteUrl}. Unele servicii terțe pe care le folosim pot seta și ele cookies — vedeți categoriile de mai jos."
+      },
+      "categories": {
+        "title": "Categoriile de cookies pe care le folosim",
+        "intro": "Clasificăm cookies-urile astfel:",
+        "items": {
+          "essential": "Strict necesare — necesare pentru autentificare, gestionarea sesiunii, echilibrare de încărcare și securitate. Nu pot fi dezactivate. Exemple: sesiunea Firebase Auth, protecție CSRF.",
+          "functionality": "Funcționalitate — rețin preferințe precum limba și tema, ca să nu trebuiască să le setați din nou. Setate la prima interacțiune, durată de viață până la 12 luni.",
+          "analytics": "Analitice — ne ajută să înțelegem utilizarea agregată a Platformei pentru a o îmbunătăți. Setate doar cu consimțământul dumneavoastră. Exemple: Google Analytics, Microsoft Clarity.",
+          "marketing": "Marketing — folosite pentru a măsura performanța reclamelor și (acolo unde este aplicabil) pentru a personaliza conținutul. Setate doar cu consimțământul dumneavoastră. Exemple: Meta Pixel, TikTok Pixel."
+        }
+      },
+      "manage": {
+        "title": "Cum gestionați cookies-urile",
+        "content": "Când vizitați pentru prima dată {siteUrl}, bannerul de cookies vă cere consimțământul pentru cookies-urile neesențiale. Vă puteți schimba alegerea oricând prin ștergerea datelor de site din browser pentru {siteUrl} și reîncărcarea paginii sau prin controalele de cookies ale browserului. Refuzul cookies-urilor neesențiale nu vă împiedică să folosiți funcționalitățile de bază ale Platformei."
+      },
+      "doNotTrack": {
+        "title": "Do Not Track",
+        "content": "În prezent nu răspundem semnalelor „Do Not Track” ale browserului, întrucât nu a fost adoptat un standard industrial consecvent. Vă respectăm alegerea exprimată prin bannerul nostru de cookies și controalele browserului dumneavoastră."
+      },
+      "changes": {
+        "title": "Modificări ale acestei Politici",
+        "content": "Putem actualiza această Politică de Cookies periodic. Versiunea curentă este disponibilă întotdeauna la {siteUrl}/cookie-policy."
+      },
+      "contact": {
+        "title": "Contact",
+        "content": "Întrebări despre cookies? Contact: {dpoEmail}."
+      }
+    }
+  },
+
+  "refund": {
+    "title": "Politica de Rambursare",
+    "lastUpdated": "{effectiveDate}",
+    "sections": {
+      "intro": {
+        "title": "Privire de ansamblu",
+        "content": "Această Politică de Rambursare se aplică achizițiilor unice de cursuri și Abonamentelor vândute prin {siteUrl}. Aceasta completează (și nu înlocuiește) drepturile pe care le aveți conform legislației aplicabile privind protecția consumatorilor."
+      },
+      "digitalContent": {
+        "title": "Conținut digital — drept de retragere",
+        "content": "Cursurile și Abonamentele sunt conținut digital livrat altfel decât pe un suport material. Așa cum este descris la Secțiunea 11 din Termeni și Condiții, prin achiziționare solicitați expres executarea imediată și recunoașteți că pierdeți dreptul de retragere de 14 zile conform legislației române care transpune Directiva 2011/83/UE imediat ce începeți să accesați orice parte din Conținut. Dacă nu ați accesat încă niciun Conținut, puteți solicita retragerea în termen de 14 zile prin email la {legalEmail}."
+      },
+      "discretionaryRefunds": {
+        "title": "Rambursări discreționare",
+        "intro": "În afara dreptului statutar de mai sus, rambursările sunt la discreția noastră și sunt analizate, de regulă, atunci când se aplică una sau mai multe dintre următoarele:",
+        "items": [
+          "Nu ați accesat niciun Conținut din comanda în cauză.",
+          "Există un defect substanțial al Conținutului pe care nu îl putem remedia rezonabil într-un termen rezonabil.",
+          "S-a produs o tranzacție duplicată sau accidentală (rambursăm suma duplicată).",
+          "Rambursările sunt cerute de legislația aplicabilă în țara dumneavoastră de reședință."
+        ]
+      },
+      "subscriptions": {
+        "title": "Abonamente",
+        "content": "Puteți anula oricând un Abonament din contul dumneavoastră. Anularea produce efecte la finalul perioadei curente de facturare și păstrați accesul până atunci. Nu rambursăm sumele deja plătite pro-rata, cu excepția cazurilor cerute de lege (de exemplu, pentru defecte materiale pe care nu le putem remedia)."
+      },
+      "introOffers": {
+        "title": "Oferte Introductive",
+        "content": "Dacă anulați în timpul unei perioade de Ofertă Introductivă (de exemplu, prima lună redusă), păstrați accesul până la finalul acelei perioade și nu vi se va factura prețul standard. Rambursările, atunci când sunt acordate, se calculează pe suma efectiv plătită (adică suma redusă a Ofertei, nu prețul standard)."
+      },
+      "copilotBonus": {
+        "title": "Bonus GitHub Copilot",
+        "content": "Dacă modificăm, reducem sau întrerupem Bonusul GitHub Copilot, Abonamentul dumneavoastră va fi convertit automat la Planul Cursuri, conform Secțiunii 9.2 din Termeni. O astfel de conversie nu vă conferă, prin ea însăși, dreptul la rambursarea sumelor deja plătite; puteți, desigur, anula Abonamentul înainte de data conversiei și nu vi se va factura noua sumă."
+      },
+      "howToRequest": {
+        "title": "Cum solicitați o rambursare",
+        "intro": "Trimiteți email la {legalEmail} de pe adresa asociată contului, incluzând:",
+        "items": [
+          "Numele complet.",
+          "Referința comenzii sau a Abonamentului.",
+          "Motivul cererii de rambursare.",
+          "Orice dovezi justificative."
+        ],
+        "timing": "Ne propunem să răspundem în 5 zile lucrătoare și să procesăm rambursările aprobate în 14 zile, prin metoda de plată originală."
+      },
+      "chargebacks": {
+        "title": "Chargeback",
+        "content": "Dacă inițiați un chargeback prin banca sau emitentul cardului în loc să ne contactați, putem suspenda contul dumneavoastră pe durata litigiului. Inițierea unui chargeback pentru o tranzacție corect autorizată poate fi considerată o încălcare a acestor Termeni."
+      },
+      "contact": {
+        "title": "Contact",
+        "content": "Întrebări despre rambursări și facturare: {legalEmail}."
+      }
+    }
+  },
+
+  "legalNotice": {
+    "title": "Notificare Legală",
+    "lastUpdated": "{effectiveDate}",
+    "sections": {
+      "operator": {
+        "title": "Operator",
+        "items": {
+          "brand": "Denumire comercială: {brandName}.",
+          "name": "Operator: {operatorName} ({operatorStatus}).",
+          "address": "Adresă: {operatorCountry}.",
+          "fiscal": "Cod fiscal (acolo unde este cazul): {operatorFiscalCode}.",
+          "regCom": "Număr Registrul Comerțului / înregistrare (acolo unde este cazul): {operatorRegCom}.",
+          "vat": "Cod TVA (acolo unde este cazul): {operatorVat}.",
+          "site": "Website: {siteUrl}."
+        }
+      },
+      "contact": {
+        "title": "Contact",
+        "items": {
+          "general": "General: {contactEmail}.",
+          "support": "Suport: {supportEmail}.",
+          "legal": "Juridic și facturare: {legalEmail}.",
+          "privacy": "Confidențialitate / GDPR: {dpoEmail}.",
+          "phone": "Telefon (acolo unde este cazul): {phone}."
+        }
+      },
+      "consumerAuthorities": {
+        "title": "Protecția consumatorilor",
+        "items": {
+          "anpc": "Autoritatea Națională pentru Protecția Consumatorilor (ANPC): {anpcUrl}.",
+          "sal": "Soluționare alternativă a litigiilor (SAL) pentru litigii de consum: {anpcSalUrl}.",
+          "odr": "Platforma UE de Soluționare Online a Litigiilor: {odrUrl}.",
+          "dpa": "Autoritatea Națională de Supraveghere a Prelucrării Datelor cu Caracter Personal ({dpaName}): {dpaUrl}."
+        }
+      },
+      "hosting": {
+        "title": "Găzduire și infrastructură",
+        "content": "Platforma este găzduită de Vercel Inc. și Google Cloud Platform (Firebase). Plățile sunt procesate de Stripe Payments Europe, Ltd."
+      },
+      "ip": {
+        "title": "Proprietate intelectuală",
+        "content": "Tot conținutul de pe {siteUrl}, inclusiv cursurile, lecțiile, exemplele de cod, grafica, logo-urile și software-ul, aparține {operatorName} sau ne este licențiat. Reproducerea sau redistribuirea neautorizată este interzisă. Pentru a raporta o presupusă încălcare a drepturilor de autor, scrieți la {legalEmail} cu detalii despre operă și materialul presupus a încălca."
+      },
+      "responsibility": {
+        "title": "Responsabilitate editorială",
+        "content": "Responsabilitatea editorială pentru conținutul publicat pe {siteUrl} aparține {operatorName}, contactabil la {legalEmail}."
+      }
+    }
+  },
+
+  "dsa": {
+    "title": "Notificare Actul privind Serviciile Digitale (DSA)",
+    "lastUpdated": "{effectiveDate}",
+    "sections": {
+      "scope": {
+        "title": "Domeniu de aplicare",
+        "content": "Această notificare respectă obligațiile noastre de informare prevăzute de Regulamentul (UE) 2022/2065 („Actul privind Serviciile Digitale”). Platforma nu este o platformă online de foarte mari dimensiuni; această notificare acoperă obligațiile aplicabile micilor operatori."
+      },
+      "singleContact": {
+        "title": "Punct unic de contact (Art. 11 și 12 DSA)",
+        "content": "Punct unic de contact pentru autorități, destinatari ai serviciului și orice altă parte: {legalEmail}. Comunicările pot fi transmise în engleză sau română. Acceptăm comunicarea pe cale electronică; adresă poștală: {operatorCountry}."
+      },
+      "legalRepresentative": {
+        "title": "Reprezentant legal",
+        "content": "{operatorName}, {operatorStatus}, stabilit în {operatorCountry} (un stat membru UE), motiv pentru care nu este necesar un reprezentant separat conform Art. 13."
+      },
+      "illegalContent": {
+        "title": "Notificare și acțiune — semnalarea conținutului ilegal (Art. 16 DSA)",
+        "intro": "Dacă bănuiți că un anumit conținut de pe Platformă este ilegal, trimiteți o notificare la {legalEmail} care să includă:",
+        "items": [
+          "O explicație suficient de fundamentată privind motivul pentru care considerați că acel conținut este ilegal.",
+          "O indicare clară a locației electronice exacte (URL) a conținutului.",
+          "Numele și emailul dumneavoastră (nu sunt necesare pentru notificările privind conținut ce implică infracțiuni sexuale împotriva minorilor).",
+          "O declarație care confirmă convingerea dumneavoastră de bună-credință că informația este exactă și completă."
+        ],
+        "outro": "Vom confirma primirea și vom lua o decizie în mod prompt, diligent, nearbitrar și obiectiv."
+      },
+      "decisions": {
+        "title": "Motivare (Art. 17 DSA)",
+        "content": "Acolo unde restricționăm vizibilitatea, suspendăm sau eliminăm conținutul dumneavoastră, suspendăm sau încetăm contul ori restricționăm capacitatea dumneavoastră de a monetiza conținut, vom oferi o motivare clară și specifică, incluzând (acolo unde este aplicabil) temeiul juridic sau contractual, sfera teritorială și mecanismele de remediere disponibile."
+      },
+      "internalComplaints": {
+        "title": "Soluționare internă a plângerilor (Art. 20 DSA, acolo unde este aplicabil)",
+        "content": "Dacă nu sunteți de acord cu o decizie luată conform Art. 17, puteți depune o plângere la {legalEmail} în termen de 6 luni de la decizie. Vom analiza plângerile individual, în mod prompt, nediscriminatoriu și diligent, prin intermediul unei persoane care nu a luat decizia inițială."
+      },
+      "outOfCourt": {
+        "title": "Soluționare extrajudiciară a litigiilor",
+        "content": "Destinatarii din UE pot folosi, de asemenea, organisme de soluționare extrajudiciară a litigiilor certificate conform Art. 21 DSA în statul lor membru, ANPC SAL ({anpcSalUrl}) pentru litigii de consum, sau platforma UE ODR ({odrUrl})."
+      },
+      "trustedFlaggers": {
+        "title": "Notificatori de încredere",
+        "content": "Notificările transmise de entități cărora li s-a acordat statutul de „notificator de încredere” conform Art. 22 DSA în orice stat membru UE sunt tratate cu prioritate."
+      },
+      "transparency": {
+        "title": "Transparență",
+        "content": "În prezent nu atingem pragurile care impun publicarea de rapoarte de transparență detaliate conform Art. 15 DSA. Dacă aceste praguri vor fi atinse, rapoartele corespunzătoare vor fi publicate pe această pagină."
       }
     }
   }

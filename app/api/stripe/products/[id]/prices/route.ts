@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { requireAdmin, checkRateLimit } from '@/utils/api/auth';
 import { logAdminAction } from '@/utils/auditLog';
 import { validateRequestBody } from '@/utils/security/inputValidation';
+import { createIntroOffer } from '@/utils/stripe/introOffers';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: '2026-02-25.clover',
@@ -29,6 +30,19 @@ const PriceCreateSchema = z.object({
     trial_period_days: z.number().int().min(0).max(365).optional(),
     nickname: z.string().max(100).optional(),
     metadata: z.record(z.string()).optional(),
+    /** Mark this price as the storefront default for its (product, interval). */
+    setDefault: z.boolean().optional(),
+    /**
+     * Optional intro offer: charge a lower amount for the first N billing
+     * periods, then revert to `unit_amount`. Implemented via a Stripe Coupon
+     * + hidden Promotion Code applied automatically at checkout.
+     */
+    intro: z
+        .object({
+            unit_amount: z.number().int().nonnegative().max(99_999_999),
+            months: z.number().int().min(1).max(12),
+        })
+        .optional(),
 });
 
 export async function POST(request: NextRequest, ctx: RouteContext) {
@@ -54,6 +68,15 @@ export async function POST(request: NextRequest, ctx: RouteContext) {
     const data = validation.data!;
 
     try {
+        const intervalForDefault =
+            data.type === 'recurring' ? data.interval || 'month' : 'one_time';
+
+        const baseMetadata: Record<string, string> = {
+            ...(data.metadata || {}),
+            app: APP_NAME,
+        };
+        if (data.setDefault) baseMetadata.default = 'true';
+
         const price = await stripe.prices.create({
             product: id,
             unit_amount: data.unit_amount,
@@ -67,20 +90,62 @@ export async function POST(request: NextRequest, ctx: RouteContext) {
                         trial_period_days: data.trial_period_days,
                     }
                     : undefined,
-            metadata: { ...(data.metadata || {}), app: APP_NAME },
+            metadata: baseMetadata,
         });
+
+        // Enforce a single default price per (product, interval)
+        if (data.setDefault) {
+            const existing = await stripe.prices.list({ product: id, limit: 100 });
+            await Promise.all(
+                existing.data
+                    .filter((p) => {
+                        if (p.id === price.id) return false;
+                        if (p.metadata?.default !== 'true') return false;
+                        const intv =
+                            p.type === 'recurring'
+                                ? p.recurring?.interval || 'month'
+                                : 'one_time';
+                        return intv === intervalForDefault;
+                    })
+                    .map((p) =>
+                        stripe.prices.update(p.id, {
+                            metadata: { ...p.metadata, default: 'false' },
+                        })
+                    )
+            );
+        }
+
+        // Attach intro offer (recurring prices only)
+        let finalPrice: Stripe.Price = price;
+        if (data.intro && data.type === 'recurring') {
+            const offer = await createIntroOffer(stripe, price, data.intro);
+            finalPrice = await stripe.prices.update(price.id, {
+                metadata: {
+                    ...price.metadata,
+                    intro_amount: String(data.intro.unit_amount),
+                    intro_months: String(data.intro.months),
+                    intro_coupon: offer.couponId,
+                    intro_promotion_code: offer.promotionCodeId,
+                },
+            });
+        }
 
         await logAdminAction(
             'stripe_price_created',
             request,
             user,
             'stripe_price',
-            price.id,
-            { productId: id, amount: price.unit_amount, currency: price.currency },
+            finalPrice.id,
+            {
+                productId: id,
+                amount: finalPrice.unit_amount,
+                currency: finalPrice.currency,
+                hasIntro: !!data.intro,
+            },
             true
         );
 
-        return NextResponse.json({ success: true, price });
+        return NextResponse.json({ success: true, price: finalPrice });
     } catch (error: any) {
         console.error('Failed to create price:', error);
         return NextResponse.json(

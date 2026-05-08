@@ -51,7 +51,14 @@
     "version": "Version",
     "privacyPolicy": "Privacy Policy",
     "termsConditions": "Terms & Conditions",
-    "gdpr": "GDPR Policy"
+    "gdpr": "GDPR Notice",
+    "cookiePolicy": "Cookie Policy",
+    "refundPolicy": "Refund Policy",
+    "legalNotice": "Legal Notice",
+    "dsa": "DSA Notice",
+    "anpc": "ANPC (Consumer Protection)",
+    "odr": "EU ODR Platform",
+    "operatedBy": "Operated by {operator} ({status})."
   },
   "loading": "Loading...",
   "saving": "Saving...",
@@ -162,10 +169,13 @@
     "title": "Cookie Consent",
     "autoAcceptIn": "Auto-accept in {seconds}s",
     "autoAcceptCountdown": "Auto-accept countdown",
-    "message": "We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies, our",
+    "message": "We use cookies to improve your experience. By continuing to use this site you agree to our",
+    "messageMid": "and our",
+    "separator": ",",
+    "cookiePolicy": "Cookie Policy",
     "privacyPolicy": "Privacy Policy",
     "termsConditions": "Terms and Conditions",
-    "gdprPolicy": "GDPR Policy",
+    "gdprPolicy": "GDPR Notice",
     "decline": "Decline",
     "acceptAll": "Accept All"
   },
@@ -216,7 +226,11 @@
   "policyLinks": {
     "privacyPolicy": "Privacy Policy",
     "termsConditions": "Terms & Conditions",
-    "gdprPolicy": "GDPR Policy",
+    "gdprPolicy": "GDPR Notice",
+    "cookiePolicy": "Cookie Policy",
+    "refundPolicy": "Refund Policy",
+    "legalNotice": "Legal Notice",
+    "dsa": "DSA Notice",
     "backToHome": "Back to Home"
   },
   "videoPlayer": {

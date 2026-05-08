@@ -26,29 +26,29 @@ export default function PolicyPage({ title, lastUpdated, children }: PolicyPageP
 
                         {children}
 
-                        <div className="mt-12 flex space-x-4 justify-center">
-                            <Link
-                                href="/privacy-policy"
-                                className="text-[color:var(--ai-primary)] hover:underline"
-                            >
-                                {t('policyLinks.privacyPolicy')}
-                            </Link>
-                            <Link
-                                href="/terms-conditions"
-                                className="text-[color:var(--ai-primary)] hover:underline"
-                            >
+                        <div className="mt-12 flex flex-wrap gap-x-4 gap-y-2 justify-center">
+                            <Link href="/terms-conditions" className="text-[color:var(--ai-primary)] hover:underline">
                                 {t('policyLinks.termsConditions')}
                             </Link>
-                            <Link
-                                href="/gdpr"
-                                className="text-[color:var(--ai-primary)] hover:underline"
-                            >
+                            <Link href="/privacy-policy" className="text-[color:var(--ai-primary)] hover:underline">
+                                {t('policyLinks.privacyPolicy')}
+                            </Link>
+                            <Link href="/gdpr" className="text-[color:var(--ai-primary)] hover:underline">
                                 {t('policyLinks.gdprPolicy')}
                             </Link>
-                            <Link
-                                href="/"
-                                className="text-[color:var(--ai-primary)] hover:underline"
-                            >
+                            <Link href="/cookie-policy" className="text-[color:var(--ai-primary)] hover:underline">
+                                {t('policyLinks.cookiePolicy')}
+                            </Link>
+                            <Link href="/refund-policy" className="text-[color:var(--ai-primary)] hover:underline">
+                                {t('policyLinks.refundPolicy')}
+                            </Link>
+                            <Link href="/legal-notice" className="text-[color:var(--ai-primary)] hover:underline">
+                                {t('policyLinks.legalNotice')}
+                            </Link>
+                            <Link href="/dsa" className="text-[color:var(--ai-primary)] hover:underline">
+                                {t('policyLinks.dsa')}
+                            </Link>
+                            <Link href="/" className="text-[color:var(--ai-primary)] hover:underline">
                                 {t('policyLinks.backToHome')}
                             </Link>
                         </div>

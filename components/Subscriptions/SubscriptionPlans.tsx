@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 import { Card } from '@heroui/react';
 import Button from '@/components/ui/Button';
-import { FiCheck, FiStar, FiSettings } from '@/components/icons/FeatherIcons';
+import { FiCheck, FiStar, FiSettings, FiZap, FiBookOpen } from '@/components/icons/FeatherIcons';
 import { AppContext } from '@/components/AppContext';
 import { createCheckoutSession } from 'firewand';
 import { stripePayments } from '@/utils/firebase/stripe';
@@ -13,100 +13,126 @@ import { firebaseApp } from '@/utils/firebase/firebase.config';
 import Login from '@/components/Login';
 import LoadingButton from '@/components/Buttons/LoadingButton';
 import { useRouter } from 'next/navigation';
-import { logSubscriptionView, logSubscriptionSelection, logSubscriptionPurchase } from '@/utils/analytics';
-import { trackSubscriptionEvent, trackRevenue } from '@/utils/statistics';
+import {
+  logSubscriptionView,
+  logSubscriptionSelection,
+} from '@/utils/analytics';
+
+type Billing = 'monthly' | 'yearly';
+type Tier = 'courses' | 'copilot';
+
+interface AnyProduct {
+  id: string;
+  name?: string;
+  metadata?: Record<string, string>;
+  prices?: any[];
+  active?: boolean;
+}
+
+function getProductTier(p: AnyProduct): Tier {
+  const explicit = p.metadata?.tier;
+  if (explicit === 'courses' || explicit === 'copilot') return explicit;
+  // Backwards-compat: legacy "main plan" used to provision Copilot for everyone.
+  if (p.metadata?.mainPlan === 'true') return 'copilot';
+  return 'courses';
+}
+
+function pickPriceForInterval(
+  product: AnyProduct | undefined,
+  interval: 'month' | 'year'
+) {
+  if (!product?.prices) return null;
+  const candidates = product.prices.filter((pr: any) => {
+    if (pr.active === false) return false;
+    const intv = pr.recurring?.interval || pr.metadata?.interval || pr.interval;
+    return intv === interval;
+  });
+  if (candidates.length === 0) return null;
+  // Prefer the price flagged as default by the admin.
+  const defaultOne = candidates.find((pr: any) => pr.metadata?.default === 'true');
+  if (defaultOne) return defaultOne;
+  // Otherwise use the most-recently-created active price (deterministic).
+  return candidates.slice().sort((a: any, b: any) => (b.created || 0) - (a.created || 0))[0];
+}
+
+function pickBestProduct(products: AnyProduct[], tier: Tier): AnyProduct | undefined {
+  const sameTier = products.filter(
+    (p) => p.active !== false && getProductTier(p) === tier
+  );
+  if (sameTier.length === 0) return undefined;
+  // Prefer mainPlan, then featured, then most-recent.
+  return (
+    sameTier.find((p) => p.metadata?.mainPlan === 'true') ||
+    sameTier.find((p) => p.metadata?.featured === 'true') ||
+    sameTier[0]
+  );
+}
 
 export default function SubscriptionPlans() {
   const t = useTranslations('subscription');
-  const tCommon = useTranslations('common');
   const context = useContext(AppContext);
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [billing, setBilling] = useState<Billing>('monthly');
   const router = useRouter();
 
   if (!context) {
     throw new Error('SubscriptionPlans must be used within an AppContextProvider');
   }
 
-  const { user, openModal, closeModal, products, subscriptions, subscriptionsLoading } = context;
+  const { user, openModal, closeModal, products, subscriptions } = context;
 
-  // Track subscription page view
   useEffect(() => {
     logSubscriptionView('subscription_plans_page');
   }, []);
 
-  // Check if user has an active subscription
   const hasActiveSubscription = subscriptions && subscriptions.length > 0;
 
-  // Find subscription product. Selection priority:
-  //   1. metadata.mainPlan === 'true'  (admin-set "main" subscription)
-  //   2. metadata.featured === 'true'  (admin-flagged featured)
-  //   3. metadata.type === 'subscription'
-  //   4. product name includes "subscription" (legacy heuristic)
-  const subscriptionProduct =
-    products?.find((p: any) => p.metadata?.mainPlan === 'true') ||
-    products?.find((p: any) => p.metadata?.featured === 'true') ||
-    products?.find((p: any) =>
-      p.metadata?.type === 'subscription' || p.name?.toLowerCase().includes('subscription')
-    );
+  const coursesProduct = useMemo(
+    () => pickBestProduct((products as AnyProduct[]) || [], 'courses'),
+    [products]
+  );
+  const copilotProduct = useMemo(
+    () => pickBestProduct((products as AnyProduct[]) || [], 'copilot'),
+    [products]
+  );
 
-  // Get app name for filtering
-  const appName = process.env.NEXT_PUBLIC_APP_NAME || 'cursuri';
+  const interval: 'month' | 'year' = billing === 'monthly' ? 'month' : 'year';
 
-  // Get monthly and yearly prices from the subscription product
-  // Since the product already has the correct metadata, just filter by active status and interval
-  const monthlyPrice = subscriptionProduct?.prices?.find((p: any) => {
-    const isActive = p.active !== false;
-    const isMonthly = p.metadata?.interval === 'month' || p.recurring?.interval === 'month' || p.interval === 'month';
+  const coursesPrice = pickPriceForInterval(coursesProduct, interval);
+  const copilotPrice = pickPriceForInterval(copilotProduct, interval);
 
-    return isActive && isMonthly;
-  });
+  // Used for the "save X / year" hint
+  const coursesMonthly = pickPriceForInterval(coursesProduct, 'month');
+  const coursesYearly = pickPriceForInterval(coursesProduct, 'year');
+  const copilotMonthly = pickPriceForInterval(copilotProduct, 'month');
+  const copilotYearly = pickPriceForInterval(copilotProduct, 'year');
 
-  const yearlyPrice = subscriptionProduct?.prices?.find((p: any) => {
-    const isActive = p.active !== false;
-    const isYearly = p.metadata?.interval === 'year' || p.recurring?.interval === 'year' || p.interval === 'year';
-
-    return isActive && isYearly;
-  });
-
-  // Helper function to format price
   const formatPrice = (price: any) => {
-    if (!price || !price.unit_amount) return null;
-
+    if (!price || price.unit_amount == null) return null;
     const amountValue = price.unit_amount / 100;
-    const currency = price.currency?.toUpperCase() || 'USD';
-
-    // Format price using Intl.NumberFormat for proper locale formatting
+    const currency = price.currency?.toUpperCase() || 'RON';
     const formatted = new Intl.NumberFormat('ro-RO', {
       style: 'currency',
-      currency: currency,
+      currency,
       minimumFractionDigits: amountValue % 1 === 0 ? 0 : 2,
       maximumFractionDigits: 2,
     }).format(amountValue);
-
-    // If currency is RON, show approximate USD conversion
-    let approximateUSD = '';
-    if (currency === 'RON') {
-      const usdAmount = amountValue / 4.5; // Approximate conversion rate
-      approximateUSD = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: usdAmount % 1 === 0 ? 0 : 2,
-        maximumFractionDigits: 2,
-      }).format(usdAmount);
-    }
-
-    return {
-      amount: amountValue,
-      currency,
-      formatted,
-      approximateUSD,
-    };
+    return { amount: amountValue, currency, formatted };
   };
 
-  const handleSubscribe = async (priceId: string, planName: string) => {
-    setLoadingPlan(planName);
+  const yearlySavings = (monthly: any, yearly: any): string => {
+    const m = formatPrice(monthly);
+    const y = formatPrice(yearly);
+    if (!m || !y) return '';
+    const saved = m.amount * 12 - y.amount;
+    if (saved <= 0) return '';
+    const pct = ((saved / (m.amount * 12)) * 100).toFixed(0);
+    return `${t('plans.proYearly.save')} ${saved.toFixed(0)} ${y.currency} (${pct}%)`;
+  };
 
-    // Check if user is logged in
+  const handleSubscribe = async (price: any, planKey: string) => {
+    if (!price?.id) return;
+    setLoadingPlan(planKey);
     if (!user) {
       setLoadingPlan(null);
       openModal({
@@ -118,39 +144,29 @@ export default function SubscriptionPlans() {
       });
       return;
     }
-
     try {
-      // Find the price details for analytics
-      let priceAmount = 0;
-      let priceCurrency = 'USD';
-      let priceInterval = 'month';
+      const priceAmount = price.unit_amount / 100;
+      const priceCurrency = price.currency?.toUpperCase() || 'RON';
+      const priceInterval = price.recurring?.interval || interval;
+      logSubscriptionSelection(planKey, priceAmount, priceInterval);
 
-      if (planName === 'monthly' && monthlyPrice) {
-        priceAmount = monthlyPrice.unit_amount / 100;
-        priceCurrency = monthlyPrice.currency?.toUpperCase() || 'USD';
-        priceInterval = monthlyPrice.recurring?.interval || 'month';
-      } else if (planName === 'yearly' && yearlyPrice) {
-        priceAmount = yearlyPrice.unit_amount / 100;
-        priceCurrency = yearlyPrice.currency?.toUpperCase() || 'USD';
-        priceInterval = yearlyPrice.recurring?.interval || 'year';
-      }
-
-      // Track subscription selection
-      logSubscriptionSelection(
-        planName,
-        priceAmount,
-        priceInterval
-      );
+      // Auto-apply intro offer if the price has one (Stripe coupon wrapped in
+      // a hidden promotion code created by the admin).
+      const introPromoId: string | undefined = price.metadata?.intro_promotion_code;
 
       const payments = stripePayments(firebaseApp);
-      const session = await createCheckoutSession(payments, {
-        price: priceId,
-        allow_promotion_codes: true,
+      const checkoutParams: any = {
+        price: price.id,
+        // Allow user-entered codes only when there is no auto-applied intro
+        // (Stripe doesn't allow combining promotion_code with allow_promotion_codes).
+        allow_promotion_codes: !introPromoId,
         mode: 'subscription',
-        success_url: `${window.location.origin}/profile/subscriptions?status=success&plan=${planName}&amount=${priceAmount}&currency=${priceCurrency}&interval=${priceInterval}`,
+        success_url: `${window.location.origin}/profile/subscriptions?status=success&plan=${planKey}&amount=${priceAmount}&currency=${priceCurrency}&interval=${priceInterval}`,
         cancel_url: `${window.location.origin}/subscriptions?status=cancel`,
-      });
+      };
+      if (introPromoId) checkoutParams.promotion_code = introPromoId;
 
+      const session = await createCheckoutSession(payments, checkoutParams);
       window.location.assign(session.url);
     } catch (error) {
       console.error('Subscription error:', error);
@@ -158,12 +174,51 @@ export default function SubscriptionPlans() {
     }
   };
 
-  const plans = [
+  type PlanCard = {
+    key: string;
+    name: string;
+    description: string;
+    price: string | null;
+    period: string;
+    icon: React.ReactNode;
+    features: string[];
+    buttonText: string;
+    popular?: boolean;
+    badge?: string;
+    savings?: string;
+    intro?: { formatted: string; months: number; regularFormatted: string } | null;
+    accent: 'free' | 'courses' | 'copilot';
+    onAction: () => void;
+    disabled?: boolean;
+  };
+
+  const introFor = (price: any): PlanCard['intro'] => {
+    if (!price?.metadata?.intro_amount || !price?.metadata?.intro_months) return null;
+    const introCents = parseInt(price.metadata.intro_amount, 10);
+    const months = parseInt(price.metadata.intro_months, 10) || 1;
+    if (!Number.isFinite(introCents) || introCents <= 0) return null;
+    const introFormatted = new Intl.NumberFormat('ro-RO', {
+      style: 'currency',
+      currency: (price.currency || 'RON').toUpperCase(),
+      minimumFractionDigits: introCents % 100 === 0 ? 0 : 2,
+      maximumFractionDigits: 2,
+    }).format(introCents / 100);
+    const regular = formatPrice(price);
+    return {
+      formatted: introFormatted,
+      months,
+      regularFormatted: regular?.formatted || '',
+    };
+  };
+
+  const cards: PlanCard[] = [
     {
+      key: 'free',
       name: t('plans.free.name'),
+      description: t('plans.free.description'),
       price: t('plans.free.price'),
       period: '',
-      description: t('plans.free.description'),
+      icon: <FiBookOpen size={20} />,
       features: [
         t('plans.free.features.access'),
         t('plans.free.features.basicSupport'),
@@ -172,87 +227,96 @@ export default function SubscriptionPlans() {
         t('plans.free.features.certificates'),
       ],
       buttonText: t('plans.free.cta'),
-      popular: false,
-      priceId: null,
-      planKey: 'free',
+      accent: 'free',
+      onAction: () => router.push('/courses'),
     },
     {
-      name: t('plans.proMonthly.name'),
-      price: (() => {
-        const priceInfo = formatPrice(monthlyPrice);
-        return priceInfo ? priceInfo.formatted : 'Error: Price not found';
-      })(),
-      approximateUSD: (() => {
-        const priceInfo = formatPrice(monthlyPrice);
-        return priceInfo?.approximateUSD || '';
-      })(),
-      period: t('plans.proMonthly.period'),
-      description: t('plans.proMonthly.description'),
+      key: 'courses',
+      name: t('plans.courses.name'),
+      description: t('plans.courses.description'),
+      price: formatPrice(coursesPrice)?.formatted ?? t('plans.unavailable'),
+      period:
+        interval === 'month'
+          ? t('plans.proMonthly.period')
+          : t('plans.proYearly.period'),
+      icon: <FiBookOpen size={20} />,
       features: [
-        t('plans.proMonthly.features.copilot'),
-        t('plans.proMonthly.features.unlimitedAccess'),
-        t('plans.proMonthly.features.allCourses'),
-        t('plans.proMonthly.features.prioritySupport'),
-        t('plans.proMonthly.features.exclusiveContent'),
-        t('plans.proMonthly.features.advancedFeatures'),
-        t('plans.proMonthly.features.certificates'),
-        t('plans.proMonthly.features.cancelAnytime'),
+        t('plans.courses.features.allCourses'),
+        t('plans.courses.features.allLessons'),
+        t('plans.courses.features.certificates'),
+        t('plans.courses.features.communityAccess'),
+        t('plans.courses.features.cancelAnytime'),
       ],
-      buttonText: t('plans.proMonthly.cta'),
+      buttonText: t('plans.courses.cta'),
+      savings: interval === 'year' ? yearlySavings(coursesMonthly, coursesYearly) : undefined,
+      intro: introFor(coursesPrice),
+      accent: 'courses',
+      onAction: () => handleSubscribe(coursesPrice, `courses-${billing}`),
+      disabled: !coursesPrice?.id,
+    },
+    {
+      key: 'copilot',
+      name: t('plans.copilot.name'),
+      description: t('plans.copilot.description'),
+      price: formatPrice(copilotPrice)?.formatted ?? t('plans.unavailable'),
+      period:
+        interval === 'month'
+          ? t('plans.proMonthly.period')
+          : t('plans.proYearly.period'),
+      icon: <FiZap size={20} />,
+      features: [
+        t('plans.copilot.features.copilotAccount'),
+        t('plans.copilot.features.unlimitedModels'),
+        t('plans.copilot.features.allCourses'),
+        t('plans.copilot.features.prioritySupport'),
+        t('plans.copilot.features.exclusiveContent'),
+        t('plans.copilot.features.cancelAnytime'),
+      ],
+      buttonText: t('plans.copilot.cta'),
       popular: true,
-      priceId: monthlyPrice?.id || null,
-      planKey: 'monthly',
-    },
-    {
-      name: t('plans.proYearly.name'),
-      price: (() => {
-        const priceInfo = formatPrice(yearlyPrice);
-        return priceInfo ? priceInfo.formatted : 'Error: Price not found';
-      })(),
-      approximateUSD: (() => {
-        const priceInfo = formatPrice(yearlyPrice);
-        return priceInfo?.approximateUSD || '';
-      })(),
-      period: t('plans.proYearly.period'),
-      description: t('plans.proYearly.description'),
-      savings: (() => {
-        const monthlyPriceInfo = formatPrice(monthlyPrice);
-        const yearlyPriceInfo = formatPrice(yearlyPrice);
-        if (monthlyPriceInfo && yearlyPriceInfo) {
-          const monthlyCost = monthlyPriceInfo.amount * 12;
-          const yearlyCost = yearlyPriceInfo.amount;
-          const savings = monthlyCost - yearlyCost;
-          const percentage = ((savings / monthlyCost) * 100).toFixed(0);
-          return `${t('plans.proYearly.save')} ${savings.toFixed(2)} ${yearlyPriceInfo.currency} (${percentage}%)`;
-        }
-        return '';
-      })(),
-      features: [
-        t('plans.proYearly.features.copilot'),
-        t('plans.proYearly.features.everything'),
-        t('plans.proYearly.features.twoMonthsFree'),
-        t('plans.proYearly.features.prioritySupport'),
-        t('plans.proYearly.features.exclusiveWorkshops'),
-        t('plans.proYearly.features.earlyAccess'),
-        t('plans.proYearly.features.careerResources'),
-      ],
-      buttonText: t('plans.proYearly.cta'),
-      popular: false,
-      priceId: yearlyPrice?.id || null,
-      planKey: 'yearly',
-      badge: t('plans.proYearly.badge'),
+      badge: interval === 'year' ? t('plans.proYearly.badge') : undefined,
+      savings: interval === 'year' ? yearlySavings(copilotMonthly, copilotYearly) : undefined,
+      intro: introFor(copilotPrice),
+      accent: 'copilot',
+      onAction: () => handleSubscribe(copilotPrice, `copilot-${billing}`),
+      disabled: !copilotPrice?.id,
     },
   ];
 
   return (
     <div className="relative">
+      {/* Billing toggle */}
+      <div className="flex justify-center mb-10">
+        <div className="inline-flex p-1 rounded-full border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/60 backdrop-blur-sm">
+          {(['monthly', 'yearly'] as Billing[]).map((b) => (
+            <button
+              key={b}
+              type="button"
+              onClick={() => setBilling(b)}
+              className={`px-5 h-9 rounded-full text-sm font-medium transition-all ${
+                billing === b
+                  ? 'bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white shadow-md'
+                  : 'text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]'
+              }`}
+            >
+              {b === 'monthly' ? t('billing.monthly') : t('billing.yearly')}
+              {b === 'yearly' && (
+                <span className="ml-2 text-[10px] uppercase tracking-wide opacity-90">
+                  {t('billing.savePill')}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-        {plans.map((plan, index) => (
+        {cards.map((plan, index) => (
           <motion.div
-            key={plan.planKey}
+            key={plan.key}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
+            transition={{ duration: 0.4, delay: index * 0.08 }}
             className="relative"
           >
             {plan.popular && (
@@ -273,33 +337,63 @@ export default function SubscriptionPlans() {
             )}
 
             <Card
-              className={`p-8 h-full flex flex-col rounded-xl bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] backdrop-blur-sm transition-all duration-300 hover:shadow-2xl ${plan.popular
-                ? 'border-2 border-[color:var(--ai-primary)] shadow-xl scale-105'
-                : 'border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/50 shadow-lg'
-                }`}
+              className={`p-8 h-full flex flex-col rounded-xl bg-[color:var(--ai-card-bg)] backdrop-blur-sm transition-all duration-300 hover:shadow-2xl ${
+                plan.popular
+                  ? 'border-2 border-[color:var(--ai-primary)] shadow-xl md:scale-105'
+                  : 'border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/50 shadow-lg'
+              }`}
             >
-              {/* Plan Header */}
               <div className="mb-6">
-                <h3 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-2">
-                  {plan.name}
-                </h3>
+                <div className="flex items-center gap-2 mb-2">
+                  <span
+                    className={`inline-flex items-center justify-center w-9 h-9 rounded-xl ${
+                      plan.accent === 'copilot'
+                        ? 'bg-violet-500/15 text-violet-500 dark:text-violet-300'
+                        : plan.accent === 'courses'
+                          ? 'bg-sky-500/15 text-sky-500 dark:text-sky-300'
+                          : 'bg-[color:var(--ai-card-border)] text-[color:var(--ai-muted)]'
+                    }`}
+                  >
+                    {plan.icon}
+                  </span>
+                  <h3 className="text-2xl font-bold text-[color:var(--ai-foreground)]">
+                    {plan.name}
+                  </h3>
+                </div>
                 <p className="text-sm text-[color:var(--ai-muted)]">{plan.description}</p>
               </div>
 
-              {/* Price */}
               <div className="mb-6">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">
-                    {plan.price}
-                  </span>
-                  {plan.period && (
-                    <span className="text-[color:var(--ai-muted)]">/{plan.period}</span>
-                  )}
-                </div>
-                {plan.approximateUSD && (
-                  <p className="text-xs text-[color:var(--ai-muted)] mt-1">
-                    ≈ {plan.approximateUSD}
-                  </p>
+                {plan.intro ? (
+                  <>
+                    <div className="inline-flex items-center gap-1.5 mb-2 px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold uppercase tracking-wide">
+                      🎁 {t('plans.introBadge', { months: plan.intro.months })}
+                    </div>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl font-bold bg-gradient-to-r from-emerald-500 to-[color:var(--ai-primary)] bg-clip-text text-transparent">
+                        {plan.intro.formatted}
+                      </span>
+                      {plan.period && (
+                        <span className="text-[color:var(--ai-muted)]">/{plan.period}</span>
+                      )}
+                    </div>
+                    <p className="text-xs text-[color:var(--ai-muted)] mt-1">
+                      {t('plans.introThen', {
+                        months: plan.intro.months,
+                        price: plan.intro.regularFormatted,
+                        period: plan.period,
+                      })}
+                    </p>
+                  </>
+                ) : (
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">
+                      {plan.price}
+                    </span>
+                    {plan.period && (
+                      <span className="text-[color:var(--ai-muted)]">/{plan.period}</span>
+                    )}
+                  </div>
                 )}
                 {plan.savings && (
                   <p className="text-sm text-[color:var(--ai-success)] font-medium mt-1">
@@ -308,15 +402,15 @@ export default function SubscriptionPlans() {
                 )}
               </div>
 
-              {/* Features */}
               <ul className="space-y-3 mb-8 flex-grow">
                 {plan.features.map((feature, featureIndex) => (
                   <li key={featureIndex} className="flex items-start gap-3">
                     <div
-                      className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${plan.popular
-                        ? 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]'
-                        : 'bg-[color:var(--ai-success)]/10 text-[color:var(--ai-success)]'
-                        }`}
+                      className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                        plan.popular
+                          ? 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]'
+                          : 'bg-[color:var(--ai-success)]/10 text-[color:var(--ai-success)]'
+                      }`}
                     >
                       <FiCheck size={14} />
                     </div>
@@ -325,15 +419,15 @@ export default function SubscriptionPlans() {
                 ))}
               </ul>
 
-              {/* CTA Button */}
-              {loadingPlan === plan.planKey ? (
+              {loadingPlan === plan.key ||
+              loadingPlan === `courses-${billing}` && plan.key === 'courses' ||
+              loadingPlan === `copilot-${billing}` && plan.key === 'copilot' ? (
                 <LoadingButton
                   className="w-full"
                   size="lg"
                   loadingText={t('toast.processing')}
                 />
-              ) : hasActiveSubscription && plan.priceId ? (
-                // Show "Manage Subscription" button if user already has a subscription
+              ) : hasActiveSubscription && plan.key !== 'free' ? (
                 <Button
                   size="lg"
                   radius="lg"
@@ -347,22 +441,17 @@ export default function SubscriptionPlans() {
                 <Button
                   size="lg"
                   radius="lg"
-                  className={`w-full font-medium px-5 py-2 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 ${plan.popular
-                    ? 'bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] border-none text-white'
-                    : plan.planKey === 'free'
-                      ? 'border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)] text-[color:var(--ai-foreground)] bg-transparent'
-                      : 'bg-gradient-to-r from-[color:var(--ai-accent)] to-[color:var(--ai-secondary)] border-none text-white'
-                    }`}
-                  onClick={() => {
-                    if (plan.priceId) {
-                      handleSubscribe(plan.priceId, plan.planKey);
-                    } else {
-                      // For free plan, redirect to courses
-                      router.push('/courses');
-                    }
-                  }}
+                  isDisabled={plan.disabled}
+                  className={`w-full font-medium px-5 py-2 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 ${
+                    plan.popular
+                      ? 'bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] border-none text-white'
+                      : plan.key === 'free'
+                        ? 'border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)] text-[color:var(--ai-foreground)] bg-transparent'
+                        : 'bg-gradient-to-r from-[color:var(--ai-accent)] to-[color:var(--ai-secondary)] border-none text-white'
+                  }`}
+                  onClick={plan.onAction}
                 >
-                  {plan.buttonText}
+                  {plan.disabled ? t('plans.unavailable') : plan.buttonText}
                 </Button>
               )}
             </Card>

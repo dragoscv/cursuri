@@ -69,3 +69,25 @@ export const SUBSCRIPTION_PRODUCT_ID = 'prod_TKWQrufVSkN0Zr';
 export function isSubscriptionProduct(productId: string): boolean {
   return productId === SUBSCRIPTION_PRODUCT_ID;
 }
+
+/**
+ * Determine whether a Stripe-style subscription/product object represents the
+ * Copilot tier (auto-provisions a GitHub account) versus the Courses-only tier.
+ * Accepts loose shapes: a `Stripe.Subscription` with `product.metadata`, an
+ * enriched subscription with a `product` field, or a raw product.
+ */
+export function subscriptionIncludesCopilot(input: any): boolean {
+  if (!input) return false;
+  const product =
+    input?.product?.metadata ? input.product :
+    input?.items?.data?.[0]?.price?.product?.metadata ? input.items.data[0].price.product :
+    input?.metadata ? input :
+    null;
+  const meta = product?.metadata;
+  if (!meta) return false;
+  if (meta.tier === 'copilot') return true;
+  if (meta.tier === 'courses') return false;
+  // Backwards compat: pre-tier products marked as the single "main plan"
+  // historically provisioned Copilot for everyone.
+  return meta.mainPlan === 'true';
+}

@@ -51,7 +51,14 @@
     "version": "Versiune",
     "privacyPolicy": "Politica de Confidențialitate",
     "termsConditions": "Termeni și Condiții",
-    "gdpr": "Politica GDPR"
+    "gdpr": "Notificare GDPR",
+    "cookiePolicy": "Politica de Cookies",
+    "refundPolicy": "Politica de Rambursare",
+    "legalNotice": "Notificare Legală",
+    "dsa": "Notificare DSA",
+    "anpc": "ANPC (Protecția Consumatorilor)",
+    "odr": "Platforma UE ODR",
+    "operatedBy": "Operat de {operator} ({status})."
   },
   "loading": "Se încarcă...",
   "saving": "Se salvează...",
@@ -162,10 +169,13 @@
     "title": "Consimțământ Cookie-uri",
     "autoAcceptIn": "Acceptare automată în {seconds}s",
     "autoAcceptCountdown": "Numărătoare inversă acceptare automată",
-    "message": "Folosim cookie-uri pentru a îmbunătăți experiența ta. Continuând să vizitezi acest site, ești de acord cu utilizarea cookie-urilor noastre, cu",
+    "message": "Folosim cookie-uri pentru a-ți îmbunătăți experiența. Continuând să folosești acest site, ești de acord cu",
+    "messageMid": "și cu",
+    "separator": ",",
+    "cookiePolicy": "Politica de Cookies",
     "privacyPolicy": "Politica de Confidențialitate",
-    "termsConditions": "Termeni și Condiții",
-    "gdprPolicy": "Politica GDPR",
+    "termsConditions": "Termenii și Condițiile",
+    "gdprPolicy": "Notificarea GDPR",
     "decline": "Refuză",
     "acceptAll": "Acceptă Toate"
   },
@@ -216,7 +226,11 @@
   "policyLinks": {
     "privacyPolicy": "Politica de Confidențialitate",
     "termsConditions": "Termeni și Condiții",
-    "gdprPolicy": "Politica GDPR",
+    "gdprPolicy": "Notificare GDPR",
+    "cookiePolicy": "Politica de Cookies",
+    "refundPolicy": "Politica de Rambursare",
+    "legalNotice": "Notificare Legală",
+    "dsa": "Notificare DSA",
     "backToHome": "Înapoi la Pagina Principală"
   },
   "videoPlayer": {

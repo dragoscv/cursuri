@@ -84,9 +84,29 @@ export async function POST(request: NextRequest) {
   const customerId = subscription.customer as string;
   const isActive = ['active', 'trialing'].includes(subscription.status);
 
+  // Determine whether this subscription is on a Copilot-tier plan. Only
+  // Copilot plans get a GitHub account auto-provisioned. Courses-only plans
+  // simply unlock courses.
+  const subscribedProductId = subscription.items?.data?.[0]?.price?.product;
+  let includesCopilot = false;
+  if (typeof subscribedProductId === 'string') {
+    try {
+      const product = await stripe.products.retrieve(subscribedProductId);
+      const tier = product.metadata?.tier;
+      // Backwards compat: legacy products marked `mainPlan=true` without an
+      // explicit tier are treated as Copilot since that was the previous
+      // (single-product) behaviour.
+      includesCopilot =
+        tier === 'copilot' ||
+        (!tier && product.metadata?.mainPlan === 'true');
+    } catch (err) {
+      console.error('Failed to retrieve subscription product for tier check:', err);
+    }
+  }
+
   try {
-    // Handle NEW subscription → auto-create GitHub account
-    if (event.type === 'customer.subscription.created' && isActive) {
+    // Handle NEW subscription → auto-create GitHub account (Copilot tier only)
+    if (event.type === 'customer.subscription.created' && isActive && includesCopilot) {
       // Find the Firebase user by Stripe customer ID
       // Firewand stores customers at /customers/{uid} with stripeId
       const customersSnapshot = await db
@@ -221,6 +241,17 @@ export async function POST(request: NextRequest) {
       }
 
       return NextResponse.json({ received: true, action: 'subscription_created' });
+    }
+
+    // Courses-only subscription created: nothing to provision, just acknowledge.
+    if (event.type === 'customer.subscription.created' && isActive && !includesCopilot) {
+      console.log(
+        `Subscription ${subscriptionId} is on a non-Copilot tier; skipping GitHub provisioning.`
+      );
+      return NextResponse.json({
+        received: true,
+        action: 'subscription_created_no_copilot',
+      });
     }
 
     // Handle subscription status changes → enable/disable linked accounts

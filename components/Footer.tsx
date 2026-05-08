@@ -11,6 +11,7 @@ import WebsiteIcon from './icons/WebsiteIcon';
 import { DiscordIcon } from './icons/DiscordIcon';
 import packageInfo from '../package.json';
 import Button from './ui/Button';
+import { legalConfig } from '@/config/legal';
 
 const Footer = React.memo(function Footer() {
   const t = useTranslations('common');
@@ -96,18 +97,18 @@ const Footer = React.memo(function Footer() {
               <ul className="space-y-2">
                 <li>
                   <Link
-                    href="/privacy-policy"
-                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
-                  >
-                    {t('footer.privacyPolicy')}
-                  </Link>
-                </li>
-                <li>
-                  <Link
                     href="/terms-conditions"
                     className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
                   >
                     {t('footer.termsConditions')}
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/privacy-policy"
+                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
+                  >
+                    {t('footer.privacyPolicy')}
                   </Link>
                 </li>
                 <li>
@@ -117,6 +118,58 @@ const Footer = React.memo(function Footer() {
                   >
                     {t('footer.gdpr')}
                   </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/cookie-policy"
+                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
+                  >
+                    {t('footer.cookiePolicy')}
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/refund-policy"
+                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
+                  >
+                    {t('footer.refundPolicy')}
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/legal-notice"
+                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
+                  >
+                    {t('footer.legalNotice')}
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/dsa"
+                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
+                  >
+                    {t('footer.dsa')}
+                  </Link>
+                </li>
+                <li className="pt-2 mt-2 border-t border-[color:var(--ai-card-border)]/40">
+                  <a
+                    href={legalConfig.anpcUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
+                  >
+                    {t('footer.anpc')}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={legalConfig.odrUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
+                  >
+                    {t('footer.odr')}
+                  </a>
                 </li>
               </ul>
             </nav>
@@ -168,18 +221,24 @@ const Footer = React.memo(function Footer() {
             <p className="text-[color:var(--ai-muted)]">
               {t('footer.contactEmail')}{' '}
               <a
-                href="mailto:contact@studiai.ro"
+                href={`mailto:${legalConfig.contactEmail}`}
                 className="text-[color:var(--ai-primary)] hover:underline"
               >
-                contact@studiai.ro
+                {legalConfig.contactEmail}
               </a>
             </p>
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-[color:var(--ai-card-border)]">
+        <div className="mt-12 pt-8 border-t border-[color:var(--ai-card-border)] space-y-2">
           <p className="text-center text-[color:var(--ai-muted)] text-sm">
-            &copy; {year} StudiAI. {t('footer.copyright')}
+            &copy; {year} {legalConfig.brandName}. {t('footer.copyright')}
+          </p>
+          <p className="text-center text-[color:var(--ai-muted)] text-xs">
+            {t('footer.operatedBy', {
+              operator: legalConfig.operatorName,
+              status: legalConfig.operatorStatus,
+            })}
           </p>
         </div>
       </div>

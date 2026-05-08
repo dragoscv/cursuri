@@ -1,10 +1,10 @@
 {
-  "title": "GitHub Copilot inclus la fiecare abonament",
-  "subtitle": "Primești un cont GitHub personal cu Copilot, acces nelimitat la toate cursurile AI și fluxul de lucru folosit de dezvoltatorii 10x.",
+  "title": "Alege planul tău",
+  "subtitle": "Deblochează toate cursurile de pe platformă — sau treci pe planul Copilot pentru un cont GitHub personal cu Copilot Pro nelimitat inclus.",
   "copilot": {
-    "eyebrow": "INCLUS ÎN ORICE PLAN",
+    "eyebrow": "INCLUS ÎN PLANUL COPILOT",
     "headline": "GitHub Copilot Pro — nelimitat, din partea noastră.",
-    "lead": "Fiecare abonament plătit îți creează automat un cont GitHub personal cu Copilot Pro activat — acces nelimitat la toate modelele AI de vârf: Claude Opus 4.7, GPT, Gemini și altele. Folosește-l în VS Code (recomandăm Insiders pentru cele mai noi funcționalități) și împerechează-l cu OpenClaw pentru un agent de coding nivel Claude direct în editor.",
+    "lead": "Planul Copilot îți creează automat un cont GitHub personal cu Copilot Pro activat — acces nelimitat la toate modelele AI de vârf: Claude Opus 4.7, GPT, Gemini și altele. Folosește-l în VS Code (recomandăm Insiders pentru cele mai noi funcționalități) și împerechează-l cu OpenClaw pentru un agent de coding nivel Claude direct în editor.",
     "footnote": "Contul tău e gata în câteva secunde după plată. Găsești datele oricând în Profil → GitHub.",
     "perks": {
       "account": {
@@ -78,6 +78,34 @@
       "cta": "Începe Călătoria AI"
     },
     "popular": "Cel Mai Popular",
+    "unavailable": "Indisponibil",
+    "introBadge": "Ofertă intro — prima {months, plural, =1 {lună} other {# luni}}",
+    "introThen": "Pentru prima {months, plural, =1 {lună} other {# luni}}, apoi {price}/{period}",
+    "courses": {
+      "name": "Cursuri",
+      "description": "Acces complet la toate cursurile și lecțiile de pe platformă.",
+      "features": {
+        "allCourses": "Acces nelimitat la toate cursurile",
+        "allLessons": "Toate lecțiile, exemplele de cod și resursele",
+        "certificates": "Certificat de finalizare",
+        "communityAccess": "Suport în comunitate",
+        "cancelAnytime": "Anulare oricând"
+      },
+      "cta": "Ia toate cursurile"
+    },
+    "copilot": {
+      "name": "Copilot",
+      "description": "Tot din planul Cursuri + un cont GitHub personal cu Copilot Pro nelimitat creat automat pentru tine.",
+      "features": {
+        "copilotAccount": "Cont GitHub personal creat automat la checkout",
+        "unlimitedModels": "Copilot Pro nelimitat — Claude Opus 4.7, GPT, Gemini",
+        "allCourses": "Tot ce e în planul Cursuri",
+        "prioritySupport": "Suport prioritar de la practicieni AI",
+        "exclusiveContent": "Prompt-uri și șabloane AI exclusive",
+        "cancelAnytime": "Anulare oricând"
+      },
+      "cta": "Ia Copilot + Cursuri"
+    },
     "proYearly": {
       "name": "Expert AI Anual",
       "price": "1000 RON",
@@ -97,6 +125,11 @@
       "savings": "Economisești 200 RON pe an",
       "badge": "Cea Mai Bună Valoare"
     }
+  },
+  "billing": {
+    "monthly": "Lunar",
+    "yearly": "Anual",
+    "savePill": "Economisești"
   },
   "benefits": {
     "title": "De Ce Pro?",
@@ -123,7 +156,7 @@
     "subtitle": "Tot ce trebuie să știi despre abonamentele noastre",
     "whatIsCopilot": {
       "question": "Ce e GitHub Copilot Pro și ce modele primesc?",
-      "answer": "GitHub Copilot Pro e un partener AI de programare integrat în VS Code. Fiecare abonament plătit îți creează automat un cont GitHub personal cu Copilot Pro activat — acces nelimitat și nerestricționat la toate modelele AI de vârf, inclusiv Claude Opus 4.7, GPT-5, Gemini 2.5 Pro și orice model nou în ziua lansării. După plată, datele apar în Profil → GitHub. Loghezi-te în VS Code (recomandăm varianta Insiders) și Copilot e gata: chat, sugestii inline, editări multi-fișier, agent mode — tot tacâmul."
+      "answer": "GitHub Copilot Pro e un partener AI de programare integrat în VS Code. Planul Copilot îți creează automat un cont GitHub personal cu Copilot Pro activat — acces nelimitat și nerestricționat la toate modelele AI de vârf, inclusiv Claude Opus 4.7, GPT-5, Gemini 2.5 Pro și orice model nou în ziua lansării. După plată, datele apar în Profil → GitHub. Loghezi-te în VS Code (recomandăm varianta Insiders) și Copilot e gata: chat, sugestii inline, editări multi-fișier, agent mode — tot tacâmul."
     },
     "howToActivate": {
       "question": "Cum activez Copilot după abonare?",

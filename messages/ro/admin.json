@@ -127,7 +127,11 @@
     },
     "badges": {
       "main": "Principal",
-      "featured": "Recomandat"
+      "featured": "Recomandat",
+      "default": "Implicit",
+      "defaultHint": "Folosit în storefront pentru acest plan & interval",
+      "copilot": "Copilot",
+      "courses": "Cursuri"
     },
     "status": {
       "active": "Activ",
@@ -143,6 +147,7 @@
       "newProduct": "Produs nou",
       "addPrice": "Adaugă preț",
       "edit": "Editează",
+      "editPrice": "Editează prețul",
       "archive": "Arhivează",
       "cancel": "Anulează",
       "activePrice": "Activ",

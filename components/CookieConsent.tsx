@@ -93,12 +93,15 @@ const CookieConsent: React.FC = () => {
 
                             <p className="text-sm text-[color:var(--ai-muted)]">
                                 {t('message')}{' '}
+                                <Link href="/cookie-policy" className="text-[color:var(--ai-primary)] hover:underline">
+                                    {t('cookiePolicy')}
+                                </Link>{t('separator')}{' '}
                                 <Link href="/privacy-policy" className="text-[color:var(--ai-primary)] hover:underline">
                                     {t('privacyPolicy')}
-                                </Link>,{' '}
+                                </Link>{t('separator')}{' '}
                                 <Link href="/terms-conditions" className="text-[color:var(--ai-primary)] hover:underline">
                                     {t('termsConditions')}
-                                </Link>, and our{' '}
+                                </Link>{' '}{t('messageMid')}{' '}
                                 <Link href="/gdpr" className="text-[color:var(--ai-primary)] hover:underline">
                                     {t('gdprPolicy')}
                                 </Link>.
