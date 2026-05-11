@@ -757,13 +757,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
       return result;
     },
-    [
-      saveLessonProgress,
-      state.lessonProgress,
-      state.lessons,
-      state.courses,
-      user,
-    ]
+    [saveLessonProgress, state.lessonProgress, state.lessons, state.courses, user]
   );
 
   const getUserLessonProgress = useCallback(async () => {
@@ -1155,9 +1149,13 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
           let courseName = courseData.name || 'Unnamed Course';
           if (courseData.title) {
             // Try to get current locale name
-            const currentLocale = typeof window !== 'undefined' ?
-              (localStorage.getItem('locale') || 'en') : 'en';
-            courseName = courseData.title[currentLocale] || courseData.title.en || courseData.title.ro || courseName;
+            const currentLocale =
+              typeof window !== 'undefined' ? localStorage.getItem('locale') || 'en' : 'en';
+            courseName =
+              courseData.title[currentLocale] ||
+              courseData.title.en ||
+              courseData.title.ro ||
+              courseName;
           }
 
           const course = {
@@ -1695,7 +1693,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         await updateDoc(statsRef, {
           loginStreak,
           lastLoginDate: today,
-          updatedAt: Timestamp.now()
+          updatedAt: Timestamp.now(),
         });
       } else {
         // Create new stats document
@@ -1703,7 +1701,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
           loginStreak: 1,
           lastLoginDate: today,
           createdAt: Timestamp.now(),
-          updatedAt: Timestamp.now()
+          updatedAt: Timestamp.now(),
         });
       }
     } catch (error) {
@@ -1722,7 +1720,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         setAnalyticsUserId(currentUser.uid);
 
         // Track daily active user
-        trackDailyActiveUser(currentUser.uid).catch(error => {
+        trackDailyActiveUser(currentUser.uid).catch((error) => {
           console.error('Failed to track daily active user:', error);
         });
 
@@ -1749,39 +1747,47 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         // Use new RBAC system
         try {
           // Import admin utilities
-          const {
-            getUserProfile,
-            createOrUpdateUserProfile,
-            isAdmin,
-            UserRole,
-          } = await import('../utils/firebase/adminAuth');
+          const { getUserProfile, createOrUpdateUserProfile, isAdmin, UserRole } =
+            await import('../utils/firebase/adminAuth');
 
-          // Get or create user profile
-          let userProfile = await getUserProfile(currentUser.uid);
-
-          // If not migrated admin, get or create regular profile
-          if (!userProfile) {
+          // Get user profile. getUserProfile() now throws on read errors and
+          // returns null ONLY when the document is verified to not exist.
+          // This prevents a transient read failure from being interpreted as
+          // a missing user, which previously caused the auth handler to call
+          // createOrUpdateUserProfile and silently wipe the admin role.
+          let userProfile: UserProfile | null = null;
+          try {
             userProfile = await getUserProfile(currentUser.uid);
+          } catch (readError) {
+            console.error(
+              'Error reading user profile (will keep previous admin state):',
+              readError
+            );
+            // Bail out of profile setup. Do NOT create a new profile here —
+            // the old code would overwrite the existing doc with role="user".
+            prevUserRef.current = currentUser;
+            return;
+          }
 
-            // Create profile if it doesn't exist
-            if (!userProfile) {
-              userProfile = await createOrUpdateUserProfile(currentUser, UserRole.USER);
+          // Only create a new profile when we have positively confirmed the
+          // doc does not exist.
+          if (!userProfile) {
+            userProfile = await createOrUpdateUserProfile(currentUser, UserRole.USER);
 
-              // Log registration event for new users
-              try {
-                await fetch('/api/audit/auth-event', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    action: 'registration',
-                    userId: currentUser.uid,
-                    email: currentUser.email,
-                    success: true,
-                  }),
-                });
-              } catch (logError) {
-                console.error('Registration event logging failed (non-critical):', logError);
-              }
+            // Log registration event for new users
+            try {
+              await fetch('/api/audit/auth-event', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  action: 'registration',
+                  userId: currentUser.uid,
+                  email: currentUser.email,
+                  success: true,
+                }),
+              });
+            } catch (logError) {
+              console.error('Registration event logging failed (non-critical):', logError);
             }
           }
 
@@ -1796,11 +1802,12 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             email_verified: currentUser.emailVerified,
           });
 
-          // Store user profile in context for permission checks                    dispatch({ type: 'SET_USER_PROFILE', payload: userProfile });
+          dispatch({ type: 'SET_USER_PROFILE', payload: userProfile });
         } catch (error) {
           console.error('Error setting up user profile:', error);
-          // No fallback to hardcoded admin - use role-based system only
-          dispatch({ type: 'SET_IS_ADMIN', payload: false });
+          // Do NOT reset isAdmin on error — keep whatever the previous
+          // successful read produced. Resetting here on a transient failure
+          // is what locked the admin out of the dashboard.
         }
 
         // Update previous user ref
@@ -1893,9 +1900,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
             active: true,
             currency: newProductData.currency,
             unit_amount: newProductData.amount,
-            type: (newProductData.recurring ? 'recurring' : 'one_time') as
-              | 'recurring'
-              | 'one_time',
+            type: (newProductData.recurring ? 'recurring' : 'one_time') as 'recurring' | 'one_time',
             billing_scheme: 'per_unit' as const,
             recurring: newProductData.recurring ?? undefined,
             metadata: {
@@ -1961,128 +1966,127 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
   }, []); // Run only once on mount to avoid infinite loop
 
   // Function to refresh subscriptions from Stripe
-  const refreshSubscriptions = useCallback(
-    async () => {
-      if (!user) {
-        dispatch({ type: 'SET_SUBSCRIPTIONS', payload: [] });
-        return;
-      }
+  const refreshSubscriptions = useCallback(async () => {
+    if (!user) {
+      dispatch({ type: 'SET_SUBSCRIPTIONS', payload: [] });
+      return;
+    }
 
-      // Double-check that Firebase Auth currentUser is available
-      if (!firebaseAuth.currentUser) {
-        console.warn('[AppContext] Firebase Auth currentUser not available yet, skipping subscription refresh');
-        dispatch({ type: 'SET_SUBSCRIPTIONS', payload: [] });
-        return;
-      }
+    // Double-check that Firebase Auth currentUser is available
+    if (!firebaseAuth.currentUser) {
+      console.warn(
+        '[AppContext] Firebase Auth currentUser not available yet, skipping subscription refresh'
+      );
+      dispatch({ type: 'SET_SUBSCRIPTIONS', payload: [] });
+      return;
+    }
 
-      try {
-        dispatch({ type: 'SET_SUBSCRIPTIONS_LOADING', payload: true });
+    try {
+      dispatch({ type: 'SET_SUBSCRIPTIONS_LOADING', payload: true });
 
-        // Fetch subscriptions directly from Firestore to avoid firewand timing issues
-        const subscriptionsRef = collection(firestoreDB, 'customers', user.uid, 'subscriptions');
-        const q = query(
-          subscriptionsRef,
-          where('status', 'in', ['active', 'trialing', 'past_due'])
-        );
-        const querySnapshot = await getDocs(q);
+      // Fetch subscriptions directly from Firestore to avoid firewand timing issues
+      const subscriptionsRef = collection(firestoreDB, 'customers', user.uid, 'subscriptions');
+      const q = query(subscriptionsRef, where('status', 'in', ['active', 'trialing', 'past_due']));
+      const querySnapshot = await getDocs(q);
 
-        const allSubs: any[] = [];
-        querySnapshot.forEach((doc) => {
-          allSubs.push({
-            id: doc.id,
-            ...doc.data()
-          });
+      const allSubs: any[] = [];
+      querySnapshot.forEach((doc) => {
+        allSubs.push({
+          id: doc.id,
+          ...doc.data(),
         });
+      });
 
-        const payments = stripePayments(firebaseApp);
+      const payments = stripePayments(firebaseApp);
 
-        // Enrich subscriptions with full price and product data
-        const enrichedSubs = await Promise.all(
-          allSubs.map(async (sub: any) => {
-            try {
-              // Fetch full product and price data if they are references or string IDs
-              let productData = sub.product;
-              let priceData = sub.price;
+      // Enrich subscriptions with full price and product data
+      const enrichedSubs = await Promise.all(
+        allSubs.map(async (sub: any) => {
+          try {
+            // Fetch full product and price data if they are references or string IDs
+            let productData = sub.product;
+            let priceData = sub.price;
 
-              // Handle DocumentReference for product
-              if (sub.product && typeof sub.product === 'object' && 'path' in sub.product) {
-                // It's a DocumentReference, fetch the data
-                try {
-                  console.log('[AppContext] Fetching product DocumentReference:', sub.product.path);
-                  const productSnapshot = await getDoc(sub.product);
-                  if (productSnapshot.exists()) {
-                    productData = { id: productSnapshot.id, ...(productSnapshot.data() as object) };
-                    console.log('[AppContext] Successfully fetched product:', productData);
-                  } else {
-                    console.log('[AppContext] Product document does not exist:', sub.product.path);
-                    productData = { id: sub.product.id, name: 'Unknown Product' };
-                  }
-                } catch (productError) {
-                  console.error(`[AppContext] Error fetching product from reference:`, productError);
-                  productData = { id: sub.product.id || 'unknown', name: 'Unknown Product' };
+            // Handle DocumentReference for product
+            if (sub.product && typeof sub.product === 'object' && 'path' in sub.product) {
+              // It's a DocumentReference, fetch the data
+              try {
+                console.log('[AppContext] Fetching product DocumentReference:', sub.product.path);
+                const productSnapshot = await getDoc(sub.product);
+                if (productSnapshot.exists()) {
+                  productData = { id: productSnapshot.id, ...(productSnapshot.data() as object) };
+                  console.log('[AppContext] Successfully fetched product:', productData);
+                } else {
+                  console.log('[AppContext] Product document does not exist:', sub.product.path);
+                  productData = { id: sub.product.id, name: 'Unknown Product' };
                 }
-              } else if (typeof sub.product === 'string') {
-                // It's a string ID, use Firewand
-                try {
-                  productData = await getProduct(payments, sub.product);
-                } catch (productError) {
-                  console.error(`[AppContext] Could not fetch product ${sub.product}:`, productError);
-                  productData = { id: sub.product, name: 'Unknown Product' };
-                }
+              } catch (productError) {
+                console.error(`[AppContext] Error fetching product from reference:`, productError);
+                productData = { id: sub.product.id || 'unknown', name: 'Unknown Product' };
               }
-
-              // Handle DocumentReference for price
-              if (sub.price && typeof sub.price === 'object' && 'path' in sub.price) {
-                // It's a DocumentReference, fetch the data
-                try {
-                  console.log('[AppContext] Fetching price DocumentReference:', sub.price.path);
-                  const priceSnapshot = await getDoc(sub.price);
-                  if (priceSnapshot.exists()) {
-                    priceData = { id: priceSnapshot.id, ...(priceSnapshot.data() as object) };
-                    console.log('[AppContext] Successfully fetched price:', priceData);
-                  } else {
-                    console.log('[AppContext] Price document does not exist:', sub.price.path);
-                    priceData = { id: sub.price.id };
-                  }
-                } catch (priceError) {
-                  console.error(`[AppContext] Error fetching price from reference:`, priceError);
-                  priceData = { id: sub.price.id || 'unknown' };
-                }
-              } else if (typeof sub.price === 'string' && typeof sub.product === 'string') {
-                // It's a string ID, use Firewand
-                try {
-                  priceData = await getPrice(payments, sub.product, sub.price);
-                } catch (priceError) {
-                  console.error(`[AppContext] Could not fetch price ${sub.price}:`, priceError);
-                  priceData = { id: sub.price };
-                }
+            } else if (typeof sub.product === 'string') {
+              // It's a string ID, use Firewand
+              try {
+                productData = await getProduct(payments, sub.product);
+              } catch (productError) {
+                console.error(`[AppContext] Could not fetch product ${sub.product}:`, productError);
+                productData = { id: sub.product, name: 'Unknown Product' };
               }
-
-              return {
-                ...sub,
-                product: productData,
-                price: priceData
-              };
-            } catch (error) {
-              console.error('[AppContext] Error enriching subscription:', error);
-              // Return subscription with minimal data if enrichment fails completely
-              return {
-                ...sub,
-                product: typeof sub.product === 'string' ? { id: sub.product, name: 'Unknown Product' } : sub.product,
-                price: typeof sub.price === 'string' ? { id: sub.price } : sub.price
-              };
             }
-          })
-        );
 
-        dispatch({ type: 'SET_SUBSCRIPTIONS', payload: enrichedSubs });
-      } catch (error) {
-        console.error('[AppContext] Error refreshing subscriptions:', error);
-        dispatch({ type: 'SET_SUBSCRIPTIONS_ERROR', payload: (error as Error).message });
-      }
-    },
-    [user]
-  );
+            // Handle DocumentReference for price
+            if (sub.price && typeof sub.price === 'object' && 'path' in sub.price) {
+              // It's a DocumentReference, fetch the data
+              try {
+                console.log('[AppContext] Fetching price DocumentReference:', sub.price.path);
+                const priceSnapshot = await getDoc(sub.price);
+                if (priceSnapshot.exists()) {
+                  priceData = { id: priceSnapshot.id, ...(priceSnapshot.data() as object) };
+                  console.log('[AppContext] Successfully fetched price:', priceData);
+                } else {
+                  console.log('[AppContext] Price document does not exist:', sub.price.path);
+                  priceData = { id: sub.price.id };
+                }
+              } catch (priceError) {
+                console.error(`[AppContext] Error fetching price from reference:`, priceError);
+                priceData = { id: sub.price.id || 'unknown' };
+              }
+            } else if (typeof sub.price === 'string' && typeof sub.product === 'string') {
+              // It's a string ID, use Firewand
+              try {
+                priceData = await getPrice(payments, sub.product, sub.price);
+              } catch (priceError) {
+                console.error(`[AppContext] Could not fetch price ${sub.price}:`, priceError);
+                priceData = { id: sub.price };
+              }
+            }
+
+            return {
+              ...sub,
+              product: productData,
+              price: priceData,
+            };
+          } catch (error) {
+            console.error('[AppContext] Error enriching subscription:', error);
+            // Return subscription with minimal data if enrichment fails completely
+            return {
+              ...sub,
+              product:
+                typeof sub.product === 'string'
+                  ? { id: sub.product, name: 'Unknown Product' }
+                  : sub.product,
+              price: typeof sub.price === 'string' ? { id: sub.price } : sub.price,
+            };
+          }
+        })
+      );
+
+      dispatch({ type: 'SET_SUBSCRIPTIONS', payload: enrichedSubs });
+    } catch (error) {
+      console.error('[AppContext] Error refreshing subscriptions:', error);
+      dispatch({ type: 'SET_SUBSCRIPTIONS_ERROR', payload: (error as Error).message });
+    }
+  }, [user]);
 
   // Fetch subscriptions when user logs in
   useEffect(() => {

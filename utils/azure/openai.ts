@@ -490,14 +490,17 @@ function buildCourseContextBlock(ctx: CourseAiContext, currentValue?: string): s
         block.push(`Key points:\n- ${l.keyPoints.join('\n- ')}`);
       }
       if (l.transcript) {
-        const t = l.transcript.length > MAX_PER_LESSON_TRANSCRIPT_CHARS
-          ? l.transcript.slice(0, MAX_PER_LESSON_TRANSCRIPT_CHARS) + '\n[truncated]'
-          : l.transcript;
+        const t =
+          l.transcript.length > MAX_PER_LESSON_TRANSCRIPT_CHARS
+            ? l.transcript.slice(0, MAX_PER_LESSON_TRANSCRIPT_CHARS) + '\n[truncated]'
+            : l.transcript;
         block.push(`Transcript excerpt:\n${t}`);
       }
       const text = block.join('\n');
       if (total + text.length > MAX_TOTAL_CONTEXT_CHARS) {
-        lessonBlocks.push(`### Lesson ${i + 1}: ${l.name || '(untitled)'}\n[further lessons truncated]`);
+        lessonBlocks.push(
+          `### Lesson ${i + 1}: ${l.name || '(untitled)'}\n[further lessons truncated]`
+        );
         break;
       }
       lessonBlocks.push(text);
@@ -535,9 +538,7 @@ export async function generateCourseField(opts: {
 
   const ctx = opts.context || {};
   const hasContext =
-    (ctx.lessons && ctx.lessons.length > 0) ||
-    !!ctx.courseDescription ||
-    !!ctx.courseName;
+    (ctx.lessons && ctx.lessons.length > 0) || !!ctx.courseDescription || !!ctx.courseName;
   if (!hasContext) {
     throw new Error('Add at least a course title or one lesson before using AI fill.');
   }
@@ -550,7 +551,7 @@ export async function generateCourseField(opts: {
     {
       role: 'system' as const,
       content:
-        'You are an expert course designer and marketer assisting an instructor while they author a paid online course in an admin form. You receive ALL of the course\'s lessons (titles, descriptions, summaries, key points and transcript excerpts). Generate the requested course-level field grounded in this material. Always reply with valid JSON matching the requested schema, in the same language as the lessons.',
+        "You are an expert course designer and marketer assisting an instructor while they author a paid online course in an admin form. You receive ALL of the course's lessons (titles, descriptions, summaries, key points and transcript excerpts). Generate the requested course-level field grounded in this material. Always reply with valid JSON matching the requested schema, in the same language as the lessons.",
     },
     {
       role: 'user' as const,
@@ -580,21 +581,26 @@ Rules:
   });
   if (!res.ok) {
     const text = await res.text().catch(() => '');
-    throw new Error(`Azure OpenAI request failed: ${res.status} ${res.statusText} ${text.slice(0, 400)}`);
+    throw new Error(
+      `Azure OpenAI request failed: ${res.status} ${res.statusText} ${text.slice(0, 400)}`
+    );
   }
   const json = (await res.json()) as { choices?: Array<{ message?: { content?: string } }> };
   const content = json.choices?.[0]?.message?.content?.trim();
   if (!content) throw new Error('Azure OpenAI returned no content');
 
   let parsed: { value?: unknown; values?: unknown };
-  try { parsed = JSON.parse(content) as typeof parsed; }
-  catch { throw new Error(`Azure OpenAI returned non-JSON content: ${content.slice(0, 200)}`); }
+  try {
+    parsed = JSON.parse(content) as typeof parsed;
+  } catch {
+    throw new Error(`Azure OpenAI returned non-JSON content: ${content.slice(0, 200)}`);
+  }
 
   if (spec.isList) {
     const values = Array.isArray(parsed.values)
       ? parsed.values
-        .filter((v): v is string => typeof v === 'string' && v.trim().length > 0)
-        .map((v) => v.trim())
+          .filter((v): v is string => typeof v === 'string' && v.trim().length > 0)
+          .map((v) => v.trim())
       : [];
     return { field: opts.field, values, model: deployment };
   }
@@ -624,7 +630,9 @@ export interface CourseImagePromptInput {
 }
 
 /** Asks the chat model to write a single high-quality image prompt. */
-export async function generateCourseImagePrompt(input: CourseImagePromptInput): Promise<{ prompt: string; model: string }> {
+export async function generateCourseImagePrompt(
+  input: CourseImagePromptInput
+): Promise<{ prompt: string; model: string }> {
   const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
   const apiKey = process.env.AZURE_OPENAI_API_KEY;
   const deployment = process.env.AZURE_OPENAI_DEPLOYMENT;
@@ -671,13 +679,18 @@ Return JSON: { "prompt": "<single self-contained image prompt, no quotes inside,
   });
   if (!res.ok) {
     const text = await res.text().catch(() => '');
-    throw new Error(`Image-prompt generation failed: ${res.status} ${res.statusText} ${text.slice(0, 300)}`);
+    throw new Error(
+      `Image-prompt generation failed: ${res.status} ${res.statusText} ${text.slice(0, 300)}`
+    );
   }
   const json = (await res.json()) as { choices?: Array<{ message?: { content?: string } }> };
   const content = json.choices?.[0]?.message?.content?.trim() || '';
   let prompt = '';
-  try { prompt = String((JSON.parse(content) as { prompt?: string }).prompt || '').trim(); }
-  catch { prompt = content; }
+  try {
+    prompt = String((JSON.parse(content) as { prompt?: string }).prompt || '').trim();
+  } catch {
+    prompt = content;
+  }
   if (!prompt) throw new Error('Image-prompt generation returned empty prompt');
   return { prompt, model: deployment };
 }
@@ -698,55 +711,35 @@ export async function generateCourseImage(opts: {
   /** 'low' | 'medium' | 'high' | 'auto' — gpt-image-1 quality knob. */
   quality?: 'low' | 'medium' | 'high' | 'auto';
 }): Promise<CourseImageResult> {
-  // Trim env vars defensively — copy-pasted .env values frequently carry
-  // trailing whitespace / CR that, when interpolated into the URL, cause
-  // Azure's front-end gateway to respond with an HTML "HTTP Error 400 -
-  // Invalid URL" page (rather than a normal JSON error from the API).
-  const endpoint = process.env.AZURE_OPENAI_ENDPOINT?.trim();
-  const apiKey = process.env.AZURE_OPENAI_API_KEY?.trim();
-  const imageDeployment = process.env.AZURE_OPENAI_IMAGE_DEPLOYMENT?.trim();
-  const apiVersion = (process.env.AZURE_OPENAI_IMAGE_API_VERSION || IMAGE_API_VERSION).trim();
+  const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
+  const apiKey = process.env.AZURE_OPENAI_API_KEY;
+  const imageDeployment = process.env.AZURE_OPENAI_IMAGE_DEPLOYMENT;
   if (!endpoint || !apiKey || !imageDeployment) {
-    throw new Error('AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_API_KEY and AZURE_OPENAI_IMAGE_DEPLOYMENT must be set');
+    throw new Error(
+      'AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_API_KEY and AZURE_OPENAI_IMAGE_DEPLOYMENT must be set'
+    );
   }
-  if (!/^https:\/\/[^\s/]+/.test(endpoint)) {
-    throw new Error(`AZURE_OPENAI_ENDPOINT looks invalid (expected https://<resource>.openai.azure.com): "${endpoint}"`);
-  }
-  // Deployment names may only contain letters, digits, dashes and underscores.
-  if (!/^[A-Za-z0-9_-]+$/.test(imageDeployment)) {
-    throw new Error(`AZURE_OPENAI_IMAGE_DEPLOYMENT contains invalid characters: "${imageDeployment}"`);
-  }
-  const size = opts.size || '1536x1024';   // landscape for course cards
+  const size = opts.size || '1536x1024'; // landscape for course cards
   const quality = opts.quality || 'high';
-  const url = `${endpoint.replace(/\/+$/, '')}/openai/deployments/${encodeURIComponent(imageDeployment)}/images/generations?api-version=${encodeURIComponent(apiVersion)}`;
-  let res: Response;
-  try {
-    res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'api-key': apiKey },
-      body: JSON.stringify({
-        prompt: opts.prompt,
-        n: 1,
-        size,
-        quality,
-        output_format: 'png',
-      }),
-    });
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : 'Unknown fetch error';
-    throw new Error(`Image generation network error calling Azure OpenAI (${url.replace(/api-version=[^&]+/, 'api-version=***')}): ${msg}`);
-  }
+  const url = `${endpoint.replace(/\/$/, '')}/openai/deployments/${encodeURIComponent(imageDeployment)}/images/generations?api-version=${encodeURIComponent(IMAGE_API_VERSION)}`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'api-key': apiKey },
+    body: JSON.stringify({
+      prompt: opts.prompt,
+      n: 1,
+      size,
+      quality,
+      output_format: 'png',
+    }),
+  });
   if (!res.ok) {
     const text = await res.text().catch(() => '');
-    // If Azure's gateway returned HTML, surface a more actionable error so
-    // the operator knows it's an URL/config issue, not a model issue.
-    const looksLikeGatewayError = text.trimStart().startsWith('<');
-    const hint = looksLikeGatewayError
-      ? ' — looks like an Azure gateway rejection. Verify AZURE_OPENAI_ENDPOINT (no trailing slash/whitespace), AZURE_OPENAI_IMAGE_DEPLOYMENT name, and that AZURE_OPENAI_IMAGE_API_VERSION matches a version that supports gpt-image-1 (e.g. 2025-04-01-preview).'
-      : '';
-    throw new Error(`Image generation failed: ${res.status} ${res.statusText}${hint} ${text.slice(0, 400)}`);
+    throw new Error(
+      `Image generation failed: ${res.status} ${res.statusText} ${text.slice(0, 400)}`
+    );
   }
-  const json = (await res.json()) as { data?: Array<{ b64_json?: string; url?: string }>; };
+  const json = (await res.json()) as { data?: Array<{ b64_json?: string; url?: string }> };
   const item = json.data?.[0];
   if (!item) throw new Error('Image generation returned no data');
 

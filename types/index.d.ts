@@ -294,13 +294,13 @@ export interface Course {
   updatedAt?: string | Date;
   /** The instructor/author of the course. */
   instructor?:
-  | string
-  | {
-    name?: string;
-    photoUrl?: string;
-    bio?: string;
-    title?: string;
-  };
+    | string
+    | {
+        name?: string;
+        photoUrl?: string;
+        bio?: string;
+        title?: string;
+      };
   /** Alternative name for instructor (used in some components) */
   instructorName?: string;
   /** Course rating average */
@@ -725,8 +725,8 @@ export interface AdminAnalytics {
   newUsers: number;
   /** New sales in the last 30 days. */
   newSales: number;
-  /** Total number of successful sales (payments) all-time. */
-  totalSalesCount: number;
+  /** Total number of completed sales (used to compute average sale value). */
+  totalSalesCount?: number;
   /** Monthly revenue breakdown. */
   monthlyRevenue: Record<string, number>;
   /** Popular courses by enrollment. */
@@ -760,26 +760,16 @@ export interface AdminSettings {
 }
 
 /**
- * Public, admin-managed runtime configuration.
- *
- * Stored in Firestore at `config/public`. Readable by anyone, writable only by
- * admins (see `firestore.rules`). MUST contain only values that are safe to
- * expose to the public web — e.g. Stripe price IDs, which are public
- * identifiers in the same family as the `pk_*` publishable key. NEVER store
- * secret keys, webhook secrets, API tokens, or PII here.
+ * Public, admin-managed runtime configuration stored at `config/public`
+ * in Firestore. Readable by anyone, writable only by admins. NEVER store
+ * secrets here.
  */
 export interface PublicConfig {
-  /** Stripe price IDs the checkout client needs to know about. */
   stripe?: {
-    /**
-     * Price ID for the GitHub + Microsoft account subscription
-     * (used by `/profile/github` and the admin GitHub accounts tab).
-     */
+    /** Stripe price ID used for the GitHub Copilot subscription checkout. */
     githubPriceId?: string;
   };
-  /** Server-side timestamp of last update. Optional; informational only. */
   updatedAt?: unknown;
-  /** Admin uid that last updated this document. Optional; informational only. */
   updatedBy?: string;
 }
 

@@ -13,7 +13,6 @@ import { AppContext } from '@/components/AppContext';
 import { firestoreDB } from '@/utils/firebase/firebase.config';
 import type { Course, Lesson } from '@/types';
 import { getCoursePrice as getUnifiedCoursePrice } from '@/utils/pricing';
-import { stripHtml } from '@/utils/security/htmlSanitizer';
 
 type LatestLesson = Lesson & {
   courseId: string;
@@ -110,29 +109,7 @@ const LatestLessonsSection = React.memo(function LatestLessonsSection() {
   const recommendedCourses = useMemo(() => {
     const allCourses = Object.values(courses) as Course[];
     const enrolledIds = Array.from(ownedCourseIds);
-
-    // Set of course IDs that have at least one published lesson, derived from
-    // the latest-lessons fetch we already perform above. Used to filter out
-    // empty/draft courses below.
-    const courseIdsWithLessons = new Set(latestLessons.map((l) => l.courseId));
-
-    // Filter out:
-    //  - courses the user is already enrolled in
-    //  - courses that are still drafts: 0 price AND no lessons published yet
-    //    (these typically appear as "0 RON" placeholders that aren't ready to
-    //    promote in the recommendations sidebar).
-    const notEnrolled = allCourses.filter((c) => {
-      if (enrolledIds.includes(c.id)) return false;
-      const priceInfo = getUnifiedCoursePrice(c, products);
-      const hasPrice = (priceInfo?.amount ?? 0) > 0;
-      const hasLessons =
-        courseIdsWithLessons.has(c.id) ||
-        (typeof c.lessonsCount === 'number' && c.lessonsCount > 0);
-      // A course is "ready" when it either has a real price OR at least one
-      // published lesson. Drafts with no price AND no lessons are excluded.
-      if (!hasPrice && !hasLessons) return false;
-      return true;
-    });
+    const notEnrolled = allCourses.filter((c) => !enrolledIds.includes(c.id));
 
     // Build user interests from owned courses' tags
     const interests = new Set<string>();
@@ -148,14 +125,14 @@ const LatestLessonsSection = React.memo(function LatestLessonsSection() {
           match: course.tags ? course.tags.filter((tg) => interests.has(tg)).length : 0,
         }))
         .sort((a, b) => b.match - a.match)
-        .slice(0, 3)
+        .slice(0, 4)
         .map((x) => x.course);
     }
 
     return notEnrolled
       .sort((a, b) => (b.reviews?.length || 0) - (a.reviews?.length || 0))
-      .slice(0, 3);
-  }, [courses, ownedCourseIds, latestLessons, products]);
+      .slice(0, 4);
+  }, [courses, ownedCourseIds]);
 
   const handleLessonClick = useCallback(
     (lesson: LatestLesson) => {
@@ -185,9 +162,7 @@ const LatestLessonsSection = React.memo(function LatestLessonsSection() {
           <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--ai-foreground)]">
             {t('title')}
           </h2>
-          <p className="mt-3 text-[color:var(--ai-muted)] max-w-2xl mx-auto">
-            {t('subtitle')}
-          </p>
+          <p className="mt-3 text-[color:var(--ai-muted)] max-w-2xl mx-auto">{t('subtitle')}</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
@@ -218,10 +193,7 @@ const LatestLessonsSection = React.memo(function LatestLessonsSection() {
                 {loading ? (
                   <ul className="p-2">
                     {Array.from({ length: 6 }).map((_, i) => (
-                      <li
-                        key={i}
-                        className="flex gap-4 p-3 animate-pulse"
-                      >
+                      <li key={i} className="flex gap-4 p-3 animate-pulse">
                         <div className="h-16 w-24 rounded-lg bg-[color:var(--ai-muted)]/10 flex-shrink-0" />
                         <div className="flex-1 space-y-2">
                           <div className="h-4 w-3/4 rounded bg-[color:var(--ai-muted)]/10" />
@@ -251,7 +223,7 @@ const LatestLessonsSection = React.memo(function LatestLessonsSection() {
                         ownedCourseIds.has(lesson.courseId) ||
                         lesson.isFree;
                       const lessonName = lesson.name || lesson.title || 'Untitled lesson';
-                      const lessonDesc = lesson.description ? stripHtml(lesson.description) : '';
+                      const lessonDesc = lesson.description || '';
                       const thumb = lesson.thumbnail || lesson.thumbnailUrl || course?.imageUrl;
 
                       return (
@@ -419,7 +391,7 @@ const LatestLessonsSection = React.memo(function LatestLessonsSection() {
                         </h4>
                         {course.description && (
                           <p className="mt-1.5 text-xs text-[color:var(--ai-muted)] line-clamp-2 leading-relaxed">
-                            {stripHtml(course.description)}
+                            {course.description}
                           </p>
                         )}
                         <div className="mt-3 flex items-center justify-between">

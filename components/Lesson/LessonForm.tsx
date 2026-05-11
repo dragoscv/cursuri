@@ -3,15 +3,7 @@ import { useTranslations } from 'next-intl';
 import { AppContext } from '@/components/AppContext';
 import { useToast } from '@/components/Toast/ToastContext';
 import { firestoreDB, firebaseStorage } from '@/utils/firebase/firebase.config';
-import {
-  doc,
-  addDoc,
-  collection,
-  updateDoc,
-  deleteDoc,
-  getDoc,
-  getDocs,
-} from 'firebase/firestore';
+import { doc, addDoc, collection, updateDoc, deleteDoc, getDoc, getDocs } from 'firebase/firestore';
 import { ref, getDownloadURL, uploadBytesResumable, deleteObject } from 'firebase/storage';
 import { motion } from 'framer-motion';
 import { FiBook } from '../icons/FeatherIcons';
@@ -124,7 +116,9 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
   const [embedUrl, setEmbedUrl] = useState('');
   const [embedType, setEmbedType] = useState<'youtube' | 'codepen' | 'github' | 'other'>('youtube');
   const [transcription, setTranscription] = useState('');
-  const [chapters, setChapters] = useState<import('@/types').LessonChapter[] | undefined>(undefined);
+  const [chapters, setChapters] = useState<import('@/types').LessonChapter[] | undefined>(
+    undefined
+  );
   const [existingTranslations, setExistingTranslations] = useState<
     Record<string, ExistingTranslation> | undefined
   >(undefined);
@@ -132,7 +126,9 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
     Record<string, { url?: string; content?: string }> | undefined
   >(undefined);
   const [transcriptionLanguage, setTranscriptionLanguage] = useState<string>('en-US');
-  const [activeTranslationJobId, setActiveTranslationJobId] = useState<string | undefined>(undefined);
+  const [activeTranslationJobId, setActiveTranslationJobId] = useState<string | undefined>(
+    undefined
+  );
 
   // ----- Resources tab -----
   const [repoUrl, setRepoUrl] = useState('');
@@ -276,11 +272,8 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
             try {
               const url = new URL(lesson.file);
               const pathname = decodeURIComponent(url.pathname);
-              // Extract filename from path like /v0/b/bucket/o/lessons%2FcourseId%2Ffilename.
-              // Note: pathname has been decoded above, so it contains literal `/`.
-              // The character class also tolerates leftover `%2F` characters in
-              // case decoding partially failed.
-              const match = pathname.match(/lessons[/%2F]+[^/%2F]+[/%2F]+([^?]+)/);
+              // Extract filename from path like /v0/b/bucket/o/lessons%2FcourseId%2Ffilename
+              const match = pathname.match(/lessons[/%2F][^/%2F]+[/%2F]([^?]+)/);
               if (match && match[1]) {
                 // Remove timestamp suffix if present (e.g., _1234567890)
                 const filename = match[1].replace(/_\d+(\.[^.]+)$/, '$1');
@@ -423,7 +416,10 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
       next.lessonOrder = t('validationOrderInvalid');
     }
 
-    if (durationMinutes !== '' && (Number(durationMinutes) < 0 || Number.isNaN(Number(durationMinutes)))) {
+    if (
+      durationMinutes !== '' &&
+      (Number(durationMinutes) < 0 || Number.isNaN(Number(durationMinutes)))
+    ) {
       next.durationMinutes = t('validationDurationInvalid');
     }
 
@@ -510,7 +506,10 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
           setUploadingFile(file.name);
 
           const sanitizedName = sanitizeFilename(file.name);
-          const storageRef = ref(firebaseStorage, `lessons/${courseId}/${sanitizedName}_${Date.now()}`);
+          const storageRef = ref(
+            firebaseStorage,
+            `lessons/${courseId}/${sanitizedName}_${Date.now()}`
+          );
 
           // Use uploadBytesResumable for progress tracking
           const uploadTask = uploadBytesResumable(storageRef, file);
@@ -778,7 +777,10 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
           setUploadingFile(file.name);
 
           const sanitizedName = sanitizeFilename(file.name);
-          const storageRef = ref(firebaseStorage, `lessons/${courseId}/${sanitizedName}_${Date.now()}`);
+          const storageRef = ref(
+            firebaseStorage,
+            `lessons/${courseId}/${sanitizedName}_${Date.now()}`
+          );
           const uploadTask = uploadBytesResumable(storageRef, file);
 
           const downloadURL = await new Promise<string>((resolve, reject) => {
@@ -1111,35 +1113,38 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
 
       // Validate file type - check both MIME type and extension
       const fileName = droppedFile.name.toLowerCase();
-      const isVideo = droppedFile.type.startsWith('video/') ||
+      const isVideo =
+        droppedFile.type.startsWith('video/') ||
         fileName.endsWith('.mkv') ||
         fileName.endsWith('.mp4') ||
         fileName.endsWith('.webm') ||
         fileName.endsWith('.avi') ||
         fileName.endsWith('.mov');
 
-      const acceptedTypes = lessonType === 'video'
-        ? isVideo
-        : droppedFile.type.includes('pdf') ||
-        droppedFile.type.includes('image') ||
-        droppedFile.type.includes('zip') ||
-        droppedFile.type.includes('document');
+      const acceptedTypes =
+        lessonType === 'video'
+          ? isVideo
+          : droppedFile.type.includes('pdf') ||
+            droppedFile.type.includes('image') ||
+            droppedFile.type.includes('zip') ||
+            droppedFile.type.includes('document');
 
       if (acceptedTypes) {
         // Simulate file input change
         const fileChangeEvent = {
           target: {
-            files: [droppedFile]
-          }
+            files: [droppedFile],
+          },
         } as any;
         handleFileChange(fileChangeEvent);
       } else {
         showToast({
           type: 'error',
           title: 'Invalid File Type',
-          message: lessonType === 'video'
-            ? 'Please drop a video file'
-            : 'Please drop a valid file (PDF, image, ZIP, or document)',
+          message:
+            lessonType === 'video'
+              ? 'Please drop a video file'
+              : 'Please drop a valid file (PDF, image, ZIP, or document)',
           duration: 4000,
         });
       }
@@ -1599,11 +1604,7 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
 
                   <div className="flex items-center gap-4 mb-6">
                     <div className="flex-1">
-                      <Switch
-                        isSelected={isFree}
-                        onValueChange={setIsFree}
-                        color="primary"
-                      >
+                      <Switch isSelected={isFree} onValueChange={setIsFree} color="primary">
                         {t('freePreviewLesson')}
                       </Switch>
                     </div>
@@ -1614,10 +1615,11 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                     {t('file')}
                   </label>
                   <div
-                    className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all mb-6 ${isDragging
-                      ? 'border-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10 shadow-xl'
-                      : 'border-[color:var(--ai-card-border)] hover:bg-[color:var(--ai-card-bg)]/50 hover:border-[color:var(--ai-primary)]/30 hover:shadow-lg'
-                      }`}
+                    className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all mb-6 ${
+                      isDragging
+                        ? 'border-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10 shadow-xl'
+                        : 'border-[color:var(--ai-card-border)] hover:bg-[color:var(--ai-card-bg)]/50 hover:border-[color:var(--ai-primary)]/30 hover:shadow-lg'
+                    }`}
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
@@ -1638,8 +1640,12 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                               <div className="mt-3 px-4 py-2 bg-[color:var(--ai-card-bg)]/60 border border-[color:var(--ai-card-border)] rounded-lg">
                                 <p className="text-sm text-[color:var(--ai-muted)] flex items-center gap-2">
                                   <FiVideo size={16} className="text-[color:var(--ai-primary)]" />
-                                  <span className="font-medium text-[color:var(--ai-foreground)]">{file.name}</span>
-                                  <span className="text-xs">({(file.size / (1024 * 1024)).toFixed(2)} MB)</span>
+                                  <span className="font-medium text-[color:var(--ai-foreground)]">
+                                    {file.name}
+                                  </span>
+                                  <span className="text-xs">
+                                    ({(file.size / (1024 * 1024)).toFixed(2)} MB)
+                                  </span>
                                 </p>
                               </div>
                             )}
@@ -1647,7 +1653,9 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                               <div className="mt-3 px-4 py-2 bg-[color:var(--ai-card-bg)]/60 border border-[color:var(--ai-card-border)] rounded-lg">
                                 <p className="text-sm text-[color:var(--ai-muted)] flex items-center gap-2">
                                   <FiVideo size={16} className="text-[color:var(--ai-primary)]" />
-                                  <span className="font-medium text-[color:var(--ai-foreground)]">{existingFileName}</span>
+                                  <span className="font-medium text-[color:var(--ai-foreground)]">
+                                    {existingFileName}
+                                  </span>
                                 </p>
                               </div>
                             )}
@@ -1692,8 +1700,7 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                         <p className="text-xs text-[color:var(--ai-muted)] mt-1">
                           {isDragging
                             ? 'Release to upload'
-                            : `${lessonType === 'video' ? t('videoUpTo100MB') : t('filesUpTo50MB')} • Or drag and drop`
-                          }
+                            : `${lessonType === 'video' ? t('videoUpTo100MB') : t('filesUpTo50MB')} • Or drag and drop`}
                         </p>{' '}
                         <input
                           type="file"
@@ -1831,7 +1838,13 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
           </Card>
         </Tab>
 
-        <Tab key="content" title={renderTabTitle(t('additionalContent'), errorTabs.has('media') || errorTabs.has('resources'))}>
+        <Tab
+          key="content"
+          title={renderTabTitle(
+            t('additionalContent'),
+            errorTabs.has('media') || errorTabs.has('resources')
+          )}
+        >
           <Card className="shadow-xl border border-[color:var(--ai-card-border)] overflow-hidden mb-8 hover:shadow-[color:var(--ai-primary)]/5 transition-all rounded-xl">
             <CardHeader className="flex gap-3 px-6 py-4 border-b border-[color:var(--ai-card-border)]/60 bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-transparent">
               <FiLayers className="text-[color:var(--ai-primary)]" size={20} />
@@ -2166,9 +2179,7 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
               <div className="mb-6 flex items-center justify-between gap-4 p-4 rounded-lg bg-[color:var(--ai-card-bg)]/50 border border-[color:var(--ai-card-border)]/50">
                 <div>
                   <p className="font-medium text-[color:var(--ai-foreground)]">{t('hasQuiz')}</p>
-                  <p className="text-sm text-[color:var(--ai-muted)]">
-                    {t('hasQuizDescription')}
-                  </p>
+                  <p className="text-sm text-[color:var(--ai-muted)]">{t('hasQuizDescription')}</p>
                 </div>
                 <Switch isSelected={hasQuiz} onValueChange={setHasQuiz} color="primary" />
               </div>
@@ -2300,24 +2311,27 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                                 {question.options.map((option, oIndex) => (
                                   <div
                                     key={oIndex}
-                                    className={`p-3 rounded-lg flex items-center gap-2 ${question.correctOption === oIndex
-                                      ? 'bg-green-100 dark:bg-green-900/20 border border-green-200 dark:border-green-800/30'
-                                      : 'bg-[color:var(--ai-card-bg)]/50 border border-[color:var(--ai-card-border)]/30'
-                                      }`}
+                                    className={`p-3 rounded-lg flex items-center gap-2 ${
+                                      question.correctOption === oIndex
+                                        ? 'bg-green-100 dark:bg-green-900/20 border border-green-200 dark:border-green-800/30'
+                                        : 'bg-[color:var(--ai-card-bg)]/50 border border-[color:var(--ai-card-border)]/30'
+                                    }`}
                                   >
                                     <div
-                                      className={`w-8 h-8 rounded-full flex items-center justify-center ${question.correctOption === oIndex
-                                        ? 'bg-green-200 dark:bg-green-800/30 text-green-800 dark:text-green-300'
-                                        : 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]'
-                                        } font-medium`}
+                                      className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                                        question.correctOption === oIndex
+                                          ? 'bg-green-200 dark:bg-green-800/30 text-green-800 dark:text-green-300'
+                                          : 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]'
+                                      } font-medium`}
                                     >
                                       {String.fromCharCode(65 + oIndex)}
                                     </div>
                                     <span
-                                      className={`${question.correctOption === oIndex
-                                        ? 'text-green-800 dark:text-green-300 font-medium'
-                                        : 'text-[color:var(--ai-foreground)]'
-                                        }`}
+                                      className={`${
+                                        question.correctOption === oIndex
+                                          ? 'text-green-800 dark:text-green-300 font-medium'
+                                          : 'text-[color:var(--ai-foreground)]'
+                                      }`}
                                     >
                                       {option}
                                     </span>
@@ -2346,7 +2360,6 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                       )}
                     </div>
                   </div>
-
                 </div>
               )}
 
@@ -2361,7 +2374,9 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
                   <div className="space-y-4">
                     <div>
                       <label className="block text-[color:var(--ai-foreground)] font-medium mb-2">
-                        {t('watchPercentageLabel', { percentage: completionCriteria.watchPercentage })}
+                        {t('watchPercentageLabel', {
+                          percentage: completionCriteria.watchPercentage,
+                        })}
                       </label>
                       <input
                         type="range"
@@ -2416,7 +2431,10 @@ export default function LessonForm({ courseId, lessonId, onClose, onSave }: Less
           </Card>
         </Tab>
 
-        <Tab key="translations" title={renderTabTitle(t('translationsTab') || 'Translations', false)}>
+        <Tab
+          key="translations"
+          title={renderTabTitle(t('translationsTab') || 'Translations', false)}
+        >
           <Card className="shadow-xl border border-[color:var(--ai-card-border)] overflow-hidden mb-8 hover:shadow-[color:var(--ai-primary)]/5 transition-all rounded-xl">
             <CardHeader className="flex gap-3 px-6 py-4 border-b border-[color:var(--ai-card-border)]/60 bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-transparent">
               <FiLayers className="text-[color:var(--ai-primary)]" size={20} />

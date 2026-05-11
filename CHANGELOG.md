@@ -6,6 +6,29 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-05-11
+
+### Fixed
+
+- Admin role no longer gets silently wiped to `user` on transient Firestore
+  read failures during sign-in. `getUserProfile()` now throws on read errors
+  and returns `null` only when the document is verified to not exist.
+  `createOrUpdateUserProfile()` only refreshes auth-derived fields
+  (`email`, `displayName`, `photoURL`, `emailVerified`) on existing docs and
+  never touches `role`, `permissions`, `isActive`, or `createdAt`.
+- The auth handler in `AppContext` bails out on profile read errors instead
+  of recreating the profile, and no longer resets `isAdmin` to `false` on
+  transient errors.
+- `ClientLessonWrapper` waits for `authLoading` to settle before deciding
+  access, so admins no longer briefly see "Access denied" while the auth
+  handler is still loading the user profile.
+- Add missing `PublicConfig` and `AdminAnalytics.totalSalesCount` type
+  members, plus `refreshProducts.recurring`, to fix TypeScript build errors.
+- Resolve pre-existing `no-useless-escape` lint errors in
+  `components/Lesson/LessonForm.tsx` and `utils/security/envValidation.ts`,
+  and silence `no-constant-binary-expression` on the intentionally-disabled
+  audio block in `LessonAIContent`.
+
 ## [0.4.0] - 2026-05-08
 
 ### Added
