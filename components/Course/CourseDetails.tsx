@@ -102,14 +102,9 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
             </div>
           }
         >
-          <motion.div
-            key="overview-content"
-            variants={tabContentVariants}
-            initial="hidden"
-            animate="visible"
-          >
+          <div key="overview-content">
             <CourseOverview course={course} />
-          </motion.div>
+          </div>
         </Tab>
 
         <Tab
@@ -137,12 +132,7 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
             </div>
           }
         >
-          <motion.div
-            key="content-content"
-            variants={tabContentVariants}
-            initial="hidden"
-            animate="visible"
-          >
+          <div key="content-content">
             {courseId && (
               <div className="bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)]/30 rounded-xl p-1 shadow-inner">
                 {' '}
@@ -256,7 +246,7 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
                   </p>
                 </div>
               )}
-          </motion.div>
+          </div>
         </Tab>
 
         <Tab
@@ -293,14 +283,9 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
             </div>
           }
         >
-          <motion.div
-            key="reviews-content"
-            variants={tabContentVariants}
-            initial="hidden"
-            animate="visible"
-          >
+          <div key="reviews-content">
             <Reviews courseId={courseId || course.id} isPurchased={hasAccess} />
-          </motion.div>
+          </div>
         </Tab>
       </Tabs>
     </Card>

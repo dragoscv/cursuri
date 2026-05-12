@@ -6,6 +6,24 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.18.6] - 2026-05-12
+
+### Fixed — NotFoundError crash on course detail tab switch
+
+v0.18.5 verified the editorial pass landed, but clicking the
+"Prezentare Generală" tab on /courses/[slug] triggered
+`Failed to execute 'removeChild' on 'Node'` from framer-motion. The three
+per-tab `motion.div` content wrappers (with `variants={tabContentVariants}
+initial="hidden" animate="visible"`) were the trigger: HeroUI `<Tab>`
+mounts/unmounts the active tab's content tree, and React 19's stricter
+reconciliation collides with framer-motion's portal-style DOM manipulation
+when the new tab's `motion.div` initializes its variants while the old
+one is being torn down.
+
+Fix: replaced the three `motion.div` tab-content wrappers in
+`components/Course/CourseDetails.tsx` with plain `<div>` elements. The
+slide-in animation between tabs is gone — worth it to stop the crash.
+
 ## [0.18.5] - 2026-05-12
 
 ### Changed — /courses/[courseId] editorial pass
