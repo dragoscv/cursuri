@@ -76,7 +76,7 @@ AppContext.displayName = 'AppContext';
 // Default user preferences
 const defaultUserPreferences: UserPreferences = {
   isDark: false,
-  colorScheme: 'modern-purple',
+  colorScheme: 'cinematic',
   emailNotifications: true,
   courseUpdates: true,
   marketingEmails: false,
@@ -93,7 +93,7 @@ const DEFAULT_CACHE_OPTIONS: CacheOptions = {
 
 export const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [isDark, setIsDark] = useState(false);
-  const [colorScheme, setColorScheme] = useState<ColorScheme>('modern-purple');
+  const [colorScheme, setColorScheme] = useState<ColorScheme>('cinematic');
   const [user, setUser] = useState<User | null>(null);
   const [userPreferences, setUserPreferences] = useState<UserPreferences | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
@@ -196,8 +196,11 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
     (scheme: ColorScheme) => {
       setColorScheme(scheme);
 
-      // Remove all existing color scheme classes
+      // Remove any existing color scheme class (incl. legacy v0.5 names)
       document.documentElement.classList.remove(
+        'theme-cinematic',
+        'theme-ivory',
+        'theme-terminal',
         'theme-modern-purple',
         'theme-black-white',
         'theme-green-neon',
@@ -281,8 +284,11 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
           document.documentElement.classList.remove('dark');
         }
 
-        // Remove all color scheme classes and add the correct one
+        // Remove any existing color scheme class (incl. legacy v0.5 names)
         document.documentElement.classList.remove(
+          'theme-cinematic',
+          'theme-ivory',
+          'theme-terminal',
           'theme-modern-purple',
           'theme-black-white',
           'theme-green-neon',
@@ -292,7 +298,14 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
           'theme-red-blood',
           'theme-pink-candy'
         );
-        document.documentElement.classList.add(`theme-${preferences.colorScheme}`);
+        // Coerce legacy/unknown scheme values to the default
+        const validSchemes: ColorScheme[] = ['cinematic', 'ivory', 'terminal'];
+        const safeScheme: ColorScheme = validSchemes.includes(
+          preferences.colorScheme as ColorScheme
+        )
+          ? (preferences.colorScheme as ColorScheme)
+          : 'cinematic';
+        document.documentElement.classList.add(`theme-${safeScheme}`);
 
         return preferences;
       } else {
@@ -340,13 +353,13 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
       }
 
       // Set color scheme
-      if (savedColorScheme) {
-        setColorScheme(savedColorScheme);
-        document.documentElement.classList.add(`theme-${savedColorScheme}`);
-      } else {
-        // Default to modern-purple if no saved preference
-        document.documentElement.classList.add('theme-modern-purple');
-      }
+      const validSchemes: ColorScheme[] = ['cinematic', 'ivory', 'terminal'];
+      const safeScheme: ColorScheme =
+        savedColorScheme && validSchemes.includes(savedColorScheme as ColorScheme)
+          ? (savedColorScheme as ColorScheme)
+          : 'cinematic';
+      setColorScheme(safeScheme);
+      document.documentElement.classList.add(`theme-${safeScheme}`);
     } else {
       // If user is logged in, get preferences from Firestore
       getUserPreferences();

@@ -22,7 +22,7 @@ jest.mock('next/navigation', () => ({
 const createMockContext = (overrides = {}) => ({
   isDark: false,
   toggleTheme: jest.fn(),
-  colorScheme: 'modern-purple' as const,
+  colorScheme: 'cinematic' as const,
   setColorScheme: jest.fn(),
   userPreferences: null,
   saveUserPreferences: jest.fn(),
@@ -32,9 +32,7 @@ const createMockContext = (overrides = {}) => ({
   openModal: jest.fn(),
   closeModal: jest.fn(),
   updateModal: jest.fn(),
-  products: [
-    { id: 'prod1', name: 'Course Bundle', description: 'All courses included' }
-  ],
+  products: [{ id: 'prod1', name: 'Course Bundle', description: 'All courses included' }],
   isAdmin: false,
   courses: {
     '1': {
@@ -42,15 +40,15 @@ const createMockContext = (overrides = {}) => ({
       name: 'React Basics',
       title: 'React Basics',
       description: 'Learn React fundamentals',
-      status: 'active'
+      status: 'active',
     },
     '2': {
       id: '2',
       name: 'JavaScript Advanced',
       title: 'JavaScript Advanced',
       description: 'Advanced JS concepts',
-      status: 'active'
-    }
+      status: 'active',
+    },
   },
   courseLoadingStates: {},
   lessons: {},
@@ -86,7 +84,7 @@ const createMockContext = (overrides = {}) => ({
   subscriptionsError: null,
   refreshSubscriptions: jest.fn(),
   refreshCourses: jest.fn(),
-  ...overrides
+  ...overrides,
 });
 
 const renderWithContext = (contextValue = {}) => {
@@ -134,8 +132,10 @@ describe('SearchBar Component', () => {
     expect(buttons.length).toBeGreaterThanOrEqual(1);
 
     // Check that at least one button has search functionality
-    const hasSearchText = buttons.some(button =>
-      button.textContent?.includes('Search') || button.getAttribute('aria-label')?.includes('Search')
+    const hasSearchText = buttons.some(
+      (button) =>
+        button.textContent?.includes('Search') ||
+        button.getAttribute('aria-label')?.includes('Search')
     );
     expect(hasSearchText).toBeTruthy();
   });
@@ -172,7 +172,7 @@ describe('SearchBar Component', () => {
     renderWithContext();
 
     const buttons = screen.getAllByRole('button');
-    const hasSearchIcon = buttons.some(button => {
+    const hasSearchIcon = buttons.some((button) => {
       const svg = button.querySelector('svg');
       return svg && svg.querySelector('path[d*="21 21l-6-6"]'); // Search icon path
     });
@@ -186,8 +186,8 @@ describe('SearchBar Component', () => {
     const buttons = screen.getAllByRole('button');
 
     // Check for responsive classes
-    const hasResponsiveClasses = buttons.some(button =>
-      button.className.includes('md:flex') || button.className.includes('md:hidden')
+    const hasResponsiveClasses = buttons.some(
+      (button) => button.className.includes('md:flex') || button.className.includes('md:hidden')
     );
 
     expect(hasResponsiveClasses).toBeTruthy();
@@ -199,9 +199,11 @@ describe('SearchBar Component', () => {
     const buttons = screen.getAllByRole('button');
 
     // Should have both mobile (icon only) and desktop (with text) variants
-    const hasTextButton = buttons.some(button => button.textContent?.includes('Search courses'));
-    const hasIconOnlyButton = buttons.some(button =>
-      button.getAttribute('aria-label')?.includes('Search') && !button.textContent?.includes('Search courses')
+    const hasTextButton = buttons.some((button) => button.textContent?.includes('Search courses'));
+    const hasIconOnlyButton = buttons.some(
+      (button) =>
+        button.getAttribute('aria-label')?.includes('Search') &&
+        !button.textContent?.includes('Search courses')
     );
 
     expect(hasTextButton).toBeTruthy();

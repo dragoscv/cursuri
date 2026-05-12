@@ -44,16 +44,8 @@ export interface PageParams<T extends Record<string, string> = Record<string, st
   searchParams?: Record<string, string | string[]>;
 }
 
-// Add TypeScript types for color schemes
-export type ColorScheme =
-  | 'modern-purple'
-  | 'black-white'
-  | 'green-neon'
-  | 'blue-ocean'
-  | 'brown-sunset'
-  | 'yellow-morning'
-  | 'red-blood'
-  | 'pink-candy';
+// Add TypeScript types for color schemes (v0.6: 3 curated themes)
+export type ColorScheme = 'cinematic' | 'ivory' | 'terminal';
 
 // User preferences interface for storing settings in Firestore
 export interface UserPreferences {

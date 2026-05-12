@@ -387,150 +387,84 @@ a:not([class*='text-']):hover {
   /* #f87171 */
 }
 
-/* Theme: Modern Purple - Default Theme */
-html.theme-modern-purple {
+/* ============================================================
+   COLOR SCHEMES (v0.6) — 3 curated themes only.
+   Each works in both light and dark; light/dark is a separate flip.
+   - cinematic  : indigo/violet (default — premium AI lab)
+   - ivory      : warm amber/sand (editorial / premium)
+   - terminal   : emerald/charcoal (developer-bold accent)
+   ============================================================ */
+
+/* Theme: Cinematic (default) */
+html.theme-cinematic {
   --ai-primary: #6366f1;
   --ai-secondary: #8b5cf6;
   --ai-accent: #ec4899;
 }
-
-html.dark.theme-modern-purple {
+html.dark.theme-cinematic {
   --ai-primary: #818cf8;
   --ai-secondary: #a78bfa;
   --ai-accent: #f472b6;
   --ai-background: #030307;
   --background-start-rgb: 3, 3, 9;
-  /* Very dark with minimal purple tint */
   --background-end-rgb: 1, 1, 6;
   --section-dark-bg: #04050c;
 }
 
-/* Theme: Black and White */
-html.theme-black-white {
-  --ai-primary: #000000;
-  --ai-secondary: #404040;
-  --ai-accent: #737373;
-  --ai-card-border: #d4d4d4;
-}
-
-html.dark.theme-black-white {
-  --ai-primary: #ffffff;
-  --ai-secondary: #d4d4d4;
-  --ai-accent: #a3a3a3;
-  --ai-card-border: #525252;
-  --ai-background: #020304;
-  --background-start-rgb: 2, 3, 4;
-  /* Almost pure black with minimal cool tint */
-  --background-end-rgb: 1, 1, 2;
-  --section-dark-bg: #030405;
-}
-
-/* Theme: Green Neon */
-html.theme-green-neon {
-  --ai-primary: #10b981;
-  --ai-secondary: #059669;
-  --ai-accent: #34d399;
-}
-
-html.dark.theme-green-neon {
-  --ai-primary: #4ade80;
-  --ai-secondary: #22c55e;
-  --ai-accent: #86efac;
-  --ai-background: #020603;
-  --background-start-rgb: 2, 6, 3;
-  /* Almost black with minimal green tint */
-  --background-end-rgb: 1, 3, 2;
-  --section-dark-bg: #030704;
-}
-
-/* Theme: Blue Ocean */
-html.theme-blue-ocean {
-  --ai-primary: #0ea5e9;
-  --ai-secondary: #0284c7;
-  --ai-accent: #38bdf8;
-}
-
-html.dark.theme-blue-ocean {
-  --ai-primary: #38bdf8;
-  --ai-secondary: #0ea5e9;
-  --ai-accent: #7dd3fc;
-  --ai-background: #020508;
-  --background-start-rgb: 2, 5, 8;
-  /* Almost black with minimal blue tint */
-  --background-end-rgb: 1, 3, 6;
-  --section-dark-bg: #030609;
-}
-
-/* Theme: Brown Sunset */
-html.theme-brown-sunset {
-  --ai-primary: #b45309;
+/* Theme: Ivory — warm editorial */
+html.theme-ivory {
+  --ai-primary: #b45309; /* burnt amber */
   --ai-secondary: #92400e;
   --ai-accent: #d97706;
+  --ai-background: #fbf7ef; /* warm parchment */
+  --ai-foreground: #1c1917; /* warm charcoal */
+  --ai-muted: #78716c;
+  --ai-card-bg: #ffffff;
+  --ai-card-border: #e7e1d4;
+  --ai-primary-rgb: 180, 83, 9;
+  --ai-secondary-rgb: 146, 64, 14;
+  --ai-accent-rgb: 217, 119, 6;
 }
-
-html.dark.theme-brown-sunset {
+html.dark.theme-ivory {
   --ai-primary: #f59e0b;
-  --ai-secondary: #d97706;
-  --ai-accent: #fbbf24;
-  --ai-background: #050403;
-  --background-start-rgb: 5, 4, 3;
-  /* Almost black with minimal brown/amber tint */
-  --background-end-rgb: 3, 2, 1;
-  --section-dark-bg: #060504;
+  --ai-secondary: #fbbf24;
+  --ai-accent: #fcd34d;
+  --ai-background: #0c0a08;
+  --ai-foreground: #fef3c7;
+  --ai-muted: #a8a29e;
+  --ai-card-bg: #14110d;
+  --ai-card-border: #3a2f20;
+  --ai-primary-rgb: 245, 158, 11;
+  --ai-secondary-rgb: 251, 191, 36;
+  --ai-accent-rgb: 252, 211, 77;
+  --background-start-rgb: 12, 10, 8;
+  --background-end-rgb: 6, 5, 3;
+  --section-dark-bg: #0e0c08;
 }
 
-/* Theme: Yellow Morning */
-html.theme-yellow-morning {
-  --ai-primary: #eab308;
-  --ai-secondary: #ca8a04;
-  --ai-accent: #facc15;
+/* Theme: Terminal — emerald/charcoal developer-bold accent */
+html.theme-terminal {
+  --ai-primary: #059669;
+  --ai-secondary: #047857;
+  --ai-accent: #10b981;
+  --ai-primary-rgb: 5, 150, 105;
+  --ai-secondary-rgb: 4, 120, 87;
+  --ai-accent-rgb: 16, 185, 129;
 }
-
-html.dark.theme-yellow-morning {
-  --ai-primary: #facc15;
-  --ai-secondary: #eab308;
-  --ai-accent: #fde047;
-  --ai-background: #050503;
-  --background-start-rgb: 5, 5, 3;
-  /* Almost black with minimal yellow/gold tint */
-  --background-end-rgb: 3, 3, 1;
-  --section-dark-bg: #060604;
-}
-
-/* Theme: Red Blood */
-html.theme-red-blood {
-  --ai-primary: #dc2626;
-  --ai-secondary: #b91c1c;
-  --ai-accent: #ef4444;
-}
-
-html.dark.theme-red-blood {
-  --ai-primary: #ef4444;
-  --ai-secondary: #dc2626;
-  --ai-accent: #f87171;
-  --ai-background: #050303;
-  --background-start-rgb: 5, 3, 3;
-  /* Almost black with minimal red tint */
-  --background-end-rgb: 3, 2, 2;
-  --section-dark-bg: #18151b;
-}
-
-/* Theme: Pink Candy */
-html.theme-pink-candy {
-  --ai-primary: #db2777;
-  --ai-secondary: #be185d;
-  --ai-accent: #ec4899;
-}
-
-html.dark.theme-pink-candy {
-  --ai-primary: #ec4899;
-  --ai-secondary: #db2777;
-  --ai-accent: #f472b6;
-  --ai-background: #1a141e;
-  --background-start-rgb: 26, 20, 30;
-  /* Subtle pink/magenta tint in dark background */
-  --background-end-rgb: 22, 16, 26;
-  --section-dark-bg: #19131d;
+html.dark.theme-terminal {
+  --ai-primary: #34d399;
+  --ai-secondary: #10b981;
+  --ai-accent: #6ee7b7;
+  --ai-background: #02060a;
+  --ai-foreground: #ecfdf5;
+  --ai-card-bg: #07120e;
+  --ai-card-border: #1c3a2e;
+  --ai-primary-rgb: 52, 211, 153;
+  --ai-secondary-rgb: 16, 185, 129;
+  --ai-accent-rgb: 110, 231, 183;
+  --background-start-rgb: 2, 6, 10;
+  --background-end-rgb: 1, 4, 7;
+  --section-dark-bg: #03080d;
 }
 
 /* ============================================================
@@ -614,6 +548,56 @@ html.dark.theme-pink-candy {
   .orb-breath,
   .pulse-node {
     animation: none !important;
+  }
+}
+
+/* ============================================================
+   EDITORIAL HERO SURFACE (v0.6) — calm, no animated background.
+   Single solid surface + ultra-faint static grid + soft radial wash.
+   ============================================================ */
+.editorial-surface {
+  position: relative;
+  background:
+    radial-gradient(80% 60% at 50% -10%, rgba(var(--ai-primary-rgb), 0.06), transparent 60%),
+    var(--ai-background);
+}
+
+.editorial-grid {
+  background-image:
+    linear-gradient(to right, rgba(var(--ai-primary-rgb), 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(var(--ai-primary-rgb), 0.06) 1px, transparent 1px);
+  background-size: 56px 56px;
+  background-position: -1px -1px;
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 40%, black 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 40%, black 30%, transparent 80%);
+}
+
+.dark .editorial-grid {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+}
+
+/* Caret blink for the CodeTyper */
+@keyframes cursor-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.animate-cursor-blink {
+  animation: cursor-blink 1s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-cursor-blink {
+    animation: none !important;
+    opacity: 0;
   }
 }
 

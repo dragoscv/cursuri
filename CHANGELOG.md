@@ -6,6 +6,58 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-05-12
+
+### Changed
+
+- **Hero v2 — editorial split layout** (`components/HeroSection.tsx`).
+  Reverted the v0.5 cinematic atmosphere (animated starfield + glow orbs)
+  per user feedback. The new hero is a calm, premium-editorial spread
+  (Stripe / Vercel / Linear feel):
+  - Background is intentionally **static**: a soft top-radial wash + an
+    ultra-faint masked SVG grid + a 1px gold rule at the very top.
+  - Left 7/12 column: oversized typographic statement (clamp 2.75 → 5.5rem,
+    tracking-[-0.025em]), gold hand-drawn underline accent that draws in
+    once, three CTAs (primary inverted, secondary outlined, ghost), mentor
+    1-on-1 link, and a refined social-proof + rating row.
+  - Right 5/12 column: new **`<CodeTyper>`** widget — a fake editor with
+    traffic lights, line numbers, status bar, and a typing animation that
+    cycles through 3 snippets (`prompt.md`, `agent.ts`, `workflow.yml`).
+    Pauses when offscreen, freezes the first snippet under reduced motion,
+    no external libraries.
+  - Removed Hero atmosphere primitives entirely (`Starfield2D`,
+    `GlowOrb2D`, `HeroAtmosphere`).
+
+- **Theme system collapsed from 8 variants to 3 curated themes**
+  (`app/globals.css`, `types/index.d.ts`, `components/AppContext.tsx`,
+  `components/Profile/ThemeSelector.tsx`):
+  - `cinematic` — indigo / violet (default)
+  - `ivory` — warm amber on parchment (editorial premium)
+  - `terminal` — emerald on charcoal (developer-bold accent)
+  - Removed: `modern-purple`, `black-white`, `green-neon`, `blue-ocean`,
+    `brown-sunset`, `yellow-morning`, `red-blood`, `pink-candy`.
+  - `AppContext` migration: legacy color-scheme values stored in user
+    preferences are coerced to `cinematic` at runtime, so existing users
+    aren't broken.
+  - `ThemeSelector` redesigned as 3 large preview cards with descriptions
+    instead of an 8-tile grid.
+
+### Added
+
+- `.editorial-surface`, `.editorial-grid`, `@keyframes cursor-blink`,
+  `.animate-cursor-blink` design utilities in `globals.css`.
+- New i18n keys `profile.themes.{cinematic,cinematicDescription,ivory,
+ivoryDescription,terminal,terminalDescription}` in EN + RO with parity.
+- `components/Home/CodeTyper.tsx` — typed-snippet editor primitive,
+  reusable wherever we need a "live code" demo.
+
+### Removed
+
+- `components/CacheStatus.tsx` — unused; the `CacheStatus` _type_ in
+  `types/index.d.ts` is unaffected.
+- `components/three/` directory and `components/Home/HeroAtmosphere.tsx`
+  — R3F-replacement Canvas/SVG primitives no longer needed.
+
 ## [0.5.0] - 2026-05-12
 
 ### Added
