@@ -6,6 +6,24 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.18.12] - 2026-05-12
+
+### Fixed — Course tab crash, take three: hit the _actual_ Tabs component
+
+v0.18.11 replaced the HeroUI `<Tabs>` in `components/Course/Course.tsx`,
+but that component isn't what renders on `/courses/[courseId]`. The
+live course page is rendered by `CourseDetail` → `CourseDetailView` →
+`CourseDetails`, and the crashing `<Tabs>` lived in
+`components/Course/CourseDetails.tsx` all along.
+
+- `components/Course/CourseDetails.tsx`: replaced HeroUI `<Tabs>` +
+  three `<Tab>` panels with a plain `<div role="tablist">` of
+  `<button role="tab">` elements + conditional content blocks below.
+  Preserved `router.push(?tab=...)` deep-link behavior via
+  `handleTabChange`.
+- Dropped now-unused `Tabs`/`Tab` import and the dead
+  `tabContentVariants` const.
+
 ## [0.18.11] - 2026-05-12
 
 ### Fixed — Course tab crash, take two: replace HeroUI Tabs with plain buttons
