@@ -37,7 +37,13 @@
       "projectBasedCurriculum": "Real-world AI applications"
     },
     "imageAlt": "AI Technology and Innovation",
-    "scrollToExplore": "Scroll to explore"
+    "scrollToExplore": "Scroll to explore",
+    "loading": "Loading\u2026",
+    "console": {
+      "title": "Live specimens",
+      "specimens": "loaded",
+      "tools": "AI tool"
+    }
   },
   "whyChooseUs": {
     "title": "Why Learn AI With Us",

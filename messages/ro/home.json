@@ -37,7 +37,13 @@
       "projectBasedCurriculum": "Aplicații AI din viața reală"
     },
     "imageAlt": "Tehnologie și Inovație AI",
-    "scrollToExplore": "Derulează pentru a explora"
+    "scrollToExplore": "Derulează pentru a explora",
+    "loading": "Se încarcă\u2026",
+    "console": {
+      "title": "Specimene live",
+      "specimens": "încărcate",
+      "tools": "unealtă AI"
+    }
   },
   "whyChooseUs": {
     "title": "De ce să Înveți AI Cu Noi",

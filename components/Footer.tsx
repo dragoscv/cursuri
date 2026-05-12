@@ -1,10 +1,18 @@
 'use client';
 
+/**
+ * Footer — Cinematic v0.5.
+ * Gold-rim divider as the opening line, 4-column with eyebrow labels,
+ * status orb (live), legal block preserving every Romanian compliance link
+ * (ANPC, ODR, GDPR, DSA), connect block with subtle hover glow.
+ */
+
 import React from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+
 import { AppContext } from './AppContext';
 import { AppContextProps } from '@/types';
-import { useTranslations } from 'next-intl';
 import GithubIcon from './icons/GithubIcon';
 import TikTokIcon from './icons/TikTokIcon';
 import WebsiteIcon from './icons/WebsiteIcon';
@@ -12,6 +20,8 @@ import { DiscordIcon } from './icons/DiscordIcon';
 import packageInfo from '../package.json';
 import Button from './ui/Button';
 import { legalConfig } from '@/config/legal';
+
+type LinkItem = { href: string; label: string; external?: boolean };
 
 const Footer = React.memo(function Footer() {
   const t = useTranslations('common');
@@ -24,226 +34,253 @@ const Footer = React.memo(function Footer() {
   const year = new Date().getFullYear();
   const appVersion = packageInfo.version;
 
+  const quickLinks: LinkItem[] = [
+    { href: '/courses', label: t('nav.allCourses') },
+    { href: '/#featured', label: t('nav.featuredCourses') },
+    { href: '/#testimonials', label: t('nav.testimonials') },
+  ];
+
+  const legalLinks: LinkItem[] = [
+    { href: '/terms-conditions', label: t('footer.termsConditions') },
+    { href: '/privacy-policy', label: t('footer.privacyPolicy') },
+    { href: '/gdpr', label: t('footer.gdpr') },
+    { href: '/cookie-policy', label: t('footer.cookiePolicy') },
+    { href: '/refund-policy', label: t('footer.refundPolicy') },
+    { href: '/legal-notice', label: t('footer.legalNotice') },
+    { href: '/dsa', label: t('footer.dsa') },
+  ];
+
+  const externalLegal: LinkItem[] = [
+    { href: legalConfig.anpcUrl, label: t('footer.anpc'), external: true },
+    { href: legalConfig.odrUrl, label: t('footer.odr'), external: true },
+  ];
+
   return (
     <footer
-      className="bg-[color:var(--ai-background)] dark:bg-[color:var(--ai-background)] border-t border-[color:var(--ai-card-border)]"
+      className="relative bg-[color:var(--ai-background)] overflow-hidden"
       role="contentinfo"
       aria-label={t('accessibility.footerNavigation')}
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Left column - About */}
-          <div>
-            <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-4">
-              StudiAI
+      {/* Gold-rim divider — opens the footer like the closing credits */}
+      <div aria-hidden className="cinematic-rim-divider" />
+
+      {/* Subtle radial glow centered above the rim line */}
+      <div
+        aria-hidden
+        className="absolute -top-32 left-1/2 -translate-x-1/2 w-[800px] h-64 rounded-full bg-gradient-to-b from-[color:var(--ai-primary)]/8 via-amber-400/4 to-transparent blur-3xl pointer-events-none"
+      />
+
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 gap-y-12">
+          {/* === Brand === */}
+          <div className="col-span-2 md:col-span-1">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="h-2 w-2 rounded-full bg-emerald-400 orb-breath" />
+              <span className="text-[10px] font-semibold tracking-[0.2em] uppercase text-emerald-400">
+                {t('footer.statusLive')}
+              </span>
+            </div>
+            <h3 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-3">
+              <span
+                style={{
+                  backgroundImage:
+                    'linear-gradient(110deg, var(--ai-primary), var(--ai-secondary) 60%, #fbbf24)',
+                }}
+                className="bg-clip-text text-transparent"
+              >
+                StudiAI
+              </span>
             </h3>
-            <p className="text-[color:var(--ai-muted)] mb-4">{t('footer.about')}</p>
-            <p className="text-sm text-[color:var(--ai-muted)]">
-              {t('footer.version')} {appVersion}
+            <p className="text-sm text-[color:var(--ai-muted)] leading-relaxed mb-4">
+              {t('footer.about')}
+            </p>
+            <p className="text-[11px] font-mono text-[color:var(--ai-muted)]/70">
+              v{appVersion} · {t('footer.version')}
             </p>
           </div>
 
-          {/* Quick Links */}
+          {/* === Quick Links === */}
           <div>
-            <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-4">
-              {t('footer.quickLinks')}
-            </h3>
+            <FooterEyebrow>{t('footer.quickLinks')}</FooterEyebrow>
             <nav aria-label={t('footer.quickLinks')}>
-              <ul className="space-y-2">
-                <li>
-                  <Link
-                    href="/courses"
-                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
-                  >
-                    {t('nav.allCourses')}
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/#featured"
-                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
-                  >
-                    {t('nav.featuredCourses')}
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/#testimonials"
-                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
-                  >
-                    {t('nav.testimonials')}
-                  </Link>
-                </li>
+              <ul className="space-y-2.5">
+                {quickLinks.map((l) => (
+                  <li key={l.href}>
+                    <FooterLink href={l.href}>{l.label}</FooterLink>
+                  </li>
+                ))}
                 <li>
                   <Button
                     onPress={toggleTheme}
                     variant="light"
                     aria-label={t('accessibility.toggleTheme')}
-                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] p-0 min-w-0"
+                    className="text-sm text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] p-0 min-w-0 h-auto bg-transparent"
                   >
-                    {isDark ? t('theme.dark') : t('theme.light')}
+                    <span className="inline-flex items-center gap-1.5">
+                      <span
+                        aria-hidden
+                        className="h-1.5 w-1.5 rounded-full bg-[color:var(--ai-primary)]/40"
+                      />
+                      {isDark ? t('theme.dark') : t('theme.light')}
+                    </span>
                   </Button>
                 </li>
               </ul>
             </nav>
           </div>
 
-          {/* Legal */}
+          {/* === Legal === */}
           <div>
-            <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-4">
-              {t('footer.legal')}
-            </h3>
+            <FooterEyebrow>{t('footer.legal')}</FooterEyebrow>
             <nav aria-label={t('footer.legal')}>
-              <ul className="space-y-2">
-                <li>
-                  <Link
-                    href="/terms-conditions"
-                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
-                  >
-                    {t('footer.termsConditions')}
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/privacy-policy"
-                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
-                  >
-                    {t('footer.privacyPolicy')}
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/gdpr"
-                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
-                  >
-                    {t('footer.gdpr')}
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/cookie-policy"
-                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
-                  >
-                    {t('footer.cookiePolicy')}
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/refund-policy"
-                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
-                  >
-                    {t('footer.refundPolicy')}
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/legal-notice"
-                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
-                  >
-                    {t('footer.legalNotice')}
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/dsa"
-                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
-                  >
-                    {t('footer.dsa')}
-                  </Link>
-                </li>
-                <li className="pt-2 mt-2 border-t border-[color:var(--ai-card-border)]/40">
-                  <a
-                    href={legalConfig.anpcUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
-                  >
-                    {t('footer.anpc')}
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href={legalConfig.odrUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition"
-                  >
-                    {t('footer.odr')}
-                  </a>
-                </li>
+              <ul className="space-y-2.5">
+                {legalLinks.map((l) => (
+                  <li key={l.href}>
+                    <FooterLink href={l.href}>{l.label}</FooterLink>
+                  </li>
+                ))}
               </ul>
+              <div className="mt-4 pt-4 border-t border-white/5">
+                <ul className="space-y-2.5">
+                  {externalLegal.map((l) => (
+                    <li key={l.href}>
+                      <FooterLink href={l.href} external>
+                        {l.label}
+                      </FooterLink>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </nav>
           </div>
 
-          {/* Connect */}
+          {/* === Connect === */}
           <div>
-            <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-4">
-              {t('footer.connect')}
-            </h3>
-            <div className="flex space-x-4 mb-4">
-              <a
-                href="https://github.com/dragoscv"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 rounded-lg hover:bg-[color:var(--ai-card-border)]/30 dark:hover:bg-[color:var(--ai-card-border)]/20 transition-colors"
-                aria-label="GitHub"
-              >
-                <GithubIcon className="text-[color:var(--ai-primary)]" size={24} />
-              </a>
-              <a
-                href="https://discord.gg/SbqrU73MjB"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 rounded-lg hover:bg-[color:var(--ai-card-border)]/30 dark:hover:bg-[color:var(--ai-card-border)]/20 transition-colors"
-                aria-label="Discord"
-              >
-                <DiscordIcon className="text-[color:var(--ai-primary)]" size={24} />
-              </a>
-              <a
-                href="https://www.tiktok.com/@mantreb"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 rounded-lg hover:bg-[color:var(--ai-card-border)]/30 dark:hover:bg-[color:var(--ai-card-border)]/20 transition-colors"
-                aria-label="TikTok"
-              >
-                <TikTokIcon className="text-[color:var(--ai-primary)]" size={24} />
-              </a>
-              <a
-                href="https://dragoscatalin.ro"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 rounded-lg hover:bg-[color:var(--ai-card-border)]/30 dark:hover:bg-[color:var(--ai-card-border)]/20 transition-colors"
-                aria-label="Website"
-              >
-                <WebsiteIcon className="text-[color:var(--ai-primary)]" size={24} />
-              </a>
+            <FooterEyebrow>{t('footer.connect')}</FooterEyebrow>
+            <div className="flex gap-2 mb-5">
+              <SocialButton href="https://github.com/dragoscv" label="GitHub">
+                <GithubIcon size={20} />
+              </SocialButton>
+              <SocialButton href="https://discord.gg/SbqrU73MjB" label="Discord">
+                <DiscordIcon size={20} />
+              </SocialButton>
+              <SocialButton href="https://www.tiktok.com/@mantreb" label="TikTok">
+                <TikTokIcon size={20} />
+              </SocialButton>
+              <SocialButton href="https://dragoscatalin.ro" label="Website">
+                <WebsiteIcon size={20} />
+              </SocialButton>
             </div>
-            <p className="text-[color:var(--ai-muted)]">
-              {t('footer.contactEmail')}{' '}
+            <div>
+              <p className="text-xs font-semibold tracking-wider uppercase text-[color:var(--ai-muted)] mb-1">
+                {t('footer.contactEmail')}
+              </p>
               <a
                 href={`mailto:${legalConfig.contactEmail}`}
-                className="text-[color:var(--ai-primary)] hover:underline"
+                className="text-sm text-[color:var(--ai-primary)] hover:text-[color:var(--ai-secondary)] transition-colors break-all"
               >
                 {legalConfig.contactEmail}
               </a>
-            </p>
+            </div>
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-[color:var(--ai-card-border)] space-y-2">
-          <p className="text-center text-[color:var(--ai-muted)] text-sm">
-            &copy; {year} {legalConfig.brandName}. {t('footer.copyright')}
-          </p>
-          <p className="text-center text-[color:var(--ai-muted)] text-xs">
-            {t('footer.operatedBy', {
-              operator: legalConfig.operatorName,
-              status: legalConfig.operatorStatus,
-            })}
-          </p>
+        {/* Closing strip */}
+        <div className="mt-14 pt-8 border-t border-white/[0.06]">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
+            <p className="text-[12px] text-[color:var(--ai-muted)]">
+              &copy; {year} {legalConfig.brandName}. {t('footer.copyright')}
+            </p>
+            <p className="text-[11px] text-[color:var(--ai-muted)]/70">
+              {t('footer.operatedBy', {
+                operator: legalConfig.operatorName,
+                status: legalConfig.operatorStatus,
+              })}
+            </p>
+          </div>
         </div>
       </div>
     </footer>
   );
 });
+
+/* ------- Primitives ------- */
+
+function FooterEyebrow({ children }: { children: React.ReactNode }) {
+  return (
+    <h3 className="text-[10px] font-semibold tracking-[0.22em] uppercase text-[color:var(--ai-muted)] mb-4">
+      {children}
+    </h3>
+  );
+}
+
+function FooterLink({
+  href,
+  external,
+  children,
+}: {
+  href: string;
+  external?: boolean;
+  children: React.ReactNode;
+}) {
+  const className =
+    'group inline-flex items-center gap-2 text-sm text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)] transition-colors';
+  const dot = (
+    <span
+      aria-hidden
+      className="h-1 w-1 rounded-full bg-[color:var(--ai-primary)]/0 group-hover:bg-[color:var(--ai-primary)] transition-colors"
+    />
+  );
+
+  if (external) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
+        {dot}
+        <span>{children}</span>
+        <span
+          aria-hidden
+          className="text-[10px] opacity-0 group-hover:opacity-60 transition-opacity"
+        >
+          ↗
+        </span>
+      </a>
+    );
+  }
+  return (
+    <Link href={href} className={className}>
+      {dot}
+      <span>{children}</span>
+    </Link>
+  );
+}
+
+function SocialButton({
+  href,
+  label,
+  children,
+}: {
+  href: string;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={label}
+      className="group relative flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.03] text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] hover:border-[color:var(--ai-primary)]/40 hover:bg-[color:var(--ai-primary)]/8 transition-all"
+    >
+      <span
+        aria-hidden
+        className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+        style={{
+          boxShadow: '0 0 24px -6px rgba(var(--ai-primary-rgb), 0.45)',
+        }}
+      />
+      <span className="relative">{children}</span>
+    </a>
+  );
+}
 
 export default Footer;

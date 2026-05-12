@@ -27,16 +27,17 @@ html {
 body {
   position: relative;
   color: var(--ai-foreground);
-  background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+  background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb)))
+    rgb(var(--background-start-rgb));
 }
 
 /* Default link styles */
-a:not([class*="text-"]) {
+a:not([class*='text-']) {
   color: var(--ai-primary);
   transition: color 0.2s ease;
 }
 
-a:not([class*="text-"]):hover {
+a:not([class*='text-']):hover {
   color: var(--ai-secondary);
 }
 
@@ -61,7 +62,6 @@ a:not([class*="text-"]):hover {
 
 /* Pulsing animation for nodes */
 @keyframes pulse {
-
   0%,
   100% {
     opacity: 0.3;
@@ -209,7 +209,6 @@ a:not([class*="text-"]):hover {
 
 /* Floating animation */
 @keyframes floating {
-
   0%,
   100% {
     transform: translateY(0);
@@ -244,10 +243,12 @@ a:not([class*="text-"]):hover {
 }
 
 .shimmer {
-  background: linear-gradient(90deg,
-      rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.2) 50%,
-      rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
   background-size: 200% 100%;
   animation: shimmer 3s infinite;
 }
@@ -532,6 +533,103 @@ html.dark.theme-pink-candy {
   --section-dark-bg: #19131d;
 }
 
+/* ============================================================
+   Cinematic AI-lab design tokens (v0.5)
+   A layer on top of the existing modern-purple palette. Provides
+   semantic atmosphere, rim-light, and shadow tokens used by the
+   new hero, footer, and motion primitives. Light mode mirrors with
+   readable contrast (WCAG AA on ivory).
+   ============================================================ */
+:root {
+  /* Atmosphere: the air between the subject and the viewer */
+  --cinematic-atmosphere-start: oklch(0.985 0.005 280);
+  --cinematic-atmosphere-end: oklch(0.96 0.012 285);
+  /* Rim light: the warm accent that traces the edge of objects */
+  --cinematic-rim: oklch(0.78 0.13 75); /* amber-gold */
+  /* Cool counter for 3D rim contrast */
+  --cinematic-cool: oklch(0.72 0.13 230); /* cyan-violet */
+  /* Ivory text (warm bias) for display type */
+  --cinematic-ivory: oklch(0.18 0.02 285);
+  /* Shadows — used on cards floating above the atmosphere */
+  --shadow-cinematic:
+    0 30px 80px -20px rgba(99, 102, 241, 0.18), 0 12px 30px -10px rgba(139, 92, 246, 0.12);
+  --shadow-glow-primary: 0 0 60px -10px rgba(var(--ai-primary-rgb), 0.45);
+  --shadow-glow-rim: 0 0 80px -12px rgba(251, 191, 36, 0.35);
+}
+
+.dark {
+  /* In dark mode, atmosphere is deep indigo, not pure black */
+  --cinematic-atmosphere-start: oklch(0.18 0.04 285);
+  --cinematic-atmosphere-end: oklch(0.08 0.025 280);
+  --cinematic-rim: oklch(0.85 0.13 78); /* brighter gold in dark */
+  --cinematic-cool: oklch(0.78 0.15 230);
+  --cinematic-ivory: oklch(0.96 0.012 80); /* warm ivory, NOT pure white */
+  --shadow-cinematic:
+    0 40px 100px -25px rgba(0, 0, 0, 0.65), 0 18px 40px -12px rgba(129, 140, 248, 0.25);
+  --shadow-glow-primary: 0 0 80px -10px rgba(var(--ai-primary-rgb), 0.55);
+  --shadow-glow-rim: 0 0 100px -12px rgba(251, 191, 36, 0.4);
+}
+
+/* Atmosphere — a slow drifting nebula gradient for hero/header backgrounds */
+.cinematic-atmosphere {
+  position: relative;
+  background:
+    radial-gradient(60% 50% at 18% 22%, rgba(var(--ai-primary-rgb), 0.18), transparent 60%),
+    radial-gradient(50% 45% at 82% 78%, rgba(var(--ai-secondary-rgb), 0.14), transparent 60%),
+    linear-gradient(180deg, var(--cinematic-atmosphere-start), var(--cinematic-atmosphere-end));
+}
+
+/* Static SVG starfield fallback for prefers-reduced-motion users
+   and SSR. Replaced by the R3F <Starfield> when motion is allowed. */
+.cinematic-starfield-static {
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, 0.6), transparent 60%),
+    radial-gradient(1px 1px at 27% 64%, rgba(255, 255, 255, 0.4), transparent 60%),
+    radial-gradient(1.5px 1.5px at 58% 32%, rgba(255, 255, 255, 0.55), transparent 60%),
+    radial-gradient(1px 1px at 73% 79%, rgba(255, 255, 255, 0.35), transparent 60%),
+    radial-gradient(2px 2px at 88% 24%, rgba(251, 191, 36, 0.45), transparent 60%),
+    radial-gradient(1px 1px at 41% 88%, rgba(167, 139, 250, 0.45), transparent 60%);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+/* Subtle ambient pulse for orbs and decorative dots */
+@keyframes orb-breath {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+}
+
+.orb-breath {
+  animation: orb-breath 4.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orb-breath,
+  .pulse-node {
+    animation: none !important;
+  }
+}
+
+/* Cinematic gold-rim divider used at the top of the footer */
+.cinematic-rim-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(251, 191, 36, 0) 10%,
+    rgba(251, 191, 36, 0.45) 50%,
+    rgba(251, 191, 36, 0) 90%,
+    transparent 100%
+  );
+}
+
 /* Neural network animation */
 .neural-network-line {
   stroke-dasharray: 100;
@@ -558,7 +656,6 @@ html.dark.theme-pink-candy {
 }
 
 @keyframes neural-node-pulse {
-
   0%,
   100% {
     r: 3;

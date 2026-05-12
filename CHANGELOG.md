@@ -6,6 +6,74 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-05-12
+
+### Added
+
+- **Cinematic AI-lab design language (Batch 1: foundation + hero + footer)**.
+  First batch of a multi-batch heavy redesign of the entire site.
+
+  **New design tokens** (`app/globals.css`):
+  - OKLCH-based cinematic atmosphere tokens — deep indigo base in dark,
+    parchment-ivory in light, both readable per WCAG AA.
+  - Rim-light (gold) and cool counter-light tokens for 3-point feel.
+  - `--shadow-cinematic`, `--shadow-glow-primary`, `--shadow-glow-rim`
+    semantic shadows.
+  - Utility classes: `.cinematic-atmosphere`, `.cinematic-starfield-static`,
+    `.cinematic-rim-divider`, `.orb-breath` (all reduced-motion aware).
+
+  **New motion primitives** (`components/motion/`):
+  - `presets.ts` — shared `cosmic`/`mystic`/`drift` easings, `fadeUp`,
+    `fadeIn`, `scaleIn`, `stagger`, `heroOverture` choreography.
+  - `<Reveal>` — entrance primitive with reduced-motion fallback.
+  - `<Stagger>` — sequenced-children wrapper.
+  - `<TiltCard>` — pointer-driven 3D tilt with directional highlight.
+
+  **New atmosphere primitives** (`components/three/`):
+  - `<Starfield2D>` — Canvas 2D drifting starfield (220 stars,
+    5-color palette, ~3 KB, prefers-reduced-motion safe).
+  - `<GlowOrb2D>` — SVG emissive orb with breathing animation.
+  - (Canvas 2D + SVG chosen over R3F to avoid the JSX-intrinsic-element
+    type augmentation breaking HeroUI's complex prop unions.)
+
+  **Hero redesign** (`components/HeroSection.tsx` — full rewrite):
+  - Removed: DOM-particle effect system (10–30 spawned `<div>`s), inline
+    blur-orb gradient blobs, Unsplash photo, hard-coded English fallback
+    "GitHub Copilot Pro included" string.
+  - Added: lazy-loaded `<HeroAtmosphere>` (Canvas starfield + 3 glow
+    orbs at calibrated thirds), 7/12 + 5/12 rule-of-thirds grid,
+    `clamp(2.5rem,6vw,5.25rem)` display type with rim-lit gradient on
+    line 2, 3-act entrance choreography (atmosphere → copy → console),
+    glass console panel on the right showing 6 AI-tool "specimens" with
+    cool/warm tone variants, refined social-proof + rating row.
+  - All strings via `useTranslations('home.hero')`. New keys
+    (`console.title`, `console.specimens`, `console.tools`, `loading`)
+    added to both `messages/en/home.json` and `messages/ro/home.json`
+    with full parity.
+
+  **Footer redesign** (`components/Footer.tsx` — full rewrite):
+  - Opens with `cinematic-rim-divider` (gold-rim 1px line) — the closing
+    credits motif.
+  - 4-column grid with eyebrow labels, brand block including breathing
+    "Live" status orb, gradient wordmark.
+  - Legal block preserves every Romanian compliance link (ANPC, ODR,
+    GDPR, DSA, cookie, refund, legal notice). External links surface a
+    subtle `↗` glyph on hover.
+  - Refined social buttons with on-hover glow shadow.
+  - New i18n key `common.footer.statusLive` added in both languages.
+
+### Changed
+
+- `components/HeroSection.tsx` reduced from ~800 lines to ~430.
+- All entrance animations now route through the shared motion presets,
+  so every section reveal feels like the same film.
+
+### Removed
+
+- `components/HeroSection.tsx`: DOM-particle `useEffect`, `gridOpacities`
+  / `nodePoints` / `connectionLines` dead memos, Unsplash hero photo,
+  hard-coded English copilot fallback string.
+
 ## [0.4.4] - 2026-05-12
 
 ### Fixed
