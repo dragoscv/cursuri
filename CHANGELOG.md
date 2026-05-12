@@ -6,6 +6,40 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.18.1] - 2026-05-12
+
+### Changed — editorial cleanup after homepage critic pass
+
+After shipping v0.18.0 and walking the homepage top-to-bottom, four
+specific regressions still showed up:
+
+- `shared/SectionHeading.tsx`: the section eyebrow micro-copy
+  ("TOCMAI PUBLICATE", "ABONAMENT", "CE NE DIFERENȚIAZĂ", etc.) was
+  still rendering in the legacy primary purple. Switched the single
+  shared eyebrow class from `text-[color:var(--ai-primary)]` to
+  `text-amber-500`, which retones every consumer (Statistics,
+  TechStack, LearningPath, WhyChooseUs, LatestLessons, Subscriptions,
+  AvailableCourses, Reviews) in one edit.
+- `Footer.tsx`: the "StudiAI" wordmark used a purple→pink→amber
+  `bg-clip-text` gradient; now renders as solid foreground. The radial
+  glow above the gold rim, the theme-toggle dot + hover, and the
+  `contact@studiai.ro` mailto link all moved off primary onto amber /
+  foreground accents.
+- `Home/LatestLessonsSection.tsx`: lesson descriptions render raw HTML
+  from Firestore content (e.g. `<p>În această lecție...</p>`). Added a
+  light HTML strip + entity decode in the list cell so the description
+  appears as clean text (matches how the lesson detail view treats it).
+
+### Changed — placeholder course illustration
+
+`public/placeholder-course.svg`: replaced the indigo→violet gradient
+placeholder (solid `#4f46e5` filled circle, violet circuit dots,
+bluish grid) with an editorial neutral version — flat dark background,
+gold top rule, an amber-bordered chip around a foreground book glyph,
+and a small "COURSE" amber eyebrow above the title. Fixes the
+remaining purple bleed on the recommended-courses sidebar of the home
+page and anywhere a course has no `imageUrl`.
+
 ## [0.18.0] - 2026-05-12
 
 ### Changed — full editorial pass on the homepage

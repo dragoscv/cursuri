@@ -217,7 +217,15 @@ const LatestLessonsSection = React.memo(function LatestLessonsSection() {
                         ownedCourseIds.has(lesson.courseId) ||
                         lesson.isFree;
                       const lessonName = lesson.name || lesson.title || t('untitledLesson');
-                      const lessonDesc = lesson.description || '';
+                      const lessonDesc = (lesson.description || '')
+                        .replace(/<[^>]+>/g, ' ')
+                        .replace(/&nbsp;/g, ' ')
+                        .replace(/&amp;/g, '&')
+                        .replace(/&lt;/g, '<')
+                        .replace(/&gt;/g, '>')
+                        .replace(/&quot;/g, '"')
+                        .replace(/\s+/g, ' ')
+                        .trim();
                       const thumb = lesson.thumbnail || lesson.thumbnailUrl || course?.imageUrl;
 
                       return (

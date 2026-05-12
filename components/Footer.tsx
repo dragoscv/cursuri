@@ -67,7 +67,7 @@ const Footer = React.memo(function Footer() {
       {/* Subtle radial glow centered above the rim line */}
       <div
         aria-hidden
-        className="absolute -top-32 left-1/2 -translate-x-1/2 w-[800px] h-64 rounded-full bg-gradient-to-b from-[color:var(--ai-primary)]/8 via-amber-400/4 to-transparent blur-3xl pointer-events-none"
+        className="absolute -top-32 left-1/2 -translate-x-1/2 w-[800px] h-64 rounded-full bg-gradient-to-b from-amber-400/8 via-amber-400/4 to-transparent blur-3xl pointer-events-none"
       />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
@@ -80,17 +80,7 @@ const Footer = React.memo(function Footer() {
                 {t('footer.statusLive')}
               </span>
             </div>
-            <h3 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-3">
-              <span
-                style={{
-                  backgroundImage:
-                    'linear-gradient(110deg, var(--ai-primary), var(--ai-secondary) 60%, #fbbf24)',
-                }}
-                className="bg-clip-text text-transparent"
-              >
-                StudiAI
-              </span>
-            </h3>
+            <h3 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-3">StudiAI</h3>
             <p className="text-sm text-[color:var(--ai-muted)] leading-relaxed mb-4">
               {t('footer.about')}
             </p>
@@ -114,13 +104,10 @@ const Footer = React.memo(function Footer() {
                     onPress={toggleTheme}
                     variant="light"
                     aria-label={t('accessibility.toggleTheme')}
-                    className="text-sm text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] p-0 min-w-0 h-auto bg-transparent"
+                    className="text-sm text-[color:var(--ai-muted)] hover:text-amber-500 p-0 min-w-0 h-auto bg-transparent"
                   >
                     <span className="inline-flex items-center gap-1.5">
-                      <span
-                        aria-hidden
-                        className="h-1.5 w-1.5 rounded-full bg-[color:var(--ai-primary)]/40"
-                      />
+                      <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-amber-500/40" />
                       {isDark ? t('theme.dark') : t('theme.light')}
                     </span>
                   </Button>
@@ -177,7 +164,7 @@ const Footer = React.memo(function Footer() {
               </p>
               <a
                 href={`mailto:${legalConfig.contactEmail}`}
-                className="text-sm text-[color:var(--ai-primary)] hover:text-[color:var(--ai-secondary)] transition-colors break-all"
+                className="text-sm text-[color:var(--ai-foreground)] hover:text-amber-500 transition-colors break-all"
               >
                 {legalConfig.contactEmail}
               </a>
