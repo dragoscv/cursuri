@@ -4,7 +4,6 @@ import React, { useState, useContext, useEffect, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 import { Card } from '@heroui/react';
-import Button from '@/components/ui/Button';
 import { FiCheck, FiStar, FiSettings, FiZap, FiBookOpen } from '@/components/icons/FeatherIcons';
 import { AppContext } from '@/components/AppContext';
 import { createCheckoutSession } from 'firewand';
@@ -402,23 +401,21 @@ export default function SubscriptionPlans() {
               (loadingPlan === `copilot-${billing}` && plan.key === 'copilot') ? (
                 <LoadingButton className="w-full" size="lg" loadingText={t('toast.processing')} />
               ) : hasActiveSubscription && plan.key !== 'free' ? (
-                <Button
-                  size="lg"
-                  radius="lg"
-                  className="w-full font-semibold border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-foreground)] px-5 py-2 rounded-full text-[color:var(--ai-foreground)] bg-transparent transition-colors duration-200"
-                  startContent={<FiSettings />}
+                <button
+                  type="button"
+                  className="w-full inline-flex items-center justify-center gap-2 h-11 px-5 rounded-full text-sm font-semibold border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-foreground)] text-[color:var(--ai-foreground)] bg-transparent transition-colors duration-200 cursor-pointer"
                   onClick={() => router.push('/profile/subscriptions')}
                 >
+                  <FiSettings />
                   {t('manage.manageSubscription')}
-                </Button>
+                </button>
               ) : (
-                <Button
-                  size="lg"
-                  radius="lg"
-                  isDisabled={plan.disabled}
-                  className={`w-full font-semibold px-5 py-2 rounded-full transition-colors duration-200 ${
+                <button
+                  type="button"
+                  disabled={plan.disabled}
+                  className={`w-full inline-flex items-center justify-center h-11 px-5 rounded-full text-sm font-semibold transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
                     plan.popular
-                      ? 'bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] border-none hover:opacity-90'
+                      ? 'bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] hover:opacity-90'
                       : plan.key === 'free'
                         ? 'border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-foreground)] text-[color:var(--ai-foreground)] bg-transparent'
                         : 'border border-[color:var(--ai-foreground)] text-[color:var(--ai-foreground)] bg-transparent hover:bg-[color:var(--ai-foreground)] hover:text-[color:var(--ai-background)]'
@@ -426,7 +423,7 @@ export default function SubscriptionPlans() {
                   onClick={plan.onAction}
                 >
                   {plan.disabled ? t('plans.unavailable') : plan.buttonText}
-                </Button>
+                </button>
               )}
             </Card>
           </motion.div>

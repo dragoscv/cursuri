@@ -6,6 +6,29 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.18.4] - 2026-05-12
+
+### Fixed — subscription plan CTAs still purple after v0.18.3
+
+Verification of v0.18.3 confirmed everything else editorialized but the
+three plan-card CTAs ("Plan Curent", "Ia toate cursurile", "Ia Copilot +
+Cursuri") still rendered with the legacy purple→pink gradient.
+
+Root cause: the local `components/ui/Button` wrapper defaults to
+`variant='primary'` which is hard-coded `bg-gradient-to-r from-primary
+to-secondary text-white shadow-md`. The wrapper concatenates that
+variant class string BEFORE the consumer-supplied `className`, but the
+variant uses multi-utility gradient classes (`bg-gradient-to-r`
+
+- `from-X` + `to-Y`) and our override `bg-[color:var(--ai-foreground)]`
+  only affected `background-color` — the gradient still rendered on top.
+
+Fix: in `SubscriptionPlans.tsx`, the three plan CTAs were swapped from
+the `Button` wrapper to native `<button>` elements with explicit
+editorial pill classes — solid foreground pill for the popular plan,
+ghost foreground pill for non-popular, ghost card-border pill for free.
+Dropped the now-unused `Button` import.
+
 ## [0.18.3] - 2026-05-12
 
 ### Changed — /subscriptions full-page editorial pass
