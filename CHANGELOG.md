@@ -6,6 +6,19 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.16.3] - 2026-05-12
+
+### Fixed — lesson-page button regressions
+
+Multiple lesson-page buttons that were patched in v0.15.0 still rendered
+the HeroUI primary purple gradient because the underlying `<Button>`
+component's `color` and `variant` props win over `className`. Replaced
+with native `<button>` elements wearing the editorial pill template:
+
+- `LessonNavigation`: previous / back-to-course / next-lesson buttons.
+- `Notes`: hide-toggle pill (now ghost text) and Save Notes pill.
+- `AskQuestionForm` / `AnswerForm`: cancel + submit pair.
+
 ## [0.16.2] - 2026-05-12
 
 ### Fixed

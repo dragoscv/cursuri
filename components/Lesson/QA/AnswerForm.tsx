@@ -256,28 +256,20 @@ const AnswerForm: React.FC<AnswerFormProps> = ({ onSubmit, onCancel }) => {
       )}
 
       <div className="flex justify-end gap-2">
-        <Button
-          variant="flat"
-          color="default"
-          size="md"
-          radius="lg"
-          onClick={onCancel}
+        <button
           type="button"
-          className="bg-[color:var(--ai-card-border)]/20 hover:bg-[color:var(--ai-card-border)]/30 rounded-lg"
+          onClick={onCancel}
+          className="cursor-pointer inline-flex items-center justify-center h-10 px-5 rounded-full text-sm font-medium border border-[color:var(--ai-card-border)] text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)] hover:border-[color:var(--ai-foreground)]/40 transition-colors duration-200"
         >
           {t('cancel')}
-        </Button>
-        <Button
-          color="primary"
-          size="md"
-          radius="lg"
+        </button>
+        <button
           type="submit"
-          isLoading={isSubmitting}
-          className="bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] border-none hover:opacity-90 transition-opacity duration-200 rounded-full font-medium"
-          isDisabled={!content.trim() || isUploading}
+          disabled={isSubmitting || !content.trim() || isUploading}
+          className="cursor-pointer inline-flex items-center justify-center h-10 px-5 rounded-full text-sm font-medium bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] hover:opacity-90 transition-opacity duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? t('submittingAnswer') : t('submitAnswer')}
-        </Button>
+        </button>
       </div>
     </form>
   );

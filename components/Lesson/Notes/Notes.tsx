@@ -32,25 +32,21 @@ export const Notes: React.FC<NotesProps> = ({
         <div className="bg-[color:var(--ai-card-bg)] py-3 px-4 -m-5 mb-4 border-b border-[color:var(--ai-card-border)] border-l-[3px] border-l-amber-500">
           <div className="flex items-center justify-between">
             <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
-              <FiBookOpen className="mr-2 text-[color:var(--ai-primary)]" />
+              <FiBookOpen className="mr-2 text-amber-500" aria-hidden />
               <span>{t('title')}</span>
             </h3>
-            <Button
-              size="sm"
-              variant="light"
-              color="primary"
+            <button
+              type="button"
               onClick={onToggleNotes}
-              className="text-[color:var(--ai-primary)]"
-              endContent={
-                <div
-                  className={`transition-transform duration-200 ${showNotes ? 'rotate-180' : ''}`}
-                >
-                  <FiChevronDown size={16} />
-                </div>
-              }
+              className="cursor-pointer inline-flex items-center gap-1.5 h-8 px-3 rounded-full text-xs font-medium text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)] transition-colors duration-200"
             >
               {showNotes ? t('hide') : t('show')}
-            </Button>
+              <FiChevronDown
+                size={14}
+                aria-hidden
+                className={`transition-transform duration-200 ${showNotes ? 'rotate-180' : ''}`}
+              />
+            </button>
           </div>
         </div>
 
@@ -66,15 +62,14 @@ export const Notes: React.FC<NotesProps> = ({
               className="w-full"
             />
             <div className="mt-3 flex justify-end">
-              <Button
-                size="md"
-                color="primary"
+              <button
+                type="button"
                 onClick={onSaveNotes}
-                className="bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] border-none hover:opacity-90 transition-opacity duration-200 rounded-full font-medium"
-                startContent={<FiCheck size={16} />}
+                className="cursor-pointer inline-flex items-center gap-2 h-10 px-5 rounded-full text-sm font-medium bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] hover:opacity-90 transition-opacity duration-200"
               >
+                <FiCheck size={16} aria-hidden />
                 {t('saveNotes')}
-              </Button>
+              </button>
             </div>
           </div>
         )}

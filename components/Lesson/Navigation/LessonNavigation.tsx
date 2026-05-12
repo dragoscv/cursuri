@@ -83,41 +83,38 @@ export default function LessonNavigation({
           <div className="flex flex-wrap gap-3">
             {/* Previous Lesson Button */}
             {prevLessonId && (
-              <Button
-                size="lg"
-                variant="flat"
-                className="flex-1 min-w-[140px] bg-[color:var(--ai-card-bg)]/80 hover:bg-[color:var(--ai-primary)]/10 transition-all duration-300 text-[color:var(--ai-foreground)] border border-[color:var(--ai-card-border)]/50 shadow-sm hover:shadow-md rounded-lg h-12 sm:h-14 font-medium"
+              <button
+                type="button"
                 onClick={() => onNavigateLesson(prevLessonId)}
-                startContent={<FiArrowLeft size={20} />}
+                className="cursor-pointer flex-1 min-w-[140px] inline-flex items-center justify-center gap-2 h-12 sm:h-14 px-5 rounded-full text-sm font-medium border border-[color:var(--ai-foreground)] text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-foreground)] hover:text-[color:var(--ai-background)] transition-colors duration-200"
               >
+                <FiArrowLeft size={18} aria-hidden />
                 {t('previousLesson')}
-              </Button>
+              </button>
             )}
 
             {/* Back to Course Button */}
             {onClose && (
-              <Button
-                size="lg"
-                variant="flat"
-                className="flex-1 min-w-[140px] bg-[color:var(--ai-card-bg)]/60 hover:bg-[color:var(--ai-card-bg)] transition-all duration-300 text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)] border border-[color:var(--ai-card-border)]/30 hover:border-[color:var(--ai-card-border)] shadow-sm rounded-lg h-12 sm:h-14 font-medium"
+              <button
+                type="button"
                 onClick={onClose}
-                startContent={<FiArrowLeft size={18} />}
+                className="cursor-pointer flex-1 min-w-[140px] inline-flex items-center justify-center gap-2 h-12 sm:h-14 px-5 rounded-full text-sm font-medium border border-[color:var(--ai-card-border)] text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)] hover:border-[color:var(--ai-foreground)]/40 transition-colors duration-200"
               >
+                <FiArrowLeft size={18} aria-hidden />
                 {t('header.backToCourse')}
-              </Button>
+              </button>
             )}
 
             {/* Next Lesson Button */}
             {nextLessonId && (
-              <Button
-                size="lg"
-                color="primary"
-                className="flex-1 min-w-[140px] bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] border-none hover:opacity-90 transition-opacity duration-200 rounded-full h-12 sm:h-14 font-medium"
+              <button
+                type="button"
                 onClick={() => onNavigateLesson(nextLessonId)}
-                endContent={<FiArrowRight size={20} />}
+                className="cursor-pointer flex-1 min-w-[140px] inline-flex items-center justify-center gap-2 h-12 sm:h-14 px-5 rounded-full text-sm font-medium bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] hover:opacity-90 transition-opacity duration-200"
               >
                 {t('nextLesson')}
-              </Button>
+                <FiArrowRight size={18} aria-hidden />
+              </button>
             )}
           </div>
 
