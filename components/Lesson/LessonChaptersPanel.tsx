@@ -13,7 +13,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import type { Lesson } from '@/types';
 import Card, { CardBody, CardHeader } from '@/components/ui/Card';
@@ -115,52 +115,49 @@ export default function LessonChaptersPanel({ lesson, videoSelector = 'video' }:
       </CardHeader>
       <CardBody className="p-2 max-h-[420px] overflow-y-auto">
         <ol className="flex flex-col gap-1">
-          <AnimatePresence initial={false}>
-            {chapters.map((c, i) => {
-              const isActive = i === activeIdx;
-              return (
-                <motion.li
-                  key={c.id}
-                  initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15, delay: i * 0.01 }}
+          {chapters.map((c, i) => {
+            const isActive = i === activeIdx;
+            return (
+              <motion.li
+                key={c.id}
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.15, delay: i * 0.01 }}
+              >
+                <button
+                  type="button"
+                  onClick={() => handleClick(c.startSeconds)}
+                  className={`w-full text-left flex items-start gap-3 px-3 py-2 rounded-lg transition-all duration-150 group ${
+                    isActive
+                      ? 'bg-[color:var(--ai-primary)]/10 ring-1 ring-[color:var(--ai-primary)]/40'
+                      : 'hover:bg-[color:var(--ai-card-border)]/30'
+                  }`}
                 >
-                  <button
-                    type="button"
-                    onClick={() => handleClick(c.startSeconds)}
-                    className={`w-full text-left flex items-start gap-3 px-3 py-2 rounded-lg transition-all duration-150 group ${
+                  <span
+                    className={`mt-0.5 inline-flex items-center justify-center min-w-[52px] px-2 py-0.5 rounded text-xs font-mono tabular-nums ${
                       isActive
-                        ? 'bg-[color:var(--ai-primary)]/10 ring-1 ring-[color:var(--ai-primary)]/40'
-                        : 'hover:bg-[color:var(--ai-card-border)]/30'
+                        ? 'bg-[color:var(--ai-primary)] text-white'
+                        : 'bg-[color:var(--ai-card-border)]/50 text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)]'
                     }`}
                   >
+                    {formatTime(c.startSeconds)}
+                  </span>
+                  <span className="flex-1 min-w-0">
                     <span
-                      className={`mt-0.5 inline-flex items-center justify-center min-w-[52px] px-2 py-0.5 rounded text-xs font-mono tabular-nums ${
-                        isActive
-                          ? 'bg-[color:var(--ai-primary)] text-white'
-                          : 'bg-[color:var(--ai-card-border)]/50 text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)]'
-                      }`}
+                      className={`block text-sm font-medium leading-snug ${isActive ? 'text-[color:var(--ai-primary)]' : 'text-[color:var(--ai-foreground)]'}`}
                     >
-                      {formatTime(c.startSeconds)}
+                      {c.title}
                     </span>
-                    <span className="flex-1 min-w-0">
-                      <span
-                        className={`block text-sm font-medium leading-snug ${isActive ? 'text-[color:var(--ai-primary)]' : 'text-[color:var(--ai-foreground)]'}`}
-                      >
-                        {c.title}
+                    {c.summary && (
+                      <span className="block text-xs text-[color:var(--ai-muted)] mt-0.5 line-clamp-2">
+                        {c.summary}
                       </span>
-                      {c.summary && (
-                        <span className="block text-xs text-[color:var(--ai-muted)] mt-0.5 line-clamp-2">
-                          {c.summary}
-                        </span>
-                      )}
-                    </span>
-                  </button>
-                </motion.li>
-              );
-            })}
-          </AnimatePresence>
+                    )}
+                  </span>
+                </button>
+              </motion.li>
+            );
+          })}
         </ol>
       </CardBody>
     </Card>

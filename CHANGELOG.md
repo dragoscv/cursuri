@@ -6,6 +6,18 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.16.1] - 2026-05-12
+
+### Fixed
+
+- `LessonChaptersPanel`: removed the `AnimatePresence` wrapper around the
+  chapters list. Children carried stable `c.id` keys + `exit` animations,
+  which under React 19 / framer-motion 12 raced the parent unmount on
+  navigation and crashed the page with `NotFoundError: Failed to execute
+'removeChild' on 'Node'`. Same root cause as `ce88dce`. Entrance
+  animation on each `motion.li` is preserved; only the redundant exit
+  choreography was dropped.
+
 ## [0.16.0] - 2026-05-12
 
 ### Changed — legal pages editorial pass
