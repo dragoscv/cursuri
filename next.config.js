@@ -1,12 +1,49 @@
 // @ts-check
 import createNextIntlPlugin from 'next-intl/plugin';
+import { execSync } from 'node:child_process';
 
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
+
+/**
+ * Derive a short, human-readable build identifier with zero configuration.
+ *
+ * Priority:
+ *   1. Vercel deployments — `VERCEL_GIT_COMMIT_SHA` is auto-injected by Vercel
+ *      at build time on every deployment. No project setting required.
+ *   2. Self-hosted / CI — `npm_package_version` from package.json.
+ *   3. Local dev — `git rev-parse --short HEAD`.
+ *   4. Last resort — `'dev'`.
+ *
+ * Inlined at build time via `env`, so it ships as a constant string in the
+ * client bundle and has no runtime cost.
+ */
+function resolveAppVersion() {
+    const sha = process.env.VERCEL_GIT_COMMIT_SHA;
+    if (sha) return sha.slice(0, 7);
+
+    const pkgVersion = process.env.npm_package_version;
+    if (pkgVersion) return `v${pkgVersion}`;
+
+    try {
+        return execSync('git rev-parse --short HEAD', { stdio: ['ignore', 'pipe', 'ignore'] })
+            .toString()
+            .trim();
+    } catch {
+        return 'dev';
+    }
+}
+
+const APP_VERSION = resolveAppVersion();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     // Setting to false to avoid double rendering in development which can cause performance issues
     reactStrictMode: false,
+    env: {
+        // Exposed to the browser as `process.env.NEXT_PUBLIC_APP_VERSION`.
+        // Consumed by components/shared/DebugErrorPanel.tsx and Sentry tags.
+        NEXT_PUBLIC_APP_VERSION: APP_VERSION,
+    },
     // Note: eslint config removed from next.config.js as it's deprecated in Next.js 16
     // Use 'next lint' command or eslint.config.js instead
     typescript: {

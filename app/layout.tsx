@@ -13,10 +13,13 @@ import PreloadLinks from './preload-links';
 import { constructMetadata } from '@/utils/metadata';
 // Security initialization import
 import '@/utils/security/initSecurityChecks';
-import { MetaPixel } from "@/components/MetaPixel";
-import { TikTokPixel } from "@/components/TikTokPixel";
-import { MicrosoftClarity } from "@/components/MicrosoftClarity";
-import { generateOrganizationStructuredData, generateWebSiteStructuredData } from '@/utils/structuredData';
+import { MetaPixel } from '@/components/MetaPixel';
+import { TikTokPixel } from '@/components/TikTokPixel';
+import { MicrosoftClarity } from '@/components/MicrosoftClarity';
+import {
+  generateOrganizationStructuredData,
+  generateWebSiteStructuredData,
+} from '@/utils/structuredData';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -32,6 +35,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className="has-[section[role='dialog'][data-open='true']]:overflow-hidden transition-all ease-in-out duration-500"
     >
       <head>
+        {/* Prevent browser auto-translation from mutating React-managed text
+            nodes (a well-known cause of `NotFoundError: removeChild ...`
+            on iOS Safari and Chrome with Google Translate). */}
+        <meta name="google" content="notranslate" />
         {/* React Scan removed - causes CSP issues in production */}
         {/* Preconnect to external domains for better performance */}
         <link rel="preconnect" href="https://images.unsplash.com" />
@@ -47,7 +54,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{ __html: generateWebSiteStructuredData() }}
         />
       </head>
-      <body className={`${inter.className} bg-[rgb(var(--background-start-rgb))]`}>
+      <body
+        className={`${inter.className} bg-[rgb(var(--background-start-rgb))] notranslate`}
+        translate="no"
+      >
         {' '}
         <MetaPixel />
         <TikTokPixel />

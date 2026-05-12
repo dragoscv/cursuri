@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useState, useEffect, useReducer, useCallback } from 'react';
+import * as Sentry from '@sentry/nextjs';
 
 import { getProducts, getCurrentUserSubscriptions, getProduct, getPrice } from 'firewand';
 import { firebaseApp, firestoreDB, firebaseAuth } from '@/utils/firebase/firebase.config';
@@ -1653,6 +1654,40 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
   // Track previous user for logout logging
   const prevUserRef = React.useRef<User | null>(null);
 
+  // Fire-and-forget audit POST with a short timeout so a hung backend never
+  // freezes the auth flow. `keepalive` lets the request survive a page unload.
+  const postAuthEvent = (payload: Record<string, unknown>) => {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      void fetch('/api/audit/auth-event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        keepalive: true,
+        signal: controller.signal,
+      })
+        .catch((err) => {
+          // Fail-open: never break auth UX on audit failure.
+          console.warn('Auth event logging failed (non-critical):', err);
+        })
+        .finally(() => clearTimeout(timeoutId));
+    } catch (err) {
+      console.warn('Auth event logging dispatch failed (non-critical):', err);
+    }
+  };
+
+  // Cache the dynamic import so it only downloads the chunk once per session.
+  const adminAuthModulePromiseRef = React.useRef<Promise<
+    typeof import('../utils/firebase/adminAuth')
+  > | null>(null);
+  const loadAdminAuthModule = () => {
+    if (!adminAuthModulePromiseRef.current) {
+      adminAuthModulePromiseRef.current = import('../utils/firebase/adminAuth');
+    }
+    return adminAuthModulePromiseRef.current;
+  };
+
   // Helper function to update login streak
   const updateLoginStreak = async (userId: string) => {
     try {
@@ -1712,132 +1747,104 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
   useEffect(() => {
     // Store the auth unsubscribe function in a variable so we can clean up
-    const unsubscribe = onAuthStateChanged(firebaseAuth, async (currentUser) => {
+    const unsubscribe = onAuthStateChanged(firebaseAuth, (currentUser) => {
       if (currentUser) {
+        // CRITICAL PATH: unblock the UI immediately. Everything else is best-effort
+        // and must not gate authLoading. A hung audit fetch or slow Firestore read
+        // used to freeze the entire app for >60s on flaky mobile networks.
         setUser(currentUser);
+        setAuthLoading(false);
 
-        // Set analytics user ID
-        setAnalyticsUserId(currentUser.uid);
+        // Best-effort analytics (sync, non-blocking).
+        try {
+          setAnalyticsUserId(currentUser.uid);
+        } catch (err) {
+          console.warn('setAnalyticsUserId failed (non-critical):', err);
+        }
 
-        // Track daily active user
+        // Track DAU in the background.
         trackDailyActiveUser(currentUser.uid).catch((error) => {
           console.error('Failed to track daily active user:', error);
         });
 
-        // Log successful login/authentication event
-        try {
-          await fetch('/api/audit/auth-event', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              action: 'login',
-              userId: currentUser.uid,
-              email: currentUser.email,
-              success: true,
-            }),
-          });
-        } catch (logError) {
-          // Fail-open: Don't break auth flow if logging fails
-          console.error('Auth event logging failed (non-critical):', logError);
-        }
+        // Audit log: fire-and-forget with timeout. Never awaited.
+        postAuthEvent({
+          action: 'login',
+          userId: currentUser.uid,
+          email: currentUser.email,
+          success: true,
+        });
 
-        // Update login streak
-        await updateLoginStreak(currentUser.uid);
+        // Login streak: fire-and-forget.
+        updateLoginStreak(currentUser.uid).catch((err) => {
+          console.error('Login streak update failed (non-critical):', err);
+        });
 
-        // Use new RBAC system
-        try {
-          // Import admin utilities
-          const { getUserProfile, createOrUpdateUserProfile, isAdmin, UserRole } =
-            await import('../utils/firebase/adminAuth');
-
-          // Get user profile. getUserProfile() now throws on read errors and
-          // returns null ONLY when the document is verified to not exist.
-          // This prevents a transient read failure from being interpreted as
-          // a missing user, which previously caused the auth handler to call
-          // createOrUpdateUserProfile and silently wipe the admin role.
-          let userProfile: UserProfile | null = null;
+        // Profile + admin role bootstrap. Runs in the background so the UI
+        // doesn't wait on a dynamic-import chunk + Firestore read.
+        (async () => {
           try {
-            userProfile = await getUserProfile(currentUser.uid);
-          } catch (readError) {
-            console.error(
-              'Error reading user profile (will keep previous admin state):',
-              readError
-            );
-            // Bail out of profile setup. Do NOT create a new profile here —
-            // the old code would overwrite the existing doc with role="user".
-            prevUserRef.current = currentUser;
-            return;
-          }
+            const { getUserProfile, createOrUpdateUserProfile, isAdmin, UserRole } =
+              await loadAdminAuthModule();
 
-          // Only create a new profile when we have positively confirmed the
-          // doc does not exist.
-          if (!userProfile) {
-            userProfile = await createOrUpdateUserProfile(currentUser, UserRole.USER);
-
-            // Log registration event for new users
+            let userProfile: UserProfile | null = null;
             try {
-              await fetch('/api/audit/auth-event', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  action: 'registration',
-                  userId: currentUser.uid,
-                  email: currentUser.email,
-                  success: true,
-                }),
-              });
-            } catch (logError) {
-              console.error('Registration event logging failed (non-critical):', logError);
+              userProfile = await getUserProfile(currentUser.uid);
+            } catch (readError) {
+              // Transient read failure — keep previous admin state intact.
+              console.error(
+                'Error reading user profile (will keep previous admin state):',
+                readError
+              );
+              prevUserRef.current = currentUser;
+              return;
             }
-          }
 
-          // Update admin status based on role
-          const adminStatus = isAdmin(userProfile);
-          dispatch({ type: 'SET_IS_ADMIN', payload: adminStatus });
-
-          // Set analytics user properties
-          setAnalyticsUserProperties({
-            user_role: userProfile.role || 'user',
-            is_admin: adminStatus,
-            email_verified: currentUser.emailVerified,
-          });
-
-          dispatch({ type: 'SET_USER_PROFILE', payload: userProfile });
-        } catch (error) {
-          console.error('Error setting up user profile:', error);
-          // Do NOT reset isAdmin on error — keep whatever the previous
-          // successful read produced. Resetting here on a transient failure
-          // is what locked the admin out of the dashboard.
-        }
-
-        // Update previous user ref
-        prevUserRef.current = currentUser;
-      } else {
-        // Log logout event if user was previously logged in
-        if (prevUserRef.current) {
-          try {
-            await fetch('/api/audit/auth-event', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                action: 'logout',
-                userId: prevUserRef.current.uid,
-                email: prevUserRef.current.email,
+            if (!userProfile) {
+              userProfile = await createOrUpdateUserProfile(currentUser, UserRole.USER);
+              postAuthEvent({
+                action: 'registration',
+                userId: currentUser.uid,
+                email: currentUser.email,
                 success: true,
-              }),
+              });
+            }
+
+            const adminStatus = isAdmin(userProfile);
+            dispatch({ type: 'SET_IS_ADMIN', payload: adminStatus });
+
+            setAnalyticsUserProperties({
+              user_role: userProfile.role || 'user',
+              is_admin: adminStatus,
+              email_verified: currentUser.emailVerified,
             });
-          } catch (logError) {
-            console.error('Logout event logging failed (non-critical):', logError);
+
+            dispatch({ type: 'SET_USER_PROFILE', payload: userProfile });
+          } catch (error) {
+            // Do NOT reset isAdmin on error — keep whatever the previous
+            // successful read produced.
+            console.error('Error setting up user profile:', error);
+          } finally {
+            prevUserRef.current = currentUser;
           }
+        })();
+      } else {
+        // Logout audit (fire-and-forget) if a previous user existed.
+        if (prevUserRef.current) {
+          postAuthEvent({
+            action: 'logout',
+            userId: prevUserRef.current.uid,
+            email: prevUserRef.current.email,
+            success: true,
+          });
           prevUserRef.current = null;
         }
 
         setUser(null);
         dispatch({ type: 'SET_IS_ADMIN', payload: false });
         dispatch({ type: 'SET_USER_PROFILE', payload: null });
+        setAuthLoading(false);
       }
-      // Auth check complete, regardless of result
-      setAuthLoading(false);
     });
 
     // Return the unsubscribe function for cleanup
@@ -1847,6 +1854,33 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
       }
     };
   }, [dispatch]);
+
+  // Telemetry: if auth never resolves within 15s the app is effectively stuck.
+  // Capture a breadcrumb + a low-severity Sentry event so we can correlate user
+  // reports ("nothing loaded for a minute") with backend / network failures.
+  useEffect(() => {
+    if (!authLoading) return;
+    const t = setTimeout(() => {
+      try {
+        Sentry.addBreadcrumb({
+          category: 'auth',
+          level: 'warning',
+          message: 'authLoading still true after 15s',
+        });
+        Sentry.captureMessage('auth-stuck-loading', {
+          level: 'warning',
+          tags: { scope: 'auth' },
+          extra: {
+            online: typeof navigator !== 'undefined' ? navigator.onLine : null,
+            url: typeof window !== 'undefined' ? window.location.href : null,
+          },
+        });
+      } catch {
+        /* Sentry not configured — ignore. */
+      }
+    }, 15_000);
+    return () => clearTimeout(t);
+  }, [authLoading]);
 
   useEffect(() => {
     if (user) {

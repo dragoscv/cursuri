@@ -6,6 +6,42 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-05-12
+
+### Fixed
+
+- Auth flow no longer blocks the UI on slow side-effects. `onAuthStateChanged`
+  now sets `user` and clears `authLoading` synchronously; audit POSTs, login
+  streak updates, the `adminAuth` dynamic import, and Firestore profile reads
+  run as fire-and-forget background tasks. Audit `fetch` calls use
+  `AbortController` (4 s timeout) + `keepalive`, so a hung backend can no
+  longer freeze the app for >60 s on flaky mobile networks.
+- `NotFoundError: The object can not be found here.` on `removeChild` while
+  navigating courses/lessons. Removed three useless `<AnimatePresence mode="wait">`
+  wrappers around static-keyed `motion.div` children inside HeroUI `<Tab>`
+  panels in `components/Course/CourseDetails.tsx`. They deferred exit
+  animations and made framer-motion try to detach nodes from already-removed
+  parents during tab/route teardown.
+- Hardened the root layout against browser auto-translation, which is a
+  known cause of the same `removeChild` crash (especially iOS Safari +
+  `ro-RO`). Added `<meta name="google" content="notranslate" />` and
+  `translate="no"` on `<body>`.
+
+### Added
+
+- `DebugErrorPanel` now captures **app version**, **online status**, and
+  **network info** (`effectiveType`, `downlink`, `rtt`) in the copyable
+  report — exactly what's needed to diagnose "stuck loading" user reports.
+  Added an **Email support** mailto button with the markdown report
+  prefilled.
+- `NEXT_PUBLIC_APP_VERSION` is now auto-derived at build time in
+  `next.config.js` from `VERCEL_GIT_COMMIT_SHA` → `npm_package_version` →
+  local `git rev-parse --short HEAD` → `'dev'`. No Vercel project setting
+  required; the value is inlined into the client bundle.
+- Sentry telemetry: a `auth-stuck-loading` warning is captured when
+  `authLoading` stays true for more than 15 s, so future hangs leave a
+  traceable fingerprint.
+
 ## [0.4.1] - 2026-05-11
 
 ### Fixed
