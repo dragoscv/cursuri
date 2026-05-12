@@ -1,44 +1,35 @@
 'use client';
 
+/**
+ * MobileMenu v2 — calm editorial sheet for unauthenticated mobile users.
+ * Same chrome system as UserDropdown v2: plain panel, single hover state,
+ * no gradient signup CTA. Login modal handles signup internally.
+ */
+
 import React, { useContext } from 'react';
 import {
-  Button,
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
   DropdownSection,
   DropdownItem,
 } from '@heroui/react';
-import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { AppContext } from '@/components/AppContext';
 import { useTranslations } from 'next-intl';
+
+import { AppContext } from '@/components/AppContext';
 import Login from '@/components/Login';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import ThemeToggle from '@/components/Header/ThemeToggle';
 import { DiscordIcon } from '@/components/icons/DiscordIcon';
 
-/**
- * MobileMenu component for non-authenticated users
- * Consolidates navigation links and actions into a hamburger menu
- */
 export default function MobileMenu() {
   const t = useTranslations('common');
-  const pathname = usePathname();
   const context = useContext(AppContext);
 
-  if (!context) {
-    throw new Error('Missing context value');
-  }
-
+  if (!context) throw new Error('Missing context value');
   const { user, openModal, closeModal } = context;
-
-  // Only show for non-authenticated users on mobile
-  if (user) {
-    return null;
-  }
-
-  const isCourseOrLessonPage = pathname.includes('/courses/');
+  if (user) return null;
 
   const handleOpenLoginModal = () => {
     openModal({
@@ -66,134 +57,109 @@ export default function MobileMenu() {
     });
   };
 
+  const itemRow =
+    'flex items-center gap-2 w-full px-2 py-1.5 rounded-md text-[13px] text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-bg)]/80 transition-colors';
+
   return (
     <div className="md:hidden">
       <Dropdown
         placement="bottom-end"
-        backdrop="blur"
+        backdrop="opaque"
         classNames={{
-          base: 'py-1 px-1 rounded-lg bg-gradient-to-br from-[color:var(--ai-card-bg)] to-[color:var(--ai-card-bg)]/80 dark:from-[color:var(--ai-card-bg)]/90 dark:to-[color:var(--ai-background)]/70 z-[9999]',
-          arrow: 'bg-default-200',
+          base: 'p-1.5 rounded-xl bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] shadow-xl z-[9999] min-w-[260px]',
           backdrop:
-            'fixed backdrop-blur-md backdrop-saturate-150 bg-[color:var(--ai-card-bg)]/70 dark:bg-[color:var(--ai-background)]/60 w-screen h-screen inset-0',
-          content: 'z-[9999] flex flex-col justify-start items-end shadow-xl min-w-[280px]',
+            'fixed inset-0 backdrop-blur-sm bg-[color:var(--ai-background)]/40 w-screen h-screen',
+          content: 'z-[9999] flex flex-col items-end',
         }}
-        className="z-[9999] relative"
-        offset={12}
-        showArrow={true}
-        shouldCloseOnBlur={false}
+        offset={10}
+        shouldCloseOnBlur
         portalContainer={typeof document !== 'undefined' ? document.body : undefined}
       >
         <DropdownTrigger>
-          <Button
-            isIconOnly
-            variant="flat"
-            className="rounded-lg"
+          <button
+            type="button"
             aria-label={t('accessibility.mainNavigation')}
             aria-haspopup="menu"
+            className="grid place-items-center w-8 h-8 rounded-md text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-bg)]/60 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ai-primary)]"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width={20}
-              height={20}
+              width={18}
+              height={18}
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
               strokeWidth={2}
               strokeLinecap="round"
               strokeLinejoin="round"
+              aria-hidden="true"
             >
-              <line x1="3" y1="12" x2="21" y2="12" />
               <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
               <line x1="3" y1="18" x2="21" y2="18" />
             </svg>
-          </Button>
+          </button>
         </DropdownTrigger>
+
         <DropdownMenu
           aria-label="Mobile Menu"
-          variant="faded"
+          variant="flat"
           itemClasses={{
-            base: [
-              'rounded-md',
-              'text-sm',
-              'transition-opacity',
-              'data-[hover=true]:text-foreground',
-              'data-[hover=true]:bg-default-100',
-              'dark:data-[hover=true]:bg-default-50',
-              'data-[selectable=true]:focus:bg-default-50',
-              'data-[pressed=true]:opacity-70',
-              'data-[focus-visible=true]:ring-default-500',
-              'text-[color:var(--ai-foreground)]',
-              'border-0',
-              'outline-none',
-            ],
+            base: 'p-0 data-[hover=true]:bg-transparent',
             wrapper: 'border-0',
           }}
-          className="z-[9999]"
         >
           <DropdownSection aria-label="Navigation" showDivider {...({} as any)}>
             <DropdownItem key="courses" textValue="Courses" className="p-0">
-              <Link href="/courses" className="block w-full">
-                <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors">
-                  {t('nav.courses')}
-                </div>
+              <Link href="/courses" className={itemRow}>
+                <span>{t('nav.courses')}</span>
               </Link>
             </DropdownItem>
             <DropdownItem key="subscriptions" textValue="Subscriptions" className="p-0">
-              <Link href="/subscriptions" className="block w-full">
-                <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors">
-                  {t('nav.subscriptions')}
-                </div>
+              <Link href="/subscriptions" className={itemRow}>
+                <span>{t('nav.subscriptions')}</span>
               </Link>
             </DropdownItem>
             <DropdownItem key="about" textValue="About" className="p-0">
-              <Link href="/about" className="block w-full">
-                <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors">
-                  {t('nav.about')}
-                </div>
+              <Link href="/about" className={itemRow}>
+                <span>{t('nav.about')}</span>
               </Link>
             </DropdownItem>
             <DropdownItem key="contact" textValue="Contact" className="p-0">
-              <Link href="/contact" className="block w-full">
-                <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors">
-                  {t('nav.contact')}
-                </div>
+              <Link href="/contact" className={itemRow}>
+                <span>{t('nav.contact')}</span>
               </Link>
             </DropdownItem>
             <DropdownItem key="book-a-call" textValue="Book a Call" className="p-0">
-              <Link href="/book-a-call" className="block w-full">
-                <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors">
-                  {t('nav.bookACall')}
-                </div>
+              <Link href="/book-a-call" className={itemRow}>
+                <span>{t('nav.bookACall')}</span>
               </Link>
             </DropdownItem>
             <DropdownItem key="discord" textValue="Discord" className="p-0">
-              <Link href="/discord" className="block w-full">
-                <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors flex items-center gap-2">
-                  <DiscordIcon size={18} />
-                  {t('nav.joinDiscord')}
-                </div>
+              <Link href="/discord" className={itemRow}>
+                <DiscordIcon size={16} />
+                <span>{t('nav.joinDiscord')}</span>
               </Link>
             </DropdownItem>
           </DropdownSection>
 
-          {/* Settings Section */}
           <DropdownSection aria-label="Settings" showDivider {...({} as any)}>
-            <DropdownItem key="language" textValue="Language" className="p-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm">{t('language')}</span>
+            <DropdownItem key="language" textValue="Language" isReadOnly className="p-0">
+              <div className="flex items-center justify-between gap-2 px-2 py-1.5">
+                <span className="text-[13px] text-[color:var(--ai-muted)]">{t('language')}</span>
                 <LanguageSwitcher />
               </div>
             </DropdownItem>
-            <DropdownItem key="theme" textValue="Theme" className="p-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm">{t('theme.toggle')}</span>
+            <DropdownItem key="theme" textValue="Theme" isReadOnly className="p-0">
+              <div className="flex items-center justify-between gap-2 px-2 py-1.5">
+                <span className="text-[13px] text-[color:var(--ai-muted)]">
+                  {t('theme.toggle')}
+                </span>
                 <ThemeToggle />
               </div>
             </DropdownItem>
           </DropdownSection>
 
-          {/* Auth Actions Section */}
           <DropdownSection aria-label="Auth Actions" {...({} as any)}>
             <DropdownItem
               key="login"
@@ -201,24 +167,13 @@ export default function MobileMenu() {
               className="p-0"
               onClick={handleOpenLoginModal}
             >
-              <div className="cursor-pointer hover:bg-[color:var(--ai-primary)]/10 hover:text-[color:var(--ai-primary)] rounded-lg p-2 transition-colors font-medium">
-                {t('buttons.login')}
-              </div>
-            </DropdownItem>
-            <DropdownItem
-              key="signup"
-              textValue="Sign Up"
-              className="p-0"
-              onClick={handleOpenLoginModal}
-            >
-              <div
-                className="cursor-pointer rounded-lg p-2 transition-colors font-medium text-white"
-                style={{
-                  background: 'linear-gradient(to right, var(--ai-primary), var(--ai-secondary))',
-                }}
+              <button
+                type="button"
+                onClick={handleOpenLoginModal}
+                className="flex items-center justify-center w-full px-2 py-2 rounded-md text-[13px] font-semibold bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] hover:opacity-90 transition-opacity"
               >
-                {t('buttons.signup')}
-              </div>
+                {t('buttons.login')}
+              </button>
             </DropdownItem>
           </DropdownSection>
         </DropdownMenu>

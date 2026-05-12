@@ -6,6 +6,31 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-05-12
+
+### Changed — Header overhaul finish (UserDropdown + MobileMenu)
+
+Finishes the header pass started in v0.10.0. Both menus now use the same
+calm chrome system as the rest of the redesigned header.
+
+- **`UserDropdown`** (302 → 196 lines): replaced the gradient dropdown
+  base (`bg-gradient-to-br from-[color:var(--ai-card-bg)] to-...`),
+  duplicated HeroUI `data-[hover=true]` styling layers, and inflated
+  per-item padding with a single rounded-xl panel + plain rows + one
+  hover state. Avatar trigger now uses a thin neutral border (no
+  primary-color halo), 32px to match the icon rail. Dropped the
+  `SocialIcons` row and the always-commented `suggestions` row — dead
+  weight inside an already-deep menu. Profile-info row now uses an
+  uppercase eyebrow over the name (matches editorial typography
+  elsewhere). Sections: Account → Navigation → Admin (if applicable) →
+  Mobile Utilities (md:hidden) → Logout.
+
+- **`MobileMenu`** (218 → 154 lines): same chrome system. Hamburger
+  trigger now icon-only 32px ghost button instead of HeroUI flat
+  Button. **Removed the duplicate gradient "Sign Up" row** (login modal
+  handles signup) — same dead-CTA cleanup as AuthActions in v0.10.0.
+  Single inverted-fill Login button at the bottom of the sheet.
+
 ## [0.10.0] - 2026-05-12
 
 ### Changed — Header overhaul (full)
