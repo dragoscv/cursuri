@@ -285,12 +285,9 @@ export default function Course({ courseId }: CourseProps) {
               <FiBookOpen size={18} className={selectedTab === 'content' ? 'text-amber-500' : ''} />
               <span>{t('tabs.content')}</span>
               {selectedTab === 'content' && (
-                <motion.span
+                <span
+                  aria-hidden
                   className="absolute -bottom-3 left-0 right-0 h-0.5 bg-amber-500"
-                  layoutId="tab-indicator"
-                  initial={{ width: '0%', opacity: 0 }}
-                  animate={{ width: '100%', opacity: 1 }}
-                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                 />
               )}
             </div>
@@ -303,12 +300,9 @@ export default function Course({ courseId }: CourseProps) {
               <FiLayers size={18} className={selectedTab === 'overview' ? 'text-amber-500' : ''} />
               <span>{t('tabs.overview')}</span>
               {selectedTab === 'overview' && (
-                <motion.span
+                <span
+                  aria-hidden
                   className="absolute -bottom-3 left-0 right-0 h-0.5 bg-amber-500"
-                  layoutId="tab-indicator"
-                  initial={{ width: '0%', opacity: 0 }}
-                  animate={{ width: '100%', opacity: 1 }}
-                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                 />
               )}
             </div>
@@ -321,12 +315,9 @@ export default function Course({ courseId }: CourseProps) {
               <FiStar size={18} className={selectedTab === 'reviews' ? 'text-amber-500' : ''} />
               <span>{t('tabs.reviews')}</span>
               {selectedTab === 'reviews' && (
-                <motion.span
+                <span
+                  aria-hidden
                   className="absolute -bottom-3 left-0 right-0 h-0.5 bg-amber-500"
-                  layoutId="tab-indicator"
-                  initial={{ width: '0%', opacity: 0 }}
-                  animate={{ width: '100%', opacity: 1 }}
-                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                 />
               )}
             </div>
@@ -356,12 +347,9 @@ export default function Course({ courseId }: CourseProps) {
                 </svg>
                 <span>{t('tabs.resources')}</span>
                 {selectedTab === 'resources' && (
-                  <motion.span
+                  <span
+                    aria-hidden
                     className="absolute -bottom-3 left-0 right-0 h-0.5 bg-amber-500"
-                    layoutId="tab-indicator"
-                    initial={{ width: '0%', opacity: 0 }}
-                    animate={{ width: '100%', opacity: 1 }}
-                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                   />
                 )}
               </div>

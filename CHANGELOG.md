@@ -6,6 +6,17 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.17.1] - 2026-05-12
+
+### Fixed — course page crash on tab switching
+
+The four `<motion.span>` tab underlines in `Course.tsx` shared
+`layoutId="tab-indicator"` so Framer Motion ran a shared-layout
+animation between them when the user switched tabs. Under React 19 that
+pattern crashes with `NotFoundError: Failed to execute 'removeChild' on
+'Node': The node to be removed is not a child of this node.` Replaced
+all four with plain static `<span>` underlines.
+
 ## [0.17.0] - 2026-05-12
 
 ### Changed — course detail page (Conținut tab) editorial pass
