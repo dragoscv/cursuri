@@ -6,6 +6,30 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.4.4] - 2026-05-12
+
+### Fixed
+
+- **Wasted hero-image preload on every route**. `app/preload-links.tsx`
+  emitted a hand-rolled `<link rel="preload" as="image">` for the
+  homepage hero from the root layout, so the preload fired on every
+  page (catalog, course, lesson, profile, ...) even though the image
+  only renders on the home page hero, and only at the `lg` breakpoint.
+  The custom `imageSrcSet` (640w/1080w) also didn't match the `sizes=
+"50vw"` srcset that Next.js generates for the actual `<Image>`, so
+  the browser warned "preloaded but not used within a few seconds" on
+  every load. Removed the hand-rolled preload entirely — `<Image
+priority fetchPriority="high">` in `HeroSection.tsx` already emits a
+  correctly matched preload, scoped to the home page only.
+- **Listener leak on lesson pages**. `LessonDetailComponent.tsx` and
+  `ClientLessonWrapper.tsx` both called `getCourseLessons(courseId)`
+  from `useEffect` without awaiting the returned `Promise<unsubscribe>`
+  or returning a cleanup. Each lesson page visit added a permanent
+  Firestore `onSnapshot` listener that never released. Converted both
+  call sites to `{ realtime: false }` (one-shot `getDocs`) — lessons
+  don't change while a user reads them, and the one-shot path returns
+  a no-op unsub so leaks are impossible.
+
 ## [0.4.3] - 2026-05-12
 
 ### Fixed

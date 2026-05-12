@@ -53,7 +53,9 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
     if (lessonsLoaded && lesson) return; // already have what we need
     if (lessonsFetchRef.current === courseId) return;
     lessonsFetchRef.current = courseId;
-    void context.getCourseLessons?.(courseId);
+    // One-shot read: no persistent Firestore Listen channel, no leaked
+    // listener (this effect never returned a cleanup).
+    void context.getCourseLessons?.(courseId, { realtime: false });
   }, [context, course, courseId, lessonsLoaded, lesson]);
 
   // Reset fetch refs when navigating to a different lesson/course

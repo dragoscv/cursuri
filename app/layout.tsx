@@ -9,7 +9,6 @@ import BottomNavigation from '@/components/Header/BottomNavigation';
 import HideOnAdmin, { ContentArea } from '@/components/shared/HideOnAdmin';
 import SkipLink from '@/components/shared/SkipLink';
 import PageViewTracker from '@/components/Analytics/PageViewTracker';
-import PreloadLinks from './preload-links';
 import { constructMetadata } from '@/utils/metadata';
 // Security initialization import
 import '@/utils/security/initSecurityChecks';
@@ -43,7 +42,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Preconnect to external domains for better performance */}
         <link rel="preconnect" href="https://images.unsplash.com" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
-        <PreloadLinks />
+        {/* Hero image preload removed: <Image priority fetchPriority="high">
+            in HeroSection already emits a matched preload only on the home
+            page. The hand-rolled global preload fired on every route and
+            caused "preloaded but not used" warnings. */}
         {/* Structured data for AI discoverability (AEO/LLMO) */}
         <script
           type="application/ld+json"
