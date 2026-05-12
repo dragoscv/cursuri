@@ -22,19 +22,27 @@ const FeaturedReviews = memo(function FeaturedReviews() {
   }
   const { courses, reviews, getCourseReviews } = context;
 
-  // Fetch reviews for all courses when component mounts
+  // Fetch reviews for all courses when component mounts.
+  // Use one-shot reads (no persistent Firestore Listen channel) — featured
+  // reviews on the homepage don't need realtime updates.
   useEffect(() => {
-    const fetchReviews = async () => {
-      // Fetch reviews for each course if they haven't been fetched yet
+    let cancelled = false;
+    const unsubs: Array<() => void> = [];
+    (async () => {
       const courseIds = Object.keys(courses);
-      courseIds.forEach((courseId) => {
-        getCourseReviews(courseId);
-      });
+      for (const courseId of courseIds) {
+        const unsub = await getCourseReviews(courseId, { realtime: false });
+        if (cancelled) {
+          if (typeof unsub === 'function') unsub();
+          continue;
+        }
+        if (typeof unsub === 'function') unsubs.push(unsub);
+      }
+    })();
+    return () => {
+      cancelled = true;
+      unsubs.forEach((u) => u());
     };
-
-    if (Object.keys(courses).length > 0) {
-      fetchReviews();
-    }
     // Only run once when component mounts or when courses initially load
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

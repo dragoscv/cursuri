@@ -417,6 +417,53 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         const db = getFirestore(firebaseApp);
         const lessonsCollection = collection(db, `courses/${courseId}/lessons`);
         const lessonsQuery = query(lessonsCollection); // Removed status filter to match server implementation
+
+        // One-shot path: avoid opening a persistent Firestore Listen channel
+        // for read-only contexts (home catalog cards, featured sections).
+        if (cacheOptions.realtime === false) {
+          try {
+            const snap = await getDocs(lessonsQuery);
+            const lessonData: Record<string, Lesson> = {};
+            if (snap.empty) {
+              dispatch({
+                type: 'INITIALIZE_COURSE_LESSONS',
+                payload: { courseId },
+              });
+            }
+            snap.forEach((d) => {
+              const data = d.data() as Lesson;
+              (data as Lesson & { id: string }).id = d.id;
+              lessonData[d.id] = data;
+              dispatch({
+                type: 'SET_LESSONS',
+                payload: { courseId, lessonId: d.id, lesson: data },
+              });
+            });
+            dispatch({
+              type: 'SET_LESSON_LOADING_STATE',
+              payload: { courseId, status: 'success' },
+            });
+            if (cacheOptions.persist) {
+              saveToLocalStorage(
+                cacheKey,
+                lessonData,
+                generateCacheMetadata('success', cacheOptions.ttl)
+              );
+            }
+          } catch (err) {
+            console.error('Error in one-shot lessons fetch:', err);
+            dispatch({
+              type: 'SET_LESSON_LOADING_STATE',
+              payload: { courseId, status: 'error' },
+            });
+          } finally {
+            setRequestPending(cacheKey, false);
+          }
+          return () => {
+            /* no-op: one-shot read */
+          };
+        }
+
         const unsubscribe = onSnapshot(
           lessonsQuery,
           (querySnapshot) => {
@@ -566,6 +613,47 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         const db = getFirestore(firebaseApp);
         const docRef = collection(db, `courses/${courseId}/reviews`);
         const q = query(docRef);
+
+        // One-shot path for home/catalog contexts that don't need live updates.
+        if (cacheOptions.realtime === false) {
+          try {
+            const snap = await getDocs(q);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const reviewData: Record<string, any> = {};
+            snap.forEach((d) => {
+              const data = d.data();
+              data.id = d.id;
+              reviewData[d.id] = data;
+              dispatch({
+                type: 'SET_REVIEWS',
+                payload: { courseId, reviewId: d.id, review: data },
+              });
+            });
+            dispatch({
+              type: 'SET_REVIEW_LOADING_STATE',
+              payload: { courseId, status: 'success' },
+            });
+            if (cacheOptions.persist) {
+              saveToLocalStorage(
+                cacheKey,
+                reviewData,
+                generateCacheMetadata('success', cacheOptions.ttl)
+              );
+            }
+          } catch (err) {
+            console.error('Error in one-shot reviews fetch:', err);
+            dispatch({
+              type: 'SET_REVIEW_LOADING_STATE',
+              payload: { courseId, status: 'error' },
+            });
+          } finally {
+            setRequestPending(cacheKey, false);
+          }
+          return () => {
+            /* no-op: one-shot read */
+          };
+        }
+
         const unsubscribe = onSnapshot(
           q,
           (querySnapshot) => {

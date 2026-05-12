@@ -1019,6 +1019,10 @@ export interface CacheOptions {
   persist?: boolean; // Whether to persist in localStorage (default: false)
   cacheKey?: string; // Custom cache key (default: auto-generated)
   forceRefresh?: boolean; // Whether to force refresh the data (default: false)
+  // When false, use a one-shot getDocs read instead of an onSnapshot streaming
+  // channel. Use for read-only home/catalog views where realtime updates are
+  // unnecessary — avoids leaking long-poll listeners on mobile networks.
+  realtime?: boolean;
 }
 
 // Other existing types...

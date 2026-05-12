@@ -6,6 +6,30 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.4.3] - 2026-05-12
+
+### Fixed
+
+- **Homepage Firestore listener explosion**. The anonymous homepage was
+  opening ~30 simultaneous Firestore `Listen` long-poll channels — roughly
+  4 per visible course card (`Course.tsx` subscribed to lessons + reviews
+  for every catalog tile) plus `FeaturedReviews` subscribing to every
+  course's reviews again, plus base AppContext listeners. On flaky mobile
+  networks the concurrent streams competed for connection slots and
+  produced "content isn't loading" behaviour. Added a `realtime?: boolean`
+  option to `CacheOptions`; when `false`, `getCourseLessons` and
+  `getCourseReviews` use a one-shot `getDocs` HTTP read instead of
+  `onSnapshot`. `Course.tsx` (catalog card) and `FeaturedReviews.tsx` now
+  opt in to one-shot mode. Expected to drop the homepage channel count
+  from ~30 to <10.
+- **Listener leak in `Course.tsx` and `FeaturedReviews.tsx`**. Both
+  components called `getCourseReviews`/`getCourseLessons` (which return
+  `Promise<unsubscribe>`) from `useEffect` without ever awaiting the
+  promise or returning a cleanup, so every mount permanently leaked a
+  Firestore listener. Cleanup is now properly wired with a `cancelled`
+  flag pattern so listeners stop on unmount even with the existing
+  `onSnapshot` callers.
+
 ## [0.4.2] - 2026-05-12
 
 ### Fixed
