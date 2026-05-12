@@ -6,6 +6,59 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-05-12
+
+### Changed — Header overhaul (full)
+
+User feedback: the header still felt busy / dense / cluttered, with
+icons too large, the right cluster a visual mess, and the active nav
+state (gradient pill with shadow inside a backdrop-blur container) was
+framing-within-framing. Top-padding on every page (`pt-20 md:pt-24`)
+left awkward dead space below the now-shorter header. Full pass:
+
+- **`Header.tsx`**: removed orphan `header-shimmer` styled-jsx keyframe
+  (the usage was already gone, the keyframe lingered). Snapper scroll
+  transition (200ms vs 400ms). Right cluster now a single rail with a
+  thin vertical separator between Search and the icon group. Slightly
+  larger gap (4 vs 3 lg:gap-8 vs 6) gives the brand and nav more breathing
+  room.
+
+- **`NavbarBrand`** (62 → 47 lines): dropped the 3-color gradient logo
+  background, the rotating spring on hover, the animated bg-clip-text
+  gradient on the wordmark, and the absolute halo on hover. Now: a
+  single bordered "S" monogram (8×8 rounded-lg, foreground type) plus
+  the brand name in plain editorial weight. Wordmark hides on `<sm`.
+
+- **`NavbarLinks`** (53 → 51 lines): dropped the rounded-full pill
+  container with `backdrop-blur-sm` and the `bg-gradient-to-r` active
+  pill with primary-color shadow. Replaced with flat row + a 2px gold
+  underline (`from-amber-400 to-amber-500`) for active route, animated
+  via `layoutId="nav-active-underline"`. Reads like a magazine masthead.
+
+- **`ThemeToggle`** (62 → 71 lines, but icon shrunk 20→16px and hit
+  target 36→32px): removed scale spring + drop shadow + ring on hover;
+  now opacity-only. Same animation budget as the rest of the new rail.
+
+- **`LanguageSwitcher`** (58 → 65 lines): replaced two competing solid
+  pill buttons (each with their own primary fill on active) with a
+  single segmented EN/RO toggle. Active state uses a sliding
+  `layoutId="lang-switch-pill"` background. Letters are uppercase 11px
+  with letter-spacing — matches the eyebrow typography.
+
+- **`AuthActions`** (92 → 56 lines): dropped the duplicate "Sign Up"
+  gradient button. The login modal handles both signin and signup
+  internally, so the second CTA was dead UX weight. Single inverted-fill
+  "Login" button (foreground bg, background text), 32px tall to match
+  the rail.
+
+- **`AdminActions`** (58 → 31 lines): removed a 22-line block of
+  commented-out `Add Course` button code. Single compact ghost "Admin"
+  button at 32px, uppercase tracking-wide.
+
+- **`HideOnAdmin > ContentArea`**: page top-padding tightened from
+  `pt-20 md:pt-24` to `pt-16 md:pt-20` to match the new compact header
+  height. Eliminates the dead band that opened up below it.
+
 ## [0.9.0] - 2026-05-12
 
 ### Removed

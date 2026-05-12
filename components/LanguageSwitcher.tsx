@@ -1,62 +1,64 @@
 'use client';
 
-import React from 'react';
-import { useLocale, useTranslations } from 'next-intl';
-import Button from '@/components/ui/Button';
-import { useRouter } from 'next/navigation';
-
 /**
- * LanguageSwitcher component for instant language switching
- * Uses cookies to store language preference without changing URL
+ * LanguageSwitcher v2 — single segmented EN/RO toggle. One pill with two
+ * sliding states instead of two competing buttons. Cookie-based, full
+ * page reload (next-intl pulls translations from messages/{locale}/*).
  */
-const LanguageSwitcher = React.memo(function LanguageSwitcher() {
-  const currentLocale = useLocale();
+
+import React, { memo } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
+import { motion } from 'framer-motion';
+
+const LOCALES = ['en', 'ro'] as const;
+type Locale = (typeof LOCALES)[number];
+
+const LanguageSwitcher = memo(function LanguageSwitcher() {
+  const currentLocale = useLocale() as Locale;
   const t = useTranslations('common.accessibility');
-  const router = useRouter();
 
-  const switchLanguage = async (newLocale: 'en' | 'ro') => {
-    // Set cookie for locale preference
+  const switchLanguage = (newLocale: Locale) => {
+    if (newLocale === currentLocale) return;
     document.cookie = `locale=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
-
-    // Navigate to current path to trigger re-render with new locale
-    // This is smoother than window.location.reload() as it uses client-side navigation
     window.location.href = window.location.pathname + window.location.search;
   };
 
   return (
-    <div className="flex items-center gap-2">
-      <Button
-        size="sm"
-        variant={currentLocale === 'en' ? 'solid' : 'light'}
-        onClick={() => switchLanguage('en')}
-        className={`
-          font-medium text-xs px-3 py-1 min-w-[45px] rounded-full
-          ${currentLocale === 'en'
-            ? 'bg-[color:var(--ai-primary)] text-white'
-            : 'text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]'
-          }
-        `}
-        aria-label={t('toggleLanguage').replace('{language}', 'English')}
-        aria-current={currentLocale === 'en' ? 'true' : undefined}
-      >
-        EN
-      </Button>
-      <Button
-        size="sm"
-        variant={currentLocale === 'ro' ? 'solid' : 'light'}
-        onClick={() => switchLanguage('ro')}
-        className={`
-          font-medium text-xs px-3 py-1 min-w-[45px] rounded-full
-          ${currentLocale === 'ro'
-            ? 'bg-[color:var(--ai-primary)] text-white'
-            : 'text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]'
-          }
-        `}
-        aria-label={t('toggleLanguage').replace('{language}', 'Romanian')}
-        aria-current={currentLocale === 'ro' ? 'true' : undefined}
-      >
-        RO
-      </Button>
+    <div
+      role="group"
+      aria-label="Language"
+      className="relative inline-flex items-center h-8 p-0.5 rounded-md bg-[color:var(--ai-card-bg)]/60 border border-[color:var(--ai-card-border)]"
+    >
+      {LOCALES.map((locale) => {
+        const active = locale === currentLocale;
+        return (
+          <button
+            key={locale}
+            type="button"
+            onClick={() => switchLanguage(locale)}
+            aria-label={t('toggleLanguage').replace(
+              '{language}',
+              locale === 'en' ? 'English' : 'Romanian'
+            )}
+            aria-current={active ? 'true' : undefined}
+            className={`relative z-10 px-2.5 h-7 text-[11px] font-semibold tracking-[0.05em] uppercase rounded-[5px] transition-colors duration-150 outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ai-primary)] ${
+              active
+                ? 'text-[color:var(--ai-foreground)]'
+                : 'text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]'
+            }`}
+          >
+            {active ? (
+              <motion.span
+                layoutId="lang-switch-pill"
+                aria-hidden
+                className="absolute inset-0 rounded-[5px] bg-[color:var(--ai-background)] shadow-sm"
+                transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+              />
+            ) : null}
+            <span className="relative z-10">{locale}</span>
+          </button>
+        );
+      })}
     </div>
   );
 });

@@ -10,9 +10,9 @@ const isAdminPath = (pathname: string) => pathname === '/admin' || pathname.star
  * the dedicated admin panel, which provides its own shell.
  */
 const HideOnAdmin: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const pathname = usePathname() || '';
-    if (isAdminPath(pathname)) return null;
-    return <>{children}</>;
+  const pathname = usePathname() || '';
+  if (isAdminPath(pathname)) return null;
+  return <>{children}</>;
 };
 
 /**
@@ -21,13 +21,12 @@ const HideOnAdmin: React.FC<{ children: React.ReactNode }> = ({ children }) => {
  * space at the top of the admin shell, so we drop it.
  */
 export const ContentArea: React.FC<{ children: React.ReactNode; className?: string }> = ({
-    children,
-    className = '',
+  children,
+  className = '',
 }) => {
-    const pathname = usePathname() || '';
-    const onAdmin = isAdminPath(pathname);
-    return <div className={`${onAdmin ? '' : 'pt-20 md:pt-24'} ${className}`}>{children}</div>;
+  const pathname = usePathname() || '';
+  const onAdmin = isAdminPath(pathname);
+  return <div className={`${onAdmin ? '' : 'pt-16 md:pt-20'} ${className}`}>{children}</div>;
 };
 
 export default HideOnAdmin;
-

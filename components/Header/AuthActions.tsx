@@ -1,28 +1,25 @@
 'use client';
 
+/**
+ * AuthActions v2 — single ghost "Sign in" button. The login modal handles
+ * both signin and signup, so the duplicate gradient signup CTA is dead UX
+ * weight in the header.
+ */
+
 import React, { useContext } from 'react';
-import { AppContext } from '@/components/AppContext';
 import { useTranslations } from 'next-intl';
-import Button from '@/components/ui/Button';
+
+import { AppContext } from '@/components/AppContext';
 import Login from '@/components/Login';
 
-/**
- * AuthActions component that displays login/signup buttons when user is not authenticated
- */
 export default function AuthActions() {
   const t = useTranslations('common.buttons');
   const context = useContext(AppContext);
-
-  if (!context) {
-    throw new Error('Missing context value');
-  }
+  if (!context) throw new Error('Missing context value');
 
   const { user, openModal, closeModal } = context;
+  if (user) return null;
 
-  // Don't show login buttons if user is already logged in
-  if (user) {
-    return null;
-  }
   const handleOpenLoginModal = () => {
     openModal({
       id: 'login',
@@ -50,49 +47,12 @@ export default function AuthActions() {
   };
 
   return (
-    <div className="flex items-center gap-2 md:gap-3">
-      <Button
-        variant="flat"
-        size="sm"
-        onClick={handleOpenLoginModal}
-        className="
-                    font-medium 
-                    text-[color:var(--ai-primary)] 
-                    bg-[color:var(--ai-primary)]/10 
-                    hover:bg-[color:var(--ai-primary)]/20
-                    border border-[color:var(--ai-primary)]/20
-                    hover:border-[color:var(--ai-primary)]/30
-                    rounded-lg
-                    px-3 py-2 md:px-4 md:py-2
-                    transition-all duration-200
-                    min-w-[60px] md:min-w-[70px]
-                    text-sm
-                "
-      >
-        {t('login')}
-      </Button>
-      <Button
-        variant="primary"
-        size="sm"
-        onClick={handleOpenLoginModal}
-        style={{
-          background: 'linear-gradient(to right, var(--ai-primary), var(--ai-secondary))',
-        }}
-        className="
-                    font-medium 
-                    text-white 
-                    hover:opacity-90
-                    hover:shadow-md hover:shadow-[color:var(--ai-primary)]/25
-                    rounded-lg
-                    px-3 py-2 md:px-4 md:py-2
-                    transition-all duration-200
-                    min-w-[70px] md:min-w-[80px]
-                    text-sm
-                    border-0
-                "
-      >
-        {t('signup')}
-      </Button>
-    </div>
+    <button
+      type="button"
+      onClick={handleOpenLoginModal}
+      className="ml-1 inline-flex items-center h-8 px-3.5 text-[13px] font-semibold tracking-[-0.005em] rounded-md bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] hover:opacity-90 transition-opacity duration-150 outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ai-primary)]"
+    >
+      {t('login')}
+    </button>
   );
 }

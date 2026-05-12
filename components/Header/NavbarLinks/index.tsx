@@ -1,15 +1,16 @@
 'use client';
 
+/**
+ * NavbarLinks v2 — flat editorial row with a 2px gold underline for the
+ * active route. No background pill, no nested chrome, no gradient fills.
+ */
+
 import React from 'react';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import Link from 'next/link';
 import { motion } from 'framer-motion';
 
-/**
- * NavbarLinks — main desktop navigation with animated active-state pill
- * (framer-motion shared layout) and hover micro-interactions.
- */
 export default function NavbarLinks() {
   const t = useTranslations('common');
   const pathname = usePathname();
@@ -25,28 +26,29 @@ export default function NavbarLinks() {
     href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(href + '/');
 
   return (
-    <nav className="flex items-center gap-1 rounded-full border border-[color:var(--ai-card-border)]/50 bg-[color:var(--ai-card-bg)]/30 backdrop-blur-sm px-1.5 py-1 shadow-sm">
+    <nav className="flex items-center gap-1">
       {items.map((item) => {
         const active = isActive(item.href);
         return (
           <Link
             key={item.href}
             href={item.href}
-            className={`relative inline-flex items-center px-4 py-1.5 text-sm font-medium rounded-full transition-colors duration-200 ${
+            className={`relative px-3 py-1.5 text-[14px] font-medium tracking-[-0.005em] rounded-md transition-colors duration-150 outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ai-primary)] ${
               active
-                ? 'text-white'
+                ? 'text-[color:var(--ai-foreground)]'
                 : 'text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]'
             }`}
+            aria-current={active ? 'page' : undefined}
           >
-            {active && (
+            {item.label}
+            {active ? (
               <motion.span
-                layoutId="nav-active-pill"
+                layoutId="nav-active-underline"
                 aria-hidden
-                className="absolute inset-0 rounded-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] shadow-md shadow-[color:var(--ai-primary)]/30"
-                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                className="absolute left-3 right-3 -bottom-0.5 h-[2px] rounded-full bg-gradient-to-r from-amber-400 to-amber-500"
+                transition={{ type: 'spring', stiffness: 380, damping: 32 }}
               />
-            )}
-            <span className="relative z-10">{item.label}</span>
+            ) : null}
           </Link>
         );
       })}

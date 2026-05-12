@@ -43,25 +43,25 @@ const Header = React.memo(function Header() {
     <motion.header
       role="navigation"
       aria-label={t('accessibility.mainNavigation')}
-      initial={{ y: -24, opacity: 0 }}
+      initial={{ y: -16, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ type: 'spring', stiffness: 280, damping: 28 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-[padding,background-color,backdrop-filter,border-color] duration-400 ease-out ${
+      transition={{ type: 'spring', stiffness: 320, damping: 30 }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-[padding,background-color,backdrop-filter,border-color] duration-200 ease-out ${
         isScrolled
           ? 'py-2 bg-[color:var(--ai-background)]/85 backdrop-blur-xl border-b border-[color:var(--ai-card-border)]'
-          : 'py-3.5 bg-[color:var(--ai-background)]/40 backdrop-blur-md border-b border-transparent'
+          : 'py-3 bg-[color:var(--ai-background)]/40 backdrop-blur-md border-b border-transparent'
       }`}
     >
-      {/* Subtle gold rim accent on scroll only — premium magazine feel */}
+      {/* Subtle gold rim accent on scroll only */}
       <div
         aria-hidden
-        className={`absolute inset-x-0 bottom-0 cinematic-rim-divider transition-opacity duration-400 ${
-          isScrolled ? 'opacity-60' : 'opacity-0'
+        className={`absolute inset-x-0 bottom-0 cinematic-rim-divider transition-opacity duration-200 ${
+          isScrolled ? 'opacity-50' : 'opacity-0'
         }`}
       />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-3 lg:gap-6">
+        <div className="flex items-center justify-between gap-4 lg:gap-8">
           {/* Brand */}
           <div className="flex items-center gap-3 min-w-0 flex-shrink-0">
             <NavbarBrand />
@@ -77,40 +77,23 @@ const Header = React.memo(function Header() {
             <MobileBreadcrumbs />
           </div>
 
-          {/* Right cluster */}
-          <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
-            <div className="flex-shrink-0">
-              <SearchBar />
-            </div>
-
-            <div className="hidden md:flex items-center gap-1.5">
+          {/* Right cluster — unified rail */}
+          <div className="flex items-center gap-1 flex-shrink-0">
+            <SearchBar />
+            <div className="hidden md:flex items-center gap-0.5">
+              <span aria-hidden className="w-px h-5 bg-[color:var(--ai-card-border)] mx-1" />
               <LanguageSwitcher />
               <ThemeToggle />
               <AdminActions />
               {!user && <AuthActions />}
             </div>
-
-            <div className="md:hidden flex-shrink-0">
+            <div className="md:hidden">
               <MobileMenu />
             </div>
-
-            <div className="flex-shrink-0">
-              <UserDropdown />
-            </div>
+            <UserDropdown />
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes header-shimmer {
-          0% {
-            background-position: 0% 0;
-          }
-          100% {
-            background-position: 200% 0;
-          }
-        }
-      `}</style>
     </motion.header>
   );
 });

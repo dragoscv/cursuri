@@ -1,64 +1,35 @@
 'use client';
 
-import React, { useContext } from 'react';
-import { AppContext } from '@/components/AppContext';
-import Button from '@/components/ui/Button';
-import { PlusIcon } from '@/components/icons/FeatherIcons';
-import AddCourse from '@/components/Course/AddCourse';
-import { useRouter } from 'next/navigation';
-
 /**
- * AdminActions component that displays admin-specific buttons and actions
+ * AdminActions v2 — compact admin-only entry point to /admin. No
+ * commented-out dead code, single small ghost button matching the icon
+ * rail height (h-8).
  */
+
+import React, { useContext } from 'react';
+import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+
+import { AppContext } from '@/components/AppContext';
+
 export default function AdminActions() {
   const context = useContext(AppContext);
   const router = useRouter();
+  const t = useTranslations('common');
 
-  if (!context) {
-    throw new Error('Missing context value');
-  }
-
-  const { isAdmin, openModal, closeModal } = context;
-
-  // Don't show admin actions if user is not an admin
-  if (!isAdmin) {
-    return null;
-  }
+  if (!context) throw new Error('Missing context value');
+  const { isAdmin } = context;
+  if (!isAdmin) return null;
 
   return (
-    <div className="flex gap-2">
-      {/* <Button
-                color="primary"
-                startContent={<PlusIcon size={16} />}
-                onPress={() => openModal({
-                    id: 'add-course',
-                    isOpen: true,
-                    hideCloseButton: false,
-                    backdrop: 'blur',
-                    size: 'full',
-                    scrollBehavior: 'inside',
-                    isDismissable: true,
-                    modalHeader: 'Add Course',
-                    modalBody: <AddCourse onClose={() => closeModal('add-course')} />,
-                    headerDisabled: true,
-                    footerDisabled: true,
-                    noReplaceURL: true,
-                    onClose: () => closeModal('add-course'),
-                })}
-                className="font-medium"
-                size="sm"
-            >
-                Add Course
-            </Button> */}
-      <Button
-        variant="flat"
-        color="primary"
-        onPress={() => router.push('/admin')}
-        className="font-medium"
-        size="sm"
-      >
-        Admin Panel
-      </Button>
-    </div>
+    <button
+      type="button"
+      onClick={() => router.push('/admin')}
+      title={t('nav.admin')}
+      aria-label={t('nav.admin')}
+      className="inline-flex items-center h-8 px-2.5 text-[12px] font-medium uppercase tracking-[0.06em] rounded-md text-[color:var(--ai-primary)] hover:bg-[color:var(--ai-primary)]/10 transition-colors duration-150 outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ai-primary)]"
+    >
+      Admin
+    </button>
   );
 }

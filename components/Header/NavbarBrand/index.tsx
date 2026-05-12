@@ -1,57 +1,50 @@
-'use client'
+'use client';
+
+/**
+ * NavbarBrand v2 — calm editorial monogram + plain wordmark.
+ *
+ * No gradients, no rotation springs, no animated halos. Just a single
+ * gold-accented "S" in a thin rounded square + the brand name in the
+ * standard foreground type. On course/lesson pages, hides the wordmark
+ * and shows breadcrumbs instead (saves horizontal real estate).
+ */
 
 import React from 'react';
 import Link from 'next/link';
-import Breadcrumbs from "@/components/Breadcrumbs";
-import { usePathname } from "next/navigation";
+import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { motion } from 'framer-motion';
 
-/**
- * NavbarBrand — animated logo + brand mark with hover micro-interactions.
- * On course/lesson pages, switches to compact logo + breadcrumbs.
- */
+import Breadcrumbs from '@/components/Breadcrumbs';
+
 export default function NavbarBrand() {
-    const t = useTranslations('common');
-    const pathname = usePathname();
-    const isCourseOrLessonPage = pathname.includes('/courses/');
+  const t = useTranslations('common');
+  const pathname = usePathname();
+  const isCourseOrLessonPage = pathname.includes('/courses/');
 
-    return (
-        <div className="flex items-center gap-3 min-w-0">
-            <Link href="/" className="group flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ai-primary)] rounded-lg" aria-label={t('nav.brandName')}>
-                <motion.div
-                    whileHover={{ rotate: -8, scale: 1.08 }}
-                    whileTap={{ scale: 0.95 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 18 }}
-                    className="relative grid place-items-center w-9 h-9 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)] text-white shadow-lg shadow-[color:var(--ai-primary)]/30"
-                >
-                    {/* Animated glow on hover */}
-                    <motion.span
-                        aria-hidden
-                        className="absolute inset-0 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] blur-md opacity-0 group-hover:opacity-60 transition-opacity duration-300"
-                    />
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="relative w-5 h-5"
-                    >
-                        <path d="M11.7 2.805a.75.75 0 01.6 0A60.65 60.65 0 0122.83 8.72a.75.75 0 01-.231 1.337 49.949 49.949 0 00-9.902 3.912l-.003.002-.34.18a.75.75 0 01-.707 0A50.009 50.009 0 007.5 12.174v-.224c0-.131.067-.248.172-.311a54.614 54.614 0 014.653-2.52.75.75 0 00-.65-1.352 56.129 56.129 0 00-4.78 2.589 1.858 1.858 0 00-.859 1.228 49.803 49.803 0 00-4.634-1.527.75.75 0 01-.231-1.337A60.653 60.653 0 0111.7 2.805z" />
-                        <path d="M13.06 15.473a48.45 48.45 0 017.666-3.282c.134 1.414.22 2.843.255 4.285a.75.75 0 01-.46.71 47.878 47.878 0 00-8.105 4.342.75.75 0 01-.832 0 47.877 47.877 0 00-8.104-4.342.75.75 0 01-.461-.71c.035-1.442.121-2.87.255-4.286A48.4 48.4 0 016 13.18v1.27a1.5 1.5 0 00-.14 2.508c-.09.38-.222.753-.397 1.11.452.213.901.434 1.346.661a6.729 6.729 0 00.551-1.608 1.5 1.5 0 00.14-2.67v-.645a48.549 48.549 0 013.44 1.668 2.25 2.25 0 002.12 0z" />
-                        <path d="M4.462 19.462c.42-.419.753-.89 1-1.394.453.213.902.434 1.347.661a6.743 6.743 0 01-1.286 1.794.75.75 0 11-1.06-1.06z" />
-                    </svg>
-                </motion.div>
-                {!isCourseOrLessonPage && (
-                    <span className="relative font-bold text-xl tracking-tight bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)] bg-clip-text text-transparent bg-[length:200%_100%] bg-[position:0%_0%] group-hover:bg-[position:100%_0%] transition-[background-position] duration-700 ease-out">
-                        {t('nav.brandName')}
-                    </span>
-                )}
-            </Link>
-            {isCourseOrLessonPage && (
-                <div className="hidden md:block max-w-[200px] lg:max-w-[300px] xl:max-w-[400px] overflow-hidden border-l border-[color:var(--ai-card-border)]/60 pl-3">
-                    <Breadcrumbs />
-                </div>
-            )}
+  return (
+    <div className="flex items-center gap-3 min-w-0">
+      <Link
+        href="/"
+        aria-label={t('nav.brandName')}
+        className="group flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ai-primary)] rounded-md"
+      >
+        <span
+          aria-hidden
+          className="grid place-items-center w-8 h-8 rounded-lg border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] text-[color:var(--ai-foreground)] font-semibold text-[15px] tracking-tight transition-colors group-hover:border-[color:var(--ai-primary)]/60 group-hover:text-[color:var(--ai-primary)]"
+        >
+          S
+        </span>
+        {!isCourseOrLessonPage ? (
+          <span className="font-semibold text-[15px] tracking-[-0.01em] text-[color:var(--ai-foreground)] hidden sm:inline">
+            {t('nav.brandName')}
+          </span>
+        ) : null}
+      </Link>
+      {isCourseOrLessonPage ? (
+        <div className="hidden md:block max-w-[200px] lg:max-w-[300px] xl:max-w-[400px] overflow-hidden border-l border-[color:var(--ai-card-border)]/60 pl-3">
+          <Breadcrumbs />
         </div>
-    );
+      ) : null}
+    </div>
+  );
 }
