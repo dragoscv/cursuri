@@ -124,7 +124,7 @@ const CourseContent: React.FC<CourseContentProps> = ({
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-[color:var(--ai-accent)]/5 backdrop-blur-sm rounded-xl p-5 border border-[color:var(--ai-card-border)]/50 shadow-sm"
+          className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] rounded-2xl p-5 border-l-[3px] border-l-amber-500"
         >
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
@@ -164,10 +164,10 @@ const CourseContent: React.FC<CourseContentProps> = ({
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="bg-[color:var(--ai-accent)]/10 rounded-xl p-5 border border-[color:var(--ai-accent)]/20 shadow-sm"
+          className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] rounded-2xl p-5 border-l-[3px] border-l-amber-500"
         >
           <div className="flex items-start gap-4">
-            <div className="text-[color:var(--ai-accent)] p-2 bg-[color:var(--ai-accent)]/10 rounded-full">
+            <div className="text-amber-500 p-2 bg-amber-500/10 rounded-full">
               <AlertIcon className="w-6 h-6" />
             </div>
             <div>
@@ -194,13 +194,13 @@ const CourseContent: React.FC<CourseContentProps> = ({
               <motion.div
                 key={module.id || moduleIndex}
                 variants={itemVariants}
-                className="border border-[color:var(--ai-card-border)] rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)] shadow-sm"
+                className="border border-[color:var(--ai-card-border)] rounded-2xl overflow-hidden bg-[color:var(--ai-card-bg)]"
               >
-                <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 border-b border-[color:var(--ai-card-border)]">
+                <div className="py-3 px-4 border-b border-[color:var(--ai-card-border)] border-l-[3px] border-l-amber-500">
                   <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
                     <span>{module.title}</span>
                     {module.lessonCount && (
-                      <span className="ml-2 text-xs bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] px-2 py-0.5 rounded-full">
+                      <span className="ml-2 text-[10px] uppercase tracking-[0.14em] font-medium border border-[color:var(--ai-card-border)] text-[color:var(--ai-muted)] px-2 py-0.5 rounded-full">
                         {t('lessonsCount', { count: module.lessonCount })}
                       </span>
                     )}
@@ -233,9 +233,9 @@ const CourseContent: React.FC<CourseContentProps> = ({
             {lessonsByModule['default'] && lessonsByModule['default'].length > 0 && (
               <motion.div
                 variants={itemVariants}
-                className="border border-[color:var(--ai-card-border)] rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)] shadow-sm"
+                className="border border-[color:var(--ai-card-border)] rounded-2xl overflow-hidden bg-[color:var(--ai-card-bg)]"
               >
-                <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 border-b border-[color:var(--ai-card-border)]">
+                <div className="py-3 px-4 border-b border-[color:var(--ai-card-border)] border-l-[3px] border-l-amber-500">
                   <h3 className="font-medium text-[color:var(--ai-foreground)]">
                     {t('additionalLessons')}
                   </h3>
@@ -262,12 +262,12 @@ const CourseContent: React.FC<CourseContentProps> = ({
           // Show flat list if no modules are defined
           <motion.div
             variants={itemVariants}
-            className="border border-[color:var(--ai-card-border)] rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)] shadow-sm"
+            className="border border-[color:var(--ai-card-border)] rounded-2xl overflow-hidden bg-[color:var(--ai-card-bg)]"
           >
-            <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 border-b border-[color:var(--ai-card-border)]">
+            <div className="py-3 px-4 border-b border-[color:var(--ai-card-border)] border-l-[3px] border-l-amber-500">
               <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
                 <span>{t('courseContent')}</span>
-                <span className="ml-2 text-xs bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] px-2 py-0.5 rounded-full">
+                <span className="ml-2 text-[10px] uppercase tracking-[0.14em] font-medium border border-[color:var(--ai-card-border)] text-[color:var(--ai-muted)] px-2 py-0.5 rounded-full">
                   {t('lessonsCount', { count: sortedLessons.length })}
                 </span>
               </h3>
@@ -336,80 +336,62 @@ const LessonItem: React.FC<LessonItemProps> = ({
 
   const getIcon = () => {
     if (isCompleted) {
-      return <FiCheck size={18} className="text-[color:var(--ai-success, #10b981)]" />;
+      return <FiCheck size={16} className="text-amber-500" aria-hidden />;
     } else if (!isAccessible) {
-      return <FiLock className="text-[color:var(--ai-muted)]" />;
+      return <FiLock className="text-[color:var(--ai-muted)]" aria-hidden />;
     } else if (lesson.videoUrl) {
-      return <FiPlay className="text-[color:var(--ai-primary)]" />;
+      return <FiPlay size={16} className="text-[color:var(--ai-foreground)]" aria-hidden />;
     } else {
-      return <FiBookOpen className="text-[color:var(--ai-primary)]" />;
+      return <FiBookOpen size={16} className="text-[color:var(--ai-foreground)]" aria-hidden />;
     }
   };
   return (
     <div
       className={`
-                flex items-center p-4 hover:bg-[color:var(--ai-card-bg)]/80 transition-all duration-300 relative
-                ${isAccessible ? 'cursor-pointer' : 'cursor-not-allowed opacity-80'}
-                ${isCompleted ? 'bg-gradient-to-r from-[color:var(--ai-success, #10b981)]/15 to-transparent border-l-4 border-[color:var(--ai-success, #10b981)]' : ''}
+                flex items-center p-4 transition-colors duration-200 relative group
+                ${isAccessible ? 'cursor-pointer hover:bg-[color:var(--ai-card-border)]/10' : 'cursor-not-allowed opacity-70'}
+                ${isCompleted ? 'border-l-[3px] border-l-amber-500' : ''}
             `}
       onClick={onClick}
     >
-      {/* Completion status indicator */}
-      {isCompleted && (
-        <div className="absolute left-0 top-0 bottom-0 flex items-center">
-          <div className="w-1 h-full bg-gradient-to-b from-[color:var(--ai-success, #10b981)] to-[color:var(--ai-success, #10b981)]/70"></div>
-          <div className="absolute -left-2 bg-[color:var(--ai-success, #10b981)] rounded-full w-4 h-4 flex items-center justify-center border-2 border-[color:var(--ai-card-bg)] dark:border-[color:var(--ai-background)]">
-            <div className="w-1.5 h-1.5 bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-background)] rounded-full"></div>
-          </div>
-        </div>
-      )}{' '}
       <div
-        className={`
-                flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full mr-4 transition-all duration-300 relative 
-                ${isCompleted
-            ? 'bg-[color:var(--ai-success, #10b981)] text-white border-4 border-[color:var(--ai-success, #10b981)]/60 ring-4 ring-[color:var(--ai-success, #10b981)]/20 shadow-lg'
-            : !isAccessible
-              ? 'bg-[color:var(--ai-card-border)]/20 text-[color:var(--ai-muted)] border border-[color:var(--ai-card-border)]/30'
-              : 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] border border-[color:var(--ai-primary)]/30'
-          }
+        className={`flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full mr-4 transition-colors duration-200
+                ${
+                  isCompleted
+                    ? 'bg-amber-500/10 border border-amber-500/40'
+                    : !isAccessible
+                      ? 'bg-[color:var(--ai-card-border)]/20 border border-[color:var(--ai-card-border)]/40'
+                      : 'bg-[color:var(--ai-card-border)]/20 border border-[color:var(--ai-card-border)]'
+                }
             `}
       >
-        {isCompleted ? <FiCheck size={24} className="text-white" /> : getIcon()}
-        {isCompleted && (
-          <div className="absolute -top-2 -right-2 w-6 h-6 bg-[color:var(--ai-success, #10b981)] rounded-full flex items-center justify-center border-2 border-[color:var(--ai-card-bg)] dark:border-[color:var(--ai-background)] shadow-md">
-            <div className="w-2 h-2 bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-background)] rounded-full"></div>
-          </div>
-        )}
+        {getIcon()}
       </div>
       <div className="flex-1 min-w-0">
-        <div className="flex items-center">
-          <span className="text-sm font-medium text-[color:var(--ai-muted)] mr-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-xs font-medium text-[color:var(--ai-muted)] tabular-nums">
             {(index + 1).toString().padStart(2, '0')}
-          </span>{' '}
-          <div className="flex items-center">
-            <h4
-              className={`font-medium truncate
-                        ${isCompleted
-                  ? 'text-[color:var(--ai-success, #10b981)]'
-                  : !isAccessible
-                    ? 'text-[color:var(--ai-muted)]'
-                    : 'text-[color:var(--ai-foreground)]'
-                }
-                    `}
-            >
-              {lesson.name}
-            </h4>
-            {isCompleted && (
-              <span className="ml-2 bg-[color:var(--ai-success, #10b981)] text-white px-2 py-0.5 rounded-md text-xs font-bold flex items-center gap-1">
-                <FiCheck className="w-3 h-3" />
-                {t('completedBadge')}
-              </span>
-            )}
-          </div>
+          </span>
+          <h4
+            className={`font-medium truncate transition-colors duration-200 ${
+              isCompleted
+                ? 'text-[color:var(--ai-foreground)]'
+                : !isAccessible
+                  ? 'text-[color:var(--ai-muted)]'
+                  : 'text-[color:var(--ai-foreground)] group-hover:text-amber-500'
+            }`}
+          >
+            {lesson.name}
+          </h4>
+          {isCompleted && (
+            <span className="text-[10px] uppercase tracking-[0.14em] font-medium border border-amber-500/50 text-amber-500 px-2 py-0.5 rounded-full">
+              {t('completedBadge')}
+            </span>
+          )}
           {lesson.isFree && (
-            <Chip size="sm" variant="flat" color="success" className="ml-2 text-xs">
+            <span className="text-[10px] uppercase tracking-[0.14em] font-medium border border-emerald-500/50 text-emerald-500 px-2 py-0.5 rounded-full">
               {t('free')}
-            </Chip>
+            </span>
           )}
         </div>
 
@@ -418,30 +400,20 @@ const LessonItem: React.FC<LessonItemProps> = ({
             {stripHtml(lesson.description)}
           </p>
         )}
-      </div>{' '}
+      </div>
       <div className="ml-4 flex-shrink-0 flex items-center gap-3">
         {lesson.duration && (
-          <span className="text-xs text-[color:var(--ai-muted)] flex items-center">
-            <FiClock className="mr-1 h-3.5 w-3.5" />
+          <span className="text-xs text-[color:var(--ai-muted)] flex items-center tabular-nums">
+            <FiClock className="mr-1 h-3.5 w-3.5" aria-hidden />
             {lesson.duration}
           </span>
         )}
         {!isAccessible ? (
-          <span className="text-xs bg-[color:var(--ai-card-border)]/20 text-[color:var(--ai-muted)] px-2 py-1 rounded-full flex items-center">
-            <FiLock className="h-3 w-3 mr-1" />
+          <span className="text-[10px] uppercase tracking-[0.14em] font-medium border border-[color:var(--ai-card-border)] text-[color:var(--ai-muted)] px-2 py-0.5 rounded-full flex items-center gap-1">
+            <FiLock className="h-3 w-3" aria-hidden />
             {t('locked')}
           </span>
-        ) : isCompleted ? (
-          <span className="text-xs bg-[color:var(--ai-success, #10b981)]/20 text-[color:var(--ai-success, #10b981)] px-3 py-1.5 rounded-full flex items-center gap-1 font-semibold border border-[color:var(--ai-success, #10b981)]/30 shadow-sm">
-            <FiCheck className="h-3 w-3" />
-            {t('completed')}
-          </span>
-        ) : (
-          <span className="text-xs bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] px-2 py-1 rounded-full flex items-center">
-            <span className="w-2 h-2 bg-[color:var(--ai-primary)]/60 rounded-full mr-1.5"></span>
-            {t('inProgress')}
-          </span>
-        )}
+        ) : null}
       </div>
     </div>
   );

@@ -270,7 +270,7 @@ export default function Course({ courseId }: CourseProps) {
         className="mb-8"
         classNames={{
           tabList: 'relative border-b border-[color:var(--ai-card-border)]/50 gap-4 mb-4',
-          tab: 'px-4 py-3 text-[color:var(--ai-muted)] data-[selected=true]:text-[color:var(--ai-primary)] font-medium transition-colors duration-200 relative',
+          tab: 'px-4 py-3 text-[color:var(--ai-muted)] data-[selected=true]:text-[color:var(--ai-foreground)] font-medium transition-colors duration-200 relative',
           cursor: 'opacity-0',
           panel: 'pt-2',
           base: 'group relative',
@@ -282,14 +282,11 @@ export default function Course({ courseId }: CourseProps) {
           key="content"
           title={
             <div className="flex items-center gap-2 relative">
-              <FiBookOpen
-                size={18}
-                className={selectedTab === 'content' ? 'text-[color:var(--ai-primary)]' : ''}
-              />
+              <FiBookOpen size={18} className={selectedTab === 'content' ? 'text-amber-500' : ''} />
               <span>{t('tabs.content')}</span>
               {selectedTab === 'content' && (
                 <motion.span
-                  className="absolute -bottom-3 left-0 right-0 h-0.5 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
+                  className="absolute -bottom-3 left-0 right-0 h-0.5 bg-amber-500"
                   layoutId="tab-indicator"
                   initial={{ width: '0%', opacity: 0 }}
                   animate={{ width: '100%', opacity: 1 }}
@@ -303,14 +300,11 @@ export default function Course({ courseId }: CourseProps) {
           key="overview"
           title={
             <div className="flex items-center gap-2 relative">
-              <FiLayers
-                size={18}
-                className={selectedTab === 'overview' ? 'text-[color:var(--ai-primary)]' : ''}
-              />
+              <FiLayers size={18} className={selectedTab === 'overview' ? 'text-amber-500' : ''} />
               <span>{t('tabs.overview')}</span>
               {selectedTab === 'overview' && (
                 <motion.span
-                  className="absolute -bottom-3 left-0 right-0 h-0.5 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
+                  className="absolute -bottom-3 left-0 right-0 h-0.5 bg-amber-500"
                   layoutId="tab-indicator"
                   initial={{ width: '0%', opacity: 0 }}
                   animate={{ width: '100%', opacity: 1 }}
@@ -324,14 +318,11 @@ export default function Course({ courseId }: CourseProps) {
           key="reviews"
           title={
             <div className="flex items-center gap-2 relative">
-              <FiStar
-                size={18}
-                className={selectedTab === 'reviews' ? 'text-[color:var(--ai-primary)]' : ''}
-              />
+              <FiStar size={18} className={selectedTab === 'reviews' ? 'text-amber-500' : ''} />
               <span>{t('tabs.reviews')}</span>
               {selectedTab === 'reviews' && (
                 <motion.span
-                  className="absolute -bottom-3 left-0 right-0 h-0.5 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
+                  className="absolute -bottom-3 left-0 right-0 h-0.5 bg-amber-500"
                   layoutId="tab-indicator"
                   initial={{ width: '0%', opacity: 0 }}
                   animate={{ width: '100%', opacity: 1 }}
@@ -355,7 +346,7 @@ export default function Course({ courseId }: CourseProps) {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className={selectedTab === 'resources' ? 'text-[color:var(--ai-primary)]' : ''}
+                  className={selectedTab === 'resources' ? 'text-amber-500' : ''}
                 >
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                   <polyline points="14 2 14 8 20 8"></polyline>
@@ -366,7 +357,7 @@ export default function Course({ courseId }: CourseProps) {
                 <span>{t('tabs.resources')}</span>
                 {selectedTab === 'resources' && (
                   <motion.span
-                    className="absolute -bottom-3 left-0 right-0 h-0.5 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
+                    className="absolute -bottom-3 left-0 right-0 h-0.5 bg-amber-500"
                     layoutId="tab-indicator"
                     initial={{ width: '0%', opacity: 0 }}
                     animate={{ width: '100%', opacity: 1 }}

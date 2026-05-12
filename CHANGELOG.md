@@ -6,6 +6,31 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.17.0] - 2026-05-12
+
+### Changed — course detail page (Conținut tab) editorial pass
+
+After the lesson and legal-page passes, the `/courses/[id]` route still
+rendered the purple primary gradient throughout its content tab. Brought
+the page in line with the editorial design language:
+
+- `Course.tsx` tabs (Conținut / Prezentare Generală / Recenzii /
+  Resurse): active state and underline are now solid amber instead of
+  the primary-to-secondary gradient; selected text uses the solid
+  foreground token.
+- `CourseContent.tsx`:
+  - "Your Progress" and "Some content locked" cards now wear the
+    editorial card chrome (border + 3px gold left rail, no gradient,
+    no backdrop-blur).
+  - Module / additional-lessons / flat-list headers now use the gold
+    left rail; the lessons-count chip is a muted bordered pill instead
+    of a purple-tinted fill.
+  - `LessonItem` was rebuilt: gold left rail for completed lessons,
+    foreground hover → amber on the title, no ring/ribbon flourishes,
+    badges are uppercase eyebrow-style bordered pills.
+- `LessonsList.tsx` (used elsewhere in the app): same editorial chrome
+  for the list container, header, and lesson cards.
+
 ## [0.16.3] - 2026-05-12
 
 ### Fixed — lesson-page button regressions

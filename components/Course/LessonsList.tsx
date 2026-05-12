@@ -42,15 +42,18 @@ export default function LessonsList({
 
   if (!lessons || lessons.length === 0) {
     return (
-      <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-[color:var(--ai-accent)]/10 backdrop-blur-sm rounded-xl p-6 border border-[color:var(--ai-card-border)]/50 shadow-md">
-        <div className="flex flex-col items-center justify-center py-8 text-center">
-          <div className="w-16 h-16 rounded-full bg-[color:var(--ai-primary)]/10 flex items-center justify-center mb-4">
-            <FiBookOpen className="text-[color:var(--ai-primary)] text-2xl" />
-          </div>
-          <h3 className="text-xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-2">
+      <div className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] rounded-2xl p-8 border-t-2 border-t-amber-500">
+        <div className="flex flex-col items-center justify-center py-6 text-center">
+          <FiBookOpen className="text-amber-500 text-2xl mb-3" aria-hidden />
+          <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--ai-muted)] mb-2">
+            {t('courseContent')}
+          </p>
+          <h3 className="text-xl font-semibold text-[color:var(--ai-foreground)] mb-2">
             {t('noLessonsYet')}
           </h3>
-          <p className="text-[color:var(--ai-muted)] max-w-md">{t('noLessonsDescription')}</p>
+          <p className="text-[color:var(--ai-muted)] max-w-md text-sm">
+            {t('noLessonsDescription')}
+          </p>
         </div>
       </div>
     );
@@ -141,28 +144,31 @@ export default function LessonsList({
     remainingHours > 0 ? `${remainingHours}h ${remainingMinutes}m` : `${remainingMinutes} min`;
 
   return (
-    <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-[color:var(--ai-accent)]/5 backdrop-blur-sm rounded-xl p-6 border border-[color:var(--ai-card-border)]/50 shadow-md">
+    <div className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] rounded-2xl p-6 border-t-2 border-t-amber-500">
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h2 className="text-xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-1">
+          <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--ai-muted)] mb-2">
+            {t('courseContent')}
+          </p>
+          <h2 className="text-xl font-semibold text-[color:var(--ai-foreground)] mb-2">
             {t('courseContent')}
           </h2>
           <div className="flex items-center gap-3 text-[color:var(--ai-muted)] text-sm">
-            <div className="flex items-center gap-1">
-              <FiBookOpen className="w-3.5 h-3.5" />
+            <div className="flex items-center gap-1.5">
+              <FiBookOpen className="w-3.5 h-3.5" aria-hidden />
               <span>{t('lessons', { count: sortedLessons.length })}</span>
             </div>
-            <span>•</span>
-            <div className="flex items-center gap-1">
-              <FiClock className="w-3.5 h-3.5" />
+            <span aria-hidden>•</span>
+            <div className="flex items-center gap-1.5">
+              <FiClock className="w-3.5 h-3.5" aria-hidden />
               <span>{t('totalDuration', { duration: durationText })}</span>
             </div>
 
             {userHasAccess && Object.keys(completedLessons).length > 0 && (
               <>
-                <span>•</span>
-                <div className="flex items-center gap-1 text-[color:var(--ai-primary)]">
-                  <FiClock className="w-3.5 h-3.5" />
+                <span aria-hidden>•</span>
+                <div className="flex items-center gap-1.5 text-amber-500">
+                  <FiClock className="w-3.5 h-3.5" aria-hidden />
                   <span>{t('remaining', { duration: remainingText })}</span>
                 </div>
               </>
@@ -171,18 +177,20 @@ export default function LessonsList({
         </div>
 
         {userHasAccess && Object.keys(completedLessons).length > 0 && (
-          <div className="bg-[color:var(--ai-primary)]/10 px-3 py-2 rounded-lg text-sm">
+          <div className="px-3 py-2 rounded-full border border-[color:var(--ai-card-border)] text-sm">
             <div className="flex items-center gap-2">
-              <div className="text-[color:var(--ai-primary)] font-medium">
+              <div className="text-[color:var(--ai-foreground)] font-medium tabular-nums">
                 {Object.values(completedLessons).filter((v) => v).length} / {sortedLessons.length}
               </div>
-              <div className="w-24 h-2 bg-[color:var(--ai-card-border)]/30 rounded-full overflow-hidden">
-                {' '}
+              <div className="w-24 h-1.5 bg-[color:var(--ai-card-border)]/40 rounded-full overflow-hidden">
                 <div
-                  className={`h-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] rounded-full w-[${Math.round((Object.values(completedLessons).filter((v) => v).length / sortedLessons.length) * 100)}%]`}
-                ></div>
+                  className="h-full bg-amber-500 rounded-full transition-all duration-300"
+                  style={{
+                    width: `${Math.round((Object.values(completedLessons).filter((v) => v).length / sortedLessons.length) * 100)}%`,
+                  }}
+                />
               </div>
-              <span className="text-[color:var(--ai-muted)]">{t('completed')}</span>
+              <span className="text-[color:var(--ai-muted)] text-xs">{t('completed')}</span>
             </div>
           </div>
         )}
@@ -202,78 +210,81 @@ export default function LessonsList({
               <motion.div
                 key={lesson?.id || index}
                 variants={itemVariants}
-                className={`relative rounded-xl transition-all duration-300 group 
+                className={`relative rounded-2xl transition-colors duration-200 group border
                                 ${
                                   userHasAccess || lesson?.isFree
-                                    ? 'bg-[color:var(--ai-card-bg)]/80 hover:bg-[color:var(--ai-card-bg)] cursor-pointer shadow hover:shadow-md border border-[color:var(--ai-card-border)]'
-                                    : 'bg-[color:var(--ai-card-bg)]/50 border-dashed cursor-not-allowed border border-[color:var(--ai-card-border)]/50'
+                                    ? 'border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] hover:border-[color:var(--ai-foreground)]/40 cursor-pointer'
+                                    : 'border-[color:var(--ai-card-border)]/60 border-dashed bg-[color:var(--ai-card-bg)]/50 cursor-not-allowed'
                                 }
-                                ${isCompleted ? 'ring-1 ring-[color:var(--ai-primary)]/30' : ''}
+                                ${isCompleted ? 'border-l-[3px] border-l-amber-500' : ''}
                             `}
               >
                 {/* Lesson Index Circle */}
                 <div
-                  className={`absolute -left-3 top-1/2 transform -translate-y-1/2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shadow-sm
+                  className={`absolute -left-3 top-1/2 transform -translate-y-1/2 w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold border-2 border-[color:var(--ai-background)]
                                 ${
                                   isCompleted
-                                    ? 'bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white'
+                                    ? 'bg-amber-500 text-[color:var(--ai-background)]'
                                     : userHasAccess || lesson.isFree
-                                      ? 'bg-[color:var(--ai-primary)] text-white'
+                                      ? 'bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)]'
                                       : 'bg-[color:var(--ai-card-border)] text-[color:var(--ai-muted)]'
                                 }
                             `}
                 >
-                  {isCompleted ? <FiCheckCircle className="w-3.5 h-3.5" /> : index + 1}
+                  {isCompleted ? <FiCheckCircle className="w-3.5 h-3.5" aria-hidden /> : index + 1}
                 </div>
 
                 {userHasAccess || lesson.isFree ? (
                   <Link
                     href={`/courses/${courseId}/lessons/${lesson?.id || ''}`}
-                    className="block p-4"
+                    className="block p-4 pl-6"
                   >
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-start gap-3">
+                    <div className="flex justify-between items-center gap-4">
+                      <div className="flex items-start gap-3 min-w-0">
                         <div
-                          className={`rounded-md p-2 mt-1
+                          className={`rounded-md p-2 mt-0.5 flex-shrink-0
                                                 ${
                                                   isCompleted
-                                                    ? 'bg-[color:var(--ai-primary)]/20 text-[color:var(--ai-primary)]'
-                                                    : 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]'
+                                                    ? 'bg-amber-500/10 text-amber-500'
+                                                    : 'bg-[color:var(--ai-card-border)]/30 text-[color:var(--ai-foreground)]'
                                                 }
                                             `}
                         >
                           {isCompleted ? (
-                            <FiCheckCircle className="h-4 w-4" />
+                            <FiCheckCircle className="h-4 w-4" aria-hidden />
                           ) : (
-                            <FiPlay className="h-4 w-4" />
+                            <FiPlay className="h-4 w-4" aria-hidden />
                           )}
                         </div>
-                        <div>
-                          {' '}
+                        <div className="min-w-0">
                           <h3
-                            className={`font-medium transition-colors duration-300 
-                                                    ${isCompleted ? 'text-[color:var(--ai-primary)]' : 'group-hover:text-[color:var(--ai-primary)]'}
-                                                `}
+                            className={`font-medium transition-colors duration-200 ${
+                              isCompleted
+                                ? 'text-[color:var(--ai-foreground)]'
+                                : 'text-[color:var(--ai-foreground)] group-hover:text-amber-500'
+                            }`}
                           >
                             {lesson.title || lesson.name || t('unnamedLesson')}
                           </h3>
                           <p className="text-sm text-[color:var(--ai-muted)] line-clamp-2 mt-1">
-                            {lesson.description ? stripHtml(lesson.description) : t('noDescription')}
+                            {lesson.description
+                              ? stripHtml(lesson.description)
+                              : t('noDescription')}
                           </p>
                           {lesson.isFree && !userHasAccess && (
-                            <span className="inline-block mt-2 text-xs font-medium bg-[color:var(--ai-accent)]/10 text-[color:var(--ai-accent)] px-2 py-0.5 rounded-full">
+                            <span className="inline-block mt-2 text-[10px] font-medium uppercase tracking-[0.14em] border border-amber-500/50 text-amber-500 px-2 py-0.5 rounded-full">
                               {t('freePreview')}
                             </span>
                           )}
                         </div>
                       </div>
-                      <div className="flex flex-col items-end gap-2">
-                        <span className="text-sm text-[color:var(--ai-muted)]">
+                      <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                        <span className="text-sm text-[color:var(--ai-muted)] tabular-nums">
                           {lesson.duration ? lesson.duration + ' min' : '-'}
                         </span>
 
                         {isCompleted && (
-                          <span className="inline-block text-xs bg-[color:var(--ai-primary)]/20 text-[color:var(--ai-primary)] px-2 py-1 rounded font-medium">
+                          <span className="inline-block text-[10px] uppercase tracking-[0.14em] border border-amber-500/50 text-amber-500 px-2 py-0.5 rounded-full font-medium">
                             {t('completedBadge')}
                           </span>
                         )}
@@ -281,24 +292,25 @@ export default function LessonsList({
                     </div>
                   </Link>
                 ) : (
-                  <div className="p-4">
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-start gap-3">
-                        <div className="rounded-md bg-[color:var(--ai-card-border)]/20 p-2 mt-1">
-                          <FiLock className="h-4 w-4 text-[color:var(--ai-muted)]" />
+                  <div className="p-4 pl-6">
+                    <div className="flex justify-between items-center gap-4">
+                      <div className="flex items-start gap-3 min-w-0">
+                        <div className="rounded-md bg-[color:var(--ai-card-border)]/30 p-2 mt-0.5 flex-shrink-0">
+                          <FiLock className="h-4 w-4 text-[color:var(--ai-muted)]" aria-hidden />
                         </div>
-                        <div>
-                          {' '}
+                        <div className="min-w-0">
                           <h3 className="font-medium text-[color:var(--ai-muted)]">
                             {lesson.title || lesson.name || 'Unnamed Lesson'}
                           </h3>
                           <p className="text-sm text-[color:var(--ai-muted)]/70 line-clamp-2 mt-1">
-                            {lesson.description ? stripHtml(lesson.description) : 'No description available'}
+                            {lesson.description
+                              ? stripHtml(lesson.description)
+                              : 'No description available'}
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center">
-                        <span className="text-sm text-[color:var(--ai-muted)]/70">
+                      <div className="flex items-center flex-shrink-0">
+                        <span className="text-sm text-[color:var(--ai-muted)]/70 tabular-nums">
                           {lesson.duration ? lesson.duration + ' min' : '-'}
                         </span>
                       </div>
