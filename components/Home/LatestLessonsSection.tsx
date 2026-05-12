@@ -10,6 +10,8 @@ import { formatDistanceToNow } from 'date-fns';
 import { ro as roLocale, enUS as enLocale } from 'date-fns/locale';
 
 import { AppContext } from '@/components/AppContext';
+import SectionHeading from '@/components/shared/SectionHeading';
+import { Reveal } from '@/components/motion';
 import { firestoreDB } from '@/utils/firebase/firebase.config';
 import type { Course, Lesson } from '@/types';
 import { getCoursePrice as getUnifiedCoursePrice } from '@/utils/pricing';
@@ -156,14 +158,17 @@ const LatestLessonsSection = React.memo(function LatestLessonsSection() {
   }
 
   return (
-    <section className="w-full py-16 md:py-24">
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-10 md:mb-14">
-          <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--ai-foreground)]">
-            {t('title')}
-          </h2>
-          <p className="mt-3 text-[color:var(--ai-muted)] max-w-2xl mx-auto">{t('subtitle')}</p>
-        </div>
+    <section className="w-full py-24 md:py-32 editorial-surface relative">
+      <div aria-hidden className="absolute top-0 inset-x-0 cinematic-rim-divider" />
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <Reveal trigger="view" offset={28}>
+          <SectionHeading
+            eyebrow={t('eyebrow')}
+            title={t('title')}
+            subtitle={t('subtitle')}
+            className="mb-12"
+          />
+        </Reveal>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
           {/* Latest Lessons (left, 2 cols on desktop) */}

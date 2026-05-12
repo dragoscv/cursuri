@@ -226,8 +226,10 @@
     }
   },
   "availableCourses": {
+    "eyebrow": "Catalog",
     "title": "Available Courses",
     "subtitle": "Explore our comprehensive course catalog",
+    "description": "Browse every available course. Filter by topic, search by keyword.",
     "viewAll": "View All Courses",
     "filterBy": "Filter by",
     "allCategories": "All Categories",
@@ -242,6 +244,7 @@
     "subtitle": "Personalized course recommendations based on your interests"
   },
   "latestLessons": {
+    "eyebrow": "Just published",
     "title": "Fresh from the Studio",
     "subtitle": "The newest lessons we just published — jump in and keep learning.",
     "lessonsHeading": "Latest Lessons",

@@ -12,6 +12,8 @@ import { stripePayments } from '@/utils/firebase/stripe';
 import { firebaseApp } from '@/utils/firebase/firebase.config';
 import Login from '@/components/Login';
 import LoadingButton from '@/components/Buttons/LoadingButton';
+import SectionHeading from '@/components/shared/SectionHeading';
+import { Reveal } from '@/components/motion';
 import { useRouter } from 'next/navigation';
 import CopilotPerksCard from '@/components/shared/CopilotPerksCard';
 
@@ -31,8 +33,9 @@ export default function SubscriptionSection() {
   const hasActiveSubscription = subscriptions && subscriptions.length > 0;
 
   // Find subscription product from products
-  const subscriptionProduct = products?.find((p: any) =>
-    p.metadata?.type === 'subscription' || p.name?.toLowerCase().includes('subscription')
+  const subscriptionProduct = products?.find(
+    (p: any) =>
+      p.metadata?.type === 'subscription' || p.name?.toLowerCase().includes('subscription')
   );
 
   // Get app name for filtering
@@ -42,14 +45,18 @@ export default function SubscriptionSection() {
   // Since the product already has the correct metadata, just filter by active status and interval
   const monthlyPrice = subscriptionProduct?.prices?.find((p: any) => {
     const isActive = p.active !== false;
-    const isMonthly = p.metadata?.interval === 'month' || p.recurring?.interval === 'month' || p.interval === 'month';
+    const isMonthly =
+      p.metadata?.interval === 'month' ||
+      p.recurring?.interval === 'month' ||
+      p.interval === 'month';
 
     return isActive && isMonthly;
   });
 
   const yearlyPrice = subscriptionProduct?.prices?.find((p: any) => {
     const isActive = p.active !== false;
-    const isYearly = p.metadata?.interval === 'year' || p.recurring?.interval === 'year' || p.interval === 'year';
+    const isYearly =
+      p.metadata?.interval === 'year' || p.recurring?.interval === 'year' || p.interval === 'year';
 
     return isActive && isYearly;
   });
@@ -112,32 +119,17 @@ export default function SubscriptionSection() {
   const yearlyPriceInfo = formatPrice(yearlyPrice);
 
   return (
-    <section className="relative w-full py-20 md:py-28 overflow-hidden bg-[color:var(--ai-background)]">
-      {/* Subtle background */}
-      <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/3 w-[500px] h-[500px] bg-[color:var(--ai-primary)]/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 right-1/3 w-[400px] h-[400px] bg-[color:var(--ai-secondary)]/5 rounded-full blur-[100px]" />
-      </div>
-
+    <section className="relative w-full py-24 md:py-32 bg-[color:var(--ai-background)]">
       <div className="container max-w-5xl mx-auto px-4 relative z-10">
         {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-14"
-        >
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-full bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] border border-[color:var(--ai-primary)]/20 mb-4">
-            {t('title')}
-          </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-[color:var(--ai-foreground)]">
-            {t('title')}
-          </h2>
-          <p className="text-lg text-[color:var(--ai-muted)] max-w-2xl mx-auto">
-            {t('subtitle')}
-          </p>
-        </motion.div>
+        <Reveal trigger="view" offset={28}>
+          <SectionHeading
+            eyebrow={t('eyebrow')}
+            title={t('title')}
+            subtitle={t('subtitle')}
+            className="mb-14"
+          />
+        </Reveal>
 
         {/* GitHub Copilot benefit banner - the headline value prop */}
         <div className="max-w-5xl mx-auto mb-12">
@@ -167,7 +159,9 @@ export default function SubscriptionSection() {
                 <h3 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-2">
                   {t('plans.proMonthly.name')}
                 </h3>
-                <p className="text-sm text-[color:var(--ai-muted)]">{t('plans.proMonthly.description')}</p>
+                <p className="text-sm text-[color:var(--ai-muted)]">
+                  {t('plans.proMonthly.description')}
+                </p>
               </div>
 
               {/* Price */}
@@ -176,7 +170,9 @@ export default function SubscriptionSection() {
                   <span className="text-4xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">
                     {monthlyPriceInfo ? monthlyPriceInfo.formatted : t('plans.proMonthly.price')}
                   </span>
-                  <span className="text-[color:var(--ai-muted)]">/{t('plans.proMonthly.period')}</span>
+                  <span className="text-[color:var(--ai-muted)]">
+                    /{t('plans.proMonthly.period')}
+                  </span>
                 </div>
               </div>
 
@@ -199,11 +195,7 @@ export default function SubscriptionSection() {
 
               {/* CTA Button */}
               {loadingPlan === 'monthly' ? (
-                <LoadingButton
-                  className="w-full"
-                  size="lg"
-                  loadingText={t('toast.processing')}
-                />
+                <LoadingButton className="w-full" size="lg" loadingText={t('toast.processing')} />
               ) : hasActiveSubscription ? (
                 // Show "Manage Subscription" button if user already has a subscription
                 <Button
@@ -254,7 +246,9 @@ export default function SubscriptionSection() {
                 <h3 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-2">
                   {t('plans.proYearly.name')}
                 </h3>
-                <p className="text-sm text-[color:var(--ai-muted)]">{t('plans.proYearly.description')}</p>
+                <p className="text-sm text-[color:var(--ai-muted)]">
+                  {t('plans.proYearly.description')}
+                </p>
               </div>
 
               {/* Price */}
@@ -263,7 +257,9 @@ export default function SubscriptionSection() {
                   <span className="text-4xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">
                     {yearlyPriceInfo ? yearlyPriceInfo.formatted : t('plans.proYearly.price')}
                   </span>
-                  <span className="text-[color:var(--ai-muted)]">/{t('plans.proYearly.period')}</span>
+                  <span className="text-[color:var(--ai-muted)]">
+                    /{t('plans.proYearly.period')}
+                  </span>
                 </div>
                 <p className="text-sm text-[color:var(--ai-success)] font-medium mt-1">
                   {t('plans.proYearly.savings')}
@@ -289,11 +285,7 @@ export default function SubscriptionSection() {
 
               {/* CTA Button */}
               {loadingPlan === 'yearly' ? (
-                <LoadingButton
-                  className="w-full"
-                  size="lg"
-                  loadingText={t('toast.processing')}
-                />
+                <LoadingButton className="w-full" size="lg" loadingText={t('toast.processing')} />
               ) : hasActiveSubscription ? (
                 // Show "Manage Subscription" button if user already has a subscription
                 <Button
@@ -324,8 +316,6 @@ export default function SubscriptionSection() {
             </Card>
           </motion.div>
         </div>
-
-
       </div>
     </section>
   );

@@ -226,8 +226,10 @@
     }
   },
   "availableCourses": {
+    "eyebrow": "Catalog",
     "title": "Cursuri Disponibile",
     "subtitle": "Explorează catalogul nostru complet de cursuri",
+    "description": "Răsfoiește toate cursurile disponibile. Filtrează după subiect, caută după cuvânt cheie.",
     "viewAll": "Vezi Toate Cursurile",
     "filterBy": "Filtrează după",
     "allCategories": "Toate Categoriile",
@@ -242,6 +244,7 @@
     "subtitle": "Recomandări personalizate de cursuri bazate pe interesele tale"
   },
   "latestLessons": {
+    "eyebrow": "Tocmai publicate",
     "title": "Proaspăt din Studio",
     "subtitle": "Cele mai noi lecții publicate — intră și continuă să înveți.",
     "lessonsHeading": "Cele Mai Noi Lecții",

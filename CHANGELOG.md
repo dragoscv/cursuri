@@ -6,6 +6,46 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-05-12
+
+### Removed
+
+- **Dead components deleted**: `components/FeaturedCoursesSection.tsx`
+  (138 lines), `components/RecommendedCoursesSection.tsx` (182 lines),
+  `components/InstructorHighlightsSection.tsx` (75 lines). Audit confirmed
+  none of these were imported anywhere in the app — pure dead weight.
+  RecommendedCoursesSection's logic was already mirrored inline inside
+  `Home/LatestLessonsSection.tsx` (which is the actually-mounted version).
+
+### Changed
+
+- **`Home/LatestLessonsSection.tsx`**: replaced the bare `<h2>` heading
+  block with the shared `<SectionHeading>`. Section background now
+  `editorial-surface` with a top gold rim divider — matches the
+  StatisticsSection / WhyChooseUs / LearningPath language. Body content
+  (the lesson list + recommended sidebar with all its data fetching)
+  intentionally left alone — it's solid.
+
+- **`Home/SubscriptionSection.tsx`**: same treatment. Removed the two
+  large blur-orb backgrounds (primary + secondary at 100–120px blur
+  radius across 400–500px ellipses) that blew out the editorial calm.
+  Removed the duplicated `t('title')` between the pill badge and the
+  display headline (the same bug pattern we fixed in WhyChooseUs and
+  LearningPath at v0.8.0). Now uses `<SectionHeading>` with proper
+  `subscription.eyebrow` key.
+
+- **`AvailableCoursesSection.tsx`**: removed two hardcoded English
+  strings (`eyebrow="Catalog"` and the `description="Browse every
+available course…"` literal) — was breaking the RO experience. Both
+  now route through `useTranslations('home.availableCourses')` with new
+  `eyebrow` and `description` keys.
+
+### Added
+
+- New i18n keys (EN + RO parity): `subscription.eyebrow`,
+  `home.latestLessons.eyebrow`, `home.availableCourses.eyebrow`,
+  `home.availableCourses.description`.
+
 ## [0.8.0] - 2026-05-12
 
 ### Added
