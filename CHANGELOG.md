@@ -6,6 +6,42 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.18.5] - 2026-05-12
+
+### Changed — /courses/[courseId] editorial pass
+
+Ripped the legacy primary/secondary purple chrome off the course detail
+surface and aligned it with the amber-on-flat editorial system already
+landed on /courses and /subscriptions.
+
+- `app/courses/[courseId]/page.tsx`: SSR fallback H1 lost the
+  `bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent`
+  treatment in favour of a solid foreground headline with an amber
+  "StudiAI · Curs" eyebrow.
+- `components/Course/CourseDetailView.tsx`: removed the fixed ambient
+  backdrop (two `bg-primary/8` + `bg-secondary/8 blur-3xl` orbs); flattened
+  the full-description card (drop `bg-card-bg/70 backdrop-blur-sm shadow-sm`)
+  and the sticky enrollment sidebar (drop `bg-card-bg/80 backdrop-blur-xl
+shadow-lg p-6`, add `overflow-hidden` so the inner amber top-rule clips).
+- `components/Course/CourseDetails.tsx`: tab active state now
+  `text-amber-500` instead of `text-[color:var(--ai-primary)]`; dropped
+  the `color="primary"` prop on `<Tabs>`. The three per-tab
+  `motion.span` underline indicators all shared
+  `layoutId="tab-indicator"` while being conditionally rendered — the
+  exact React 19 + framer-motion pattern that throws
+  `NotFoundError: removeChild`. Replaced with plain `<span>` underlines
+  (loses the magic-move slide between tabs, gains stability). Also fixed
+  a stray missing space in three tab-icon className templates that left
+  `text-mutedflex-shrink-0` glued together.
+- `components/Course/CourseOverview.tsx`: the four section header strips
+  ("What you will learn", "Requirements", "Prerequisites", "Additional
+  information") lost their `bg-gradient-to-r from-primary/10 via-secondary/10`
+  treatment and now use a solid card with a 3px amber left rule. All
+  in-content primary purple accents (target icon, check icon, bullets,
+  prerequisite link icon tile + pill, hover tints) recoloured to
+  amber-500. Cards dropped `shadow-sm` and went from `rounded-xl` to
+  `rounded-2xl` to match the rest of the system.
+
 ## [0.18.4] - 2026-05-12
 
 ### Fixed — subscription plan CTAs still purple after v0.18.3

@@ -3,7 +3,10 @@ import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { getCourseBySlugOrId } from '@/utils/firebase/server';
 import { constructCourseMetadata } from '@/utils/metadata';
-import { generateCourseStructuredData, generateBreadcrumbStructuredData } from '@/utils/structuredData';
+import {
+  generateCourseStructuredData,
+  generateBreadcrumbStructuredData,
+} from '@/utils/structuredData';
 import dynamic from 'next/dynamic';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://studiai.ro';
@@ -22,11 +25,15 @@ const CourseDetail = dynamic(() => import('@/components/Course/CourseDetail'), {
         </div>
       </div>
     </div>
-  )
+  ),
 });
 
 // Generate metadata dynamically for each course
-export async function generateMetadata({ params }: { params: { courseId: string } | Promise<{ courseId: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: { courseId: string } | Promise<{ courseId: string }>;
+}): Promise<Metadata> {
   try {
     const resolvedParams = 'then' in params ? await params : params;
     const slugOrId = String(resolvedParams.courseId);
@@ -35,7 +42,7 @@ export async function generateMetadata({ params }: { params: { courseId: string 
     if (!course) {
       return {
         title: 'Course Not Found',
-        description: 'The requested course could not be found.'
+        description: 'The requested course could not be found.',
       };
     }
 
@@ -45,22 +52,38 @@ export async function generateMetadata({ params }: { params: { courseId: string 
     return constructCourseMetadata({
       title: course.title || course.name || 'Course',
       description: course.description || 'No description available',
-      instructorName: course.instructorName || (typeof course.instructor === 'string' ? course.instructor : course.instructor?.name || 'Unknown Instructor'),
-      updatedAt: course.updatedAt ? (typeof course.updatedAt === 'string' ? course.updatedAt : course.updatedAt.toString()) : undefined,
-      createdAt: course.createdAt ? (typeof course.createdAt === 'string' ? course.createdAt : course.createdAt.toString()) : undefined,
+      instructorName:
+        course.instructorName ||
+        (typeof course.instructor === 'string'
+          ? course.instructor
+          : course.instructor?.name || 'Unknown Instructor'),
+      updatedAt: course.updatedAt
+        ? typeof course.updatedAt === 'string'
+          ? course.updatedAt
+          : course.updatedAt.toString()
+        : undefined,
+      createdAt: course.createdAt
+        ? typeof course.createdAt === 'string'
+          ? course.createdAt
+          : course.createdAt.toString()
+        : undefined,
       slug: canonicalSlug,
-      coverImage: course.coverImage || course.imageUrl
+      coverImage: course.coverImage || course.imageUrl,
     });
   } catch (error) {
     console.error('Error generating course metadata:', error);
     return {
       title: 'Course Details',
-      description: 'View course details and curriculum'
+      description: 'View course details and curriculum',
     };
   }
 }
 
-export default async function Page({ params }: { params: { courseId: string } | Promise<{ courseId: string }> }) {
+export default async function Page({
+  params,
+}: {
+  params: { courseId: string } | Promise<{ courseId: string }>;
+}) {
   const resolvedParams = 'then' in params ? await params : params;
   const slugOrId = String(resolvedParams.courseId);
 
@@ -86,14 +109,26 @@ export default async function Page({ params }: { params: { courseId: string } | 
   if (course) {
     courseTitle = course.title || course.name || 'Course';
     courseDescription = course.description || 'No description available';
-    courseInstructor = course.instructorName || (typeof course.instructor === 'string' ? course.instructor : course.instructor?.name || 'StudiAI');
+    courseInstructor =
+      course.instructorName ||
+      (typeof course.instructor === 'string'
+        ? course.instructor
+        : course.instructor?.name || 'StudiAI');
 
     courseStructuredData = generateCourseStructuredData({
       title: courseTitle,
       description: courseDescription,
       instructorName: courseInstructor,
-      updatedAt: course.updatedAt ? (typeof course.updatedAt === 'string' ? course.updatedAt : course.updatedAt.toString()) : undefined,
-      createdAt: course.createdAt ? (typeof course.createdAt === 'string' ? course.createdAt : course.createdAt.toString()) : undefined,
+      updatedAt: course.updatedAt
+        ? typeof course.updatedAt === 'string'
+          ? course.updatedAt
+          : course.updatedAt.toString()
+        : undefined,
+      createdAt: course.createdAt
+        ? typeof course.createdAt === 'string'
+          ? course.createdAt
+          : course.createdAt.toString()
+        : undefined,
       slug: canonicalSlug,
       coverImage: course.coverImage || course.imageUrl,
       price: course.price,
@@ -126,45 +161,64 @@ export default async function Page({ params }: { params: { courseId: string } | 
       {courseTitle && (
         <section id="course-ssr-content" className="container mx-auto px-4 py-8 max-w-5xl">
           <nav aria-label="Breadcrumb" className="text-sm text-[color:var(--ai-muted)] mb-4">
-            <a href="/" className="hover:text-[color:var(--ai-primary)]">Home</a>
+            <a href="/" className="hover:text-[color:var(--ai-primary)]">
+              Home
+            </a>
             <span className="mx-2">/</span>
-            <a href="/courses" className="hover:text-[color:var(--ai-primary)]">Courses</a>
+            <a href="/courses" className="hover:text-[color:var(--ai-primary)]">
+              Courses
+            </a>
             <span className="mx-2">/</span>
             <span className="text-[color:var(--ai-foreground)]">{courseTitle}</span>
           </nav>
-          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-4">
+          <p className="text-[11px] uppercase tracking-[0.22em] font-semibold text-amber-500 mb-3">
+            StudiAI · Curs
+          </p>
+          <h1 className="text-3xl md:text-4xl font-semibold tracking-[-0.02em] text-[color:var(--ai-foreground)] mb-4">
             {courseTitle}
           </h1>
-          <p className="text-lg text-[color:var(--ai-muted)] mb-6 leading-relaxed">{courseDescription}</p>
+          <p className="text-lg text-[color:var(--ai-muted)] mb-6 leading-relaxed">
+            {courseDescription}
+          </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-sm">
             {courseInstructor && (
               <div>
                 <span className="block text-[color:var(--ai-muted)]">Instructor</span>
-                <span className="font-medium text-[color:var(--ai-foreground)]">{courseInstructor}</span>
+                <span className="font-medium text-[color:var(--ai-foreground)]">
+                  {courseInstructor}
+                </span>
               </div>
             )}
             {course?.level && (
               <div>
                 <span className="block text-[color:var(--ai-muted)]">Level</span>
-                <span className="font-medium text-[color:var(--ai-foreground)] capitalize">{course.level}</span>
+                <span className="font-medium text-[color:var(--ai-foreground)] capitalize">
+                  {course.level}
+                </span>
               </div>
             )}
             {course?.duration && (
               <div>
                 <span className="block text-[color:var(--ai-muted)]">Duration</span>
-                <span className="font-medium text-[color:var(--ai-foreground)]">{course.duration}</span>
+                <span className="font-medium text-[color:var(--ai-foreground)]">
+                  {course.duration}
+                </span>
               </div>
             )}
             {course?.lessonsCount && (
               <div>
                 <span className="block text-[color:var(--ai-muted)]">Lessons</span>
-                <span className="font-medium text-[color:var(--ai-foreground)]">{course.lessonsCount}</span>
+                <span className="font-medium text-[color:var(--ai-foreground)]">
+                  {course.lessonsCount}
+                </span>
               </div>
             )}
           </div>
           {course?.benefits && course.benefits.length > 0 && (
             <div className="mb-6">
-              <h2 className="text-xl font-semibold text-[color:var(--ai-foreground)] mb-2">What you will learn</h2>
+              <h2 className="text-xl font-semibold text-[color:var(--ai-foreground)] mb-2">
+                What you will learn
+              </h2>
               <ul className="list-disc list-inside text-[color:var(--ai-muted)] space-y-1">
                 {course.benefits.map((benefit: string, i: number) => (
                   <li key={i}>{benefit}</li>
@@ -174,7 +228,9 @@ export default async function Page({ params }: { params: { courseId: string } | 
           )}
           {course?.requirements && course.requirements.length > 0 && (
             <div className="mb-6">
-              <h2 className="text-xl font-semibold text-[color:var(--ai-foreground)] mb-2">Requirements</h2>
+              <h2 className="text-xl font-semibold text-[color:var(--ai-foreground)] mb-2">
+                Requirements
+              </h2>
               <ul className="list-disc list-inside text-[color:var(--ai-muted)] space-y-1">
                 {course.requirements.map((req: string, i: number) => (
                   <li key={i}>{req}</li>
@@ -183,7 +239,11 @@ export default async function Page({ params }: { params: { courseId: string } | 
             </div>
           )}
           <p className="text-[color:var(--ai-muted)]">
-            Platform: <a href={SITE_URL} className="text-[color:var(--ai-primary)] hover:underline">StudiAI</a> — Romanian AI development education
+            Platform:{' '}
+            <a href={SITE_URL} className="text-[color:var(--ai-primary)] hover:underline">
+              StudiAI
+            </a>{' '}
+            — Romanian AI development education
           </p>
         </section>
       )}

@@ -66,7 +66,6 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
         onSelectionChange={handleTabChange}
         fullWidth
         size="md"
-        color="primary"
         aria-label="Course details tabs"
         disableAnimation={true}
         classNames={{
@@ -74,7 +73,7 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
           tabList:
             'bg-transparent border-b border-[color:var(--ai-card-border)]/50 p-2 rounded-t-xl flex justify-center',
           cursor: 'opacity-0',
-          tab: 'text-sm data-[selected=true]:text-[color:var(--ai-primary)] data-[selected=true]:font-semibold relative overflow-visible transition-all px-4 py-3 flex-col gap-1 min-w-20 hover:opacity-90',
+          tab: 'text-sm data-[selected=true]:text-amber-500 data-[selected=true]:font-semibold relative overflow-visible transition-all px-4 py-3 flex-col gap-1 min-w-20 hover:opacity-90',
           tabContent: 'py-5 sm:py-6 px-4 sm:px-6',
         }}
       >
@@ -83,7 +82,7 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
           title={
             <div className="flex flex-col items-center gap-1 relative">
               <FiLayers
-                className={`${selectedTab === 'overview' ? 'text-[color:var(--ai-primary)]' : 'text-[color:var(--ai-muted)]'}flex-shrink-0 w-5 h-5 transition-colors duration-300`}
+                className={`${selectedTab === 'overview' ? 'text-amber-500' : 'text-[color:var(--ai-muted)]'} flex-shrink-0 w-5 h-5 transition-colors duration-300`}
               />
               <span className="text-xs">
                 {selectedTab === 'overview' ? (
@@ -95,10 +94,9 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
 
               {/* Bottom indicator line */}
               {selectedTab === 'overview' && (
-                <motion.span
+                <span
                   aria-hidden
-                  className="absolute -bottom-2 left-0 right-0 h-[2px] bg-gradient-to-r from-amber-400 to-amber-500"
-                  layoutId="tab-indicator"
+                  className="absolute -bottom-2 left-0 right-0 h-[2px] bg-amber-500"
                 />
               )}
             </div>
@@ -119,7 +117,7 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
           title={
             <div className="flex flex-col items-center gap-1 relative">
               <FiBookOpen
-                className={`${selectedTab === 'content' ? 'text-[color:var(--ai-primary)]' : 'text-[color:var(--ai-muted)]'}flex-shrink-0 w-5 h-5 transition-colors duration-300`}
+                className={`${selectedTab === 'content' ? 'text-amber-500' : 'text-[color:var(--ai-muted)]'} flex-shrink-0 w-5 h-5 transition-colors duration-300`}
               />
               <span className="text-xs">
                 {selectedTab === 'content' ? (
@@ -131,10 +129,9 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
 
               {/* Bottom indicator line */}
               {selectedTab === 'content' && (
-                <motion.span
+                <span
                   aria-hidden
-                  className="absolute -bottom-2 left-0 right-0 h-[2px] bg-gradient-to-r from-amber-400 to-amber-500"
-                  layoutId="tab-indicator"
+                  className="absolute -bottom-2 left-0 right-0 h-[2px] bg-amber-500"
                 />
               )}
             </div>
@@ -268,7 +265,7 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
             <div className="flex flex-col items-center gap-1 relative">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className={`${selectedTab === 'reviews' ? 'text-[color:var(--ai-primary)]' : 'text-[color:var(--ai-muted)]'} flex-shrink-0 w-5 h-5 transition-colors duration-300`}
+                className={`${selectedTab === 'reviews' ? 'text-amber-500' : 'text-[color:var(--ai-muted)]'} flex-shrink-0 w-5 h-5 transition-colors duration-300`}
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -288,10 +285,9 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
 
               {/* Bottom indicator line */}
               {selectedTab === 'reviews' && (
-                <motion.span
+                <span
                   aria-hidden
-                  className="absolute -bottom-2 left-0 right-0 h-[2px] bg-gradient-to-r from-amber-400 to-amber-500"
-                  layoutId="tab-indicator"
+                  className="absolute -bottom-2 left-0 right-0 h-[2px] bg-amber-500"
                 />
               )}
             </div>

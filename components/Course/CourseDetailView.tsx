@@ -43,33 +43,33 @@ export default function CourseDetailView({
     enhancedCourse.lessonsCount = courseLessons ? courseLessons.length : 0; // Calculate minutes of content
     const totalMinutes = courseLessons
       ? courseLessons.reduce((acc, lesson) => {
-        // Ensure lesson is defined
-        if (!lesson) return acc;
+          // Ensure lesson is defined
+          if (!lesson) return acc;
 
-        // Handle different duration property types with enhanced safety checks
-        let durationMins = 0;
+          // Handle different duration property types with enhanced safety checks
+          let durationMins = 0;
 
-        // First try durationMinutes field
-        if (lesson.durationMinutes !== undefined) {
-          if (typeof lesson.durationMinutes === 'number') {
-            durationMins = lesson.durationMinutes;
-          } else if (typeof lesson.durationMinutes === 'string') {
-            const parsed = parseInt(lesson.durationMinutes, 10);
-            if (!isNaN(parsed)) durationMins = parsed;
+          // First try durationMinutes field
+          if (lesson.durationMinutes !== undefined) {
+            if (typeof lesson.durationMinutes === 'number') {
+              durationMins = lesson.durationMinutes;
+            } else if (typeof lesson.durationMinutes === 'string') {
+              const parsed = parseInt(lesson.durationMinutes, 10);
+              if (!isNaN(parsed)) durationMins = parsed;
+            }
           }
-        }
-        // Fall back to duration field if durationMinutes is not available
-        else if (lesson.duration !== undefined) {
-          if (typeof lesson.duration === 'number') {
-            durationMins = lesson.duration;
-          } else if (typeof lesson.duration === 'string') {
-            const parsed = parseInt(lesson.duration, 10);
-            if (!isNaN(parsed)) durationMins = parsed;
+          // Fall back to duration field if durationMinutes is not available
+          else if (lesson.duration !== undefined) {
+            if (typeof lesson.duration === 'number') {
+              durationMins = lesson.duration;
+            } else if (typeof lesson.duration === 'string') {
+              const parsed = parseInt(lesson.duration, 10);
+              if (!isNaN(parsed)) durationMins = parsed;
+            }
           }
-        }
 
-        return acc + durationMins;
-      }, 0)
+          return acc + durationMins;
+        }, 0)
       : 0;
 
     // Format duration based on total minutes
@@ -101,16 +101,12 @@ export default function CourseDetailView({
     if (!course || !courseId) return;
 
     // Log analytics event
-    logCourseView(
-      courseId,
-      course.name || 'Unknown Course',
-      course.category || 'general'
-    );
+    logCourseView(courseId, course.name || 'Unknown Course', course.category || 'general');
 
     // Increment view count in database only for authenticated users
     // (Firestore rules require authentication for updates)
     if (context?.user) {
-      incrementCourseViews(courseId).catch(error => {
+      incrementCourseViews(courseId).catch((error) => {
         console.error('Failed to increment course views:', error);
       });
     }
@@ -118,12 +114,6 @@ export default function CourseDetailView({
 
   return (
     <div className="relative">
-      {/* Ambient backdrop */}
-      <div aria-hidden className="pointer-events-none fixed inset-x-0 top-0 h-[420px] -z-10 overflow-hidden">
-        <div className="absolute -top-32 left-1/4 w-[480px] h-[480px] bg-[color:var(--ai-primary)]/8 rounded-full blur-3xl" />
-        <div className="absolute -top-10 right-1/4 w-[360px] h-[360px] bg-[color:var(--ai-secondary)]/8 rounded-full blur-3xl" />
-      </div>
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -139,7 +129,7 @@ export default function CourseDetailView({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.15 }}
-            className="mt-6 rounded-2xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/70 backdrop-blur-sm p-6 shadow-sm"
+            className="mt-6 rounded-2xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] p-6"
           >
             <div
               className="prose prose-invert max-w-none text-[color:var(--ai-muted)] leading-relaxed"
@@ -168,7 +158,7 @@ export default function CourseDetailView({
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="lg:sticky lg:top-24 self-start rounded-2xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/80 backdrop-blur-xl p-6 shadow-lg"
+            className="lg:sticky lg:top-24 self-start rounded-2xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] overflow-hidden"
           >
             <CourseEnrollment
               course={courseWithStats}
