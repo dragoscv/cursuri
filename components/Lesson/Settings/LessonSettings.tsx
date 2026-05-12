@@ -66,7 +66,7 @@ const LessonSettings: React.FC<LessonSettingsProps> = ({
                 className="sr-only peer"
                 title="Auto-play Next Lesson"
               />
-              <div className="w-11 h-6 bg-[color:var(--ai-card-border)]/50 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[color:var(--ai-primary)]/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-[color:var(--ai-card-bg)] dark:after:border-[color:var(--ai-background)] after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[color:var(--ai-card-bg)] dark:after:bg-[color:var(--ai-foreground)] after:border-[color:var(--ai-card-border)]/50 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[color:var(--ai-primary)] shadow-inner"></div>
+              <div className="w-11 h-6 bg-[color:var(--ai-card-border)]/50 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-amber-500/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-[color:var(--ai-card-bg)] dark:after:border-[color:var(--ai-background)] after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[color:var(--ai-card-bg)] dark:after:bg-[color:var(--ai-foreground)] after:border-[color:var(--ai-card-border)]/50 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500 shadow-inner"></div>
             </label>
           </div>
         </div>
@@ -90,7 +90,7 @@ const LessonSettings: React.FC<LessonSettingsProps> = ({
                 className="sr-only peer"
                 title="Auto-save Progress"
               />
-              <div className="w-11 h-6 bg-[color:var(--ai-card-border)]/50 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[color:var(--ai-primary)]/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-[color:var(--ai-card-bg)] dark:after:border-[color:var(--ai-background)] after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[color:var(--ai-card-bg)] dark:after:bg-[color:var(--ai-foreground)] after:border-[color:var(--ai-card-border)]/50 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[color:var(--ai-primary)] shadow-inner"></div>
+              <div className="w-11 h-6 bg-[color:var(--ai-card-border)]/50 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-amber-500/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-[color:var(--ai-card-bg)] dark:after:border-[color:var(--ai-background)] after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[color:var(--ai-card-bg)] dark:after:bg-[color:var(--ai-foreground)] after:border-[color:var(--ai-card-border)]/50 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500 shadow-inner"></div>
             </label>
           </div>
         </div>
@@ -100,7 +100,7 @@ const LessonSettings: React.FC<LessonSettingsProps> = ({
           <Button
             variant="flat"
             size="sm"
-            className="w-full bg-[color:var(--ai-card-bg)]/80 hover:bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-foreground)] border border-[color:var(--ai-card-border)]/50 shadow-sm transition-all duration-300 hover:shadow"
+            className="w-full bg-[color:var(--ai-card-bg)]/80 hover:bg-amber-500/10 text-[color:var(--ai-foreground)] border border-[color:var(--ai-card-border)]/50 transition-colors duration-200"
             onClick={onManualSave}
             startContent={<FiSave size={16} />}
           >

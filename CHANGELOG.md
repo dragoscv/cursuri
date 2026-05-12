@@ -6,6 +6,37 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.18.7] - 2026-05-12
+
+### Changed — Editorial pass on `/courses/[courseId]/lessons/[lessonId]` lesson player
+
+Ripped the remaining purple `--ai-primary`/`--ai-secondary` chrome off the
+lesson player surfaces and recoloured them with the editorial amber-500 system
+to match the rest of the course flow.
+
+- `LessonSettings`: "Auto-play" and "Auto-save progress" toggles now turn
+  amber-500 in the "on" state instead of purple. Focus ring + manual-save
+  hover tint also switched to amber. Removed `shadow-sm`/`hover:shadow` on
+  manual save to stay flat.
+- `LessonContent`: lesson hero eyebrow no longer uses `bg-clip-text` amber
+  gradient — switched to solid `text-amber-500` for consistency with the
+  editorial rule against gradient text.
+- `LessonNavigation` (expanded lesson list): expand-button hover, chapters
+  icon, and the in-progress play-icon tile recoloured from primary to amber.
+- `LessonChaptersPanel`: active chapter row pill, timestamp chip, and chapter
+  title text now use amber-500 instead of the primary purple tint.
+- `VideoPlayer`: dropped `shadow-2xl` on the video container in favour of a
+  flat `border` + `rounded-2xl` (matches the editorial chrome standard).
+  Captions-enabled toggle background recoloured to amber.
+- `LessonTimeline`: playhead progress bar gradient `from-primary to-secondary`
+  collapsed to solid `bg-amber-500`. Active chapter tick mark also recoloured
+  to amber.
+- `CaptionsSettingsModal`: active option pills use solid foreground/background
+  swatches instead of the purple gradient. The CC tile in the header now uses
+  a solid amber square. The duration display recoloured to amber.
+- `ResumeVideoModal`: "saved position" timestamp recoloured from primary to
+  amber-500.
+
 ## [0.18.6] - 2026-05-12
 
 ### Fixed — NotFoundError crash on course detail tab switch

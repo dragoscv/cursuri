@@ -47,9 +47,7 @@ export const ResumeVideoModal: React.FC<ResumeVideoModalProps> = ({
             <div className="bg-[color:var(--ai-card-bg)]/60 border border-[color:var(--ai-card-border)] rounded-lg p-4">
               <div className="flex justify-between items-center">
                 <span className="text-[color:var(--ai-muted)]">{t('savedPosition')}:</span>
-                <span className="text-[color:var(--ai-primary)] font-semibold">
-                  {formatTime(savedPosition)}
-                </span>
+                <span className="text-amber-500 font-semibold">{formatTime(savedPosition)}</span>
               </div>
               <div className="flex justify-between items-center mt-2">
                 <span className="text-[color:var(--ai-muted)]">{t('totalDuration')}:</span>

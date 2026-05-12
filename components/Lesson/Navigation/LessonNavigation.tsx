@@ -68,7 +68,7 @@ export default function LessonNavigation({
                 size="sm"
                 variant="flat"
                 isIconOnly
-                className="bg-[color:var(--ai-card-bg)]/50 hover:bg-[color:var(--ai-primary)]/10 transition-colors"
+                className="bg-[color:var(--ai-card-bg)]/50 hover:bg-amber-500/10 transition-colors"
                 onClick={() => setExpanded(!expanded)}
                 aria-label={expanded ? 'Collapse lessons' : 'Expand lessons'}
               >
@@ -123,7 +123,7 @@ export default function LessonNavigation({
             <div className="mt-2 transition-all duration-300 animate-in fade-in slide-in-from-top-2">
               <Divider className="my-4" />
               <div className="font-semibold text-[color:var(--ai-foreground)] mb-4 flex items-center gap-2">
-                <FiLayers className="text-[color:var(--ai-primary)]" size={18} />
+                <FiLayers className="text-amber-500" size={18} />
                 <span className="text-sm sm:text-base">{t('courseProgress')}</span>
               </div>
 
@@ -148,7 +148,7 @@ export default function LessonNavigation({
                             ? 'bg-[color:var(--ai-success)]/20 text-[color:var(--ai-success)]'
                             : lesson.isLocked
                               ? 'bg-[color:var(--ai-muted)]/20 text-[color:var(--ai-muted)]'
-                              : 'bg-[color:var(--ai-primary)]/20 text-[color:var(--ai-primary)]'
+                              : 'bg-amber-500/15 text-amber-500'
                         }`}
                       >
                         {lesson.isCompleted ? (

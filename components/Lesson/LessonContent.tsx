@@ -257,7 +257,7 @@ function LessonContent({
         <div className="h-[2px] w-full bg-gradient-to-r from-amber-400 to-amber-500"></div>
         <div className="p-5 md:p-7">
           {course && (
-            <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] bg-gradient-to-r from-amber-400 to-amber-500 bg-clip-text text-transparent mb-3">
+            <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-500 mb-3">
               <FiBookOpen className="w-3.5 h-3.5 text-amber-500" aria-hidden />
               <span className="truncate max-w-xs">{course.name}</span>
             </div>

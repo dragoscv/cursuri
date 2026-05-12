@@ -129,14 +129,14 @@ export default function LessonChaptersPanel({ lesson, videoSelector = 'video' }:
                   onClick={() => handleClick(c.startSeconds)}
                   className={`w-full text-left flex items-start gap-3 px-3 py-2 rounded-lg transition-all duration-150 group ${
                     isActive
-                      ? 'bg-[color:var(--ai-primary)]/10 ring-1 ring-[color:var(--ai-primary)]/40'
+                      ? 'bg-amber-500/10 ring-1 ring-amber-500/40'
                       : 'hover:bg-[color:var(--ai-card-border)]/30'
                   }`}
                 >
                   <span
                     className={`mt-0.5 inline-flex items-center justify-center min-w-[52px] px-2 py-0.5 rounded text-xs font-mono tabular-nums ${
                       isActive
-                        ? 'bg-[color:var(--ai-primary)] text-white'
+                        ? 'bg-amber-500 text-[color:var(--ai-background)]'
                         : 'bg-[color:var(--ai-card-border)]/50 text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)]'
                     }`}
                   >
@@ -144,7 +144,7 @@ export default function LessonChaptersPanel({ lesson, videoSelector = 'video' }:
                   </span>
                   <span className="flex-1 min-w-0">
                     <span
-                      className={`block text-sm font-medium leading-snug ${isActive ? 'text-[color:var(--ai-primary)]' : 'text-[color:var(--ai-foreground)]'}`}
+                      className={`block text-sm font-medium leading-snug ${isActive ? 'text-amber-500' : 'text-[color:var(--ai-foreground)]'}`}
                     >
                       {c.title}
                     </span>
