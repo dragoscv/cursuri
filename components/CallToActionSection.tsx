@@ -1,15 +1,27 @@
 'use client';
 
-import React, { useMemo, memo } from 'react';
-import { motion } from 'framer-motion';
-import Button from '@/components/ui/Button';
-import ScrollAnimationWrapper from './animations/ScrollAnimationWrapper';
-import { useContext } from 'react';
-import { AppContext } from './AppContext';
+/**
+ * CallToActionSection v2 — editorial closing card.
+ *
+ * SCENE: a single, generously padded bordered card sitting on the editorial
+ * surface — like a closing pull-quote in a magazine. Subtle gradient wash
+ * inside the card (not full-bleed) keeps the page calm. No floating orbs,
+ * no animated particles, no noise.
+ */
+
+import React, { memo, useContext } from 'react';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+
+import Button from '@/components/ui/Button';
+import { AppContext } from './AppContext';
+import Login from './Login';
+import { Reveal, Stagger, fadeUp } from '@/components/motion';
+import { motion } from 'framer-motion';
 
 const CallToActionSection = memo(function CallToActionSection() {
   const t = useTranslations('home.cta');
+  const router = useRouter();
   const context = useContext(AppContext);
 
   if (!context) {
@@ -18,186 +30,134 @@ const CallToActionSection = memo(function CallToActionSection() {
 
   const { openModal, closeModal, user } = context;
 
-  // Memoize hover/tap animation props
-  const buttonHoverProps = useMemo(
-    () => ({
-      whileHover: { scale: 1.05 },
-      whileTap: { scale: 0.95 },
-    }),
-    []
-  );
-
-  // Pre-calculate grid opacity values to avoid hydration mismatch
-  const gridOpacities = useMemo(() => {
-    return Array.from({ length: 50 }).map((_, i) => {
-      // Deterministic opacity calculation with fixed precision
-      return (0.1 + (Math.sin(i * 0.1) * 0.15 + 0.25)).toFixed(5);
-    });
-  }, []);
-
-  // Pre-calculate floating orbs properties with animation configs
-  const floatingOrbs = useMemo(() => {
-    // Use a seeded random function for consistent values between server and client
-    const seededRandom = (seed: number): number => {
-      const x = Math.sin(seed) * 10000;
-      return x - Math.floor(x);
-    };
-
-    return Array.from({ length: 6 }).map((_, i) => {
-      // Use index as seed for deterministic randomness
-      const widthSeed = i * 3.1;
-      const heightSeed = i * 4.2;
-      const topSeed = i * 5.3;
-      const leftSeed = i * 6.4;
-      const xMoveSeed = i * 7.5;
-      const yMoveSeed = i * 8.6;
-      const durationSeed = i * 9.7;
-
-      const xMove = seededRandom(xMoveSeed) * 50 - 25;
-      const yMove = seededRandom(yMoveSeed) * 50 - 25;
-      const duration = 5 + seededRandom(durationSeed) * 5;
-
-      // Use fixed string values for ALL properties to prevent hydration mismatches
-      return {
-        key: i,
-        width: (seededRandom(widthSeed) * 200 + 50).toFixed(4),
-        height: (seededRandom(heightSeed) * 200 + 50).toFixed(4),
-        top: (seededRandom(topSeed) * 100).toFixed(4),
-        left: (seededRandom(leftSeed) * 100).toFixed(4),
-        // Pre-compute animation objects to avoid recreation
-        animate: {
-          x: [0, xMove],
-          y: [0, yMove],
-        },
-        transition: {
-          duration: duration,
-          repeat: Infinity,
-          repeatType: 'reverse' as const,
-          ease: 'easeInOut' as const,
-        },
-      };
-    });
-  }, []);
-
   const handleGetStarted = () => {
     if (!user) {
       openModal({
         id: 'login',
         isOpen: true,
         hideCloseButton: false,
-        backdrop: 'blur',
-        size: 'full',
+        backdrop: 'opaque',
+        size: 'md',
         scrollBehavior: 'inside',
         isDismissable: true,
-        modalHeader: t('buttons.login'),
-        modalBody: <div>Login Component</div>,
+        modalHeader: t('button'),
+        modalBody: <Login onClose={() => closeModal('login')} />,
         headerDisabled: true,
         footerDisabled: true,
         noReplaceURL: true,
         onClose: () => closeModal('login'),
+        classNames: {
+          backdrop:
+            'z-50 backdrop-blur-md backdrop-saturate-150 bg-black/50 dark:bg-black/50 w-screen min-h-[100dvh] fixed inset-0',
+          base: 'z-50 mx-auto my-auto w-full max-w-md rounded-2xl outline-none bg-transparent shadow-2xl',
+        },
       });
     } else {
-      // Smooth scroll to courses section
-      const coursesSection = document.getElementById('courses-section');
-      coursesSection?.scrollIntoView({ behavior: 'smooth' });
+      document.getElementById('courses-section')?.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
   return (
-    <section className="relative w-full py-20 md:py-28 overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)]" />
+    <section className="relative w-full py-20 md:py-28">
+      <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        <Reveal trigger="view" offset={36}>
+          <div className="relative overflow-hidden rounded-3xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/80 backdrop-blur-sm shadow-[var(--shadow-cinematic)]">
+            {/* Inset gradient wash */}
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-gradient-to-br from-[color:var(--ai-primary)]/12 via-transparent to-amber-400/8 pointer-events-none"
+            />
+            {/* Top gold rim */}
+            <div aria-hidden className="absolute top-0 inset-x-0 cinematic-rim-divider" />
 
-      {/* Subtle overlay pattern */}
-      <div className="absolute inset-0 opacity-10" style={{
-        backgroundImage: 'radial-gradient(circle at 25% 25%, rgba(255,255,255,0.2) 1px, transparent 1px)',
-        backgroundSize: '40px 40px'
-      }} />
+            <div className="relative px-8 py-14 md:px-14 md:py-20 text-center">
+              <Stagger gap={0.08} delay={0.05}>
+                <motion.p
+                  variants={fadeUp}
+                  className="text-[11px] font-semibold tracking-[0.22em] uppercase text-[color:var(--ai-primary)] mb-5"
+                >
+                  {t('eyebrow')}
+                </motion.p>
 
-      {/* Floating glow orbs */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-[300px] h-[300px] bg-white/10 rounded-full blur-[80px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-white/5 rounded-full blur-[100px]" />
-      </div>
+                <motion.h2
+                  variants={fadeUp}
+                  className="text-[clamp(2rem,4.5vw,3.5rem)] font-semibold tracking-[-0.02em] leading-[1.05] text-[color:var(--ai-foreground)] max-w-3xl mx-auto"
+                >
+                  {t('title')}
+                </motion.h2>
 
-      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <ScrollAnimationWrapper>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
-              {t('title')}
-            </h2>
-          </ScrollAnimationWrapper>
+                <motion.p
+                  variants={fadeUp}
+                  className="mt-5 text-lg text-[color:var(--ai-muted)] leading-relaxed max-w-2xl mx-auto"
+                >
+                  {t('subtitle')}
+                </motion.p>
 
-          <ScrollAnimationWrapper delay={0.1}>
-            <p className="text-lg md:text-xl text-white/80 mb-10 max-w-2xl mx-auto">{t('subtitle')}</p>
-          </ScrollAnimationWrapper>
+                <motion.div
+                  variants={fadeUp}
+                  className="mt-10 flex flex-col sm:flex-row justify-center gap-3.5"
+                >
+                  <Button
+                    color="primary"
+                    variant="primary"
+                    size="lg"
+                    radius="full"
+                    className="px-8 h-12 text-[15px] font-semibold bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] hover:opacity-90 hover:-translate-y-0.5 transition-all"
+                    onClick={handleGetStarted}
+                  >
+                    <span className="flex items-center gap-2">
+                      {t('button')}
+                      <span aria-hidden>→</span>
+                    </span>
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    color="secondary"
+                    size="lg"
+                    radius="full"
+                    className="px-8 h-12 text-[15px] font-semibold border border-[color:var(--ai-card-border)] bg-transparent text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-bg)]/60 hover:-translate-y-0.5 transition-all"
+                    onClick={() => router.push('/book-a-call')}
+                  >
+                    {t('secondaryButton')}
+                  </Button>
+                </motion.div>
 
-          <ScrollAnimationWrapper delay={0.2}>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Button
-                color="primary"
-                size="lg"
-                radius="full"
-                className="px-10 py-6 text-base font-semibold bg-white text-[color:var(--ai-primary)] hover:bg-white/90 shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300"
-                onClick={handleGetStarted}
-              >
-                {t('button')}
-              </Button>
-
-              <Button
-                variant="secondary"
-                color="secondary"
-                size="lg"
-                radius="full"
-                className="px-10 py-6 text-base font-semibold border-2 border-white/30 text-white hover:bg-white/10 hover:-translate-y-0.5 transition-all duration-300"
-                onClick={() => {
-                  const coursesSection = document.getElementById('courses-section');
-                  coursesSection?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                {t('button')}
-              </Button>
+                {/* Trust badges */}
+                <motion.div
+                  variants={fadeUp}
+                  className="mt-12 pt-8 border-t border-[color:var(--ai-card-border)] flex flex-wrap justify-center items-center gap-x-8 gap-y-3 text-[13px] text-[color:var(--ai-muted)]"
+                >
+                  <TrustBadge label={t('benefits.moneyBack')} />
+                  <span className="opacity-30 hidden sm:inline">·</span>
+                  <TrustBadge label={t('benefits.lifetimeAccess')} />
+                  <span className="opacity-30 hidden sm:inline">·</span>
+                  <TrustBadge label={t('benefits.certificate')} />
+                </motion.div>
+              </Stagger>
             </div>
-          </ScrollAnimationWrapper>
-
-          {/* Trust badges */}
-          <ScrollAnimationWrapper delay={0.3}>
-            <div className="mt-14 flex flex-wrap justify-center items-center gap-8">
-              <div className="text-white/80 flex items-center text-sm">
-                <svg className="w-5 h-5 mr-2 text-white/60" fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span>{t('benefits.moneyBack')}</span>
-              </div>
-              <div className="text-white/80 flex items-center">
-                <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span>{t('benefits.lifetimeAccess')}</span>
-              </div>
-              <div className="text-white/80 flex items-center">
-                <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span>{t('benefits.certificate')}</span>
-              </div>
-            </div>
-          </ScrollAnimationWrapper>
-        </div>
+          </div>
+        </Reveal>
       </div>
     </section>
   );
 });
+
+function TrustBadge({ label }: { label: string }) {
+  return (
+    <span className="inline-flex items-center gap-2">
+      <svg
+        className="w-4 h-4 text-emerald-500/80"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        viewBox="0 0 24 24"
+        aria-hidden
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+      </svg>
+      {label}
+    </span>
+  );
+}
 
 export default CallToActionSection;

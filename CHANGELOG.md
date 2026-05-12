@@ -6,6 +6,37 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-05-12
+
+### Changed
+
+- **Header refinement** (`components/Header.tsx`). Calmed the scrolled
+  state to match the new editorial language:
+  - Removed the multi-color shimmer hairline (it referenced a
+    `header-shimmer` keyframe that didn't actually exist — dead animation).
+  - Removed the radial primary-color glow halo that bled across the page.
+  - Replaced with a single 1px gold `cinematic-rim-divider` that fades in
+    only on scroll, plus a clean card-border hairline.
+  - Backdrop opacity raised slightly (0.85 vs 0.75) so the title text
+    behind never bleeds through.
+
+- **CallToActionSection rewritten** (`components/CallToActionSection.tsx`,
+  184 → 165 lines):
+  - Removed full-bleed indigo → violet → pink gradient that conflicted with
+    the editorial surface.
+  - Removed dead `gridOpacities` and `floatingOrbs` memos (computed but
+    never rendered — pure waste).
+  - Removed duplicate-labelled buttons (both said `t('button')`).
+  - New treatment: a single bordered card sitting on the editorial surface
+    with an inset gradient wash, top gold rim, eyebrow + display headline
+    - dual CTAs (primary inverted + ghost secondary going to `/book-a-call`).
+  - Trust badges now an inline list with a single emerald check icon
+    each, separated by elegant middle dots.
+
+### Added
+
+- New i18n keys `home.cta.{eyebrow,secondaryButton}` in EN + RO with parity.
+
 ## [0.6.0] - 2026-05-12
 
 ### Changed

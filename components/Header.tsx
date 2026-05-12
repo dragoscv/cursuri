@@ -46,36 +46,18 @@ const Header = React.memo(function Header() {
       initial={{ y: -24, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ type: 'spring', stiffness: 280, damping: 28 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-[padding,background-color,backdrop-filter,box-shadow] duration-500 ease-out ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-[padding,background-color,backdrop-filter,border-color] duration-400 ease-out ${
         isScrolled
-          ? 'py-1.5 bg-[color:var(--ai-background)]/75 backdrop-blur-xl shadow-[0_8px_32px_-12px_rgba(0,0,0,0.25)]'
-          : 'py-3 bg-[color:var(--ai-background)]/40 backdrop-blur-md'
+          ? 'py-2 bg-[color:var(--ai-background)]/85 backdrop-blur-xl border-b border-[color:var(--ai-card-border)]'
+          : 'py-3.5 bg-[color:var(--ai-background)]/40 backdrop-blur-md border-b border-transparent'
       }`}
     >
-      {/* Animated gradient hairline border */}
+      {/* Subtle gold rim accent on scroll only — premium magazine feel */}
       <div
         aria-hidden
-        className={`absolute inset-x-0 bottom-0 h-px transition-opacity duration-500 ${
-          isScrolled ? 'opacity-100' : 'opacity-60'
+        className={`absolute inset-x-0 bottom-0 cinematic-rim-divider transition-opacity duration-400 ${
+          isScrolled ? 'opacity-60' : 'opacity-0'
         }`}
-        style={{
-          background:
-            'linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--ai-primary) 60%, transparent) 25%, color-mix(in srgb, var(--ai-secondary) 60%, transparent) 50%, color-mix(in srgb, var(--ai-accent) 60%, transparent) 75%, transparent 100%)',
-          backgroundSize: '200% 100%',
-          animation: 'header-shimmer 8s linear infinite',
-        }}
-      />
-
-      {/* Subtle animated glow on scroll */}
-      <div
-        aria-hidden
-        className={`absolute inset-0 -z-10 transition-opacity duration-700 ${
-          isScrolled ? 'opacity-100' : 'opacity-0'
-        }`}
-        style={{
-          background:
-            'radial-gradient(ellipse 800px 100px at 50% 0%, color-mix(in srgb, var(--ai-primary) 10%, transparent), transparent 70%)',
-        }}
       />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -121,8 +103,12 @@ const Header = React.memo(function Header() {
 
       <style jsx>{`
         @keyframes header-shimmer {
-          0% { background-position: 0% 0; }
-          100% { background-position: 200% 0; }
+          0% {
+            background-position: 0% 0;
+          }
+          100% {
+            background-position: 200% 0;
+          }
         }
       `}</style>
     </motion.header>
