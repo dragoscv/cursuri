@@ -6,6 +6,47 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-05-12
+
+### Changed — homepage editorial pass (sub-hero sections)
+
+Audit found most homepage sections (Statistics, TechStack, LearningPath,
+WhyChooseUs) already in editorial language. Real offenders were the
+pricing band, the reviews band, and the latest-lessons surface.
+
+- **`SubscriptionSection`** (367 → 290 lines): full editorial rewrite.
+  Replaced HeroUI `Card` + `border-2 border-[--ai-primary] shadow-2xl`
+  with a flat extracted `<PlanCard>` component. Recommended plan now
+  marked by a 3px gold left rail (`from-amber-400 to-amber-500`) +
+  a gold gradient-text eyebrow — not a floating gradient "Popular" pill
+  with white-on-color and `shadow-lg`. Yearly badge dropped to a quiet
+  muted eyebrow. Price text now solid foreground tabular-nums (was
+  `bg-clip-text text-transparent` gradient — the worst offender). Check
+  glyphs flat amber (no rounded color tile background). CTAs now ghost
+  pills (h-11, rounded-full, border + hover-fill) for non-recommended
+  and a solid foreground pill for the recommended plan — dropping the
+  dual gradient backgrounds + `shadow-md hover:shadow-xl
+hover:-translate-y-0.5` chrome.
+
+- **`FeaturedReviews`** (header + cards + CTA): swapped pill-shaped
+  border badge for the standard gold eyebrow + `text-3xl md:text-5xl
+font-semibold tracking-[-0.02em]` headline. Course-type badge moved
+  from `bg-[--ai-primary]/8` rounded-lg pill to a calm bordered amber
+  uppercase chip. Review cards lose `whileHover y:-6` + `hover:shadow-lg`
+  — now just border-color hover. Final "View all" CTA replaced gradient
+  primary button with the same solid foreground pill we use elsewhere.
+
+- **`LatestLessonsSection`**: removed the two decorative top/bottom
+  fade-gradient overlays and the panel `shadow-sm` — the scroll list now
+  just lives inside a clean bordered card.
+
+### Added — i18n keys (no more hardcoded fallbacks)
+
+- `home.reviews.anonymousUser` / `home.reviews.defaultRole` (en + ro)
+  — was hardcoded "Anonymous User" / "Course Participant"
+- `home.latestLessons.untitledLesson` (en + ro) — was hardcoded
+  "Untitled lesson"
+
 ## [0.12.0] - 2026-05-12
 
 ### Changed — /courses catalog editorial overhaul

@@ -183,13 +183,13 @@ const FeaturedReviews = memo(function FeaturedReviews() {
           }}
           transition={{ duration: 0.6 }}
         >
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] border border-[color:var(--ai-primary)]/20 mb-4">
+          <span className="inline-block text-[11px] uppercase tracking-[0.18em] font-semibold bg-gradient-to-r from-amber-400 to-amber-500 bg-clip-text text-transparent mb-4">
             {t('badge')}
           </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-[color:var(--ai-foreground)] mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-[-0.02em] text-[color:var(--ai-foreground)] mb-4">
             {t('sectionTitle')}
           </h2>
-          <p className="text-lg text-[color:var(--ai-muted)] max-w-2xl mx-auto">
+          <p className="text-base md:text-lg text-[color:var(--ai-muted)] max-w-2xl mx-auto">
             {t('sectionSubtitle')}
           </p>
         </motion.div>
@@ -204,9 +204,8 @@ const FeaturedReviews = memo(function FeaturedReviews() {
               key={review.id}
               className="group rounded-2xl overflow-hidden"
               variants={cardVariants}
-              whileHover={{ y: -6, transition: { duration: 0.3 } }}
             >
-              <div className="rounded-2xl bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/30 hover:shadow-lg p-6 h-full flex flex-col transition-all duration-300">
+              <div className="relative rounded-2xl bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-foreground)]/40 p-6 h-full flex flex-col transition-colors duration-200">
                 {/* Stars */}
                 <div className="flex items-center space-x-1 mb-3">
                   {Array.from({ length: 5 }).map((_, i) => (
@@ -222,7 +221,7 @@ const FeaturedReviews = memo(function FeaturedReviews() {
                 </div>
 
                 {/* Course badge */}
-                <span className="inline-flex w-fit px-2.5 py-1 rounded-lg text-xs font-medium bg-[color:var(--ai-primary)]/8 text-[color:var(--ai-primary)] mb-4">
+                <span className="inline-flex w-fit items-center px-2 h-6 rounded-md text-[10px] font-semibold uppercase tracking-[0.12em] border border-amber-500/30 text-amber-500 mb-4">
                   {review.courseType}
                 </span>
 
@@ -253,10 +252,10 @@ const FeaturedReviews = memo(function FeaturedReviews() {
                   </div>
                   <div className="ml-3">
                     <div className="text-sm font-semibold text-[color:var(--ai-foreground)]">
-                      {review.author?.name || review.userName || 'Anonymous User'}
+                      {review.author?.name || review.userName || t('anonymousUser')}
                     </div>
                     <div className="text-xs text-[color:var(--ai-muted)]">
-                      {review.author?.role || review.userRole || 'Course Participant'}
+                      {review.author?.role || review.userRole || t('defaultRole')}
                     </div>
                   </div>
                 </div>
@@ -287,7 +286,7 @@ const FeaturedReviews = memo(function FeaturedReviews() {
             variant="primary"
             size="lg"
             radius="full"
-            className="px-8 py-3 group bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-semibold shadow-lg shadow-[color:var(--ai-primary)]/20 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+            className="px-6 h-11 group bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] font-medium hover:opacity-90 transition-opacity duration-200"
             endContent={
               <svg
                 className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1"

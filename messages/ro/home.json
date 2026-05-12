@@ -204,6 +204,8 @@
     "sectionSubtitle": "Descoperă cum trainingul nostru practic în AI ajută profesioniștii din toate industriile să crească productivitatea și să deschidă noi oportunități.",
     "badge": "Povești de Succes",
     "viewAll": "Vezi Toate Poveștile de Succes",
+    "anonymousUser": "Utilizator anonim",
+    "defaultRole": "Cursant",
     "fallback": {
       "review1": {
         "content": "Învățarea folosirii AI pentru crearea de conținut mi-a redus timpul de scriere la jumătate. Tehnicile de prompt engineering predate aici schimbă jocul pentru orice marketer.",
@@ -251,7 +253,8 @@
     "newestFirst": "Cele mai noi primele",
     "empty": "Nicio lecție publicată încă.",
     "noRecommendations": "Nicio recomandare disponibilă încă.",
-    "subscribeToWatch": "Abonează-te ca să vizionezi"
+    "subscribeToWatch": "Abonează-te ca să vizionezi",
+    "untitledLesson": "Lecție fără titlu"
   },
   "instructorHighlights": {
     "title": "Cunoaște Instructorii Noștri Experți",

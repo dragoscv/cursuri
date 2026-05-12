@@ -3,9 +3,8 @@
 import React, { useState, useContext } from 'react';
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
-import { Card } from '@heroui/react';
 import Button from '@/components/ui/Button';
-import { FiCheck, FiArrowRight, FiStar, FiSettings } from '@/components/icons/FeatherIcons';
+import { FiCheck, FiArrowRight, FiSettings } from '@/components/icons/FeatherIcons';
 import { AppContext } from '@/components/AppContext';
 import { createCheckoutSession } from 'firewand';
 import { stripePayments } from '@/utils/firebase/stripe';
@@ -29,27 +28,19 @@ export default function SubscriptionSection() {
 
   const { user, openModal, closeModal, products, subscriptions } = context;
 
-  // Check if user has an active subscription
   const hasActiveSubscription = subscriptions && subscriptions.length > 0;
 
-  // Find subscription product from products
   const subscriptionProduct = products?.find(
     (p: any) =>
       p.metadata?.type === 'subscription' || p.name?.toLowerCase().includes('subscription')
   );
 
-  // Get app name for filtering
-  const appName = process.env.NEXT_PUBLIC_APP_NAME || 'cursuri';
-
-  // Get monthly and yearly prices from the subscription product
-  // Since the product already has the correct metadata, just filter by active status and interval
   const monthlyPrice = subscriptionProduct?.prices?.find((p: any) => {
     const isActive = p.active !== false;
     const isMonthly =
       p.metadata?.interval === 'month' ||
       p.recurring?.interval === 'month' ||
       p.interval === 'month';
-
     return isActive && isMonthly;
   });
 
@@ -57,36 +48,24 @@ export default function SubscriptionSection() {
     const isActive = p.active !== false;
     const isYearly =
       p.metadata?.interval === 'year' || p.recurring?.interval === 'year' || p.interval === 'year';
-
     return isActive && isYearly;
   });
 
-  // Helper function to format price
   const formatPrice = (price: any) => {
     if (!price || !price.unit_amount) return null;
-
     const amountValue = price.unit_amount / 100;
     const currency = price.currency?.toUpperCase() || 'USD';
-
-    // Format price using Intl.NumberFormat for proper locale formatting
     const formatted = new Intl.NumberFormat('ro-RO', {
       style: 'currency',
-      currency: currency,
+      currency,
       minimumFractionDigits: amountValue % 1 === 0 ? 0 : 2,
       maximumFractionDigits: 2,
     }).format(amountValue);
-
-    return {
-      amount: amountValue,
-      currency,
-      formatted,
-    };
+    return { amount: amountValue, currency, formatted };
   };
 
   const handleSubscribe = async (priceId: string, planName: string) => {
     setLoadingPlan(planName);
-
-    // Check if user is logged in
     if (!user) {
       setLoadingPlan(null);
       openModal({
@@ -121,7 +100,6 @@ export default function SubscriptionSection() {
   return (
     <section className="relative w-full py-24 md:py-32 bg-[color:var(--ai-background)]">
       <div className="container max-w-5xl mx-auto px-4 relative z-10">
-        {/* Section Header */}
         <Reveal trigger="view" offset={28}>
           <SectionHeading
             eyebrow={t('eyebrow')}
@@ -131,192 +109,208 @@ export default function SubscriptionSection() {
           />
         </Reveal>
 
-        {/* GitHub Copilot benefit banner - the headline value prop */}
         <div className="max-w-5xl mx-auto mb-12">
           <CopilotPerksCard variant="banner" ctaHref="/subscriptions" />
         </div>
 
-        {/* Pricing Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          {/* Monthly Plan */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="relative"
-          >
-            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-              <div className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-1 shadow-lg">
-                <FiStar size={14} />
-                {t('plans.popular')}
-              </div>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+          {/* Monthly Plan — recommended (gold rail) */}
+          <PlanCard
+            recommended
+            name={t('plans.proMonthly.name')}
+            description={t('plans.proMonthly.description')}
+            priceLabel={monthlyPriceInfo ? monthlyPriceInfo.formatted : t('plans.proMonthly.price')}
+            period={t('plans.proMonthly.period')}
+            badgeLabel={t('plans.popular')}
+            features={[
+              t('plans.proMonthly.features.unlimitedAccess'),
+              t('plans.proMonthly.features.allCourses'),
+              t('plans.proMonthly.features.prioritySupport'),
+              t('plans.proMonthly.features.exclusiveContent'),
+            ]}
+            ctaLabel={t('plans.proMonthly.cta')}
+            manageLabel={t('manage.manageSubscription')}
+            processingLabel={t('toast.processing')}
+            loading={loadingPlan === 'monthly'}
+            hasActiveSubscription={!!hasActiveSubscription}
+            disabled={!monthlyPrice?.id}
+            onSubscribe={() => monthlyPrice?.id && handleSubscribe(monthlyPrice.id, 'monthly')}
+            onManage={() => router.push('/profile/subscriptions')}
+            delay={0.1}
+          />
 
-            <Card className="p-8 h-full flex flex-col rounded-2xl bg-[color:var(--ai-card-bg)] transition-all duration-300 hover:shadow-2xl border-2 border-[color:var(--ai-primary)] shadow-lg shadow-[color:var(--ai-primary)]/10">
-              {/* Plan Header */}
-              <div className="mb-6">
-                <h3 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-2">
-                  {t('plans.proMonthly.name')}
-                </h3>
-                <p className="text-sm text-[color:var(--ai-muted)]">
-                  {t('plans.proMonthly.description')}
-                </p>
-              </div>
-
-              {/* Price */}
-              <div className="mb-6">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">
-                    {monthlyPriceInfo ? monthlyPriceInfo.formatted : t('plans.proMonthly.price')}
-                  </span>
-                  <span className="text-[color:var(--ai-muted)]">
-                    /{t('plans.proMonthly.period')}
-                  </span>
-                </div>
-              </div>
-
-              {/* Features */}
-              <ul className="space-y-3 mb-8 flex-grow">
-                {[
-                  t('plans.proMonthly.features.unlimitedAccess'),
-                  t('plans.proMonthly.features.allCourses'),
-                  t('plans.proMonthly.features.prioritySupport'),
-                  t('plans.proMonthly.features.exclusiveContent'),
-                ].map((feature, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <div className="w-5 h-5 rounded-full bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <FiCheck size={14} />
-                    </div>
-                    <span className="text-sm text-[color:var(--ai-muted)]">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              {/* CTA Button */}
-              {loadingPlan === 'monthly' ? (
-                <LoadingButton className="w-full" size="lg" loadingText={t('toast.processing')} />
-              ) : hasActiveSubscription ? (
-                // Show "Manage Subscription" button if user already has a subscription
-                <Button
-                  size="lg"
-                  radius="lg"
-                  className="w-full font-medium border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)] px-5 py-2 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 text-[color:var(--ai-foreground)]"
-                  startContent={<FiSettings />}
-                  onClick={() => router.push('/profile/subscriptions')}
-                >
-                  {t('manage.manageSubscription')}
-                </Button>
-              ) : (
-                <Button
-                  size="lg"
-                  radius="lg"
-                  className="w-full font-medium px-5 py-2 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] border-none text-white"
-                  endContent={<FiArrowRight />}
-                  onClick={() => {
-                    if (monthlyPrice?.id) {
-                      handleSubscribe(monthlyPrice.id, 'monthly');
-                    }
-                  }}
-                  disabled={!monthlyPrice?.id}
-                >
-                  {t('plans.proMonthly.cta')}
-                </Button>
-              )}
-            </Card>
-          </motion.div>
-
-          {/* Yearly Plan */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="relative"
-          >
-            <div className="absolute -top-4 right-4 z-10">
-              <div className="bg-gradient-to-r from-[color:var(--ai-accent)] to-[color:var(--ai-secondary)] text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
-                {t('plans.proYearly.badge')}
-              </div>
-            </div>
-
-            <Card className="p-8 h-full flex flex-col rounded-2xl bg-[color:var(--ai-card-bg)] transition-all duration-300 hover:shadow-xl border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/40 shadow-sm">
-              {/* Plan Header */}
-              <div className="mb-6">
-                <h3 className="text-2xl font-bold text-[color:var(--ai-foreground)] mb-2">
-                  {t('plans.proYearly.name')}
-                </h3>
-                <p className="text-sm text-[color:var(--ai-muted)]">
-                  {t('plans.proYearly.description')}
-                </p>
-              </div>
-
-              {/* Price */}
-              <div className="mb-6">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">
-                    {yearlyPriceInfo ? yearlyPriceInfo.formatted : t('plans.proYearly.price')}
-                  </span>
-                  <span className="text-[color:var(--ai-muted)]">
-                    /{t('plans.proYearly.period')}
-                  </span>
-                </div>
-                <p className="text-sm text-[color:var(--ai-success)] font-medium mt-1">
-                  {t('plans.proYearly.savings')}
-                </p>
-              </div>
-
-              {/* Features */}
-              <ul className="space-y-3 mb-8 flex-grow">
-                {[
-                  t('plans.proYearly.features.everything'),
-                  t('plans.proYearly.features.twoMonthsFree'),
-                  t('plans.proYearly.features.prioritySupport'),
-                  t('plans.proYearly.features.exclusiveWorkshops'),
-                ].map((feature, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <div className="w-5 h-5 rounded-full bg-[color:var(--ai-success)]/10 text-[color:var(--ai-success)] flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <FiCheck size={14} />
-                    </div>
-                    <span className="text-sm text-[color:var(--ai-muted)]">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              {/* CTA Button */}
-              {loadingPlan === 'yearly' ? (
-                <LoadingButton className="w-full" size="lg" loadingText={t('toast.processing')} />
-              ) : hasActiveSubscription ? (
-                // Show "Manage Subscription" button if user already has a subscription
-                <Button
-                  size="lg"
-                  radius="lg"
-                  className="w-full font-medium border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)] px-5 py-2 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 text-[color:var(--ai-foreground)]"
-                  startContent={<FiSettings />}
-                  onClick={() => router.push('/profile/subscriptions')}
-                >
-                  {t('manage.manageSubscription')}
-                </Button>
-              ) : (
-                <Button
-                  size="lg"
-                  radius="lg"
-                  className="w-full font-medium px-5 py-2 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 bg-gradient-to-r from-[color:var(--ai-accent)] to-[color:var(--ai-secondary)] border-none text-white"
-                  endContent={<FiArrowRight />}
-                  onClick={() => {
-                    if (yearlyPrice?.id) {
-                      handleSubscribe(yearlyPrice.id, 'yearly');
-                    }
-                  }}
-                  disabled={!yearlyPrice?.id}
-                >
-                  {t('plans.proYearly.cta')}
-                </Button>
-              )}
-            </Card>
-          </motion.div>
+          {/* Yearly Plan — calm card with savings note */}
+          <PlanCard
+            name={t('plans.proYearly.name')}
+            description={t('plans.proYearly.description')}
+            priceLabel={yearlyPriceInfo ? yearlyPriceInfo.formatted : t('plans.proYearly.price')}
+            period={t('plans.proYearly.period')}
+            badgeLabel={t('plans.proYearly.badge')}
+            savingsLabel={t('plans.proYearly.savings')}
+            features={[
+              t('plans.proYearly.features.everything'),
+              t('plans.proYearly.features.twoMonthsFree'),
+              t('plans.proYearly.features.prioritySupport'),
+              t('plans.proYearly.features.exclusiveWorkshops'),
+            ]}
+            ctaLabel={t('plans.proYearly.cta')}
+            manageLabel={t('manage.manageSubscription')}
+            processingLabel={t('toast.processing')}
+            loading={loadingPlan === 'yearly'}
+            hasActiveSubscription={!!hasActiveSubscription}
+            disabled={!yearlyPrice?.id}
+            onSubscribe={() => yearlyPrice?.id && handleSubscribe(yearlyPrice.id, 'yearly')}
+            onManage={() => router.push('/profile/subscriptions')}
+            delay={0.2}
+          />
         </div>
       </div>
     </section>
+  );
+}
+
+interface PlanCardProps {
+  recommended?: boolean;
+  name: string;
+  description: string;
+  priceLabel: string;
+  period: string;
+  badgeLabel: string;
+  savingsLabel?: string;
+  features: string[];
+  ctaLabel: string;
+  manageLabel: string;
+  processingLabel: string;
+  loading: boolean;
+  hasActiveSubscription: boolean;
+  disabled: boolean;
+  onSubscribe: () => void;
+  onManage: () => void;
+  delay: number;
+}
+
+function PlanCard({
+  recommended = false,
+  name,
+  description,
+  priceLabel,
+  period,
+  badgeLabel,
+  savingsLabel,
+  features,
+  ctaLabel,
+  manageLabel,
+  processingLabel,
+  loading,
+  hasActiveSubscription,
+  disabled,
+  onSubscribe,
+  onManage,
+  delay,
+}: PlanCardProps) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay }}
+      className="relative"
+    >
+      <div
+        className={`relative h-full flex flex-col rounded-2xl border bg-[color:var(--ai-card-bg)] p-7 transition-colors duration-200 ${
+          recommended
+            ? 'border-[color:var(--ai-card-border)]'
+            : 'border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-foreground)]/40'
+        }`}
+      >
+        {/* Recommended: gold left rail */}
+        {recommended && (
+          <span
+            aria-hidden
+            className="absolute inset-y-0 left-0 w-[3px] rounded-l-2xl bg-gradient-to-b from-amber-400 to-amber-500"
+          />
+        )}
+
+        {/* Eyebrow badge */}
+        <span
+          className={`inline-flex w-fit items-center text-[10px] uppercase tracking-[0.18em] font-semibold mb-4 ${
+            recommended
+              ? 'bg-gradient-to-r from-amber-400 to-amber-500 bg-clip-text text-transparent'
+              : 'text-[color:var(--ai-muted)]'
+          }`}
+        >
+          {badgeLabel}
+        </span>
+
+        {/* Plan name + description */}
+        <h3 className="text-xl md:text-2xl font-semibold tracking-[-0.01em] text-[color:var(--ai-foreground)]">
+          {name}
+        </h3>
+        <p className="mt-1.5 text-[13px] leading-relaxed text-[color:var(--ai-muted)]">
+          {description}
+        </p>
+
+        {/* Price */}
+        <div className="mt-6 flex items-baseline gap-1.5">
+          <span className="text-4xl font-semibold tabular-nums tracking-[-0.02em] text-[color:var(--ai-foreground)]">
+            {priceLabel}
+          </span>
+          <span className="text-sm text-[color:var(--ai-muted)]">/{period}</span>
+        </div>
+        {savingsLabel && (
+          <p className="mt-1.5 text-xs font-medium text-emerald-500">{savingsLabel}</p>
+        )}
+
+        {/* Features */}
+        <ul className="mt-6 mb-8 space-y-2.5 flex-grow">
+          {features.map((feature, index) => (
+            <li key={index} className="flex items-start gap-2.5">
+              <FiCheck
+                size={15}
+                className="mt-0.5 flex-shrink-0 text-amber-500"
+                aria-hidden="true"
+              />
+              <span className="text-[13px] leading-relaxed text-[color:var(--ai-muted)]">
+                {feature}
+              </span>
+            </li>
+          ))}
+        </ul>
+
+        {/* CTA */}
+        {loading ? (
+          <LoadingButton className="w-full" size="lg" loadingText={processingLabel} />
+        ) : hasActiveSubscription ? (
+          <button
+            type="button"
+            onClick={onManage}
+            className="cursor-pointer inline-flex items-center justify-center gap-2 w-full h-11 rounded-full text-sm font-medium border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-foreground)] text-[color:var(--ai-foreground)] transition-colors duration-200"
+          >
+            <FiSettings size={15} aria-hidden="true" />
+            {manageLabel}
+          </button>
+        ) : recommended ? (
+          <button
+            type="button"
+            onClick={onSubscribe}
+            disabled={disabled}
+            className="cursor-pointer inline-flex items-center justify-center gap-2 w-full h-11 rounded-full text-sm font-medium bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity duration-200"
+          >
+            {ctaLabel}
+            <FiArrowRight size={15} aria-hidden="true" />
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={onSubscribe}
+            disabled={disabled}
+            className="cursor-pointer inline-flex items-center justify-center gap-2 w-full h-11 rounded-full text-sm font-medium border border-[color:var(--ai-foreground)] text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-foreground)] hover:text-[color:var(--ai-background)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+          >
+            {ctaLabel}
+            <FiArrowRight size={15} aria-hidden="true" />
+          </button>
+        )}
+      </div>
+    </motion.div>
   );
 }

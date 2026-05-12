@@ -182,18 +182,7 @@ const LatestLessonsSection = React.memo(function LatestLessonsSection() {
               </span>
             </div>
 
-            <div className="relative rounded-2xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] overflow-hidden shadow-sm">
-              {/* Top fade shadow */}
-              <div
-                className="pointer-events-none absolute top-0 left-0 right-0 h-8 z-10 bg-gradient-to-b from-[color:var(--ai-card-bg)] to-transparent"
-                aria-hidden="true"
-              />
-              {/* Bottom fade shadow */}
-              <div
-                className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 z-10 bg-gradient-to-t from-[color:var(--ai-card-bg)] to-transparent"
-                aria-hidden="true"
-              />
-
+            <div className="relative rounded-2xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] overflow-hidden">
               <div className="max-h-[640px] overflow-y-auto custom-scrollbar divide-y divide-[color:var(--ai-card-border)]">
                 {loading ? (
                   <ul className="p-2">
@@ -227,7 +216,7 @@ const LatestLessonsSection = React.memo(function LatestLessonsSection() {
                         hasActiveSubscription ||
                         ownedCourseIds.has(lesson.courseId) ||
                         lesson.isFree;
-                      const lessonName = lesson.name || lesson.title || 'Untitled lesson';
+                      const lessonName = lesson.name || lesson.title || t('untitledLesson');
                       const lessonDesc = lesson.description || '';
                       const thumb = lesson.thumbnail || lesson.thumbnailUrl || course?.imageUrl;
 

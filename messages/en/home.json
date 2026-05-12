@@ -204,6 +204,8 @@
     "sectionSubtitle": "Discover how our practical AI training is helping professionals across industries boost productivity and unlock new opportunities.",
     "badge": "Success Stories",
     "viewAll": "View All Success Stories",
+    "anonymousUser": "Anonymous User",
+    "defaultRole": "Course Participant",
     "fallback": {
       "review1": {
         "content": "Learning to use AI for content creation cut my writing time in half. The prompt engineering techniques taught here are game-changing for any marketer.",
@@ -251,7 +253,8 @@
     "newestFirst": "Newest first",
     "empty": "No lessons published yet.",
     "noRecommendations": "No course recommendations available yet.",
-    "subscribeToWatch": "Subscribe to watch"
+    "subscribeToWatch": "Subscribe to watch",
+    "untitledLesson": "Untitled lesson"
   },
   "instructorHighlights": {
     "title": "Meet Our Expert Instructors",
