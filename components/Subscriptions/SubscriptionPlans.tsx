@@ -273,15 +273,15 @@ export default function SubscriptionPlans() {
     <div className="relative">
       {/* Billing toggle */}
       <div className="flex justify-center mb-10">
-        <div className="inline-flex p-1 rounded-full border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/60 backdrop-blur-sm">
+        <div className="inline-flex p-1 rounded-full border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]">
           {(['monthly', 'yearly'] as Billing[]).map((b) => (
             <button
               key={b}
               type="button"
               onClick={() => setBilling(b)}
-              className={`px-5 h-9 rounded-full text-sm font-medium transition-all ${
+              className={`px-5 h-9 rounded-full text-sm font-medium transition-colors ${
                 billing === b
-                  ? 'bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white shadow-md'
+                  ? 'bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)]'
                   : 'text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]'
               }`}
             >
@@ -307,8 +307,8 @@ export default function SubscriptionPlans() {
           >
             {plan.popular && (
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-                <div className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-1 shadow-lg">
-                  <FiStar size={14} />
+                <div className="bg-amber-500 text-[color:var(--ai-background)] px-4 py-1 rounded-full text-[11px] font-semibold uppercase tracking-[0.12em] flex items-center gap-1">
+                  <FiStar size={12} />
                   {t('plans.popular')}
                 </div>
               </div>
@@ -316,33 +316,25 @@ export default function SubscriptionPlans() {
 
             {plan.badge && (
               <div className="absolute -top-4 right-4 z-10">
-                <div className="bg-gradient-to-r from-[color:var(--ai-accent)] to-[color:var(--ai-secondary)] text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
+                <div className="bg-amber-500 text-[color:var(--ai-background)] px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-[0.12em]">
                   {plan.badge}
                 </div>
               </div>
             )}
 
             <Card
-              className={`p-8 h-full flex flex-col rounded-xl bg-[color:var(--ai-card-bg)] backdrop-blur-sm transition-all duration-300 hover:shadow-2xl ${
+              className={`p-8 h-full flex flex-col rounded-2xl bg-[color:var(--ai-card-bg)] shadow-none transition-colors duration-200 ${
                 plan.popular
-                  ? 'border-2 border-[color:var(--ai-primary)] shadow-xl md:scale-105'
-                  : 'border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/50 shadow-lg'
+                  ? 'border-2 border-amber-500/60 md:scale-[1.02]'
+                  : 'border border-[color:var(--ai-card-border)] hover:border-amber-500/40'
               }`}
             >
               <div className="mb-6">
                 <div className="flex items-center gap-2 mb-2">
-                  <span
-                    className={`inline-flex items-center justify-center w-9 h-9 rounded-xl ${
-                      plan.accent === 'copilot'
-                        ? 'bg-violet-500/15 text-violet-500 dark:text-violet-300'
-                        : plan.accent === 'courses'
-                          ? 'bg-sky-500/15 text-sky-500 dark:text-sky-300'
-                          : 'bg-[color:var(--ai-card-border)] text-[color:var(--ai-muted)]'
-                    }`}
-                  >
+                  <span className="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-amber-500/40 bg-amber-500/[0.06] text-amber-500">
                     {plan.icon}
                   </span>
-                  <h3 className="text-2xl font-bold text-[color:var(--ai-foreground)]">
+                  <h3 className="text-2xl font-semibold tracking-[-0.01em] text-[color:var(--ai-foreground)]">
                     {plan.name}
                   </h3>
                 </div>
@@ -394,7 +386,7 @@ export default function SubscriptionPlans() {
                     <div
                       className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${
                         plan.popular
-                          ? 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]'
+                          ? 'bg-amber-500/15 text-amber-500'
                           : 'bg-[color:var(--ai-success)]/10 text-[color:var(--ai-success)]'
                       }`}
                     >
@@ -413,7 +405,7 @@ export default function SubscriptionPlans() {
                 <Button
                   size="lg"
                   radius="lg"
-                  className="w-full font-medium border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)] px-5 py-2 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 text-[color:var(--ai-foreground)]"
+                  className="w-full font-semibold border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-foreground)] px-5 py-2 rounded-full text-[color:var(--ai-foreground)] bg-transparent transition-colors duration-200"
                   startContent={<FiSettings />}
                   onClick={() => router.push('/profile/subscriptions')}
                 >
@@ -424,12 +416,12 @@ export default function SubscriptionPlans() {
                   size="lg"
                   radius="lg"
                   isDisabled={plan.disabled}
-                  className={`w-full font-medium px-5 py-2 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 ${
+                  className={`w-full font-semibold px-5 py-2 rounded-full transition-colors duration-200 ${
                     plan.popular
-                      ? 'bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] border-none text-white'
+                      ? 'bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] border-none hover:opacity-90'
                       : plan.key === 'free'
-                        ? 'border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)] text-[color:var(--ai-foreground)] bg-transparent'
-                        : 'bg-gradient-to-r from-[color:var(--ai-accent)] to-[color:var(--ai-secondary)] border-none text-white'
+                        ? 'border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-foreground)] text-[color:var(--ai-foreground)] bg-transparent'
+                        : 'border border-[color:var(--ai-foreground)] text-[color:var(--ai-foreground)] bg-transparent hover:bg-[color:var(--ai-foreground)] hover:text-[color:var(--ai-background)]'
                   }`}
                   onClick={plan.onAction}
                 >

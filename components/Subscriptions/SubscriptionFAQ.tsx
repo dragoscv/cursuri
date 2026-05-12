@@ -41,10 +41,13 @@ export default function SubscriptionFAQ() {
     <div className="relative max-w-4xl mx-auto">
       {/* Section Header */}
       <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[color:var(--ai-foreground)]">
+        <p className="text-[11px] uppercase tracking-[0.22em] font-semibold text-amber-500 mb-3">
+          Întrebări Frecvente
+        </p>
+        <h2 className="text-3xl md:text-4xl font-semibold tracking-[-0.02em] mb-4 text-[color:var(--ai-foreground)]">
           {t('title')}
         </h2>
-        <p className="text-lg text-[color:var(--ai-muted)]">{t('subtitle')}</p>
+        <p className="text-lg text-[color:var(--ai-muted)] leading-relaxed">{t('subtitle')}</p>
       </div>
 
       {/* FAQ Accordion */}
@@ -52,13 +55,13 @@ export default function SubscriptionFAQ() {
         {faqs.map((faq, index) => (
           <Card
             key={index}
-            className="rounded-xl bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] backdrop-blur-sm border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/50 transition-all duration-300 overflow-hidden shadow-lg"
+            className="rounded-2xl bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-foreground)]/30 transition-colors duration-200 overflow-hidden shadow-none"
           >
             <button
               onClick={() => setOpenIndex(openIndex === index ? null : index)}
               className="w-full p-6 text-left flex items-center justify-between gap-4 hover:bg-[color:var(--ai-card-border)]/5 transition-colors"
             >
-              <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)]">
+              <h3 className="text-base md:text-lg font-semibold tracking-[-0.005em] text-[color:var(--ai-foreground)]">
                 {faq.question}
               </h3>
               <motion.div
@@ -66,10 +69,7 @@ export default function SubscriptionFAQ() {
                 transition={{ duration: 0.3 }}
                 className="flex-shrink-0"
               >
-                <FiChevronDown
-                  className="text-[color:var(--ai-primary)]"
-                  size={24}
-                />
+                <FiChevronDown className="text-[color:var(--ai-muted)]" size={20} />
               </motion.div>
             </button>
 

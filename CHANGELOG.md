@@ -6,6 +6,47 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.18.3] - 2026-05-12
+
+### Changed — /subscriptions full-page editorial pass
+
+The `/subscriptions` page was the last surface bleeding legacy primary /
+secondary / accent purple chrome. This bump editorializes the whole page:
+
+- `app/subscriptions/page.tsx`: dropped the page-level
+  `bg-gradient-to-br from-background via-card-bg to-background` wrapper,
+  the animated `bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5
+animate-gradient-xy` overlay, and the two giant primary/secondary blur
+  blobs (`w-72 h-72 bg-primary/10 blur-3xl` + `w-96 h-96 bg-secondary/10`).
+  The H1 was a 3-stop `bg-clip-text` rainbow gradient (primary → secondary
+  → accent) — now renders as solid foreground under a small amber eyebrow.
+- `Subscriptions/SubscriptionPlans.tsx`: billing toggle active state
+  moved off `bg-gradient-to-r from-primary to-secondary text-white shadow-md`
+  onto solid foreground pill. "Popular" + yearly badges moved off
+  `bg-gradient-to-r from-primary to-secondary` / `from-accent to-secondary`
+  onto solid `bg-amber-500 text-background` uppercase pills. Plan card
+  chrome dropped `backdrop-blur-sm hover:shadow-2xl shadow-xl shadow-lg`;
+  popular card border moved from `border-2 border-primary` to
+  `border-2 border-amber-500/60`, non-popular from
+  `hover:border-primary/50` to `hover:border-amber-500/40`. Plan-name icon
+  tiles unified from `bg-violet-500/15` / `bg-sky-500/15` onto a single
+  amber-bordered chip. Feature checks (popular) moved from `primary/10` to
+  `amber/15`. All three primary CTA gradients (`from-primary to-secondary`,
+  `from-accent to-secondary`) replaced with native pills — popular gets a
+  solid foreground pill, non-popular gets a ghost foreground pill, free
+  stays a ghost card-border pill. Dropped `shadow-md hover:shadow-xl
+hover:-translate-y-0.5` lift effect everywhere.
+- `Subscriptions/SubscriptionBenefits.tsx`: removed the 4 `from-X to-Y`
+  saturated icon-tile gradients (blue/cyan, purple/pink, green/emerald,
+  orange/red) and replaced with a single amber-bordered chip + amber
+  glyph. Card chrome dropped `backdrop-blur-sm hover:shadow-xl shadow-lg`
+  and moved from `hover:border-primary/50` to `hover:border-amber-500/40`.
+  Added an amber eyebrow above the section heading.
+- `Subscriptions/SubscriptionFAQ.tsx`: card dropped `backdrop-blur-sm
+shadow-lg` and moved from `hover:border-primary/50` to
+  `hover:border-foreground/30`. Chevron color moved off primary purple
+  onto muted. Added an amber eyebrow above the heading.
+
 ## [0.18.2] - 2026-05-12
 
 ### Changed — /courses listing editorial cleanup
