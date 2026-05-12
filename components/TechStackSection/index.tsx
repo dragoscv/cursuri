@@ -1,56 +1,59 @@
-'use client'
+'use client';
 
-import React, { useMemo } from 'react'
-import { motion } from 'framer-motion'
-import { useTranslations } from 'next-intl'
-import ScrollAnimationWrapper from '../animations/ScrollAnimationWrapper'
-import TechItem from './TechItem'
-import { technologies } from './techData'
+import React, { memo } from 'react';
+import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
+import { Reveal, Stagger, fadeUp } from '@/components/motion';
+import SectionHeading from '@/components/shared/SectionHeading';
+import { technologies } from './techData';
 
-const TechStackSection = React.memo(function TechStackSection() {
-    const t = useTranslations('home.techStack');
+const TechStackSection = memo(function TechStackSection() {
+  const t = useTranslations('home.techStack');
+  const tTech = useTranslations('home.techStack.technologies');
 
-    // Memoize containerVariants to prevent recreation
-    const containerVariants = useMemo(() => ({
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.1
-            }
-        }
-    }), []); return (
-        <section className="relative w-full py-20 md:py-24 bg-[color:var(--section-light-bg)] dark:bg-[color:var(--section-dark-bg)]">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <ScrollAnimationWrapper>
-                    <div className="text-center mb-14">
-                        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[color:var(--ai-foreground)]">{t('title')}</h2>
-                        <p className="text-lg text-[color:var(--ai-muted)] max-w-2xl mx-auto">
-                            {t('subtitle')}
-                        </p>
-                    </div>
+  return (
+    <section className="relative w-full py-24 md:py-32 bg-[color:var(--ai-background)]">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <Reveal trigger="view" offset={28}>
+          <SectionHeading
+            eyebrow={t('eyebrow')}
+            title={t('title')}
+            subtitle={t('subtitle')}
+            className="mb-16"
+          />
+        </Reveal>
 
-                    <motion.div
-                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-                        variants={containerVariants}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, margin: "-100px" }}
-                    >
-                        {technologies.map((tech, index) => (
-                            <TechItem
-                                key={tech.key}
-                                techKey={tech.key}
-                                Icon={tech.icon}
-                                color={tech.color}
-                                index={index}
-                            />
-                        ))}
-                    </motion.div>
-                </ScrollAnimationWrapper>
-            </div>
-        </section>
-    )
+        <Stagger
+          gap={0.05}
+          delay={0.08}
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5"
+        >
+          {technologies.map((tech) => {
+            const Icon = tech.icon;
+            return (
+              <motion.div
+                key={tech.key}
+                variants={fadeUp}
+                whileHover={{ y: -3 }}
+                transition={{ type: 'spring', stiffness: 250, damping: 22 }}
+                className="group rounded-2xl p-6 bg-[color:var(--ai-card-bg)]/70 backdrop-blur-sm border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/40 transition-colors"
+              >
+                <div className="w-11 h-11 mb-4 inline-flex items-center justify-center rounded-xl bg-[color:var(--ai-primary)]/8 group-hover:bg-[color:var(--ai-primary)]/15 transition-colors">
+                  <Icon size={22} className="text-[color:var(--ai-primary)]" />
+                </div>
+                <h3 className="text-[15px] font-semibold text-[color:var(--ai-foreground)] mb-1.5 tracking-[-0.01em]">
+                  {tTech(`${tech.key}.name`)}
+                </h3>
+                <p className="text-[13px] text-[color:var(--ai-muted)] leading-relaxed">
+                  {tTech(`${tech.key}.description`)}
+                </p>
+              </motion.div>
+            );
+          })}
+        </Stagger>
+      </div>
+    </section>
+  );
 });
 
 export default TechStackSection;

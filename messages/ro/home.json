@@ -46,6 +46,7 @@
     }
   },
   "whyChooseUs": {
+    "eyebrow": "Ce ne diferențiază",
     "title": "De ce să Înveți AI Cu Noi",
     "subtitle": "Descoperă cum facem AI accesibil și practic pentru toată lumea",
     "features": {
@@ -94,6 +95,7 @@
     "upToDateDesc": "Conținut actualizat regulat cu cele mai noi tendințe din industrie"
   },
   "techStack": {
+    "eyebrow": "Ce vei învăța",
     "title": "Abilități pe care le vei stăpâni",
     "subtitle": "Explorează tehnologiile și abilitățile moderne din domeniul AI, dezvoltare, marketing și data science. Fiecare abilitate este predată prin proiecte practice, din viața reală.",
     "technologies": {
@@ -169,6 +171,7 @@
     }
   },
   "learningPath": {
+    "eyebrow": "Parcurs de învățare",
     "title": "Calea Ta către Stăpânirea AI",
     "subtitle": "De la începător AI la utilizator avansat - construiește abilități practice pas cu pas",
     "steps": {

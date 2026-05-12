@@ -46,6 +46,7 @@
     }
   },
   "whyChooseUs": {
+    "eyebrow": "What sets us apart",
     "title": "Why Learn AI With Us",
     "subtitle": "Discover how we make AI accessible and practical for everyone",
     "features": {
@@ -94,6 +95,7 @@
     "upToDateDesc": "Content regularly updated with the latest industry trends"
   },
   "techStack": {
+    "eyebrow": "What you'll learn",
     "title": "Skills You'll Master",
     "subtitle": "Explore the modern technologies and skills across AI, development, marketing, and data science. Each skill is taught through practical, real-world projects.",
     "technologies": {
@@ -169,6 +171,7 @@
     }
   },
   "learningPath": {
+    "eyebrow": "Learning roadmap",
     "title": "Your AI Mastery Path",
     "subtitle": "From AI beginner to power user - build practical skills step by step",
     "steps": {

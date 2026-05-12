@@ -1,70 +1,57 @@
 'use client';
 
-import React, { useMemo, useContext, useEffect, useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+/**
+ * StatisticsSection v2 — editorial KPI strip.
+ *
+ * Pulls live values from AppContext (course count, total content hours,
+ * average review rating). For total students we count unique paying users
+ * across the `customers/{uid}/payments` collection group, but only when
+ * the viewer is an authenticated admin (the rule set forbids broad reads
+ * for anyone else). Falls back to the i18n "value" copy otherwise.
+ */
+
+import React, { memo, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import ScrollAnimationWrapper from './animations/ScrollAnimationWrapper';
+
+import { Reveal, Stagger, fadeUp } from '@/components/motion';
+import SectionHeading from '@/components/shared/SectionHeading';
 import { AppContext } from './AppContext';
 
-const StatisticsSection = React.memo(function StatisticsSection() {
+const StatisticsSection = memo(function StatisticsSection() {
   const t = useTranslations('home.statistics');
-  const ref = React.useRef(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   const context = useContext(AppContext);
   const [isVisible, setIsVisible] = useState(false);
+  const [totalStudents, setTotalStudents] = useState(0);
 
-  // Defer scroll animations until component is in viewport
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start end', 'end start'],
-  });
-
-  // Simplified parallax effect
-  const y = useTransform(scrollYProgress, [0, 1], [0, 50]);
-
-  // Calculate real statistics from context data
   const realStats = useMemo(() => {
-    if (!context) {
-      return {
-        totalCourses: 0,
-        totalStudents: 0,
-        totalHours: 0,
-        avgRating: 0,
-      };
-    }
+    if (!context) return { totalCourses: 0, totalHours: 0, avgRating: '4.8' };
 
     const { courses = {}, reviews = {}, lessons = {} } = context;
-
-    // Calculate total active courses
     const totalCourses = Object.keys(courses).length;
 
-    // Calculate total content hours from actual lesson durations
     let totalMinutes = 0;
-
-    // Iterate through all courses and their lessons
     Object.keys(courses).forEach((courseId: string) => {
       const courseLessons = lessons[courseId];
       if (courseLessons && typeof courseLessons === 'object') {
-        Object.values(courseLessons).forEach((lesson: any) => {
-          if (lesson && lesson.duration) {
-            // Lesson duration is stored as number in minutes
-            const durationMins = typeof lesson.duration === 'number'
-              ? lesson.duration
-              : parseInt(lesson.duration, 10) || 0;
-            totalMinutes += durationMins;
+        Object.values(courseLessons).forEach((lesson: { duration?: number | string }) => {
+          if (lesson?.duration) {
+            const mins =
+              typeof lesson.duration === 'number'
+                ? lesson.duration
+                : parseInt(lesson.duration, 10) || 0;
+            totalMinutes += mins;
           }
         });
       }
     });
 
-    // Convert total minutes to hours
-    const totalHours = Math.round(totalMinutes / 60);
-
-    // Calculate average rating across all reviews
     let totalRating = 0;
     let reviewCount = 0;
-    Object.values(reviews).forEach((courseReviews: any) => {
+    Object.values(reviews).forEach((courseReviews: Record<string, { rating?: number }>) => {
       if (courseReviews && typeof courseReviews === 'object') {
-        Object.values(courseReviews).forEach((review: any) => {
+        Object.values(courseReviews).forEach((review) => {
           if (review && typeof review.rating === 'number') {
             totalRating += review.rating;
             reviewCount++;
@@ -74,246 +61,119 @@ const StatisticsSection = React.memo(function StatisticsSection() {
     });
     const avgRating = reviewCount > 0 ? (totalRating / reviewCount).toFixed(1) : '4.8';
 
-    // For student count, we need to query the database directly
-    // This will be done via a separate effect
     return {
       totalCourses,
-      totalStudents: 0, // Will be updated by useEffect
-      totalHours: Math.round(totalHours),
+      totalHours: Math.round(totalMinutes / 60),
       avgRating,
-      reviewCount,
     };
   }, [context]);
 
-  // Fetch real total students count from database - deferred until visible
-  const [totalStudents, setTotalStudents] = useState(0);
-
   useEffect(() => {
-    // Intersection Observer to detect when component is visible
     if (!ref.current) return;
-
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) {
-          setIsVisible(true);
-        }
+        if (entries[0]?.isIntersecting) setIsVisible(true);
       },
       { threshold: 0.1, rootMargin: '100px' }
     );
-
     observer.observe(ref.current);
     return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
-    // Only fetch when visible
     if (!isVisible) return;
+    if (!context?.user || !context?.isAdmin) return;
 
+    let cancelled = false;
     async function fetchTotalStudents() {
-      // Only fetch if user is authenticated and is admin
-      if (!context?.user || !context?.isAdmin) {
-        return;
-      }
-
       try {
-        // Import Firebase functions dynamically to avoid SSR issues
-        const { getFirestore, collectionGroup, query, where, getDocs } = await import('firebase/firestore');
+        const { getFirestore, collectionGroup, query, where, getDocs } =
+          await import('firebase/firestore');
         const { firebaseApp } = await import('@/utils/firebase/firebase.config');
-
         const db = getFirestore(firebaseApp);
-
-        // Query all payments across all users using collectionGroup
         const paymentsQuery = query(
           collectionGroup(db, 'payments'),
           where('status', '==', 'succeeded')
         );
-
-        const paymentsSnapshot = await getDocs(paymentsQuery);
-
-        // Extract unique user IDs from payment documents
+        const snapshot = await getDocs(paymentsQuery);
         const uniqueUserIds = new Set<string>();
-        paymentsSnapshot.forEach((doc) => {
-          // The parent path contains the user ID: customers/{userId}/payments/{paymentId}
-          const pathParts = doc.ref.path.split('/');
-          const userIdIndex = pathParts.indexOf('customers') + 1;
-          if (userIdIndex > 0 && userIdIndex < pathParts.length) {
-            const userId = pathParts[userIdIndex];
-            if (userId) {
-              uniqueUserIds.add(userId);
-            }
-          }
+        snapshot.forEach((doc) => {
+          const parts = doc.ref.path.split('/');
+          const idx = parts.indexOf('customers') + 1;
+          if (idx > 0 && idx < parts.length && parts[idx]) uniqueUserIds.add(parts[idx]);
         });
-
-        setTotalStudents(uniqueUserIds.size);
+        if (!cancelled) setTotalStudents(uniqueUserIds.size);
       } catch (error) {
         console.error('Error fetching total students:', error);
-        // Keep at 0 on error
       }
     }
-
     fetchTotalStudents();
+    return () => {
+      cancelled = true;
+    };
   }, [isVisible, context?.user, context?.isAdmin]);
-
-  // Memoize stat card hover props
-  const statCardHoverProps = useMemo(
-    () => ({
-      scale: 1.03,
-      boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-    }),
-    []
-  );
-
-  // Memoize background animation props
-  const backgroundAnimateProps = useMemo(
-    () => ({
-      backgroundPosition: ['0% 0%', '100% 100%'],
-    }),
-    []
-  );
-
-  const backgroundTransitionProps = useMemo(
-    () => ({
-      duration: 15,
-      repeat: Infinity,
-      repeatType: 'reverse' as const,
-      ease: 'linear' as const,
-    }),
-    []
-  );
 
   const stats = [
     {
+      key: 'courses',
       value: realStats.totalCourses > 0 ? `${realStats.totalCourses}+` : t('courses.value'),
       label: t('courses.label'),
       icon: t('courses.icon'),
-      color: 'from-[color:var(--ai-primary)] to-[color:var(--ai-primary)]/80',
     },
     {
+      key: 'students',
       value: totalStudents > 0 ? `${totalStudents.toLocaleString()}+` : t('students.value'),
       label: t('students.label'),
       icon: t('students.icon'),
-      color: 'from-[color:var(--ai-secondary)] to-[color:var(--ai-secondary)]/80',
     },
     {
-      value: realStats.totalHours > 0 ? `${realStats.totalHours.toLocaleString()}+` : t('hours.value'),
+      key: 'hours',
+      value:
+        realStats.totalHours > 0 ? `${realStats.totalHours.toLocaleString()}+` : t('hours.value'),
       label: t('hours.label'),
       icon: t('hours.icon'),
-      color: 'from-[color:var(--ai-accent)] to-[color:var(--ai-accent)]/80',
     },
     {
-      value: realStats.avgRating || t('rating.value'),
+      key: 'rating',
+      value: realStats.avgRating,
       label: t('rating.label'),
       icon: t('rating.icon'),
-      color: 'from-amber-500 to-amber-400',
     },
   ];
 
-  const counterVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        type: 'spring' as const,
-        stiffness: 100,
-        damping: 10,
-      },
-    },
-  };
-
-  // Pre-calculate particle properties with fixed precision to avoid hydration mismatch
-  const particles = useMemo(() => {
-    // Use a deterministic seed for consistent values
-    const seed = 42;
-    const particles = [];
-
-    function pseudoRandom(seed: number, index: number): number {
-      // Deterministic pseudo-random generator
-      return parseFloat(((Math.sin(seed * index) * 10000) % 1).toFixed(2));
-    }
-
-    for (let i = 0; i < 20; i++) {
-      // Create fixed-precision values that will be consistent
-      const width = (5 + pseudoRandom(seed, i * 1.1) * 10).toFixed(2);
-      const height = (5 + pseudoRandom(seed, i * 2.2) * 15).toFixed(2);
-      const top = (pseudoRandom(seed, i * 3.3) * 100).toFixed(2);
-      const left = (pseudoRandom(seed, i * 4.4) * 100).toFixed(2);
-      const duration = (3 + pseudoRandom(seed, i * 5.5) * 5).toFixed(2);
-      const delay = (pseudoRandom(seed, i * 6.6) * 5).toFixed(2);
-
-      particles.push({
-        key: i,
-        width,
-        height,
-        top,
-        left,
-        duration,
-        delay,
-      });
-    }
-
-    return particles;
-  }, []);
   return (
-    <section ref={ref} className="relative w-full overflow-hidden">
-      <div className="relative py-20 md:py-28 bg-[color:var(--ai-background)]">
-        {/* Subtle background accents */}
-        <div className="absolute inset-0">
-          <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-[color:var(--ai-primary)]/5 rounded-full blur-[100px]" />
-          <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-[color:var(--ai-secondary)]/5 rounded-full blur-[100px]" />
-        </div>
+    <section ref={ref} className="relative w-full py-24 md:py-32 bg-[color:var(--ai-background)]">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <Reveal trigger="view" offset={28}>
+          <SectionHeading
+            eyebrow={t('badge')}
+            title={t('title')}
+            subtitle={t('description')}
+            className="mb-16"
+          />
+        </Reveal>
 
-        {/* Main content container */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollAnimationWrapper>
-            <div className="text-center mb-12 md:mb-16">
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-full bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] border border-[color:var(--ai-primary)]/20 mb-4">
-                {t('badge')}
+        <Stagger gap={0.06} delay={0.1} className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
+          {stats.map((stat) => (
+            <motion.div
+              key={stat.key}
+              variants={fadeUp}
+              whileHover={{ y: -3 }}
+              transition={{ type: 'spring', stiffness: 250, damping: 22 }}
+              className="group relative rounded-2xl p-7 md:p-8 bg-[color:var(--ai-card-bg)]/70 backdrop-blur-sm border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/40 transition-colors text-center"
+            >
+              <span className="text-2xl mb-3 inline-block opacity-80" aria-hidden>
+                {stat.icon}
               </span>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[color:var(--ai-foreground)]">{t('title')}</h2>
-            </div>
-          </ScrollAnimationWrapper>
-
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-            {stats.map((stat, index) => (
-              <ScrollAnimationWrapper key={stat.label} delay={index * 0.1} className="h-full">
-                <motion.div
-                  className="flex flex-col items-center justify-center p-6 md:p-8 rounded-2xl bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] h-full text-center shadow-sm hover:shadow-lg hover:border-[color:var(--ai-primary)]/30 transition-all duration-300"
-                  variants={counterVariants}
-                  whileHover={{ y: -4 }}
-                >
-                  <div className="text-3xl md:text-4xl mb-3 p-3 rounded-2xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10">
-                    {stat.icon}
-                  </div>
-                  <motion.div
-                    className="text-3xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] mb-2"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{
-                      duration: 0.8,
-                      delay: 0.1 + index * 0.1,
-                      ease: [0.22, 1, 0.36, 1],
-                    }}
-                  >
-                    {stat.value}
-                  </motion.div>
-                  <div className="text-sm md:text-base font-medium text-[color:var(--ai-muted)]">{stat.label}</div>
-                </motion.div>
-              </ScrollAnimationWrapper>
-            ))}
-          </div>
-
-          {/* Description */}
-          <div className="mt-12 text-center">
-            <ScrollAnimationWrapper delay={0.4}>
-              <p className="text-[color:var(--ai-muted)] text-base md:text-lg max-w-2xl mx-auto">
-                {t('description')}
-              </p>
-            </ScrollAnimationWrapper>
-          </div>
-        </div>
+              <div className="text-[clamp(2rem,3.5vw,2.75rem)] font-semibold tracking-[-0.03em] tabular-nums text-[color:var(--ai-foreground)] leading-none">
+                {stat.value}
+              </div>
+              <div className="mt-2 text-[13px] tracking-[0.04em] uppercase text-[color:var(--ai-muted)] font-medium">
+                {stat.label}
+              </div>
+            </motion.div>
+          ))}
+        </Stagger>
       </div>
     </section>
   );

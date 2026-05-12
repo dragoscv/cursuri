@@ -6,6 +6,52 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-05-12
+
+### Added
+
+- **`<SectionHeading>`** shared primitive
+  (`components/shared/SectionHeading.tsx`) — unified eyebrow + display
+  title + subtitle block, used by all four redesigned home sections.
+  Eyebrow is the new editorial signature: 11px, semibold, 0.22em tracking,
+  uppercase, primary color.
+- New i18n keys (EN + RO parity): `home.whyChooseUs.eyebrow`,
+  `home.techStack.eyebrow`, `home.learningPath.eyebrow`.
+
+### Changed
+
+- **WhyChooseUsSection rewritten** (61 → 56 lines, plus 34-line
+  `FeatureCard.tsx` deleted and inlined). Editorial surface background,
+  proper eyebrow (was duplicating `t('title')` as both badge and headline
+  — a real bug, not just polish), unified card styling, motion via
+  `Reveal` + `Stagger` + `fadeUp`.
+
+- **TechStackSection rewritten** (51 → 60 lines, plus 40-line
+  `TechItem.tsx` deleted and inlined). Added eyebrow, dropped per-card
+  spring delay variants in favor of shared `Stagger`. Tighter card
+  paddings, tabular icon rail.
+
+- **LearningPathSection rewritten** (91 → 76 lines). Same headline
+  duplication bug as WhyChooseUs fixed. Step number now an oversized
+  faded numeral in the corner (editorial flourish) instead of a colored
+  badge. Connector dot rail uses a 1px gold-fade line.
+
+- **StatisticsSection rewritten** (283 → 178 lines). Removed:
+  `useScroll` parallax `y` that was computed but never applied; pre-baked
+  `particles` array of 20 floating dots that was computed but never
+  rendered; deterministic `pseudoRandom` helpers tied to those particles;
+  background blur orbs; per-card hover boxShadow object. Kept all live
+  data fetching (course count, total content hours, average review
+  rating, admin-only paying-user count via `customers/*/payments`
+  collectionGroup query). KPI cards now use clamp display numerals with
+  tabular-nums and uppercase tracking labels — reads like a financial
+  report, not a marketing dashboard.
+
+### Removed
+
+- `components/WhyChooseUsSection/FeatureCard.tsx` (inlined).
+- `components/TechStackSection/TechItem.tsx` (inlined).
+
 ## [0.7.0] - 2026-05-12
 
 ### Changed
