@@ -6,6 +6,58 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-05-12
+
+### Changed — /courses catalog editorial overhaul
+
+User screenshot showed the catalog page still wearing leftover
+maximalist chrome: ambient blur blobs, gradient KPI cards in 4 colors,
+a full-bleed gradient subscription banner with a bevelled icon tile and
+translate-on-hover CTA, a pill-in-pill filter bar with colored icon
+boxes, and course cards loaded with emoji-decorated colored badges.
+Full editorial pass:
+
+- **`CoursesPage`** (179 → 145 lines): dropped the two `blur-3xl` ambient
+  blobs, replaced `<SectionShell>` + `<MetricCard>` quad + `<GradientCard
+tone="primary" glow>` with a typographic hero (eyebrow + headline +
+  lede) and an inline `<dl>` 4-stat row. Subscription card is now a
+  flat panel with a 3px gold accent rail on the left, gold eyebrow,
+  calm headline, plain bullet checks, and a ghost-pill CTA that fills
+  on hover (no shadow, no translate). Saved 4 levels of wrapper nesting.
+
+- **`CoursesFilter`** (203 → 196 lines): dropped the rounded-2xl outer
+  pill chrome with `bg-[color:var(--ai-card-bg)]/80 backdrop-blur-xl`,
+  the two colored 40×40 icon boxes (search + filter), and the gradient
+  active pill (`from-[color:var(--ai-primary)] to-...`) with shadow.
+  Replaced with: native `<input type="search">` with a leading 16px icon,
+  flat chip row with a 2px gold underline (animated `layoutId=
+"courses-cat-underline"`) for the active category, and calm bordered
+  active-filter chips. Mirrors the new NavbarLinks active state.
+
+- **`CoursesList`** (card visuals only): dropped the heavy emoji-laden
+  badge colour map (⭐ ✅ 🆕 🔥 🎁 ⏰) for plain amber
+  uppercase pills. Difficulty pill compacted (h-6, uppercase, no
+  HeroUI Chip). Image overlay gradient lightened (from `from-black/70
+via-black/30` to `from-black/60 via-black/10`). Bottom info chips no
+  longer sit on `bg-black/50 backdrop-blur` rounded boxes — plain
+  white-on-shadow text. Card border now hover-darkens to foreground/40
+  instead of jumping to primary/50; dropped `shadow-md/hover:shadow-lg`
+  and `whileHover y:-5` (calmer than the editorial language allows).
+  Image still does a subtle 1.03 scale on hover for tactility. Bottom
+  row now has a price + "View details" link affordance separated by a
+  thin top border.
+
+- **`CoursesHeader.tsx`**: deleted (orphan — only `AdminCoursesHeader`
+  is referenced anywhere).
+
+### Added — i18n stat labels
+
+- `courses.header.statCourses` / `statLessons` / `statHours` /
+  `statRating` in both `en` and `ro`. The previous code used hardcoded
+  English ("Lessons", "Hours", "Avg rating") and a hacky
+  `tHeader('exploreSubtitle')?.split(' ')[0]` for the first column —
+  causing EN/RO mixing on the RO locale.
+
 ## [0.11.1] - 2026-05-12
 
 ### Fixed — Header bugs from v0.11.0

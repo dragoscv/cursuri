@@ -1,12 +1,18 @@
 'use client';
 
+/**
+ * CoursesFilter v2 — flat editorial filter bar. No outer pill chrome,
+ * no colored icon boxes, no gradient active pill. Plain search input +
+ * inline chip row with underline-active, stacked above the grid.
+ */
+
 import React, { useContext, useState, useEffect, useMemo } from 'react';
-import { AppContext } from '../AppContext';
-import { Input } from '@heroui/react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Course } from '../../types';
+import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import { FiX, FiSearch, FiFilter } from '@/components/icons/FeatherIcons';
+
+import { AppContext } from '../AppContext';
+import { Course } from '../../types';
+import { FiX, FiSearch } from '@/components/icons/FeatherIcons';
 
 interface CoursesFilterProps {
   onFilterChange: (filter: string) => void;
@@ -50,7 +56,6 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
       .map(([key, count]) => ({ key, label: key, count }));
   }, [courses]);
 
-  // Debounce search
   useEffect(() => {
     const timer = setTimeout(() => onFilterChange(searchText), 300);
     return () => clearTimeout(timer);
@@ -64,136 +69,143 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
   const hasActive = currentFilter || (currentCategory && currentCategory !== 'all');
 
   const allChips = useMemo(
-    () => [{ key: 'all', label: t('allCategories'), count: undefined as number | undefined }, ...categories],
+    () => [
+      { key: 'all', label: t('allCategories'), count: undefined as number | undefined },
+      ...categories,
+    ],
     [categories, t]
   );
 
   return (
-    <div className="mb-8 rounded-2xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/80 backdrop-blur-xl p-4 md:p-5 shadow-sm">
-      <div className="flex flex-col gap-4">
-        {/* Search */}
-        <div className="flex items-center gap-3">
-          <div className="grid place-items-center w-10 h-10 rounded-xl bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] shrink-0">
-            <FiSearch className="w-5 h-5" />
-          </div>
-          <Input
-            placeholder={t('searchPlaceholder')}
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            type="search"
-            size="lg"
-            variant="bordered"
-            className="flex-1"
-            classNames={{
-              inputWrapper:
-                'bg-transparent border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/50',
-            }}
-          />
-        </div>
+    <div className="mb-8">
+      {/* Search */}
+      <div className="relative">
+        <FiSearch
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[color:var(--ai-muted)] pointer-events-none"
+          aria-hidden
+        />
+        <input
+          type="search"
+          placeholder={t('searchPlaceholder')}
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          className="w-full h-11 pl-9 pr-3 rounded-md bg-[color:var(--ai-card-bg)]/60 border border-[color:var(--ai-card-border)] text-[14px] text-[color:var(--ai-foreground)] placeholder:text-[color:var(--ai-muted)] outline-none focus:border-[color:var(--ai-foreground)] transition-colors"
+        />
+      </div>
 
-        {/* Category chips */}
-        <div className="flex items-start gap-3">
-          <div className="hidden md:grid place-items-center w-10 h-10 rounded-xl bg-[color:var(--ai-secondary)]/10 text-[color:var(--ai-secondary)] shrink-0">
-            <FiFilter className="w-5 h-5" />
-          </div>
-          <div className="flex-1 flex flex-wrap gap-2 min-h-[40px]">
-            <AnimatePresence initial={false}>
-              {allChips.map((c) => {
-                const active =
-                  c.key === 'all' ? !selectedCategory || selectedCategory === 'all' : selectedCategory === c.label;
-                return (
-                  <motion.button
-                    key={c.key}
-                    type="button"
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    onClick={() => handleCategoryChange(c.key === 'all' ? 'all' : c.label)}
-                    className={`relative inline-flex items-center gap-2 px-3.5 h-9 rounded-full text-sm font-medium transition-colors border ${
-                      active
-                        ? 'text-white border-transparent'
-                        : 'text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)] border-[color:var(--ai-card-border)] bg-[color:var(--ai-background)]/40'
-                    }`}
-                  >
-                    {active && (
-                      <motion.span
-                        layoutId="courses-cat-active"
-                        className="absolute inset-0 -z-0 rounded-full bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] shadow-sm"
-                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                      />
-                    )}
-                    <span className="relative z-10">{c.label}</span>
-                    {c.count !== undefined && (
-                      <span
-                        className={`relative z-10 text-[10px] font-semibold px-1.5 h-4 rounded-full inline-flex items-center ${
-                          active ? 'bg-white/25 text-white' : 'bg-[color:var(--ai-card-border)]/60 text-[color:var(--ai-muted)]'
-                        }`}
-                      >
-                        {String(c.count)}
-                      </span>
-                    )}
-                  </motion.button>
-                );
-              })}
-            </AnimatePresence>
-          </div>
-        </div>
-
-        {/* Active filters strip */}
-        {hasActive && (
-          <div className="pt-2 border-t border-[color:var(--ai-card-border)]/60 flex flex-wrap items-center gap-2">
-            <span className="text-xs uppercase tracking-wider font-semibold text-[color:var(--ai-muted)]">
-              {t('activeFilters')}
-            </span>
-            {currentFilter && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 h-7 rounded-full text-xs bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]">
-                &quot;{currentFilter}&quot;
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearchText('');
-                    onFilterChange('');
-                  }}
-                  className="opacity-70 hover:opacity-100"
-                  aria-label={t('clearSearchFilter')}
-                >
-                  <FiX className="w-3.5 h-3.5" />
-                </button>
-              </span>
-            )}
-            {currentCategory && currentCategory !== 'all' && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 h-7 rounded-full text-xs bg-[color:var(--ai-secondary)]/10 text-[color:var(--ai-secondary)]">
-                {currentCategory}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedCategory('all');
-                    onCategoryChange('all');
-                  }}
-                  className="opacity-70 hover:opacity-100"
-                  aria-label={t('clearCategoryFilter')}
-                >
-                  <FiX className="w-3.5 h-3.5" />
-                </button>
-              </span>
-            )}
+      {/* Category chips */}
+      <div
+        className="mt-4 flex flex-wrap items-center gap-x-1 gap-y-2 border-b border-[color:var(--ai-card-border)]/60 pb-1"
+        role="tablist"
+        aria-label={t('allCategories')}
+      >
+        {allChips.map((c) => {
+          const active =
+            c.key === 'all'
+              ? !selectedCategory || selectedCategory === 'all'
+              : selectedCategory === c.label;
+          return (
             <button
+              key={c.key}
               type="button"
-              onClick={() => {
+              role="tab"
+              aria-selected={active}
+              onClick={() => handleCategoryChange(c.key === 'all' ? 'all' : c.label)}
+              className={`relative inline-flex items-center gap-1.5 px-3 h-9 text-[13px] font-medium tracking-[-0.005em] transition-colors duration-150 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ai-primary)] rounded-md ${
+                active
+                  ? 'text-[color:var(--ai-foreground)]'
+                  : 'text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]'
+              }`}
+            >
+              <span>{c.label}</span>
+              {c.count !== undefined ? (
+                <span
+                  className={`text-[10px] font-semibold tabular-nums ${
+                    active ? 'text-[color:var(--ai-foreground)]' : 'text-[color:var(--ai-muted)]/70'
+                  }`}
+                >
+                  {String(c.count)}
+                </span>
+              ) : null}
+              {active ? (
+                <motion.span
+                  layoutId="courses-cat-underline"
+                  aria-hidden
+                  className="absolute left-2 right-2 -bottom-[1px] h-[2px] rounded-full bg-gradient-to-r from-amber-400 to-amber-500"
+                  transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                />
+              ) : null}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Active filters strip */}
+      {hasActive ? (
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <span className="text-[10px] uppercase tracking-[0.12em] font-semibold text-[color:var(--ai-muted)]">
+            {t('activeFilters')}
+          </span>
+          {currentFilter ? (
+            <ActiveChip
+              label={`"${currentFilter}"`}
+              onClear={() => {
                 setSearchText('');
-                setSelectedCategory('all');
                 onFilterChange('');
+              }}
+              ariaLabel={t('clearSearchFilter')}
+            />
+          ) : null}
+          {currentCategory && currentCategory !== 'all' ? (
+            <ActiveChip
+              label={currentCategory}
+              onClear={() => {
+                setSelectedCategory('all');
                 onCategoryChange('all');
               }}
-              className="ml-auto text-xs text-[color:var(--ai-muted)] hover:text-[color:var(--ai-danger)] underline-offset-4 hover:underline"
-            >
-              {t('clearAll')}
-            </button>
-          </div>
-        )}
-      </div>
+              ariaLabel={t('clearCategoryFilter')}
+            />
+          ) : null}
+          <button
+            type="button"
+            onClick={() => {
+              setSearchText('');
+              setSelectedCategory('all');
+              onFilterChange('');
+              onCategoryChange('all');
+            }}
+            className="ml-auto text-[12px] text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)] underline underline-offset-4 cursor-pointer"
+          >
+            {t('clearAll')}
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 };
+
+function ActiveChip({
+  label,
+  onClear,
+  ariaLabel,
+}: {
+  label: string;
+  onClear: () => void;
+  ariaLabel: string;
+}) {
+  return (
+    <span className="inline-flex items-center gap-1.5 h-7 pl-2.5 pr-1.5 rounded-full text-[12px] bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] text-[color:var(--ai-foreground)]">
+      {label}
+      <button
+        type="button"
+        onClick={onClear}
+        aria-label={ariaLabel}
+        className="grid place-items-center w-4 h-4 rounded-full text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)] cursor-pointer"
+      >
+        <FiX className="w-3 h-3" />
+      </button>
+    </span>
+  );
+}
 
 export default CoursesFilter;
