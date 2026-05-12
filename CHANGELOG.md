@@ -6,6 +6,34 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.18.9] - 2026-05-12
+
+### Changed — Editorial pass on lesson Q&A + Resources panels
+
+Ripped the remaining purple `--ai-primary`/`--ai-secondary` tints off the
+lesson-detail side panels (Q&A thread + Resources list) and aligned them
+with the amber-500 editorial system.
+
+- `LessonResources` + `ResourcesList`: dropped the `backdrop-blur-sm` +
+  `shadow-md` + `rounded-xl` card chrome in favour of the canonical
+  editorial card (`border` + `bg-card` + `shadow-none rounded-2xl`).
+  Killed the gradient header strip
+  (`bg-gradient-to-r from-primary/10 via-secondary/10`) entirely.
+  All resource-type icons, hover states, and CTA pill recoloured to
+  amber-500. Offline-mode badge became a small uppercase eyebrow chip.
+- `QuestionItem`: card chrome flattened (`shadow-sm` →
+  `shadow-none`, `rounded-xl` → `rounded-2xl`). Question-author avatar
+  ring and active like-button recoloured to amber-500. "View all
+  answers" link recoloured.
+- `QuestionsList`: "all" filter chip recoloured to amber.
+- `AnswersList`: instructor/admin role badge now amber-500, regular-user
+  badge neutral foreground; author avatar ring amber-500; prose links
+  amber-500; like button active state amber.
+- `QASection`: section header icon amber.
+- `AnswerForm`: upload progress bar fill amber; attachment-placeholder
+  SVG icons (video, file) amber.
+- `RichTextEditor`: focus ring recoloured to amber.
+
 ## [0.18.8] - 2026-05-12
 
 ### Changed — Editorial pass on global Header + BottomNavigation

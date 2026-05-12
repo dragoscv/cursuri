@@ -130,7 +130,7 @@ function QASection({ lessonId, courseId }: QAProps) {
       <div className="p-5">
         <div className="bg-[color:var(--ai-card-bg)] py-3 px-4 -m-5 mb-4 border-b border-[color:var(--ai-card-border)] border-l-[3px] border-l-amber-500">
           <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
-            <FiMessageSquare className="mr-2 text-[color:var(--ai-primary)]" />
+            <FiMessageSquare className="mr-2 text-amber-500" />
             <span>{t('title')}</span>
           </h3>
         </div>

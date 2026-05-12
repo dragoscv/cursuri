@@ -171,7 +171,7 @@ export default function RichTextEditor({
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           className={`p-4 outline-none overflow-auto text-[color:var(--ai-foreground)] ${
-            isFocused ? 'ring-2 ring-[color:var(--ai-primary)]/20' : ''
+            isFocused ? 'ring-2 ring-amber-500/30' : ''
           }`}
           style={{ minHeight: `${minHeight}px` }}
           suppressContentEditableWarning

@@ -118,7 +118,7 @@ const QuestionItem: React.FC<QuestionItemProps> = ({ question }) => {
   };
 
   return (
-    <div className="rounded-xl bg-[color:var(--ai-card-bg)]/80 shadow-sm border border-[color:var(--ai-card-border)]/30 overflow-hidden">
+    <div className="rounded-2xl bg-[color:var(--ai-card-bg)] shadow-none border border-[color:var(--ai-card-border)] overflow-hidden">
       <div className="p-4">
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-3">
@@ -126,7 +126,7 @@ const QuestionItem: React.FC<QuestionItemProps> = ({ question }) => {
               src={question.userAvatar || '/default-avatar.png'}
               name={question.userName?.charAt(0) || '?'}
               size="sm"
-              className="border-2 border-[color:var(--ai-primary)]/20"
+              className="border-2 border-amber-500/30"
             />
             <div>
               <h3 className="font-medium text-[color:var(--ai-text)]">{question.userName}</h3>
@@ -161,7 +161,7 @@ const QuestionItem: React.FC<QuestionItemProps> = ({ question }) => {
             startContent={<LikeIcon className="w-4 h-4" />}
             className={
               question.likedBy?.includes(user?.uid || '')
-                ? 'text-[color:var(--ai-primary)] bg-[color:var(--ai-primary)]/10 hover:bg-[color:var(--ai-primary)]/20'
+                ? 'text-amber-500 bg-amber-500/[0.08] hover:bg-amber-500/15'
                 : 'text-[color:var(--ai-muted)]'
             }
           >
@@ -216,7 +216,7 @@ const QuestionItem: React.FC<QuestionItemProps> = ({ question }) => {
                 size="sm"
                 radius="lg"
                 onClick={() => setExpanded(!expanded)}
-                className="text-xs text-[color:var(--ai-primary)]"
+                className="text-xs text-amber-500"
               >
                 {expanded ? t('collapse') : t('viewAllAnswers')}
               </Button>

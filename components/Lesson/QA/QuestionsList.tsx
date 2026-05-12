@@ -82,7 +82,7 @@ const QuestionsList: React.FC<QuestionsListProps> = ({
             radius="full"
             className={
               filter === 'all'
-                ? 'bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)]'
+                ? 'bg-amber-500/[0.08] text-amber-500'
                 : 'text-[color:var(--ai-muted)]'
             }
           >

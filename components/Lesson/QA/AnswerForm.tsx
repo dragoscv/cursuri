@@ -152,7 +152,7 @@ const AnswerForm: React.FC<AnswerFormProps> = ({ onSubmit, onCancel }) => {
           <div className="flex items-center gap-2 text-xs">
             <div className="w-20 h-1.5 bg-[color:var(--ai-card-border)]/20 rounded-full">
               <div
-                className="h-full bg-[color:var(--ai-primary)] rounded-full transition-all duration-300"
+                className="h-full bg-amber-500 rounded-full transition-all duration-300"
                 style={{ width: `${uploadProgress}%` }}
               ></div>
             </div>
@@ -189,7 +189,7 @@ const AnswerForm: React.FC<AnswerFormProps> = ({ onSubmit, onCancel }) => {
                 <div className="relative">
                   <div className="h-16 w-16 bg-[color:var(--ai-card-bg)]/80 rounded border border-[color:var(--ai-card-border)] flex items-center justify-center">
                     <svg
-                      className="h-8 w-8 text-[color:var(--ai-primary)]"
+                      className="h-8 w-8 text-amber-500"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -224,7 +224,7 @@ const AnswerForm: React.FC<AnswerFormProps> = ({ onSubmit, onCancel }) => {
                 <div className="relative">
                   <div className="h-16 w-16 bg-[color:var(--ai-card-bg)]/80 rounded border border-[color:var(--ai-card-border)] flex items-center justify-center">
                     <svg
-                      className="h-8 w-8 text-[color:var(--ai-primary)]"
+                      className="h-8 w-8 text-amber-500"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"

@@ -9,73 +9,78 @@ import { LessonResource } from '@/types';
 import { useTranslations } from 'next-intl';
 
 interface LessonResourcesProps {
-    resources: LessonResource[];
+  resources: LessonResource[];
 }
 
 const LessonResources: React.FC<LessonResourcesProps> = ({ resources }) => {
-    const t = useTranslations('courses.lessonResources');
+  const t = useTranslations('courses.lessonResources');
 
-    const getResourceIcon = (type?: string) => {
-        switch (type) {
-            case 'pdf':
-                return <FiFileText className="text-[color:var(--ai-primary)]" />;
-            case 'link':
-            case 'video':
-                return <FiExternalLink className="text-[color:var(--ai-primary)]" />;
-            case 'code':
-                return <FiFileText className="text-[color:var(--ai-primary)]" />;
-            default:
-                return <FiLink className="text-[color:var(--ai-primary)]" />;
-        }
-    };
+  const getResourceIcon = (type?: string) => {
+    switch (type) {
+      case 'pdf':
+        return <FiFileText className="text-amber-500" />;
+      case 'link':
+      case 'video':
+        return <FiExternalLink className="text-amber-500" />;
+      case 'code':
+        return <FiFileText className="text-amber-500" />;
+      default:
+        return <FiLink className="text-amber-500" />;
+    }
+  };
 
-    return (
-        <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-md rounded-xl overflow-hidden">
-            <div className="p-5">
-                <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 -m-5 mb-4 border-b border-[color:var(--ai-card-border)]">
-                    <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
-                        <FiFileText className="mr-2 text-[color:var(--ai-primary)]" />
-                        <span>{t('title')}</span>
-                    </h3>
-                </div>                <div className="space-y-3">
-                    {resources.map((resource, index) => (
-                        <div
-                            key={index}
-                            className="flex items-start p-3 rounded-lg border border-[color:var(--ai-card-border)]/50 hover:bg-[color:var(--ai-primary)]/5 transition-colors"
-                        >
-                            <div className="flex-shrink-0 mr-3 mt-1">
-                                {getResourceIcon(resource.type)}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <h4 className="font-medium text-[color:var(--ai-foreground)] truncate">
-                                    {resource.name}
-                                </h4>
-                                {resource.description && (
-                                    <p className="text-sm text-[color:var(--ai-muted)] mt-1">
-                                        {resource.description}
-                                    </p>
-                                )}
-                            </div>
-                            <div className="ml-4 flex-shrink-0">
-                                <Button
-                                    as="a"
-                                    href={resource.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    size="sm"
-                                    variant="flat"
-                                    className="bg-[color:var(--ai-primary)]/10 hover:bg-[color:var(--ai-primary)]/20 text-[color:var(--ai-primary)] transition-all duration-200"
-                                    endContent={resource.type === 'pdf' ? <FiDownload size={14} /> : <FiExternalLink size={14} />}
-                                >
-                                    {resource.type === 'pdf' ? t('download') : t('view')}
-                                </Button>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+  return (
+    <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] shadow-none rounded-2xl overflow-hidden">
+      <div className="p-5">
+        <div className="py-3 px-4 -m-5 mb-4 border-b border-[color:var(--ai-card-border)]">
+          <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
+            <FiFileText className="mr-2 text-amber-500" />
+            <span>{t('title')}</span>
+          </h3>
+        </div>{' '}
+        <div className="space-y-3">
+          {resources.map((resource, index) => (
+            <div
+              key={index}
+              className="flex items-start p-3 rounded-lg border border-[color:var(--ai-card-border)]/50 hover:bg-amber-500/[0.06] hover:border-amber-500/40 transition-colors"
+            >
+              <div className="flex-shrink-0 mr-3 mt-1">{getResourceIcon(resource.type)}</div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-medium text-[color:var(--ai-foreground)] truncate">
+                  {resource.name}
+                </h4>
+                {resource.description && (
+                  <p className="text-sm text-[color:var(--ai-muted)] mt-1">
+                    {resource.description}
+                  </p>
+                )}
+              </div>
+              <div className="ml-4 flex-shrink-0">
+                <Button
+                  as="a"
+                  href={resource.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="sm"
+                  variant="flat"
+                  className="bg-amber-500/[0.08] hover:bg-amber-500/15 text-amber-500 transition-colors"
+                  endContent={
+                    resource.type === 'pdf' ? (
+                      <FiDownload size={14} />
+                    ) : (
+                      <FiExternalLink size={14} />
+                    )
+                  }
+                >
+                  {resource.type === 'pdf' ? t('download') : t('view')}
+                </Button>
+              </div>
             </div>
-        </Card>
-    );
+          ))}
+        </div>
+      </div>
+    </Card>
+  );
 };
 
 export default LessonResources;
