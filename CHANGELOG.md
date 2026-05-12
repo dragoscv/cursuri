@@ -6,6 +6,26 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.18.11] - 2026-05-12
+
+### Fixed — Course tab crash, take two: replace HeroUI Tabs with plain buttons
+
+v0.18.10 stripped `motion.div` from `CourseContent` / `CourseOverview` /
+`Reviews`, but the page still crashed on tab swap with the same
+`NotFoundError: Failed to execute 'removeChild' on 'Node'`. Stack trace
+was entirely inside React reconciler vendor chunks — no app code — which
+pointed at HeroUI's `<Tabs>` component itself. HeroUI uses
+`framer-motion` internally for the cursor / panel transitions, and
+`disableAnimation={true}` + `cursor: 'opacity-0'` weren't enough to
+prevent the FM components from registering with React 19's reconciler.
+
+- `components/Course/Course.tsx`: replaced `<Tabs>` + `<Tab>` (from
+  `@/components/ui/Tabs`, which wraps `@heroui/react` `Tabs`) with a
+  plain `<div role="tablist">` of `<button role="tab">` elements. Same
+  active-state styling (amber-500 icon tint + bottom underline), same
+  keyboard semantics, no framer-motion in the tree.
+- Dropped the now-unused `Tabs`/`Tab` and `motion` imports.
+
 ## [0.18.10] - 2026-05-12
 
 ### Fixed — React 19 + framer-motion crash on course tab switch

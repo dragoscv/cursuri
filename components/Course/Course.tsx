@@ -10,8 +10,6 @@ import CourseContent from './CourseContent';
 import CourseOverview from './CourseOverview';
 import CourseEnrollment from './CourseEnrollment';
 import { Button, Divider, Card, Chip } from '@/components/ui';
-import Tabs, { Tab } from '@/components/ui/Tabs';
-import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { AppContextProps, Course as CourseType, Lesson, Resource, UserPaidProduct } from '@/types';
 import { FiBookOpen, FiLayers, FiStar } from '../icons/FeatherIcons';
@@ -262,101 +260,71 @@ export default function Course({ courseId }: CourseProps) {
 
         <Divider className="my-6" />
       </div>
-      {/* Tabs Navigation */}{' '}
-      <Tabs
+      {/* Tabs Navigation — plain buttons (no HeroUI/framer-motion to avoid React 19 reconciler crash on tab swap) */}
+      <div
+        role="tablist"
         aria-label="Course tabs"
-        selectedKey={selectedTab}
-        onSelectionChange={(key: string) => setSelectedTab(key)}
-        className="mb-8"
-        classNames={{
-          tabList: 'relative border-b border-[color:var(--ai-card-border)]/50 gap-4 mb-4',
-          tab: 'px-4 py-3 text-[color:var(--ai-muted)] data-[selected=true]:text-[color:var(--ai-foreground)] font-medium transition-colors duration-200 relative',
-          cursor: 'opacity-0',
-          panel: 'pt-2',
-          base: 'group relative',
-          tabContent: 'z-10 relative', // Ensure content is above any highlights
-        }}
-        disableAnimation={true} // Disable default animations
+        className="relative flex border-b border-[color:var(--ai-card-border)]/50 gap-4 mb-8 overflow-x-auto"
       >
-        <Tab
-          key="content"
-          title={
-            <div className="flex items-center gap-2 relative">
-              <FiBookOpen size={18} className={selectedTab === 'content' ? 'text-amber-500' : ''} />
-              <span>{t('tabs.content')}</span>
-              {selectedTab === 'content' && (
+        {(
+          [
+            { key: 'content', label: t('tabs.content'), icon: <FiBookOpen size={18} /> },
+            { key: 'overview', label: t('tabs.overview'), icon: <FiLayers size={18} /> },
+            { key: 'reviews', label: t('tabs.reviews'), icon: <FiStar size={18} /> },
+            ...(course?.resources
+              ? [
+                  {
+                    key: 'resources',
+                    label: t('tabs.resources'),
+                    icon: (
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                      </svg>
+                    ),
+                  },
+                ]
+              : []),
+          ] as { key: string; label: string; icon: React.ReactNode }[]
+        ).map((tab) => {
+          const isActive = selectedTab === tab.key;
+          return (
+            <button
+              key={tab.key}
+              type="button"
+              role="tab"
+              aria-selected={isActive}
+              onClick={() => setSelectedTab(tab.key)}
+              className={`relative px-4 py-3 font-medium transition-colors duration-200 flex items-center gap-2 whitespace-nowrap ${
+                isActive
+                  ? 'text-[color:var(--ai-foreground)]'
+                  : 'text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]'
+              }`}
+            >
+              <span className={isActive ? 'text-amber-500' : ''}>{tab.icon}</span>
+              <span>{tab.label}</span>
+              {isActive && (
                 <span
                   aria-hidden
-                  className="absolute -bottom-3 left-0 right-0 h-0.5 bg-amber-500"
+                  className="absolute -bottom-px left-0 right-0 h-0.5 bg-amber-500"
                 />
               )}
-            </div>
-          }
-        />
-        <Tab
-          key="overview"
-          title={
-            <div className="flex items-center gap-2 relative">
-              <FiLayers size={18} className={selectedTab === 'overview' ? 'text-amber-500' : ''} />
-              <span>{t('tabs.overview')}</span>
-              {selectedTab === 'overview' && (
-                <span
-                  aria-hidden
-                  className="absolute -bottom-3 left-0 right-0 h-0.5 bg-amber-500"
-                />
-              )}
-            </div>
-          }
-        />
-        <Tab
-          key="reviews"
-          title={
-            <div className="flex items-center gap-2 relative">
-              <FiStar size={18} className={selectedTab === 'reviews' ? 'text-amber-500' : ''} />
-              <span>{t('tabs.reviews')}</span>
-              {selectedTab === 'reviews' && (
-                <span
-                  aria-hidden
-                  className="absolute -bottom-3 left-0 right-0 h-0.5 bg-amber-500"
-                />
-              )}
-            </div>
-          }
-        />
-        {course?.resources && (
-          <Tab
-            key="resources"
-            title={
-              <div className="flex items-center gap-2 relative">
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className={selectedTab === 'resources' ? 'text-amber-500' : ''}
-                >
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                  <polyline points="14 2 14 8 20 8"></polyline>
-                  <line x1="16" y1="13" x2="8" y2="13"></line>
-                  <line x1="16" y1="17" x2="8" y2="17"></line>
-                  <polyline points="10 9 9 9 8 9"></polyline>
-                </svg>
-                <span>{t('tabs.resources')}</span>
-                {selectedTab === 'resources' && (
-                  <span
-                    aria-hidden
-                    className="absolute -bottom-3 left-0 right-0 h-0.5 bg-amber-500"
-                  />
-                )}
-              </div>
-            }
-          />
-        )}
-      </Tabs>
+            </button>
+          );
+        })}
+      </div>
       {/* Tab Content */}
       <div className="mt-4">
         {/* Content Tab */}
