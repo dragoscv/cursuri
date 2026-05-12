@@ -323,7 +323,7 @@ const DebugErrorPanel: React.FC<DebugErrorPanelProps> = ({
             <button
               type="button"
               onClick={() => reset()}
-              className="inline-flex items-center gap-2 px-4 h-10 rounded-lg bg-[color:var(--ai-primary)] text-white text-sm font-medium hover:opacity-90 transition-opacity"
+              className="inline-flex items-center gap-2 px-5 h-10 rounded-full bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] text-sm font-medium hover:opacity-90 transition-opacity"
             >
               Try again
             </button>
@@ -331,14 +331,14 @@ const DebugErrorPanel: React.FC<DebugErrorPanelProps> = ({
           <button
             type="button"
             onClick={() => typeof window !== 'undefined' && window.location.reload()}
-            className="inline-flex items-center gap-2 px-4 h-10 rounded-lg border border-[color:var(--ai-card-border)] text-sm font-medium text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-bg)]/60 transition-colors"
+            className="inline-flex items-center gap-2 px-5 h-10 rounded-full border border-[color:var(--ai-card-border)] text-sm font-medium text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)] hover:border-[color:var(--ai-foreground)]/40 transition-colors"
           >
             Reload page
           </button>
           {!hideHome && (
             <a
               href="/"
-              className="inline-flex items-center gap-2 px-4 h-10 rounded-lg border border-[color:var(--ai-card-border)] text-sm font-medium text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-bg)]/60 transition-colors"
+              className="inline-flex items-center gap-2 px-5 h-10 rounded-full border border-[color:var(--ai-card-border)] text-sm font-medium text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)] hover:border-[color:var(--ai-foreground)]/40 transition-colors"
             >
               Go home
             </a>
@@ -347,7 +347,7 @@ const DebugErrorPanel: React.FC<DebugErrorPanelProps> = ({
             href={`mailto:support@studiai.ro?subject=${encodeURIComponent(
               `[studiai] ${report.name}: ${report.message}`.slice(0, 160)
             )}&body=${encodeURIComponent(markdown).slice(0, 6000)}`}
-            className="inline-flex items-center gap-2 px-4 h-10 rounded-lg border border-[color:var(--ai-card-border)] text-sm font-medium text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-bg)]/60 transition-colors"
+            className="inline-flex items-center gap-2 px-5 h-10 rounded-full border border-[color:var(--ai-card-border)] text-sm font-medium text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)] hover:border-[color:var(--ai-foreground)]/40 transition-colors"
           >
             Email support
           </a>

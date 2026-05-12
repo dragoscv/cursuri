@@ -13,7 +13,6 @@ import React, { memo, useContext } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
-import Button from '@/components/ui/Button';
 import { AppContext } from './AppContext';
 import Login from './Login';
 import { Reveal, Stagger, fadeUp } from '@/components/motion';
@@ -65,7 +64,7 @@ const CallToActionSection = memo(function CallToActionSection() {
             {/* Inset gradient wash */}
             <div
               aria-hidden
-              className="absolute inset-0 bg-gradient-to-br from-[color:var(--ai-primary)]/12 via-transparent to-amber-400/8 pointer-events-none"
+              className="absolute inset-0 bg-gradient-to-br from-amber-400/12 via-transparent to-amber-400/8 pointer-events-none"
             />
             {/* Top gold rim */}
             <div aria-hidden className="absolute top-0 inset-x-0 cinematic-rim-divider" />
@@ -74,7 +73,7 @@ const CallToActionSection = memo(function CallToActionSection() {
               <Stagger gap={0.08} delay={0.05}>
                 <motion.p
                   variants={fadeUp}
-                  className="text-[11px] font-semibold tracking-[0.22em] uppercase text-[color:var(--ai-primary)] mb-5"
+                  className="text-[11px] font-semibold tracking-[0.22em] uppercase text-amber-500 mb-5"
                 >
                   {t('eyebrow')}
                 </motion.p>
@@ -97,29 +96,21 @@ const CallToActionSection = memo(function CallToActionSection() {
                   variants={fadeUp}
                   className="mt-10 flex flex-col sm:flex-row justify-center gap-3.5"
                 >
-                  <Button
-                    color="primary"
-                    variant="primary"
-                    size="lg"
-                    radius="full"
-                    className="px-8 h-12 text-[15px] font-semibold bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] hover:opacity-90 hover:-translate-y-0.5 transition-all"
+                  <button
+                    type="button"
                     onClick={handleGetStarted}
+                    className="cursor-pointer inline-flex items-center justify-center gap-2 h-12 px-8 rounded-full text-[15px] font-semibold bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200"
                   >
-                    <span className="flex items-center gap-2">
-                      {t('button')}
-                      <span aria-hidden>→</span>
-                    </span>
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    color="secondary"
-                    size="lg"
-                    radius="full"
-                    className="px-8 h-12 text-[15px] font-semibold border border-[color:var(--ai-card-border)] bg-transparent text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-bg)]/60 hover:-translate-y-0.5 transition-all"
+                    {t('button')}
+                    <span aria-hidden>→</span>
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => router.push('/book-a-call')}
+                    className="cursor-pointer inline-flex items-center justify-center h-12 px-8 rounded-full text-[15px] font-semibold border border-[color:var(--ai-card-border)] text-[color:var(--ai-foreground)] hover:border-[color:var(--ai-foreground)]/40 hover:bg-[color:var(--ai-card-bg)]/60 transition-colors duration-200"
                   >
                     {t('secondaryButton')}
-                  </Button>
+                  </button>
                 </motion.div>
 
                 {/* Trust badges */}

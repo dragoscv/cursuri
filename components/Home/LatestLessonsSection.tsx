@@ -225,7 +225,7 @@ const LatestLessonsSection = React.memo(function LatestLessonsSection() {
                           <button
                             type="button"
                             onClick={() => handleLessonClick(lesson)}
-                            className="group w-full text-left flex gap-4 p-3 sm:p-4 cursor-pointer transition-colors hover:bg-[color:var(--ai-primary)]/5 focus:outline-none focus-visible:bg-[color:var(--ai-primary)]/8"
+                            className="group w-full text-left flex gap-4 p-3 sm:p-4 cursor-pointer transition-colors hover:bg-[color:var(--ai-card-border)]/20 focus:outline-none focus-visible:bg-[color:var(--ai-card-border)]/30"
                           >
                             <div className="relative h-16 w-24 sm:h-20 sm:w-32 flex-shrink-0 rounded-lg overflow-hidden bg-[color:var(--ai-muted)]/10">
                               {thumb ? (
@@ -237,7 +237,7 @@ const LatestLessonsSection = React.memo(function LatestLessonsSection() {
                                   className="object-cover transition-transform duration-300 group-hover:scale-105"
                                 />
                               ) : (
-                                <div className="h-full w-full flex items-center justify-center text-[color:var(--ai-primary)]/40">
+                                <div className="h-full w-full flex items-center justify-center text-[color:var(--ai-muted)]/40">
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     width="28"
@@ -277,7 +277,7 @@ const LatestLessonsSection = React.memo(function LatestLessonsSection() {
 
                             <div className="flex-1 min-w-0">
                               <div className="flex items-start justify-between gap-2">
-                                <h4 className="text-sm sm:text-base font-semibold text-[color:var(--ai-foreground)] group-hover:text-[color:var(--ai-primary)] transition-colors line-clamp-1">
+                                <h4 className="text-sm sm:text-base font-semibold text-[color:var(--ai-foreground)] group-hover:text-amber-500 transition-colors line-clamp-1">
                                   {lessonName}
                                 </h4>
                               </div>
@@ -330,7 +330,7 @@ const LatestLessonsSection = React.memo(function LatestLessonsSection() {
                                   </span>
                                 )}
                                 {!hasAccess && (
-                                  <span className="ml-auto text-[10px] uppercase tracking-wider font-medium text-[color:var(--ai-primary)]">
+                                  <span className="ml-auto text-[10px] uppercase tracking-wider font-medium text-amber-500">
                                     {t('subscribeToWatch')}
                                   </span>
                                 )}
@@ -380,7 +380,7 @@ const LatestLessonsSection = React.memo(function LatestLessonsSection() {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                       </div>
                       <div className="p-4">
-                        <h4 className="text-sm font-semibold text-[color:var(--ai-foreground)] group-hover:text-[color:var(--ai-primary)] transition-colors line-clamp-2">
+                        <h4 className="text-sm font-semibold text-[color:var(--ai-foreground)] group-hover:text-amber-500 transition-colors line-clamp-2">
                           {course.name}
                         </h4>
                         {course.description && (
@@ -400,7 +400,7 @@ const LatestLessonsSection = React.memo(function LatestLessonsSection() {
                               </span>
                             )}
                           </span>
-                          <span className="text-xs font-medium text-[color:var(--ai-primary)] group-hover:translate-x-0.5 transition-transform">
+                          <span className="text-xs font-medium text-amber-500 group-hover:translate-x-0.5 transition-transform">
                             {tCommon('viewDetails')} &rarr;
                           </span>
                         </div>

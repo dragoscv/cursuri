@@ -6,6 +6,52 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-05-12
+
+### Changed — full editorial pass on the homepage
+
+Brought every above-the-fold homepage section in line with the same
+editorial language used on the lesson, legal and course-detail surfaces.
+Killed the remaining purple→pink→amber rainbow accents, replaced HeroUI
+`Button color="primary"` instances with native `<button>`/`<Link>` pills
+(so className actually wins over data-attribute styles), and removed the
+backdrop-blur translucent card chrome in favor of flat bordered cards.
+
+- `HeroSection.tsx`: the second display headline line now renders as
+  solid `text-[color:var(--ai-foreground)]` (gradient text removed); the
+  three primary CTAs are now native pills — solid foreground "Începe să
+  Înveți →", ghost foreground "Explorează Cursurile AI", muted ghost
+  "Alătură-te Discord". The Copilot eyebrow chip's "NOU" pill is now
+  amber on background, and the `bookACall` hover goes to amber. Dropped
+  the now-unused HeroUI Button import.
+- `CallToActionSection.tsx`: replaced the two HeroUI Buttons with
+  matching native pills (solid foreground + ghost border), and swapped
+  the primary radial wash for an amber-only wash + amber eyebrow.
+- `FeaturedReviews.tsx`: the eyebrow micro-copy is now solid
+  `text-amber-500` (no gradient text), and the "View all" CTA is a
+  native `<Link>` pill.
+- `StatisticsSection.tsx`, `WhyChooseUsSection/index.tsx`,
+  `TechStackSection/index.tsx`: stat / value / tech cards now flat
+  `bg-[color:var(--ai-card-bg)]` with amber hover-border (no
+  backdrop-blur, no primary tint). Icon tiles on Why/Tech use a thin
+  bordered chip with amber glyph.
+- `LearningPathSection.tsx`: step numerals and connector lines now use
+  amber instead of primary.
+- `Home/LatestLessonsSection.tsx`: hover/focus background, fallback
+  thumbnail icon, hover title color, "subscribe to watch" pill and
+  recommended-card "view details" link all moved off primary onto amber
+  / foreground.
+- `Subscriptions/SubscriptionPlans.tsx`: the two price displays no
+  longer use `bg-clip-text` gradient text; intro price is solid emerald,
+  regular price is solid foreground.
+
+### Changed — error panel editorial pills
+
+`shared/DebugErrorPanel.tsx`: the four action buttons (Try again,
+Reload, Go home, Email support) are now editorial pills — solid
+foreground primary + three ghost-bordered secondaries — replacing the
+previous tinted color variants.
+
 ## [0.17.1] - 2026-05-12
 
 ### Fixed — course page crash on tab switching

@@ -21,7 +21,6 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
-import Button from '@/components/ui/Button';
 import { AppContext } from '@/components/AppContext';
 import Login from './Login';
 import { CopilotIcon } from './icons/tech';
@@ -133,14 +132,14 @@ const HeroSection = memo(function HeroSection() {
             <motion.div variants={fadeUp}>
               <Link
                 href="/subscriptions"
-                className="group inline-flex items-center gap-2 pl-1 pr-3.5 py-1 rounded-full text-[12px] font-medium bg-[color:var(--ai-card-bg)]/60 backdrop-blur-sm text-[color:var(--ai-foreground)] border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/60 transition-all"
+                className="group inline-flex items-center gap-2 pl-1 pr-3.5 py-1 rounded-full text-[12px] font-medium bg-[color:var(--ai-card-bg)] text-[color:var(--ai-foreground)] border border-[color:var(--ai-card-border)] hover:border-amber-500/60 transition-colors duration-200"
               >
-                <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-[0.14em] bg-[color:var(--ai-primary)] text-white">
+                <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-[0.16em] bg-amber-500 text-[color:var(--ai-background)]">
                   {t('copilotBadge.eyebrow')}
                 </span>
                 <CopilotIcon size={14} />
                 <span className="opacity-90">{t('copilotBadge.label')}</span>
-                <span className="text-[color:var(--ai-primary)] font-semibold group-hover:translate-x-0.5 transition-transform">
+                <span className="text-amber-500 font-semibold group-hover:translate-x-0.5 transition-transform">
                   →
                 </span>
               </Link>
@@ -153,15 +152,7 @@ const HeroSection = memo(function HeroSection() {
             >
               <span className="block">{t('title.line1')}</span>
               <span className="block mt-2 relative">
-                <span
-                  className="bg-clip-text text-transparent"
-                  style={{
-                    backgroundImage:
-                      'linear-gradient(105deg, var(--ai-primary) 0%, var(--ai-secondary) 55%, #f59e0b 100%)',
-                  }}
-                >
-                  {t('title.line2')}
-                </span>
+                <span className="text-[color:var(--ai-foreground)]">{t('title.line2')}</span>
                 {/* Hand-drawn-style underline accent */}
                 {!prefersReduced && (
                   <motion.svg
@@ -198,49 +189,36 @@ const HeroSection = memo(function HeroSection() {
 
             {/* CTAs */}
             <motion.div variants={fadeUp} className="mt-10 flex flex-col sm:flex-row gap-3.5">
-              <Button
-                color="primary"
-                variant="primary"
-                size="lg"
-                radius="full"
-                className="px-7 h-12 text-[15px] font-semibold bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] hover:opacity-90 hover:-translate-y-0.5 transition-all"
+              <button
+                type="button"
                 onClick={handleGetStarted}
+                className="cursor-pointer inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full text-[15px] font-semibold bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200"
               >
-                <span className="flex items-center gap-2">
-                  {t('getStarted')}
-                  <span aria-hidden>→</span>
-                </span>
-              </Button>
-              <Button
-                variant="secondary"
-                color="secondary"
-                size="lg"
-                radius="full"
-                className="px-7 h-12 text-[15px] font-semibold border border-[color:var(--ai-card-border)] bg-transparent text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-bg)]/40 hover:-translate-y-0.5 transition-all"
+                {t('getStarted')}
+                <span aria-hidden>→</span>
+              </button>
+              <button
+                type="button"
                 onClick={() => router.push('/courses')}
+                className="cursor-pointer inline-flex items-center justify-center h-12 px-7 rounded-full text-[15px] font-semibold border border-[color:var(--ai-card-border)] text-[color:var(--ai-foreground)] hover:border-[color:var(--ai-foreground)]/40 hover:bg-[color:var(--ai-card-bg)]/40 transition-colors duration-200"
               >
                 {t('exploreCourses')}
-              </Button>
-              <Button
-                variant="secondary"
-                color="secondary"
-                size="lg"
-                radius="full"
-                className="px-5 h-12 text-[15px] font-semibold text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)] bg-transparent transition-all"
+              </button>
+              <button
+                type="button"
                 onClick={() => router.push('/discord')}
+                className="cursor-pointer inline-flex items-center justify-center gap-2 h-12 px-5 rounded-full text-[15px] font-semibold text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)] transition-colors duration-200"
               >
-                <span className="flex items-center gap-2">
-                  <DiscordIcon size={18} />
-                  {t('joinDiscord')}
-                </span>
-              </Button>
+                <DiscordIcon size={18} />
+                {t('joinDiscord')}
+              </button>
             </motion.div>
 
             {/* Mentor 1-on-1 link */}
             <motion.div variants={fadeUp} className="mt-5">
               <Link
                 href="/book-a-call"
-                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] transition-colors group"
+                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[color:var(--ai-muted)] hover:text-amber-500 transition-colors group"
               >
                 <span aria-hidden className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                 {t('bookACall')}

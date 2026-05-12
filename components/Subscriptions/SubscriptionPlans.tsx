@@ -13,10 +13,7 @@ import { firebaseApp } from '@/utils/firebase/firebase.config';
 import Login from '@/components/Login';
 import LoadingButton from '@/components/Buttons/LoadingButton';
 import { useRouter } from 'next/navigation';
-import {
-  logSubscriptionView,
-  logSubscriptionSelection,
-} from '@/utils/analytics';
+import { logSubscriptionView, logSubscriptionSelection } from '@/utils/analytics';
 
 type Billing = 'monthly' | 'yearly';
 type Tier = 'courses' | 'copilot';
@@ -37,10 +34,7 @@ function getProductTier(p: AnyProduct): Tier {
   return 'courses';
 }
 
-function pickPriceForInterval(
-  product: AnyProduct | undefined,
-  interval: 'month' | 'year'
-) {
+function pickPriceForInterval(product: AnyProduct | undefined, interval: 'month' | 'year') {
   if (!product?.prices) return null;
   const candidates = product.prices.filter((pr: any) => {
     if (pr.active === false) return false;
@@ -56,9 +50,7 @@ function pickPriceForInterval(
 }
 
 function pickBestProduct(products: AnyProduct[], tier: Tier): AnyProduct | undefined {
-  const sameTier = products.filter(
-    (p) => p.active !== false && getProductTier(p) === tier
-  );
+  const sameTier = products.filter((p) => p.active !== false && getProductTier(p) === tier);
   if (sameTier.length === 0) return undefined;
   // Prefer mainPlan, then featured, then most-recent.
   return (
@@ -235,10 +227,7 @@ export default function SubscriptionPlans() {
       name: t('plans.courses.name'),
       description: t('plans.courses.description'),
       price: formatPrice(coursesPrice)?.formatted ?? t('plans.unavailable'),
-      period:
-        interval === 'month'
-          ? t('plans.proMonthly.period')
-          : t('plans.proYearly.period'),
+      period: interval === 'month' ? t('plans.proMonthly.period') : t('plans.proYearly.period'),
       icon: <FiBookOpen size={20} />,
       features: [
         t('plans.courses.features.allCourses'),
@@ -259,10 +248,7 @@ export default function SubscriptionPlans() {
       name: t('plans.copilot.name'),
       description: t('plans.copilot.description'),
       price: formatPrice(copilotPrice)?.formatted ?? t('plans.unavailable'),
-      period:
-        interval === 'month'
-          ? t('plans.proMonthly.period')
-          : t('plans.proYearly.period'),
+      period: interval === 'month' ? t('plans.proMonthly.period') : t('plans.proYearly.period'),
       icon: <FiZap size={20} />,
       features: [
         t('plans.copilot.features.copilotAccount'),
@@ -370,7 +356,7 @@ export default function SubscriptionPlans() {
                       🎁 {t('plans.introBadge', { months: plan.intro.months })}
                     </div>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-4xl font-bold bg-gradient-to-r from-emerald-500 to-[color:var(--ai-primary)] bg-clip-text text-transparent">
+                      <span className="text-4xl font-bold text-emerald-500">
                         {plan.intro.formatted}
                       </span>
                       {plan.period && (
@@ -387,7 +373,7 @@ export default function SubscriptionPlans() {
                   </>
                 ) : (
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">
+                    <span className="text-4xl font-bold text-[color:var(--ai-foreground)]">
                       {plan.price}
                     </span>
                     {plan.period && (
@@ -420,13 +406,9 @@ export default function SubscriptionPlans() {
               </ul>
 
               {loadingPlan === plan.key ||
-              loadingPlan === `courses-${billing}` && plan.key === 'courses' ||
-              loadingPlan === `copilot-${billing}` && plan.key === 'copilot' ? (
-                <LoadingButton
-                  className="w-full"
-                  size="lg"
-                  loadingText={t('toast.processing')}
-                />
+              (loadingPlan === `courses-${billing}` && plan.key === 'courses') ||
+              (loadingPlan === `copilot-${billing}` && plan.key === 'copilot') ? (
+                <LoadingButton className="w-full" size="lg" loadingText={t('toast.processing')} />
               ) : hasActiveSubscription && plan.key !== 'free' ? (
                 <Button
                   size="lg"

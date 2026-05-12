@@ -45,7 +45,7 @@ const LearningPathSection = memo(function LearningPathSection() {
               {/* Step index — large faded numeral as editorial flourish */}
               <span
                 aria-hidden
-                className="absolute top-4 right-5 text-5xl font-semibold leading-none text-[color:var(--ai-primary)]/15 select-none tabular-nums"
+                className="absolute top-4 right-5 text-5xl font-semibold leading-none text-amber-500/15 select-none tabular-nums"
               >
                 {t(`steps.${step.key}.number`)}
               </span>
@@ -54,7 +54,7 @@ const LearningPathSection = memo(function LearningPathSection() {
               {index < pathSteps.length - 1 ? (
                 <div
                   aria-hidden
-                  className="hidden lg:block absolute top-1/2 -right-3 w-6 h-px bg-gradient-to-r from-[color:var(--ai-primary)]/40 to-transparent"
+                  className="hidden lg:block absolute top-1/2 -right-3 w-6 h-px bg-gradient-to-r from-amber-500/40 to-transparent"
                 />
               ) : null}
 

@@ -160,7 +160,7 @@ const StatisticsSection = memo(function StatisticsSection() {
               variants={fadeUp}
               whileHover={{ y: -3 }}
               transition={{ type: 'spring', stiffness: 250, damping: 22 }}
-              className="group relative rounded-2xl p-7 md:p-8 bg-[color:var(--ai-card-bg)]/70 backdrop-blur-sm border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/40 transition-colors text-center"
+              className="group relative rounded-2xl p-7 md:p-8 bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] hover:border-amber-500/40 transition-colors text-center"
             >
               <span className="text-2xl mb-3 inline-block opacity-80" aria-hidden>
                 {stat.icon}

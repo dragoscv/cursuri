@@ -36,9 +36,9 @@ const TechStackSection = memo(function TechStackSection() {
                 variants={fadeUp}
                 whileHover={{ y: -3 }}
                 transition={{ type: 'spring', stiffness: 250, damping: 22 }}
-                className="group rounded-2xl p-6 bg-[color:var(--ai-card-bg)]/70 backdrop-blur-sm border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/40 transition-colors"
+                className="group rounded-2xl p-6 bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] hover:border-amber-500/40 transition-colors"
               >
-                <div className="w-11 h-11 mb-4 inline-flex items-center justify-center rounded-xl bg-[color:var(--ai-primary)]/8 group-hover:bg-[color:var(--ai-primary)]/15 transition-colors">
+                <div className="w-11 h-11 mb-4 inline-flex items-center justify-center rounded-xl border border-[color:var(--ai-card-border)] text-amber-500 group-hover:border-amber-500/40 transition-colors">
                   <Icon size={22} className="text-[color:var(--ai-primary)]" />
                 </div>
                 <h3 className="text-[15px] font-semibold text-[color:var(--ai-foreground)] mb-1.5 tracking-[-0.01em]">

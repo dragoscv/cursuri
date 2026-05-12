@@ -35,9 +35,9 @@ const WhyChooseUsSection = memo(function WhyChooseUsSection() {
               variants={fadeUp}
               whileHover={{ y: -3 }}
               transition={{ type: 'spring', stiffness: 250, damping: 22 }}
-              className="group relative rounded-2xl p-7 bg-[color:var(--ai-card-bg)]/70 backdrop-blur-sm border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/40 transition-colors"
+              className="group relative rounded-2xl p-7 bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] hover:border-amber-500/40 transition-colors"
             >
-              <div className="text-2xl mb-4 w-12 h-12 inline-flex items-center justify-center rounded-xl bg-[color:var(--ai-primary)]/8 group-hover:bg-[color:var(--ai-primary)]/15 transition-colors">
+              <div className="text-2xl mb-4 w-12 h-12 inline-flex items-center justify-center rounded-xl border border-[color:var(--ai-card-border)] text-amber-500 group-hover:border-amber-500/40 transition-colors">
                 {tFeatures(`${feature.key}.icon`)}
               </div>
               <h3 className="text-lg font-semibold text-[color:var(--ai-foreground)] mb-2 tracking-[-0.01em]">

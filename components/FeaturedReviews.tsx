@@ -4,9 +4,9 @@ import React, { useRef, useEffect, useContext, useState, useMemo, memo } from 'r
 import { motion, useInView, useAnimation } from 'framer-motion';
 import { AppContext } from './AppContext';
 import { Review } from '@/types';
-import { Button } from './ui';
 import DefaultAvatar from './shared/DefaultAvatar';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 
 const FeaturedReviews = memo(function FeaturedReviews() {
   const t = useTranslations('home.reviews');
@@ -183,7 +183,7 @@ const FeaturedReviews = memo(function FeaturedReviews() {
           }}
           transition={{ duration: 0.6 }}
         >
-          <span className="inline-block text-[11px] uppercase tracking-[0.18em] font-semibold bg-gradient-to-r from-amber-400 to-amber-500 bg-clip-text text-transparent mb-4">
+          <span className="inline-block text-[11px] uppercase tracking-[0.18em] font-semibold text-amber-500 mb-4">
             {t('badge')}
           </span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-[-0.02em] text-[color:var(--ai-foreground)] mb-4">
@@ -282,28 +282,24 @@ const FeaturedReviews = memo(function FeaturedReviews() {
           }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <Button
-            variant="primary"
-            size="lg"
-            radius="full"
-            className="px-6 h-11 group bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] font-medium hover:opacity-90 transition-opacity duration-200"
-            endContent={
-              <svg
-                className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            }
+          <Link
+            href="/courses"
+            className="cursor-pointer inline-flex items-center justify-center gap-2 h-11 px-6 rounded-full text-sm font-medium bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] hover:opacity-90 transition-opacity duration-200 group"
           >
             {t('viewAll')}
-          </Button>
+            <svg
+              className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </Link>
         </motion.div>
       </div>
     </section>
