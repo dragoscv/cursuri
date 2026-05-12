@@ -28,28 +28,24 @@ const LessonSettings: React.FC<LessonSettingsProps> = ({
   const t = useTranslations('lessons.settings');
 
   return (
-    <div className="rounded-xl overflow-hidden backdrop-blur-sm border border-[color:var(--ai-card-border)] shadow-lg">
-      <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/15 via-[color:var(--ai-secondary)]/15 to-[color:var(--ai-accent)]/10 py-4 px-5 border-b border-[color:var(--ai-card-border)]/50">
+    <div className="rounded-2xl overflow-hidden border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]">
+      <div className="bg-[color:var(--ai-card-bg)] py-4 px-5 border-b border-[color:var(--ai-card-border)] border-l-[3px] border-l-amber-500">
         <h3 className="font-semibold text-[color:var(--ai-foreground)] flex items-center">
-          <FiClock className="mr-2 text-[color:var(--ai-primary)]" size={18} />
+          <FiClock className="mr-2 text-amber-500" size={18} aria-hidden />
           <span>{t('title')}</span>
         </h3>
       </div>
 
-      <div className="p-5 bg-[color:var(--ai-card-bg)]/30 space-y-5">
+      <div className="p-5 bg-[color:var(--ai-card-bg)] space-y-5">
         {/* Mark as Complete/Incomplete Button */}
-        <Button
-          size="lg"
-          color={isCompleted ? 'success' : 'primary'}
-          className={`w-full ${isCompleted
-              ? 'bg-gradient-to-r from-[color:var(--ai-success)] to-[color:var(--ai-primary)]'
-              : 'bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]'
-            } text-white border-none shadow-md transition-all duration-300 hover:shadow-lg hover:scale-[1.02] rounded-lg h-12 sm:h-14 font-semibold`}
+        <button
+          type="button"
           onClick={onMarkComplete}
-          startContent={<FiCheck size={18} />}
+          className="cursor-pointer inline-flex items-center justify-center gap-2 w-full h-12 sm:h-14 rounded-full text-sm font-medium bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] hover:opacity-90 transition-opacity duration-200"
         >
+          <FiCheck size={18} aria-hidden />
           {isCompleted ? t('markAsIncomplete') : t('markAsComplete')}
-        </Button>
+        </button>
 
         <Divider className="opacity-50" />
 

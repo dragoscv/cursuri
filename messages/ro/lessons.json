@@ -20,6 +20,7 @@
   "fullscreen": "Ecran Complet",
   "progress": "Progres",
   "courseProgress": "Progres Curs",
+  "lessonsDone": "lecții finalizate",
   "viewer": {
     "loadingLesson": "Se încarcă lecția...",
     "lessonNotAvailable": "Lecție Indisponibilă",
@@ -295,6 +296,18 @@
     "completed": "Completat",
     "progressSaved": "Progres Salvat",
     "autoplayNext": "Redare Automată Următoare"
+  },
+  "chapters": {
+    "title": "Capitole",
+    "sectionsCount": "{count} secțiuni"
+  },
+  "aiContent": {
+    "briefing": "Rezumat lecție",
+    "listenAudio": "Ascultă audio",
+    "downloadMp3": "Descarcă MP3",
+    "inShort": "Pe scurt",
+    "whatYouLearn": "Ce vei învăța",
+    "readTranscript": "Citește transcrierea completă"
   },
   "sections": {
     "content": "Conținut Lecție",

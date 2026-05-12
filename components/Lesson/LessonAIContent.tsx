@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import Card from '@/components/ui/Card';
 import { Lesson } from '@/types';
 import { FiFileText, FiCheckCircle } from '@/components/icons/FeatherIcons';
@@ -32,6 +33,7 @@ const FiVolume2: React.FC<{ size?: number; className?: string }> = ({
 );
 
 const LessonAIContent: React.FC<LessonAIContentProps> = ({ lesson }) => {
+  const t = useTranslations('lessons.aiContent');
   const summary = lesson.summary?.trim();
   const keyPoints = (lesson.keyPoints || []).filter(Boolean);
   const audioUrl = lesson.audioUrl;
@@ -40,12 +42,12 @@ const LessonAIContent: React.FC<LessonAIContentProps> = ({ lesson }) => {
   if (!summary && !keyPoints.length && !audioUrl && !transcription) return null;
 
   return (
-    <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/60 backdrop-blur-sm shadow-xl overflow-hidden rounded-2xl">
-      <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent px-5 sm:px-6 py-3 border-b border-[color:var(--ai-card-border)] flex items-center gap-2">
-        <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white text-xs font-bold">
+    <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] shadow-none overflow-hidden rounded-2xl transition-colors duration-200 hover:border-[color:var(--ai-foreground)]/40">
+      <div className="bg-[color:var(--ai-card-bg)] px-5 sm:px-6 py-3 border-b border-[color:var(--ai-card-border)] border-l-[3px] border-l-amber-500 flex items-center gap-2">
+        <span className="inline-flex h-7 px-2 items-center justify-center rounded-md text-[10px] uppercase tracking-[0.18em] font-semibold border border-amber-500/40 text-amber-500">
           AI
         </span>
-        <h3 className="font-semibold text-[color:var(--ai-foreground)]">Lesson briefing</h3>
+        <h3 className="font-semibold text-[color:var(--ai-foreground)]">{t('briefing')}</h3>
       </div>
 
       <div className="p-5 sm:p-6 space-y-6">
@@ -57,8 +59,8 @@ const LessonAIContent: React.FC<LessonAIContentProps> = ({ lesson }) => {
           <div className="rounded-xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-background)]/40 p-4">
             <div className="flex items-center justify-between gap-3 mb-2">
               <div className="text-sm font-medium text-[color:var(--ai-foreground)] inline-flex items-center gap-2">
-                <FiVolume2 size={16} className="text-[color:var(--ai-primary)]" />
-                Listen to the audio
+                <FiVolume2 size={16} className="text-amber-500" />
+                {t('listenAudio')}
               </div>
               <a
                 href={audioUrl}
@@ -67,7 +69,7 @@ const LessonAIContent: React.FC<LessonAIContentProps> = ({ lesson }) => {
                 download
                 className="text-xs font-medium text-[color:var(--ai-primary)] hover:underline"
               >
-                Download MP3
+                {t('downloadMp3')}
               </a>
             </div>
             <audio src={audioUrl} controls preload="none" className="w-full" />
@@ -77,8 +79,8 @@ const LessonAIContent: React.FC<LessonAIContentProps> = ({ lesson }) => {
         {/* Summary */}
         {summary && (
           <div>
-            <h4 className="text-sm font-semibold uppercase tracking-wider text-[color:var(--ai-muted)] mb-2">
-              In short
+            <h4 className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--ai-muted)] mb-2">
+              {t('inShort')}
             </h4>
             <p className="text-[color:var(--ai-foreground)] leading-relaxed whitespace-pre-line">
               {summary}
@@ -89,8 +91,8 @@ const LessonAIContent: React.FC<LessonAIContentProps> = ({ lesson }) => {
         {/* Key points */}
         {keyPoints.length > 0 && (
           <div>
-            <h4 className="text-sm font-semibold uppercase tracking-wider text-[color:var(--ai-muted)] mb-3">
-              What you&apos;ll learn
+            <h4 className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--ai-muted)] mb-3">
+              {t('whatYouLearn')}
             </h4>
             <ul className="space-y-2">
               {keyPoints.map((p, i) => (
@@ -98,10 +100,7 @@ const LessonAIContent: React.FC<LessonAIContentProps> = ({ lesson }) => {
                   key={i}
                   className="flex items-start gap-2 text-[color:var(--ai-text-secondary)] leading-relaxed"
                 >
-                  <FiCheckCircle
-                    size={18}
-                    className="mt-0.5 flex-shrink-0 text-[color:var(--ai-primary)]"
-                  />
+                  <FiCheckCircle size={18} className="mt-0.5 flex-shrink-0 text-amber-500" />
                   <span>{p}</span>
                 </li>
               ))}
@@ -114,8 +113,8 @@ const LessonAIContent: React.FC<LessonAIContentProps> = ({ lesson }) => {
           <details className="group rounded-xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-background)]/30">
             <summary className="cursor-pointer list-none flex items-center justify-between gap-2 px-4 py-3 text-sm font-medium text-[color:var(--ai-foreground)]">
               <span className="inline-flex items-center gap-2">
-                <FiFileText size={16} className="text-[color:var(--ai-primary)]" />
-                Read the full transcript
+                <FiFileText size={16} className="text-amber-500" />
+                {t('readTranscript')}
               </span>
               <span className="text-xs text-[color:var(--ai-muted)] group-open:rotate-180 transition-transform">
                 ▾

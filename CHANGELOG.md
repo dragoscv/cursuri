@@ -6,6 +6,63 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.15.0] - 2026-05-12
+
+### Changed — lesson page editorial pass
+
+Full editorial sweep across the student lesson surface
+(`/courses/[id]/lessons/[lid]`) and every panel it composes.
+
+- `LessonContent`: dropped `GradientCard` hero + radial backdrop, gradient
+  h1, four HeroUI `Chip` color slots, and the gradient quiz CTA. Now a
+  flat bordered card with a 2px gold top accent rule, solid-foreground
+  headline, custom bordered status pills (emerald / rose / amber /
+  neutral), and a solid-foreground pill quiz button. Loading skeleton,
+  navigation, content, and quiz cards all dropped `shadow-xl` +
+  `backdrop-blur`.
+- `ClientLessonWrapper`: access-denied + render-error gradient buttons →
+  solid-foreground / ghost pills; card `shadow-lg` → flat rounded-2xl.
+- `LessonHeader`: gradient panel + gradient h1 + three HeroUI chips →
+  flat bordered card with gold top rule, solid-foreground title, custom
+  bordered status pills.
+- `LessonAIContent`: dropped `backdrop-blur` / `shadow-xl` + gradient
+  header. AI badge gradient tile → bordered amber pill. Hardcoded
+  English ("Lesson briefing", "Listen to the audio", "Download MP3", "In
+  short", "What you'll learn", "Read the full transcript") moved to
+  `lessons.aiContent.*` (en + ro).
+- `LessonChaptersPanel`: dropped `shadow-xl` / `backdrop-blur` + gradient
+  header. Now flat with a 3px gold rail. "Chapters" + section count
+  i18n'd via `lessons.chapters.*`.
+- `LessonAIProcessor` + `LessonAIProgressModal`: AI tile gradient →
+  bordered amber pill. Progress bar gradient → gold (failed = rose).
+- `AIFillButton`: enabled state gradient → flat amber.
+- `ResumeVideoModal`: progress bar gradient → gold; Resume + Start
+  buttons → solid-foreground / ghost pills (rounded-full).
+- `LessonSettings`: `backdrop-blur` + `shadow-lg` → flat rounded-2xl.
+  Mark Complete gradient HeroUI Button → solid-foreground pill.
+- `LessonNavigation`: header gradient → flat + 3px gold rail. Next
+  Lesson gradient + scale-on-hover → solid-foreground pill. Active
+  list-item primary→secondary gradient + ring → amber-tinted background.
+- `Notes` / `LessonNotes` / `QASection`: card chrome flattened. Header
+  gradient → flat + 3px gold rail.
+- `Notes` / `AskQuestionForm` / `AnswerForm`: gradient submit buttons →
+  solid-foreground pills.
+- `QuestionItem`: HeroUI success Chip → bordered emerald pill.
+- `LessonDetailComponent` (legacy alt container): four `shadow-lg` cards
+  flattened; off-palette indigo / blue / green buttons → editorial pills.
+
+### Added — i18n (en + ro)
+
+- `lessons.lessonsDone`
+- `lessons.chapters.{title,sectionsCount}`
+- `lessons.aiContent.{briefing,listenAudio,downloadMp3,inShort,whatYouLearn,readTranscript}`
+
+### Out of scope
+
+- `LessonForm` (admin editor) and the `Video/*` media chrome are
+  intentionally left in place; admin surfaces and media controls follow
+  a different visual contract.
+
 ## [0.14.0] - 2026-05-12
 
 ### Changed — course detail page editorial pass

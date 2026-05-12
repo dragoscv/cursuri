@@ -19,9 +19,20 @@ import LessonAIContent from './LessonAIContent';
 import LessonChaptersPanel from './LessonChaptersPanel';
 import OfflineButton from './OfflineButton';
 import { useOfflineContent } from '../Profile/hooks/useOfflineContent';
-import { FiWifi, FiWifiOff, FiFileText, FiCheckCircle, FiBookOpen } from '@/components/icons/FeatherIcons';
+import {
+  FiWifi,
+  FiWifiOff,
+  FiFileText,
+  FiCheckCircle,
+  FiBookOpen,
+} from '@/components/icons/FeatherIcons';
 import { logLessonCompletion, logVideoProgress, logCourseCompletion } from '@/utils/analytics';
-import { incrementLessonCompletions, trackVideoWatchTime, incrementCourseCompletions, incrementUserCompletedCourses } from '@/utils/statistics';
+import {
+  incrementLessonCompletions,
+  trackVideoWatchTime,
+  incrementCourseCompletions,
+  incrementUserCompletedCourses,
+} from '@/utils/statistics';
 import { GradientCard, ProgressRing } from '@/components/user-shell';
 
 interface LessonContentProps {
@@ -103,7 +114,7 @@ function LessonContent({
   const courseId = course?.id || lesson?.courseId || ''; // Set up loading state component for when lesson is not available
   const loadingComponent = (
     <div className="flex flex-col w-full max-w-7xl mx-auto animate-in fade-in duration-500">
-      <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-[color:var(--ai-accent)]/10 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-[color:var(--ai-card-border)]/50 shadow-xl">
+      <div className="rounded-2xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] p-6 mb-8">
         <div className="flex justify-center items-center py-20">
           <div className="animate-pulse flex flex-col items-center">
             <div className="w-32 h-32 bg-[color:var(--ai-card-border)]/30 rounded-full mb-4"></div>
@@ -241,90 +252,81 @@ function LessonContent({
   const completedLessonsCount = navigationLessons.filter((l) => l.isCompleted).length;
   return (
     <div className="flex flex-col w-full max-w-7xl mx-auto px-4 py-6 animate-in fade-in duration-500">
-      {/* Modern lesson hero */}
-      <GradientCard className="mb-6 p-0 overflow-hidden" flush>
-        <div className="relative">
-          <div
-            aria-hidden
-            className="absolute inset-0 pointer-events-none opacity-70"
-            style={{
-              background:
-                'radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--ai-primary) 18%, transparent) 0%, transparent 55%), radial-gradient(circle at 100% 100%, color-mix(in srgb, var(--ai-secondary) 18%, transparent) 0%, transparent 55%)',
-            }}
-          />
-          <div className="relative p-5 md:p-7">
-            {course && (
-              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[color:var(--ai-muted)] mb-3">
-                <FiBookOpen className="w-3.5 h-3.5" />
-                <span className="truncate max-w-xs">{course.name}</span>
-              </div>
-            )}
-            <div className="flex flex-col md:flex-row gap-6 items-start">
-              <div className="min-w-0 flex-1">
-                <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">
-                  {lesson.name}
-                </h1>
-                {lesson.description && (
-                  <div
-                    className="prose prose-sm prose-invert text-[color:var(--ai-muted)] mt-3 max-w-2xl leading-relaxed"
-                    dangerouslySetInnerHTML={{ __html: sanitizeRich(lesson.description) }}
-                  />
+      {/* Editorial lesson hero */}
+      <div className="relative mb-6 overflow-hidden rounded-2xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]">
+        <div className="h-[2px] w-full bg-gradient-to-r from-amber-400 to-amber-500"></div>
+        <div className="p-5 md:p-7">
+          {course && (
+            <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] bg-gradient-to-r from-amber-400 to-amber-500 bg-clip-text text-transparent mb-3">
+              <FiBookOpen className="w-3.5 h-3.5 text-amber-500" aria-hidden />
+              <span className="truncate max-w-xs">{course.name}</span>
+            </div>
+          )}
+          <div className="flex flex-col md:flex-row gap-6 items-start">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-[-0.02em] text-[color:var(--ai-foreground)] leading-[1.15]">
+                {lesson.name}
+              </h1>
+              {lesson.description && (
+                <div
+                  className="prose prose-sm prose-invert text-[color:var(--ai-muted)] mt-3 max-w-2xl leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: sanitizeRich(lesson.description) }}
+                />
+              )}
+
+              {/* Status pills */}
+              <div className="flex flex-wrap items-center gap-2 mt-4">
+                {isCompleted && (
+                  <span className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-md text-[10px] font-semibold uppercase tracking-[0.12em] border border-emerald-500/30 text-emerald-500">
+                    <FiCheckCircle className="w-3.5 h-3.5" aria-hidden />
+                    {t('status.completed')}
+                  </span>
                 )}
-
-                {/* Status chips */}
-                <div className="flex flex-wrap items-center gap-2 mt-4">
-                  {isCompleted && (
-                    <Chip
-                      color="success"
-                      variant="flat"
-                      size="sm"
-                      startContent={<FiCheckCircle className="w-3.5 h-3.5" />}
-                    >
-                      {t('status.completed')}
-                    </Chip>
-                  )}
-                  {!isOnline && (
-                    <Chip
-                      color="danger"
-                      variant="flat"
-                      size="sm"
-                      startContent={<FiWifiOff className="w-3.5 h-3.5" />}
-                    >
-                      {t('status.offlineMode')}
-                    </Chip>
-                  )}
-                  {progressSaved && (
-                    <Chip color="primary" variant="flat" size="sm" className="animate-pulse">
-                      {t('status.progressSaved')}
-                    </Chip>
-                  )}
-                  {autoPlayNext && (
-                    <Chip color="warning" variant="flat" size="sm">
-                      {t('status.autoplayNext')}
-                    </Chip>
-                  )}
-                  {course && <OfflineButton lesson={lesson} course={course} />}
-                </div>
+                {!isOnline && (
+                  <span className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-md text-[10px] font-semibold uppercase tracking-[0.12em] border border-rose-500/30 text-rose-500">
+                    <FiWifiOff className="w-3.5 h-3.5" aria-hidden />
+                    {t('status.offlineMode')}
+                  </span>
+                )}
+                {progressSaved && (
+                  <span className="inline-flex items-center h-7 px-2.5 rounded-md text-[10px] font-semibold uppercase tracking-[0.12em] border border-amber-500/40 text-amber-500 animate-pulse">
+                    {t('status.progressSaved')}
+                  </span>
+                )}
+                {autoPlayNext && (
+                  <span className="inline-flex items-center h-7 px-2.5 rounded-md text-[10px] font-semibold uppercase tracking-[0.12em] border border-[color:var(--ai-card-border)] text-[color:var(--ai-muted)]">
+                    {t('status.autoplayNext')}
+                  </span>
+                )}
+                {course && <OfflineButton lesson={lesson} course={course} />}
               </div>
+            </div>
 
-              {/* Progress ring */}
-              <div className="shrink-0 flex items-center gap-4 self-stretch md:self-start rounded-2xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/70 backdrop-blur-sm p-4">
-                <ProgressRing value={Math.round(progressPercentage)} size={84} strokeWidth={9} tone="primary" />
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider font-semibold text-[color:var(--ai-muted)]">
-                    {t('courseProgress')}
-                  </p>
-                  <p className="text-lg font-bold text-[color:var(--ai-foreground)]">
-                    {completedLessonsCount}
-                    <span className="text-sm text-[color:var(--ai-muted)] font-normal"> / {navigationLessons.length}</span>
-                  </p>
-                  <p className="text-xs text-[color:var(--ai-muted)]">lessons done</p>
-                </div>
+            {/* Progress ring */}
+            <div className="shrink-0 flex items-center gap-4 self-stretch md:self-start rounded-2xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-background)] p-4">
+              <ProgressRing
+                value={Math.round(progressPercentage)}
+                size={84}
+                strokeWidth={9}
+                tone="primary"
+              />
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-[color:var(--ai-muted)]">
+                  {t('courseProgress')}
+                </p>
+                <p className="text-lg font-semibold tabular-nums text-[color:var(--ai-foreground)]">
+                  {completedLessonsCount}
+                  <span className="text-sm text-[color:var(--ai-muted)] font-normal">
+                    {' '}
+                    / {navigationLessons.length}
+                  </span>
+                </p>
+                <p className="text-xs text-[color:var(--ai-muted)]">{t('lessonsDone')}</p>
               </div>
             </div>
           </div>
         </div>
-      </GradientCard>
+      </div>
       {/* Main content grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 px-1">
         {/* Main Content Column */}
@@ -335,11 +337,11 @@ function LessonContent({
             lesson={
               isUsingOfflineContent
                 ? {
-                  ...lesson,
-                  videoUrl: offlineLessonContent?.videoUrl || lesson.videoUrl,
-                  thumbnailUrl:
-                    offlineLessonContent?.thumbnailUrl || lesson.thumbnailUrl || lesson.thumbnail,
-                }
+                    ...lesson,
+                    videoUrl: offlineLessonContent?.videoUrl || lesson.videoUrl,
+                    thumbnailUrl:
+                      offlineLessonContent?.thumbnailUrl || lesson.thumbnailUrl || lesson.thumbnail,
+                  }
                 : lesson
             }
             isCompleted={isCompleted}
@@ -352,10 +354,7 @@ function LessonContent({
           />
           {/* Lesson Navigation - Positioned directly below video player */}
           {(prevLessonId || nextLessonId || onClose) && (
-            <Card
-              className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-xl overflow-hidden 
-                            transform transition-all duration-300 hover:shadow-2xl hover:border-[color:var(--ai-primary)]/30 rounded-lg"
-            >
+            <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] shadow-none overflow-hidden transition-colors duration-200 hover:border-[color:var(--ai-foreground)]/40 rounded-2xl">
               <LessonNavigation
                 prevLessonId={prevLessonId}
                 nextLessonId={nextLessonId}
@@ -372,22 +371,21 @@ function LessonContent({
           {/* AI-generated audio + summary + transcript */}
           <LessonAIContent lesson={lesson} />
           {/* Lesson Content */}
-          {(lesson.content) && (
-            <Card
-              className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-xl overflow-hidden 
-                            transform transition-all duration-300 hover:shadow-2xl hover:border-[color:var(--ai-primary)]/30 rounded-lg"
-            >
+          {lesson.content && (
+            <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] shadow-none overflow-hidden transition-colors duration-200 hover:border-[color:var(--ai-foreground)]/40 rounded-2xl">
               <div className="p-4 sm:p-6">
-                <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/10 via-[color:var(--ai-secondary)]/10 to-transparent py-3 px-4 -mx-4 sm:-mx-6 -mt-4 sm:-mt-6 mb-6 border-b border-[color:var(--ai-card-border)]">
+                <div className="bg-[color:var(--ai-card-bg)] py-3 px-4 -mx-4 sm:-mx-6 -mt-4 sm:-mt-6 mb-6 border-b border-[color:var(--ai-card-border)] border-l-[3px] border-l-amber-500">
                   <h3 className="font-semibold text-[color:var(--ai-foreground)] flex items-center gap-2">
-                    <FiFileText className="text-[color:var(--ai-primary)]" size={20} />
+                    <FiFileText className="text-amber-500" size={18} aria-hidden />
                     <span className="text-base sm:text-lg">{t('sections.content')}</span>
                   </h3>
                 </div>
                 <div
                   className="prose dark:prose-invert max-w-none prose-img:rounded-lg prose-img:shadow-md prose-a:text-[color:var(--ai-primary)] text-[color:var(--ai-text-secondary)]"
                   dangerouslySetInnerHTML={{
-                    __html: sanitizeRich(isUsingOfflineContent ? offlineLessonContent.content : lesson.content),
+                    __html: sanitizeRich(
+                      isUsingOfflineContent ? offlineLessonContent.content : lesson.content
+                    ),
                   }}
                 />
               </div>
@@ -395,30 +393,34 @@ function LessonContent({
           )}
           {/* Quiz Section (if lesson has a quiz) */}
           {lesson.hasQuiz && (
-            <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/50 backdrop-blur-sm shadow-xl overflow-hidden">
+            <Card className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] shadow-none overflow-hidden">
               <div className="p-6">
-                <h2 className="text-xl font-bold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent mb-4">
+                <h2 className="text-xl font-semibold tracking-[-0.02em] text-[color:var(--ai-foreground)] mb-4">
                   {t('sections.knowledgeCheck')}
                 </h2>
                 <p className="text-[color:var(--ai-muted)] mb-4">
                   {t('knowledgeCheck.description')}
                 </p>
-                <Button
-                  color="primary"
-                  className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium"
-                  endContent={
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M13 7l5 5m0 0l-5 5m5-5H6"
-                      />
-                    </svg>
-                  }
+                <button
+                  type="button"
+                  className="cursor-pointer inline-flex items-center justify-center gap-2 h-11 px-5 rounded-full text-sm font-medium bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] hover:opacity-90 transition-opacity duration-200"
                 >
                   {t('knowledgeCheck.startButton')}
-                </Button>
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    />
+                  </svg>
+                </button>
               </div>
             </Card>
           )}
@@ -453,9 +455,10 @@ function LessonContent({
                 const allLessons = Array.isArray(courseLessonsData)
                   ? courseLessonsData
                   : Object.values(courseLessonsData);
-                const completedCount = Object.keys(lessonProgress?.[courseId] || {}).filter(
-                  lid => lessonProgress?.[courseId]?.[lid]?.isCompleted
-                ).length + 1; // +1 for the lesson just completed
+                const completedCount =
+                  Object.keys(lessonProgress?.[courseId] || {}).filter(
+                    (lid) => lessonProgress?.[courseId]?.[lid]?.isCompleted
+                  ).length + 1; // +1 for the lesson just completed
 
                 const completionPercentage = Math.round((completedCount / allLessons.length) * 100);
 
@@ -490,19 +493,19 @@ function LessonContent({
             (isUsingOfflineContent &&
               offlineLessonContent?.resources &&
               offlineLessonContent.resources.length > 0)) && (
-              <ResourcesList
-                resources={
-                  isUsingOfflineContent && offlineLessonContent?.resources
-                    ? offlineLessonContent.resources.map((r: any) => ({
+            <ResourcesList
+              resources={
+                isUsingOfflineContent && offlineLessonContent?.resources
+                  ? offlineLessonContent.resources.map((r: any) => ({
                       url: r.data,
                       name: r.name,
                       type: r.type,
                     }))
-                    : lesson.resources || []
-                }
-                isOfflineMode={isUsingOfflineContent}
-              />
-            )}
+                  : lesson.resources || []
+              }
+              isOfflineMode={isUsingOfflineContent}
+            />
+          )}
         </div>
       </div>
     </div>

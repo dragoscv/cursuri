@@ -211,7 +211,7 @@ export default function LessonDetailComponent({
   if (!course) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <Card className="p-6 shadow-lg">
+        <Card className="p-6 shadow-none border border-[color:var(--ai-card-border)] rounded-2xl">
           <div className="text-center py-10">
             <h2 className="text-xl font-semibold mb-4">{t('courseNotFound')}</h2>
             <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mb-6">
@@ -219,7 +219,7 @@ export default function LessonDetailComponent({
             </p>
             <button
               onClick={() => router.push('/courses')}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+              className="inline-flex items-center justify-center h-10 px-5 rounded-full text-sm font-medium bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] hover:opacity-90 transition-opacity duration-200"
             >
               {t('browseCourses')}
             </button>
@@ -233,7 +233,7 @@ export default function LessonDetailComponent({
   if (!courseLessons) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <Card className="p-6 shadow-lg">
+        <Card className="p-6 shadow-none border border-[color:var(--ai-card-border)] rounded-2xl">
           <div className="text-center py-10">
             <h2 className="text-xl font-semibold mb-4">{t('loadingCourseContent')}</h2>
             <div className="animate-pulse flex flex-col items-center">
@@ -265,7 +265,7 @@ export default function LessonDetailComponent({
     // Fallback to traditional error UI
     return (
       <div className="container mx-auto px-4 py-8">
-        <Card className="p-6 shadow-lg">
+        <Card className="p-6 shadow-none border border-[color:var(--ai-card-border)] rounded-2xl">
           <div className="text-center py-10">
             <h2 className="text-xl font-semibold mb-4">{t('lessonNotFound')}</h2>
             <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mb-6">
@@ -274,7 +274,7 @@ export default function LessonDetailComponent({
             <div className="space-y-4">
               <button
                 onClick={() => router.push(`/courses/${courseId}`)}
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+                className="inline-flex items-center justify-center h-10 px-5 rounded-full text-sm font-medium bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] hover:opacity-90 transition-opacity duration-200"
               >
                 {t('returnToCourse')}
               </button>
@@ -282,7 +282,7 @@ export default function LessonDetailComponent({
               {/* Try the new viewer component button */}
               <button
                 onClick={() => setUseNewViewer(true)}
-                className="block w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                className="block w-full text-center h-10 leading-10 rounded-full text-sm font-medium border border-emerald-500/40 text-emerald-500 hover:bg-emerald-500/10 transition-colors duration-200"
               >
                 {t('tryAlternativeLoader')}
               </button>
@@ -313,7 +313,7 @@ export default function LessonDetailComponent({
                 <div className="mt-2">
                   <button
                     onClick={() => getCourseLessons(courseId)}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm"
+                    className="inline-flex items-center justify-center h-10 px-5 rounded-full text-sm font-medium border border-[color:var(--ai-foreground)] text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-foreground)] hover:text-[color:var(--ai-background)] transition-colors duration-200"
                   >
                     {t('retryLoadingLessons')}
                   </button>
@@ -330,7 +330,7 @@ export default function LessonDetailComponent({
   if (!hasAccess && !lesson.isFree && !isAdmin) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <Card className="p-6 shadow-lg">
+        <Card className="p-6 shadow-none border border-[color:var(--ai-card-border)] rounded-2xl">
           <div className="text-center py-10">
             <h2 className="text-xl font-semibold mb-4">{t('accessDenied')}</h2>
             <p className="text-[color:var(--ai-muted-foreground)] dark:text-[color:var(--ai-muted-foreground)] mb-6">
@@ -339,7 +339,7 @@ export default function LessonDetailComponent({
             <div className="flex justify-center gap-4">
               <button
                 onClick={() => router.push(`/courses/${courseId}`)}
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+                className="inline-flex items-center justify-center h-10 px-5 rounded-full text-sm font-medium bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] hover:opacity-90 transition-opacity duration-200"
               >
                 {t('goToCourse')}
               </button>

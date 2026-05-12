@@ -120,7 +120,7 @@ const AskQuestionForm: React.FC<AskQuestionFormProps> = ({ onSubmit, onCancel })
           color="primary"
           type="submit"
           isLoading={isSubmitting}
-          className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white rounded-lg shadow-md transition-all duration-300 hover:shadow-lg hover:scale-[1.02]"
+          className="bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] border-none hover:opacity-90 transition-opacity duration-200 rounded-full font-medium"
         >
           {isSubmitting ? t('submitting') : t('submitQuestion')}
         </Button>

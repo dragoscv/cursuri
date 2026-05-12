@@ -153,7 +153,7 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
   if (accessReason === 'denied') {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-lg shadow-lg p-8">
+        <div className="max-w-4xl mx-auto bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] rounded-2xl p-8">
           <div className="text-center">
             <div className="mb-6">
               <svg
@@ -179,14 +179,14 @@ export default function ClientLessonWrapper({ params }: ClientLessonWrapperProps
             <div className="flex justify-center gap-4 flex-wrap">
               <button
                 onClick={() => router.push(`/courses/${courseId}`)}
-                className="px-6 py-3 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white rounded-lg font-medium hover:opacity-90 transition-all duration-300 transform hover:-translate-y-1 active:translate-y-0"
+                className="cursor-pointer inline-flex items-center justify-center h-11 px-6 rounded-full text-sm font-medium bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] hover:opacity-90 transition-opacity duration-200"
               >
                 {t('viewCourse')}
               </button>
               {!context.user && (
                 <button
                   onClick={() => router.push('/')}
-                  className="px-6 py-3 bg-[color:var(--ai-card-bg)] text-[color:var(--ai-foreground)] border border-[color:var(--ai-card-border)] rounded-lg font-medium hover:bg-[color:var(--ai-card-bg)]/80 transition-all duration-300"
+                  className="cursor-pointer inline-flex items-center justify-center h-11 px-6 rounded-full text-sm font-medium border border-[color:var(--ai-foreground)] text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-foreground)] hover:text-[color:var(--ai-background)] transition-colors duration-200"
                 >
                   {t('signIn')}
                 </button>
@@ -237,7 +237,7 @@ function renderError({
       <p className="mb-6 text-[color:var(--ai-muted)]">{message}</p>
       <button
         onClick={onBack}
-        className="px-6 py-2 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white rounded-lg hover:opacity-90 transition-all duration-300"
+        className="cursor-pointer inline-flex items-center justify-center h-11 px-6 rounded-full text-sm font-medium bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] hover:opacity-90 transition-opacity duration-200"
       >
         {backLabel}
       </button>
