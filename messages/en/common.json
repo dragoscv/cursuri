@@ -224,6 +224,8 @@
     "errorIllustration": "Error illustration"
   },
   "lastUpdated": "Last updated: {date}",
+  "policyEyebrow": "Legal",
+  "relatedLegal": "Related documents",
   "policyLinks": {
     "privacyPolicy": "Privacy Policy",
     "termsConditions": "Terms & Conditions",

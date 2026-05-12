@@ -6,6 +6,37 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.16.0] - 2026-05-12
+
+### Changed — legal pages editorial pass
+
+Full pass over the seven legal surfaces (privacy, terms, cookies,
+refund, GDPR, legal-notice, DSA). All pages share a single
+`PolicyPage` shell, so the entire chain shifts in one move.
+
+- `PolicyPage`: dropped the wrapping `Card` + `CardBody` chrome,
+  `shadow-xl`, and the gradient `bg-clip-text` headline. Container
+  narrowed to a readable `max-w-3xl` editorial column.
+- New header: thin amber leader rule + gold eyebrow (`Legal`),
+  solid-foreground display headline at editorial scale
+  (`text-3xl md:text-5xl`), `tabular-nums` last-updated stamp.
+- New article surface: themed Tailwind Typography (`prose-neutral` /
+  `prose-invert`) with editorial overrides — `h2` carries a 3px gold
+  left rail, `h3` is restrained, paragraphs and list items inherit the
+  muted token, links use a gold underline accent.
+- New related-docs nav: replaced the centered link strip with a top-bordered
+  section, eyebrow label, and a flex grid of bordered pill chips. "Back to
+  home" promoted to a solid-foreground pill.
+- `PolicyContent`: removed hard-coded heading classes from
+  `PolicySection` / `PolicySubsection` so the prose theme drives
+  hierarchy. Lists gained `space-y-1.5`; paragraphs gained
+  `leading-relaxed`.
+
+### Added — i18n (en + ro)
+
+- `common.policyEyebrow` ("Legal" / "Legal")
+- `common.relatedLegal` ("Related documents" / "Documente conexe")
+
 ## [0.15.0] - 2026-05-12
 
 ### Changed — lesson page editorial pass

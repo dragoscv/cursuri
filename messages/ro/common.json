@@ -224,6 +224,8 @@
     "errorIllustration": "Ilustrație eroare"
   },
   "lastUpdated": "Ultima actualizare: {date}",
+  "policyEyebrow": "Legal",
+  "relatedLegal": "Documente conexe",
   "policyLinks": {
     "privacyPolicy": "Politica de Confidențialitate",
     "termsConditions": "Termeni și Condiții",
