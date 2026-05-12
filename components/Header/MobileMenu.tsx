@@ -64,15 +64,12 @@ export default function MobileMenu() {
     <div className="md:hidden">
       <Dropdown
         placement="bottom-end"
-        backdrop="opaque"
+        backdrop="transparent"
         classNames={{
           base: 'p-1.5 rounded-xl bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] shadow-xl z-[9999] min-w-[260px]',
-          backdrop:
-            'fixed inset-0 backdrop-blur-sm bg-[color:var(--ai-background)]/40 w-screen h-screen',
           content: 'z-[9999] flex flex-col items-end',
         }}
         offset={10}
-        shouldCloseOnBlur
         portalContainer={typeof document !== 'undefined' ? document.body : undefined}
       >
         <DropdownTrigger>
@@ -80,7 +77,7 @@ export default function MobileMenu() {
             type="button"
             aria-label={t('accessibility.mainNavigation')}
             aria-haspopup="menu"
-            className="grid place-items-center w-8 h-8 rounded-md text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-bg)]/60 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ai-primary)]"
+            className="grid place-items-center w-8 h-8 rounded-md text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-bg)]/60 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ai-primary)] cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

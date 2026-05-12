@@ -50,7 +50,7 @@ export default function AuthActions() {
     <button
       type="button"
       onClick={handleOpenLoginModal}
-      className="ml-1 inline-flex items-center h-8 px-3.5 text-[13px] font-semibold tracking-[-0.005em] rounded-md bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] hover:opacity-90 transition-opacity duration-150 outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ai-primary)]"
+      className="ml-1 inline-flex items-center h-8 px-3.5 text-[13px] font-semibold tracking-[-0.005em] rounded-md bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] hover:opacity-90 transition-opacity duration-150 outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ai-primary)] cursor-pointer"
     >
       {t('login')}
     </button>

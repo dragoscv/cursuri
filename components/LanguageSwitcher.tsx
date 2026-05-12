@@ -41,7 +41,7 @@ const LanguageSwitcher = memo(function LanguageSwitcher() {
               locale === 'en' ? 'English' : 'Romanian'
             )}
             aria-current={active ? 'true' : undefined}
-            className={`relative z-10 px-2.5 h-7 text-[11px] font-semibold tracking-[0.05em] uppercase rounded-[5px] transition-colors duration-150 outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ai-primary)] ${
+            className={`relative z-10 px-2.5 h-7 text-[11px] font-semibold tracking-[0.05em] uppercase rounded-[5px] transition-colors duration-150 outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ai-primary)] cursor-pointer ${
               active
                 ? 'text-[color:var(--ai-foreground)]'
                 : 'text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]'

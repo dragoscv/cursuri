@@ -6,6 +6,23 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.11.1] - 2026-05-12
+
+### Fixed — Header bugs from v0.11.0
+
+- **UserDropdown / MobileMenu trapped clicks after closing**: both menus
+  used HeroUI Dropdown with `backdrop="opaque"` and a `fixed inset-0
+w-screen h-screen` overlay class. After closing, the overlay node
+  occasionally lingered and intercepted pointer events on header items
+  (search, theme toggle, login button). Switched both to `backdrop=
+"transparent"` and removed the custom backdrop class. Outside-click
+  still closes the menu via HeroUI's internal logic, no overlay needed.
+- **Missing `cursor: pointer` on header triggers**: the new native
+  `<button>` elements (UserDropdown avatar, MobileMenu hamburger,
+  ThemeToggle, LanguageSwitcher segments, AuthActions login,
+  AdminActions admin) inherit `cursor: default` under Tailwind v4's
+  preflight. Added `cursor-pointer` to all of them.
+
 ## [0.11.0] - 2026-05-12
 
 ### Changed — Header overhaul finish (UserDropdown + MobileMenu)

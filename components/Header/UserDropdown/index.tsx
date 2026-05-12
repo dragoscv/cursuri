@@ -52,15 +52,12 @@ export default function UserDropdown() {
   return (
     <Dropdown
       placement="bottom-end"
-      backdrop="opaque"
+      backdrop="transparent"
       classNames={{
         base: 'p-1.5 rounded-xl bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] shadow-xl z-[9999] min-w-[260px]',
-        backdrop:
-          'fixed inset-0 backdrop-blur-sm bg-[color:var(--ai-background)]/40 w-screen h-screen',
         content: 'z-[9999] flex flex-col items-end',
       }}
       offset={10}
-      shouldCloseOnBlur
       portalContainer={typeof document !== 'undefined' ? document.body : undefined}
     >
       <DropdownTrigger>
@@ -68,7 +65,7 @@ export default function UserDropdown() {
           type="button"
           aria-label={t('accessibility.userMenu')}
           aria-haspopup="menu"
-          className="grid place-items-center w-8 h-8 rounded-full overflow-hidden border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-foreground)] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ai-primary)]"
+          className="grid place-items-center w-8 h-8 rounded-full overflow-hidden border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-foreground)] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ai-primary)] cursor-pointer"
         >
           {user?.photoURL ? (
             <img

@@ -25,7 +25,7 @@ export default function ThemeToggle() {
       onClick={toggleTheme}
       aria-label={t('accessibility.toggleTheme')}
       title={isDark ? t('theme.light') : t('theme.dark')}
-      className="relative w-8 h-8 grid place-items-center rounded-md text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-bg)]/60 transition-colors duration-150 outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ai-primary)]"
+      className="relative w-8 h-8 grid place-items-center rounded-md text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)] hover:bg-[color:var(--ai-card-bg)]/60 transition-colors duration-150 outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ai-primary)] cursor-pointer"
     >
       <AnimatePresence mode="wait" initial={false}>
         {isDark ? (
