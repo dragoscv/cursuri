@@ -3,7 +3,7 @@ import { Course, Lesson } from '../../types';
 import { Card, Divider } from '@heroui/react';
 import { motion } from 'framer-motion';
 import { FiLayers, FiBookOpen } from '../icons/FeatherIcons';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import LessonsList from './LessonsList';
 import CourseOverview from './CourseOverview';
@@ -26,16 +26,19 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
 }) => {
   const t = useTranslations('courses.tabs');
   // For handling tab selection in URL
-  const router = useRouter();
   const searchParams = useSearchParams();
   const tabParam = searchParams.get('tab');
   const [selectedTab, setSelectedTab] = React.useState(tabParam || 'content');
 
-  // Update URL when tab changes
+  // Update URL when tab changes — use replaceState to avoid Next router
+  // re-render of the [courseId] segment, which races with the local state
+  // update and triggers a React 19 reconciler crash on tab swap.
   const handleTabChange = (key: React.Key) => {
     setSelectedTab(key as string);
-    if (courseId) {
-      router.push(`/courses/${courseId}?tab=${String(key)}`, { scroll: false });
+    if (typeof window !== 'undefined' && courseId) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('tab', String(key));
+      window.history.replaceState({}, '', url.toString());
     }
   };
 

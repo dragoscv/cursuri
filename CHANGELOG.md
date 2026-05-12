@@ -6,6 +6,27 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.18.13] - 2026-05-12
+
+### Fixed — Course tab crash, final root cause: `router.push` race
+
+v0.18.11/12 replaced HeroUI `<Tabs>` everywhere it appeared, but the
+page still crashed on tab swap. The actual root cause was
+`handleTabChange` calling `router.push('/courses/${courseId}?tab=...')`,
+which swapped the URL slug (`dezvolta-aplicatii-...`) for the internal
+course ID (`oMC8PJGBVo94LGPQ4wuW`) and triggered an App Router
+`[courseId]` segment re-render that raced with the local
+`setSelectedTab` state update. Under React 19, this double cascade
+left FM/portal subtrees in an inconsistent state and threw
+`NotFoundError: Failed to execute 'removeChild' on 'Node'`.
+
+- `components/Course/CourseDetails.tsx`: `handleTabChange` now uses
+  `window.history.replaceState` to update only the `?tab=` query param
+  in place, without triggering Next router navigation. Deep-link
+  behavior (loading `/courses/[id]?tab=overview`) still works via the
+  existing `useEffect([tabParam])`.
+- Dropped now-unused `useRouter` import.
+
 ## [0.18.12] - 2026-05-12
 
 ### Fixed — Course tab crash, take three: hit the _actual_ Tabs component
