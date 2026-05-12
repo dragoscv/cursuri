@@ -6,6 +6,23 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.16.2] - 2026-05-12
+
+### Fixed
+
+- Header on course/lesson pages between md (768) and lg (1024) had the
+  desktop nav links and the in-brand breadcrumbs colliding in the same
+  row. The desktop nav now waits until `lg` on those routes, and the
+  mobile breadcrumbs row + brand-pinned breadcrumbs now share the same
+  `lg` cutoff so exactly one breadcrumb surface is visible per width.
+- `OfflineButton`: the HeroUI `default` / `bordered` Button rendered
+  with the framework's primary purple, breaking the lesson hero. Now a
+  native ghost pill (solid-foreground border, hover invert) with an
+  emerald state when the lesson is downloaded.
+- Missing i18n key `common.videoPlayer.retry` (en + ro) that surfaced
+  as a raw `common.videoPlayer.retry` label inside the video error
+  fallback.
+
 ## [0.16.1] - 2026-05-12
 
 ### Fixed

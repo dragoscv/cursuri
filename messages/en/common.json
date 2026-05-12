@@ -237,6 +237,7 @@
     "backToHome": "Back to Home"
   },
   "videoPlayer": {
+    "retry": "Retry",
     "noVideoAvailable": "No video available for this lesson",
     "playVideo": "Play video",
     "pauseVideo": "Pause video",

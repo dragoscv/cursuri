@@ -237,6 +237,7 @@
     "backToHome": "Înapoi la Pagina Principală"
   },
   "videoPlayer": {
+    "retry": "Reîncearcă",
     "noVideoAvailable": "Niciun videoclip disponibil pentru această lecție",
     "playVideo": "Redare video",
     "pauseVideo": "Pauză video",

@@ -41,7 +41,7 @@ export default function NavbarBrand() {
         ) : null}
       </Link>
       {isCourseOrLessonPage ? (
-        <div className="hidden md:block max-w-[200px] lg:max-w-[300px] xl:max-w-[400px] overflow-hidden border-l border-[color:var(--ai-card-border)]/60 pl-3">
+        <div className="hidden lg:block max-w-[260px] xl:max-w-[420px] overflow-hidden border-l border-[color:var(--ai-card-border)]/60 pl-3">
           <Breadcrumbs />
         </div>
       ) : null}

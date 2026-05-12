@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useContext, useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { AppContext } from '@/components/AppContext';
 import { motion } from 'framer-motion';
 import SearchBar from '@/components/SearchBar';
@@ -30,6 +31,8 @@ const Header = React.memo(function Header() {
   }
 
   const { user } = context;
+  const pathname = usePathname();
+  const isCourseOrLessonPage = pathname?.includes('/courses/') ?? false;
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -67,13 +70,15 @@ const Header = React.memo(function Header() {
             <NavbarBrand />
           </div>
 
-          {/* Center: nav links (desktop) */}
-          <div className="hidden md:flex flex-1 items-center justify-center min-w-0">
+          {/* Center: nav links (desktop). On course/lesson pages, only lg+ to leave room for breadcrumbs. */}
+          <div
+            className={`${isCourseOrLessonPage ? 'hidden lg:flex' : 'hidden md:flex'} flex-1 items-center justify-center min-w-0`}
+          >
             <NavbarLinks />
           </div>
 
-          {/* Mobile breadcrumbs (only on course/lesson pages, mobile) */}
-          <div className="md:hidden flex-1 min-w-0">
+          {/* Mobile breadcrumbs (only on course/lesson pages, below lg) */}
+          <div className="lg:hidden flex-1 min-w-0">
             <MobileBreadcrumbs />
           </div>
 
