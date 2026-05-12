@@ -126,7 +126,9 @@
     "completionCertificate": "Certificat de finalizare",
     "moneyBackGuarantee": "Garanție de returnare a banilor de 30 de zile",
     "alreadyHaveAccount": "Ai deja un cont? Autentifică-te pentru a cumpăra acest curs",
-    "signInToPurchase": "Autentifică-te pentru a cumpăra"
+    "signInToPurchase": "Autentifică-te pentru a cumpăra",
+    "processingPayment": "Procesăm plata...",
+    "instructorLabel": "Instructor"
   },
   "prerequisites": {
     "title": "Cerințe Prealabile",
@@ -283,7 +285,13 @@
     "lessonsComingSoon": "Lecții în curând",
     "reviews": "recenzii",
     "review": "recenzie",
-    "reviewsCount": "{count} {count, plural, one {recenzie} other {recenzii}}"
+    "reviewsCount": "{count} {count, plural, one {recenzie} other {recenzii}}",
+    "duration": "Durată",
+    "lessonsLabel": "Lecții",
+    "studentsLabel": "Cursanți",
+    "certificateLabel": "Certificat",
+    "certificateIncluded": "Inclus",
+    "certificateOnRequest": "La cerere"
   },
   "details": {
     "overview": "Prezentare generală",

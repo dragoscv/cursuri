@@ -60,7 +60,7 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
   };
 
   return (
-    <Card className="shadow-lg border rounded-2xl border-[color:var(--ai-card-border)] overflow-hidden backdrop-blur-sm">
+    <Card className="shadow-none border rounded-2xl border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] overflow-hidden">
       <Tabs
         selectedKey={selectedTab}
         onSelectionChange={handleTabChange}
@@ -96,11 +96,9 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
               {/* Bottom indicator line */}
               {selectedTab === 'overview' && (
                 <motion.span
-                  className="absolute -bottom-2 left-0 right-0 h-0.5 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
+                  aria-hidden
+                  className="absolute -bottom-2 left-0 right-0 h-[2px] bg-gradient-to-r from-amber-400 to-amber-500"
                   layoutId="tab-indicator"
-                  initial={{ width: '0%', opacity: 0 }}
-                  animate={{ width: '100%', opacity: 1 }}
-                  transition={{ duration: 0.3 }}
                 />
               )}
             </div>
@@ -134,11 +132,9 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
               {/* Bottom indicator line */}
               {selectedTab === 'content' && (
                 <motion.span
-                  className="absolute -bottom-2 left-0 right-0 h-0.5 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
+                  aria-hidden
+                  className="absolute -bottom-2 left-0 right-0 h-[2px] bg-gradient-to-r from-amber-400 to-amber-500"
                   layoutId="tab-indicator"
-                  initial={{ width: '0%', opacity: 0 }}
-                  animate={{ width: '100%', opacity: 1 }}
-                  transition={{ duration: 0.3 }}
                 />
               )}
             </div>
@@ -171,9 +167,9 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className="border border-[color:var(--ai-card-border)] rounded-lg overflow-hidden bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)]/60 shadow-sm hover:shadow-md transition-shadow"
+                    className="border border-[color:var(--ai-card-border)] rounded-lg overflow-hidden bg-[color:var(--ai-card-bg)] hover:border-[color:var(--ai-foreground)]/40 transition-colors duration-200"
                   >
-                    <div className="bg-gradient-to-r from-[color:var(--ai-card-bg)]/50 to-[color:var(--ai-card-bg)]/80 p-3 sm:p-4 font-medium border-l-4 border-[color:var(--ai-primary)]">
+                    <div className="bg-[color:var(--ai-card-bg)] p-3 sm:p-4 font-medium border-l-[3px] border-amber-500">
                       {module.title || `Module ${index + 1}`}
                     </div>
                     <div className="p-3 sm:p-4">
@@ -293,11 +289,9 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
               {/* Bottom indicator line */}
               {selectedTab === 'reviews' && (
                 <motion.span
-                  className="absolute -bottom-2 left-0 right-0 h-0.5 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"
+                  aria-hidden
+                  className="absolute -bottom-2 left-0 right-0 h-[2px] bg-gradient-to-r from-amber-400 to-amber-500"
                   layoutId="tab-indicator"
-                  initial={{ width: '0%', opacity: 0 }}
-                  animate={{ width: '100%', opacity: 1 }}
-                  transition={{ duration: 0.3 }}
                 />
               )}
             </div>

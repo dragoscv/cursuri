@@ -63,9 +63,10 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
   const tCommon = useTranslations('common');
 
   // Check for active subscription from context or prop
-  const hasSubscriptionFromContext = subscriptions && subscriptions.length > 0 && subscriptions.some((sub: any) =>
-    sub.status === 'active' || sub.status === 'trialing'
-  );
+  const hasSubscriptionFromContext =
+    subscriptions &&
+    subscriptions.length > 0 &&
+    subscriptions.some((sub: any) => sub.status === 'active' || sub.status === 'trialing');
 
   // Use prop if provided, otherwise use context check
   const hasSubscription = hasActiveSubscription || hasSubscriptionFromContext;
@@ -190,7 +191,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
             <p className="text-sm text-[color:var(--ai-muted)]">{t('completePrerequisites')}</p>
           </div>
         ),
-        onClose: () => { },
+        onClose: () => {},
       });
       return;
     }
@@ -207,10 +208,10 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
           // Course is flagged as paid but has no Stripe price configured.
           // Surface this to the user instead of silently failing, and log
           // diagnostic info for the admin.
-          console.warn(
-            '[CourseEnrollment] Paid course has no Stripe price configured',
-            { courseId: course.id, priceInfo }
-          );
+          console.warn('[CourseEnrollment] Paid course has no Stripe price configured', {
+            courseId: course.id,
+            priceInfo,
+          });
           showToast({
             type: 'error',
             message:
@@ -279,29 +280,23 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
     return (
       <>
         {/* Top success indicator bar */}
-        <div className="h-1.5 w-full bg-gradient-to-r from-[color:var(--ai-success)] via-[color:var(--ai-primary)] to-[color:var(--ai-success)]"></div>
+        <div className="h-[2px] w-full bg-gradient-to-r from-amber-400 to-amber-500"></div>
 
         <div className="p-6">
           {/* Header with status */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <div className="bg-[color:var(--ai-success)]/10 p-2 rounded-full">
-                <FiCheck className="text-[color:var(--ai-success)]" size={18} />
-              </div>
-              <h3 className="font-bold text-lg text-[color:var(--ai-foreground)]">
+              <FiCheck className="text-emerald-500" size={18} />
+              <h3 className="font-semibold text-base text-[color:var(--ai-foreground)]">
                 {hasSubscription && !isPurchased ? t('subscriptionAccess') : t('youreEnrolled')}
               </h3>
             </div>
-            <Chip
-              color="success"
-              variant="flat"
-              className="bg-[color:var(--ai-success)]/10 text-[color:var(--ai-success)] font-medium"
-            >
+            <span className="inline-flex items-center h-6 px-2 rounded-md text-[10px] font-semibold uppercase tracking-[0.12em] border border-emerald-500/30 text-emerald-500">
               {hasSubscription && !isPurchased ? t('viaSubscription') : t('active')}
-            </Chip>
-          </div>{' '}
+            </span>
+          </div>
           {/* Progress card */}
-          <div className="bg-gradient-to-br from-[color:var(--ai-success)]/10 via-[color:var(--ai-primary)]/5 to-[color:var(--ai-success)]/10 backdrop-blur-sm rounded-xl p-5 border border-[color:var(--ai-card-border)] shadow-sm hover:shadow-md transition-all duration-300 mb-6">
+          <div className="rounded-xl p-5 border border-[color:var(--ai-card-border)] bg-[color:var(--ai-background)] mb-6">
             <div className="flex items-center justify-between mb-3">
               <span className="text-sm font-medium text-[color:var(--ai-foreground)]">
                 {t('yourProgress')}
@@ -326,38 +321,23 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
               <span>
                 {totalLessons > 0
                   ? t('lessonsProgress', {
-                    completed: Object.values(completedLessons).filter((c) => c === true).length,
-                    total: totalLessons,
-                  })
+                      completed: Object.values(completedLessons).filter((c) => c === true).length,
+                      total: totalLessons,
+                    })
                   : t('inProgress')}
               </span>
             </div>
           </div>
-          {/* Continue button with animation */}{' '}
-          <motion.div
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.98 }}
-            transition={{ duration: 0.2 }}
-            className="relative"
+          {/* Continue button */}
+          <button
+            type="button"
+            onClick={() => router.push(getNextLessonUrl())}
+            className="cursor-pointer inline-flex items-center justify-center gap-2 w-full h-12 rounded-full text-sm font-medium bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] hover:opacity-90 transition-opacity duration-200"
           >
-            <div className="relative overflow-hidden rounded-xl group">
-              {/* Subtle animated glow effect */}
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-30 blur-lg bg-gradient-to-r from-[color:var(--ai-success)] to-[color:var(--ai-primary)] transition-opacity duration-500"></div>
-
-              <Button
-                color="success"
-                className="w-full bg-gradient-to-r from-[color:var(--ai-success)] to-[color:var(--ai-primary)] py-6 rounded-xl shadow-md hover:shadow-lg hover:shadow-[color:var(--ai-success)]/20 transition-all duration-300 font-semibold"
-                size="lg"
-                onClick={() => router.push(getNextLessonUrl())}
-                endContent={
-                  <FiArrowRight className="text-lg ml-1 group-hover:translate-x-1 transition-transform duration-200" />
-                }
-                startContent={<FiPlayCircle className="text-xl" />}
-              >
-                {t('continueButton')}
-              </Button>
-            </div>
-          </motion.div>
+            <FiPlayCircle className="text-base" aria-hidden />
+            {t('continueButton')}
+            <FiArrowRight className="text-base" aria-hidden />
+          </button>
           <Divider className="my-6" />
           <h4 className="text-sm font-semibold text-[color:var(--ai-foreground)] mb-4">
             {t('whatYouHaveAccess')}
@@ -365,7 +345,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
           {/* Features grid for better visual arrangement */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-5">
             <div className="flex items-center gap-3 text-[color:var(--ai-muted)] group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
+              <div className="w-9 h-9 rounded-md flex items-center justify-center text-amber-500 transition-colors duration-200">
                 <FiBook className="flex-shrink-0" />
               </div>
               <span className="font-medium transition-colors duration-300 group-hover:text-[color:var(--ai-foreground)]">
@@ -374,7 +354,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
             </div>
 
             <div className="flex items-center gap-3 text-[color:var(--ai-muted)] group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
+              <div className="w-9 h-9 rounded-md flex items-center justify-center text-amber-500 transition-colors duration-200">
                 <FiClock className="flex-shrink-0" />
               </div>
               <span className="font-medium transition-colors duration-300 group-hover:text-[color:var(--ai-foreground)]">
@@ -384,7 +364,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
 
             {course.certificate && (
               <div className="flex items-center gap-3 text-[color:var(--ai-muted)] group">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
+                <div className="w-9 h-9 rounded-md flex items-center justify-center text-amber-500 transition-colors duration-200">
                   <FiAward className="flex-shrink-0" />
                 </div>
                 <span className="font-medium transition-colors duration-300 group-hover:text-[color:var(--ai-foreground)]">
@@ -393,7 +373,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
               </div>
             )}
             <div className="flex items-center gap-3 text-[color:var(--ai-muted)] group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
+              <div className="w-9 h-9 rounded-md flex items-center justify-center text-amber-500 transition-colors duration-200">
                 <FiMessageSquare className="flex-shrink-0" />
               </div>
               <span className="font-medium transition-colors duration-300 group-hover:text-[color:var(--ai-foreground)]">
@@ -401,27 +381,32 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
               </span>
             </div>
           </div>
-
           {/* Instructor Section */}
           {course.instructor && (
             <>
               <Divider className="my-6" />
               <div>
-                <h4 className="text-sm font-semibold text-[color:var(--ai-foreground)] mb-4">
-                  Instructor
+                <h4 className="text-[10px] uppercase tracking-[0.18em] font-semibold text-[color:var(--ai-muted)] mb-3">
+                  {t('instructorLabel')}
                 </h4>
-                <div className="flex items-start gap-3 p-4 rounded-lg bg-gradient-to-br from-[color:var(--ai-primary)]/5 to-[color:var(--ai-secondary)]/5 border border-[color:var(--ai-card-border)]">
-                  <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] flex items-center justify-center text-white font-bold flex-shrink-0">
+                <div className="flex items-start gap-3 p-4 rounded-lg border border-[color:var(--ai-card-border)] bg-[color:var(--ai-background)]">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] flex items-center justify-center text-[color:var(--ai-foreground)] font-semibold flex-shrink-0">
                     {typeof course.instructor !== 'string' && course.instructor.photoUrl ? (
                       <img
                         src={course.instructor.photoUrl}
-                        alt={typeof course.instructor !== 'string' ? course.instructor.name || 'Instructor' : 'Instructor'}
+                        alt={
+                          typeof course.instructor !== 'string'
+                            ? course.instructor.name || 'Instructor'
+                            : 'Instructor'
+                        }
                         className="w-full h-full object-cover"
                       />
+                    ) : typeof course.instructor !== 'string' ? (
+                      course.instructor.name?.charAt(0) || 'I'
+                    ) : typeof course.instructor === 'string' ? (
+                      course.instructor.charAt(0)
                     ) : (
-                      typeof course.instructor !== 'string'
-                        ? (course.instructor.name?.charAt(0) || "I")
-                        : (typeof course.instructor === 'string' ? course.instructor.charAt(0) : "I")
+                      'I'
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -453,25 +438,25 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
   // Enhanced view for users who are not enrolled yet
   return (
     <>
-      {/* Top animated gradient bar */}{' '}
-      <div className="h-1.5 w-full bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-accent)] background-animate"></div>
-      <div className="p-6 bg-gradient-to-br from-[color:var(--ai-card-bg)]/80 via-[color:var(--ai-card-bg)] to-[color:var(--ai-card-bg)]/90 backdrop-blur-sm">
-        {/* Price showcase with enhanced styling */}
+      {/* Top accent bar */}
+      <div className="h-[2px] w-full bg-gradient-to-r from-amber-400 to-amber-500"></div>
+      <div className="p-6">
+        {/* Price showcase */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-3">
             <div className="flex flex-wrap gap-2 items-center">
-              <span className="text-3xl font-extrabold bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] bg-clip-text text-transparent">
+              <span className="text-3xl font-semibold tabular-nums tracking-[-0.02em] text-[color:var(--ai-foreground)]">
                 {displayPrice()}
               </span>
 
               {course.originalPrice && (
                 <div className="flex items-center gap-2">
-                  <span className="text-[color:var(--ai-muted)] text-lg line-through">
+                  <span className="text-[color:var(--ai-muted)] text-lg line-through tabular-nums">
                     {course.originalPrice}
                   </span>
-                  <Chip color="danger" size="sm" variant="flat" className="font-medium">
+                  <span className="inline-flex items-center h-6 px-2 rounded-md text-[10px] font-semibold uppercase tracking-[0.12em] border border-rose-500/30 text-rose-500">
                     {discountPercentage}% {t('off')}
-                  </Chip>
+                  </span>
                 </div>
               )}
             </div>
@@ -492,76 +477,38 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
           )}
         </div>
 
-        {/* Enrollment Button with enhanced animations */}
-        <motion.div
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.98 }}
-          transition={{ duration: 0.2 }}
-          className="relative"
-        >
-          {isLoading ? (
-            <LoadingButton
-              className="w-full bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-primary)] mb-4 py-6 shadow-lg hover:shadow-xl transition-all duration-300"
-              size="lg"
-              loadingText="Processing payment..."
-            />
-          ) : (
-            <div className="relative mb-4 overflow-hidden rounded-xl group">
-              {/* Animated corners - more subtle and elegant */}
-              <div className="absolute inset-0 rounded-xl overflow-hidden">
-                <div className="absolute -top-1 -left-1 w-10 h-10 border-t-2 border-l-2 border-[color:var(--ai-primary)]/30 rounded-tl-lg opacity-70 group-hover:border-[color:var(--ai-primary)]/80 transition-colors duration-500"></div>
-                <div className="absolute -bottom-1 -right-1 w-10 h-10 border-b-2 border-r-2 border-[color:var(--ai-secondary)]/30 rounded-br-lg opacity-70 group-hover:border-[color:var(--ai-secondary)]/80 transition-colors duration-500"></div>
-              </div>
-
-              {/* Shimmer effect overlay */}
-              <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-10">
-                <div className="absolute -inset-[200%] animate-[shimmer_5s_linear_infinite] bg-gradient-to-r from-transparent via-white/10 dark:via-white/5 to-transparent transform -translate-x-full group-hover:animate-[shimmer_2s_linear_infinite]"></div>
-              </div>
-
-              {/* Enhanced main button */}
-              <Button
-                color="primary"
-                className="w-full bg-gradient-to-r from-[color:var(--ai-primary)] via-[color:var(--ai-secondary)] to-[color:var(--ai-primary)] py-6 font-medium text-white transition-all duration-500 shadow-lg hover:shadow-xl hover:shadow-[color:var(--ai-primary)]/20 group-hover:bg-gradient-to-r group-hover:from-[color:var(--ai-secondary)] group-hover:via-[color:var(--ai-primary)] group-hover:to-[color:var(--ai-secondary)]"
-                size="lg"
-                onClick={handleEnrollClick}
-                startContent={
-                  <div className="relative">
-                    {course.isFree ? (
-                      <FiCheck className="text-xl" />
-                    ) : (
-                      <FiShoppingCart className="text-xl transition-transform duration-500 group-hover:rotate-12" />
-                    )}
-                  </div>
-                }
-              >
-                <span className="relative z-10 tracking-wide font-semibold text-white flex items-center gap-2 transition-all duration-300 group-hover:tracking-wider">
-                  {course.isFree ? `${t('enrollButton')} - ${t('free')}` : t('buyNow')}
-
-                  {/* Arrow with enhanced hover animation */}
-                  {!course.isFree && (
-                    <FiArrowRight className="transition-all duration-500 group-hover:translate-x-1" />
-                  )}
-                </span>
-              </Button>
-            </div>
-          )}
-        </motion.div>
+        {/* Enrollment Button */}
+        {isLoading ? (
+          <LoadingButton className="w-full mb-4" size="lg" loadingText={t('processingPayment')} />
+        ) : (
+          <button
+            type="button"
+            onClick={handleEnrollClick}
+            className="cursor-pointer inline-flex items-center justify-center gap-2 w-full h-12 rounded-full text-sm font-medium bg-[color:var(--ai-foreground)] text-[color:var(--ai-background)] hover:opacity-90 transition-opacity duration-200 mb-4"
+          >
+            {course.isFree ? (
+              <FiCheck className="text-base" aria-hidden />
+            ) : (
+              <FiShoppingCart className="text-base" aria-hidden />
+            )}
+            <span>{course.isFree ? `${t('enrollButton')} - ${t('free')}` : t('buyNow')}</span>
+            {!course.isFree && <FiArrowRight className="text-base" aria-hidden />}
+          </button>
+        )}
 
         {/* Features section with enhanced visual hierarchy */}
         <div className="mt-6">
-          {/* Course benefits heading with accent line */}
+          {/* Course benefits heading */}
           <div className="flex items-center gap-2 mb-4">
-            <div className="h-0.5 w-6 bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)]"></div>
-            <div className="mb-6">
-              <h4 className="font-bold text-[color:var(--ai-foreground)]">
-                {t('getInstantAccess')}
-              </h4>
-            </div>
+            <div className="h-[2px] w-6 bg-gradient-to-r from-amber-400 to-amber-500"></div>
+            <h4 className="text-[10px] uppercase tracking-[0.18em] font-semibold text-[color:var(--ai-muted)]">
+              {t('getInstantAccess')}
+            </h4>
           </div>
           {/* Course features grid */}{' '}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="flex items-center gap-3 group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
+              <div className="w-9 h-9 rounded-md flex items-center justify-center text-amber-500 transition-colors duration-200">
                 <FiBook className="flex-shrink-0" />
               </div>
               <span className="text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)] transition-colors duration-300 font-medium">
@@ -570,7 +517,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
             </div>
 
             <div className="flex items-center gap-3 group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
+              <div className="w-9 h-9 rounded-md flex items-center justify-center text-amber-500 transition-colors duration-200">
                 <FiClock className="flex-shrink-0" />
               </div>
               <span className="text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)] transition-colors duration-300 font-medium">
@@ -579,7 +526,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
             </div>
 
             <div className="flex items-center gap-3 group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
+              <div className="w-9 h-9 rounded-md flex items-center justify-center text-amber-500 transition-colors duration-200">
                 <FiPlayCircle className="flex-shrink-0" />
               </div>
               <span className="text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)] transition-colors duration-300 font-medium">
@@ -589,7 +536,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
 
             {course.certificate && (
               <div className="flex items-center gap-3 group">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
+                <div className="w-9 h-9 rounded-md flex items-center justify-center text-amber-500 transition-colors duration-200">
                   <FiAward className="flex-shrink-0" />
                 </div>
                 <span className="text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)] transition-colors duration-300 font-medium">
@@ -600,7 +547,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
 
             {course.downloadableResources && (
               <div className="flex items-center gap-3 group">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
+                <div className="w-9 h-9 rounded-md flex items-center justify-center text-amber-500 transition-colors duration-200">
                   <FiDownload className="flex-shrink-0" />
                 </div>
                 <span className="text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)] transition-colors duration-300 font-medium">
@@ -609,7 +556,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
               </div>
             )}
             <div className="flex items-center gap-3 group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[color:var(--ai-primary)]/10 to-[color:var(--ai-secondary)]/10 flex items-center justify-center text-[color:var(--ai-primary)] transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-[color:var(--ai-primary)]/20 group-hover:to-[color:var(--ai-secondary)]/20 group-hover:scale-110 shadow-sm">
+              <div className="w-9 h-9 rounded-md flex items-center justify-center text-amber-500 transition-colors duration-200">
                 <FiMessageSquare className="flex-shrink-0" />
               </div>
               <span className="text-[color:var(--ai-muted)] group-hover:text-[color:var(--ai-foreground)] transition-colors duration-300 font-medium">
@@ -624,21 +571,27 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
           <>
             <Divider className="my-6" />
             <div>
-              <h4 className="text-sm font-semibold text-[color:var(--ai-foreground)] mb-4">
-                Instructor
+              <h4 className="text-[10px] uppercase tracking-[0.18em] font-semibold text-[color:var(--ai-muted)] mb-3">
+                {t('instructorLabel')}
               </h4>
-              <div className="flex items-start gap-3 p-4 rounded-lg bg-gradient-to-br from-[color:var(--ai-primary)]/5 to-[color:var(--ai-secondary)]/5 border border-[color:var(--ai-card-border)]">
-                <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] flex items-center justify-center text-white font-bold flex-shrink-0">
+              <div className="flex items-start gap-3 p-4 rounded-lg border border-[color:var(--ai-card-border)] bg-[color:var(--ai-background)]">
+                <div className="w-12 h-12 rounded-full overflow-hidden border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] flex items-center justify-center text-[color:var(--ai-foreground)] font-semibold flex-shrink-0">
                   {typeof course.instructor !== 'string' && course.instructor.photoUrl ? (
                     <img
                       src={course.instructor.photoUrl}
-                      alt={typeof course.instructor !== 'string' ? course.instructor.name || 'Instructor' : 'Instructor'}
+                      alt={
+                        typeof course.instructor !== 'string'
+                          ? course.instructor.name || 'Instructor'
+                          : 'Instructor'
+                      }
                       className="w-full h-full object-cover"
                     />
+                  ) : typeof course.instructor !== 'string' ? (
+                    course.instructor.name?.charAt(0) || 'I'
+                  ) : typeof course.instructor === 'string' ? (
+                    course.instructor.charAt(0)
                   ) : (
-                    typeof course.instructor !== 'string'
-                      ? (course.instructor.name?.charAt(0) || "I")
-                      : (typeof course.instructor === 'string' ? course.instructor.charAt(0) : "I")
+                    'I'
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -689,10 +642,11 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
                 return (
                   <div
                     key={prerequisiteId}
-                    className={`flex items-center justify-between p-2 rounded-md mb-2 ${hasPurchased
-                      ? 'bg-[color:var(--ai-success)]/10 border border-[color:var(--ai-success)]/20'
-                      : 'bg-[color:var(--ai-accent)]/10 border border-[color:var(--ai-accent)]/20'
-                      }`}
+                    className={`flex items-center justify-between p-2 rounded-md mb-2 ${
+                      hasPurchased
+                        ? 'bg-[color:var(--ai-success)]/10 border border-[color:var(--ai-success)]/20'
+                        : 'bg-[color:var(--ai-accent)]/10 border border-[color:var(--ai-accent)]/20'
+                    }`}
                   >
                     <div className="flex items-center gap-2">
                       {hasPurchased ? (
@@ -723,7 +677,7 @@ export const CourseEnrollment: React.FC<CourseEnrollmentProps> = ({
         {!isPurchased && !user && (
           <>
             <Divider className="my-6" />
-            <div className="bg-gradient-to-r from-[color:var(--ai-primary)]/5 via-[color:var(--ai-secondary)]/5 to-[color:var(--ai-accent)]/5 rounded-lg p-4">
+            <div className="rounded-lg p-4 border border-[color:var(--ai-card-border)] bg-[color:var(--ai-background)]">
               <p className="text-sm text-[color:var(--ai-muted)] mb-3 text-center">
                 {t('alreadyHaveAccount')}
               </p>

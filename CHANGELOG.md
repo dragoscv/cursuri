@@ -6,6 +6,98 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-05-12
+
+### Changed — course detail page editorial pass
+
+Full pass over the `/courses/[courseId]` chain. The detail page was the
+most maximalist surface left: gradient text headlines, gradient stat
+pills, gradient module headers, gradient buy button with a shimmer
+overlay + animated corners + glow blur + scale-1.03 hover, and 10
+identical gradient icon tiles with `group-hover:scale-110`.
+
+- **`CourseHeader`**: dropped `GradientCard` wrapper + radial `radial-gradient` decorative backdrop. Replaced gradient-text
+  `text-extrabold bg-clip-text` headline with solid foreground
+  `font-semibold tracking-[-0.02em]`. Replaced HeroUI `<Chip
+color="warning|success|primary|secondary" variant="flat">` badges with
+  flat bordered `<Pill>` (amber for featured/new, neutral for level/cert).
+  StatPill now uses a flat amber icon (no gradient tile background) +
+  hover-darken border. Rating block uses solid foreground tabular-nums
+  instead of gradient text.
+
+- **`CourseDetails`**: dropped HeroUI `Card` `shadow-lg backdrop-blur-sm`
+  in favor of flat bordered card. Tab indicator switched from
+  `from-[--ai-primary] to-[--ai-secondary]` 0.5px line with `width: 0%
+→ 100%` animation to the standard 2px gold underline
+  `from-amber-400 to-amber-500` (matches `/courses` filter chips and
+  Header navbar). Cleaned up the static-modules fallback: dropped
+  `bg-gradient-to-r ...card-bg/50 to /80 border-l-4 border-primary`
+  module header in favor of a flat 3px gold left rail + neutral fill,
+  and replaced `shadow-sm hover:shadow-md` with border-color hover.
+
+- **`CourseEnrollment`** (largest cleanup):
+  - Top success bar `h-1.5 from-success via-primary to-success` and top
+    animated `background-animate` rainbow bar both replaced with a calm
+    2px gold accent rule.
+  - Header: HeroUI `Chip color="success" variant="flat"` enrollment
+    status replaced with bordered emerald uppercase pill. Check icon
+    no longer wrapped in a `bg-success/10` rounded chip.
+  - Progress card: dropped `bg-gradient-to-br ...success/10
+via-primary/5 to-success/10 backdrop-blur-sm shadow-sm hover:shadow-md`
+    in favor of a flat bordered panel.
+  - **Continue button**: removed `whileHover scale-1.03`, `blur-lg` glow
+    overlay, and gradient `from-success to-primary py-6 shadow-md
+hover:shadow-lg`. Now a solid foreground pill (h-12, rounded-full,
+    opacity-only hover).
+  - **Buy button** (the worst offender): removed the entire wrapper
+    chrome — `whileHover scale-1.03`, animated corner brackets, shimmer
+    overlay (`absolute -inset-[200%] animate-[shimmer_5s_linear_infinite]`),
+    rotate-12 cart icon, tracking-wider on hover, gradient text shadow.
+    Now a solid foreground pill (matches Continue, the homepage CTAs,
+    and the rest of the editorial language).
+  - **Loading state**: `LoadingButton` no longer carries
+    `bg-gradient-to-r ...primary via-secondary to-primary py-6 shadow-lg`
+    — just neutral default.
+  - **Discount chip**: `<Chip color="danger" variant="flat">` → bordered
+    rose pill matching the new pill system.
+  - **Feature icon tiles**: bulk replace via PowerShell on 10 identical
+    `w-10 h-10 rounded-xl bg-gradient-to-br ...primary/10 to ...secondary/10
+group-hover:scale-110 shadow-sm` instances → flat amber 9x9 icons.
+  - **Instructor card**: dropped `bg-gradient-to-br ...primary/5
+to ...secondary/5` panel + `bg-gradient-to-r ...primary to ...secondary
+text-white` avatar circle in favor of flat bordered panel + neutral
+    avatar circle. Hardcoded `"Instructor"` heading now i18n.
+  - **Login prompt**: dropped tri-color gradient panel for flat
+    bordered panel.
+  - **Price text**: gradient `bg-clip-text text-transparent` → solid
+    foreground tabular-nums.
+  - **Accent line**: thin primary→secondary 0.5px line above benefits
+    heading → thin gold 2px line. Heading style changed to gold-style
+    eyebrow (`text-[10px] uppercase tracking-[0.18em]`).
+  - i18n: added `courses.enrollment.processingPayment` and
+    `instructorLabel` (en + ro) — was hardcoded "Processing payment..."
+    and `"Instructor"`.
+
+- **`Reviews`** (course detail nested): dropped
+  `bg-gradient-to-r ...primary/10 via-secondary/10 to-transparent`
+  section headers in favor of flat fill with a 3px gold left rail.
+  Submit button gradient + `hover:scale-[1.02]` → solid foreground pill
+  (rounded-full). Author avatar circles dropped gradient bg + white
+  text → flat bordered initial. Quote-rail accent shifted to amber.
+
+- **`LatestLessonsSection`** (homepage, sidebar course card): removed
+  the lingering `hover:shadow-lg hover:shadow-[--ai-primary]/5` and
+  `hover:border-[--ai-primary]/40` on the recommended-course card —
+  now uses the same neutral border-darken as everywhere else.
+
+### Added — i18n keys (course detail)
+
+- `courses.stats.duration` / `lessonsLabel` / `studentsLabel` /
+  `certificateLabel` / `certificateIncluded` / `certificateOnRequest`
+  (en + ro) — stat pill labels were hardcoded English.
+- `courses.enrollment.processingPayment` (en + ro)
+- `courses.enrollment.instructorLabel` (en + ro)
+
 ## [0.13.0] - 2026-05-12
 
 ### Changed — homepage editorial pass (sub-hero sections)

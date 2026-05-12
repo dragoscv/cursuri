@@ -367,7 +367,7 @@ const LatestLessonsSection = React.memo(function LatestLessonsSection() {
                     <Link
                       key={course.id}
                       href={href}
-                      className="group flex flex-col rounded-2xl bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/40 hover:shadow-lg hover:shadow-[color:var(--ai-primary)]/5 transition-all duration-300 overflow-hidden"
+                      className="group flex flex-col rounded-2xl bg-[color:var(--ai-card-bg)] border border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-foreground)]/40 transition-colors duration-200 overflow-hidden"
                     >
                       <div className="relative h-32 w-full overflow-hidden">
                         <Image

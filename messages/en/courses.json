@@ -73,7 +73,13 @@
     "lessonsComingSoon": "Lessons coming soon",
     "reviews": "reviews",
     "review": "review",
-    "reviewsCount": "{count} {count, plural, one {review} other {reviews}}"
+    "reviewsCount": "{count} {count, plural, one {review} other {reviews}}",
+    "duration": "Duration",
+    "lessonsLabel": "Lessons",
+    "studentsLabel": "Students",
+    "certificateLabel": "Certificate",
+    "certificateIncluded": "Included",
+    "certificateOnRequest": "On request"
   },
   "header": {
     "badge": "AI Curriculum",
@@ -143,7 +149,9 @@
     "completionCertificate": "Certificate of completion",
     "moneyBackGuarantee": "30-day money-back guarantee",
     "alreadyHaveAccount": "Already have an account? Sign in to purchase this course",
-    "signInToPurchase": "Sign in to purchase"
+    "signInToPurchase": "Sign in to purchase",
+    "processingPayment": "Processing payment...",
+    "instructorLabel": "Instructor"
   },
   "prerequisites": {
     "title": "Prerequisites",
