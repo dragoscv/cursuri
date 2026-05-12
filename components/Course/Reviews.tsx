@@ -17,7 +17,6 @@ import Button from '@/components/ui/Button';
 import RichTextEditor from '@/components/Lesson/QA/RichTextEditor';
 // Using our custom RatingStars component
 import RatingStars from '../ui/RatingStars';
-import { motion } from 'framer-motion';
 import { FiStar } from '../icons/FeatherIcons';
 import { FiEdit } from '../icons/FeatherIcons/FiEdit';
 import { FiMessageCircle } from '../icons/FeatherIcons/FiMessageCircle';
@@ -154,49 +153,17 @@ export default function Reviews({
     }
   };
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        when: 'beforeChildren',
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: 'spring' as const,
-        damping: 12,
-      },
-    },
-  };
-
   // Check if user has access (purchased OR subscribed)
   const hasAccess = isPurchased || hasSubscription;
 
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      className="space-y-6"
-    >
+    <div className="space-y-6">
       {/* Write a review section - only show if user has purchased or has active subscription */}
       {hasAccess && (
-        <motion.div
-          variants={itemVariants}
-          className="border border-[color:var(--ai-card-border)] rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)] shadow-sm"
-        >
+        <div className="border border-[color:var(--ai-card-border)] rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)] shadow-sm">
           <div className="bg-[color:var(--ai-card-bg)] py-3 px-4 border-b border-[color:var(--ai-card-border)] border-l-[3px] border-l-amber-500">
             <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
-              <FiEdit className="mr-2 text-[color:var(--ai-primary)]" />
+              <FiEdit className="mr-2 text-amber-500" />
               <span>{hasExistingReview ? t('editReview') : t('writeReview')}</span>
             </h3>
           </div>
@@ -280,20 +247,17 @@ export default function Reviews({
               </div>
             </form>
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Reviews list section */}
-      <motion.div
-        variants={itemVariants}
-        className="border border-[color:var(--ai-card-border)] rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)] shadow-sm"
-      >
+      <div className="border border-[color:var(--ai-card-border)] rounded-xl overflow-hidden bg-[color:var(--ai-card-bg)] shadow-sm">
         <div className="bg-[color:var(--ai-card-bg)] py-3 px-4 border-b border-[color:var(--ai-card-border)] border-l-[3px] border-l-amber-500">
           <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
-            <FiMessageCircle className="mr-2 text-[color:var(--ai-primary)]" />
+            <FiMessageCircle className="mr-2 text-amber-500" />
             <span>{t('studentReviews')}</span>
             {reviews.length > 0 && (
-              <span className="ml-2 text-xs bg-[color:var(--ai-primary)]/10 text-[color:var(--ai-primary)] px-2 py-0.5 rounded-full">
+              <span className="ml-2 text-xs bg-amber-500/[0.08] text-amber-500 px-2 py-0.5 rounded-full">
                 {reviews.length}
               </span>
             )}
@@ -304,13 +268,7 @@ export default function Reviews({
           {reviews.length > 0 ? (
             <div className="divide-y divide-[color:var(--ai-card-border)]/50 w-full">
               {reviews.map((review, index) => (
-                <motion.div
-                  key={review.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="py-4 first:pt-0 last:pb-0 w-full"
-                >
+                <div key={review.id} className="py-4 first:pt-0 last:pb-0 w-full">
                   <div className="flex items-start gap-3 mb-3 w-full">
                     <div className="w-10 h-10 flex-shrink-0 rounded-full border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] flex items-center justify-center text-[color:var(--ai-foreground)] font-semibold text-base">
                       {review.userName?.[0] || 'U'}
@@ -383,7 +341,7 @@ export default function Reviews({
                       </div>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
           ) : (
@@ -396,7 +354,7 @@ export default function Reviews({
             </div>
           )}
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }

@@ -1,6 +1,5 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { Chip, Card } from '@heroui/react';
 import Progress from '@/components/ui/Progress';
@@ -57,29 +56,7 @@ const CourseContent: React.FC<CourseContentProps> = ({
   );
 
   const modules = course.modules || [];
-  const defaultModule = { id: 'default', title: t('courseContent') }; // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        when: 'beforeChildren',
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        type: 'spring' as const,
-        damping: 12,
-      },
-    },
-  };
+  const defaultModule = { id: 'default', title: t('courseContent') };
 
   // Log if we don't have any lessons to show
   if (sortedLessons.length === 0) {
@@ -120,12 +97,7 @@ const CourseContent: React.FC<CourseContentProps> = ({
     <div className="space-y-6">
       {/* Course Progress */}
       {hasAccess && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] rounded-2xl p-5 border-l-[3px] border-l-amber-500"
-        >
+        <div className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] rounded-2xl p-5 border-l-[3px] border-l-amber-500">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               {' '}
@@ -155,17 +127,12 @@ const CourseContent: React.FC<CourseContentProps> = ({
               </span>
             </div>
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Access Notification for Non-Enrolled Users */}
       {!hasAccess && !isAdmin && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] rounded-2xl p-5 border-l-[3px] border-l-amber-500"
-        >
+        <div className="border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] rounded-2xl p-5 border-l-[3px] border-l-amber-500">
           <div className="flex items-start gap-4">
             <div className="text-amber-500 p-2 bg-amber-500/10 rounded-full">
               <AlertIcon className="w-6 h-6" />
@@ -177,23 +144,17 @@ const CourseContent: React.FC<CourseContentProps> = ({
               <p className="text-sm text-[color:var(--ai-muted)] mt-1">{t('purchaseToUnlock')}</p>
             </div>
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Lesson List */}
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="space-y-6"
-      >
+      <div className="space-y-6">
         {modules.length > 0 ? (
           // Show lessons grouped by modules if they exist
           <>
             {modules.map((module, moduleIndex) => (
-              <motion.div
+              <div
                 key={module.id || moduleIndex}
-                variants={itemVariants}
                 className="border border-[color:var(--ai-card-border)] rounded-2xl overflow-hidden bg-[color:var(--ai-card-bg)]"
               >
                 <div className="py-3 px-4 border-b border-[color:var(--ai-card-border)] border-l-[3px] border-l-amber-500">
@@ -226,15 +187,12 @@ const CourseContent: React.FC<CourseContentProps> = ({
                       />
                     ))}
                 </div>
-              </motion.div>
+              </div>
             ))}
 
             {/* Show any lessons not assigned to a module */}
             {lessonsByModule['default'] && lessonsByModule['default'].length > 0 && (
-              <motion.div
-                variants={itemVariants}
-                className="border border-[color:var(--ai-card-border)] rounded-2xl overflow-hidden bg-[color:var(--ai-card-bg)]"
-              >
+              <div className="border border-[color:var(--ai-card-border)] rounded-2xl overflow-hidden bg-[color:var(--ai-card-bg)]">
                 <div className="py-3 px-4 border-b border-[color:var(--ai-card-border)] border-l-[3px] border-l-amber-500">
                   <h3 className="font-medium text-[color:var(--ai-foreground)]">
                     {t('additionalLessons')}
@@ -255,15 +213,12 @@ const CourseContent: React.FC<CourseContentProps> = ({
                       />
                     ))}
                 </div>
-              </motion.div>
+              </div>
             )}
           </>
         ) : (
           // Show flat list if no modules are defined
-          <motion.div
-            variants={itemVariants}
-            className="border border-[color:var(--ai-card-border)] rounded-2xl overflow-hidden bg-[color:var(--ai-card-bg)]"
-          >
+          <div className="border border-[color:var(--ai-card-border)] rounded-2xl overflow-hidden bg-[color:var(--ai-card-bg)]">
             <div className="py-3 px-4 border-b border-[color:var(--ai-card-border)] border-l-[3px] border-l-amber-500">
               <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
                 <span>{t('courseContent')}</span>
@@ -302,9 +257,9 @@ const CourseContent: React.FC<CourseContentProps> = ({
                 <p className="mt-1 text-sm text-[color:var(--ai-muted)]">{t('noLessonsYet')}</p>
               </div>
             )}
-          </motion.div>
+          </div>
         )}
-      </motion.div>
+      </div>
     </div>
   );
 };

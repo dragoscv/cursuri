@@ -6,6 +6,32 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.18.10] - 2026-05-12
+
+### Fixed — React 19 + framer-motion crash on course tab switch
+
+Switching tabs on `/courses/[courseId]` (Conținut → Prezentare Generală,
+or any other transition) crashed the page with
+`NotFoundError: Failed to execute 'removeChild' on 'Node'`. Pattern C
+from `react19-framer-motion-crashes.md`: motion.div roots inside a
+conditionally-rendered tab subtree collide with React 19's reconciler
+on unmount.
+
+- `CourseContent`: stripped 6 `motion.div` wrappers + the
+  `containerVariants`/`itemVariants` stagger definitions + the
+  `framer-motion` import. The tab now renders plain `<div>` trees —
+  no entrance animation, but no crash on tab swap.
+- `CourseOverview`: same treatment. 5 `motion.div` + 1 `motion.li`
+  flattened to plain DOM.
+- `Reviews`: same treatment. 4 `motion.div` flattened.
+
+### Changed — Editorial sweep in Reviews tab
+
+- `FiEdit` and `FiMessageCircle` section icons recoloured from
+  `text-[--ai-primary]` to `text-amber-500`.
+- Review-count chip recoloured from `bg-[--ai-primary]/10` to
+  `bg-amber-500/[0.08]`.
+
 ## [0.18.9] - 2026-05-12
 
 ### Changed — Editorial pass on lesson Q&A + Resources panels

@@ -1,5 +1,4 @@
 import React, { useContext } from 'react';
-import { motion } from 'framer-motion';
 import { Course } from '@/types';
 import { useTranslations } from 'next-intl';
 import { FiCheckCircle, FiTarget, FiCalendar, FiFileText, FiLink } from '../icons/FeatherIcons';
@@ -34,38 +33,11 @@ const CourseOverview: React.FC<CourseOverviewProps> = ({ course }) => {
           t('sampleRequirements.willingnessToLearn'),
         ];
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        when: 'beforeChildren',
-        staggerChildren: 0.08,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { y: 15, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        type: 'spring' as const,
-        damping: 15,
-      },
-    },
-  };
-
   return (
     <div className="space-y-6">
       {/* What You'll Learn */}
-      <motion.div variants={containerVariants} initial="hidden" animate="visible">
-        <motion.div
-          variants={itemVariants}
-          className="border border-[color:var(--ai-card-border)] rounded-2xl overflow-hidden bg-[color:var(--ai-card-bg)]"
-        >
+      <div>
+        <div className="border border-[color:var(--ai-card-border)] rounded-2xl overflow-hidden bg-[color:var(--ai-card-bg)]">
           <div className="py-3 px-4 border-b border-[color:var(--ai-card-border)] border-l-[3px] border-l-amber-500">
             <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
               <FiTarget className="mr-2 text-amber-500" />
@@ -75,26 +47,22 @@ const CourseOverview: React.FC<CourseOverviewProps> = ({ course }) => {
           <div className="p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {benefits.map((benefit, index) => (
-                <motion.div
+                <div
                   key={index}
-                  variants={itemVariants}
                   className="flex items-start gap-2 p-2 rounded-lg hover:bg-amber-500/5 transition-colors"
                 >
                   <FiCheckCircle className="text-amber-500 mt-1 flex-shrink-0" />
                   <span className="text-sm text-[color:var(--ai-muted)]">{benefit}</span>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
       {/* Requirements */}
-      <motion.div variants={containerVariants} initial="hidden" animate="visible">
-        <motion.div
-          variants={itemVariants}
-          className="border border-[color:var(--ai-card-border)] rounded-2xl overflow-hidden bg-[color:var(--ai-card-bg)]"
-        >
+      <div>
+        <div className="border border-[color:var(--ai-card-border)] rounded-2xl overflow-hidden bg-[color:var(--ai-card-bg)]">
           <div className="py-3 px-4 border-b border-[color:var(--ai-card-border)] border-l-[3px] border-l-amber-500">
             <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
               <FiCalendar className="mr-2 text-amber-500" />
@@ -104,27 +72,23 @@ const CourseOverview: React.FC<CourseOverviewProps> = ({ course }) => {
           <div className="p-4">
             <ul className="space-y-3">
               {requirements.map((requirement, index) => (
-                <motion.li
+                <li
                   key={index}
-                  variants={itemVariants}
                   className="flex items-center gap-3 text-sm text-[color:var(--ai-muted)]"
                 >
                   <div className="w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0"></div>
                   {requirement}
-                </motion.li>
+                </li>
               ))}
             </ul>
           </div>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
       {/* Prerequisites */}
       {course.prerequisites && course.prerequisites.length > 0 && (
-        <motion.div variants={containerVariants} initial="hidden" animate="visible">
-          <motion.div
-            variants={itemVariants}
-            className="border border-[color:var(--ai-card-border)] rounded-2xl overflow-hidden bg-[color:var(--ai-card-bg)]"
-          >
+        <div>
+          <div className="border border-[color:var(--ai-card-border)] rounded-2xl overflow-hidden bg-[color:var(--ai-card-bg)]">
             <div className="py-3 px-4 border-b border-[color:var(--ai-card-border)] border-l-[3px] border-l-amber-500">
               <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
                 <FiLink className="mr-2 text-amber-500" />
@@ -139,11 +103,7 @@ const CourseOverview: React.FC<CourseOverviewProps> = ({ course }) => {
                   const prerequisiteCourse = context?.courses?.[prerequisiteId];
 
                   return (
-                    <motion.div
-                      key={prerequisiteId}
-                      variants={itemVariants}
-                      className="flex items-center gap-3"
-                    >
+                    <div key={prerequisiteId} className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-md border border-amber-500/40 bg-amber-500/[0.06] flex items-center justify-center flex-shrink-0">
                         <FiLink className="text-amber-500" size={16} />
                       </div>
@@ -163,22 +123,19 @@ const CourseOverview: React.FC<CourseOverviewProps> = ({ course }) => {
                       >
                         {t('viewCourse')}
                       </a>
-                    </motion.div>
+                    </div>
                   );
                 })}
               </div>
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       )}
 
       {/* Additional Course Info if available */}
       {course.additionalInfo && (
-        <motion.div variants={containerVariants} initial="hidden" animate="visible">
-          <motion.div
-            variants={itemVariants}
-            className="border border-[color:var(--ai-card-border)] rounded-2xl overflow-hidden bg-[color:var(--ai-card-bg)]"
-          >
+        <div>
+          <div className="border border-[color:var(--ai-card-border)] rounded-2xl overflow-hidden bg-[color:var(--ai-card-bg)]">
             <div className="py-3 px-4 border-b border-[color:var(--ai-card-border)] border-l-[3px] border-l-amber-500">
               <h3 className="font-medium text-[color:var(--ai-foreground)] flex items-center">
                 <FiFileText className="mr-2 text-amber-500" />
@@ -190,8 +147,8 @@ const CourseOverview: React.FC<CourseOverviewProps> = ({ course }) => {
                 {course.additionalInfo}
               </p>
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       )}
     </div>
   );
