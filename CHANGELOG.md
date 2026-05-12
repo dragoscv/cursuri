@@ -6,6 +6,25 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.18.2] - 2026-05-12
+
+### Changed — /courses listing editorial cleanup
+
+The `/courses` page was already mostly editorial from a prior pass; this
+bump removes the last three purple touches surfaced by a browser
+walkthrough:
+
+- `Courses/CoursesList.tsx`: course-card title hover color moved from
+  `text-[color:var(--ai-primary)]` to `text-amber-500`, matching every
+  other amber accent on the page.
+- `Courses/CoursesPage.tsx`: the "GitHub Copilot Pro" subscription card
+  inside the catalog dropped `bg-[color:var(--ai-card-bg)]/60
+backdrop-blur-sm` for a flat `bg-[color:var(--ai-card-bg)]`. The
+  editorial spec forbids `backdrop-blur` on flat content cards.
+- `Courses/CoursesFilter.tsx`: category-chip focus ring switched from
+  primary to `ring-amber-500` so keyboard focus matches the active
+  underline.
+
 ## [0.18.1] - 2026-05-12
 
 ### Changed — editorial cleanup after homepage critic pass

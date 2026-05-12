@@ -111,7 +111,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
               role="tab"
               aria-selected={active}
               onClick={() => handleCategoryChange(c.key === 'all' ? 'all' : c.label)}
-              className={`relative inline-flex items-center gap-1.5 px-3 h-9 text-[13px] font-medium tracking-[-0.005em] transition-colors duration-150 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ai-primary)] rounded-md ${
+              className={`relative inline-flex items-center gap-1.5 px-3 h-9 text-[13px] font-medium tracking-[-0.005em] transition-colors duration-150 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded-md ${
                 active
                   ? 'text-[color:var(--ai-foreground)]'
                   : 'text-[color:var(--ai-muted)] hover:text-[color:var(--ai-foreground)]'

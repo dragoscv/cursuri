@@ -401,7 +401,7 @@ export const CoursesList: React.FC<CoursesListProps> = memo(function CoursesList
 
               <div className="flex flex-1 flex-col p-5">
                 {/* Course title */}
-                <h3 className="mb-2 text-[17px] font-semibold tracking-[-0.01em] text-[color:var(--ai-foreground)] group-hover:text-[color:var(--ai-primary)] transition-colors line-clamp-2">
+                <h3 className="mb-2 text-[17px] font-semibold tracking-[-0.01em] text-[color:var(--ai-foreground)] group-hover:text-amber-500 transition-colors line-clamp-2">
                   {course.name}
                 </h3>
 

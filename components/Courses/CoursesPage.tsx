@@ -82,7 +82,7 @@ export default function CoursesPage() {
         {/* Subscription card — calm editorial */}
         <section
           aria-label={t('badge')}
-          className="relative mb-10 rounded-2xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)]/60 backdrop-blur-sm overflow-hidden"
+          className="relative mb-10 rounded-2xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] overflow-hidden"
         >
           <span
             aria-hidden
