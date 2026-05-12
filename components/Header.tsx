@@ -49,10 +49,10 @@ const Header = React.memo(function Header() {
       initial={{ y: -16, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ type: 'spring', stiffness: 320, damping: 30 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-[padding,background-color,backdrop-filter,border-color] duration-200 ease-out ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-[padding,background-color,border-color] duration-200 ease-out ${
         isScrolled
-          ? 'py-2 bg-[color:var(--ai-background)]/85 backdrop-blur-xl border-b border-[color:var(--ai-card-border)]'
-          : 'py-3 bg-[color:var(--ai-background)]/40 backdrop-blur-md border-b border-transparent'
+          ? 'py-2 bg-[color:var(--ai-background)] border-b border-[color:var(--ai-card-border)]'
+          : 'py-3 bg-transparent border-b border-transparent'
       }`}
     >
       {/* Subtle gold rim accent on scroll only */}

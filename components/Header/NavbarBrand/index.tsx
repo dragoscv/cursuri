@@ -30,7 +30,7 @@ export default function NavbarBrand() {
       >
         <span
           aria-hidden
-          className="grid place-items-center w-8 h-8 rounded-lg border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] text-[color:var(--ai-foreground)] font-semibold text-[15px] tracking-tight transition-colors group-hover:border-[color:var(--ai-primary)]/60 group-hover:text-[color:var(--ai-primary)]"
+          className="grid place-items-center w-8 h-8 rounded-lg border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] text-[color:var(--ai-foreground)] font-semibold text-[15px] tracking-tight transition-colors group-hover:border-amber-500/60 group-hover:text-amber-500"
         >
           S
         </span>

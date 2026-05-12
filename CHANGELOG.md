@@ -6,6 +6,43 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.18.8] - 2026-05-12
+
+### Changed — Editorial pass on global Header + BottomNavigation
+
+Flattened the global header chrome and ripped the remaining purple
+`--ai-primary`/`--ai-secondary` tints off the navigation surfaces.
+
+- `Header`: removed the glass-morphism `backdrop-blur-xl`/`backdrop-blur-md`
+  and the translucent `bg-background/85`/`bg-background/40`. The header is
+  now solid `bg-background` on scroll and fully transparent at the top of
+  the page — no more frosted-glass overlay over the cinematic hero.
+- `AdminActions`: the "ADMIN" pill in the right rail recoloured from
+  primary purple (`text-[--ai-primary]` / `hover:bg-[--ai-primary]/10` /
+  `ring-[--ai-primary]`) to `text-amber-500` / `hover:bg-amber-500/10` /
+  `ring-amber-500`. Matches the editorial accent across the rest of the
+  app.
+- `NavbarBrand`: brand tile hover state now goes to amber-500 (border +
+  text) instead of primary purple.
+- `SocialIcons`: GitHub / Discord / Website / TikTok / Instagram icons
+  recoloured from primary purple to neutral foreground (icons are
+  functional, not accents).
+- `UserDropdown`: admin shield icon recoloured to amber-500. Popover
+  card dropped `shadow-xl` for the flat editorial chrome (border-only).
+- `AuthActions` (auth modal): dropped `shadow-xl` on the modal panel,
+  switched to `rounded-2xl` to match editorial card chrome.
+- `MobileMenu` (modal + popover): same `shadow-xl` → `shadow-none`
+  treatment; modal panel uses `rounded-2xl`.
+- `BottomNavigation` (mobile bottom nav): full rewrite. Removed the
+  ambient gradient backdrop (`from-[--ai-primary]/5 to-[--ai-secondary]/5`
+  - `backdrop-blur-xl`), the secondary `backdrop-blur-2xl` card layer,
+    the `shadow-lg`, the rounded-top container, the tri-colour gradient
+    rule, the active glow (`blur-sm` halo), the active icon gradient tile
+    (`from-[--ai-primary]/15 to-[--ai-secondary]/10`), and the animate-pulse
+    underline. Replaced with a solid `bg-background` bar, a 2px amber-500
+    top rule, amber-500 active text + 10% bg pill on the active icon, and
+    a static amber-500 2px underline on the active label.
+
 ## [0.18.7] - 2026-05-12
 
 ### Changed — Editorial pass on `/courses/[courseId]/lessons/[lessonId]` lesson player

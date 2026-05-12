@@ -49,7 +49,7 @@ export default function MobileMenu() {
       classNames: {
         backdrop:
           'z-50 backdrop-blur-md backdrop-saturate-150 bg-black/60 w-screen min-h-[100dvh] fixed inset-0',
-        base: 'z-50 mx-auto my-auto rounded-xl shadow-xl border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] overflow-hidden h-auto min-h-0',
+        base: 'z-50 mx-auto my-auto rounded-2xl shadow-none border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] dark:bg-[color:var(--ai-card-bg)] overflow-hidden h-auto min-h-0',
         wrapper:
           'z-50 w-full flex flex-col justify-center items-center overflow-hidden min-h-[100dvh]',
         content: 'h-auto min-h-0',
@@ -66,7 +66,7 @@ export default function MobileMenu() {
         placement="bottom-end"
         backdrop="transparent"
         classNames={{
-          base: 'p-1.5 rounded-xl bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] shadow-xl z-[9999] min-w-[260px]',
+          base: 'p-1.5 rounded-xl bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] shadow-none z-[9999] min-w-[260px]',
           content: 'z-[9999] flex flex-col items-end',
         }}
         offset={10}

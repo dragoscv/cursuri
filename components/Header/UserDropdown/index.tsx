@@ -54,7 +54,7 @@ export default function UserDropdown() {
       placement="bottom-end"
       backdrop="transparent"
       classNames={{
-        base: 'p-1.5 rounded-xl bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] shadow-xl z-[9999] min-w-[260px]',
+        base: 'p-1.5 rounded-xl bg-[color:var(--ai-background)] border border-[color:var(--ai-card-border)] shadow-none z-[9999] min-w-[260px]',
         content: 'z-[9999] flex flex-col items-end',
       }}
       offset={10}
@@ -142,7 +142,7 @@ export default function UserDropdown() {
           <DropdownSection aria-label="Admin" showDivider {...({} as any)}>
             <DropdownItem key="admin" textValue="Admin" className="p-0">
               <Link href="/admin" className={itemRow}>
-                <ShieldIcon className="text-[color:var(--ai-primary)]" size={16} />
+                <ShieldIcon className="text-amber-500" size={16} />
                 <span>{t('userMenu.adminDashboard')}</span>
               </Link>
             </DropdownItem>
