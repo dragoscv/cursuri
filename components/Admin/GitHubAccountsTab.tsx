@@ -323,6 +323,17 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
   const [repairRunning, setRepairRunning] = useState(false);
   const [repairSteps, setRepairSteps] = useState<RepairStepResult[] | null>(null);
   const [healthError, setHealthError] = useState<string | null>(null);
+  // Auto-retry state for the long SCIM tail. Each repair run that ends
+  // with `needs_repair` schedules another run after a backoff (capped at
+  // MAX_AUTO_RETRIES) so the admin doesn't have to keep clicking
+  // "Repair missing steps" → "Re-check" while SCIM finishes propagating.
+  const MAX_AUTO_RETRIES = 4;
+  const AUTO_RETRY_DELAY_MS = 30000;
+  const [autoRetryCount, setAutoRetryCount] = useState(0);
+  const [autoRetryEta, setAutoRetryEta] = useState<number | null>(null);
+  const [, setAutoRetryTick] = useState(0); // forces 1Hz re-render for countdown
+  const autoRetryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const autoRetryEtaIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Creation progress state
   const [isCreating, setIsCreating] = useState(false);
@@ -649,7 +660,21 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
     [user.id]
   );
 
+  const cancelAutoRetry = useCallback(() => {
+    if (autoRetryTimerRef.current) {
+      clearTimeout(autoRetryTimerRef.current);
+      autoRetryTimerRef.current = null;
+    }
+    if (autoRetryEtaIntervalRef.current) {
+      clearInterval(autoRetryEtaIntervalRef.current);
+      autoRetryEtaIntervalRef.current = null;
+    }
+    setAutoRetryEta(null);
+  }, []);
+
   const handleOpenHealth = (account: GitHubAccount) => {
+    cancelAutoRetry();
+    setAutoRetryCount(0);
     setHealthAccount(account);
     setHealthData(null);
     setRepairSteps(null);
@@ -658,31 +683,73 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
     runHealthCheck(account.id);
   };
 
-  const handleRepair = async () => {
-    if (!healthAccount) return;
-    setRepairRunning(true);
-    setHealthError(null);
-    setRepairSteps(null);
-    try {
-      const res = await apiCall('/api/admin/github-accounts/repair', 'POST', {
-        userId: user.id,
-        accountId: healthAccount.id,
-      });
-      const data = await res.json();
-      if (data.success) {
-        setRepairSteps(data.steps || []);
-        setHealthData(data.health || null);
-        await fetchAccounts();
-      } else {
-        setHealthError(data.error || 'Repair failed');
+  const handleRepair = useCallback(
+    async (opts?: { isAuto?: boolean }) => {
+      if (!healthAccount) return;
+      cancelAutoRetry();
+      setRepairRunning(true);
+      setHealthError(null);
+      setRepairSteps(null);
+      try {
+        const res = await apiCall('/api/admin/github-accounts/repair', 'POST', {
+          userId: user.id,
+          accountId: healthAccount.id,
+        });
+        const data = await res.json();
+        if (data.success) {
+          setRepairSteps(data.steps || []);
+          setHealthData(data.health || null);
+          await fetchAccounts();
+
+          // Schedule the next auto-retry if SCIM is still propagating.
+          // Stops on success or after MAX_AUTO_RETRIES total attempts.
+          if (data.health?.overall === 'needs_repair') {
+            setAutoRetryCount((prev) => {
+              const next = (opts?.isAuto ? prev : 0) + 1;
+              if (next < MAX_AUTO_RETRIES) {
+                const fireAt = Date.now() + AUTO_RETRY_DELAY_MS;
+                setAutoRetryEta(fireAt);
+                autoRetryEtaIntervalRef.current = setInterval(() => {
+                  setAutoRetryTick((t) => t + 1);
+                }, 1000);
+                autoRetryTimerRef.current = setTimeout(() => {
+                  if (autoRetryEtaIntervalRef.current) {
+                    clearInterval(autoRetryEtaIntervalRef.current);
+                    autoRetryEtaIntervalRef.current = null;
+                  }
+                  setAutoRetryEta(null);
+                  void handleRepair({ isAuto: true });
+                }, AUTO_RETRY_DELAY_MS);
+              }
+              return next;
+            });
+          } else {
+            setAutoRetryCount(0);
+          }
+        } else {
+          setHealthError(data.error || 'Repair failed');
+        }
+      } catch (err) {
+        setHealthError('Network error running repair');
+        console.error(err);
+      } finally {
+        setRepairRunning(false);
       }
-    } catch (err) {
-      setHealthError('Network error running repair');
-      console.error(err);
-    } finally {
-      setRepairRunning(false);
+    },
+    [healthAccount, user.id, fetchAccounts, cancelAutoRetry]
+  );
+
+  // Cancel any pending auto-retry when the modal closes or the account changes.
+  useEffect(() => {
+    if (!healthOpen) {
+      cancelAutoRetry();
+      setAutoRetryCount(0);
     }
-  };
+  }, [healthOpen, cancelAutoRetry]);
+
+  useEffect(() => {
+    return () => cancelAutoRetry();
+  }, [cancelAutoRetry]);
 
   if (loading) {
     return (
@@ -1068,9 +1135,20 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
         }
         footer={
           <>
-            <Button variant="light" onPress={() => setHealthOpen(false)}>
+            <Button
+              variant="light"
+              onPress={() => {
+                cancelAutoRetry();
+                setHealthOpen(false);
+              }}
+            >
               Close
             </Button>
+            {autoRetryEta !== null && (
+              <Button variant="flat" color="warning" onPress={cancelAutoRetry}>
+                Cancel auto-retry
+              </Button>
+            )}
             <Button
               variant="flat"
               onPress={() => healthAccount && runHealthCheck(healthAccount.id)}
@@ -1080,7 +1158,7 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
             </Button>
             <Button
               color="primary"
-              onPress={handleRepair}
+              onPress={() => handleRepair()}
               isLoading={repairRunning}
               isDisabled={!healthData || healthData.overall === 'ok'}
               className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium"
@@ -1095,6 +1173,31 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
             {healthError}
           </div>
         )}
+
+        {autoRetryEta !== null && !repairRunning && (
+          <div className="mb-4 p-3 rounded-lg border border-amber-500/30 bg-amber-500/10 text-sm text-amber-300 flex items-center justify-between gap-3">
+            <span>
+              SCIM is still propagating. Auto-retrying in&nbsp;
+              <strong>{Math.max(0, Math.ceil((autoRetryEta - Date.now()) / 1000))}s</strong>
+              &nbsp;(attempt {autoRetryCount + 1} of {MAX_AUTO_RETRIES}).
+            </span>
+          </div>
+        )}
+        {repairRunning && autoRetryCount > 0 && (
+          <div className="mb-4 p-3 rounded-lg border border-amber-500/30 bg-amber-500/10 text-sm text-amber-300">
+            Auto-retry attempt {autoRetryCount} of {MAX_AUTO_RETRIES} running…
+          </div>
+        )}
+        {!repairRunning &&
+          autoRetryEta === null &&
+          autoRetryCount >= MAX_AUTO_RETRIES &&
+          healthData?.overall === 'needs_repair' && (
+            <div className="mb-4 p-3 rounded-lg border border-rose-500/30 bg-rose-500/10 text-sm text-rose-300">
+              Auto-retry stopped after {MAX_AUTO_RETRIES} attempts. SCIM may take up to 40 minutes
+              when on-demand sync is unavailable. Try again later or click{' '}
+              <strong>Repair missing steps</strong> to restart the loop.
+            </div>
+          )}
 
         {healthLoading && !healthData ? (
           <div className="flex items-center justify-center py-10">

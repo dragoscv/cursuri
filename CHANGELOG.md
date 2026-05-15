@@ -6,6 +6,37 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.18.16] - 2026-05-15
+
+### Fixed — GitHub provisioning gets stuck on SCIM tail
+
+The Provisioning Health modal often left users stuck on the last two
+steps ("Visible in GitHub enterprise" and "Member of studiai-students"
+both Pending) and required the admin to keep clicking
+"Repair missing steps" / "Re-check" until SCIM finished propagating.
+Two separate causes:
+
+1. **Server (`utils/github-accounts.ts` `repairAccount`)**: after
+   calling `provisionUserOnDemand`, the code slept 10s and then ran
+   `addUserToGitHubOrg` with the _derived_ username. If SCIM had
+   landed the user under a different login (dots stripped, etc.) the
+   org-add request 404'd in a loop. Now polls `resolveGithubUsername`
+   for up to ~20s after the SCIM trigger so step 3 always uses the
+   real GitHub login. Also re-fires `provisionOnDemand` once if the
+   first call returned 200 but no user appeared (silent SCIM failure).
+
+2. **Client (`components/Admin/GitHubAccountsTab.tsx`)**: added an
+   automatic retry loop when the repair finishes with
+   `overall: 'needs_repair'`. Schedules another full repair every 30s
+   for up to 4 attempts, with a visible countdown banner and a
+   "Cancel auto-retry" button. Stops on success, on modal close, or
+   after the cap is reached — the admin no longer has to babysit the
+   modal while SCIM finishes.
+
+Server polling budgets trimmed (4 SCIM polls + 5 org-add attempts)
+so the route still completes inside the 60s function limit; the
+client-side retry covers the long tail.
+
 ## [0.18.15] - 2026-05-15
 
 ### Fixed — Real root cause of `getCollectionNode is not a function` on admin

@@ -67,16 +67,13 @@ export async function resolveGithubUsername(
 
   for (const candidate of ordered) {
     try {
-      const res = await fetch(
-        `${GITHUB_API_BASE}/users/${encodeURIComponent(candidate)}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: 'application/vnd.github+json',
-            'X-GitHub-Api-Version': '2022-11-28',
-          },
-        }
-      );
+      const res = await fetch(`${GITHUB_API_BASE}/users/${encodeURIComponent(candidate)}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28',
+        },
+      });
       if (res.ok) {
         return { username: candidate, tried: ordered };
       }
@@ -240,9 +237,7 @@ export async function getSyncJobId(token: string): Promise<string> {
         return active.id;
       }
     } else {
-      console.warn(
-        `Failed to list sync jobs (${res.status}); falling back to hardcoded ID`
-      );
+      console.warn(`Failed to list sync jobs (${res.status}); falling back to hardcoded ID`);
     }
   } catch (e) {
     console.warn('Error fetching sync job ID:', e);
@@ -351,7 +346,9 @@ export async function provisionUserOnDemand(
       };
       const entries: Array<{ provisioningSteps?: Step[] }> = body?.value || [];
       const steps = entries.flatMap((e) => e.provisioningSteps || []);
-      const failed = steps.filter((s) => s?.status && s.status !== 'success' && s.status !== 'skipped');
+      const failed = steps.filter(
+        (s) => s?.status && s.status !== 'success' && s.status !== 'skipped'
+      );
       const exportSteps = steps.filter((s) => (s.type || '').toLowerCase().includes('export'));
       const exportSucceeded = exportSteps.some((s) => s.status === 'success');
       const allSkipped = steps.length > 0 && steps.every((s) => s.status === 'skipped');
@@ -364,8 +361,7 @@ export async function provisionUserOnDemand(
           .join('; ')}`;
       } else if (allSkipped) {
         actuallyProvisioned = false;
-        summary =
-          ` — All steps skipped (user is likely out of scope). Open Entra ID → Enterprise Apps → GitHub EMU → Provisioning and check the scope: it must include this user (assignment + any scoping filters).`;
+        summary = ` — All steps skipped (user is likely out of scope). Open Entra ID → Enterprise Apps → GitHub EMU → Provisioning and check the scope: it must include this user (assignment + any scoping filters).`;
       } else if (exportSteps.length > 0 && !exportSucceeded) {
         actuallyProvisioned = false;
         summary = ` — Export step status: ${exportSteps.map((s) => s.status).join(', ')}`;
@@ -412,10 +408,7 @@ export async function setAzureAccountEnabled(
     });
     return res.ok;
   } catch (error) {
-    console.error(
-      `Failed to ${enabled ? 'enable' : 'disable'} Azure user ${azureUserId}:`,
-      error
-    );
+    console.error(`Failed to ${enabled ? 'enable' : 'disable'} Azure user ${azureUserId}:`, error);
     return false;
   }
 }
@@ -548,10 +541,7 @@ export async function createGitHubAccount(params: {
     await new Promise((r) => setTimeout(r, 4000));
     const orgResult = await addUserToGitHubOrg(githubUsername, { mailNickname });
     if (orgResult.status !== 'added') {
-      console.warn(
-        `Org membership for ${githubUsername} => ${orgResult.status}:`,
-        orgResult.error
-      );
+      console.warn(`Org membership for ${githubUsername} => ${orgResult.status}:`, orgResult.error);
     }
     const finalGithubUsername = orgResult.resolvedUsername || githubUsername;
 
@@ -831,9 +821,7 @@ export async function retryAddAccountToOrg(params: {
   if (!snap.exists) {
     return { status: 'failed', error: 'Account not found' };
   }
-  const data = snap.data() as
-    | { githubUsername?: string; userPrincipalName?: string }
-    | undefined;
+  const data = snap.data() as { githubUsername?: string; userPrincipalName?: string } | undefined;
   const githubUsername = data?.githubUsername;
   if (!githubUsername) {
     return { status: 'failed', error: 'Account has no githubUsername' };
@@ -878,11 +866,7 @@ export interface AccountHealth {
 
 async function fetchAccountDoc(userId: string, accountId: string) {
   const db = getFirestore();
-  const ref = db
-    .collection('users')
-    .doc(userId)
-    .collection('githubAccounts')
-    .doc(accountId);
+  const ref = db.collection('users').doc(userId).collection('githubAccounts').doc(accountId);
   const snap = await ref.get();
   if (!snap.exists) return null;
   return { ref, data: snap.data() as Record<string, unknown> };
@@ -1125,11 +1109,7 @@ export async function checkAccountHealth(params: {
   const orgCheck = checks.find((c) => c.id === 'org-membership');
   if (orgCheck && orgCheck.status !== 'skipped') {
     const mappedStatus: OrgMembershipStatus =
-      orgCheck.status === 'ok'
-        ? 'added'
-        : orgCheck.status === 'pending'
-          ? 'pending'
-          : 'failed';
+      orgCheck.status === 'ok' ? 'added' : orgCheck.status === 'pending' ? 'pending' : 'failed';
     await doc.ref.update({
       orgMembershipStatus: mappedStatus,
       orgMembershipError: orgCheck.status === 'ok' ? null : orgCheck.detail || null,
@@ -1171,10 +1151,7 @@ export interface RepairStepResult {
  * - Add to the studiai-students org
  * Returns a fresh health check after the repair attempt.
  */
-export async function repairAccount(params: {
-  userId: string;
-  accountId: string;
-}): Promise<{
+export async function repairAccount(params: { userId: string; accountId: string }): Promise<{
   success: boolean;
   steps?: RepairStepResult[];
   health?: AccountHealth;
@@ -1238,40 +1215,105 @@ export async function repairAccount(params: {
     }
   }
 
-  // Step 2: trigger SCIM provisioning if GitHub user not yet visible
+  // Step 2: trigger SCIM provisioning if GitHub user not yet visible.
+  // After triggering, poll the GitHub Users API until the SCIM-generated
+  // login appears (or the budget runs out). This resolves the screenshot
+  // case where steps 3+4 stayed "Pending" because addUserToGitHubOrg was
+  // called with a stale derived username while SCIM was still in flight.
+  let resolvedUsername = githubUsername;
   if (ghCheck && ghCheck.status !== 'ok') {
+    let provisionOk = false;
+    let provisionDetail = 'unknown';
     try {
       const result = await provisionUserOnDemand(token, azureUserId);
-      steps.push({
-        id: 'provision-on-demand',
-        label: 'Trigger SCIM provisioning',
-        ran: true,
-        status: result.ok ? 'ok' : 'error',
-        detail: result.detail,
-      });
-      // Give SCIM time to push to GitHub. EMU SCIM exports usually
-      // complete in 5-15s but can take up to 60s under load.
-      if (result.ok) await new Promise((r) => setTimeout(r, 10000));
+      provisionOk = result.ok;
+      provisionDetail = result.detail;
     } catch (e) {
-      steps.push({
-        id: 'provision-on-demand',
-        label: 'Trigger SCIM provisioning',
-        ran: true,
-        status: 'error',
-        detail: e instanceof Error ? e.message : 'Unknown error',
-      });
+      provisionDetail = e instanceof Error ? e.message : 'Unknown error';
     }
+    steps.push({
+      id: 'provision-on-demand',
+      label: 'Trigger SCIM provisioning',
+      ran: true,
+      status: provisionOk ? 'ok' : 'error',
+      detail: provisionDetail,
+    });
+
+    if (provisionOk) {
+      // Poll for SCIM propagation. EMU SCIM exports usually land in
+      // 5-15s; allow up to ~20s before falling through to org-add. The
+      // client auto-retries the whole repair on a backoff for the long
+      // tail (SCIM can take minutes on first sync).
+      const maxVisibilityPolls = 4;
+      let visibilityAttempts = 0;
+      while (visibilityAttempts < maxVisibilityPolls) {
+        await new Promise((r) => setTimeout(r, 5000));
+        const r = await resolveGithubUsername(mailNickname || '', githubUsername);
+        if (r.username) {
+          resolvedUsername = r.username;
+          break;
+        }
+        visibilityAttempts++;
+      }
+      // One more provision retry if still invisible — covers the case
+      // where the first provisionOnDemand response was 200 but the
+      // backing job actually failed silently.
+      if (resolvedUsername === githubUsername) {
+        const verify = await resolveGithubUsername(mailNickname || '', githubUsername);
+        if (!verify.username) {
+          try {
+            const retry = await provisionUserOnDemand(token, azureUserId);
+            steps.push({
+              id: 'provision-on-demand-retry',
+              label: 'Retry SCIM provisioning',
+              ran: true,
+              status: retry.ok ? 'ok' : 'error',
+              detail: retry.detail,
+            });
+            if (retry.ok) {
+              for (let i = 0; i < 2; i++) {
+                await new Promise((r) => setTimeout(r, 5000));
+                const r2 = await resolveGithubUsername(mailNickname || '', githubUsername);
+                if (r2.username) {
+                  resolvedUsername = r2.username;
+                  break;
+                }
+              }
+            }
+          } catch (e) {
+            steps.push({
+              id: 'provision-on-demand-retry',
+              label: 'Retry SCIM provisioning',
+              ran: true,
+              status: 'error',
+              detail: e instanceof Error ? e.message : 'Unknown error',
+            });
+          }
+        } else {
+          resolvedUsername = verify.username;
+        }
+      }
+    }
+
+    // Persist resolved username if SCIM landed on a different login
+    if (resolvedUsername && resolvedUsername !== githubUsername) {
+      await doc.ref.update({ githubUsername: resolvedUsername });
+    }
+  } else {
+    // ghCheck already ok — re-resolve so step 3 uses the correct login
+    const r = await resolveGithubUsername(mailNickname || '', githubUsername);
+    if (r.username) resolvedUsername = r.username;
   }
 
   // Step 3: add to org if not already an active member.
   // Poll up to ~40s for SCIM propagation.
   if (orgCheck && orgCheck.status !== 'ok' && orgCheck.repairable) {
-    let result = await addUserToGitHubOrg(githubUsername, { mailNickname });
+    let result = await addUserToGitHubOrg(resolvedUsername, { mailNickname });
     let attempts = 1;
-    const maxAttempts = 8;
+    const maxAttempts = 5;
     while (result.status === 'pending' && attempts < maxAttempts) {
       await new Promise((r) => setTimeout(r, 5000));
-      result = await addUserToGitHubOrg(githubUsername, { mailNickname });
+      result = await addUserToGitHubOrg(resolvedUsername, { mailNickname });
       attempts++;
     }
     const updates: Record<string, unknown> = {
@@ -1279,7 +1321,7 @@ export async function repairAccount(params: {
       orgMembershipError: result.error || null,
       orgMembershipLastAttempt: new Date(),
     };
-    if (result.resolvedUsername && result.resolvedUsername !== githubUsername) {
+    if (result.resolvedUsername && result.resolvedUsername !== resolvedUsername) {
       updates.githubUsername = result.resolvedUsername;
     }
     await doc.ref.update(updates);
@@ -1299,7 +1341,7 @@ export async function repairAccount(params: {
         result.status === 'added'
           ? `Added successfully${attempts > 1 ? ` (after ${attempts} attempts)` : ''}`
           : result.status === 'pending'
-            ? `Still pending after ${attempts} attempts — SCIM may take up to 40 minutes when on-demand sync is unavailable. Try again later.`
+            ? `Still pending after ${attempts} attempts — SCIM may take up to 40 minutes when on-demand sync is unavailable. The UI will keep retrying.`
             : result.error || `Status: ${result.status}`,
     });
   }
