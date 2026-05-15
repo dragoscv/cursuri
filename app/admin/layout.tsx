@@ -16,14 +16,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const authLoading = context?.authLoading ?? true;
   const isAdmin = context?.isAdmin || false;
   const user = context?.user || null;
+  const userProfile = context?.userProfile || null;
+
+  // Admin role is resolved asynchronously after auth (background IIFE in
+  // AppContext sets isAdmin once userProfile loads). Don't redirect on
+  // refresh while we're still waiting for that check — symptom was
+  // bouncing admins to '/' on every page refresh.
+  const adminCheckPending = !!user && !userProfile;
 
   useEffect(() => {
-    if (!authLoading && (!user || !isAdmin)) {
+    if (authLoading || adminCheckPending) return;
+    if (!user || !isAdmin) {
       router.push('/');
     }
-  }, [authLoading, user, isAdmin, router]);
+  }, [authLoading, adminCheckPending, user, isAdmin, router]);
 
-  if (authLoading || !user || !isAdmin) {
+  if (authLoading || adminCheckPending || !user || !isAdmin) {
     return (
       <div className="min-h-screen bg-[color:var(--ai-background)] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">

@@ -6,6 +6,39 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.18.14] - 2026-05-12
+
+### Fixed — Admin user detail page: HeroUI Tabs crash, refresh redirect, URL tab sync
+
+Three bugs reported on `/admin/users/[userId]`:
+
+1. **`TypeError: o.getCollectionNode is not a function`** when opening
+   the GitHub Accounts tab (and intermittently on initial render). The
+   crash originated inside `@react-stately/collections` while HeroUI
+   `<Tabs>` tried to build its child collection. Fixed by replacing
+   `<Tabs>` + 7 empty `<Tab>` children with a plain
+   `<div role="tablist">` of `<button role="tab">` (same pattern used
+   in `CourseDetails.tsx` v0.18.13). Also removed the keyed
+   `motion.div` panel wrapper around tab content (Pattern C remount
+   risk after Pattern D fix).
+
+2. **Refresh on any admin page bounced to `/`.** `app/admin/layout.tsx`
+   redirected as soon as `authLoading` became false, but Firebase auth
+   resolves before `userProfile` (and therefore `isAdmin`) loads — the
+   admin role check runs in a background IIFE in `AppContext`. Added
+   an `adminCheckPending = !!user && !userProfile` guard so the layout
+   waits for the role resolution before deciding whether to redirect.
+
+3. **Active tab not reflected in the URL.** Added `?tab=` query-param
+   sync via `useSearchParams` for initial state and
+   `window.history.replaceState` for updates (deliberately avoiding
+   `router.push` to keep the v0.18.13 lesson — never trigger a
+   dynamic-segment re-render to sync tab state).
+
+Editorial: tab list now uses `--ai-primary` underline accent on a
+plain button row; the keyed `motion.div` is gone so animations no
+longer remount the entire panel subtree on tab swap.
+
 ## [0.18.13] - 2026-05-12
 
 ### Fixed — Course tab crash, final root cause: `router.push` race
