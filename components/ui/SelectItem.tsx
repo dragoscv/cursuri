@@ -3,22 +3,25 @@
 import React from 'react';
 import { SelectItem as HeroSelectItem } from '@heroui/react';
 
-// This adapter component solves the TypeScript error with value prop
+// HeroUI's <Select> uses react-aria's collection builder, which calls a
+// static `getCollectionNode` on each child's component type. The previous
+// implementation here was a plain function-component wrapper, which did not
+// expose that static — so any HeroUI <Select> using this adapter crashed
+// at render with: "o.getCollectionNode is not a function".
+//
+// Fix: re-export the native HeroSelectItem so the static method is
+// preserved, and re-type it to accept the legacy `value` prop that
+// existing consumers still pass.
 export interface SelectItemProps {
   key?: string;
-  value: string;
-  textValue: string;
+  value?: string;
+  textValue?: string;
   className?: string;
   isDisabled?: boolean;
   isReadOnly?: boolean;
   children?: React.ReactNode;
 }
 
-// Create a compatibility wrapper that handles the type issues
-const SelectItem = (props: SelectItemProps) => {
-  const { value, ...rest } = props;
-
-  return <HeroSelectItem {...rest}>{props.children}</HeroSelectItem>;
-};
+const SelectItem = HeroSelectItem as unknown as React.FC<SelectItemProps>;
 
 export default SelectItem;

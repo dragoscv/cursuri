@@ -6,6 +6,28 @@ All notable changes to this project are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.18.15] - 2026-05-15
+
+### Fixed — Real root cause of `getCollectionNode is not a function` on admin
+
+v0.18.14 swapped HeroUI `<Tabs>` for plain buttons in UserDetailView,
+but `/admin/users/[id]?tab=github` still threw the same
+`o.getCollectionNode is not a function` error. Real root cause:
+[components/ui/SelectItem.tsx](components/ui/SelectItem.tsx) was a
+plain function-component wrapper around `HeroSelectItem`. HeroUI's
+`<Select>` uses react-aria's collection builder, which calls a static
+`getCollectionNode` on each child's component **type** — the wrapper
+did not expose that static, so every `<Select>` using it crashed.
+
+- Fixed `SelectItem` to re-export the native `HeroSelectItem` (cast
+  to accept the legacy `value` prop). Static method preserved, all
+  4 admin consumers now work: GitHubAccountsTab, UserDetailView
+  (role select), BatchOperations, EnhancedUserManagement,
+  UserActivityTimeline.
+- In `GitHubAccountsTab`, also replaced the inline subscription-link
+  HeroUI `<Select>` with a native `<select>` — it lives inside a
+  DataTable cell where HeroUI's portalled listbox is the wrong tool.
+
 ## [0.18.14] - 2026-05-12
 
 ### Fixed — Admin user detail page: HeroUI Tabs crash, refresh redirect, URL tab sync

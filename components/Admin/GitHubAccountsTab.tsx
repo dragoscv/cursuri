@@ -1,14 +1,7 @@
 'use client';
 
 import React, { useCallback, useContext, useEffect, useState, useRef } from 'react';
-import {
-  Button,
-  Chip,
-  Spinner,
-  Select,
-  Input,
-} from '@heroui/react';
-import SelectItem from '@/components/ui/SelectItem';
+import { Button, Chip, Spinner, Input } from '@heroui/react';
 import { AppModal, DataTable, type DataTableColumn } from '@/components/shared/ui';
 import { firebaseAuth, firebaseApp } from '@/utils/firebase/firebase.config';
 import { createCheckoutSession } from 'firewand';
@@ -94,19 +87,34 @@ async function apiCall(
   return fetch(url, options);
 }
 
-function CreationProgress({ currentStep, isDone, error }: { currentStep: number; isDone: boolean; error: string | null }) {
+function CreationProgress({
+  currentStep,
+  isDone,
+  error,
+}: {
+  currentStep: number;
+  isDone: boolean;
+  error: string | null;
+}) {
   return (
     <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-indigo-950/40 dark:via-purple-950/30 dark:to-pink-950/20 border border-indigo-200/50 dark:border-indigo-800/30 p-6">
       {/* Animated background */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-2xl animate-pulse" />
-        <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-gradient-to-br from-indigo-400/20 to-blue-400/20 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div
+          className="absolute -bottom-4 -left-4 w-32 h-32 bg-gradient-to-br from-indigo-400/20 to-blue-400/20 rounded-full blur-2xl animate-pulse"
+          style={{ animationDelay: '1s' }}
+        />
       </div>
 
       <div className="relative z-10">
         <h4 className="text-lg font-bold text-indigo-900 dark:text-indigo-100 mb-4 flex items-center gap-2">
           {isDone ? '✨' : error ? '💥' : '⚡'}
-          {isDone ? 'Account Created Successfully!' : error ? 'Oops! Something went wrong' : 'Creating Account...'}
+          {isDone
+            ? 'Account Created Successfully!'
+            : error
+              ? 'Oops! Something went wrong'
+              : 'Creating Account...'}
         </h4>
 
         <div className="space-y-3">
@@ -118,36 +126,37 @@ function CreationProgress({ currentStep, isDone, error }: { currentStep: number;
             return (
               <div
                 key={index}
-                className={`flex items-center gap-3 transition-all duration-500 ${isActive
-                  ? 'scale-[1.02] opacity-100'
-                  : isCompleted
-                    ? 'opacity-70 scale-100'
-                    : 'opacity-30 scale-95'
-                  }`}
+                className={`flex items-center gap-3 transition-all duration-500 ${
+                  isActive
+                    ? 'scale-[1.02] opacity-100'
+                    : isCompleted
+                      ? 'opacity-70 scale-100'
+                      : 'opacity-30 scale-95'
+                }`}
               >
                 <div
-                  className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all duration-500 ${isCompleted
-                    ? 'bg-green-500/20 text-green-600 dark:text-green-400'
-                    : isActive
-                      ? 'bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 ring-2 ring-indigo-400/50 animate-pulse'
-                      : 'bg-gray-200/50 dark:bg-gray-700/30 text-gray-400'
-                    }`}
+                  className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all duration-500 ${
+                    isCompleted
+                      ? 'bg-green-500/20 text-green-600 dark:text-green-400'
+                      : isActive
+                        ? 'bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 ring-2 ring-indigo-400/50 animate-pulse'
+                        : 'bg-gray-200/50 dark:bg-gray-700/30 text-gray-400'
+                  }`}
                 >
                   {isCompleted ? '✓' : step.emoji}
                 </div>
                 <span
-                  className={`text-sm font-medium transition-colors duration-300 ${isActive
-                    ? 'text-indigo-700 dark:text-indigo-300'
-                    : isCompleted
-                      ? 'text-green-700 dark:text-green-400 line-through'
-                      : 'text-gray-400 dark:text-gray-600'
-                    }`}
+                  className={`text-sm font-medium transition-colors duration-300 ${
+                    isActive
+                      ? 'text-indigo-700 dark:text-indigo-300'
+                      : isCompleted
+                        ? 'text-green-700 dark:text-green-400 line-through'
+                        : 'text-gray-400 dark:text-gray-600'
+                  }`}
                 >
                   {step.text}
                 </span>
-                {isActive && (
-                  <Spinner size="sm" color="secondary" className="ml-auto" />
-                )}
+                {isActive && <Spinner size="sm" color="secondary" className="ml-auto" />}
               </div>
             );
           })}
@@ -156,14 +165,19 @@ function CreationProgress({ currentStep, isDone, error }: { currentStep: number;
         {/* Progress bar */}
         <div className="mt-4 h-2 bg-gray-200/50 dark:bg-gray-700/30 rounded-full overflow-hidden">
           <div
-            className={`h-full rounded-full transition-all duration-700 ease-out ${error
-              ? 'bg-red-500'
-              : isDone
-                ? 'bg-gradient-to-r from-green-400 to-emerald-500'
-                : 'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500'
-              }`}
+            className={`h-full rounded-full transition-all duration-700 ease-out ${
+              error
+                ? 'bg-red-500'
+                : isDone
+                  ? 'bg-gradient-to-r from-green-400 to-emerald-500'
+                  : 'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500'
+            }`}
             style={{
-              width: isDone ? '100%' : error ? `${((currentStep + 1) / CREATION_STEPS.length) * 100}%` : `${((currentStep + 0.5) / CREATION_STEPS.length) * 100}%`,
+              width: isDone
+                ? '100%'
+                : error
+                  ? `${((currentStep + 1) / CREATION_STEPS.length) * 100}%`
+                  : `${((currentStep + 0.5) / CREATION_STEPS.length) * 100}%`,
             }}
           />
         </div>
@@ -177,12 +191,17 @@ function CreationProgress({ currentStep, isDone, error }: { currentStep: number;
 }
 
 function StatusIcon({ status }: { status: CheckStatus }) {
-  const base = 'flex-none inline-flex items-center justify-center h-5 w-5 rounded-full text-xs font-bold';
+  const base =
+    'flex-none inline-flex items-center justify-center h-5 w-5 rounded-full text-xs font-bold';
   switch (status) {
     case 'ok':
-      return <span className={`${base} bg-green-500/20 text-green-600 dark:text-green-400`}>✓</span>;
+      return (
+        <span className={`${base} bg-green-500/20 text-green-600 dark:text-green-400`}>✓</span>
+      );
     case 'pending':
-      return <span className={`${base} bg-amber-500/20 text-amber-600 dark:text-amber-400`}>…</span>;
+      return (
+        <span className={`${base} bg-amber-500/20 text-amber-600 dark:text-amber-400`}>…</span>
+      );
     case 'missing':
       return <span className={`${base} bg-red-500/20 text-red-600 dark:text-red-400`}>✗</span>;
     case 'error':
@@ -194,7 +213,10 @@ function StatusIcon({ status }: { status: CheckStatus }) {
 }
 
 function StatusChip({ status }: { status: CheckStatus }) {
-  const config: Record<CheckStatus, { color: 'success' | 'warning' | 'danger' | 'default'; label: string }> = {
+  const config: Record<
+    CheckStatus,
+    { color: 'success' | 'warning' | 'danger' | 'default'; label: string }
+  > = {
     ok: { color: 'success', label: 'OK' },
     pending: { color: 'warning', label: 'Pending' },
     missing: { color: 'danger', label: 'Missing' },
@@ -351,12 +373,15 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
 
     // Animate steps with random intervals for a natural feel
     let step = 0;
-    stepIntervalRef.current = setInterval(() => {
-      step++;
-      if (step < CREATION_STEPS.length - 1) {
-        setCreationStep(step);
-      }
-    }, 1200 + Math.random() * 800);
+    stepIntervalRef.current = setInterval(
+      () => {
+        step++;
+        if (step < CREATION_STEPS.length - 1) {
+          setCreationStep(step);
+        }
+      },
+      1200 + Math.random() * 800
+    );
 
     try {
       const res = await apiCall('/api/admin/github-accounts', 'POST', {
@@ -377,9 +402,7 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
         }
         await new Promise((r) => setTimeout(r, 300));
         setCreationDone(true);
-        setSuccessMessage(
-          `Account created: ${data.account.githubUsername}`
-        );
+        setSuccessMessage(`Account created: ${data.account.githubUsername}`);
         await fetchAccounts();
       } else {
         setCreationError(data.error || 'Failed to create account');
@@ -436,9 +459,7 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
       const data = await res.json();
       if (data.success) {
         setAccounts((prev) =>
-          prev.map((a) =>
-            a.id === accountId ? { ...a, subscriptionId: selectedSubscription } : a
-          )
+          prev.map((a) => (a.id === accountId ? { ...a, subscriptionId: selectedSubscription } : a))
         );
         setSelectedSubscription('');
         setSuccessMessage('Subscription linked successfully');
@@ -454,9 +475,7 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
   };
 
   const handlePurchaseSubscription = async () => {
-    const copilotPrice = resolveCopilotMonthlyPrice(
-      (appCtx?.products as AnyProduct[]) || []
-    );
+    const copilotPrice = resolveCopilotMonthlyPrice((appCtx?.products as AnyProduct[]) || []);
     const priceId = copilotPrice?.id || resolveGithubPriceId(publicConfig);
     if (!priceId) {
       setError(
@@ -467,8 +486,7 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
     setPurchaseLoading(true);
     try {
       const payments = stripePayments(firebaseApp);
-      const introPromoId: string | undefined =
-        copilotPrice?.metadata?.intro_promotion_code;
+      const introPromoId: string | undefined = copilotPrice?.metadata?.intro_promotion_code;
       const checkoutParams: any = {
         price: priceId,
         allow_promotion_codes: !introPromoId,
@@ -540,7 +558,11 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
   };
 
   const handleUnlink = async (accountId: string) => {
-    if (!confirm('Detach this account from the user? The Azure account will NOT be deleted and can be re-linked later.')) {
+    if (
+      !confirm(
+        'Detach this account from the user? The Azure account will NOT be deleted and can be re-linked later.'
+      )
+    ) {
       return;
     }
     setUnlinkingId(accountId);
@@ -587,7 +609,9 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
       if (data.success) {
         setSuccessMessage(`Added ${data.githubUsername || 'user'} to the organization`);
       } else if (data.status === 'pending') {
-        setError('GitHub does not see the user yet — SCIM may still be syncing. Try again in a minute.');
+        setError(
+          'GitHub does not see the user yet — SCIM may still be syncing. Try again in a minute.'
+        );
       } else {
         setError(data.error || 'Failed to add user to organization');
       }
@@ -687,8 +711,17 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
             variant="bordered"
             onPress={handleOpenLinkModal}
             startContent={
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clipRule="evenodd" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"
+                  clipRule="evenodd"
+                />
               </svg>
             }
           >
@@ -701,9 +734,18 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
             onPress={handlePurchaseSubscription}
             isLoading={purchaseLoading}
             startContent={
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
                 <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
-                <path fillRule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clipRule="evenodd" />
+                <path
+                  fillRule="evenodd"
+                  d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
+                  clipRule="evenodd"
+                />
               </svg>
             }
           >
@@ -716,8 +758,17 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
             isDisabled={isCreating && !creationDone && !creationError}
             className="bg-gradient-to-r from-[color:var(--ai-primary)] to-[color:var(--ai-secondary)] text-white font-medium"
             startContent={
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                  clipRule="evenodd"
+                />
               </svg>
             }
           >
@@ -729,9 +780,22 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
       {/* Info box about email derivation */}
       <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 text-sm">
         <p className="text-blue-800 dark:text-blue-300">
-          <strong>Username derivation:</strong> From email <code>{user.email}</code> →
-          Account: <code>{user.email.split('@')[0].replace(/[^a-zA-Z0-9._-]/g, '').toLowerCase()}@studiai.ro</code> →
-          GitHub: <code>{user.email.split('@')[0].replace(/[^a-zA-Z0-9._-]/g, '').toLowerCase()}_metu</code>
+          <strong>Username derivation:</strong> From email <code>{user.email}</code> → Account:{' '}
+          <code>
+            {user.email
+              .split('@')[0]
+              .replace(/[^a-zA-Z0-9._-]/g, '')
+              .toLowerCase()}
+            @studiai.ro
+          </code>{' '}
+          → GitHub:{' '}
+          <code>
+            {user.email
+              .split('@')[0]
+              .replace(/[^a-zA-Z0-9._-]/g, '')
+              .toLowerCase()}
+            _metu
+          </code>
         </p>
         <p className="text-blue-700 dark:text-blue-400 mt-1">
           Next accounts will get suffix 02, 03, etc.
@@ -798,8 +862,18 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
                   className="opacity-0 group-hover:opacity-100 text-[color:var(--ai-muted)] hover:text-[color:var(--ai-primary)] p-1 transition"
                   title="Copy"
                 >
-                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  <svg
+                    className="h-3.5 w-3.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
                   </svg>
                 </button>
               </div>
@@ -842,24 +916,24 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
             responsiveFrom: 'lg',
             cell: (a) =>
               a.subscriptionId ? (
-                <Chip color="primary" size="sm" variant="flat">Linked</Chip>
+                <Chip color="primary" size="sm" variant="flat">
+                  Linked
+                </Chip>
               ) : (
                 <div className="flex items-center gap-1">
-                  <Select
-                    size="sm"
-                    placeholder="Link..."
-                    className="w-32"
+                  <select
+                    aria-label="Link subscription"
+                    className="w-32 h-8 rounded-md border border-[color:var(--ai-card-border)] bg-[color:var(--ai-card-bg)] px-2 text-xs text-[color:var(--ai-foreground)] focus:outline-none focus:ring-2 focus:ring-[color:var(--ai-primary)]"
                     value={selectedSubscription}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                      setSelectedSubscription(e.target.value)
-                    }
+                    onChange={(e) => setSelectedSubscription(e.target.value)}
                   >
+                    <option value="">Link…</option>
                     {(subscriptions || []).map((sub) => (
-                      <SelectItem key={sub.id} value={sub.id} textValue={sub.id}>
+                      <option key={sub.id} value={sub.id}>
                         {sub.product?.name || sub.id.slice(-8)}
-                      </SelectItem>
+                      </option>
                     ))}
-                  </Select>
+                  </select>
                   <Button
                     size="sm"
                     color="primary"
@@ -913,8 +987,18 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
         ]}
         emptyState={
           <div className="text-center py-4">
-            <svg className="mx-auto h-12 w-12 text-[color:var(--ai-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            <svg
+              className="mx-auto h-12 w-12 text-[color:var(--ai-muted)]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+              />
             </svg>
             <p className="mt-2 text-[color:var(--ai-foreground)] font-medium">
               No GitHub accounts created yet
@@ -940,11 +1024,18 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
                 )
               }
             >
-              <p>User GitHub: <strong>{account.githubUsername}</strong></p>
-              <p>User Cont Microsoft: <strong>{account.userPrincipalName}</strong></p>
-              <p>Parola: <strong>{account.defaultPassword}</strong> (o să îți ceară să o schimbi)</p>
+              <p>
+                User GitHub: <strong>{account.githubUsername}</strong>
+              </p>
+              <p>
+                User Cont Microsoft: <strong>{account.userPrincipalName}</strong>
+              </p>
+              <p>
+                Parola: <strong>{account.defaultPassword}</strong> (o să îți ceară să o schimbi)
+              </p>
               <p className="text-[color:var(--ai-muted-foreground)] mt-1">
-                După ce scrii pe GitHub username-ul nu trebuie să introduci parola, parola o cere doar la contul de Microsoft
+                După ce scrii pe GitHub username-ul nu trebuie să introduci parola, parola o cere
+                doar la contul de Microsoft
               </p>
               <p className="text-[color:var(--ai-muted-foreground)] mt-1">
                 Să descarci VS Code Insiders, cu acel Insiders, nu cea normală
@@ -1076,7 +1167,10 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
 
       {/* Create Account Confirmation Modal */}
       {(() => {
-        const baseUsername = user.email.split('@')[0].replace(/[^a-zA-Z0-9._-]/g, '').toLowerCase();
+        const baseUsername = user.email
+          .split('@')[0]
+          .replace(/[^a-zA-Z0-9._-]/g, '')
+          .toLowerCase();
         const nextNumber = accounts.length + 1;
         const suffix = nextNumber > 1 ? String(nextNumber).padStart(2, '0') : '';
         const newAccount = `${baseUsername}${suffix}@studiai.ro`;
@@ -1112,15 +1206,20 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
               </div>
               <div className="flex justify-between gap-2">
                 <span className="text-[color:var(--ai-muted)]">Email</span>
-                <code className="font-mono text-[color:var(--ai-primary)] truncate">{newAccount}</code>
+                <code className="font-mono text-[color:var(--ai-primary)] truncate">
+                  {newAccount}
+                </code>
               </div>
               <div className="flex justify-between gap-2">
                 <span className="text-[color:var(--ai-muted)]">GitHub username</span>
-                <code className="font-mono text-[color:var(--ai-primary)] truncate">{newGithub}</code>
+                <code className="font-mono text-[color:var(--ai-primary)] truncate">
+                  {newGithub}
+                </code>
               </div>
             </div>
             <div className="mt-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2.5 text-xs text-amber-300">
-              💡 If you already created the account manually in Azure AD, use <strong>Link Existing</strong> instead to avoid duplicates.
+              💡 If you already created the account manually in Azure AD, use{' '}
+              <strong>Link Existing</strong> instead to avoid duplicates.
             </div>
           </AppModal>
         );
@@ -1164,8 +1263,18 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 startContent={
-                  <svg className="h-4 w-4 text-[color:var(--ai-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  <svg
+                    className="h-4 w-4 text-[color:var(--ai-muted)]"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
                   </svg>
                 }
                 className="flex-1"
@@ -1215,10 +1324,11 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
                 {filtered.map((u) => (
                   <div
                     key={u.azureUserId}
-                    className={`flex items-center justify-between gap-3 p-3 rounded-xl border transition-colors ${u.alreadyLinked
-                      ? 'bg-[color:var(--ai-card-border)]/30 border-[color:var(--ai-card-border)] opacity-70'
-                      : 'bg-[color:var(--ai-background)]/50 border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/50 hover:bg-[color:var(--ai-primary)]/[0.04]'
-                      }`}
+                    className={`flex items-center justify-between gap-3 p-3 rounded-xl border transition-colors ${
+                      u.alreadyLinked
+                        ? 'bg-[color:var(--ai-card-border)]/30 border-[color:var(--ai-card-border)] opacity-70'
+                        : 'bg-[color:var(--ai-background)]/50 border-[color:var(--ai-card-border)] hover:border-[color:var(--ai-primary)]/50 hover:bg-[color:var(--ai-primary)]/[0.04]'
+                    }`}
                   >
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
@@ -1226,10 +1336,14 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
                           {u.displayName || u.mailNickname}
                         </p>
                         {!u.accountEnabled && (
-                          <Chip size="sm" color="danger" variant="flat">Disabled</Chip>
+                          <Chip size="sm" color="danger" variant="flat">
+                            Disabled
+                          </Chip>
                         )}
                         {u.alreadyLinked && (
-                          <Chip size="sm" color="warning" variant="flat">Already linked</Chip>
+                          <Chip size="sm" color="warning" variant="flat">
+                            Already linked
+                          </Chip>
                         )}
                       </div>
                       <p className="text-xs font-mono text-[color:var(--ai-muted)] truncate">
@@ -1238,7 +1352,10 @@ export default function GitHubAccountsTab({ user, subscriptions }: GitHubAccount
                       <p className="text-xs text-[color:var(--ai-muted)] truncate">
                         GitHub: <span className="font-mono">{u.derivedGithubUsername}</span>
                         {u.alreadyLinked && u.linkedToUserId && (
-                          <span> · linked to user <code>{u.linkedToUserId.slice(0, 8)}…</code></span>
+                          <span>
+                            {' '}
+                            · linked to user <code>{u.linkedToUserId.slice(0, 8)}…</code>
+                          </span>
                         )}
                       </p>
                     </div>
